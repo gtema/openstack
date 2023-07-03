@@ -1,0 +1,304 @@
+//! Module to handle OpenStack config
+//!
+//! ```rust
+//! let cfg = openstack_sdk::config::ConfigFile::new().unwrap();
+//! let profile = cfg
+//!     .get_cloud_config("devstack".to_string())
+//!     .expect("Cloud devstack not found");
+//! ```
+
+use anyhow::Context;
+use std::fmt;
+use std::path::{Path, PathBuf};
+use tracing::{debug, error, warn};
+
+use serde::Deserialize;
+use std::collections::HashMap;
+use std::collections::HashSet;
+use std::env;
+
+use thiserror::Error;
+
+use config::Environment;
+use config::File;
+
+/// Errors which may occur when creating form data.
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum ConfigError {
+    #[error("Cloud {0} not found")]
+    CloudNotFound(String),
+
+    #[error("Profile {} not found", profile_name)]
+    MissingProfile { profile_name: String },
+
+    #[error("unknown error")]
+    Unknown,
+
+    #[error("failed to deserialize config: {}", source)]
+    Parse {
+        /// The source of the error.
+        #[from]
+        source: config::ConfigError,
+    },
+    #[error(transparent)]
+    Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
+}
+
+impl ConfigError {
+    pub fn parse(source: config::ConfigError) -> Self {
+        ConfigError::Parse { source }
+    }
+}
+
+/// ConfigFile structure
+#[derive(Deserialize, Debug, Clone)]
+pub struct ConfigFile {
+    /// clouds configuration
+    clouds: Option<HashMap<String, CloudConfig>>,
+    /// vendor clouds information (profiles)
+    #[serde(rename = "public-clouds")]
+    public_clouds: Option<HashMap<String, CloudConfig>>,
+}
+
+/// Authentication data
+#[derive(Clone, Default, Deserialize)]
+pub(crate) struct Auth {
+    pub(crate) auth_url: Option<String>,
+    pub(crate) domain_id: Option<String>,
+    pub(crate) domain_name: Option<String>,
+    pub(crate) endpoint: Option<String>,
+    pub(crate) password: Option<String>,
+    pub(crate) project_id: Option<String>,
+    pub(crate) project_name: Option<String>,
+    pub(crate) project_domain_id: Option<String>,
+    pub(crate) project_domain_name: Option<String>,
+    pub(crate) token: Option<String>,
+    pub(crate) username: Option<String>,
+    pub(crate) user_id: Option<String>,
+    pub(crate) user_domain_name: Option<String>,
+    pub(crate) user_domain_id: Option<String>,
+}
+
+impl fmt::Debug for Auth {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Auth")
+            .field("auth_url", &self.auth_url)
+            .field("domain_id", &self.domain_id)
+            .field("domain_name", &self.domain_name)
+            .field("project_id", &self.project_id)
+            .field("project_name", &self.project_name)
+            .field("project_domain_id", &self.project_domain_id)
+            .field("project_domain_name", &self.project_domain_name)
+            .field("username", &self.username)
+            .field("user_domain_id", &self.user_domain_id)
+            .field("user_domain_name", &self.user_domain_name)
+            .finish()
+    }
+}
+
+/// CloudConfig structure
+#[derive(Deserialize, Debug, Clone)]
+pub struct CloudConfig {
+    /// Authorization data
+    pub(crate) auth: Option<Auth>,
+    /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations
+    pub auth_type: Option<String>,
+
+    /// Vendor Profile (by name from clouds-public.yaml or TBD: URL)
+    pub profile: Option<String>,
+    /// Interface name to be used for endpoints selection
+    pub interface: Option<String>,
+    /// Region name
+    pub region_name: Option<String>,
+
+    /// All other options
+    #[serde(flatten)]
+    pub options: HashMap<String, config::Value>,
+}
+
+/// CloudConfig struct implementation
+impl CloudConfig {
+    /// Update unset CloudConfig with values from the `update` var
+    pub fn update(&mut self, update: &CloudConfig) {
+        if let Some(update_auth) = &update.auth {
+            let auth = self.auth.get_or_insert(Auth::default());
+            if auth.auth_url.is_none() && update_auth.auth_url.is_some() {
+                auth.auth_url = update_auth.auth_url.clone();
+            }
+            if auth.domain_id.is_none() && update_auth.domain_id.is_some() {
+                auth.domain_id = update_auth.domain_id.clone();
+            }
+            if auth.domain_name.is_none() && update_auth.domain_name.is_some() {
+                auth.domain_name = update_auth.domain_name.clone();
+            }
+            if auth.endpoint.is_none() && update_auth.endpoint.is_some() {
+                auth.endpoint = update_auth.endpoint.clone();
+            }
+            if auth.password.is_none() && update_auth.password.is_some() {
+                auth.password = update_auth.password.clone();
+            }
+            if auth.project_id.is_none() && update_auth.project_id.is_some() {
+                auth.project_id = update_auth.project_id.clone();
+            }
+            if auth.project_name.is_none() && update_auth.project_name.is_some() {
+                auth.project_name = update_auth.project_name.clone();
+            }
+            if auth.project_domain_id.is_none() && update_auth.project_domain_id.is_some() {
+                auth.project_domain_id = update_auth.project_domain_id.clone();
+            }
+            if auth.project_domain_name.is_none() && update_auth.project_domain_name.is_some() {
+                auth.project_domain_name = update_auth.project_domain_name.clone();
+            }
+            if auth.token.is_none() && update_auth.token.is_some() {
+                auth.token = update_auth.token.clone();
+            }
+            if auth.username.is_none() && update_auth.username.is_some() {
+                auth.username = update_auth.username.clone();
+            }
+            if auth.user_domain_name.is_none() && update_auth.user_domain_name.is_some() {
+                auth.user_domain_name = update_auth.user_domain_name.clone();
+            }
+            if auth.user_domain_id.is_none() && update_auth.user_domain_id.is_some() {
+                auth.user_domain_id = update_auth.user_domain_id.clone();
+            }
+        }
+        if self.auth_type.is_none() && update.auth_type.is_some() {
+            self.auth_type = update.auth_type.clone();
+        }
+        if self.profile.is_none() && update.profile.is_some() {
+            self.profile = update.profile.clone();
+        }
+        if self.interface.is_none() && update.interface.is_some() {
+            self.interface = update.interface.clone();
+        }
+        if self.region_name.is_none() && update.region_name.is_some() {
+            self.region_name = update.region_name.clone();
+        }
+        let current_keys: HashSet<String> = self.options.keys().cloned().collect();
+        self.options.extend(
+            update
+                .options
+                .clone()
+                .into_iter()
+                .filter(|x| !current_keys.contains(&x.0)),
+        );
+    }
+}
+
+const CONFIG_SUFFIXES: &[&str] = &[".yaml", ".yml", ".json"];
+
+/// Get Paths in which to search for the configuration file
+fn get_config_file_search_paths<S: AsRef<str> + std::fmt::Display>(filename: S) -> Vec<PathBuf> {
+    let paths: Vec<PathBuf> = vec![
+        env::current_dir().expect("Cannot determine current workdir"),
+        dirs::config_dir()
+            .expect("Cannot determine users XDG_CONFIG_HOME")
+            .join("openstack"),
+        dirs::home_dir()
+            .expect("Cannot determine users XDG_HOME")
+            .join(".config/openstack"),
+        PathBuf::from("/etc/openstack"),
+    ];
+
+    return paths
+        .iter()
+        .flat_map(|x| {
+            CONFIG_SUFFIXES
+                .iter()
+                .map(|y| x.join(format!("{}{}", filename, y)))
+        })
+        .collect();
+}
+
+impl ConfigFile {
+    /// Get new ConfigFile processor
+    pub fn new() -> Result<Self, ConfigError> {
+        let mut s = config::Config::builder();
+        for filename in &["clouds", "secure", "clouds-public"] {
+            if let Some(path) = get_config_file_search_paths(filename)
+                .iter()
+                .find(|&x| x.is_file())
+            {
+                if let Some(v) = path.to_str() {
+                    // Since config lib is not returning information about the file from which the error comes we try to deserialize each individual file to be user friendly
+                    match config::Config::builder()
+                        .add_source(File::with_name(v))
+                        .build()
+                    {
+                        Ok(x) => match x.try_deserialize::<ConfigFile>() {
+                            Ok(..) => s = s.add_source(File::with_name(v)),
+                            Err(e) => error!("Error in file {}: {:?}. Ignoring the file", v, e),
+                        },
+                        Err(x) => return Err(ConfigError::parse(x)),
+                    }
+                }
+            }
+        }
+        s.build()?.try_deserialize().map_err(ConfigError::parse)
+    }
+
+    /// Get cloud connection configuration by name.
+    ///
+    /// This method does not raise the expection when the cloud is
+    /// not found.
+    pub fn get_cloud_config(&self, cloud_name: String) -> Result<Option<CloudConfig>, ConfigError> {
+        if let Some(clouds) = &self.clouds {
+            if let Some(cfg) = clouds.get(&cloud_name) {
+                let mut config = cfg.clone();
+                if let Some(ref profile_name) = config.profile {
+                    let mut profile_definition: Option<&CloudConfig> = None;
+                    // TODO: profile may be URL to .well_known
+                    // Merge profile
+                    match &self.public_clouds {
+                        Some(profiles) => {
+                            profile_definition = profiles.get(profile_name);
+                        }
+                        None => {
+                            warn!("Cannot find profiles definition");
+                        }
+                    }
+                    if let Some(profile) = profile_definition {
+                        config.update(profile);
+                    }
+                }
+
+                return Ok(Some(config));
+            }
+        }
+        Ok(None)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::config;
+    use std::env;
+    use std::path::PathBuf;
+
+    #[test]
+    fn test_get_search_paths() {
+        let fname = "clouds";
+        let cwd = env::current_dir().unwrap();
+        let conf_dir = dirs::config_dir().unwrap().join("openstack");
+        let unix_conf_home = dirs::home_dir().unwrap().join(".config/openstack");
+        let site_conf = PathBuf::from("/etc/openstack");
+        assert_eq!(
+            vec![
+                PathBuf::from(format!("{}/{}.yaml", cwd.display(), fname)),
+                PathBuf::from(format!("{}/{}.yml", cwd.display(), fname)),
+                PathBuf::from(format!("{}/{}.json", cwd.display(), fname)),
+                PathBuf::from(format!("{}/{}.yaml", conf_dir.display(), fname)),
+                PathBuf::from(format!("{}/{}.yml", conf_dir.display(), fname)),
+                PathBuf::from(format!("{}/{}.json", conf_dir.display(), fname)),
+                PathBuf::from(format!("{}/{}.yaml", unix_conf_home.display(), fname)),
+                PathBuf::from(format!("{}/{}.yml", unix_conf_home.display(), fname)),
+                PathBuf::from(format!("{}/{}.json", unix_conf_home.display(), fname)),
+                PathBuf::from(format!("{}/{}.yaml", site_conf.display(), fname)),
+                PathBuf::from(format!("{}/{}.yml", site_conf.display(), fname)),
+                PathBuf::from(format!("{}/{}.json", site_conf.display(), fname)),
+            ],
+            config::get_config_file_search_paths(fname)
+        );
+    }
+}

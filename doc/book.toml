@@ -1,0 +1,10 @@
+[book]
+authors = ["gtema"]
+language = "en"
+multilingual = false
+src = "src"
+title = "OpenStack Rust tooling"
+
+[build]
+build-dir = "html"
+create-missing = false

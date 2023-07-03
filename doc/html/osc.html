@@ -1,0 +1,1147 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>OpenStackClient (OSC) - OpenStack Rust tooling</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="sdk.html"><strong aria-hidden="true">1.</strong> OpenStack SDK</a></li><li class="chapter-item expanded "><a href="osc.html" class="active"><strong aria-hidden="true">2.</strong> OpenStackClient (OSC)</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">OpenStack Rust tooling</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="command-line-help-for-osc"><a class="header" href="#command-line-help-for-osc">Command-Line Help for <code>osc</code></a></h1>
+<p>This document contains the help content for the <code>osc</code> command-line program.</p>
+<p><strong>Command Overview:</strong></p>
+<ul>
+<li><a href="#osc"><code>osc</code>↴</a></li>
+<li><a href="#osc-compute"><code>osc compute</code>↴</a></li>
+<li><a href="#osc-compute-server"><code>osc compute server</code>↴</a></li>
+<li><a href="#osc-compute-server-list"><code>osc compute server list</code>↴</a></li>
+<li><a href="#osc-compute-server-show"><code>osc compute server show</code>↴</a></li>
+<li><a href="#osc-compute-flavor"><code>osc compute flavor</code>↴</a></li>
+<li><a href="#osc-compute-flavor-list"><code>osc compute flavor list</code>↴</a></li>
+<li><a href="#osc-compute-flavor-show"><code>osc compute flavor show</code>↴</a></li>
+<li><a href="#osc-image"><code>osc image</code>↴</a></li>
+<li><a href="#osc-image-image"><code>osc image image</code>↴</a></li>
+<li><a href="#osc-image-image-list"><code>osc image image list</code>↴</a></li>
+<li><a href="#osc-image-image-show"><code>osc image image show</code>↴</a></li>
+<li><a href="#osc-image-image-create"><code>osc image image create</code>↴</a></li>
+<li><a href="#osc-image-image-set"><code>osc image image set</code>↴</a></li>
+<li><a href="#osc-image-image-download"><code>osc image image download</code>↴</a></li>
+<li><a href="#osc-image-image-upload"><code>osc image image upload</code>↴</a></li>
+<li><a href="#osc-image-image-delete"><code>osc image image delete</code>↴</a></li>
+<li><a href="#osc-image-image-deactivate"><code>osc image image deactivate</code>↴</a></li>
+<li><a href="#osc-image-image-reactivate"><code>osc image image reactivate</code>↴</a></li>
+<li><a href="#osc-image-schema"><code>osc image schema</code>↴</a></li>
+<li><a href="#osc-image-schema-image"><code>osc image schema image</code>↴</a></li>
+<li><a href="#osc-image-schema-image-show"><code>osc image schema image show</code>↴</a></li>
+<li><a href="#osc-image-schema-images"><code>osc image schema images</code>↴</a></li>
+<li><a href="#osc-image-schema-images-show"><code>osc image schema images show</code>↴</a></li>
+<li><a href="#osc-image-schema-member"><code>osc image schema member</code>↴</a></li>
+<li><a href="#osc-image-schema-member-show"><code>osc image schema member show</code>↴</a></li>
+<li><a href="#osc-image-schema-members"><code>osc image schema members</code>↴</a></li>
+<li><a href="#osc-image-schema-members-show"><code>osc image schema members show</code>↴</a></li>
+<li><a href="#osc-object-store"><code>osc object-store</code>↴</a></li>
+<li><a href="#osc-object-store-account"><code>osc object-store account</code>↴</a></li>
+<li><a href="#osc-object-store-account-show"><code>osc object-store account show</code>↴</a></li>
+<li><a href="#osc-object-store-account-set"><code>osc object-store account set</code>↴</a></li>
+<li><a href="#osc-object-store-container"><code>osc object-store container</code>↴</a></li>
+<li><a href="#osc-object-store-container-list"><code>osc object-store container list</code>↴</a></li>
+<li><a href="#osc-object-store-container-show"><code>osc object-store container show</code>↴</a></li>
+<li><a href="#osc-object-store-container-set"><code>osc object-store container set</code>↴</a></li>
+<li><a href="#osc-object-store-container-create"><code>osc object-store container create</code>↴</a></li>
+<li><a href="#osc-object-store-container-delete"><code>osc object-store container delete</code>↴</a></li>
+<li><a href="#osc-object-store-object"><code>osc object-store object</code>↴</a></li>
+<li><a href="#osc-object-store-object-list"><code>osc object-store object list</code>↴</a></li>
+<li><a href="#osc-object-store-object-download"><code>osc object-store object download</code>↴</a></li>
+<li><a href="#osc-object-store-object-upload"><code>osc object-store object upload</code>↴</a></li>
+<li><a href="#osc-object-store-object-show"><code>osc object-store object show</code>↴</a></li>
+<li><a href="#osc-object-store-object-delete"><code>osc object-store object delete</code>↴</a></li>
+<li><a href="#osc-api"><code>osc api</code>↴</a></li>
+</ul>
+<h2 id="osc"><a class="header" href="#osc"><code>osc</code></a></h2>
+<p>OpenStack client rewritten in Rust</p>
+<p><strong>Usage:</strong> <code>osc [OPTIONS] &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands"><a class="header" href="#subcommands"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>compute</code> — Compute service (Nova) commands</li>
+<li><code>image</code> — Image (Glance) commands</li>
+<li><code>object-store</code> — Object Store service (Swift) commands</li>
+<li><code>api</code> — Perform direct REST API requests with authorization</li>
+</ul>
+<h6 id="options"><a class="header" href="#options"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--os-cloud &lt;OS_CLOUD&gt;</code> — Name reference to the clouds.yaml entry for the cloud configuration</p>
+</li>
+<li>
+<p><code>-o</code>, <code>--output &lt;OUTPUT&gt;</code> — Output format</p>
+<p>Possible values:</p>
+<ul>
+<li><code>json</code>:
+Json output</li>
+<li><code>yaml</code>:
+YAML output</li>
+<li><code>wide</code>:
+Wide (Human readable table with extra attributes)</li>
+</ul>
+</li>
+<li>
+<p><code>-f</code>, <code>--fields &lt;FIELDS&gt;</code> — Fields to return in the output (only in normal and wide mode)</p>
+</li>
+<li>
+<p><code>-v</code>, <code>--verbose</code> — Verbosity level. Repeat to increase level</p>
+</li>
+</ul>
+<h2 id="osc-compute"><a class="header" href="#osc-compute"><code>osc compute</code></a></h2>
+<p>Compute service (Nova) commands</p>
+<p><strong>Usage:</strong> <code>osc compute [OPTIONS] compute &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-1"><a class="header" href="#subcommands-1"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>server</code> — Server (VM) commands</li>
+<li><code>flavor</code> — Flavor commands</li>
+</ul>
+<h6 id="options-1"><a class="header" href="#options-1"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--os-compute-api-version &lt;OS_COMPUTE_API_VERSION&gt;</code> — Compute API microversion</li>
+</ul>
+<h2 id="osc-compute-server"><a class="header" href="#osc-compute-server"><code>osc compute server</code></a></h2>
+<p>Server (VM) commands</p>
+<p><strong>Usage:</strong> <code>osc compute server server &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-2"><a class="header" href="#subcommands-2"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — List Servers</li>
+<li><code>show</code> — Show single Server</li>
+</ul>
+<h2 id="osc-compute-server-list"><a class="header" href="#osc-compute-server-list"><code>osc compute server list</code></a></h2>
+<p>List Servers</p>
+<p><strong>Usage:</strong> <code>osc compute server list [OPTIONS]</code></p>
+<h6 id="options-2"><a class="header" href="#options-2"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — limit filter parameter</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — marker filter parameter</p>
+</li>
+<li>
+<p><code>--auto-disk-config &lt;AUTO_DISK_CONFIG&gt;</code> — auto_disk_config filter parameter</p>
+</li>
+<li>
+<p><code>--availability-zone &lt;AVAILABILITY_ZONE&gt;</code> — availability_zone filter parameter</p>
+</li>
+<li>
+<p><code>--created-at &lt;CREATED_AT&gt;</code> — created_at filter parameter</p>
+</li>
+<li>
+<p><code>--description &lt;DESCRIPTION&gt;</code> — description filter parameter</p>
+</li>
+<li>
+<p><code>--flavor &lt;FLAVOR&gt;</code> — flavor filter parameter</p>
+</li>
+<li>
+<p><code>--hostname &lt;HOSTNAME&gt;</code> — hostname filter parameter</p>
+</li>
+<li>
+<p><code>--image &lt;IMAGE&gt;</code> — image filter parameter</p>
+</li>
+<li>
+<p><code>--kernel-id &lt;KERNEL_ID&gt;</code> — kernel_id filter parameter</p>
+</li>
+<li>
+<p><code>--key-name &lt;KEY_NAME&gt;</code> — key_name filter parameter</p>
+</li>
+<li>
+<p><code>--launch-index &lt;LAUNCH_INDEX&gt;</code> — launch_index filter parameter</p>
+</li>
+<li>
+<p><code>--launched-at &lt;LAUNCHED_AT&gt;</code> — launched_at filter parameter</p>
+</li>
+<li>
+<p><code>--locked-by &lt;LOCKED_BY&gt;</code> — locked_by filter parameter</p>
+</li>
+<li>
+<p><code>--name &lt;NAME&gt;</code> — name filter parameter</p>
+</li>
+<li>
+<p><code>--node &lt;NODE&gt;</code> — node filter parameter</p>
+</li>
+<li>
+<p><code>--power-state &lt;POWER_STATE&gt;</code> — power_state filter parameter</p>
+</li>
+<li>
+<p><code>--progress &lt;PROGRESS&gt;</code> — progress filter parameter</p>
+</li>
+<li>
+<p><code>--project-id &lt;PROJECT_ID&gt;</code> — project_id filter parameter</p>
+</li>
+<li>
+<p><code>--ramdisk-id &lt;RAMDISK_ID&gt;</code> — ramdisk_id filter parameter</p>
+</li>
+<li>
+<p><code>--reservation-id &lt;RESERVATION_ID&gt;</code> — reservation_id filter parameter</p>
+</li>
+<li>
+<p><code>--root-device-name &lt;ROOT_DEVICE_NAME&gt;</code> — root_device_name filter parameter</p>
+</li>
+<li>
+<p><code>--status &lt;STATUS&gt;</code> — status filter parameter</p>
+</li>
+<li>
+<p><code>--task-state &lt;TASK_STATE&gt;</code> — task_state filter parameter</p>
+</li>
+<li>
+<p><code>--terminated-at &lt;TERMINATED_AT&gt;</code> — terminated_at filter parameter</p>
+</li>
+<li>
+<p><code>--user-id &lt;USER_ID&gt;</code> — user_id filter parameter</p>
+</li>
+<li>
+<p><code>--vm-state &lt;VM_STATE&gt;</code> — vm_state filter parameter</p>
+</li>
+<li>
+<p><code>--sort-key &lt;SORT_KEY&gt;</code> — sort_key filter parameter</p>
+</li>
+<li>
+<p><code>--sort-dir &lt;SORT_DIR&gt;</code> — sort_dir filter parameter</p>
+</li>
+<li>
+<p><code>--access-ip-v4 &lt;ACCESS_IP_V4&gt;</code> — access_ipv4 filter parameter</p>
+</li>
+<li>
+<p><code>--access-ip-v6 &lt;ACCESS_IP_V6&gt;</code> — access_ipv6 filter parameter</p>
+</li>
+<li>
+<p><code>--config-drive &lt;CONFIG_DRIVE&gt;</code> — has_config_drive filter parameter</p>
+</li>
+<li>
+<p><code>--deleted &lt;DELETED&gt;</code> — deleted_only filter parameter</p>
+</li>
+<li>
+<p><code>--host &lt;HOST&gt;</code> — compute_host filter parameter</p>
+</li>
+<li>
+<p><code>--soft-deleted &lt;SOFT_DELETED&gt;</code> — is_soft_deleted filter parameter</p>
+</li>
+<li>
+<p><code>--ip &lt;IP&gt;</code> — ipv4_address filter parameter</p>
+</li>
+<li>
+<p><code>--ip6 &lt;IP6&gt;</code> — ipv6_address filter parameter</p>
+</li>
+<li>
+<p><code>--changes-since &lt;CHANGES_SINCE&gt;</code> — changes_since filter parameter</p>
+</li>
+<li>
+<p><code>--changes-before &lt;CHANGES_BEFORE&gt;</code> — changes_before filter parameter</p>
+</li>
+<li>
+<p><code>--uuid &lt;UUID&gt;</code> — id filter parameter</p>
+</li>
+<li>
+<p><code>--all-tenants &lt;ALL_TENANTS&gt;</code> — all_projects filter parameter</p>
+</li>
+<li>
+<p><code>--tags &lt;TAGS&gt;</code> — tags filter parameter</p>
+</li>
+<li>
+<p><code>--tags-any &lt;TAGS_ANY&gt;</code> — any_tags filter parameter</p>
+</li>
+<li>
+<p><code>--not-tags &lt;NOT_TAGS&gt;</code> — not_tags filter parameter</p>
+</li>
+<li>
+<p><code>--not-tags-any &lt;NOT_TAGS_ANY&gt;</code> — not_any_tags filter parameter</p>
+</li>
+<li>
+<p><code>--max-entities &lt;MAX_ENTITIES&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-compute-server-show"><a class="header" href="#osc-compute-server-show"><code>osc compute server show</code></a></h2>
+<p>Show single Server</p>
+<p><strong>Usage:</strong> <code>osc compute server show &lt;ID&gt;</code></p>
+<h6 id="arguments"><a class="header" href="#arguments"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Server ID</li>
+</ul>
+<h2 id="osc-compute-flavor"><a class="header" href="#osc-compute-flavor"><code>osc compute flavor</code></a></h2>
+<p>Flavor commands</p>
+<p><strong>Usage:</strong> <code>osc compute flavor &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-3"><a class="header" href="#subcommands-3"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — List Servers</li>
+<li><code>show</code> — Show single Server</li>
+</ul>
+<h2 id="osc-compute-flavor-list"><a class="header" href="#osc-compute-flavor-list"><code>osc compute flavor list</code></a></h2>
+<p>List Servers</p>
+<p><strong>Usage:</strong> <code>osc compute flavor list [OPTIONS]</code></p>
+<h6 id="options-3"><a class="header" href="#options-3"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--min-disk &lt;MIN_DISK&gt;</code> — Filters the response by a minimum disk space, in GiB. For example, 100</p>
+</li>
+<li>
+<p><code>--min-ram &lt;MIN_RAM&gt;</code> — Filters the response by a minimum RAM, in MiB. For example, 512</p>
+</li>
+<li>
+<p><code>--is-public &lt;IS_PUBLIC&gt;</code> — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request</p>
+</li>
+<li>
+<p><code>--max-entities &lt;MAX_ENTITIES&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-compute-flavor-show"><a class="header" href="#osc-compute-flavor-show"><code>osc compute flavor show</code></a></h2>
+<p>Show single Server</p>
+<p><strong>Usage:</strong> <code>osc compute flavor show &lt;ID&gt;</code></p>
+<h6 id="arguments-1"><a class="header" href="#arguments-1"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Flavor ID</li>
+</ul>
+<h2 id="osc-image"><a class="header" href="#osc-image"><code>osc image</code></a></h2>
+<p>Image (Glance) commands</p>
+<p><strong>Usage:</strong> <code>osc image image &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-4"><a class="header" href="#subcommands-4"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>image</code> — Image commands</li>
+<li><code>schema</code> — Schema commands</li>
+</ul>
+<h2 id="osc-image-image"><a class="header" href="#osc-image-image"><code>osc image image</code></a></h2>
+<p>Image commands</p>
+<p><strong>Usage:</strong> <code>osc image image image &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-5"><a class="header" href="#subcommands-5"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — List Images</li>
+<li><code>show</code> — Show single Image</li>
+<li><code>create</code> — Create Image</li>
+<li><code>set</code> — Update Image</li>
+<li><code>download</code> — Download Image</li>
+<li><code>upload</code> — Upload Image</li>
+<li><code>delete</code> — Delete Image</li>
+<li><code>deactivate</code> — Deactivate Image</li>
+<li><code>reactivate</code> — Reactivate Image</li>
+</ul>
+<h2 id="osc-image-image-list"><a class="header" href="#osc-image-image-list"><code>osc image image list</code></a></h2>
+<p>List Images</p>
+<p><strong>Usage:</strong> <code>osc image image list [OPTIONS]</code></p>
+<h6 id="options-4"><a class="header" href="#options-4"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — limit filter parameter</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — marker filter parameter</p>
+</li>
+<li>
+<p><code>--id &lt;ID&gt;</code> — id filter parameter</p>
+</li>
+<li>
+<p><code>--name &lt;NAME&gt;</code> — name filter parameter</p>
+</li>
+<li>
+<p><code>--visibility &lt;VISIBILITY&gt;</code> — visibility filter parameter</p>
+</li>
+<li>
+<p><code>--member-status &lt;MEMBER_STATUS&gt;</code> — member_status filter parameter</p>
+</li>
+<li>
+<p><code>--owner &lt;OWNER&gt;</code> — owner filter parameter</p>
+</li>
+<li>
+<p><code>--status &lt;STATUS&gt;</code> — status filter parameter</p>
+</li>
+<li>
+<p><code>--size-min &lt;SIZE_MIN&gt;</code> — size_min filter parameter</p>
+</li>
+<li>
+<p><code>--size-max &lt;SIZE_MAX&gt;</code> — size_max filter parameter</p>
+</li>
+<li>
+<p><code>--protected &lt;PROTECTED&gt;</code> — protected filter parameter</p>
+</li>
+<li>
+<p><code>--os-hidden &lt;OS_HIDDEN&gt;</code> — is_hidden filter parameter</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--sort-key &lt;SORT_KEY&gt;</code> — sort_key filter parameter</p>
+</li>
+<li>
+<p><code>--sort-dir &lt;SORT_DIR&gt;</code> — sort_dir filter parameter</p>
+</li>
+<li>
+<p><code>--sort &lt;SORT&gt;</code> — sort filter parameter</p>
+</li>
+<li>
+<p><code>--tag &lt;TAG&gt;</code> — tag filter parameter</p>
+</li>
+<li>
+<p><code>--created-at &lt;CREATED_AT&gt;</code> — created_at filter parameter</p>
+</li>
+<li>
+<p><code>--updated-at &lt;UPDATED_AT&gt;</code> — updated_at filter parameter</p>
+</li>
+<li>
+<p><code>--max-entities &lt;MAX_ENTITIES&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-image-image-show"><a class="header" href="#osc-image-image-show"><code>osc image image show</code></a></h2>
+<p>Show single Image</p>
+<p><strong>Usage:</strong> <code>osc image image show &lt;ID&gt;</code></p>
+<h6 id="arguments-2"><a class="header" href="#arguments-2"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h2 id="osc-image-image-create"><a class="header" href="#osc-image-image-create"><code>osc image image create</code></a></h2>
+<p>Create Image</p>
+<p><strong>Usage:</strong> <code>osc image image create [OPTIONS]</code></p>
+<h6 id="options-5"><a class="header" href="#options-5"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--container-format &lt;CONTAINER_FORMAT&gt;</code> — The container format refers to whether the VM image is in a file format that also contains metadata about the actual VM. Container formats include OVF and Amazon AMI. In addition, a VM image might not have a container format - instead, the image is just a blob of unstructured data</p>
+</li>
+<li>
+<p><code>--disk-format &lt;DISK_FORMAT&gt;</code> — The format of the disk. Values may vary based on the configuration available in a particular OpenStack cloud. See the Image Schema response from the cloud itself for the valid values available. Example formats are: ami, ari, aki, vhd, vhdx, vmdk, raw, qcow2, vdi, ploop or iso</p>
+</li>
+<li>
+<p><code>--min-disk &lt;MIN_DISK&gt;</code> — Amount of disk space in GB that is required to boot the image</p>
+</li>
+<li>
+<p><code>--min-ram &lt;MIN_RAM&gt;</code> — Amount of RAM in MB that is required to boot the image</p>
+</li>
+<li>
+<p><code>--name &lt;NAME&gt;</code> — The name of the image</p>
+</li>
+<li>
+<p><code>--is-protected &lt;IS_PROTECTED&gt;</code> — Image protection for deletion. Valid value is true or false. Default is false</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--tags &lt;TAGS&gt;</code> — List of tags for this image. Each tag is a string of at most 255 chars. The maximum number of tags allowed on an image is set by the operator</p>
+</li>
+<li>
+<p><code>--visibility &lt;VISIBILITY&gt;</code> — Visibility for this image. Valid value is one of: <code>public</code>, <code>private</code>, <code>shared</code>, or <code>community</code>. At most sites, only an administrator can make an image public. Some sites may restrict what users can make an image community. Some sites may restrict what users can perform member operations on a shared image. Since the Image API v2.5, the default value is <code>shared</code></p>
+</li>
+</ul>
+<h2 id="osc-image-image-set"><a class="header" href="#osc-image-image-set"><code>osc image image set</code></a></h2>
+<p>Update Image</p>
+<p><strong>Usage:</strong> <code>osc image image set [OPTIONS] &lt;ID&gt;</code></p>
+<h6 id="arguments-3"><a class="header" href="#arguments-3"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h6 id="options-6"><a class="header" href="#options-6"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--architecture &lt;ARCHITECTURE&gt;</code> — The CPU architecture that must be supported by the hypervisor</p>
+</li>
+<li>
+<p><code>--has-auto-disk-config &lt;HAS_AUTO_DISK_CONFIG&gt;</code> — If true, the root partition on the disk is automatically resized before the instance boots</p>
+</li>
+<li>
+<p><code>--container-format &lt;CONTAINER_FORMAT&gt;</code> — The container format refers to whether the VM image is in a file format that also contains metadata about the actual VM. Container formats include OVF and Amazon AMI. In addition, a VM image might not have a container format - instead, the image is just a blob of unstructured data</p>
+</li>
+<li>
+<p><code>--disk-format &lt;DISK_FORMAT&gt;</code> — Valid values are: aki, ari, ami, raw, iso, vhd, vdi, qcow2, or vmdk. The disk format of a VM image is the format of the underlying disk image. Virtual appliance vendors have different formats for laying out the information contained in a VM disk image</p>
+</li>
+<li>
+<p><code>--is-hw-boot-menu-enabled &lt;IS_HW_BOOT_MENU_ENABLED&gt;</code> — If true, enables the BIOS bootmenu</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--hw-cpu-cores &lt;HW_CPU_CORES&gt;</code> — The preferred number of cores to expose to the guest</p>
+</li>
+<li>
+<p><code>--hw-cpu-policy &lt;HW_CPU_POLICY&gt;</code> — Used to pin the virtual CPUs (vCPUs) of instances to the host's physical CPU cores (pCPUs)</p>
+</li>
+<li>
+<p><code>--hw-cpu-sockets &lt;HW_CPU_SOCKETS&gt;</code> — The preferred number of sockets to expose to the guest</p>
+</li>
+<li>
+<p><code>--hw-cpu-thread-policy &lt;HW_CPU_THREAD_POLICY&gt;</code> — Defines how hardware CPU threads in a simultaneous multithreading-based (SMT) architecture be used</p>
+</li>
+<li>
+<p><code>--hw-cpu-threads &lt;HW_CPU_THREADS&gt;</code> — The preferred number of threads to expose to the guest</p>
+</li>
+<li>
+<p><code>--hw-disk-bus &lt;HW_DISK_BUS&gt;</code> — Specifies the type of disk controller to attach disk devices to. One of scsi, virtio, uml, xen, ide, or usb</p>
+</li>
+<li>
+<p><code>--hw-machine-type &lt;HW_MACHINE_TYPE&gt;</code> — For libvirt: Enables booting an ARM system using the specified machine type. For Hyper-V: Specifies whether the Hyper-V instance will be a generation 1 or generation 2 VM</p>
+</li>
+<li>
+<p><code>--hw-qemu-guest-agent &lt;HW_QEMU_GUEST_AGENT&gt;</code> — A string boolean, which if &quot;true&quot;, QEMU guest agent will be exposed to the instance</p>
+</li>
+<li>
+<p><code>--hw-rng-model &lt;HW_RNG_MODEL&gt;</code> — Adds a random-number generator device to the image's instances</p>
+</li>
+<li>
+<p><code>--hw-scsi-model &lt;HW_SCSI_MODEL&gt;</code> — Enables the use of VirtIO SCSI (virtio-scsi) to provide block device access for compute instances; by default, instances use VirtIO Block (virtio-blk)</p>
+</li>
+<li>
+<p><code>--hw-serial-port-count &lt;HW_SERIAL_PORT_COUNT&gt;</code> — Specifies the count of serial ports that should be provided</p>
+</li>
+<li>
+<p><code>--hw-video-model &lt;HW_VIDEO_MODEL&gt;</code> — The video image driver used</p>
+</li>
+<li>
+<p><code>--hw-video-ram &lt;HW_VIDEO_RAM&gt;</code> — Maximum RAM for the video image</p>
+</li>
+<li>
+<p><code>--hw-vif-model &lt;HW_VIF_MODEL&gt;</code> — Specifies the model of virtual network interface device to use</p>
+</li>
+<li>
+<p><code>--is-hw-vif-multiqueue-enabled &lt;IS_HW_VIF_MULTIQUEUE_ENABLED&gt;</code> — If true, this enables the virtio-net multiqueue feature. In this case, the driver sets the number of queues equal to the number of guest vCPUs. This makes the network performance scale across a number of vCPUs</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--hw-watchdog-action &lt;HW_WATCHDOG_ACTION&gt;</code> — Enables a virtual hardware watchdog device that carries out the specified action if the server hangs</p>
+</li>
+<li>
+<p><code>--hypervisor-type &lt;HYPERVISOR_TYPE&gt;</code> — The hypervisor type. Note that qemu is used for both QEMU and KVM hypervisor types</p>
+</li>
+<li>
+<p><code>--needs-config-drive &lt;NEEDS_CONFIG_DRIVE&gt;</code> — Specifies whether the image needs a config drive. <code>mandatory</code> or <code>optional</code> (default if property is not used)</p>
+</li>
+<li>
+<p><code>--instance-type-rxtx-factor &lt;INSTANCE_TYPE_RXTX_FACTOR&gt;</code> — Optional property allows created servers to have a different bandwidth cap than that defined in the network they are attached to</p>
+</li>
+<li>
+<p><code>--instance-uuid &lt;INSTANCE_UUID&gt;</code> — create this image</p>
+</li>
+<li>
+<p><code>--kernel-id &lt;KERNEL_ID&gt;</code> — The ID of an image stored in the Image service that should be used as the kernel when booting an AMI-style image</p>
+</li>
+<li>
+<p><code>--locations &lt;LOCATIONS&gt;</code> — A list of URLs to access the image file in external store. This list appears if the show_multiple_locations option is set to true in the Image service's configuration file</p>
+</li>
+<li>
+<p><code>--min-disk &lt;MIN_DISK&gt;</code> — The minimum disk size in GB that is required to boot the image</p>
+</li>
+<li>
+<p><code>--min-ram &lt;MIN_RAM&gt;</code> — The minimum amount of RAM in MB that is required to boot the image</p>
+</li>
+<li>
+<p><code>--name &lt;NAME&gt;</code> — The name of the image</p>
+</li>
+<li>
+<p><code>--os-admin-user &lt;OS_ADMIN_USER&gt;</code> — The operating system admin username</p>
+</li>
+<li>
+<p><code>--os-command-line &lt;OS_COMMAND_LINE&gt;</code> — The kernel command line to be used by the libvirt driver, instead of the default</p>
+</li>
+<li>
+<p><code>--os-distro &lt;OS_DISTRO&gt;</code> — The common name of the operating system distribution in lowercase</p>
+</li>
+<li>
+<p><code>--is-hidden &lt;IS_HIDDEN&gt;</code> — This field controls whether an image is displayed in the default image- list response</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--os-require-quiesce &lt;OS_REQUIRE_QUIESCE&gt;</code> — If true, require quiesce on snapshot via QEMU guest agent</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--needs-secure-boot &lt;NEEDS_SECURE_BOOT&gt;</code> — Secure Boot is a security standard. When the instance starts, Secure Boot first examines software such as firmware and OS by their signature and only allows them to run if the signatures are valid</p>
+</li>
+<li>
+<p><code>--os-shutdown-timeout &lt;OS_SHUTDOWN_TIMEOUT&gt;</code> — Time for graceful shutdown</p>
+</li>
+<li>
+<p><code>--os-type &lt;OS_TYPE&gt;</code> — The operating system installed on the image</p>
+</li>
+<li>
+<p><code>--os-version &lt;OS_VERSION&gt;</code> — The operating system version as specified by the distributor</p>
+</li>
+<li>
+<p><code>--owner-id &lt;OWNER_ID&gt;</code> — The ID of the owner, or project, of the image. (backwards compat)</p>
+</li>
+<li>
+<p><code>--is-protected &lt;IS_PROTECTED&gt;</code> — Defines whether the image can be deleted</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--ramdisk-id &lt;RAMDISK_ID&gt;</code> — The ID of image stored in the Image service that should be used as the ramdisk when booting an AMI-style image</p>
+</li>
+<li>
+<p><code>--store &lt;STORE&gt;</code> — When present, Glance will attempt to store the disk image data in the backing store indicated by the value of the header. When not present, Glance will store the disk image data in the backing store that is marked default. Valid values are: file, s3, rbd, swift, cinder, gridfs, sheepdog, or vsphere</p>
+</li>
+<li>
+<p><code>--tags &lt;TAGS&gt;</code> — List of tags for this image, possibly an empty list</p>
+</li>
+<li>
+<p><code>--url &lt;URL&gt;</code> — The URL to access the image file kept in external store</p>
+</li>
+<li>
+<p><code>--visibility &lt;VISIBILITY&gt;</code> — The image visibility</p>
+</li>
+<li>
+<p><code>--vm-mode &lt;VM_MODE&gt;</code> — The virtual machine mode. This represents the host/guest ABI (application binary interface) used for the virtual machine</p>
+</li>
+<li>
+<p><code>--vmware-adaptertype &lt;VMWARE_ADAPTERTYPE&gt;</code> — The virtual SCSI or IDE controller used by the hypervisor</p>
+</li>
+<li>
+<p><code>--vmware-ostype &lt;VMWARE_OSTYPE&gt;</code> — A VMware GuestID which describes the operating system installed in the image</p>
+</li>
+</ul>
+<h2 id="osc-image-image-download"><a class="header" href="#osc-image-image-download"><code>osc image image download</code></a></h2>
+<p>Download Image</p>
+<p><strong>Usage:</strong> <code>osc image image download [OPTIONS] &lt;ID&gt;</code></p>
+<h6 id="arguments-4"><a class="header" href="#arguments-4"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h6 id="options-7"><a class="header" href="#options-7"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--file &lt;FILE&gt;</code> — Destination filename (using &quot;-&quot; will print object to stdout)</li>
+</ul>
+<h2 id="osc-image-image-upload"><a class="header" href="#osc-image-image-upload"><code>osc image image upload</code></a></h2>
+<p>Upload Image</p>
+<p><strong>Usage:</strong> <code>osc image image upload [OPTIONS] &lt;ID&gt;</code></p>
+<h6 id="arguments-5"><a class="header" href="#arguments-5"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h6 id="options-8"><a class="header" href="#options-8"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--file &lt;FILE&gt;</code> — Source filename (using &quot;-&quot; will read object from stdout)</li>
+</ul>
+<h2 id="osc-image-image-delete"><a class="header" href="#osc-image-image-delete"><code>osc image image delete</code></a></h2>
+<p>Delete Image</p>
+<p><strong>Usage:</strong> <code>osc image image delete &lt;ID&gt;</code></p>
+<h6 id="arguments-6"><a class="header" href="#arguments-6"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h2 id="osc-image-image-deactivate"><a class="header" href="#osc-image-image-deactivate"><code>osc image image deactivate</code></a></h2>
+<p>Deactivate Image</p>
+<p><strong>Usage:</strong> <code>osc image image deactivate &lt;ID&gt;</code></p>
+<h6 id="arguments-7"><a class="header" href="#arguments-7"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h2 id="osc-image-image-reactivate"><a class="header" href="#osc-image-image-reactivate"><code>osc image image reactivate</code></a></h2>
+<p>Reactivate Image</p>
+<p><strong>Usage:</strong> <code>osc image image reactivate &lt;ID&gt;</code></p>
+<h6 id="arguments-8"><a class="header" href="#arguments-8"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Image ID</li>
+</ul>
+<h2 id="osc-image-schema"><a class="header" href="#osc-image-schema"><code>osc image schema</code></a></h2>
+<p>Schema commands</p>
+<p><strong>Usage:</strong> <code>osc image schema schema &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-6"><a class="header" href="#subcommands-6"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>image</code> — Show Image Schema</li>
+<li><code>images</code> — Show Images Schema</li>
+<li><code>member</code> — Show Member Schema</li>
+<li><code>members</code> — Show Members Schema</li>
+</ul>
+<h2 id="osc-image-schema-image"><a class="header" href="#osc-image-schema-image"><code>osc image schema image</code></a></h2>
+<p>Show Image Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema image image &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-7"><a class="header" href="#subcommands-7"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>show</code> — Show Image Schema</li>
+</ul>
+<h2 id="osc-image-schema-image-show"><a class="header" href="#osc-image-schema-image-show"><code>osc image schema image show</code></a></h2>
+<p>Show Image Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema image show</code></p>
+<h2 id="osc-image-schema-images"><a class="header" href="#osc-image-schema-images"><code>osc image schema images</code></a></h2>
+<p>Show Images Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema images images &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-8"><a class="header" href="#subcommands-8"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>show</code> — Show Images Schema</li>
+</ul>
+<h2 id="osc-image-schema-images-show"><a class="header" href="#osc-image-schema-images-show"><code>osc image schema images show</code></a></h2>
+<p>Show Images Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema images show</code></p>
+<h2 id="osc-image-schema-member"><a class="header" href="#osc-image-schema-member"><code>osc image schema member</code></a></h2>
+<p>Show Member Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema member member &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-9"><a class="header" href="#subcommands-9"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>show</code> — Show Member Schema</li>
+</ul>
+<h2 id="osc-image-schema-member-show"><a class="header" href="#osc-image-schema-member-show"><code>osc image schema member show</code></a></h2>
+<p>Show Member Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema member show</code></p>
+<h2 id="osc-image-schema-members"><a class="header" href="#osc-image-schema-members"><code>osc image schema members</code></a></h2>
+<p>Show Members Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema members members &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-10"><a class="header" href="#subcommands-10"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>show</code> — Show Members Schema</li>
+</ul>
+<h2 id="osc-image-schema-members-show"><a class="header" href="#osc-image-schema-members-show"><code>osc image schema members show</code></a></h2>
+<p>Show Members Schema</p>
+<p><strong>Usage:</strong> <code>osc image schema members show</code></p>
+<h2 id="osc-object-store"><a class="header" href="#osc-object-store"><code>osc object-store</code></a></h2>
+<p>Object Store service (Swift) commands</p>
+<p><strong>Usage:</strong> <code>osc object-store object-store &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-11"><a class="header" href="#subcommands-11"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>account</code> — Account commands</li>
+<li><code>container</code> — Container commands</li>
+<li><code>object</code> — Object commands</li>
+</ul>
+<h2 id="osc-object-store-account"><a class="header" href="#osc-object-store-account"><code>osc object-store account</code></a></h2>
+<p>Account commands</p>
+<p><strong>Usage:</strong> <code>osc object-store account &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-12"><a class="header" href="#subcommands-12"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>show</code> — Shows metadata for an account. Because the storage system can store large amounts of data, take care when you represent the total bytes response as an integer; when possible, convert it to a 64-bit unsigned integer if your platform supports that primitive type. Do not include metadata headers in this request</li>
+<li><code>set</code> — Creates, updates, or deletes account metadata. To create, update, or delete custom metadata, use the X-Account-Meta-{name} request header, where {name} is the name of the metadata item. Account metadata operations work differently than how object metadata operations work. Depending on the contents of your POST account metadata request, the Object Storage API updates the metadata as shown in the following table: TODO: fill the rest To delete a metadata header, send an empty value for that header, such as for the X-Account-Meta-Book header. If the tool you use to communicate with Object Storage, such as an older version of cURL, does not support empty headers, send the X-Remove-Account- Meta-{name} header with an arbitrary value. For example, X-Remove-Account-Meta-Book: x. The operation ignores the arbitrary value</li>
+</ul>
+<h2 id="osc-object-store-account-show"><a class="header" href="#osc-object-store-account-show"><code>osc object-store account show</code></a></h2>
+<p>Shows metadata for an account. Because the storage system can store large amounts of data, take care when you represent the total bytes response as an integer; when possible, convert it to a 64-bit unsigned integer if your platform supports that primitive type. Do not include metadata headers in this request</p>
+<p><strong>Usage:</strong> <code>osc object-store account show</code></p>
+<h2 id="osc-object-store-account-set"><a class="header" href="#osc-object-store-account-set"><code>osc object-store account set</code></a></h2>
+<p>Creates, updates, or deletes account metadata. To create, update, or delete custom metadata, use the X-Account-Meta-{name} request header, where {name} is the name of the metadata item. Account metadata operations work differently than how object metadata operations work. Depending on the contents of your POST account metadata request, the Object Storage API updates the metadata as shown in the following table: TODO: fill the rest To delete a metadata header, send an empty value for that header, such as for the X-Account-Meta-Book header. If the tool you use to communicate with Object Storage, such as an older version of cURL, does not support empty headers, send the X-Remove-Account- Meta-{name} header with an arbitrary value. For example, X-Remove-Account-Meta-Book: x. The operation ignores the arbitrary value</p>
+<p><strong>Usage:</strong> <code>osc object-store account set [OPTIONS]</code></p>
+<h6 id="options-9"><a class="header" href="#options-9"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--property &lt;key=value&gt;</code> — Property to be set</li>
+</ul>
+<h2 id="osc-object-store-container"><a class="header" href="#osc-object-store-container"><code>osc object-store container</code></a></h2>
+<p>Container commands</p>
+<p><strong>Usage:</strong> <code>osc object-store container &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-13"><a class="header" href="#subcommands-13"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — Shows details for an account and lists containers, sorted by name, in the account</li>
+<li><code>show</code> — Shows container metadata, including the number of objects and the total bytes of all objects stored in the container</li>
+<li><code>set</code> — Creates, updates, or deletes custom metadata for a container</li>
+<li><code>create</code> — Creates a container. You do not need to check whether a container already exists before issuing a PUT operation because the operation is idempotent: It creates a container or updates an existing container, as appropriate</li>
+<li><code>delete</code> — Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects</li>
+</ul>
+<h2 id="osc-object-store-container-list"><a class="header" href="#osc-object-store-container-list"><code>osc object-store container list</code></a></h2>
+<p>Shows details for an account and lists containers, sorted by name, in the account</p>
+<p><strong>Usage:</strong> <code>osc object-store container list [OPTIONS]</code></p>
+<h6 id="options-10"><a class="header" href="#options-10"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — For an integer value n, limits the number of results to n</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are greater than x</p>
+</li>
+<li>
+<p><code>--end-marker &lt;END_MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are less than x</p>
+</li>
+<li>
+<p><code>--format &lt;FORMAT&gt;</code> — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines</p>
+</li>
+<li>
+<p><code>--prefix &lt;PREFIX&gt;</code> — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
+</li>
+<li>
+<p><code>--delimiter &lt;DELIMITER&gt;</code> — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
+</li>
+<li>
+<p><code>--reverse &lt;REVERSE&gt;</code> — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--max-entities &lt;MAX_ENTITIES&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-object-store-container-show"><a class="header" href="#osc-object-store-container-show"><code>osc object-store container show</code></a></h2>
+<p>Shows container metadata, including the number of objects and the total bytes of all objects stored in the container</p>
+<p><strong>Usage:</strong> <code>osc object-store container show &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-9"><a class="header" href="#arguments-9"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h2 id="osc-object-store-container-set"><a class="header" href="#osc-object-store-container-set"><code>osc object-store container set</code></a></h2>
+<p>Creates, updates, or deletes custom metadata for a container</p>
+<p><strong>Usage:</strong> <code>osc object-store container set [OPTIONS] &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-10"><a class="header" href="#arguments-10"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h6 id="options-11"><a class="header" href="#options-11"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--property &lt;key=value&gt;</code> — Property to be set</li>
+</ul>
+<h2 id="osc-object-store-container-create"><a class="header" href="#osc-object-store-container-create"><code>osc object-store container create</code></a></h2>
+<p>Creates a container. You do not need to check whether a container already exists before issuing a PUT operation because the operation is idempotent: It creates a container or updates an existing container, as appropriate</p>
+<p><strong>Usage:</strong> <code>osc object-store container create &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-11"><a class="header" href="#arguments-11"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h2 id="osc-object-store-container-delete"><a class="header" href="#osc-object-store-container-delete"><code>osc object-store container delete</code></a></h2>
+<p>Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects</p>
+<p><strong>Usage:</strong> <code>osc object-store container delete &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-12"><a class="header" href="#arguments-12"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h2 id="osc-object-store-object"><a class="header" href="#osc-object-store-object"><code>osc object-store object</code></a></h2>
+<p>Object commands</p>
+<p><strong>Usage:</strong> <code>osc object-store object &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-14"><a class="header" href="#subcommands-14"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — Shows details for a container and lists objects, sorted by name, in the container. Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request</li>
+<li><code>download</code> — Downloads the object content and gets the object metadata. This operation returns the object metadata in the response headers and the object content in the response body</li>
+<li><code>upload</code> — Creates an object with data content and metadata, or replaces an existing object with data content and metadata. The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code. If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB. Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8. To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item</li>
+<li><code>show</code> — Shows object metadata</li>
+<li><code>delete</code> — Permanently deletes an object from the object store. Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code. For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object. A DELETE request made to a symlink path will delete the symlink rather than the target object. An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter</li>
+</ul>
+<h2 id="osc-object-store-object-list"><a class="header" href="#osc-object-store-object-list"><code>osc object-store object list</code></a></h2>
+<p>Shows details for a container and lists objects, sorted by name, in the container. Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request</p>
+<p><strong>Usage:</strong> <code>osc object-store object list [OPTIONS] &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-13"><a class="header" href="#arguments-13"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h6 id="options-12"><a class="header" href="#options-12"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — For an integer value n, limits the number of results to n</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are greater than x</p>
+</li>
+<li>
+<p><code>--end-marker &lt;END_MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are less than x</p>
+</li>
+<li>
+<p><code>--format &lt;FORMAT&gt;</code> — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines</p>
+</li>
+<li>
+<p><code>--prefix &lt;PREFIX&gt;</code> — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
+</li>
+<li>
+<p><code>--delimiter &lt;DELIMITER&gt;</code> — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
+</li>
+<li>
+<p><code>--reverse &lt;REVERSE&gt;</code> — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--max-entities &lt;MAX_ENTITIES&gt;</code> — Total limit of entities to return</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-object-store-object-download"><a class="header" href="#osc-object-store-object-download"><code>osc object-store object download</code></a></h2>
+<p>Downloads the object content and gets the object metadata. This operation returns the object metadata in the response headers and the object content in the response body</p>
+<p><strong>Usage:</strong> <code>osc object-store object download [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h6 id="arguments-14"><a class="header" href="#arguments-14"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
+<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
+</ul>
+<h6 id="options-13"><a class="header" href="#options-13"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
+<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
+<li><code>--file &lt;FILE&gt;</code> — Destination filename (using &quot;-&quot; will print object to stdout)</li>
+</ul>
+<h2 id="osc-object-store-object-upload"><a class="header" href="#osc-object-store-object-upload"><code>osc object-store object upload</code></a></h2>
+<p>Creates an object with data content and metadata, or replaces an existing object with data content and metadata. The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code. If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB. Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8. To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item</p>
+<p><strong>Usage:</strong> <code>osc object-store object upload [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h6 id="arguments-15"><a class="header" href="#arguments-15"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
+<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
+</ul>
+<h6 id="options-14"><a class="header" href="#options-14"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
+<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
+<li><code>--file &lt;FILE&gt;</code> — Source filename (using &quot;-&quot; will read object from stdout)</li>
+</ul>
+<h2 id="osc-object-store-object-show"><a class="header" href="#osc-object-store-object-show"><code>osc object-store object show</code></a></h2>
+<p>Shows object metadata</p>
+<p><strong>Usage:</strong> <code>osc object-store object show [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h6 id="arguments-16"><a class="header" href="#arguments-16"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
+<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
+</ul>
+<h6 id="options-15"><a class="header" href="#options-15"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
+<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
+</ul>
+<h2 id="osc-object-store-object-delete"><a class="header" href="#osc-object-store-object-delete"><code>osc object-store object delete</code></a></h2>
+<p>Permanently deletes an object from the object store. Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code. For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object. A DELETE request made to a symlink path will delete the symlink rather than the target object. An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter</p>
+<p><strong>Usage:</strong> <code>osc object-store object delete [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h6 id="arguments-17"><a class="header" href="#arguments-17"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
+<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
+</ul>
+<h6 id="options-16"><a class="header" href="#options-16"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
+</ul>
+<h2 id="osc-api"><a class="header" href="#osc-api"><code>osc api</code></a></h2>
+<p>Perform direct REST API requests with authorization</p>
+<p><strong>Usage:</strong> <code>osc api [OPTIONS] &lt;SERVICE&gt; &lt;URL&gt;</code></p>
+<h6 id="arguments-18"><a class="header" href="#arguments-18"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;SERVICE&gt;</code> — Service name</li>
+<li><code>&lt;URL&gt;</code> — Rest URL (relative to the endpoint information from the service catalog). Do not start URL with the &quot;/&quot; to respect endpoint version information</li>
+</ul>
+<h6 id="options-17"><a class="header" href="#options-17"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>-m</code>, <code>--method &lt;METHOD&gt;</code> — HTTP Method</p>
+<p>Default value: <code>get</code></p>
+<p>Possible values:</p>
+<ul>
+<li><code>head</code>:
+HEAD</li>
+<li><code>get</code>:
+GET</li>
+<li><code>put</code>:
+PUT</li>
+<li><code>post</code>:
+POST</li>
+<li><code>delete</code>:
+DELETE</li>
+</ul>
+</li>
+<li>
+<p><code>--header &lt;key=value&gt;</code> — Additional headers</p>
+</li>
+<li>
+<p><code>--body &lt;BODY&gt;</code> — Request body to be used</p>
+</li>
+</ul>
+<hr/>
+<p><small><i>
+This document was generated automatically by
+<a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
+</i></small></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="sdk.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="sdk.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

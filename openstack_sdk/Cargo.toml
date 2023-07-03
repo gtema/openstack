@@ -1,0 +1,43 @@
+[package]
+name = "openstack_sdk"
+version = "0.1.0"
+edition = "2021"
+keywords = ["api", "openstack"]
+categories = ["api-bindings"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = {workspace = true}
+anyhow = {workspace = true}
+bytes = {workspace = true}
+chrono = { version = "~0.4", default-features = false, features = ["clock", "serde"] }
+config = "~0.13"
+derive_builder = "~0.12"
+dirs = "~5.0"
+futures = {workspace = true}
+futures-util = { version = "~0.3", default-features = false} #, optional = true }
+futures-core = { version = "~0.3" }
+glob = "~0.3"
+http = { workspace = true }
+#http-types = { workspace = true }
+itertools = { version = "~0.11" }
+json-patch = { workspace = true }
+reqwest = { workspace = true }
+#hyper = { workspace = true }
+serde = { workspace = true }
+serde_bytes = {workspace = true}
+serde_json = {workspace = true}
+serde_yaml = {workspace = true}
+serde_urlencoded = "~0.7"
+thiserror = { workspace = true }
+tokio = {workspace = true }
+tokio-util = {workspace = true}
+tracing = { workspace = true}
+url = { workspace = true }
+
+[dev-dependencies]
+httpmock = "~0.6"
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+log = "~0.4"
+simple_logger="~4.2"
