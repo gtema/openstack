@@ -60,9 +60,7 @@ impl<'a> RestEndpoint for Flavor<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {

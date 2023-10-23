@@ -155,15 +155,13 @@ impl Command for ObjectCmd {
                     hdr.to_string(),
                     val.to_str().unwrap_or_default().to_string(),
                 );
-            } else {
-                if !regexes.is_empty() {
-                    for rex in regexes.iter() {
-                        if rex.is_match(hdr.as_str()) {
-                            metadata.insert(
-                                hdr.to_string(),
-                                val.to_str().unwrap_or_default().to_string(),
-                            );
-                        }
+            } else if !regexes.is_empty() {
+                for rex in regexes.iter() {
+                    if rex.is_match(hdr.as_str()) {
+                        metadata.insert(
+                            hdr.to_string(),
+                            val.to_str().unwrap_or_default().to_string(),
+                        );
                     }
                 }
             }

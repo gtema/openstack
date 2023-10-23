@@ -13,19 +13,27 @@ use crate::api::Pageable;
 /// Query for volumes.get_detail operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Volumes {
+pub struct Volumes<'a> {
+    /// Name filter
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// The UUID of the project in a multi-tenancy cloud.
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
 
-impl Volumes {
+impl<'a> Volumes<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> VolumesBuilder {
+    pub fn builder() -> VolumesBuilder<'a> {
         VolumesBuilder::default()
     }
 }
 
-impl VolumesBuilder {
+impl<'a> VolumesBuilder<'a> {
     /// Add a single header to the Volumes.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -50,17 +58,19 @@ where {
     }
 }
 
-impl RestEndpoint for Volumes {
+impl<'a> RestEndpoint for Volumes<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("volumes/detail",).into()
+        "volumes/detail".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
 
         params
     }
@@ -78,7 +88,7 @@ impl RestEndpoint for Volumes {
         self._headers.as_ref()
     }
 }
-impl Pageable for Volumes {}
+impl<'a> Pageable for Volumes<'a> {}
 
 #[cfg(test)]
 mod tests {

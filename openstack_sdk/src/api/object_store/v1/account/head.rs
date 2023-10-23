@@ -57,13 +57,11 @@ impl RestEndpoint for Account {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("",).into()
+        String::new().into()
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {

@@ -56,13 +56,11 @@ impl RestEndpoint for Volumes {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("volumes",).into()
+        "volumes".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {

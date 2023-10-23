@@ -87,7 +87,7 @@ impl<'a> RestEndpoint for Flavors<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("flavors",).into()
+        "flavors".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

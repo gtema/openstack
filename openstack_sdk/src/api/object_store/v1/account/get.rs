@@ -97,7 +97,7 @@ impl<'a> RestEndpoint for Account<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("",).into()
+        String::new().into()
     }
 
     fn parameters(&self) -> QueryParams {

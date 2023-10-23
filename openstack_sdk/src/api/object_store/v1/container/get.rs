@@ -112,7 +112,7 @@ impl<'a> RestEndpoint for Container<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("{container}", container = self.container.as_ref(),).into()
+        self.container.as_ref().to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

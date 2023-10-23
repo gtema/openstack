@@ -128,13 +128,11 @@ impl<'a> RestEndpoint for Image<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("images",).into()
+        "images".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {

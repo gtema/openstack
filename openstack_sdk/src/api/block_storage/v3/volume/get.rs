@@ -1,17 +1,4 @@
-//! Creates, updates, or deletes account metadata.
-//! To create, update, or delete custom metadata, use the X-Account-Meta-{name}
-//! request header, where {name} is the name of the metadata item.
-//! Account metadata operations work differently than how object metadata
-//! operations work. Depending on the contents of your POST account metadata
-//! request, the Object Storage API updates the metadata as shown in the
-//! following table:
-//! TODO: fill the rest
-//! To delete a metadata header, send an empty value for that header, such as
-//! for the X-Account-Meta-Book header. If the tool you use to communicate with
-//! Object Storage, such as an older version of cURL, does not support empty
-//! headers, send the X-Remove-Account- Meta-{name} header with an arbitrary
-//! value. For example, X-Remove-Account-Meta-Book: x. The operation ignores
-//! the arbitrary value.
+//! Get single Volume
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use std::collections::BTreeSet;
@@ -19,23 +6,27 @@ use std::collections::BTreeSet;
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
-/// Query for account.post operation.
+/// Query for volume.get operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Account {
+pub struct Volume<'a> {
+    /// Volume ID
+    #[builder(default, setter(into))]
+    id: Cow<'a, str>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
 
-impl Account {
+impl<'a> Volume<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> AccountBuilder {
-        AccountBuilder::default()
+    pub fn builder() -> VolumeBuilder<'a> {
+        VolumeBuilder::default()
     }
 }
 
-impl AccountBuilder {
-    /// Add a single header to the Account.
+impl<'a> VolumeBuilder<'a> {
+    /// Add a single header to the Volume.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -59,13 +50,13 @@ where {
     }
 }
 
-impl RestEndpoint for Account {
+impl<'a> RestEndpoint for Volume<'a> {
     fn method(&self) -> Method {
-        Method::POST
+        Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        String::new().into()
+        format!("volumes/{id}", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -73,11 +64,11 @@ impl RestEndpoint for Account {
     }
 
     fn service_type(&self) -> ServiceType {
-        ServiceType::ObjectStore
+        ServiceType::BlockStorage
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("volume".into())
     }
 
     /// Returns headers to be set into the request
@@ -99,28 +90,32 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Account::builder().build().unwrap().service_type(),
-            ServiceType::ObjectStore
+            Volume::builder().build().unwrap().service_type(),
+            ServiceType::BlockStorage
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Account::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Volume::builder().build().unwrap().response_key().unwrap(),
+            "volume"
+        );
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::POST).path(format!("/",));
+            when.method(httpmock::Method::GET)
+                .path(format!("/volumes/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "volume": {} }));
         });
 
-        let endpoint = Account::builder().build().unwrap();
+        let endpoint = Volume::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -129,16 +124,17 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::POST)
-                .path(format!("/",))
+            when.method(httpmock::Method::GET)
+                .path(format!("/volumes/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "volume": {} }));
         });
 
-        let endpoint = Account::builder()
+        let endpoint = Volume::builder()
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

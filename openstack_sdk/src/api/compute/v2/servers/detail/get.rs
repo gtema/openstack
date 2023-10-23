@@ -286,7 +286,7 @@ impl<'a> RestEndpoint for Servers<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("servers/detail",).into()
+        "servers/detail".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

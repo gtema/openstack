@@ -52,13 +52,11 @@ impl RestEndpoint for Schema {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("schemas/image",).into()
+        "schemas/image".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {
