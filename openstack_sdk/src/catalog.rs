@@ -13,6 +13,7 @@ use url::Url;
 use tracing::{debug, error, info, trace, Level};
 
 use crate::types::identity::v3::ServiceEndpoints;
+use crate::types::{ServiceType, SupportedServiceTypes};
 
 #[derive(Debug, Clone, Default)]
 pub struct ServiceEndpointInformation {}
@@ -206,15 +207,15 @@ impl Catalog {
     }
 
     /// Get URL for the endpoint by the service_type
-    pub(crate) fn get_service_endpoint(&self, service_type: &str) -> Option<Url> {
+    pub(crate) fn get_service_endpoint(&self, service_type: &ServiceType) -> Option<Url> {
         trace!("Requested service {} endpoint", service_type);
-        match self.service_endpoints.get(service_type) {
-            Some(sep) => {
+        for cat_type in service_type.get_supported_catalog_types() {
+            if let Some(sep) = self.service_endpoints.get(&cat_type.to_string()) {
                 debug!("Service endpoint url = {}", sep.url);
-                Some(sep.url.clone())
+                return Some(sep.url.clone());
             }
-            None => None,
         }
+        None
     }
 
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {

@@ -12,6 +12,7 @@ mod params;
 pub(crate) mod query;
 mod rest_endpoint;
 
+pub mod block_storage;
 pub mod compute;
 pub mod identity;
 pub mod image;

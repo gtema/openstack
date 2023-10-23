@@ -228,8 +228,8 @@ mod tests {
         fn endpoint(&self) -> Cow<'static, str> {
             "paged_dummy".into()
         }
-        fn service_type(&self) -> Cow<'static, str> {
-            "dummy".into()
+        fn service_type(&self) -> ServiceType {
+            ServiceType::Compute
         }
         fn response_key(&self) -> Option<Cow<'static, str>> {
             Some("resources".into())

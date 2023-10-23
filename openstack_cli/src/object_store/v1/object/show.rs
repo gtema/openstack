@@ -17,7 +17,7 @@ use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
 use structable_derive::StructTable;
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::HashMapStringString;
 use openstack_sdk::api::object_store::v1::object::head;
@@ -122,6 +122,9 @@ impl Command for ObjectCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        client
+            .discover_service_endpoint(&ServiceType::ObjectStore)
+            .await?;
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
@@ -152,13 +155,15 @@ impl Command for ObjectCmd {
                     hdr.to_string(),
                     val.to_str().unwrap_or_default().to_string(),
                 );
-            } else if !regexes.is_empty() {
-                for rex in regexes.iter() {
-                    if rex.is_match(hdr.as_str()) {
-                        metadata.insert(
-                            hdr.to_string(),
-                            val.to_str().unwrap_or_default().to_string(),
-                        );
+            } else {
+                if !regexes.is_empty() {
+                    for rex in regexes.iter() {
+                        if rex.is_match(hdr.as_str()) {
+                            metadata.insert(
+                                hdr.to_string(),
+                                val.to_str().unwrap_or_default().to_string(),
+                            );
+                        }
                     }
                 }
             }

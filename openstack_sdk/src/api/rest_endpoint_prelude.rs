@@ -13,3 +13,4 @@ pub use crate::api::JsonBodyParams;
 pub use crate::api::Pageable;
 pub use crate::api::QueryParams;
 pub use crate::api::RestEndpoint;
+pub use crate::types::ServiceType;

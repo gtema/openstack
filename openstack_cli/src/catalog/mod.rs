@@ -133,7 +133,7 @@ impl Command for ListCmd {
 
         let data: Vec<Value> = client
             .get_token_catalog()
-            .unwrap_or(Vec::new())
+            .unwrap_or_default()
             .into_iter()
             .map(|x| serde_json::to_value(x).unwrap())
             .collect();

@@ -27,6 +27,7 @@ use crate::api::{
     RawQueryAsync, RestClient,
 };
 use crate::types::BoxedAsyncRead;
+use crate::types::ServiceType;
 //use crate::types::identity::v3::ResourceWithHeaders;
 
 /// A trait for providing the necessary information for a single REST API endpoint.
@@ -36,7 +37,7 @@ pub trait RestEndpoint {
     /// The path to the endpoint.
     fn endpoint(&self) -> Cow<'static, str>;
     /// The endpoint service type.
-    fn service_type(&self) -> Cow<'static, str>;
+    fn service_type(&self) -> ServiceType;
 
     /// Query parameters for the endpoint.
     fn parameters(&self) -> QueryParams {
@@ -86,7 +87,6 @@ where
     }
     if let Some((mime, data)) = endpoint.body()? {
         let req = req.header(header::CONTENT_TYPE, mime);
-        debug!("Sending {:?}", data.clone());
         Ok((req, data))
     } else {
         Ok((req, Vec::new()))
@@ -293,6 +293,7 @@ mod tests {
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{ApiError, Query};
     use crate::test::client::{MockAsyncServerClient, MockServerClient};
+    use crate::types::ServiceType;
 
     struct Dummy;
 
@@ -305,8 +306,8 @@ mod tests {
             "dummy".into()
         }
 
-        fn service_type(&self) -> Cow<'static, str> {
-            "dummy".into()
+        fn service_type(&self) -> ServiceType {
+            ServiceType::Other("dummy".to_string())
         }
     }
 

@@ -204,8 +204,8 @@ impl<'a> RestEndpoint for CreateAuthToken<'a> {
         "auth/tokens".into()
     }
 
-    fn service_type(&self) -> Cow<'static, str> {
-        "identity".into()
+    fn service_type(&self) -> ServiceType {
+        ServiceType::Identity
     }
 
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {

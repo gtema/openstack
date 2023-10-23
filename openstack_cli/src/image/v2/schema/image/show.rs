@@ -17,7 +17,7 @@ use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
 use structable_derive::StructTable;
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::image::v2::schemas::image::get;
 use openstack_sdk::api::RawQueryAsync;
@@ -52,7 +52,9 @@ impl Command for ImageCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client.discover_service_endpoint("image").await?;
+        client
+            .discover_service_endpoint(&ServiceType::Image)
+            .await?;
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data: serde_json::Value = serde_json::from_slice(rsp.body())?;
         op.output_machine(data)?;

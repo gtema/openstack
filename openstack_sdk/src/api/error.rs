@@ -4,6 +4,7 @@ use std::error::Error;
 use thiserror::Error;
 
 use crate::api::PaginationError;
+use crate::types::ServiceType;
 
 /// Errors which may occur when creating form data.
 #[derive(Debug, Error)]
@@ -199,7 +200,7 @@ where
         }
     }
 
-    pub(crate) fn endpoint(service_type: &str) -> Self {
+    pub(crate) fn endpoint(service_type: &ServiceType) -> Self {
         ApiError::Session {
             msg: format!("No Endpoint for service `{}`", service_type),
         }

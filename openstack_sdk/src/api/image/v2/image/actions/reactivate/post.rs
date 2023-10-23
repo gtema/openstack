@@ -65,11 +65,13 @@ impl<'a> RestEndpoint for Image<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
-    fn service_type(&self) -> Cow<'static, str> {
-        "image".into()
+    fn service_type(&self) -> ServiceType {
+        ServiceType::Image
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
@@ -87,13 +89,17 @@ mod tests {
     use super::*;
     use crate::api::{self, Query, RawQuery};
     use crate::test::client::MockServerClient;
+    use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
-        assert_eq!(Image::builder().build().unwrap().service_type(), "image");
+        assert_eq!(
+            Image::builder().build().unwrap().service_type(),
+            ServiceType::Image
+        );
     }
 
     #[test]

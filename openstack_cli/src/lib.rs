@@ -38,6 +38,7 @@ use openstack_sdk::AsyncOpenStack;
 use cli_table::{print_stdout, Table};
 
 mod api;
+mod block_storage;
 mod catalog;
 mod common;
 mod compute;
@@ -48,6 +49,7 @@ mod output;
 
 use crate::error::OpenStackCliError;
 
+use crate::block_storage::v3::{BlockStorageSrvArgs, BlockStorageSrvCommand};
 use crate::compute::v2::ComputeSrvCommand;
 use crate::image::v2::ImageSrvCommand;
 use crate::object_store::v1::ObjectStoreSrvCommand;
@@ -69,6 +71,8 @@ pub struct Cli {
 /// Supported Top Level commands
 #[derive(Subcommand)]
 pub enum TopLevelCommands {
+    /// Block Storage (Volume) service (Cinder) commands
+    BlockStorage(BlockStorageSrvArgs),
     /// Compute service (Nova) commands
     Compute(compute::v2::ComputeSrvArgs),
     /// Image (Glance) commands
@@ -161,6 +165,9 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .init();
 
     let cmd = match &cli.command {
+        TopLevelCommands::BlockStorage(args) => {
+            BlockStorageSrvCommand { args: args.clone() }.get_command()
+        }
         TopLevelCommands::Compute(args) => ComputeSrvCommand { args: args.clone() }.get_command(),
         TopLevelCommands::Image(args) => ImageSrvCommand { args: args.clone() }.get_command(),
         TopLevelCommands::ObjectStore(args) => {

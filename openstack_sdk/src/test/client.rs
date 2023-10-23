@@ -25,7 +25,7 @@ use url::Url;
 use serde_json::json;
 
 use crate::api::{ApiError, AsyncClient, Client, RestClient};
-use crate::types::BoxedAsyncRead;
+use crate::types::{BoxedAsyncRead, ServiceType};
 use crate::RestError;
 
 use httpmock::prelude::*;
@@ -164,7 +164,7 @@ impl<T> RestClient for PagedTestClient<T> {
 
     fn rest_endpoint(
         &self,
-        service_type: &str,
+        service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!("{}/{}", CLIENT_STUB, endpoint))?)
@@ -320,7 +320,7 @@ impl RestClient for MockServerClient {
 
     fn rest_endpoint(
         &self,
-        service_type: &str,
+        service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!(
@@ -376,7 +376,7 @@ impl RestClient for MockAsyncServerClient {
 
     fn rest_endpoint(
         &self,
-        service_type: &str,
+        service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!(

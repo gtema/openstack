@@ -52,15 +52,17 @@ impl RestEndpoint for Servers {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "servers".to_string().into()
+        format!("servers",).into()
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
-    fn service_type(&self) -> Cow<'static, str> {
-        "compute".into()
+    fn service_type(&self) -> ServiceType {
+        ServiceType::Compute
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
@@ -78,6 +80,7 @@ mod tests {
     use super::*;
     use crate::api::{self, Query, RawQuery};
     use crate::test::client::MockServerClient;
+    use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
     use serde_json::json;
@@ -86,7 +89,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Servers::builder().build().unwrap().service_type(),
-            "compute"
+            ServiceType::Compute
         );
     }
 

@@ -65,15 +65,17 @@ impl RestEndpoint for Account {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        String::new().into()
+        format!("",).into()
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
-    fn service_type(&self) -> Cow<'static, str> {
-        "object-store".into()
+    fn service_type(&self) -> ServiceType {
+        ServiceType::ObjectStore
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
@@ -91,6 +93,7 @@ mod tests {
     use super::*;
     use crate::api::{self, Query, RawQuery};
     use crate::test::client::MockServerClient;
+    use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
     use serde_json::json;
@@ -99,7 +102,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Account::builder().build().unwrap().service_type(),
-            "object-store"
+            ServiceType::ObjectStore
         );
     }
 

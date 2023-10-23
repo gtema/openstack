@@ -33,7 +33,7 @@ use crate::api::rest_endpoint_prelude::RestEndpoint;
 use crate::auth::{Auth, AuthError};
 use crate::config::ConfigError;
 use crate::types::identity::v3::{AuthResponse, ServiceEndpoints};
-use crate::types::BoxedAsyncRead;
+use crate::types::{BoxedAsyncRead, ServiceType, SupportedServiceTypes};
 
 use crate::api::identity::v3::auth_tokens::create as token_v3;
 
@@ -330,7 +330,7 @@ impl api::RestClient for OpenStack {
     /// Construct final URL for the resource given the service type and RestEndpoint
     fn rest_endpoint(
         &self,
-        service_type: &str,
+        service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, api::ApiError<Self::Error>> {
         let service_url = self
@@ -379,7 +379,7 @@ impl api::RestClient for AsyncOpenStack {
     /// Construct final URL for the resource given the service type and RestEndpoint
     fn rest_endpoint(
         &self,
-        service_type: &str,
+        service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, api::ApiError<Self::Error>> {
         let service_url = self
@@ -504,7 +504,8 @@ impl AsyncOpenStack {
             .build()
             .unwrap();
 
-        self.discover_service_endpoint("identity").await?;
+        self.discover_service_endpoint(&ServiceType::Identity)
+            .await?;
 
         let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query_async(self).await.unwrap();
         debug!("Auth response is {:?}", rsp);
@@ -529,23 +530,26 @@ impl AsyncOpenStack {
 
     pub async fn discover_service_endpoint(
         &mut self,
-        service_type: &str,
+        service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
-        if let Some(mut ep) = self.catalog.service_endpoints.get(service_type) {
-            if !ep.discovered {
-                info!("Performing `{}` endpoint version discovery", service_type);
-                let req = http::Request::builder()
-                    .method(http::Method::GET)
-                    .uri(query::url_to_http_uri(ep.url.clone()));
-                let rsp = self
-                    .rest_with_auth_async(req, Vec::new(), &self.auth)
-                    .await?;
-                let dt = self
-                    .catalog
-                    .service_endpoints
-                    .get_mut(service_type)
-                    .unwrap();
-                dt.process_discovery(rsp.body())?;
+        for cat_type in service_type.get_supported_catalog_types() {
+            if let Some(mut ep) = self.catalog.service_endpoints.get(&cat_type.to_string()) {
+                if !ep.discovered {
+                    info!("Performing `{}` endpoint version discovery", service_type);
+                    let req = http::Request::builder()
+                        .method(http::Method::GET)
+                        .uri(query::url_to_http_uri(ep.url.clone()));
+                    let rsp = self
+                        .rest_with_auth_async(req, Vec::new(), &self.auth)
+                        .await?;
+                    let dt = self
+                        .catalog
+                        .service_endpoints
+                        .get_mut(&cat_type.to_string())
+                        .unwrap();
+                    dt.process_discovery(rsp.body())?;
+                }
+                return Ok(());
             }
         }
         Ok(())

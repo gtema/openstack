@@ -112,7 +112,7 @@ impl<'a> RestEndpoint for Container<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        self.container.as_ref().to_string().into()
+        format!("{container}", container = self.container.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -128,8 +128,8 @@ impl<'a> RestEndpoint for Container<'a> {
         params
     }
 
-    fn service_type(&self) -> Cow<'static, str> {
-        "object-store".into()
+    fn service_type(&self) -> ServiceType {
+        ServiceType::ObjectStore
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
@@ -148,6 +148,7 @@ mod tests {
     use super::*;
     use crate::api::{self, Query, RawQuery};
     use crate::test::client::MockServerClient;
+    use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
     use serde_json::json;
@@ -156,7 +157,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Container::builder().build().unwrap().service_type(),
-            "object-store"
+            ServiceType::ObjectStore
         );
     }
 

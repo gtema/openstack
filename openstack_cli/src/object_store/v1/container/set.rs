@@ -17,7 +17,7 @@ use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
 use structable_derive::StructTable;
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::parse_key_val;
 use openstack_sdk::api::object_store::v1::container::post;
@@ -74,6 +74,9 @@ impl Command for ContainerCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        client
+            .discover_service_endpoint(&ServiceType::ObjectStore)
+            .await?;
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data = Container {};
         // Maybe output some headers metadata

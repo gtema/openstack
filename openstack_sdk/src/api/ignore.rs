@@ -86,6 +86,7 @@ mod tests {
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError, Query, QueryAsync};
     use crate::test::client::{MockAsyncServerClient, MockServerClient};
+    use crate::types::ServiceType;
 
     struct Dummy;
 
@@ -98,8 +99,8 @@ mod tests {
             "dummy".into()
         }
 
-        fn service_type(&self) -> Cow<'static, str> {
-            "dummy".into()
+        fn service_type(&self) -> ServiceType {
+            ServiceType::Other("dummy".to_string())
         }
     }
 

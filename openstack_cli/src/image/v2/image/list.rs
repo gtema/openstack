@@ -15,7 +15,7 @@ use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
 use structable_derive::StructTable;
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::parse_json;
 use crate::common::VecString;
@@ -480,7 +480,9 @@ impl Command for ImagesCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client.discover_service_endpoint("image").await?;
+        client
+            .discover_service_endpoint(&ServiceType::Image)
+            .await?;
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.args.max_items))
             .query_async(client)
             .await?;

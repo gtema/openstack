@@ -7,6 +7,7 @@
 //! ```rust
 //! use openstack_sdk::api::{paged, Pagination, QueryAsync};
 //! use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//! use openstack_sdk::types::ServiceType;
 //! use openstack_sdk::api::compute::v2::flavors::get;
 //!
 //! async fn list_flavors() -> Result<(), OpenStackError> {
@@ -23,7 +24,7 @@
 //!     let mut session = AsyncOpenStack::new(&profile).await?;
 //!
 //!     // Invoke service discovery when desired.
-//!     session.discover_service_endpoint("compute").await?;
+//!     session.discover_service_endpoint(&ServiceType::Compute).await?;
 //!
 //!     // Execute the call with pagination limiting maximum amount of entries to 1000
 //!     let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(1000))

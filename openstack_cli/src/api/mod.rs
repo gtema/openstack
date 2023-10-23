@@ -24,6 +24,7 @@ use url::Url;
 
 use openstack_sdk::{
     api::{AsyncClient, RestClient},
+    types::ServiceType,
     AsyncOpenStack,
 };
 
@@ -109,9 +110,11 @@ impl Command for ApiCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        client.discover_service_endpoint(&self.args.service).await?;
+        let service = ServiceType::from(self.args.service.as_str());
 
-        let endpoint = client.rest_endpoint(&self.args.service, &self.args.url)?;
+        client.discover_service_endpoint(&service).await?;
+
+        let endpoint = client.rest_endpoint(&service, &self.args.url)?;
 
         let req = http::Request::builder()
             .method::<http::Method>(self.args.method.clone().into())
