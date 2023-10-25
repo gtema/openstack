@@ -58,7 +58,7 @@ pub struct Images<'a> {
 
     /// is_hidden filter parameter
     #[builder(default)]
-    os_hidden: Option<bool>,
+    is_hidden: Option<bool>,
 
     /// sort_key filter parameter
     #[builder(default, setter(into))]
@@ -154,7 +154,7 @@ impl<'a> RestEndpoint for Images<'a> {
         params.push_opt("size_min", self.size_min.as_ref());
         params.push_opt("size_max", self.size_max.as_ref());
         params.push_opt("protected", self.protected.as_ref());
-        params.push_opt("os_hidden", self.os_hidden);
+        params.push_opt("os_hidden", self.is_hidden);
         params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("sort", self.sort.as_ref());

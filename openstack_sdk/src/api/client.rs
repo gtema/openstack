@@ -14,7 +14,8 @@ use tokio_util::io::StreamReader;
 use url::Url;
 
 use crate::api::ApiError;
-use crate::types::{BoxedAsyncRead, ServiceType};
+use crate::catalog::ServiceEndpoint;
+use crate::types::{identity::v3::Project, BoxedAsyncRead, ServiceType};
 
 /// A trait representing a client which can communicate with a OpenStack service API via REST API.
 pub trait RestClient {
@@ -27,6 +28,15 @@ pub trait RestClient {
         service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>>;
+
+    /// Get current token project infomation
+    fn get_current_project(&self) -> Option<Project>;
+
+    /// Get service endpoint information
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>>;
 }
 
 /// A trait representing a client which can communicate with a OpenStack cloud APIs.

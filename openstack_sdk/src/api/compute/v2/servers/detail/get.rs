@@ -130,35 +130,35 @@ pub struct Servers<'a> {
 
     /// access_ipv4 filter parameter
     #[builder(default, setter(into))]
-    access_ip_v4: Option<Cow<'a, str>>,
+    access_ipv4: Option<Cow<'a, str>>,
 
     /// access_ipv6 filter parameter
     #[builder(default, setter(into))]
-    access_ip_v6: Option<Cow<'a, str>>,
+    access_ipv6: Option<Cow<'a, str>>,
 
     /// has_config_drive filter parameter
     #[builder(default, setter(into))]
-    config_drive: Option<Cow<'a, str>>,
+    has_config_drive: Option<Cow<'a, str>>,
 
     /// deleted_only filter parameter
     #[builder(default, setter(into))]
-    deleted: Option<Cow<'a, str>>,
+    deleted_only: Option<Cow<'a, str>>,
 
     /// compute_host filter parameter
     #[builder(default, setter(into))]
-    host: Option<Cow<'a, str>>,
+    compute_host: Option<Cow<'a, str>>,
 
     /// is_soft_deleted filter parameter
     #[builder(default, setter(into))]
-    soft_deleted: Option<Cow<'a, str>>,
+    is_soft_deleted: Option<Cow<'a, str>>,
 
     /// ipv4_address filter parameter
     #[builder(default, setter(into))]
-    ip: Option<Cow<'a, str>>,
+    ipv4_address: Option<Cow<'a, str>>,
 
     /// ipv6_address filter parameter
     #[builder(default, setter(into))]
-    ip6: Option<Cow<'a, str>>,
+    ipv6_address: Option<Cow<'a, str>>,
 
     /// changes_since filter parameter
     #[builder(default, setter(into))]
@@ -170,27 +170,27 @@ pub struct Servers<'a> {
 
     /// id filter parameter
     #[builder(default, setter(into))]
-    uuid: Option<Cow<'a, str>>,
+    id: Option<Cow<'a, str>>,
 
     /// all_projects filter parameter
     #[builder(default, setter(into))]
-    all_tenants: Option<Cow<'a, str>>,
+    all_projects: Option<Cow<'a, str>>,
 
     /// tags filter parameter
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// any_tags filter parameter
-    #[builder(default, private, setter(name = "_tags_any"))]
-    tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
+    #[builder(default, private, setter(name = "_any_tags"))]
+    any_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not_tags filter parameter
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not_any_tags filter parameter
-    #[builder(default, private, setter(name = "_not_tags_any"))]
-    not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
+    #[builder(default, private, setter(name = "_not_any_tags"))]
+    not_any_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -218,12 +218,12 @@ impl<'a> ServersBuilder<'a> {
     }
 
     /// any_tags filter parameter
-    pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
+    pub fn any_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.tags_any
+        self.any_tags
             .get_or_insert(None)
             .get_or_insert_with(CommaSeparatedList::new)
             .extend(iter.map(Into::into));
@@ -244,12 +244,12 @@ impl<'a> ServersBuilder<'a> {
     }
 
     /// not_any_tags filter parameter
-    pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
+    pub fn not_any_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
         T: Into<Cow<'a, str>>,
     {
-        self.not_tags_any
+        self.not_any_tags
             .get_or_insert(None)
             .get_or_insert_with(CommaSeparatedList::new)
             .extend(iter.map(Into::into));
@@ -320,22 +320,22 @@ impl<'a> RestEndpoint for Servers<'a> {
         params.push_opt("vm_state", self.vm_state.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
-        params.push_opt("access_ip_v4", self.access_ip_v4.as_ref());
-        params.push_opt("access_ip_v6", self.access_ip_v6.as_ref());
-        params.push_opt("config_drive", self.config_drive.as_ref());
-        params.push_opt("deleted", self.deleted.as_ref());
-        params.push_opt("host", self.host.as_ref());
-        params.push_opt("soft_deleted", self.soft_deleted.as_ref());
-        params.push_opt("ip", self.ip.as_ref());
-        params.push_opt("ip6", self.ip6.as_ref());
+        params.push_opt("access_ip_v4", self.access_ipv4.as_ref());
+        params.push_opt("access_ip_v6", self.access_ipv6.as_ref());
+        params.push_opt("config_drive", self.has_config_drive.as_ref());
+        params.push_opt("deleted", self.deleted_only.as_ref());
+        params.push_opt("host", self.compute_host.as_ref());
+        params.push_opt("soft_deleted", self.is_soft_deleted.as_ref());
+        params.push_opt("ip", self.ipv4_address.as_ref());
+        params.push_opt("ip6", self.ipv6_address.as_ref());
         params.push_opt("changes-since", self.changes_since.as_ref());
         params.push_opt("changes-before", self.changes_before.as_ref());
-        params.push_opt("uuid", self.uuid.as_ref());
-        params.push_opt("all_tenants", self.all_tenants.as_ref());
+        params.push_opt("uuid", self.id.as_ref());
+        params.push_opt("all_tenants", self.all_projects.as_ref());
         params.push_opt("tags", self.tags.as_ref());
-        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("tags-any", self.any_tags.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
-        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("not-tags-any", self.not_any_tags.as_ref());
 
         params
     }

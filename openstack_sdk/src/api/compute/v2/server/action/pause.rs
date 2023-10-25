@@ -1,6 +1,8 @@
-//! Lists summary information for all Block Storage volumes that the project
-//! can access, since v3.31 if non-admin users specify invalid filters in the
-//! url, API will return bad request.
+//! Pauses a server. Changes its status to PAUSED.
+//! Specify the pause action in the request body.
+//! Policy defaults enable only users with the administrative role or the owner
+//! of the server to perform this operation. Cloud providers can change these
+//! permissions through the policy.json file.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use std::collections::BTreeSet;
@@ -8,29 +10,27 @@ use std::collections::BTreeSet;
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
-use crate::api::Pageable;
-
-/// Query for volumes.get operation.
+/// Query for server.action.pause operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Volumes<'a> {
-    /// The UUID of the project in a multi-tenancy cloud.
+pub struct Server<'a> {
+    /// Server ID
     #[builder(default, setter(into))]
-    project_id: Cow<'a, str>,
+    id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
 
-impl<'a> Volumes<'a> {
+impl<'a> Server<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> VolumesBuilder<'a> {
-        VolumesBuilder::default()
+    pub fn builder() -> ServerBuilder<'a> {
+        ServerBuilder::default()
     }
 }
 
-impl<'a> VolumesBuilder<'a> {
-    /// Add a single header to the Volumes.
+impl<'a> ServerBuilder<'a> {
+    /// Add a single header to the Server.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -54,29 +54,33 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Volumes<'a> {
+impl<'a> RestEndpoint for Server<'a> {
     fn method(&self) -> Method {
-        Method::GET
+        Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "{project_id}/volumes",
-            project_id = self.project_id.as_ref(),
-        )
-        .into()
+        format!("servers/{id}/action", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
         QueryParams::default()
     }
 
+    fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let mut params = JsonBodyParams::default();
+
+        params.push("pause", None::<String>);
+
+        params.into_body()
+    }
+
     fn service_type(&self) -> ServiceType {
-        ServiceType::BlockStorage
+        ServiceType::Compute
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("volumes".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -84,7 +88,6 @@ impl<'a> RestEndpoint for Volumes<'a> {
         self._headers.as_ref()
     }
 }
-impl<'a> Pageable for Volumes<'a> {}
 
 #[cfg(test)]
 mod tests {
@@ -99,32 +102,29 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Volumes::builder().build().unwrap().service_type(),
-            ServiceType::BlockStorage
+            Server::builder().build().unwrap().service_type(),
+            ServiceType::Compute
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Volumes::builder().build().unwrap().response_key().unwrap(),
-            "volumes"
-        );
+        assert!(Server::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/{project_id}/volumes", project_id = "project_id",));
+            when.method(httpmock::Method::POST)
+                .path(format!("/servers/{id}/action", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volumes": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Volumes::builder().project_id("project_id").build().unwrap();
+        let endpoint = Server::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -133,17 +133,17 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/{project_id}/volumes", project_id = "project_id",))
+            when.method(httpmock::Method::POST)
+                .path(format!("/servers/{id}/action", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volumes": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Volumes::builder()
-            .project_id("project_id")
+        let endpoint = Server::builder()
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
@@ -157,5 +157,19 @@ mod tests {
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
+    }
+
+    #[test]
+    fn endpoint_body() {
+        let endpoint = Server::builder().build().unwrap();
+
+        let (mime, body) = endpoint.body().unwrap().unwrap();
+        assert_eq!(
+            std::str::from_utf8(&body).unwrap(),
+            json!({
+                 "pause": None::<String>,
+            })
+            .to_string()
+        );
     }
 }

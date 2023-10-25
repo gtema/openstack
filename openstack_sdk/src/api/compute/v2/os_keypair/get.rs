@@ -1,47 +1,40 @@
+//! Shows details for a keypair that is associated with the account.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
+use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
-use crate::api::Pageable;
-use crate::api::ParamValue;
 
-/// Query for flavors.
+/// Query for keypair.get operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Servers<'a> {
-    #[builder(setter(into), default)]
-    name: Option<Cow<'a, str>>,
-    // #[builder(setter(custom), default)]
-    #[builder(setter(name = "_tags"), default, private)]
-    tags: Option<CommaSeparatedList<Cow<'a, str>>>,
+pub struct Keypair<'a> {
+    /// This allows administrative users to operate key-pairs of specified user
+    /// ID.
+    /// New in version 2.10
+    #[builder(default, setter(into))]
+    keypair_name: Cow<'a, str>,
+
+    /// This allows administrative users to operate key-pairs of specified user
+    /// ID.
+    /// New in version 2.10
+    #[builder(default, setter(into))]
+    user_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
 
-impl<'a> Servers<'a> {
+impl<'a> Keypair<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> ServersBuilder<'a> {
-        ServersBuilder::default()
+    pub fn builder() -> KeypairBuilder<'a> {
+        KeypairBuilder::default()
     }
 }
 
-impl<'a> ServersBuilder<'a> {
-    /// Add multiple tags search parameters.
-    pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = T>,
-        T: Into<Cow<'a, str>>,
-    {
-        self.tags
-            .get_or_insert(None)
-            .get_or_insert_with(CommaSeparatedList::new)
-            .extend(iter.map(Into::into));
-        self
-    }
-
-    /// Add a single header to the server.
+impl<'a> KeypairBuilder<'a> {
+    /// Add a single header to the Keypair.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -65,32 +58,32 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Servers<'a> {
+impl<'a> RestEndpoint for Keypair<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "servers/detail".into()
+        format!(
+            "os-keypairs/{keypair_name}",
+            keypair_name = self.keypair_name.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("user_id", self.user_id.as_ref());
 
         params
     }
 
-    /// OpenStack service type
-    fn service_type(&self) -> Cow<'static, str> {
-        "compute".into()
+    fn service_type(&self) -> ServiceType {
+        ServiceType::Compute
     }
 
-    /// Response key name with results
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("servers".into())
+        Some("keypair".into())
     }
 
     /// Returns headers to be set into the request
@@ -99,47 +92,48 @@ impl<'a> RestEndpoint for Servers<'a> {
     }
 }
 
-impl<'a> Pageable for Servers<'a> {}
-
 #[cfg(test)]
 mod tests {
-    use crate::api::compute::v2::server::list::Servers;
-    use crate::api::{self, Query};
-    use crate::test::client::{ExpectedUrl, MockServerClient};
+    use super::*;
+    use crate::api::{self, Query, RawQuery};
+    use crate::test::client::MockServerClient;
+    use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
     use serde_json::json;
-    use std::borrow::Cow;
+
+    #[test]
+    fn test_service_type() {
+        assert_eq!(
+            Keypair::builder().build().unwrap().service_type(),
+            ServiceType::Compute
+        );
+    }
+
+    #[test]
+    fn test_response_key() {
+        assert_eq!(
+            Keypair::builder().build().unwrap().response_key().unwrap(),
+            "keypair"
+        );
+    }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/servers/detail");
+            when.method(httpmock::Method::GET).path(format!(
+                "/os-keypairs/{keypair_name}",
+                keypair_name = "keypair_name",
+            ));
+
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "servers": [] }));
+                .json_body(json!({ "keypair": {} }));
         });
 
-        let endpoint = Servers::builder().build().unwrap();
-        let _: serde_json::Value = endpoint.query(&client).unwrap();
-        mock.assert();
-    }
-
-    #[test]
-    fn endpoint_tags() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/servers/detail")
-                .query_param("tags", "a,b");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "servers": [] }));
-        });
-
-        let endpoint = Servers::builder()
-            .tags(["a", "b"].iter().copied())
+        let endpoint = Keypair::builder()
+            .keypair_name("keypair_name")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -151,15 +145,19 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/servers/detail")
+                .path(format!(
+                    "/os-keypairs/{keypair_name}",
+                    keypair_name = "keypair_name",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "resources": [] }));
+                .json_body(json!({ "keypair": {} }));
         });
 
-        let endpoint = Servers::builder()
+        let endpoint = Keypair::builder()
+            .keypair_name("keypair_name")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

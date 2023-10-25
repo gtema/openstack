@@ -12,6 +12,7 @@ use serde::de::DeserializeOwned;
 use url::Url;
 
 use crate::api::paged::{next_page, Pageable, Paged};
+use crate::api::rest_endpoint::set_latest_microversion;
 use crate::api::{
     query, ApiError, AsyncClient, Client, Query, QueryAsync, RestClient, RestEndpoint,
 };
@@ -253,6 +254,16 @@ where
             v = v[root_key.to_string()].take();
         }
 
+        // List of items and every item is in additional container
+        if let (Some(item_key), Some(mut array)) = (
+            self.paged.endpoint.response_list_item_key(),
+            v.as_array_mut(),
+        ) {
+            for elem in array {
+                *elem = elem[item_key.to_string()].take();
+            }
+        }
+
         let page = serde_json::from_value::<Vec<T>>(v).map_err(ApiError::data_type::<Vec<T>>)?;
         self.next_page(page.len(), next_url);
 
@@ -269,17 +280,18 @@ where
     C: Client,
 {
     fn query(&self, client: &C) -> Result<Vec<T>, ApiError<C::Error>> {
-        let url = if let Some(url) = self.page_url(client.rest_endpoint(
-            &self.paged.endpoint.service_type(),
-            &self.paged.endpoint.endpoint(),
-        )?) {
+        let ep = client.get_service_endpoint(&self.paged.endpoint.service_type())?;
+        let url = if let Some(url) =
+            self.page_url(ep.url.clone().join(&self.paged.endpoint.endpoint())?)
+        {
             url
         } else {
             // Just return empty data.
             // XXX: Return a new kind of PaginationError here?
             return Ok(Vec::new());
         };
-        let (req, data) = self.build_request::<C>(url.clone())?;
+        let (mut req, data) = self.build_request::<C>(url.clone())?;
+        set_latest_microversion(&mut req, &ep, &self.paged.endpoint);
         let rsp = client.rest(req, data)?;
         self.process_response::<C, _>(rsp, url.clone())
     }
@@ -293,17 +305,18 @@ where
     C: AsyncClient + Sync,
 {
     async fn query_async(&self, client: &C) -> Result<Vec<T>, ApiError<C::Error>> {
-        let url = if let Some(url) = self.page_url(client.rest_endpoint(
-            &self.paged.endpoint.service_type(),
-            &self.paged.endpoint.endpoint(),
-        )?) {
+        let ep = client.get_service_endpoint(&self.paged.endpoint.service_type())?;
+        let url = if let Some(url) =
+            self.page_url(ep.url.clone().join(&self.paged.endpoint.endpoint())?)
+        {
             url
         } else {
             // Just return empty data.
             // XXX: Return a new kind of PaginationError here?
             return Ok(Vec::new());
         };
-        let (req, data) = self.build_request::<C>(url.clone())?;
+        let (mut req, data) = self.build_request::<C>(url.clone())?;
+        set_latest_microversion(&mut req, &ep, &self.paged.endpoint);
         let rsp = client.rest_async(req, data).await?;
         self.process_response::<C, _>(rsp, url.clone())
     }

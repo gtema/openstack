@@ -14,13 +14,17 @@ use crate::api::Pageable;
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
 pub struct Volumes<'a> {
+    /// The UUID of the project in a multi-tenancy cloud.
+    #[builder(default, setter(into))]
+    project_id: Cow<'a, str>,
+
+    /// all_projects filter parameter
+    #[builder(default)]
+    all_projects: Option<bool>,
+
     /// Name filter
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
-
-    /// The UUID of the project in a multi-tenancy cloud.
-    #[builder(default, setter(into))]
-    project_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -64,13 +68,17 @@ impl<'a> RestEndpoint for Volumes<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "volumes/detail".to_string().into()
+        format!(
+            "{project_id}/volumes/detail",
+            project_id = self.project_id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("all_tenants", self.all_projects);
         params.push_opt("name", self.name.as_ref());
-        params.push_opt("project_id", self.project_id.as_ref());
 
         params
     }
@@ -120,15 +128,17 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/volumes/detail",));
+            when.method(httpmock::Method::GET).path(format!(
+                "/{project_id}/volumes/detail",
+                project_id = "project_id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "volumes": {} }));
         });
 
-        let endpoint = Volumes::builder().build().unwrap();
+        let endpoint = Volumes::builder().project_id("project_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -138,7 +148,10 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/volumes/detail",))
+                .path(format!(
+                    "/{project_id}/volumes/detail",
+                    project_id = "project_id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -147,6 +160,7 @@ mod tests {
         });
 
         let endpoint = Volumes::builder()
+            .project_id("project_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

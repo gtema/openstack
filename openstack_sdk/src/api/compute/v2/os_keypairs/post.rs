@@ -1,6 +1,11 @@
-//! Lists summary information for all Block Storage volumes that the project
-//! can access, since v3.31 if non-admin users specify invalid filters in the
-//! url, API will return bad request.
+//! Imports (or generates) a keypair.
+//!
+//! Warning: Generating a keypair is no longer possible starting from
+//!   version 2.92.
+//!
+//! Normal response codes: 200, 201
+//! Note: The success status code was changed from 200 to 201 in version
+//!   2.2
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use std::collections::BTreeSet;
@@ -8,29 +13,43 @@ use std::collections::BTreeSet;
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
-use crate::api::Pageable;
-
-/// Query for volumes.get operation.
+/// Query for keypairs.post operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Volumes<'a> {
-    /// The UUID of the project in a multi-tenancy cloud.
+pub struct Keypairs<'a> {
+    /// A name for the keypair which will be used to reference it later.
+    /// Note: Since microversion 2.92, allowed characters are ASCII letters
+    /// [a-zA-Z], digits [0-9] and the following special characters: [@._- ].
     #[builder(default, setter(into))]
-    project_id: Cow<'a, str>,
+    name: Cow<'a, str>,
+
+    /// The public ssh key to import. Was optional before microversion 2.92 :
+    /// if you were omitting this value, a keypair was generated for you.
+    #[builder(default, setter(into))]
+    public_key: Cow<'a, str>,
+
+    /// The type of the keypair. Allowed values are ssh or x509.
+    /// New in version 2.2
+    #[builder(default, setter(into))]
+    xtype: Option<Cow<'a, str>>,
+
+    /// The user_id for a keypair.
+    #[builder(default, setter(into))]
+    user_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
 
-impl<'a> Volumes<'a> {
+impl<'a> Keypairs<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> VolumesBuilder<'a> {
-        VolumesBuilder::default()
+    pub fn builder() -> KeypairsBuilder<'a> {
+        KeypairsBuilder::default()
     }
 }
 
-impl<'a> VolumesBuilder<'a> {
-    /// Add a single header to the Volumes.
+impl<'a> KeypairsBuilder<'a> {
+    /// Add a single header to the Keypairs.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -54,29 +73,36 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Volumes<'a> {
+impl<'a> RestEndpoint for Keypairs<'a> {
     fn method(&self) -> Method {
-        Method::GET
+        Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "{project_id}/volumes",
-            project_id = self.project_id.as_ref(),
-        )
-        .into()
+        "os-keypairs".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
         QueryParams::default()
     }
 
+    fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let mut params = JsonBodyParams::default();
+
+        params.push("name", self.name.as_ref());
+        params.push("public_key", self.public_key.as_ref());
+        params.push_opt("type", self.xtype.as_ref());
+        params.push_opt("user_id", self.user_id.as_ref());
+
+        params.into_body()
+    }
+
     fn service_type(&self) -> ServiceType {
-        ServiceType::BlockStorage
+        ServiceType::Compute
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("volumes".into())
+        Some("keypair".into())
     }
 
     /// Returns headers to be set into the request
@@ -84,7 +110,6 @@ impl<'a> RestEndpoint for Volumes<'a> {
         self._headers.as_ref()
     }
 }
-impl<'a> Pageable for Volumes<'a> {}
 
 #[cfg(test)]
 mod tests {
@@ -99,16 +124,16 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Volumes::builder().build().unwrap().service_type(),
-            ServiceType::BlockStorage
+            Keypairs::builder().build().unwrap().service_type(),
+            ServiceType::Compute
         );
     }
 
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Volumes::builder().build().unwrap().response_key().unwrap(),
-            "volumes"
+            Keypairs::builder().build().unwrap().response_key().unwrap(),
+            "keypair"
         );
     }
 
@@ -116,15 +141,15 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/{project_id}/volumes", project_id = "project_id",));
+            when.method(httpmock::Method::POST)
+                .path(format!("/os-keypairs",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volumes": {} }));
+                .json_body(json!({ "keypair": {} }));
         });
 
-        let endpoint = Volumes::builder().project_id("project_id").build().unwrap();
+        let endpoint = Keypairs::builder().build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -133,17 +158,16 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/{project_id}/volumes", project_id = "project_id",))
+            when.method(httpmock::Method::POST)
+                .path(format!("/os-keypairs",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volumes": {} }));
+                .json_body(json!({ "keypair": {} }));
         });
 
-        let endpoint = Volumes::builder()
-            .project_id("project_id")
+        let endpoint = Keypairs::builder()
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
@@ -157,5 +181,28 @@ mod tests {
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
+    }
+
+    #[test]
+    fn endpoint_body() {
+        let endpoint = Keypairs::builder()
+            .name("name")
+            .public_key("public_key")
+            .xtype("type")
+            .user_id("user_id")
+            .build()
+            .unwrap();
+
+        let (mime, body) = endpoint.body().unwrap().unwrap();
+        assert_eq!(
+            std::str::from_utf8(&body).unwrap(),
+            json!({
+                 "name": "name",
+                 "public_key": "public_key",
+                 "type": "type",
+                 "user_id": "user_id",
+            })
+            .to_string()
+        );
     }
 }

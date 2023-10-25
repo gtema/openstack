@@ -13,6 +13,7 @@ use serde::de::DeserializeOwned;
 
 pub use self::pagination::{Pagination, PaginationError};
 
+use crate::api::rest_endpoint::set_latest_microversion;
 use crate::api::{query, ApiError, AsyncClient, Client, Query, QueryAsync, RestEndpoint};
 
 /// A trait to indicate that an endpoint is pageable.
@@ -65,9 +66,10 @@ where
     async fn query_async(&self, client: &C) -> Result<Vec<T>, ApiError<C::Error>> {
         debug!("Async Query for paginated resource");
         // Consume iterator and fetch all requested data.
+
+        let ep = client.get_service_endpoint(&self.endpoint.service_type())?;
         let url = {
-            let mut url =
-                client.rest_endpoint(&self.endpoint.service_type(), &self.endpoint.endpoint())?;
+            let mut url = ep.url.join(&self.endpoint.endpoint())?;
             self.endpoint.parameters().add_to_url(&mut url);
             url
         };
@@ -111,6 +113,7 @@ where
                 .method(self.endpoint.method())
                 .uri(query::url_to_http_uri(page_url.clone()))
                 .header(header::ACCEPT, HeaderValue::from_static("application/json"));
+            set_latest_microversion(&mut req, &ep, &self.endpoint);
             // Set endpoint headers
             if let Some(request_headers) = self.endpoint.request_headers() {
                 let headers = req.headers_mut().unwrap();
@@ -148,7 +151,7 @@ where
                 next_url = next_page::next_page_from_headers(rsp.headers())?;
             }
 
-            debug!("data = {:?}", v.clone());
+            debug!("raw data = {:?}", v.clone());
             if let Some(root_key) = self.endpoint.response_key() {
                 v = v[root_key.to_string()].take();
             }
@@ -172,7 +175,15 @@ where
                     }
                 }
             }
-            debug!("data = {:?}", v.clone());
+
+            if let (Some(item_key), Some(mut array)) =
+                (self.endpoint.response_list_item_key(), v.as_array_mut())
+            {
+                for elem in array {
+                    *elem = elem[item_key.to_string()].take();
+                }
+            }
+            trace!("items data = {:?}", v.clone());
 
             let page =
                 serde_json::from_value::<Vec<T>>(v).map_err(ApiError::data_type::<Vec<T>>)?;

@@ -12,7 +12,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use futures::io::{AsyncRead, Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
-use http::{request::Builder, HeaderMap, Method, Response as HttpResponse};
+use http::{request::Builder, HeaderMap, Method, Response as HttpResponse, StatusCode, Uri};
 
 //use http::{self, request::Builder, Method, Request, Response};
 use itertools::Itertools;
@@ -32,7 +32,7 @@ use crate::api::query::{Query, QueryAsync, RawQuery, RawQueryAsync};
 use crate::api::rest_endpoint_prelude::RestEndpoint;
 use crate::auth::{Auth, AuthError};
 use crate::config::ConfigError;
-use crate::types::identity::v3::{AuthResponse, ServiceEndpoints};
+use crate::types::identity::v3::{AuthResponse, AuthToken, Project, ServiceEndpoints};
 use crate::types::{BoxedAsyncRead, ServiceType, SupportedServiceTypes};
 
 use crate::api::identity::v3::auth_tokens::create as token_v3;
@@ -126,6 +126,9 @@ pub enum OpenStackError {
         #[from]
         source: ConfigError,
     },
+
+    #[error("Endpoint version discovery error: {}", msg)]
+    Discovery { msg: String },
 }
 
 impl OpenStackError {
@@ -171,6 +174,9 @@ pub struct OpenStack {
     // rest_url: Url,
     /// The authentication information to use when communicating with OpenStack.
     auth: Auth,
+    /// Authorization information as received from the server
+    token: Option<AuthToken>,
+
     catalog: Catalog,
 }
 
@@ -202,6 +208,7 @@ impl OpenStack {
             client,
             config: config.clone(),
             auth: Auth::None,
+            token: None,
             catalog: Catalog::default(),
         };
 
@@ -224,6 +231,7 @@ impl OpenStack {
                 url: identity_service_url,
                 discovered: false,
                 versions: Vec::new(),
+                current_version: None,
             },
         );
 
@@ -333,11 +341,22 @@ impl api::RestClient for OpenStack {
         service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, api::ApiError<Self::Error>> {
-        let service_url = self
-            .catalog
-            .get_service_endpoint(service_type)
-            .ok_or_else(|| api::ApiError::endpoint(service_type))?;
+        let service_url = self.get_service_endpoint(service_type)?.url;
         Ok(service_url.join(endpoint)?)
+    }
+
+    /// Get service endpoint from the catalog
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
+        self.catalog
+            .get_service_endpoint(service_type)
+            .ok_or_else(|| api::ApiError::endpoint(service_type))
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        self.token.clone().and_then(|x| x.project)
     }
 }
 
@@ -360,6 +379,8 @@ pub struct AsyncOpenStack {
     config: CloudConfig,
     /// The authentication information to use when communicating with OpenStack.
     auth: Auth,
+    /// Authorization information as received from the server
+    token: Option<AuthToken>,
     /// Endpoints catalog
     catalog: Catalog,
 }
@@ -382,16 +403,28 @@ impl api::RestClient for AsyncOpenStack {
         service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, api::ApiError<Self::Error>> {
-        let service_url = self
-            .catalog
-            .get_service_endpoint(service_type)
-            .ok_or_else(|| api::ApiError::endpoint(service_type))?;
+        let service_url = self.get_service_endpoint(service_type)?.url;
         Ok(service_url.join(endpoint)?)
+    }
+
+    /// Get service endpoint from the catalog
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
+        self.catalog
+            .get_service_endpoint(service_type)
+            .ok_or_else(|| api::ApiError::endpoint(service_type))
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        self.token.clone().and_then(|x| x.project)
     }
 }
 
 #[async_trait]
 impl api::AsyncClient for AsyncOpenStack {
+    // Perform REST request
     async fn rest_async(
         &self,
         request: http::request::Builder,
@@ -399,6 +432,8 @@ impl api::AsyncClient for AsyncOpenStack {
     ) -> Result<HttpResponse<Bytes>, api::ApiError<<Self as api::RestClient>::Error>> {
         self.rest_with_auth_async(request, body, &self.auth).await
     }
+
+    /// Perform REST request with the body read from AsyncRead
     async fn rest_read_body_async(
         &self,
         request: http::request::Builder,
@@ -407,16 +442,6 @@ impl api::AsyncClient for AsyncOpenStack {
         self.rest_with_auth_read_body_async(request, body, &self.auth)
             .await
     }
-
-    //    async fn rest_raw_async(
-    //        &self,
-    //        request: http::request::Builder,
-    //        body: Vec<u8>,
-    //        //) -> Result<reqwest::Response, api::ApiError<<Self as api::RestClient>::Error>> {
-    //    ) -> Result<HttpResponse<Body>, api::ApiError<<Self as api::RestClient>::Error>> {
-    //        self.rest_with_auth_raw_async(request, body, &self.auth)
-    //            .await
-    //    }
 
     /// Download result of HTTP operation.
     async fn download_async(
@@ -441,6 +466,7 @@ impl AsyncOpenStack {
             client,
             config: config.clone(),
             auth: Auth::None,
+            token: None,
             catalog: Catalog::default(),
         };
 
@@ -510,6 +536,7 @@ impl AsyncOpenStack {
         let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query_async(self).await.unwrap();
         debug!("Auth response is {:?}", rsp);
         let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+        info!("Auth token is {:?}", data);
         self.auth = Auth::Token(
             rsp.headers()
                 .get("x-subject-token")
@@ -518,6 +545,7 @@ impl AsyncOpenStack {
                 .unwrap()
                 .to_string(),
         );
+        self.token = Some(data.token.clone());
 
         if let Some(endpoints) = data.token.catalog {
             self.catalog
@@ -536,23 +564,85 @@ impl AsyncOpenStack {
             if let Some(mut ep) = self.catalog.service_endpoints.get(&cat_type.to_string()) {
                 if !ep.discovered {
                     info!("Performing `{}` endpoint version discovery", service_type);
-                    let req = http::Request::builder()
-                        .method(http::Method::GET)
-                        .uri(query::url_to_http_uri(ep.url.clone()));
-                    let rsp = self
-                        .rest_with_auth_async(req, Vec::new(), &self.auth)
-                        .await?;
-                    let dt = self
-                        .catalog
-                        .service_endpoints
-                        .get_mut(&cat_type.to_string())
-                        .unwrap();
-                    dt.process_discovery(rsp.body())?;
+
+                    let mut try_url = ep.url.clone();
+                    let mut max_depth = 10;
+                    loop {
+                        let req = http::Request::builder()
+                            .method(http::Method::GET)
+                            .uri(query::url_to_http_uri(try_url.clone()));
+
+                        let rsp = self
+                            .rest_with_auth_async(req, Vec::new(), &self.auth)
+                            .await?;
+                        if rsp.status() != StatusCode::NOT_FOUND {
+                            let dt = self
+                                .catalog
+                                .service_endpoints
+                                .get_mut(&cat_type.to_string())
+                                .unwrap();
+
+                            if dt.process_discovery(rsp.body()).is_ok() {
+                                // We have found a valid version document. Exit.
+                                return Ok(());
+                            }
+                        }
+                        if try_url.path() != "/" {
+                            // We are not at the root yet and have not found a
+                            // valid version document so far, try one level up
+                            try_url = try_url.join("../")?;
+                        } else {
+                            return Err(OpenStackError::Discovery {
+                                msg: "No Version document discovered".to_string(),
+                            });
+                        }
+
+                        max_depth -= 1;
+                        if max_depth == 0 {
+                            break;
+                        }
+                    }
+                    return Err(OpenStackError::Discovery {
+                        msg: "Unknown".to_string(),
+                    });
                 }
                 return Ok(());
             }
         }
         Ok(())
+    }
+
+    pub async fn find_version_document(
+        &self,
+        url: Url,
+    ) -> Result<HttpResponse<Bytes>, OpenStackError> {
+        let mut try_url = url.clone();
+        let mut max_depth = 10;
+        loop {
+            let req = http::Request::builder()
+                .method(http::Method::GET)
+                .uri(query::url_to_http_uri(try_url.clone()));
+
+            let rsp = self
+                .rest_with_auth_async(req, Vec::new(), &self.auth)
+                .await?;
+            if rsp.status() == StatusCode::NOT_FOUND {
+                if try_url.path() != "/" {
+                    try_url = try_url.join("../")?;
+                } else {
+                    break;
+                }
+            } else {
+                return Ok(rsp);
+            }
+            max_depth -= 1;
+            if max_depth == 0 {
+                break;
+            }
+        }
+        Err(OpenStackError::Discovery {
+            msg: "Unknown".to_string(),
+        })
     }
 
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {

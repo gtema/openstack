@@ -25,11 +25,16 @@ use openstack_sdk::api::block_storage::v3::volume::find;
 use openstack_sdk::api::block_storage::v3::volume::get;
 use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestClient;
 use serde_json::Value;
 
 /// Get single Volume
 #[derive(Args, Clone, Debug)]
 pub struct VolumeArgs {
+    /// The UUID of the project in a multi-tenancy cloud.
+    #[arg(long)]
+    project_id: Option<String>,
+
     /// Volume ID
     #[arg()]
     id: String,
@@ -218,6 +223,16 @@ impl Command for VolumeCmd {
         op.validate_args(parsed_args)?;
         let mut ep_builder = find::Volume::builder();
         // Set path parameters
+        if let Some(val) = &self.args.project_id {
+            ep_builder.project_id(val);
+        } else {
+            ep_builder.project_id(
+                client
+                    .get_current_project()
+                    .expect("Project ID must be known")
+                    .id,
+            );
+        }
         ep_builder.id(&self.args.id);
         // Set query parameters
         // Set body parameters

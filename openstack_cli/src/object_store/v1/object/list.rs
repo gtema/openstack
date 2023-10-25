@@ -85,7 +85,7 @@ pub struct ObjectsArgs {
     /// By default, listings are returned sorted by name, ascending. If you
     /// include the reverse=true query parameter, the listing will be returned
     /// sorted by name, descending.
-    #[arg(long)]
+    #[arg(long, action=clap::ArgAction::SetTrue)]
     reverse: Option<bool>,
 
     /// Total limit of entities count to return. Use this when there are too many entries.

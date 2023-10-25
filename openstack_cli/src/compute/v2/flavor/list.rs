@@ -43,7 +43,7 @@ pub struct FlavorsArgs {
     /// are treated as False (they are case-insensitive). If the value is None
     /// (case-insensitive) both public and private flavors will be listed in a
     /// single request.
-    #[arg(long)]
+    #[arg(long, action=clap::ArgAction::SetTrue)]
     is_public: Option<bool>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
@@ -100,8 +100,8 @@ pub struct Flavors {
     disk: Option<u32>,
 
     /// A dictionary of the flavor's extra-specs key-and-value pairs.
-    #[structable(wide)]
-    extra_specs: HashMapStringString,
+    #[structable(optional, wide)]
+    extra_specs: Option<HashMapStringString>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.

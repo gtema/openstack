@@ -120,7 +120,7 @@ pub struct Server {
     /// The power state of this server.
     #[serde(rename = "OS-EXT-STS:power_state")]
     #[structable(optional)]
-    power_state: Option<String>,
+    power_state: Option<u32>,
 
     /// The task state of this server.
     #[serde(rename = "OS-EXT-STS:task_state")]
@@ -134,7 +134,8 @@ pub struct Server {
 
     /// The dictionary of data to send to the scheduler.
     #[serde(rename = "OS-SCH-HNT:scheduler_hints")]
-    scheduler_hints: HashMapStringString,
+    #[structable(optional)]
+    scheduler_hints: Option<HashMapStringString>,
 
     /// The timestamp when the server was launched.
     #[serde(rename = "OS-SRV-USG:launched_at")]
@@ -162,7 +163,8 @@ pub struct Server {
     /// addresses are contained in a dictionary with keys ``addr`` and
     /// ``version``, which is either 4 or 6 depending on the protocol of the IP
     /// address.
-    addresses: HashMapStringString,
+    #[structable(optional)]
+    addresses: Option<HashMapStringString>,
 
     /// When a server is first created, it provides the administrator password.
     #[serde(rename = "adminPass")]
@@ -197,7 +199,8 @@ pub struct Server {
     fault: Option<String>,
 
     /// The flavor property as returned from server.
-    flavor: HashMapStringString,
+    #[structable(optional)]
+    flavor: Option<HashMapStringString>,
 
     /// The flavor reference, as a ID or full URL, for the flavor to use for
     /// this server.
@@ -219,7 +222,8 @@ pub struct Server {
     id: Option<String>,
 
     /// The image property as returned from server.
-    image: HashMapStringString,
+    #[structable(optional)]
+    image: Option<HashMapStringString>,
 
     /// The image reference, as a ID or full URL, for the image to use for this
     /// server.
@@ -230,10 +234,6 @@ pub struct Server {
     /// The name of an associated keypair
     #[structable(optional)]
     key_name: Option<String>,
-
-    /// A list of dictionaries holding links relevant to this server.
-    #[structable(optional)]
-    links: Option<String>,
 
     /// True if the instance is locked otherwise False.
     /// New in version 2.9
@@ -247,7 +247,8 @@ pub struct Server {
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
     /// backward compatibility.
-    metadata: HashMapStringString,
+    #[structable(optional)]
+    metadata: Option<HashMapStringString>,
 
     /// The minimum number of servers to create.
     #[structable(optional)]

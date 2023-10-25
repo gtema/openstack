@@ -26,6 +26,7 @@ use crate::api::{
     query, ApiError, AsyncClient, BodyError, Client, Query, QueryAsync, QueryParams, RawQuery,
     RawQueryAsync, RestClient,
 };
+use crate::catalog::ServiceEndpoint;
 use crate::types::BoxedAsyncRead;
 use crate::types::ServiceType;
 //use crate::types::identity::v3::ResourceWithHeaders;
@@ -56,6 +57,11 @@ pub trait RestEndpoint {
         None
     }
 
+    /// Returns response key under which the list item data is expected (i.e. `{"list": ["item":{},  "item": {}}`
+    fn response_list_item_key(&self) -> Option<Cow<'static, str>> {
+        None
+    }
+
     /// Returns map of headers to capture from the endpoint response to the names in the target result struct.
     fn response_headers(&self) -> HashMap<&str, &str> {
         HashMap::new()
@@ -67,13 +73,40 @@ pub trait RestEndpoint {
     }
 }
 
-pub(crate) fn prepare_request<E>(
-    mut url: Url,
+/// Set latest microversion information into the request
+/// for services that support that.
+pub(crate) fn set_latest_microversion<E>(
+    request: &mut Builder,
+    service_endpoint: &ServiceEndpoint,
     endpoint: &E,
-) -> Result<(Builder, Vec<u8>), BodyError>
-where
+) where
     E: RestEndpoint,
 {
+    let mh_service_type = match endpoint.service_type() {
+        ServiceType::BlockStorage => Some("volume"),
+        ServiceType::Compute => Some("compute"),
+        _ => None,
+    };
+    if let (Some(st), Some(ref curr_ver)) =
+        (mh_service_type, service_endpoint.current_version.clone())
+    {
+        if let (Some(hdrs), Some(ref ver)) = (request.headers_mut(), curr_ver.version.clone()) {
+            if let Ok(val) = HeaderValue::from_str(format!("{} {}", st, ver).as_str()) {
+                hdrs.append("Openstack-API-Version", val);
+            }
+        }
+    }
+}
+
+pub(crate) fn prepare_request<C, E>(
+    service_endpoint: &ServiceEndpoint,
+    endpoint: &E,
+) -> Result<(Builder, Vec<u8>), ApiError<C::Error>>
+where
+    E: RestEndpoint,
+    C: RestClient,
+{
+    let mut url = service_endpoint.url.clone().join(&endpoint.endpoint())?;
     endpoint.parameters().add_to_url(&mut url);
     let mut req = Request::builder()
         .method(endpoint.method())
@@ -85,6 +118,7 @@ where
             headers.append(k, v.clone());
         }
     }
+    set_latest_microversion(&mut req, service_endpoint, endpoint);
     if let Some((mime, data)) = endpoint.body()? {
         let req = req.header(header::CONTENT_TYPE, mime);
         Ok((req, data))
@@ -119,8 +153,8 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
-        let (req, data) = prepare_request::<E>(url, self)?;
+        let ep = client.get_service_endpoint(&self.service_type())?;
+        let (req, data) = prepare_request::<C, E>(&ep, self)?;
 
         let rsp = client.rest(req, data)?;
 
@@ -156,10 +190,8 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        //let rsp = self.raw_query_async(client).await?;
-
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
-        let (req, data) = prepare_request::<E>(url, self)?;
+        let ep = client.get_service_endpoint(&self.service_type())?;
+        let (req, data) = prepare_request::<C, E>(&ep, self)?;
 
         let rsp = client.rest_async(req, data).await?;
         let mut v = get_json::<C>(&rsp)?;
@@ -193,8 +225,8 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
-        let (req, data) = prepare_request::<E>(url, self)?;
+        let ep = client.get_service_endpoint(&self.service_type())?;
+        let (req, data) = prepare_request::<C, E>(&ep, self)?;
 
         let rsp = client.rest(req, data)?;
 
@@ -213,8 +245,8 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
-        let (req, data) = prepare_request::<E>(url, self)?;
+        let ep = client.get_service_endpoint(&self.service_type())?;
+        let (req, data) = prepare_request::<C, E>(&ep, self)?;
 
         let rsp = client.rest_async(req, data).await?;
 
@@ -239,7 +271,8 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
+        let ep = client.get_service_endpoint(&self.service_type())?;
+        let mut url = ep.url.clone().join(&self.endpoint())?;
         self.parameters().add_to_url(&mut url);
         let mut req = Request::builder()
             .method(self.method())
@@ -250,6 +283,7 @@ where
                 headers.append(k, v.clone());
             }
         }
+        set_latest_microversion(&mut req, &ep, self);
 
         let rsp = client.rest_read_body_async(req, data).await?;
 
@@ -274,8 +308,8 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
-        let (req, data) = prepare_request::<E>(url, self)?;
+        let ep = client.get_service_endpoint(&self.service_type())?;
+        let (req, data) = prepare_request::<C, E>(&ep, self)?;
 
         let rsp = client.download_async(req, data).await?;
 

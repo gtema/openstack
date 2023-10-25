@@ -3,6 +3,7 @@ use clap::{Args, Subcommand};
 use crate::{Command, ResourceCommands};
 
 mod list;
+mod pause;
 mod show;
 
 #[derive(Args, Clone)]
@@ -18,6 +19,8 @@ pub enum ServerCommands {
     List(list::ServersArgs),
     /// Show single Server
     Show(show::ServerArgs),
+    /// Pause Server
+    Pause(pause::ServerArgs),
 }
 
 pub struct ServerCommand {
@@ -29,6 +32,7 @@ impl ResourceCommands for ServerCommand {
         match &self.args.command {
             ServerCommands::List(args) => Box::new(list::ServersCmd { args: args.clone() }),
             ServerCommands::Show(args) => Box::new(show::ServerCmd { args: args.clone() }),
+            ServerCommands::Pause(args) => Box::new(pause::ServerCmd { args: args.clone() }),
         }
     }
 }

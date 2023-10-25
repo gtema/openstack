@@ -30,8 +30,11 @@ impl ResourceWithHeaders for AuthResponse {
 #[derive(Deserialize, Debug, Clone)]
 pub struct AuthToken {
     pub catalog: Option<Vec<ServiceEndpoints>>,
-    roles: Vec<IdAndName>,
-    user: User,
+    pub roles: Vec<IdAndName>,
+    pub user: User,
+    pub project: Option<Project>,
+    pub issued_at: String,
+    pub expires_at: String,
 }
 
 #[derive(Deserialize, Debug, Clone)]
@@ -59,4 +62,11 @@ pub struct User {
     pub name: String,
     pub id: String,
     pub password_expires_at: Option<String>,
+}
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct Project {
+    pub id: String,
+    pub name: String,
+    pub domain: IdAndName,
 }

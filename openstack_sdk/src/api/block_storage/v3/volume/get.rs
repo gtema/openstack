@@ -10,6 +10,10 @@ use crate::api::rest_endpoint_prelude::*;
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
 pub struct Volume<'a> {
+    /// The UUID of the project in a multi-tenancy cloud.
+    #[builder(default, setter(into))]
+    project_id: Cow<'a, str>,
+
     /// Volume ID
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
@@ -56,7 +60,12 @@ impl<'a> RestEndpoint for Volume<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("volumes/{id}", id = self.id.as_ref(),).into()
+        format!(
+            "{project_id}/volumes/{id}",
+            project_id = self.project_id.as_ref(),
+            id = self.id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -107,15 +116,22 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/volumes/{id}", id = "id",));
+            when.method(httpmock::Method::GET).path(format!(
+                "/{project_id}/volumes/{id}",
+                project_id = "project_id",
+                id = "id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "volume": {} }));
         });
 
-        let endpoint = Volume::builder().id("id").build().unwrap();
+        let endpoint = Volume::builder()
+            .project_id("project_id")
+            .id("id")
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -125,7 +141,11 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/volumes/{id}", id = "id",))
+                .path(format!(
+                    "/{project_id}/volumes/{id}",
+                    project_id = "project_id",
+                    id = "id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -134,6 +154,7 @@ mod tests {
         });
 
         let endpoint = Volume::builder()
+            .project_id("project_id")
             .id("id")
             .headers(
                 [(

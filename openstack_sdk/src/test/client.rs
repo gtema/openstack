@@ -25,6 +25,8 @@ use url::Url;
 use serde_json::json;
 
 use crate::api::{ApiError, AsyncClient, Client, RestClient};
+use crate::catalog::ServiceEndpoint;
+use crate::types::identity::v3::Project;
 use crate::types::{BoxedAsyncRead, ServiceType};
 use crate::RestError;
 
@@ -168,6 +170,22 @@ impl<T> RestClient for PagedTestClient<T> {
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!("{}/{}", CLIENT_STUB, endpoint))?)
+    }
+
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(ServiceEndpoint {
+            url: Url::parse(CLIENT_STUB)?,
+            discovered: true,
+            versions: Vec::new(),
+            current_version: None,
+        })
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
     }
 }
 
@@ -329,6 +347,22 @@ impl RestClient for MockServerClient {
             endpoint
         ))?)
     }
+
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(ServiceEndpoint {
+            url: Url::parse(&format!("{}", self.server.base_url()))?,
+            discovered: true,
+            versions: Vec::new(),
+            current_version: None,
+        })
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
+    }
 }
 
 impl Client for MockServerClient {
@@ -384,6 +418,22 @@ impl RestClient for MockAsyncServerClient {
             self.server.base_url(),
             endpoint
         ))?)
+    }
+
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(ServiceEndpoint {
+            url: Url::parse(&format!("{}", self.server.base_url()))?,
+            discovered: true,
+            versions: Vec::new(),
+            current_version: None,
+        })
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
     }
 }
 

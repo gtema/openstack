@@ -68,7 +68,8 @@ pub struct Flavor {
     disk: Option<u32>,
 
     /// A dictionary of the flavor's extra-specs key-and-value pairs.
-    extra_specs: HashMapStringString,
+    #[structable(optional)]
+    extra_specs: Option<HashMapStringString>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.

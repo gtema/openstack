@@ -33,10 +33,11 @@ pub enum CatalogError {
 
 /// ServiceEndpoint data
 #[derive(Debug, Clone)]
-pub(crate) struct ServiceEndpoint {
+pub struct ServiceEndpoint {
     pub url: Url,
     pub discovered: bool,
     pub versions: Vec<EndpointVersion>,
+    pub current_version: Option<EndpointVersion>,
 }
 
 impl ServiceEndpoint {
@@ -44,14 +45,17 @@ impl ServiceEndpoint {
     pub fn process_discovery(&mut self, data: &Bytes) -> Result<(), CatalogError> {
         // Unversioned endpoint normally returns: `{versions: []}`
         if let Ok(versions) = serde_json::from_slice::<EndpointVersions>(data) {
+            self.versions.clear();
             for ver in versions.versions {
                 self.process_version_information(&ver)?;
             }
-        } else if let Ok(version) = serde_json::from_slice::<EndpointVersion>(data) {
+        } else if let Ok(version) = serde_json::from_slice::<EndpointVersionContainer>(data) {
             // Versioned endpoint normally returns: `{version: {}}`
-            self.process_version_information(&version)?;
+            self.versions.clear();
+            self.process_version_information(&version.version)?;
         } else if let Ok(vers) = serde_json::from_slice::<EndpointVersionsValues>(data) {
             // Keystone returns `{versions: {values: []}}}`
+            self.versions.clear();
             for ver in vers.versions.values {
                 self.process_version_information(&ver)?;
             }
@@ -63,7 +67,9 @@ impl ServiceEndpoint {
 
     /// Process single Endpoint Version information
     fn process_version_information(&mut self, ver: &EndpointVersion) -> Result<(), CatalogError> {
+        self.versions.push(ver.clone());
         if ver.status == EndpointVersionStatus::Current {
+            self.current_version = Some(ver.clone());
             for link in &ver.links {
                 if link.rel == "self" {
                     self.url = Url::parse(&link.href)
@@ -78,7 +84,7 @@ impl ServiceEndpoint {
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(remote = "EndpointVersionStatus")]
-pub(crate) enum EndpointVersionStatus {
+pub enum EndpointVersionStatus {
     Current,
     Supported,
     Deprecated,
@@ -107,14 +113,20 @@ impl<'de> Deserialize<'de> for EndpointVersionStatus {
 
 /// Link structure
 #[derive(Debug, Deserialize, Clone)]
-pub(crate) struct Link {
+pub struct Link {
     pub href: String,
     pub rel: String,
 }
 
+/// Single Endpoint Version structure
+#[derive(Debug, Deserialize, Clone)]
+pub struct EndpointVersionContainer {
+    pub version: EndpointVersion,
+}
+
 /// Single Endpoint Version structure representation
 #[derive(Debug, Deserialize, Clone)]
-pub(crate) struct EndpointVersion {
+pub struct EndpointVersion {
     pub id: String,
     pub status: EndpointVersionStatus,
     pub version: Option<String>,
@@ -172,6 +184,7 @@ impl Catalog {
                     .with_context(|| format!("Wrong endpoint URL: `{}`", fixed_url))?,
                 discovered: false,
                 versions: Vec::new(),
+                current_version: None,
             },
         );
         Ok(())
@@ -207,17 +220,22 @@ impl Catalog {
     }
 
     /// Get URL for the endpoint by the service_type
-    pub(crate) fn get_service_endpoint(&self, service_type: &ServiceType) -> Option<Url> {
+    pub(crate) fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+    ) -> Option<ServiceEndpoint> {
         trace!("Requested service {} endpoint", service_type);
         for cat_type in service_type.get_supported_catalog_types() {
             if let Some(sep) = self.service_endpoints.get(&cat_type.to_string()) {
                 debug!("Service endpoint url = {}", sep.url);
-                return Some(sep.url.clone());
+                info!("Service info = {:?}", sep);
+                return Some(sep.clone());
             }
         }
         None
     }
 
+    /// Return catalog endpoints as returned in the authorization response
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {
         self.token_catalog.clone()
     }

@@ -148,35 +148,35 @@ pub struct ServersArgs {
 
     /// access_ipv4 filter parameter
     #[arg(long)]
-    access_ip_v4: Option<String>,
+    access_ipv4: Option<String>,
 
     /// access_ipv6 filter parameter
     #[arg(long)]
-    access_ip_v6: Option<String>,
+    access_ipv6: Option<String>,
 
     /// has_config_drive filter parameter
     #[arg(long)]
-    config_drive: Option<String>,
+    has_config_drive: Option<String>,
 
     /// deleted_only filter parameter
     #[arg(long)]
-    deleted: Option<String>,
+    deleted_only: Option<String>,
 
     /// compute_host filter parameter
     #[arg(long)]
-    host: Option<String>,
+    compute_host: Option<String>,
 
     /// is_soft_deleted filter parameter
     #[arg(long)]
-    soft_deleted: Option<String>,
+    is_soft_deleted: Option<String>,
 
     /// ipv4_address filter parameter
     #[arg(long)]
-    ip: Option<String>,
+    ipv4_address: Option<String>,
 
     /// ipv6_address filter parameter
     #[arg(long)]
-    ip6: Option<String>,
+    ipv6_address: Option<String>,
 
     /// changes_since filter parameter
     #[arg(long)]
@@ -188,11 +188,11 @@ pub struct ServersArgs {
 
     /// id filter parameter
     #[arg(long)]
-    uuid: Option<String>,
+    id: Option<String>,
 
     /// all_projects filter parameter
     #[arg(long)]
-    all_tenants: Option<String>,
+    all_projects: Option<String>,
 
     /// tags filter parameter
     #[arg(long, action=clap::ArgAction::Append)]
@@ -200,7 +200,7 @@ pub struct ServersArgs {
 
     /// any_tags filter parameter
     #[arg(long, action=clap::ArgAction::Append)]
-    tags_any: Option<Vec<String>>,
+    any_tags: Option<Vec<String>>,
 
     /// not_tags filter parameter
     #[arg(long, action=clap::ArgAction::Append)]
@@ -208,7 +208,7 @@ pub struct ServersArgs {
 
     /// not_any_tags filter parameter
     #[arg(long, action=clap::ArgAction::Append)]
-    not_tags_any: Option<Vec<String>>,
+    not_any_tags: Option<Vec<String>>,
 
     /// Total limit of entities count to return. Use this when there are too many entries.
     #[arg(long, default_value_t = 10000)]
@@ -299,7 +299,7 @@ pub struct Servers {
     /// The power state of this server.
     #[serde(rename = "OS-EXT-STS:power_state")]
     #[structable(optional, wide)]
-    power_state: Option<String>,
+    power_state: Option<u32>,
 
     /// The task state of this server.
     #[serde(rename = "OS-EXT-STS:task_state")]
@@ -313,8 +313,8 @@ pub struct Servers {
 
     /// The dictionary of data to send to the scheduler.
     #[serde(rename = "OS-SCH-HNT:scheduler_hints")]
-    #[structable(wide)]
-    scheduler_hints: HashMapStringString,
+    #[structable(optional, wide)]
+    scheduler_hints: Option<HashMapStringString>,
 
     /// The timestamp when the server was launched.
     #[serde(rename = "OS-SRV-USG:launched_at")]
@@ -342,8 +342,8 @@ pub struct Servers {
     /// addresses are contained in a dictionary with keys ``addr`` and
     /// ``version``, which is either 4 or 6 depending on the protocol of the IP
     /// address.
-    #[structable(wide)]
-    addresses: HashMapStringString,
+    #[structable(optional, wide)]
+    addresses: Option<HashMapStringString>,
 
     /// When a server is first created, it provides the administrator password.
     #[serde(rename = "adminPass")]
@@ -378,8 +378,8 @@ pub struct Servers {
     fault: Option<String>,
 
     /// The flavor property as returned from server.
-    #[structable(wide)]
-    flavor: HashMapStringString,
+    #[structable(optional, wide)]
+    flavor: Option<HashMapStringString>,
 
     /// The flavor reference, as a ID or full URL, for the flavor to use for
     /// this server.
@@ -401,8 +401,8 @@ pub struct Servers {
     id: Option<String>,
 
     /// The image property as returned from server.
-    #[structable(wide)]
-    image: HashMapStringString,
+    #[structable(optional, wide)]
+    image: Option<HashMapStringString>,
 
     /// The image reference, as a ID or full URL, for the image to use for this
     /// server.
@@ -413,10 +413,6 @@ pub struct Servers {
     /// The name of an associated keypair
     #[structable(optional, wide)]
     key_name: Option<String>,
-
-    /// A list of dictionaries holding links relevant to this server.
-    #[structable(optional, wide)]
-    links: Option<String>,
 
     /// True if the instance is locked otherwise False.
     /// New in version 2.9
@@ -430,8 +426,8 @@ pub struct Servers {
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
     /// backward compatibility.
-    #[structable(wide)]
-    metadata: HashMapStringString,
+    #[structable(optional, wide)]
+    metadata: Option<HashMapStringString>,
 
     /// The minimum number of servers to create.
     #[structable(optional, wide)]
@@ -601,29 +597,29 @@ impl Command for ServersCmd {
         if let Some(val) = &self.args.sort_dir {
             ep_builder.sort_dir(val);
         }
-        if let Some(val) = &self.args.access_ip_v4 {
-            ep_builder.access_ip_v4(val);
+        if let Some(val) = &self.args.access_ipv4 {
+            ep_builder.access_ipv4(val);
         }
-        if let Some(val) = &self.args.access_ip_v6 {
-            ep_builder.access_ip_v6(val);
+        if let Some(val) = &self.args.access_ipv6 {
+            ep_builder.access_ipv6(val);
         }
-        if let Some(val) = &self.args.config_drive {
-            ep_builder.config_drive(val);
+        if let Some(val) = &self.args.has_config_drive {
+            ep_builder.has_config_drive(val);
         }
-        if let Some(val) = &self.args.deleted {
-            ep_builder.deleted(val);
+        if let Some(val) = &self.args.deleted_only {
+            ep_builder.deleted_only(val);
         }
-        if let Some(val) = &self.args.host {
-            ep_builder.host(val);
+        if let Some(val) = &self.args.compute_host {
+            ep_builder.compute_host(val);
         }
-        if let Some(val) = &self.args.soft_deleted {
-            ep_builder.soft_deleted(val);
+        if let Some(val) = &self.args.is_soft_deleted {
+            ep_builder.is_soft_deleted(val);
         }
-        if let Some(val) = &self.args.ip {
-            ep_builder.ip(val);
+        if let Some(val) = &self.args.ipv4_address {
+            ep_builder.ipv4_address(val);
         }
-        if let Some(val) = &self.args.ip6 {
-            ep_builder.ip6(val);
+        if let Some(val) = &self.args.ipv6_address {
+            ep_builder.ipv6_address(val);
         }
         if let Some(val) = &self.args.changes_since {
             ep_builder.changes_since(val);
@@ -631,23 +627,23 @@ impl Command for ServersCmd {
         if let Some(val) = &self.args.changes_before {
             ep_builder.changes_before(val);
         }
-        if let Some(val) = &self.args.uuid {
-            ep_builder.uuid(val);
+        if let Some(val) = &self.args.id {
+            ep_builder.id(val);
         }
-        if let Some(val) = &self.args.all_tenants {
-            ep_builder.all_tenants(val);
+        if let Some(val) = &self.args.all_projects {
+            ep_builder.all_projects(val);
         }
         if let Some(val) = &self.args.tags {
             ep_builder.tags(val.iter());
         }
-        if let Some(val) = &self.args.tags_any {
-            ep_builder.tags_any(val.iter());
+        if let Some(val) = &self.args.any_tags {
+            ep_builder.any_tags(val.iter());
         }
         if let Some(val) = &self.args.not_tags {
             ep_builder.not_tags(val.iter());
         }
-        if let Some(val) = &self.args.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
+        if let Some(val) = &self.args.not_any_tags {
+            ep_builder.not_any_tags(val.iter());
         }
         // Set body parameters
         let ep = ep_builder

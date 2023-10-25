@@ -5,13 +5,23 @@ This document contains the help content for the `osc` command-line program.
 **Command Overview:**
 
 * [`osc`↴](#osc)
+* [`osc block-storage`↴](#osc-block-storage)
+* [`osc block-storage volume`↴](#osc-block-storage-volume)
+* [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
+* [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc compute`↴](#osc-compute)
 * [`osc compute server`↴](#osc-compute-server)
 * [`osc compute server list`↴](#osc-compute-server-list)
 * [`osc compute server show`↴](#osc-compute-server-show)
+* [`osc compute server pause`↴](#osc-compute-server-pause)
 * [`osc compute flavor`↴](#osc-compute-flavor)
 * [`osc compute flavor list`↴](#osc-compute-flavor-list)
 * [`osc compute flavor show`↴](#osc-compute-flavor-show)
+* [`osc compute keypair`↴](#osc-compute-keypair)
+* [`osc compute keypair list`↴](#osc-compute-keypair-list)
+* [`osc compute keypair show`↴](#osc-compute-keypair-show)
+* [`osc compute keypair create`↴](#osc-compute-keypair-create)
+* [`osc compute keypair delete`↴](#osc-compute-keypair-delete)
 * [`osc image`↴](#osc-image)
 * [`osc image image`↴](#osc-image-image)
 * [`osc image image list`↴](#osc-image-image-list)
@@ -48,6 +58,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc object-store object upload`↴](#osc-object-store-object-upload)
 * [`osc object-store object show`↴](#osc-object-store-object-show)
 * [`osc object-store object delete`↴](#osc-object-store-object-delete)
+* [`osc catalog`↴](#osc-catalog)
+* [`osc catalog list`↴](#osc-catalog-list)
 * [`osc api`↴](#osc-api)
 
 ## `osc`
@@ -58,9 +70,11 @@ OpenStack client rewritten in Rust
 
 ###### **Subcommands:**
 
+* `block-storage` — Block Storage (Volume) service (Cinder) commands
 * `compute` — Compute service (Nova) commands
 * `image` — Image (Glance) commands
 * `object-store` — Object Store service (Swift) commands
+* `catalog` — Shows current catalog information
 * `api` — Perform direct REST API requests with authorization
 
 ###### **Options:**
@@ -81,6 +95,69 @@ OpenStack client rewritten in Rust
 
 
 
+## `osc block-storage`
+
+Block Storage (Volume) service (Cinder) commands
+
+**Usage:** `osc block-storage [OPTIONS]
+       block-storage <COMMAND>`
+
+###### **Subcommands:**
+
+* `volume` — Volume commands
+
+###### **Options:**
+
+* `--os-volume-api-version <OS_VOLUME_API_VERSION>` — BlockStorage API microversion
+
+
+
+## `osc block-storage volume`
+
+Volume commands
+
+**Usage:** `osc block-storage volume <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Volumes
+* `show` — Show single volume
+
+
+
+## `osc block-storage volume list`
+
+List Volumes
+
+**Usage:** `osc block-storage volume list [OPTIONS]`
+
+###### **Options:**
+
+* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
+* `--all-projects` — all_projects filter parameter
+* `--name <NAME>` — Name filter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage volume show`
+
+Show single volume
+
+**Usage:** `osc block-storage volume show [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Volume ID
+
+###### **Options:**
+
+* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
+
+
+
 ## `osc compute`
 
 Compute service (Nova) commands
@@ -92,6 +169,7 @@ Compute service (Nova) commands
 
 * `server` — Server (VM) commands
 * `flavor` — Flavor commands
+* `keypair` — Keypair commands
 
 ###### **Options:**
 
@@ -110,6 +188,7 @@ Server (VM) commands
 
 * `list` — List Servers
 * `show` — Show single Server
+* `pause` — Pause Server
 
 
 
@@ -150,23 +229,23 @@ List Servers
 * `--vm-state <VM_STATE>` — vm_state filter parameter
 * `--sort-key <SORT_KEY>` — sort_key filter parameter
 * `--sort-dir <SORT_DIR>` — sort_dir filter parameter
-* `--access-ip-v4 <ACCESS_IP_V4>` — access_ipv4 filter parameter
-* `--access-ip-v6 <ACCESS_IP_V6>` — access_ipv6 filter parameter
-* `--config-drive <CONFIG_DRIVE>` — has_config_drive filter parameter
-* `--deleted <DELETED>` — deleted_only filter parameter
-* `--host <HOST>` — compute_host filter parameter
-* `--soft-deleted <SOFT_DELETED>` — is_soft_deleted filter parameter
-* `--ip <IP>` — ipv4_address filter parameter
-* `--ip6 <IP6>` — ipv6_address filter parameter
+* `--access-ipv4 <ACCESS_IPV4>` — access_ipv4 filter parameter
+* `--access-ipv6 <ACCESS_IPV6>` — access_ipv6 filter parameter
+* `--has-config-drive <HAS_CONFIG_DRIVE>` — has_config_drive filter parameter
+* `--deleted-only <DELETED_ONLY>` — deleted_only filter parameter
+* `--compute-host <COMPUTE_HOST>` — compute_host filter parameter
+* `--is-soft-deleted <IS_SOFT_DELETED>` — is_soft_deleted filter parameter
+* `--ipv4-address <IPV4_ADDRESS>` — ipv4_address filter parameter
+* `--ipv6-address <IPV6_ADDRESS>` — ipv6_address filter parameter
 * `--changes-since <CHANGES_SINCE>` — changes_since filter parameter
 * `--changes-before <CHANGES_BEFORE>` — changes_before filter parameter
-* `--uuid <UUID>` — id filter parameter
-* `--all-tenants <ALL_TENANTS>` — all_projects filter parameter
+* `--id <ID>` — id filter parameter
+* `--all-projects <ALL_PROJECTS>` — all_projects filter parameter
 * `--tags <TAGS>` — tags filter parameter
-* `--tags-any <TAGS_ANY>` — any_tags filter parameter
+* `--any-tags <ANY_TAGS>` — any_tags filter parameter
 * `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-tags-any <NOT_TAGS_ANY>` — not_any_tags filter parameter
-* `--max-entities <MAX_ENTITIES>` — Total limit of entities count to return. Use this when there are too many entries
+* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
 
@@ -177,6 +256,18 @@ List Servers
 Show single Server
 
 **Usage:** `osc compute server show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Server ID
+
+
+
+## `osc compute server pause`
+
+Pause Server
+
+**Usage:** `osc compute server pause <ID>`
 
 ###### **Arguments:**
 
@@ -207,13 +298,10 @@ List Servers
 
 * `--min-disk <MIN_DISK>` — Filters the response by a minimum disk space, in GiB. For example, 100
 * `--min-ram <MIN_RAM>` — Filters the response by a minimum RAM, in MiB. For example, 512
-* `--is-public <IS_PUBLIC>` — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request
-
-  Possible values: `true`, `false`
-
+* `--is-public` — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request
 * `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
-* `--max-entities <MAX_ENTITIES>` — Total limit of entities count to return. Use this when there are too many entries
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
 
@@ -228,6 +316,85 @@ Show single Server
 ###### **Arguments:**
 
 * `<ID>` — Flavor ID
+
+
+
+## `osc compute keypair`
+
+Keypair commands
+
+**Usage:** `osc compute keypair <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Keypairs
+* `show` — Show single Keypair
+* `create` — Create Keypair
+* `delete` — Delete Keypair
+
+
+
+## `osc compute keypair list`
+
+List Keypairs
+
+**Usage:** `osc compute keypair list [OPTIONS]`
+
+###### **Options:**
+
+* `--user-id <USER_ID>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the last-seen item from the response as the marker parameter value in a subsequent limited request. New in version 2.35
+* `--marker <MARKER>` — The last-seen item. Use the limit parameter to make an initial limited request and use the last-seen item from the response as the marker parameter value in a subsequent limited request. New in version 2.35
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc compute keypair show`
+
+Show single Keypair
+
+**Usage:** `osc compute keypair show [OPTIONS] <KEYPAIR_NAME>`
+
+###### **Arguments:**
+
+* `<KEYPAIR_NAME>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+
+###### **Options:**
+
+* `--user-id <USER_ID>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+
+
+
+## `osc compute keypair create`
+
+Create Keypair
+
+**Usage:** `osc compute keypair create [OPTIONS] --name <NAME> --public-key <PUBLIC_KEY>`
+
+###### **Options:**
+
+* `--name <NAME>` — A name for the keypair which will be used to reference it later. Note: Since microversion 2.92, allowed characters are ASCII letters [a-zA-Z], digits [0-9] and the following special characters: [@._- ]
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
+* `--xtype <XTYPE>` — The type of the keypair. Allowed values are ssh or x509. New in version 2.2
+* `--user-id <USER_ID>` — The user_id for a keypair
+
+
+
+## `osc compute keypair delete`
+
+Delete Keypair
+
+**Usage:** `osc compute keypair delete [OPTIONS] <KEYPAIR_NAME>`
+
+###### **Arguments:**
+
+* `<KEYPAIR_NAME>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+
+###### **Options:**
+
+* `--user-id <USER_ID>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
 
 
 
@@ -285,17 +452,14 @@ List Images
 * `--size-min <SIZE_MIN>` — size_min filter parameter
 * `--size-max <SIZE_MAX>` — size_max filter parameter
 * `--protected <PROTECTED>` — protected filter parameter
-* `--os-hidden <OS_HIDDEN>` — is_hidden filter parameter
-
-  Possible values: `true`, `false`
-
+* `--is-hidden` — is_hidden filter parameter
 * `--sort-key <SORT_KEY>` — sort_key filter parameter
 * `--sort-dir <SORT_DIR>` — sort_dir filter parameter
 * `--sort <SORT>` — sort filter parameter
 * `--tag <TAG>` — tag filter parameter
 * `--created-at <CREATED_AT>` — created_at filter parameter
 * `--updated-at <UPDATED_AT>` — updated_at filter parameter
-* `--max-entities <MAX_ENTITIES>` — Total limit of entities count to return. Use this when there are too many entries
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
 
@@ -660,11 +824,8 @@ Shows details for an account and lists containers, sorted by name, in the accoun
 * `--format <FORMAT>` — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines
 * `--prefix <PREFIX>` — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
 * `--delimiter <DELIMITER>` — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
-* `--reverse <REVERSE>` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
-
-  Possible values: `true`, `false`
-
-* `--max-entities <MAX_ENTITIES>` — Total limit of entities count to return. Use this when there are too many entries
+* `--reverse` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
 
@@ -756,11 +917,8 @@ Shows details for a container and lists objects, sorted by name, in the containe
 * `--format <FORMAT>` — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines
 * `--prefix <PREFIX>` — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
 * `--delimiter <DELIMITER>` — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
-* `--reverse <REVERSE>` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
-
-  Possible values: `true`, `false`
-
-* `--max-entities <MAX_ENTITIES>` — Total limit of entities to return
+* `--reverse` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
 
@@ -845,6 +1003,26 @@ Permanently deletes an object from the object store. Object deletion occurs imme
 ###### **Options:**
 
 * `--multipart-manifest <MULTIPART_MANIFEST>` — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects
+
+
+
+## `osc catalog`
+
+Shows current catalog information
+
+**Usage:** `osc catalog <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List catalog command arguments
+
+
+
+## `osc catalog list`
+
+List catalog command arguments
+
+**Usage:** `osc catalog list`
 
 
 

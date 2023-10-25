@@ -25,6 +25,7 @@ use crate::common::HashMapStringString;
 use crate::common::VecValue;
 use openstack_sdk::api::block_storage::v3::volumes::detail::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RestClient;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 
@@ -33,13 +34,17 @@ use serde_json::Value;
 /// return bad request.
 #[derive(Args, Clone, Debug)]
 pub struct VolumesArgs {
-    /// Name filter
-    #[arg(long)]
-    name: Option<String>,
-
     /// The UUID of the project in a multi-tenancy cloud.
     #[arg(long)]
     project_id: Option<String>,
+
+    /// all_projects filter parameter
+    #[arg(long, action=clap::ArgAction::SetTrue)]
+    all_projects: Option<bool>,
+
+    /// Name filter
+    #[arg(long)]
+    name: Option<String>,
 
     /// Total limit of entities count to return. Use this when there are too many entries.
     #[arg(long, default_value_t = 10000)]
@@ -229,12 +234,22 @@ impl Command for VolumesCmd {
         op.validate_args(parsed_args)?;
         let mut ep_builder = get::Volumes::builder();
         // Set path parameters
-        // Set query parameters
-        if let Some(val) = &self.args.name {
-            ep_builder.name(val);
-        }
         if let Some(val) = &self.args.project_id {
             ep_builder.project_id(val);
+        } else {
+            ep_builder.project_id(
+                client
+                    .get_current_project()
+                    .expect("Project ID must be known")
+                    .id,
+            );
+        }
+        // Set query parameters
+        if let Some(val) = &self.args.all_projects {
+            ep_builder.all_projects(*val);
+        }
+        if let Some(val) = &self.args.name {
+            ep_builder.name(val);
         }
         // Set body parameters
         let ep = ep_builder

@@ -206,6 +206,15 @@ impl JsonBodyParams {
         let body = self.data.to_string();
         Ok(Some(("application/json", body.into_bytes())))
     }
+    ///
+    /// Encode the parameters into a request body.
+    pub fn into_body_with_root_key(
+        self,
+        key: &'static str,
+    ) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let body = json!({ key: self.data}).to_string();
+        Ok(Some(("application/json", body.into_bytes())))
+    }
 }
 
 #[cfg(test)]
