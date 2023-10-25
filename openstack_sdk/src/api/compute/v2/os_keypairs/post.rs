@@ -94,7 +94,7 @@ impl<'a> RestEndpoint for Keypairs<'a> {
         params.push_opt("type", self.xtype.as_ref());
         params.push_opt("user_id", self.user_id.as_ref());
 
-        params.into_body()
+        params.into_body_with_root_key("keypair")
     }
 
     fn service_type(&self) -> ServiceType {
@@ -197,10 +197,12 @@ mod tests {
         assert_eq!(
             std::str::from_utf8(&body).unwrap(),
             json!({
+              "keypair": {
                  "name": "name",
                  "public_key": "public_key",
                  "type": "type",
                  "user_id": "user_id",
+              }
             })
             .to_string()
         );
