@@ -1,5 +1,4 @@
-//! Object Store service (Swift) Account resource
-
+//! `/` REST operations of object_store
 pub mod delete;
 pub mod get;
 pub mod head;

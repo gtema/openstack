@@ -16,6 +16,7 @@ pub mod block_storage;
 pub mod compute;
 pub mod identity;
 pub mod image;
+pub mod network;
 pub mod object_store;
 
 pub use self::error::ApiError;

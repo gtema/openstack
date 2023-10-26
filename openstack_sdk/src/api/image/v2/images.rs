@@ -1,3 +1,3 @@
-//! Operations on images (list, create)
+//! `/images` REST operations of image
 pub mod get;
 pub mod post;

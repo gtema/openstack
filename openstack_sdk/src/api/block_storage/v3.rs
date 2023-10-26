@@ -1,4 +1,3 @@
-//! Block Storage (cinder) API v3 bindings
-//!
+//! `Block_storage` Service bindings
 pub mod volume;
 pub mod volumes;

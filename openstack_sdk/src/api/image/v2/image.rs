@@ -1,5 +1,4 @@
-//! Single image operations
-//!
+//! `/images/{id}` REST operations of image
 pub mod actions;
 pub mod delete;
 pub mod file;
