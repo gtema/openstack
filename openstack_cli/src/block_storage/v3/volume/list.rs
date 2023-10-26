@@ -39,7 +39,7 @@ pub struct VolumesArgs {
     project_id: Option<String>,
 
     /// all_projects filter parameter
-    #[arg(long, action=clap::ArgAction::SetTrue)]
+    #[arg(long, action=clap::ArgAction::Set)]
     all_projects: Option<bool>,
 
     /// Name filter

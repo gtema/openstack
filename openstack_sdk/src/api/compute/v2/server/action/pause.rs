@@ -71,7 +71,6 @@ impl<'a> RestEndpoint for Server<'a> {
         let mut params = JsonBodyParams::default();
 
         params.push("pause", None::<String>);
-
         params.into_body()
     }
 

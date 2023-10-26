@@ -135,10 +135,6 @@ pub struct ImageArgs {
     #[arg(long)]
     disk_format: Option<String>,
 
-    /// If true, enables the BIOS bootmenu.
-    #[arg(long)]
-    is_hw_boot_menu_enabled: Option<bool>,
-
     /// The preferred number of cores to expose to the guest.
     #[arg(long)]
     hw_cpu_cores: Option<u32>,
@@ -147,10 +143,6 @@ pub struct ImageArgs {
     /// physical CPU cores (pCPUs).
     #[arg(long)]
     hw_cpu_policy: Option<String>,
-
-    /// The preferred number of sockets to expose to the guest.
-    #[arg(long)]
-    hw_cpu_sockets: Option<u32>,
 
     /// Defines how hardware CPU threads in a simultaneous multithreading-based
     /// (SMT) architecture be used.
@@ -202,13 +194,6 @@ pub struct ImageArgs {
     /// Specifies the model of virtual network interface device to use.
     #[arg(long)]
     hw_vif_model: Option<String>,
-
-    /// If true, this enables the virtio-net multiqueue feature. In this case,
-    /// the driver sets the number of queues equal to the number of guest
-    /// vCPUs. This makes the network performance scale across a number of
-    /// vCPUs.
-    #[arg(long)]
-    is_hw_vif_multiqueue_enabled: Option<bool>,
 
     /// Enables a virtual hardware watchdog device that carries out the
     /// specified action if the server hangs.
@@ -396,11 +381,6 @@ pub struct Image {
     #[structable(optional)]
     file: Option<String>,
 
-    /// If true, enables the BIOS bootmenu.
-    #[serde(rename = "hw_boot_menu")]
-    #[structable(optional)]
-    is_hw_boot_menu_enabled: Option<bool>,
-
     /// The preferred number of cores to expose to the guest.
     #[structable(optional)]
     hw_cpu_cores: Option<u32>,
@@ -409,10 +389,6 @@ pub struct Image {
     /// physical CPU cores (pCPUs).
     #[structable(optional)]
     hw_cpu_policy: Option<String>,
-
-    /// The preferred number of sockets to expose to the guest.
-    #[structable(optional)]
-    hw_cpu_sockets: Option<u32>,
 
     /// Defines how hardware CPU threads in a simultaneous multithreading-based
     /// (SMT) architecture be used.
@@ -464,14 +440,6 @@ pub struct Image {
     /// Specifies the model of virtual network interface device to use.
     #[structable(optional)]
     hw_vif_model: Option<String>,
-
-    /// If true, this enables the virtio-net multiqueue feature. In this case,
-    /// the driver sets the number of queues equal to the number of guest
-    /// vCPUs. This makes the network performance scale across a number of
-    /// vCPUs.
-    #[serde(rename = "hw_vif_multiqueue_enabled")]
-    #[structable(optional)]
-    is_hw_vif_multiqueue_enabled: Option<bool>,
 
     /// Enables a virtual hardware watchdog device that carries out the
     /// specified action if the server hangs.
@@ -686,17 +654,11 @@ impl Command for ImageCmd {
         if let Some(val) = &self.args.disk_format {
             new.disk_format = Some(val.into());
         }
-        if let Some(val) = &self.args.is_hw_boot_menu_enabled {
-            new.is_hw_boot_menu_enabled = Some(*val);
-        }
         if let Some(val) = &self.args.hw_cpu_cores {
             new.hw_cpu_cores = Some(*val);
         }
         if let Some(val) = &self.args.hw_cpu_policy {
             new.hw_cpu_policy = Some(val.into());
-        }
-        if let Some(val) = &self.args.hw_cpu_sockets {
-            new.hw_cpu_sockets = Some(*val);
         }
         if let Some(val) = &self.args.hw_cpu_thread_policy {
             new.hw_cpu_thread_policy = Some(val.into());
@@ -730,9 +692,6 @@ impl Command for ImageCmd {
         }
         if let Some(val) = &self.args.hw_vif_model {
             new.hw_vif_model = Some(val.into());
-        }
-        if let Some(val) = &self.args.is_hw_vif_multiqueue_enabled {
-            new.is_hw_vif_multiqueue_enabled = Some(*val);
         }
         if let Some(val) = &self.args.hw_watchdog_action {
             new.hw_watchdog_action = Some(val.into());

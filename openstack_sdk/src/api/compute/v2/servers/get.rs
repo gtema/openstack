@@ -11,6 +11,8 @@ use std::collections::BTreeSet;
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
+use crate::api::Pageable;
+
 /// Query for servers.get operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
@@ -77,6 +79,7 @@ impl RestEndpoint for Servers {
         self._headers.as_ref()
     }
 }
+impl Pageable for Servers {}
 
 #[cfg(test)]
 mod tests {

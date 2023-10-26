@@ -153,11 +153,6 @@ pub struct Image {
     #[structable(optional)]
     file: Option<String>,
 
-    /// If true, enables the BIOS bootmenu.
-    #[serde(rename = "hw_boot_menu")]
-    #[structable(optional)]
-    is_hw_boot_menu_enabled: Option<bool>,
-
     /// The preferred number of cores to expose to the guest.
     #[structable(optional)]
     hw_cpu_cores: Option<u32>,
@@ -166,10 +161,6 @@ pub struct Image {
     /// physical CPU cores (pCPUs).
     #[structable(optional)]
     hw_cpu_policy: Option<String>,
-
-    /// The preferred number of sockets to expose to the guest.
-    #[structable(optional)]
-    hw_cpu_sockets: Option<u32>,
 
     /// Defines how hardware CPU threads in a simultaneous multithreading-based
     /// (SMT) architecture be used.
@@ -221,14 +212,6 @@ pub struct Image {
     /// Specifies the model of virtual network interface device to use.
     #[structable(optional)]
     hw_vif_model: Option<String>,
-
-    /// If true, this enables the virtio-net multiqueue feature. In this case,
-    /// the driver sets the number of queues equal to the number of guest
-    /// vCPUs. This makes the network performance scale across a number of
-    /// vCPUs.
-    #[serde(rename = "hw_vif_multiqueue_enabled")]
-    #[structable(optional)]
-    is_hw_vif_multiqueue_enabled: Option<bool>,
 
     /// Enables a virtual hardware watchdog device that carries out the
     /// specified action if the server hangs.

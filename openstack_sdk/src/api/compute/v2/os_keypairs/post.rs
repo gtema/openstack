@@ -93,7 +93,6 @@ impl<'a> RestEndpoint for Keypairs<'a> {
         params.push("public_key", self.public_key.as_ref());
         params.push_opt("type", self.xtype.as_ref());
         params.push_opt("user_id", self.user_id.as_ref());
-
         params.into_body_with_root_key("keypair")
     }
 
@@ -202,7 +201,7 @@ mod tests {
                  "public_key": "public_key",
                  "type": "type",
                  "user_id": "user_id",
-              }
+             }
             })
             .to_string()
         );

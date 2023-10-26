@@ -73,7 +73,7 @@ pub struct ImagesArgs {
     protected: Option<String>,
 
     /// is_hidden filter parameter
-    #[arg(long, action=clap::ArgAction::SetTrue)]
+    #[arg(long, action=clap::ArgAction::Set)]
     is_hidden: Option<bool>,
 
     /// sort_key filter parameter
@@ -156,10 +156,6 @@ pub struct Images {
     #[structable(optional, wide)]
     file: Option<String>,
 
-    //    /// If true, enables the BIOS bootmenu.
-    //    #[serde(rename = "hw_boot_menu")]
-    //    #[structable(optional, wide)]
-    //    is_hw_boot_menu_enabled: Option<bool>,
     /// The preferred number of cores to expose to the guest.
     #[structable(optional, wide)]
     hw_cpu_cores: Option<u32>,
@@ -168,10 +164,6 @@ pub struct Images {
     /// physical CPU cores (pCPUs).
     #[structable(optional, wide)]
     hw_cpu_policy: Option<String>,
-
-    /// The preferred number of sockets to expose to the guest.
-    #[structable(optional, wide)]
-    hw_cpu_sockets: Option<String>,
 
     /// Defines how hardware CPU threads in a simultaneous multithreading-based
     /// (SMT) architecture be used.
@@ -224,13 +216,6 @@ pub struct Images {
     #[structable(optional, wide)]
     hw_vif_model: Option<String>,
 
-    //    /// If true, this enables the virtio-net multiqueue feature. In this case,
-    //    /// the driver sets the number of queues equal to the number of guest
-    //    /// vCPUs. This makes the network performance scale across a number of
-    //    /// vCPUs.
-    //    #[serde(rename = "hw_vif_multiqueue_enabled")]
-    //    #[structable(optional, wide)]
-    //    is_hw_vif_multiqueue_enabled: Option<bool>,
     /// Enables a virtual hardware watchdog device that carries out the
     /// specified action if the server hangs.
     #[structable(optional, wide)]
@@ -453,9 +438,9 @@ impl Command for ImagesCmd {
         if let Some(val) = &self.args.protected {
             ep_builder.protected(val);
         }
-        //        if let Some(val) = &self.args.is_hidden {
-        //            ep_builder.is_hidden(*val);
-        //        }
+        if let Some(val) = &self.args.is_hidden {
+            ep_builder.is_hidden(*val);
+        }
         if let Some(val) = &self.args.sort_key {
             ep_builder.sort_key(val);
         }

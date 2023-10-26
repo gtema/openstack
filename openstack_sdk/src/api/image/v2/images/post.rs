@@ -146,7 +146,6 @@ impl<'a> RestEndpoint for Image<'a> {
         params.push_opt("protected", self.is_protected);
         params.push("tags", &self.tags);
         params.push_opt("visibility", self.visibility.as_ref());
-
         params.into_body()
     }
 

@@ -43,7 +43,7 @@ pub struct FlavorsArgs {
     /// are treated as False (they are case-insensitive). If the value is None
     /// (case-insensitive) both public and private flavors will be listed in a
     /// single request.
-    #[arg(long, action=clap::ArgAction::SetTrue)]
+    #[arg(long, action=clap::ArgAction::Set)]
     is_public: Option<bool>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
