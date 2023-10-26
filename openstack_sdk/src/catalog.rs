@@ -71,7 +71,9 @@ impl ServiceEndpoint {
         if ver.status == EndpointVersionStatus::Current {
             self.current_version = Some(ver.clone());
             for link in &ver.links {
-                if link.rel == "self" {
+                if link.rel == "self" && link.href.starts_with(self.url.as_str()) {
+                    // When link.rel is "self" and link.href is more preciese
+                    // than what we've got from catalog - take it as our endpoint
                     self.url = Url::parse(&link.href)
                         .with_context(|| format!("Wrong endpoint URL: `{}`", link.href))?;
                 }
