@@ -1,7 +1,7 @@
 //! Common helpers
 use crate::error::OpenStackCliError;
 
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt;
@@ -145,6 +145,51 @@ impl fmt::Display for VecHashMapStringString {
                 .collect::<Vec<String>>()
                 .join(",")
         )
+    }
+}
+
+/// NumString (Number or Number as string)
+#[derive(Clone, Debug, Serialize)]
+#[serde(transparent)]
+pub struct NumString(u64);
+impl fmt::Display for NumString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+impl<'de> Deserialize<'de> for NumString {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct MyVisitor;
+
+        impl<'de> Visitor<'de> for MyVisitor {
+            type Value = NumString;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+                fmt.write_str("integer or string")
+            }
+
+            fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(NumString(val))
+            }
+
+            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match val.parse::<u64>() {
+                    Ok(val) => self.visit_u64(val),
+                    Err(_) => Ok(NumString(0)),
+                }
+            }
+        }
+
+        deserializer.deserialize_any(MyVisitor)
     }
 }
 

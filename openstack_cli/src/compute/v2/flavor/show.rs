@@ -19,6 +19,7 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::parse_key_val;
 use crate::common::HashMapStringString;
+use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::find;
 use openstack_sdk::api::compute::v2::flavor::get;
 use openstack_sdk::api::find;
@@ -105,7 +106,7 @@ pub struct Flavor {
     /// empty string ('') is used to represent 0. As of microversion 2.75
     /// default return value of swap is 0 instead of empty string.
     #[structable(optional)]
-    swap: Option<u32>,
+    swap: Option<NumString>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[structable(optional)]
