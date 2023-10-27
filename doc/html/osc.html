@@ -213,6 +213,12 @@
 <li><a href="#osc-image-schema-member-show"><code>osc image schema member show</code>↴</a></li>
 <li><a href="#osc-image-schema-members"><code>osc image schema members</code>↴</a></li>
 <li><a href="#osc-image-schema-members-show"><code>osc image schema members show</code>↴</a></li>
+<li><a href="#osc-network"><code>osc network</code>↴</a></li>
+<li><a href="#osc-network-router"><code>osc network router</code>↴</a></li>
+<li><a href="#osc-network-router-list"><code>osc network router list</code>↴</a></li>
+<li><a href="#osc-network-router-show"><code>osc network router show</code>↴</a></li>
+<li><a href="#osc-network-router-create"><code>osc network router create</code>↴</a></li>
+<li><a href="#osc-network-router-delete"><code>osc network router delete</code>↴</a></li>
 <li><a href="#osc-object-store"><code>osc object-store</code>↴</a></li>
 <li><a href="#osc-object-store-account"><code>osc object-store account</code>↴</a></li>
 <li><a href="#osc-object-store-account-show"><code>osc object-store account show</code>↴</a></li>
@@ -241,6 +247,7 @@
 <li><code>block-storage</code> — Block Storage (Volume) service (Cinder) commands</li>
 <li><code>compute</code> — Compute service (Nova) commands</li>
 <li><code>image</code> — Image (Glance) commands</li>
+<li><code>network</code> — Network (Neutron) commands</li>
 <li><code>object-store</code> — Object Store service (Swift) commands</li>
 <li><code>catalog</code> — Shows current catalog information</li>
 <li><code>api</code> — Perform direct REST API requests with authorization</li>
@@ -297,7 +304,8 @@ Wide (Human readable table with extra attributes)</li>
 <p><code>--project-id &lt;PROJECT_ID&gt;</code> — The UUID of the project in a multi-tenancy cloud</p>
 </li>
 <li>
-<p><code>--all-projects</code> — all_projects filter parameter</p>
+<p><code>--all-projects &lt;ALL_PROJECTS&gt;</code> — all_projects filter parameter</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
 </li>
 <li>
 <p><code>--name &lt;NAME&gt;</code> — Name filter</p>
@@ -519,7 +527,8 @@ Wide (Human readable table with extra attributes)</li>
 <p><code>--min-ram &lt;MIN_RAM&gt;</code> — Filters the response by a minimum RAM, in MiB. For example, 512</p>
 </li>
 <li>
-<p><code>--is-public</code> — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request</p>
+<p><code>--is-public &lt;IS_PUBLIC&gt;</code> — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
 </li>
 <li>
 <p><code>--limit &lt;LIMIT&gt;</code> — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request</p>
@@ -662,7 +671,8 @@ Wide (Human readable table with extra attributes)</li>
 <p><code>--protected &lt;PROTECTED&gt;</code> — protected filter parameter</p>
 </li>
 <li>
-<p><code>--is-hidden</code> — is_hidden filter parameter</p>
+<p><code>--is-hidden &lt;IS_HIDDEN&gt;</code> — is_hidden filter parameter</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
 </li>
 <li>
 <p><code>--sort-key &lt;SORT_KEY&gt;</code> — sort_key filter parameter</p>
@@ -747,17 +757,10 @@ Wide (Human readable table with extra attributes)</li>
 <p><code>--disk-format &lt;DISK_FORMAT&gt;</code> — Valid values are: aki, ari, ami, raw, iso, vhd, vdi, qcow2, or vmdk. The disk format of a VM image is the format of the underlying disk image. Virtual appliance vendors have different formats for laying out the information contained in a VM disk image</p>
 </li>
 <li>
-<p><code>--is-hw-boot-menu-enabled &lt;IS_HW_BOOT_MENU_ENABLED&gt;</code> — If true, enables the BIOS bootmenu</p>
-<p>Possible values: <code>true</code>, <code>false</code></p>
-</li>
-<li>
 <p><code>--hw-cpu-cores &lt;HW_CPU_CORES&gt;</code> — The preferred number of cores to expose to the guest</p>
 </li>
 <li>
 <p><code>--hw-cpu-policy &lt;HW_CPU_POLICY&gt;</code> — Used to pin the virtual CPUs (vCPUs) of instances to the host's physical CPU cores (pCPUs)</p>
-</li>
-<li>
-<p><code>--hw-cpu-sockets &lt;HW_CPU_SOCKETS&gt;</code> — The preferred number of sockets to expose to the guest</p>
 </li>
 <li>
 <p><code>--hw-cpu-thread-policy &lt;HW_CPU_THREAD_POLICY&gt;</code> — Defines how hardware CPU threads in a simultaneous multithreading-based (SMT) architecture be used</p>
@@ -791,10 +794,6 @@ Wide (Human readable table with extra attributes)</li>
 </li>
 <li>
 <p><code>--hw-vif-model &lt;HW_VIF_MODEL&gt;</code> — Specifies the model of virtual network interface device to use</p>
-</li>
-<li>
-<p><code>--is-hw-vif-multiqueue-enabled &lt;IS_HW_VIF_MULTIQUEUE_ENABLED&gt;</code> — If true, this enables the virtio-net multiqueue feature. In this case, the driver sets the number of queues equal to the number of guest vCPUs. This makes the network performance scale across a number of vCPUs</p>
-<p>Possible values: <code>true</code>, <code>false</code></p>
 </li>
 <li>
 <p><code>--hw-watchdog-action &lt;HW_WATCHDOG_ACTION&gt;</code> — Enables a virtual hardware watchdog device that carries out the specified action if the server hangs</p>
@@ -980,10 +979,139 @@ Wide (Human readable table with extra attributes)</li>
 <h2 id="osc-image-schema-members-show"><a class="header" href="#osc-image-schema-members-show"><code>osc image schema members show</code></a></h2>
 <p>Show Members Schema</p>
 <p><strong>Usage:</strong> <code>osc image schema members show</code></p>
+<h2 id="osc-network"><a class="header" href="#osc-network"><code>osc network</code></a></h2>
+<p>Network (Neutron) commands</p>
+<p><strong>Usage:</strong> <code>osc network network &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-14"><a class="header" href="#subcommands-14"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>router</code> — Router commands</li>
+</ul>
+<h2 id="osc-network-router"><a class="header" href="#osc-network-router"><code>osc network router</code></a></h2>
+<p>Router commands</p>
+<p><strong>Usage:</strong> <code>osc network router router &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-15"><a class="header" href="#subcommands-15"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — List Routers</li>
+<li><code>show</code> — Show single Router</li>
+<li><code>create</code> — Create single Router</li>
+<li><code>delete</code> — Delete single Router</li>
+</ul>
+<h2 id="osc-network-router-list"><a class="header" href="#osc-network-router-list"><code>osc network router list</code></a></h2>
+<p>List Routers</p>
+<p><strong>Usage:</strong> <code>osc network router list [OPTIONS]</code></p>
+<h6 id="options-16"><a class="header" href="#options-16"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — limit filter parameter</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — marker filter parameter</p>
+</li>
+<li>
+<p><code>--description &lt;DESCRIPTION&gt;</code> — description filter parameter</p>
+</li>
+<li>
+<p><code>--flavor-id &lt;FLAVOR_ID&gt;</code> — flavor_id filter parameter</p>
+</li>
+<li>
+<p><code>--name &lt;NAME&gt;</code> — name filter parameter</p>
+</li>
+<li>
+<p><code>--status &lt;STATUS&gt;</code> — status filter parameter</p>
+</li>
+<li>
+<p><code>--project-id &lt;PROJECT_ID&gt;</code> — project_id filter parameter</p>
+</li>
+<li>
+<p><code>--is-admin-state-up &lt;IS_ADMIN_STATE_UP&gt;</code> — is_admin_state_up filter parameter</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--is-distributed &lt;IS_DISTRIBUTED&gt;</code> — is_distributed filter parameter</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--is-ha &lt;IS_HA&gt;</code> — is_ha filter parameter</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--tags &lt;TAGS&gt;</code> — tags filter parameter</p>
+</li>
+<li>
+<p><code>--any-tags &lt;ANY_TAGS&gt;</code> — any_tags filter parameter</p>
+</li>
+<li>
+<p><code>--not-tags &lt;NOT_TAGS&gt;</code> — not_tags filter parameter</p>
+</li>
+<li>
+<p><code>--not-any-tags &lt;NOT_ANY_TAGS&gt;</code> — not_any_tags filter parameter</p>
+</li>
+<li>
+<p><code>--max-items &lt;MAX_ITEMS&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-network-router-show"><a class="header" href="#osc-network-router-show"><code>osc network router show</code></a></h2>
+<p>Show single Router</p>
+<p><strong>Usage:</strong> <code>osc network router show &lt;ID&gt;</code></p>
+<h6 id="arguments-13"><a class="header" href="#arguments-13"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Router ID</li>
+</ul>
+<h2 id="osc-network-router-create"><a class="header" href="#osc-network-router-create"><code>osc network router create</code></a></h2>
+<p>Create single Router</p>
+<p><strong>Usage:</strong> <code>osc network router create [OPTIONS]</code></p>
+<h6 id="options-17"><a class="header" href="#options-17"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--is-admin-state-up &lt;IS_ADMIN_STATE_UP&gt;</code> — The administrative state of the router, which is up <code>True</code> or down <code>False</code></p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--availability-zone-hints &lt;AVAILABILITY_ZONE_HINTS&gt;</code> — Availability zone hints to use when scheduling the router</p>
+</li>
+<li>
+<p><code>--description &lt;DESCRIPTION&gt;</code> — The router description</p>
+</li>
+<li>
+<p><code>--is-distributed &lt;IS_DISTRIBUTED&gt;</code> — The distributed state of the router, which is distributed <code>True</code> or not <code>False</code></p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--enable-ndp-proxy &lt;ENABLE_NDP_PROXY&gt;</code> — The ndp proxy state of the router</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--external-gateway-info &lt;JSON_VALUE&gt;</code> — The external gateway information of the router. If the router has an external gateway, this would be a dict with network_id, enable_snat, external_fixed_ips and qos_policy_id. Otherwise, this would be null</p>
+</li>
+<li>
+<p><code>--flavor-id &lt;FLAVOR_ID&gt;</code> — The ID of the flavor</p>
+</li>
+<li>
+<p><code>--is-ha &lt;IS_HA&gt;</code> — The highly-available state of the router, which is highly available <code>True</code> or not <code>False</code></p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--name &lt;NAME&gt;</code> — The router name</p>
+</li>
+<li>
+<p><code>--project-id &lt;PROJECT_ID&gt;</code> — The ID of the project this router is associated with</p>
+</li>
+<li>
+<p><code>--tenant-id &lt;TENANT_ID&gt;</code> — Tenant_id (deprecated attribute)</p>
+</li>
+</ul>
+<h2 id="osc-network-router-delete"><a class="header" href="#osc-network-router-delete"><code>osc network router delete</code></a></h2>
+<p>Delete single Router</p>
+<p><strong>Usage:</strong> <code>osc network router delete &lt;ID&gt;</code></p>
+<h6 id="arguments-14"><a class="header" href="#arguments-14"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;ID&gt;</code> — Router ID</li>
+</ul>
 <h2 id="osc-object-store"><a class="header" href="#osc-object-store"><code>osc object-store</code></a></h2>
 <p>Object Store service (Swift) commands</p>
 <p><strong>Usage:</strong> <code>osc object-store object-store &lt;COMMAND&gt;</code></p>
-<h6 id="subcommands-14"><a class="header" href="#subcommands-14"><strong>Subcommands:</strong></a></h6>
+<h6 id="subcommands-16"><a class="header" href="#subcommands-16"><strong>Subcommands:</strong></a></h6>
 <ul>
 <li><code>account</code> — Account commands</li>
 <li><code>container</code> — Container commands</li>
@@ -992,7 +1120,7 @@ Wide (Human readable table with extra attributes)</li>
 <h2 id="osc-object-store-account"><a class="header" href="#osc-object-store-account"><code>osc object-store account</code></a></h2>
 <p>Account commands</p>
 <p><strong>Usage:</strong> <code>osc object-store account &lt;COMMAND&gt;</code></p>
-<h6 id="subcommands-15"><a class="header" href="#subcommands-15"><strong>Subcommands:</strong></a></h6>
+<h6 id="subcommands-17"><a class="header" href="#subcommands-17"><strong>Subcommands:</strong></a></h6>
 <ul>
 <li><code>show</code> — Shows metadata for an account. Because the storage system can store large amounts of data, take care when you represent the total bytes response as an integer; when possible, convert it to a 64-bit unsigned integer if your platform supports that primitive type. Do not include metadata headers in this request</li>
 <li><code>set</code> — Creates, updates, or deletes account metadata. To create, update, or delete custom metadata, use the X-Account-Meta-{name} request header, where {name} is the name of the metadata item. Account metadata operations work differently than how object metadata operations work. Depending on the contents of your POST account metadata request, the Object Storage API updates the metadata as shown in the following table: TODO: fill the rest To delete a metadata header, send an empty value for that header, such as for the X-Account-Meta-Book header. If the tool you use to communicate with Object Storage, such as an older version of cURL, does not support empty headers, send the X-Remove-Account- Meta-{name} header with an arbitrary value. For example, X-Remove-Account-Meta-Book: x. The operation ignores the arbitrary value</li>
@@ -1003,14 +1131,14 @@ Wide (Human readable table with extra attributes)</li>
 <h2 id="osc-object-store-account-set"><a class="header" href="#osc-object-store-account-set"><code>osc object-store account set</code></a></h2>
 <p>Creates, updates, or deletes account metadata. To create, update, or delete custom metadata, use the X-Account-Meta-{name} request header, where {name} is the name of the metadata item. Account metadata operations work differently than how object metadata operations work. Depending on the contents of your POST account metadata request, the Object Storage API updates the metadata as shown in the following table: TODO: fill the rest To delete a metadata header, send an empty value for that header, such as for the X-Account-Meta-Book header. If the tool you use to communicate with Object Storage, such as an older version of cURL, does not support empty headers, send the X-Remove-Account- Meta-{name} header with an arbitrary value. For example, X-Remove-Account-Meta-Book: x. The operation ignores the arbitrary value</p>
 <p><strong>Usage:</strong> <code>osc object-store account set [OPTIONS]</code></p>
-<h6 id="options-16"><a class="header" href="#options-16"><strong>Options:</strong></a></h6>
+<h6 id="options-18"><a class="header" href="#options-18"><strong>Options:</strong></a></h6>
 <ul>
 <li><code>--property &lt;key=value&gt;</code> — Property to be set</li>
 </ul>
 <h2 id="osc-object-store-container"><a class="header" href="#osc-object-store-container"><code>osc object-store container</code></a></h2>
 <p>Container commands</p>
 <p><strong>Usage:</strong> <code>osc object-store container &lt;COMMAND&gt;</code></p>
-<h6 id="subcommands-16"><a class="header" href="#subcommands-16"><strong>Subcommands:</strong></a></h6>
+<h6 id="subcommands-18"><a class="header" href="#subcommands-18"><strong>Subcommands:</strong></a></h6>
 <ul>
 <li><code>list</code> — Shows details for an account and lists containers, sorted by name, in the account</li>
 <li><code>show</code> — Shows container metadata, including the number of objects and the total bytes of all objects stored in the container</li>
@@ -1021,84 +1149,6 @@ Wide (Human readable table with extra attributes)</li>
 <h2 id="osc-object-store-container-list"><a class="header" href="#osc-object-store-container-list"><code>osc object-store container list</code></a></h2>
 <p>Shows details for an account and lists containers, sorted by name, in the account</p>
 <p><strong>Usage:</strong> <code>osc object-store container list [OPTIONS]</code></p>
-<h6 id="options-17"><a class="header" href="#options-17"><strong>Options:</strong></a></h6>
-<ul>
-<li>
-<p><code>--limit &lt;LIMIT&gt;</code> — For an integer value n, limits the number of results to n</p>
-</li>
-<li>
-<p><code>--marker &lt;MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are greater than x</p>
-</li>
-<li>
-<p><code>--end-marker &lt;END_MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are less than x</p>
-</li>
-<li>
-<p><code>--format &lt;FORMAT&gt;</code> — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines</p>
-</li>
-<li>
-<p><code>--prefix &lt;PREFIX&gt;</code> — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
-</li>
-<li>
-<p><code>--delimiter &lt;DELIMITER&gt;</code> — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
-</li>
-<li>
-<p><code>--reverse</code> — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending</p>
-</li>
-<li>
-<p><code>--max-items &lt;MAX_ITEMS&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
-<p>Default value: <code>10000</code></p>
-</li>
-</ul>
-<h2 id="osc-object-store-container-show"><a class="header" href="#osc-object-store-container-show"><code>osc object-store container show</code></a></h2>
-<p>Shows container metadata, including the number of objects and the total bytes of all objects stored in the container</p>
-<p><strong>Usage:</strong> <code>osc object-store container show &lt;CONTAINER&gt;</code></p>
-<h6 id="arguments-13"><a class="header" href="#arguments-13"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
-</ul>
-<h2 id="osc-object-store-container-set"><a class="header" href="#osc-object-store-container-set"><code>osc object-store container set</code></a></h2>
-<p>Creates, updates, or deletes custom metadata for a container</p>
-<p><strong>Usage:</strong> <code>osc object-store container set [OPTIONS] &lt;CONTAINER&gt;</code></p>
-<h6 id="arguments-14"><a class="header" href="#arguments-14"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
-</ul>
-<h6 id="options-18"><a class="header" href="#options-18"><strong>Options:</strong></a></h6>
-<ul>
-<li><code>--property &lt;key=value&gt;</code> — Property to be set</li>
-</ul>
-<h2 id="osc-object-store-container-create"><a class="header" href="#osc-object-store-container-create"><code>osc object-store container create</code></a></h2>
-<p>Creates a container. You do not need to check whether a container already exists before issuing a PUT operation because the operation is idempotent: It creates a container or updates an existing container, as appropriate</p>
-<p><strong>Usage:</strong> <code>osc object-store container create &lt;CONTAINER&gt;</code></p>
-<h6 id="arguments-15"><a class="header" href="#arguments-15"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
-</ul>
-<h2 id="osc-object-store-container-delete"><a class="header" href="#osc-object-store-container-delete"><code>osc object-store container delete</code></a></h2>
-<p>Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects</p>
-<p><strong>Usage:</strong> <code>osc object-store container delete &lt;CONTAINER&gt;</code></p>
-<h6 id="arguments-16"><a class="header" href="#arguments-16"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
-</ul>
-<h2 id="osc-object-store-object"><a class="header" href="#osc-object-store-object"><code>osc object-store object</code></a></h2>
-<p>Object commands</p>
-<p><strong>Usage:</strong> <code>osc object-store object &lt;COMMAND&gt;</code></p>
-<h6 id="subcommands-17"><a class="header" href="#subcommands-17"><strong>Subcommands:</strong></a></h6>
-<ul>
-<li><code>list</code> — Shows details for a container and lists objects, sorted by name, in the container. Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request</li>
-<li><code>download</code> — Downloads the object content and gets the object metadata. This operation returns the object metadata in the response headers and the object content in the response body</li>
-<li><code>upload</code> — Creates an object with data content and metadata, or replaces an existing object with data content and metadata. The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code. If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB. Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8. To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item</li>
-<li><code>show</code> — Shows object metadata</li>
-<li><code>delete</code> — Permanently deletes an object from the object store. Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code. For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object. A DELETE request made to a symlink path will delete the symlink rather than the target object. An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter</li>
-</ul>
-<h2 id="osc-object-store-object-list"><a class="header" href="#osc-object-store-object-list"><code>osc object-store object list</code></a></h2>
-<p>Shows details for a container and lists objects, sorted by name, in the container. Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request</p>
-<p><strong>Usage:</strong> <code>osc object-store object list [OPTIONS] &lt;CONTAINER&gt;</code></p>
-<h6 id="arguments-17"><a class="header" href="#arguments-17"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
-</ul>
 <h6 id="options-19"><a class="header" href="#options-19"><strong>Options:</strong></a></h6>
 <ul>
 <li>
@@ -1120,7 +1170,87 @@ Wide (Human readable table with extra attributes)</li>
 <p><code>--delimiter &lt;DELIMITER&gt;</code> — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
 </li>
 <li>
-<p><code>--reverse</code> — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending</p>
+<p><code>--reverse &lt;REVERSE&gt;</code> — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
+</li>
+<li>
+<p><code>--max-items &lt;MAX_ITEMS&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
+<p>Default value: <code>10000</code></p>
+</li>
+</ul>
+<h2 id="osc-object-store-container-show"><a class="header" href="#osc-object-store-container-show"><code>osc object-store container show</code></a></h2>
+<p>Shows container metadata, including the number of objects and the total bytes of all objects stored in the container</p>
+<p><strong>Usage:</strong> <code>osc object-store container show &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-15"><a class="header" href="#arguments-15"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h2 id="osc-object-store-container-set"><a class="header" href="#osc-object-store-container-set"><code>osc object-store container set</code></a></h2>
+<p>Creates, updates, or deletes custom metadata for a container</p>
+<p><strong>Usage:</strong> <code>osc object-store container set [OPTIONS] &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-16"><a class="header" href="#arguments-16"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h6 id="options-20"><a class="header" href="#options-20"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--property &lt;key=value&gt;</code> — Property to be set</li>
+</ul>
+<h2 id="osc-object-store-container-create"><a class="header" href="#osc-object-store-container-create"><code>osc object-store container create</code></a></h2>
+<p>Creates a container. You do not need to check whether a container already exists before issuing a PUT operation because the operation is idempotent: It creates a container or updates an existing container, as appropriate</p>
+<p><strong>Usage:</strong> <code>osc object-store container create &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-17"><a class="header" href="#arguments-17"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h2 id="osc-object-store-container-delete"><a class="header" href="#osc-object-store-container-delete"><code>osc object-store container delete</code></a></h2>
+<p>Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects</p>
+<p><strong>Usage:</strong> <code>osc object-store container delete &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-18"><a class="header" href="#arguments-18"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h2 id="osc-object-store-object"><a class="header" href="#osc-object-store-object"><code>osc object-store object</code></a></h2>
+<p>Object commands</p>
+<p><strong>Usage:</strong> <code>osc object-store object &lt;COMMAND&gt;</code></p>
+<h6 id="subcommands-19"><a class="header" href="#subcommands-19"><strong>Subcommands:</strong></a></h6>
+<ul>
+<li><code>list</code> — Shows details for a container and lists objects, sorted by name, in the container. Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request</li>
+<li><code>download</code> — Downloads the object content and gets the object metadata. This operation returns the object metadata in the response headers and the object content in the response body</li>
+<li><code>upload</code> — Creates an object with data content and metadata, or replaces an existing object with data content and metadata. The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code. If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB. Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8. To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item</li>
+<li><code>show</code> — Shows object metadata</li>
+<li><code>delete</code> — Permanently deletes an object from the object store. Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code. For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object. A DELETE request made to a symlink path will delete the symlink rather than the target object. An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter</li>
+</ul>
+<h2 id="osc-object-store-object-list"><a class="header" href="#osc-object-store-object-list"><code>osc object-store object list</code></a></h2>
+<p>Shows details for a container and lists objects, sorted by name, in the container. Specify query parameters in the request to filter the list and return a subset of objects. Omit query parameters to return a list of objects that are stored in the container, up to 10,000 names. The 10,000 maximum value is configurable. To view the value for the cluster, issue a GET /info request</p>
+<p><strong>Usage:</strong> <code>osc object-store object list [OPTIONS] &lt;CONTAINER&gt;</code></p>
+<h6 id="arguments-19"><a class="header" href="#arguments-19"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name. For example, the path /v1/account/www/pages specifies the www container, not the www/pages container</li>
+</ul>
+<h6 id="options-21"><a class="header" href="#options-21"><strong>Options:</strong></a></h6>
+<ul>
+<li>
+<p><code>--limit &lt;LIMIT&gt;</code> — For an integer value n, limits the number of results to n</p>
+</li>
+<li>
+<p><code>--marker &lt;MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are greater than x</p>
+</li>
+<li>
+<p><code>--end-marker &lt;END_MARKER&gt;</code> — For a string value, x, constrains the list to items whose names are less than x</p>
+</li>
+<li>
+<p><code>--format &lt;FORMAT&gt;</code> — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines</p>
+</li>
+<li>
+<p><code>--prefix &lt;PREFIX&gt;</code> — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
+</li>
+<li>
+<p><code>--delimiter &lt;DELIMITER&gt;</code> — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree</p>
+</li>
+<li>
+<p><code>--reverse &lt;REVERSE&gt;</code> — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending</p>
+<p>Possible values: <code>true</code>, <code>false</code></p>
 </li>
 <li>
 <p><code>--max-items &lt;MAX_ITEMS&gt;</code> — Total limit of entities count to return. Use this when there are too many entries</p>
@@ -1130,40 +1260,6 @@ Wide (Human readable table with extra attributes)</li>
 <h2 id="osc-object-store-object-download"><a class="header" href="#osc-object-store-object-download"><code>osc object-store object download</code></a></h2>
 <p>Downloads the object content and gets the object metadata. This operation returns the object metadata in the response headers and the object content in the response body</p>
 <p><strong>Usage:</strong> <code>osc object-store object download [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
-<h6 id="arguments-18"><a class="header" href="#arguments-18"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
-<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
-</ul>
-<h6 id="options-20"><a class="header" href="#options-20"><strong>Options:</strong></a></h6>
-<ul>
-<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
-<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
-<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
-<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
-<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
-<li><code>--file &lt;FILE&gt;</code> — Destination filename (using &quot;-&quot; will print object to stdout)</li>
-</ul>
-<h2 id="osc-object-store-object-upload"><a class="header" href="#osc-object-store-object-upload"><code>osc object-store object upload</code></a></h2>
-<p>Creates an object with data content and metadata, or replaces an existing object with data content and metadata. The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code. If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB. Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8. To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item</p>
-<p><strong>Usage:</strong> <code>osc object-store object upload [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
-<h6 id="arguments-19"><a class="header" href="#arguments-19"><strong>Arguments:</strong></a></h6>
-<ul>
-<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
-<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
-</ul>
-<h6 id="options-21"><a class="header" href="#options-21"><strong>Options:</strong></a></h6>
-<ul>
-<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
-<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
-<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
-<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
-<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
-<li><code>--file &lt;FILE&gt;</code> — Source filename (using &quot;-&quot; will read object from stdout)</li>
-</ul>
-<h2 id="osc-object-store-object-show"><a class="header" href="#osc-object-store-object-show"><code>osc object-store object show</code></a></h2>
-<p>Shows object metadata</p>
-<p><strong>Usage:</strong> <code>osc object-store object show [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
 <h6 id="arguments-20"><a class="header" href="#arguments-20"><strong>Arguments:</strong></a></h6>
 <ul>
 <li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
@@ -1176,10 +1272,11 @@ Wide (Human readable table with extra attributes)</li>
 <li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
 <li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
 <li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
+<li><code>--file &lt;FILE&gt;</code> — Destination filename (using &quot;-&quot; will print object to stdout)</li>
 </ul>
-<h2 id="osc-object-store-object-delete"><a class="header" href="#osc-object-store-object-delete"><code>osc object-store object delete</code></a></h2>
-<p>Permanently deletes an object from the object store. Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code. For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object. A DELETE request made to a symlink path will delete the symlink rather than the target object. An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter</p>
-<p><strong>Usage:</strong> <code>osc object-store object delete [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h2 id="osc-object-store-object-upload"><a class="header" href="#osc-object-store-object-upload"><code>osc object-store object upload</code></a></h2>
+<p>Creates an object with data content and metadata, or replaces an existing object with data content and metadata. The PUT operation always creates an object. If you use this operation on an existing object, you replace the existing object and metadata rather than modifying the object. Consequently, this operation returns the Created (201) response code. If you use this operation to copy a manifest object, the new object is a normal object and not a copy of the manifest. Instead it is a concatenation of all the segment objects. This means that you cannot copy objects larger than 5 GB. Note that the provider may have limited the characters which are allowed in an object name. Any name limits are exposed under the name_check key in the /info discoverability response. Regardless of name_check limitations, names must be URL quoted UTF-8. To create custom metadata, use the X-Object-Meta-name header, where name is the name of the metadata item</p>
+<p><strong>Usage:</strong> <code>osc object-store object upload [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
 <h6 id="arguments-21"><a class="header" href="#arguments-21"><strong>Arguments:</strong></a></h6>
 <ul>
 <li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
@@ -1188,11 +1285,44 @@ Wide (Human readable table with extra attributes)</li>
 <h6 id="options-23"><a class="header" href="#options-23"><strong>Options:</strong></a></h6>
 <ul>
 <li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
+<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
+<li><code>--file &lt;FILE&gt;</code> — Source filename (using &quot;-&quot; will read object from stdout)</li>
+</ul>
+<h2 id="osc-object-store-object-show"><a class="header" href="#osc-object-store-object-show"><code>osc object-store object show</code></a></h2>
+<p>Shows object metadata</p>
+<p><strong>Usage:</strong> <code>osc object-store object show [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h6 id="arguments-22"><a class="header" href="#arguments-22"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
+<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
+</ul>
+<h6 id="options-24"><a class="header" href="#options-24"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
+<li><code>--temp-url-sig &lt;TEMP_URL_SIG&gt;</code> — Used with temporary URLs to sign the request with an HMAC-SHA1 cryptographic signature that defines the allowed HTTP method, expiration date, full path to the object, and the secret key for the temporary URL. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--temp-url-expires &lt;TEMP_URL_EXPIRES&gt;</code> — The date and time in UNIX Epoch time stamp format or ISO 8601 UTC timestamp when the signature for temporary URLs expires. For example, 1440619048 or 2015-08-26T19:57:28Z is equivalent to Mon, Wed, 26 Aug 2015 19:57:28 GMT. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--filename &lt;FILENAME&gt;</code> — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware</li>
+<li><code>--symlink &lt;SYMLINK&gt;</code> — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target</li>
+</ul>
+<h2 id="osc-object-store-object-delete"><a class="header" href="#osc-object-store-object-delete"><code>osc object-store object delete</code></a></h2>
+<p>Permanently deletes an object from the object store. Object deletion occurs immediately at request time. Any subsequent GET, HEAD, POST, or DELETE operations will return a 404 Not Found error code. For static large object manifests, you can add the ?multipart- manifest=delete query parameter. This operation deletes the segment objects and, if all deletions succeed, this operation deletes the manifest object. A DELETE request made to a symlink path will delete the symlink rather than the target object. An alternative to using the DELETE operation is to use the POST operation with the bulk-delete query parameter</p>
+<p><strong>Usage:</strong> <code>osc object-store object delete [OPTIONS] &lt;CONTAINER&gt; &lt;OBJECT&gt;</code></p>
+<h6 id="arguments-23"><a class="header" href="#arguments-23"><strong>Arguments:</strong></a></h6>
+<ul>
+<li><code>&lt;CONTAINER&gt;</code> — The unique name for the account. An account is also known as the project or tenant</li>
+<li><code>&lt;OBJECT&gt;</code> — The unique name for the object</li>
+</ul>
+<h6 id="options-25"><a class="header" href="#options-25"><strong>Options:</strong></a></h6>
+<ul>
+<li><code>--multipart-manifest &lt;MULTIPART_MANIFEST&gt;</code> — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects</li>
 </ul>
 <h2 id="osc-catalog"><a class="header" href="#osc-catalog"><code>osc catalog</code></a></h2>
 <p>Shows current catalog information</p>
 <p><strong>Usage:</strong> <code>osc catalog &lt;COMMAND&gt;</code></p>
-<h6 id="subcommands-18"><a class="header" href="#subcommands-18"><strong>Subcommands:</strong></a></h6>
+<h6 id="subcommands-20"><a class="header" href="#subcommands-20"><strong>Subcommands:</strong></a></h6>
 <ul>
 <li><code>list</code> — List catalog command arguments</li>
 </ul>
@@ -1202,12 +1332,12 @@ Wide (Human readable table with extra attributes)</li>
 <h2 id="osc-api"><a class="header" href="#osc-api"><code>osc api</code></a></h2>
 <p>Perform direct REST API requests with authorization</p>
 <p><strong>Usage:</strong> <code>osc api [OPTIONS] &lt;SERVICE&gt; &lt;URL&gt;</code></p>
-<h6 id="arguments-22"><a class="header" href="#arguments-22"><strong>Arguments:</strong></a></h6>
+<h6 id="arguments-24"><a class="header" href="#arguments-24"><strong>Arguments:</strong></a></h6>
 <ul>
 <li><code>&lt;SERVICE&gt;</code> — Service name</li>
 <li><code>&lt;URL&gt;</code> — Rest URL (relative to the endpoint information from the service catalog). Do not start URL with the &quot;/&quot; to respect endpoint version information</li>
 </ul>
-<h6 id="options-24"><a class="header" href="#options-24"><strong>Options:</strong></a></h6>
+<h6 id="options-26"><a class="header" href="#options-26"><strong>Options:</strong></a></h6>
 <ul>
 <li>
 <p><code>-m</code>, <code>--method &lt;METHOD&gt;</code> — HTTP Method</p>

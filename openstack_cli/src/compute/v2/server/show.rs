@@ -223,7 +223,7 @@ pub struct Server {
 
     /// The image property as returned from server.
     #[structable(optional)]
-    image: Option<HashMapStringString>,
+    image: Option<Value>,
 
     /// The image reference, as a ID or full URL, for the image to use for this
     /// server.

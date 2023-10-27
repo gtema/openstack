@@ -67,9 +67,9 @@ pub(crate) fn next_page_from_body(
                     }
                 }
                 if next.is_none() {
-                    return Err(PaginationError::Body {
-                        msg: "`rel=next` is missing in links".into(),
-                    });
+                    // Pagination is present, but there is no info about next
+                    // page. Means there is no next page
+                    return Ok(None);
                 }
             }
         } else {
@@ -143,13 +143,10 @@ mod tests {
     #[test]
     fn test_body_links_no_next_rel() {
         let data = json!({"links": [{"rel": "curr", "href": "http://foo1.bar"}]});
-        let err =
-            next_page_from_body(&data, &None, Url::parse("http://dummy").unwrap()).unwrap_err();
-        if let PaginationError::Body { msg } = err {
-            // expected error
-        } else {
-            panic!("unexpected error: {}", err);
-        }
+        assert_eq!(
+            None,
+            next_page_from_body(&data, &None, Url::parse("http://dummy").unwrap()).unwrap()
+        );
     }
 
     #[test]

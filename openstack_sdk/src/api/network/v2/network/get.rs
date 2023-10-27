@@ -1,15 +1,16 @@
-//! Get single Router
+//! Get single Network
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
+use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
-/// Query for router.get operation.
+/// Query for network.get operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Router<'a> {
-    /// Router ID
+pub struct Network<'a> {
+    /// Network ID
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
@@ -17,15 +18,15 @@ pub struct Router<'a> {
     _headers: Option<HeaderMap>,
 }
 
-impl<'a> Router<'a> {
+impl<'a> Network<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RouterBuilder<'a> {
-        RouterBuilder::default()
+    pub fn builder() -> NetworkBuilder<'a> {
+        NetworkBuilder::default()
     }
 }
 
-impl<'a> RouterBuilder<'a> {
-    /// Add a single header to the Router.
+impl<'a> NetworkBuilder<'a> {
+    /// Add a single header to the Network.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -49,13 +50,13 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Router<'a> {
+impl<'a> RestEndpoint for Network<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("routers/{router_id}", router_id = self.id.as_ref(),).into()
+        format!("networks/{network_id}", network_id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -67,7 +68,7 @@ impl<'a> RestEndpoint for Router<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("router".into())
+        Some("network".into())
     }
 
     /// Returns headers to be set into the request
@@ -89,7 +90,7 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Router::builder().build().unwrap().service_type(),
+            Network::builder().build().unwrap().service_type(),
             ServiceType::Network
         );
     }
@@ -97,8 +98,8 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Router::builder().build().unwrap().response_key().unwrap(),
-            "router"
+            Network::builder().build().unwrap().response_key().unwrap(),
+            "network"
         );
     }
 
@@ -107,14 +108,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/routers/{router_id}", router_id = "router_id",));
+                .path(format!("/networks/{network_id}", network_id = "network_id",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "router": {} }));
+                .json_body(json!({ "network": {} }));
         });
 
-        let endpoint = Router::builder().id("router_id").build().unwrap();
+        let endpoint = Network::builder().network_id("network_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -124,16 +125,16 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/routers/{router_id}", router_id = "router_id",))
+                .path(format!("/networks/{network_id}", network_id = "network_id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "router": {} }));
+                .json_body(json!({ "network": {} }));
         });
 
-        let endpoint = Router::builder()
-            .id("router_id")
+        let endpoint = Network::builder()
+            .network_id("network_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

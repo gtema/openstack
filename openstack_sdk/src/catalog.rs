@@ -76,6 +76,16 @@ impl ServiceEndpoint {
                     // than what we've got from catalog - take it as our endpoint
                     self.url = Url::parse(&link.href)
                         .with_context(|| format!("Wrong endpoint URL: `{}`", link.href))?;
+                    // Path MUST end with "/"
+                    if !self.url.path().ends_with('/') {
+                        let mut new_path: String = self.url.path().into();
+                        new_path.push('/');
+                        self.url.set_path(new_path.as_str());
+                    }
+
+                    info!("Using discovered URL `{:?}` as the base", self.url);
+                } else {
+                    info!("discovery {:?} vs {:?}", link.href, self.url);
                 }
             }
         }

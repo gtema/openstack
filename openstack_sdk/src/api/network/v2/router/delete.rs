@@ -1,7 +1,6 @@
 //! Delete Router
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
-use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
@@ -12,7 +11,7 @@ use crate::api::rest_endpoint_prelude::*;
 pub struct Router<'a> {
     /// Router ID
     #[builder(default, setter(into))]
-    router_id: Cow<'a, str>,
+    id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -56,7 +55,7 @@ impl<'a> RestEndpoint for Router<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("routers/{router_id}", router_id = self.router_id.as_ref(),).into()
+        format!("routers/{router_id}", router_id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -112,7 +111,7 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Router::builder().router_id("router_id").build().unwrap();
+        let endpoint = Router::builder().id("router_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -131,7 +130,7 @@ mod tests {
         });
 
         let endpoint = Router::builder()
-            .router_id("router_id")
+            .id("router_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

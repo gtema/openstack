@@ -44,15 +44,19 @@ mod common;
 mod compute;
 pub mod error;
 mod image;
+mod network;
 mod object_store;
 mod output;
 
 use crate::error::OpenStackCliError;
 
+use crate::api::{ApiArgs, ApiCommand};
 use crate::block_storage::v3::{BlockStorageSrvArgs, BlockStorageSrvCommand};
-use crate::compute::v2::ComputeSrvCommand;
-use crate::image::v2::ImageSrvCommand;
-use crate::object_store::v1::ObjectStoreSrvCommand;
+use crate::catalog::{CatalogArgs, CatalogCommand};
+use crate::compute::v2::{ComputeSrvArgs, ComputeSrvCommand};
+use crate::image::v2::{ImageSrvArgs, ImageSrvCommand};
+use crate::network::v2::{NetworkSrvArgs, NetworkSrvCommand};
+use crate::object_store::v1::{ObjectStoreSrvArgs, ObjectStoreSrvCommand};
 
 /// OpenStack CLI rewritten in Rust
 #[derive(Parser)]
@@ -74,15 +78,17 @@ pub enum TopLevelCommands {
     /// Block Storage (Volume) service (Cinder) commands
     BlockStorage(BlockStorageSrvArgs),
     /// Compute service (Nova) commands
-    Compute(compute::v2::ComputeSrvArgs),
+    Compute(ComputeSrvArgs),
     /// Image (Glance) commands
-    Image(image::v2::ImageSrvArgs),
+    Image(ImageSrvArgs),
+    /// Network (Neutron) commands
+    Network(NetworkSrvArgs),
     /// Object Store service (Swift) commands
-    ObjectStore(object_store::v1::ObjectStoreSrvArgs),
+    ObjectStore(ObjectStoreSrvArgs),
     /// Shows current catalog information
-    Catalog(catalog::CatalogArgs),
+    Catalog(CatalogArgs),
     /// Perform direct REST API requests with authorization
-    Api(api::ApiArgs),
+    Api(ApiArgs),
 }
 
 /// Global CLI options
@@ -170,6 +176,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         }
         TopLevelCommands::Compute(args) => ComputeSrvCommand { args: args.clone() }.get_command(),
         TopLevelCommands::Image(args) => ImageSrvCommand { args: args.clone() }.get_command(),
+        TopLevelCommands::Network(args) => NetworkSrvCommand { args: args.clone() }.get_command(),
         TopLevelCommands::ObjectStore(args) => {
             ObjectStoreSrvCommand { args: args.clone() }.get_command()
         }

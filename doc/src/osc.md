@@ -42,6 +42,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image schema member show`↴](#osc-image-schema-member-show)
 * [`osc image schema members`↴](#osc-image-schema-members)
 * [`osc image schema members show`↴](#osc-image-schema-members-show)
+* [`osc network`↴](#osc-network)
+* [`osc network router`↴](#osc-network-router)
+* [`osc network router list`↴](#osc-network-router-list)
+* [`osc network router show`↴](#osc-network-router-show)
+* [`osc network router create`↴](#osc-network-router-create)
+* [`osc network router delete`↴](#osc-network-router-delete)
 * [`osc object-store`↴](#osc-object-store)
 * [`osc object-store account`↴](#osc-object-store-account)
 * [`osc object-store account show`↴](#osc-object-store-account-show)
@@ -73,6 +79,7 @@ OpenStack client rewritten in Rust
 * `block-storage` — Block Storage (Volume) service (Cinder) commands
 * `compute` — Compute service (Nova) commands
 * `image` — Image (Glance) commands
+* `network` — Network (Neutron) commands
 * `object-store` — Object Store service (Swift) commands
 * `catalog` — Shows current catalog information
 * `api` — Perform direct REST API requests with authorization
@@ -134,7 +141,10 @@ List Volumes
 ###### **Options:**
 
 * `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
-* `--all-projects` — all_projects filter parameter
+* `--all-projects <ALL_PROJECTS>` — all_projects filter parameter
+
+  Possible values: `true`, `false`
+
 * `--name <NAME>` — Name filter
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
@@ -298,7 +308,10 @@ List Servers
 
 * `--min-disk <MIN_DISK>` — Filters the response by a minimum disk space, in GiB. For example, 100
 * `--min-ram <MIN_RAM>` — Filters the response by a minimum RAM, in MiB. For example, 512
-* `--is-public` — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request
+* `--is-public <IS_PUBLIC>` — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request
+
+  Possible values: `true`, `false`
+
 * `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
@@ -452,7 +465,10 @@ List Images
 * `--size-min <SIZE_MIN>` — size_min filter parameter
 * `--size-max <SIZE_MAX>` — size_max filter parameter
 * `--protected <PROTECTED>` — protected filter parameter
-* `--is-hidden` — is_hidden filter parameter
+* `--is-hidden <IS_HIDDEN>` — is_hidden filter parameter
+
+  Possible values: `true`, `false`
+
 * `--sort-key <SORT_KEY>` — sort_key filter parameter
 * `--sort-dir <SORT_DIR>` — sort_dir filter parameter
 * `--sort <SORT>` — sort filter parameter
@@ -515,13 +531,8 @@ Update Image
 * `--has-auto-disk-config <HAS_AUTO_DISK_CONFIG>` — If true, the root partition on the disk is automatically resized before the instance boots
 * `--container-format <CONTAINER_FORMAT>` — The container format refers to whether the VM image is in a file format that also contains metadata about the actual VM. Container formats include OVF and Amazon AMI. In addition, a VM image might not have a container format - instead, the image is just a blob of unstructured data
 * `--disk-format <DISK_FORMAT>` — Valid values are: aki, ari, ami, raw, iso, vhd, vdi, qcow2, or vmdk. The disk format of a VM image is the format of the underlying disk image. Virtual appliance vendors have different formats for laying out the information contained in a VM disk image
-* `--is-hw-boot-menu-enabled <IS_HW_BOOT_MENU_ENABLED>` — If true, enables the BIOS bootmenu
-
-  Possible values: `true`, `false`
-
 * `--hw-cpu-cores <HW_CPU_CORES>` — The preferred number of cores to expose to the guest
 * `--hw-cpu-policy <HW_CPU_POLICY>` — Used to pin the virtual CPUs (vCPUs) of instances to the host's physical CPU cores (pCPUs)
-* `--hw-cpu-sockets <HW_CPU_SOCKETS>` — The preferred number of sockets to expose to the guest
 * `--hw-cpu-thread-policy <HW_CPU_THREAD_POLICY>` — Defines how hardware CPU threads in a simultaneous multithreading-based (SMT) architecture be used
 * `--hw-cpu-threads <HW_CPU_THREADS>` — The preferred number of threads to expose to the guest
 * `--hw-disk-bus <HW_DISK_BUS>` — Specifies the type of disk controller to attach disk devices to. One of scsi, virtio, uml, xen, ide, or usb
@@ -533,10 +544,6 @@ Update Image
 * `--hw-video-model <HW_VIDEO_MODEL>` — The video image driver used
 * `--hw-video-ram <HW_VIDEO_RAM>` — Maximum RAM for the video image
 * `--hw-vif-model <HW_VIF_MODEL>` — Specifies the model of virtual network interface device to use
-* `--is-hw-vif-multiqueue-enabled <IS_HW_VIF_MULTIQUEUE_ENABLED>` — If true, this enables the virtio-net multiqueue feature. In this case, the driver sets the number of queues equal to the number of guest vCPUs. This makes the network performance scale across a number of vCPUs
-
-  Possible values: `true`, `false`
-
 * `--hw-watchdog-action <HW_WATCHDOG_ACTION>` — Enables a virtual hardware watchdog device that carries out the specified action if the server hangs
 * `--hypervisor-type <HYPERVISOR_TYPE>` — The hypervisor type. Note that qemu is used for both QEMU and KVM hypervisor types
 * `--needs-config-drive <NEEDS_CONFIG_DRIVE>` — Specifies whether the image needs a config drive. `mandatory` or `optional` (default if property is not used)
@@ -746,6 +753,130 @@ Show Members Schema
 
 
 
+## `osc network`
+
+Network (Neutron) commands
+
+**Usage:** `osc network
+       network <COMMAND>`
+
+###### **Subcommands:**
+
+* `router` — Router commands
+
+
+
+## `osc network router`
+
+Router commands
+
+**Usage:** `osc network router
+       router <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Routers
+* `show` — Show single Router
+* `create` — Create single Router
+* `delete` — Delete single Router
+
+
+
+## `osc network router list`
+
+List Routers
+
+**Usage:** `osc network router list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — limit filter parameter
+* `--marker <MARKER>` — marker filter parameter
+* `--description <DESCRIPTION>` — description filter parameter
+* `--flavor-id <FLAVOR_ID>` — flavor_id filter parameter
+* `--name <NAME>` — name filter parameter
+* `--status <STATUS>` — status filter parameter
+* `--project-id <PROJECT_ID>` — project_id filter parameter
+* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — is_admin_state_up filter parameter
+
+  Possible values: `true`, `false`
+
+* `--is-distributed <IS_DISTRIBUTED>` — is_distributed filter parameter
+
+  Possible values: `true`, `false`
+
+* `--is-ha <IS_HA>` — is_ha filter parameter
+
+  Possible values: `true`, `false`
+
+* `--tags <TAGS>` — tags filter parameter
+* `--any-tags <ANY_TAGS>` — any_tags filter parameter
+* `--not-tags <NOT_TAGS>` — not_tags filter parameter
+* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc network router show`
+
+Show single Router
+
+**Usage:** `osc network router show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Router ID
+
+
+
+## `osc network router create`
+
+Create single Router
+
+**Usage:** `osc network router create [OPTIONS]`
+
+###### **Options:**
+
+* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — The administrative state of the router, which is up ``True`` or down ``False``
+
+  Possible values: `true`, `false`
+
+* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — Availability zone hints to use when scheduling the router
+* `--description <DESCRIPTION>` — The router description
+* `--is-distributed <IS_DISTRIBUTED>` — The distributed state of the router, which is distributed ``True`` or not ``False``
+
+  Possible values: `true`, `false`
+
+* `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — The ndp proxy state of the router
+
+  Possible values: `true`, `false`
+
+* `--external-gateway-info <JSON_VALUE>` — The external gateway information of the router. If the router has an external gateway, this would be a dict with network_id, enable_snat, external_fixed_ips and qos_policy_id. Otherwise, this would be null
+* `--flavor-id <FLAVOR_ID>` — The ID of the flavor
+* `--is-ha <IS_HA>` — The highly-available state of the router, which is highly available ``True`` or not ``False``
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The router name
+* `--project-id <PROJECT_ID>` — The ID of the project this router is associated with
+* `--tenant-id <TENANT_ID>` — Tenant_id (deprecated attribute)
+
+
+
+## `osc network router delete`
+
+Delete single Router
+
+**Usage:** `osc network router delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Router ID
+
+
+
 ## `osc object-store`
 
 Object Store service (Swift) commands
@@ -824,7 +955,10 @@ Shows details for an account and lists containers, sorted by name, in the accoun
 * `--format <FORMAT>` — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines
 * `--prefix <PREFIX>` — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
 * `--delimiter <DELIMITER>` — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
-* `--reverse` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
+* `--reverse <REVERSE>` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
+
+  Possible values: `true`, `false`
+
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -917,7 +1051,10 @@ Shows details for a container and lists objects, sorted by name, in the containe
 * `--format <FORMAT>` — The response format. Valid values are json, xml, or plain. The default is plain. If you append the format=xml or format=json query parameter to the storage account URL, the response shows extended container information serialized in that format. If you append the format=plain query parameter, the response lists the container names separated by newlines
 * `--prefix <PREFIX>` — Only objects with this prefix will be returned. When combined with a delimiter query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
 * `--delimiter <DELIMITER>` — The delimiter is a single character used to split object names to present a pseudo-directory hierarchy of objects. When combined with a prefix query, this enables API users to simulate and traverse the objects in a container as if they were in a directory tree
-* `--reverse` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
+* `--reverse <REVERSE>` — By default, listings are returned sorted by name, ascending. If you include the reverse=true query parameter, the listing will be returned sorted by name, descending
+
+  Possible values: `true`, `false`
+
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`

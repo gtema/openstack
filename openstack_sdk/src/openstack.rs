@@ -533,7 +533,7 @@ impl AsyncOpenStack {
         self.discover_service_endpoint(&ServiceType::Identity)
             .await?;
 
-        let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query_async(self).await.unwrap();
+        let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query_async(self).await?;
         debug!("Auth response is {:?}", rsp);
         let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
         info!("Auth token is {:?}", data);
@@ -652,6 +652,10 @@ impl AsyncOpenStack {
     /// Perform HTTP request with given request and return raw response.
     async fn execute_request(&self, request: Request) -> Result<Response, reqwest::Error> {
         info!("Sending request {:?}", request);
+        // Body may contain sensitive info.
+        //if let Some(body) = request.body() {
+        //  debug!("Body: {:?}", std::str::from_utf8(body.as_bytes().unwrap()));
+        //}
         let start = SystemTime::now();
         let rsp = self.client.execute(request).await?;
         let elapsed = SystemTime::now().duration_since(start);
