@@ -38,25 +38,36 @@ fn dist() -> Result<(), DynError> {
     let _ = fs::remove_dir_all(&dist_dir());
     fs::create_dir_all(&dist_dir())?;
 
-    dist_binary()?;
+    dist_binary(None)?;
+    dist_binary(Some("x86_64-unknown-linux-musl"))?;
     dist_manpage()?;
     build_doc()?;
 
     Ok(())
 }
 
-fn dist_binary() -> Result<(), DynError> {
+fn dist_binary(target: Option<&str>) -> Result<(), DynError> {
     let cargo = env::var("CARGO").unwrap_or_else(|_| "cargo".to_string());
+    let mut args = vec!["build", "--release"];
+    if let Some(target) = target {
+        args.push("--target");
+        args.push(target);
+    }
     let status = Command::new(cargo)
         .current_dir(project_root())
-        .args(&["build", "--release"])
+        .args(args)
         .status()?;
 
     if !status.success() {
         Err("cargo build failed")?;
     }
 
-    let dst = project_root().join("target/release/osc");
+    let mut dst = project_root().join("target");
+    if let Some(target) = target {
+        dst.push(target);
+    }
+    dst.push("release/osc");
+    println!("release binary `{:?}`", dst);
 
     fs::copy(&dst, dist_dir().join("osc"))?;
 
