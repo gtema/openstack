@@ -43,6 +43,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image schema members`↴](#osc-image-schema-members)
 * [`osc image schema members show`↴](#osc-image-schema-members-show)
 * [`osc network`↴](#osc-network)
+* [`osc network availability-zone`↴](#osc-network-availability-zone)
+* [`osc network availability-zone list`↴](#osc-network-availability-zone-list)
 * [`osc network network`↴](#osc-network-network)
 * [`osc network network list`↴](#osc-network-network-list)
 * [`osc network network show`↴](#osc-network-network-show)
@@ -777,10 +779,41 @@ Network (Neutron) commands
 
 ###### **Subcommands:**
 
+* `availability-zone` — Availability Zones commands
 * `network` — Network commands
 * `port` — Port commands
 * `router` — Router commands
 * `subnet` — Subnet commands
+
+
+
+## `osc network availability-zone`
+
+Availability Zones commands
+
+**Usage:** `osc network availability-zone
+       availability-zone <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List AvailabilityZones
+
+
+
+## `osc network availability-zone list`
+
+List AvailabilityZones
+
+**Usage:** `osc network availability-zone list [OPTIONS]`
+
+###### **Options:**
+
+* `--state <STATE>` — Filter the list result by the state of the availability zone, which is either available or unavailable
+* `--resource <RESOURCE>` — Filter the list result by the resource type of the availability zone. The supported resource types are network and router
+* `--name <NAME>` — Filter the list result by the human-readable name of the resource
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 

@@ -1,4 +1,5 @@
 //! `Network` Service bindings
+pub mod availability_zones;
 pub mod network;
 pub mod networks;
 pub mod port;
