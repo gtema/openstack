@@ -1,15 +1,15 @@
-//! Get single Network
+//! Get single Port
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
-/// Query for network.get operation.
+/// Query for port.get operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Network<'a> {
-    /// Network ID
+pub struct Port<'a> {
+    /// Port ID
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
@@ -17,15 +17,15 @@ pub struct Network<'a> {
     _headers: Option<HeaderMap>,
 }
 
-impl<'a> Network<'a> {
+impl<'a> Port<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> NetworkBuilder<'a> {
-        NetworkBuilder::default()
+    pub fn builder() -> PortBuilder<'a> {
+        PortBuilder::default()
     }
 }
 
-impl<'a> NetworkBuilder<'a> {
-    /// Add a single header to the Network.
+impl<'a> PortBuilder<'a> {
+    /// Add a single header to the Port.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -49,13 +49,13 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Network<'a> {
+impl<'a> RestEndpoint for Port<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("networks/{network_id}", network_id = self.id.as_ref(),).into()
+        format!("ports/{port_id}", port_id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -67,7 +67,7 @@ impl<'a> RestEndpoint for Network<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("network".into())
+        Some("port".into())
     }
 
     /// Returns headers to be set into the request
@@ -89,7 +89,7 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Network::builder().build().unwrap().service_type(),
+            Port::builder().build().unwrap().service_type(),
             ServiceType::Network
         );
     }
@@ -97,8 +97,8 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Network::builder().build().unwrap().response_key().unwrap(),
-            "network"
+            Port::builder().build().unwrap().response_key().unwrap(),
+            "port"
         );
     }
 
@@ -107,14 +107,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/networks/{network_id}", network_id = "network_id",));
+                .path(format!("/ports/{port_id}", port_id = "port_id",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "network": {} }));
+                .json_body(json!({ "port": {} }));
         });
 
-        let endpoint = Network::builder().id("network_id").build().unwrap();
+        let endpoint = Port::builder().id("port_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -124,16 +124,16 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/networks/{network_id}", network_id = "network_id",))
+                .path(format!("/ports/{port_id}", port_id = "port_id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "network": {} }));
+                .json_body(json!({ "port": {} }));
         });
 
-        let endpoint = Network::builder()
-            .id("network_id")
+        let endpoint = Port::builder()
+            .id("port_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

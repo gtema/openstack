@@ -1,16 +1,18 @@
-//! List Networks
+//! List Ports
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
+use std::collections::BTreeSet;
+
 use crate::api::Pageable;
 
-/// Query for networks.get operation.
+/// Query for ports.get operation.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Networks<'a> {
+pub struct Ports<'a> {
     /// limit filter parameter
     #[builder(default, setter(into))]
     limit: Option<Cow<'a, str>>,
@@ -19,29 +21,81 @@ pub struct Networks<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// binding:host_id filter parameter
+    #[builder(default, setter(into))]
+    binding_host_id: Option<Cow<'a, str>>,
+
+    /// binding:profile filter parameter
+    #[builder(default, setter(into))]
+    binding_profile: Option<Cow<'a, str>>,
+
+    /// binding:vif_details filter parameter
+    #[builder(default, setter(into))]
+    binding_vif_details: Option<Cow<'a, str>>,
+
+    /// binding:vif_type filter parameter
+    #[builder(default, setter(into))]
+    binding_vif_type: Option<Cow<'a, str>>,
+
+    /// binding:vnic_type filter parameter
+    #[builder(default, setter(into))]
+    binding_vnic_type: Option<Cow<'a, str>>,
+
     /// description filter parameter
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
+
+    /// device_id filter parameter
+    #[builder(default, setter(into))]
+    device_id: Option<Cow<'a, str>>,
+
+    /// device_owner filter parameter
+    #[builder(default, setter(into))]
+    device_owner: Option<Cow<'a, str>>,
+
+    /// fields filter parameter
+    #[builder(default, private, setter(name = "_fields"))]
+    fields: BTreeSet<Cow<'a, str>>,
+
+    /// fixed_ips filter parameter
+    #[builder(default, private, setter(name = "_fixed_ips"))]
+    fixed_ips: Option<CommaSeparatedList<Cow<'a, str>>>,
+
+    /// id filter parameter
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// ip_address filter parameter
+    #[builder(default, setter(into))]
+    ip_address: Option<Cow<'a, str>>,
+
+    /// mac_address filter parameter
+    #[builder(default, setter(into))]
+    mac_address: Option<Cow<'a, str>>,
 
     /// name filter parameter
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
+    /// network_id filter parameter
+    #[builder(default, setter(into))]
+    network_id: Option<Cow<'a, str>>,
+
     /// status filter parameter
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
+
+    /// subnet_id filter parameter
+    #[builder(default, setter(into))]
+    subnet_id: Option<Cow<'a, str>>,
 
     /// project_id filter parameter
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
-    /// ipv4_address_scope_id filter parameter
+    /// security_groups filter parameter
     #[builder(default, setter(into))]
-    ipv4_address_scope_id: Option<Cow<'a, str>>,
-
-    /// ipv6_address_scope_id filter parameter
-    #[builder(default, setter(into))]
-    ipv6_address_scope_id: Option<Cow<'a, str>>,
+    security_groups: Option<Cow<'a, str>>,
 
     /// is_admin_state_up filter parameter
     #[builder(default)]
@@ -50,26 +104,6 @@ pub struct Networks<'a> {
     /// is_port_security_enabled filter parameter
     #[builder(default)]
     is_port_security_enabled: Option<bool>,
-
-    /// is_router_external filter parameter
-    #[builder(default)]
-    is_router_external: Option<bool>,
-
-    /// is_shared filter parameter
-    #[builder(default)]
-    is_shared: Option<bool>,
-
-    /// provider_network_type filter parameter
-    #[builder(default, setter(into))]
-    provider_network_type: Option<Cow<'a, str>>,
-
-    /// provider_physical_network filter parameter
-    #[builder(default, setter(into))]
-    provider_physical_network: Option<Cow<'a, str>>,
-
-    /// provider_segmentation_id filter parameter
-    #[builder(default, setter(into))]
-    provider_segmentation_id: Option<Cow<'a, str>>,
 
     /// tags filter parameter
     #[builder(default, private, setter(name = "_tags"))]
@@ -91,14 +125,39 @@ pub struct Networks<'a> {
     _headers: Option<HeaderMap>,
 }
 
-impl<'a> Networks<'a> {
+impl<'a> Ports<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> NetworksBuilder<'a> {
-        NetworksBuilder::default()
+    pub fn builder() -> PortsBuilder<'a> {
+        PortsBuilder::default()
     }
 }
 
-impl<'a> NetworksBuilder<'a> {
+impl<'a> PortsBuilder<'a> {
+    /// fields filter parameter
+    pub fn fields<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.fields
+            .get_or_insert_with(BTreeSet::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
+    /// fixed_ips filter parameter
+    pub fn fixed_ips<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.fixed_ips
+            .get_or_insert(None)
+            .get_or_insert_with(CommaSeparatedList::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
     /// tags filter parameter
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
@@ -151,7 +210,7 @@ impl<'a> NetworksBuilder<'a> {
         self
     }
 
-    /// Add a single header to the Networks.
+    /// Add a single header to the Ports.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -175,38 +234,40 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Networks<'a> {
+impl<'a> RestEndpoint for Ports<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "networks".to_string().into()
+        "ports".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("limit", self.limit.as_ref());
         params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("binding:host_id", self.binding_host_id.as_ref());
+        params.push_opt("binding:profile", self.binding_profile.as_ref());
+        params.push_opt("binding:vif_details", self.binding_vif_details.as_ref());
+        params.push_opt("binding:vif_type", self.binding_vif_type.as_ref());
+        params.push_opt("binding:vnic_type", self.binding_vnic_type.as_ref());
         params.push_opt("description", self.description.as_ref());
+        params.push_opt("device_id", self.device_id.as_ref());
+        params.push_opt("device_owner", self.device_owner.as_ref());
+        params.extend(self.fields.iter().map(|value| ("fields", value)));
+        params.push_opt("fixed_ips", self.fixed_ips.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("ip_address", self.ip_address.as_ref());
+        params.push_opt("mac_address", self.mac_address.as_ref());
         params.push_opt("name", self.name.as_ref());
+        params.push_opt("network_id", self.network_id.as_ref());
         params.push_opt("status", self.status.as_ref());
+        params.push_opt("subnet_id", self.subnet_id.as_ref());
         params.push_opt("project_id", self.project_id.as_ref());
-        params.push_opt("ipv4_address_scope", self.ipv4_address_scope_id.as_ref());
-        params.push_opt("ipv6_address_scope", self.ipv6_address_scope_id.as_ref());
+        params.push_opt("security_groups", self.security_groups.as_ref());
         params.push_opt("admin_state_up", self.is_admin_state_up);
         params.push_opt("port_security_enabled", self.is_port_security_enabled);
-        params.push_opt("router:external", self.is_router_external);
-        params.push_opt("shared", self.is_shared);
-        params.push_opt("provider:network_type", self.provider_network_type.as_ref());
-        params.push_opt(
-            "provider:physical_network",
-            self.provider_physical_network.as_ref(),
-        );
-        params.push_opt(
-            "provider:segmentation_id",
-            self.provider_segmentation_id.as_ref(),
-        );
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.any_tags.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
@@ -220,7 +281,7 @@ impl<'a> RestEndpoint for Networks<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("networks".into())
+        Some("ports".into())
     }
 
     /// Returns headers to be set into the request
@@ -228,7 +289,7 @@ impl<'a> RestEndpoint for Networks<'a> {
         self._headers.as_ref()
     }
 }
-impl<'a> Pageable for Networks<'a> {}
+impl<'a> Pageable for Ports<'a> {}
 
 #[cfg(test)]
 mod tests {
@@ -243,7 +304,7 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Networks::builder().build().unwrap().service_type(),
+            Ports::builder().build().unwrap().service_type(),
             ServiceType::Network
         );
     }
@@ -251,8 +312,8 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Networks::builder().build().unwrap().response_key().unwrap(),
-            "networks"
+            Ports::builder().build().unwrap().response_key().unwrap(),
+            "ports"
         );
     }
 
@@ -260,15 +321,14 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/networks",));
+            when.method(httpmock::Method::GET).path(format!("/ports",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "networks": {} }));
+                .json_body(json!({ "ports": {} }));
         });
 
-        let endpoint = Networks::builder().build().unwrap();
+        let endpoint = Ports::builder().build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -278,15 +338,15 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/networks",))
+                .path(format!("/ports",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "networks": {} }));
+                .json_body(json!({ "ports": {} }));
         });
 
-        let endpoint = Networks::builder()
+        let endpoint = Ports::builder()
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

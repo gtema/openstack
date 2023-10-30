@@ -1,7 +1,6 @@
 //! Delete Network
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
-use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
@@ -112,7 +111,7 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Network::builder().network_id("network_id").build().unwrap();
+        let endpoint = Network::builder().id("network_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -131,7 +130,7 @@ mod tests {
         });
 
         let endpoint = Network::builder()
-            .network_id("network_id")
+            .id("network_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

@@ -43,11 +43,26 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image schema members`↴](#osc-image-schema-members)
 * [`osc image schema members show`↴](#osc-image-schema-members-show)
 * [`osc network`↴](#osc-network)
+* [`osc network network`↴](#osc-network-network)
+* [`osc network network list`↴](#osc-network-network-list)
+* [`osc network network show`↴](#osc-network-network-show)
+* [`osc network network create`↴](#osc-network-network-create)
+* [`osc network network delete`↴](#osc-network-network-delete)
+* [`osc network port`↴](#osc-network-port)
+* [`osc network port list`↴](#osc-network-port-list)
+* [`osc network port show`↴](#osc-network-port-show)
+* [`osc network port create`↴](#osc-network-port-create)
+* [`osc network port delete`↴](#osc-network-port-delete)
 * [`osc network router`↴](#osc-network-router)
 * [`osc network router list`↴](#osc-network-router-list)
 * [`osc network router show`↴](#osc-network-router-show)
 * [`osc network router create`↴](#osc-network-router-create)
 * [`osc network router delete`↴](#osc-network-router-delete)
+* [`osc network subnet`↴](#osc-network-subnet)
+* [`osc network subnet list`↴](#osc-network-subnet-list)
+* [`osc network subnet show`↴](#osc-network-subnet-show)
+* [`osc network subnet create`↴](#osc-network-subnet-create)
+* [`osc network subnet delete`↴](#osc-network-subnet-delete)
 * [`osc object-store`↴](#osc-object-store)
 * [`osc object-store account`↴](#osc-object-store-account)
 * [`osc object-store account show`↴](#osc-object-store-account-show)
@@ -550,7 +565,7 @@ Update Image
 * `--instance-type-rxtx-factor <INSTANCE_TYPE_RXTX_FACTOR>` — Optional property allows created servers to have a different bandwidth cap than that defined in the network they are attached to
 * `--instance-uuid <INSTANCE_UUID>` — create this image
 * `--kernel-id <KERNEL_ID>` — The ID of an image stored in the Image service that should be used as the kernel when booting an AMI-style image
-* `--locations <LOCATIONS>` — A list of URLs to access the image file in external store. This list appears if the show_multiple_locations option is set to true in the Image service's configuration file
+* `--locations <JSON_VALUE>` — A list of URLs to access the image file in external store. This list appears if the show_multiple_locations option is set to true in the Image service's configuration file
 * `--min-disk <MIN_DISK>` — The minimum disk size in GB that is required to boot the image
 * `--min-ram <MIN_RAM>` — The minimum amount of RAM in MB that is required to boot the image
 * `--name <NAME>` — The name of the image
@@ -762,7 +777,280 @@ Network (Neutron) commands
 
 ###### **Subcommands:**
 
+* `network` — Network commands
+* `port` — Port commands
 * `router` — Router commands
+* `subnet` — Subnet commands
+
+
+
+## `osc network network`
+
+Network commands
+
+**Usage:** `osc network network
+       network <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Networks
+* `show` — Show single Network
+* `create` — Create single Network
+* `delete` — Delete single Network
+
+
+
+## `osc network network list`
+
+List Networks
+
+**Usage:** `osc network network list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — limit filter parameter
+* `--marker <MARKER>` — marker filter parameter
+* `--description <DESCRIPTION>` — description filter parameter
+* `--name <NAME>` — name filter parameter
+* `--status <STATUS>` — status filter parameter
+* `--project-id <PROJECT_ID>` — project_id filter parameter
+* `--ipv4-address-scope-id <IPV4_ADDRESS_SCOPE_ID>` — ipv4_address_scope_id filter parameter
+* `--ipv6-address-scope-id <IPV6_ADDRESS_SCOPE_ID>` — ipv6_address_scope_id filter parameter
+* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — is_admin_state_up filter parameter
+
+  Possible values: `true`, `false`
+
+* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — is_port_security_enabled filter parameter
+
+  Possible values: `true`, `false`
+
+* `--is-router-external <IS_ROUTER_EXTERNAL>` — is_router_external filter parameter
+
+  Possible values: `true`, `false`
+
+* `--is-shared <IS_SHARED>` — is_shared filter parameter
+
+  Possible values: `true`, `false`
+
+* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — provider_network_type filter parameter
+* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — provider_physical_network filter parameter
+* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — provider_segmentation_id filter parameter
+* `--tags <TAGS>` — tags filter parameter
+* `--any-tags <ANY_TAGS>` — any_tags filter parameter
+* `--not-tags <NOT_TAGS>` — not_tags filter parameter
+* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc network network show`
+
+Show single Network
+
+**Usage:** `osc network network show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Network ID
+
+
+
+## `osc network network create`
+
+Create single Network
+
+**Usage:** `osc network network create [OPTIONS]`
+
+###### **Options:**
+
+* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — The administrative state of the network, which is up ``True`` or down ``False``
+
+  Possible values: `true`, `false`
+
+* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — Availability zone hints to use when scheduling the network
+* `--description <DESCRIPTION>` — The network description
+* `--dns-domain <DNS_DOMAIN>` — The DNS domain associated
+* `--is-default <IS_DEFAULT>` — Whether or not this is the default external network
+
+  Possible values: `true`, `false`
+
+* `--mtu <MTU>` — Read-only. The maximum transmission unit (MTU) of the network resource
+* `--name <NAME>` — The network name
+* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — The port security status, which is enabled ``True`` or disabled ``False``.  Available for multiple provider extensions
+
+  Possible values: `true`, `false`
+
+* `--project-id <PROJECT_ID>` — The ID of the project this network is associated with
+* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — The type of physical network that maps to this network resource. For example, ``flat``, ``vlan``, ``vxlan``, or ``gre``. Available for multiple provider extensions
+* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — The physical network where this network object is implemented. Available for multiple provider extensions
+* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — An isolated segment ID on the physical network. The provider network type defines the segmentation model. Available for multiple provider extensions
+* `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy attached to the port
+* `--is-router-external <IS_ROUTER_EXTERNAL>` — Whether or not the router is external
+
+  Possible values: `true`, `false`
+
+* `--segments <JSON_VALUE>` — A list of provider segment objects. Available for multiple provider extensions
+* `--is-shared <IS_SHARED>` — Indicates whether this network is shared across all tenants. By default, only administrative users can change this value
+
+  Possible values: `true`, `false`
+
+* `--is-vlan-transparent <IS_VLAN_TRANSPARENT>` — Indicates the VLAN transparency mode of the network
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc network network delete`
+
+Delete single Network
+
+**Usage:** `osc network network delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Network ID
+
+
+
+## `osc network port`
+
+Port commands
+
+**Usage:** `osc network port
+       port <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Ports
+* `show` — Show single Port
+* `create` — Create single Port
+* `delete` — Delete single Port
+
+
+
+## `osc network port list`
+
+List Ports
+
+**Usage:** `osc network port list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — limit filter parameter
+* `--marker <MARKER>` — marker filter parameter
+* `--binding-host-id <BINDING_HOST_ID>` — binding:host_id filter parameter
+* `--binding-profile <BINDING_PROFILE>` — binding:profile filter parameter
+* `--binding-vif-details <BINDING_VIF_DETAILS>` — binding:vif_details filter parameter
+* `--binding-vif-type <BINDING_VIF_TYPE>` — binding:vif_type filter parameter
+* `--binding-vnic-type <BINDING_VNIC_TYPE>` — binding:vnic_type filter parameter
+* `--description <DESCRIPTION>` — description filter parameter
+* `--device-id <DEVICE_ID>` — device_id filter parameter
+* `--device-owner <DEVICE_OWNER>` — device_owner filter parameter
+* `--fields <FIELDS>` — fields filter parameter
+* `--fixed-ips <FIXED_IPS>` — fixed_ips filter parameter
+* `--id <ID>` — id filter parameter
+* `--ip-address <IP_ADDRESS>` — ip_address filter parameter
+* `--mac-address <MAC_ADDRESS>` — mac_address filter parameter
+* `--name <NAME>` — name filter parameter
+* `--network-id <NETWORK_ID>` — network_id filter parameter
+* `--status <STATUS>` — status filter parameter
+* `--subnet-id <SUBNET_ID>` — subnet_id filter parameter
+* `--project-id <PROJECT_ID>` — project_id filter parameter
+* `--security-groups <SECURITY_GROUPS>` — security_groups filter parameter
+* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — is_admin_state_up filter parameter
+
+  Possible values: `true`, `false`
+
+* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — is_port_security_enabled filter parameter
+
+  Possible values: `true`, `false`
+
+* `--tags <TAGS>` — tags filter parameter
+* `--any-tags <ANY_TAGS>` — any_tags filter parameter
+* `--not-tags <NOT_TAGS>` — not_tags filter parameter
+* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc network port show`
+
+Show single Port
+
+**Usage:** `osc network port show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Port ID
+
+
+
+## `osc network port create`
+
+Create single Port
+
+**Usage:** `osc network port create [OPTIONS]`
+
+###### **Options:**
+
+* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — The administrative state of the port, which is up ``True`` or down ``False``
+
+  Possible values: `true`, `false`
+
+* `--allowed-address-pairs <ALLOWED_ADDRESS_PAIRS>` — Allowed address pairs list. Dictionary key ``ip_address`` is required and key ``mac_address`` is optional
+* `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port is allocated. In some cases, different implementations can run on different hosts
+* `--binding-profile <JSON_VALUE>` — A dictionary the enables the application running on the specified host to pass and receive vif port-specific information to the plug-in
+* `--binding-vif-details <JSON_VALUE>` — Read-only. A dictionary that enables the application to pass information about functions that the Networking API provides. To enable or disable port filtering features such as security group and anti- MAC/IP spoofing, specify ``port_filter: True`` or ``port_filter: False``
+* `--binding-vif-type <BINDING_VIF_TYPE>` — Read-only. The vif type for the specified port
+* `--binding-vnic-type <BINDING_VNIC_TYPE>` — The vnic type that is bound to the neutron port.  In POST and PUT operations, specify a value of ``normal`` (virtual nic), ``direct`` (pci passthrough), or ``macvtap`` (virtual interface with a tap-like software interface). These values support SR-IOV PCI passthrough networking. The ML2 plug-in supports the vnic_type.  In GET operations, the binding:vnic_type extended attribute is visible to only port owners and administrative users
+* `--data-plane-status <DATA_PLANE_STATUS>` — Underlying data plane status of this port
+* `--description <DESCRIPTION>` — The port description
+* `--device-id <DEVICE_ID>` — Device ID of this port
+* `--device-owner <DEVICE_OWNER>` — Device owner of this port (e.g. ``network:dhcp``)
+* `--device-profile <DEVICE_PROFILE>` — None
+* `--dns-assignment <DNS_ASSIGNMENT>` — DNS assignment for the port
+* `--dns-domain <DNS_DOMAIN>` — DNS domain assigned to the port
+* `--dns-name <DNS_NAME>` — DNS name for the port
+* `--extra-dhcp-opts <EXTRA_DHCP_OPTS>` — Extra DHCP options
+* `--fixed-ips <JSON_VALUE>` — IP addresses for the port. Includes the IP address and subnet ID
+* `--ip-allocation <IP_ALLOCATION>` — None
+* `--mac-address <MAC_ADDRESS>` — The MAC address of an allowed address pair
+* `--name <NAME>` — The port name
+* `--network-id <NETWORK_ID>` — The ID of the attached network
+* `--numa-affinity-policy <NUMA_AFFINITY_POLICY>` — The NUMA affinity policy defined for this port
+* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — The port security status, which is enabled ``True`` or disabled ``False``
+
+  Possible values: `true`, `false`
+
+* `--project-id <PROJECT_ID>` — The ID of the project who owns the network. Only administrative users can specify a project ID other than their own
+* `--propagate-uplink-status <PROPAGATE_UPLINK_STATUS>` — Whether to propagate uplink status of the port
+
+  Possible values: `true`, `false`
+
+* `--qos-network-policy-id <QOS_NETWORK_POLICY_ID>` — None
+* `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy attached to the port
+* `--resource-request <JSON_VALUE>` — None
+* `--revision-number <REVISION_NUMBER>` — None
+* `--security-group-ids <SECURITY_GROUP_IDS>` — The IDs of any attached security groups
+* `--tags <TAGS>` — Port Tags
+* `--tenant-id <TENANT_ID>` — Tenant_id (deprecated attribute)
+
+
+
+## `osc network port delete`
+
+Delete single Port
+
+**Usage:** `osc network port delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Port ID
 
 
 
@@ -874,6 +1162,131 @@ Delete single Router
 ###### **Arguments:**
 
 * `<ID>` — Router ID
+
+
+
+## `osc network subnet`
+
+Subnet commands
+
+**Usage:** `osc network subnet
+       subnet <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Subnets
+* `show` — Show single Subnet
+* `create` — Create single Subnet
+* `delete` — Delete single Subnet
+
+
+
+## `osc network subnet list`
+
+List Subnets
+
+**Usage:** `osc network subnet list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — limit filter parameter
+* `--marker <MARKER>` — marker filter parameter
+* `--cidr <CIDR>` — cidr filter parameter
+* `--description <DESCRIPTION>` — description filter parameter
+* `--gateway-ip <GATEWAY_IP>` — gateway_ip filter parameter
+* `--ip-version <IP_VERSION>` — ip_version filter parameter
+* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — ipv6_address_mode filter parameter
+* `--ipv6-ra-mode <IPV6_RA_MODE>` — ipv6_ra_mode filter parameter
+* `--name <NAME>` — name filter parameter
+* `--network-id <NETWORK_ID>` — network_id filter parameter
+* `--segment-id <SEGMENT_ID>` — segment_id filter parameter
+* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — dns_publish_fixed_ip filter parameter
+
+  Possible values: `true`, `false`
+
+* `--project-id <PROJECT_ID>` — project_id filter parameter
+* `--is-dhcp-enabled <IS_DHCP_ENABLED>` — is_dhcp_enabled filter parameter
+
+  Possible values: `true`, `false`
+
+* `--subnet-pool-id <SUBNET_POOL_ID>` — subnet_pool_id filter parameter
+* `--use-default-subnet-pool <USE_DEFAULT_SUBNET_POOL>` — use_default_subnet_pool filter parameter
+
+  Possible values: `true`, `false`
+
+* `--tags <TAGS>` — tags filter parameter
+* `--any-tags <ANY_TAGS>` — any_tags filter parameter
+* `--not-tags <NOT_TAGS>` — not_tags filter parameter
+* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc network subnet show`
+
+Show single Subnet
+
+**Usage:** `osc network subnet show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Subnet ID
+
+
+
+## `osc network subnet create`
+
+Create single Subnet
+
+**Usage:** `osc network subnet create [OPTIONS]`
+
+###### **Options:**
+
+* `--allocation-pools <JSON_VALUE>` — List of allocation pools each of which has a start and an end address for this subnet
+* `--cidr <CIDR>` — The CIDR
+* `--description <DESCRIPTION>` — The subnet description
+* `--dns-nameservers <DNS_NAMESERVERS>` — A list of DNS nameservers
+* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for fixed IPs
+
+  Possible values: `true`, `false`
+
+* `--is-dhcp-enabled <IS_DHCP_ENABLED>` — Set to ``True`` if DHCP is enabled and ``False`` if DHCP is disabled
+
+  Possible values: `true`, `false`
+
+* `--gateway-ip <GATEWAY_IP>` — The gateway IP address
+* `--host-routes <HOST_ROUTES>` — A list of host routes
+* `--ip-version <IP_VERSION>` — The IP version, which is 4 or 6
+* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — The IPv6 address modes which are 'dhcpv6-stateful', 'dhcpv6-stateless' or 'slaac'
+* `--ipv6-ra-mode <IPV6_RA_MODE>` — The IPv6 router advertisements modes which can be 'slaac', 'dhcpv6-stateful', 'dhcpv6-stateless'
+* `--name <NAME>` — The subnet name
+* `--network-id <NETWORK_ID>` — The ID of the attached network
+* `--prefix-length <PREFIX_LENGTH>` — The prefix length to use for subnet allocation from a subnet pool
+* `--project-id <PROJECT_ID>` — The ID of the project this subnet is associated with
+* `--revision-number <REVISION_NUMBER>` — None
+* `--segment-id <SEGMENT_ID>` — The ID of the segment this subnet is associated with
+* `--service-types <SERVICE_TYPES>` — Service types for this subnet
+* `--subnet-pool-id <SUBNET_POOL_ID>` — The subnet pool ID from which to obtain a CIDR
+* `--tags <TAGS>` — Subnet Tags
+* `--tenant-id <TENANT_ID>` — Tenant_id (deprecated attribute)
+* `--use-default-subnet-pool <USE_DEFAULT_SUBNET_POOL>` — Whether to use the default subnet pool to obtain a CIDR
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc network subnet delete`
+
+Delete single Subnet
+
+**Usage:** `osc network subnet delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Subnet ID
 
 
 

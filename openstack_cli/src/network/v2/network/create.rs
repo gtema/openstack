@@ -17,105 +17,24 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use crate::common::parse_json;
 use crate::common::VecString;
-use openstack_sdk::api::network::v2::network::post;
+use crate::common::VecValue;
+use openstack_sdk::api::network::v2::networks::post;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 
 /// Create Network
 #[derive(Args, Clone, Debug)]
 pub struct NetworkArgs {
-    /// limit filter parameter
-    #[arg(long)]
-    limit: Option<String>,
-
-    /// marker filter parameter
-    #[arg(long)]
-    marker: Option<String>,
-
-    /// description filter parameter
-    #[arg(long)]
-    description: Option<String>,
-
-    /// name filter parameter
-    #[arg(long)]
-    name: Option<String>,
-
-    /// status filter parameter
-    #[arg(long)]
-    status: Option<String>,
-
-    /// project_id filter parameter
-    #[arg(long)]
-    project_id: Option<String>,
-
-    /// ipv4_address_scope_id filter parameter
-    #[arg(long)]
-    ipv4_address_scope_id: Option<String>,
-
-    /// ipv6_address_scope_id filter parameter
-    #[arg(long)]
-    ipv6_address_scope_id: Option<String>,
-
-    /// is_admin_state_up filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    is_admin_state_up: Option<bool>,
-
-    /// is_port_security_enabled filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    is_port_security_enabled: Option<bool>,
-
-    /// is_router_external filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    is_router_external: Option<bool>,
-
-    /// is_shared filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    is_shared: Option<bool>,
-
-    /// provider_network_type filter parameter
-    #[arg(long)]
-    provider_network_type: Option<String>,
-
-    /// provider_physical_network filter parameter
-    #[arg(long)]
-    provider_physical_network: Option<String>,
-
-    /// provider_segmentation_id filter parameter
-    #[arg(long)]
-    provider_segmentation_id: Option<String>,
-
-    /// tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    tags: Option<Vec<String>>,
-
-    /// any_tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    any_tags: Option<Vec<String>>,
-
-    /// not_tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    not_tags: Option<Vec<String>>,
-
-    /// not_any_tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    not_any_tags: Option<Vec<String>>,
-
     /// The administrative state of the network, which is up ``True`` or down
     /// ``False``.
     #[arg(long)]
     is_admin_state_up: Option<bool>,
 
     /// Availability zone hints to use when scheduling the network.
-    #[arg(long)]
-    availability_zone_hints: Option<String>,
-
-    /// Availability zones for the network.
-    #[arg(long)]
-    availability_zones: Option<String>,
-
-    /// Timestamp when the network was created.
-    #[arg(long)]
-    created_at: Option<String>,
+    #[arg(long, action=clap::ArgAction::Append)]
+    availability_zone_hints: Option<Vec<String>>,
 
     /// The network description.
     #[arg(long)]
@@ -124,18 +43,6 @@ pub struct NetworkArgs {
     /// The DNS domain associated.
     #[arg(long)]
     dns_domain: Option<String>,
-
-    /// Id of the resource
-    #[arg(long)]
-    id: Option<String>,
-
-    /// The ID of the IPv4 address scope for the network.
-    #[arg(long)]
-    ipv4_address_scope_id: Option<String>,
-
-    /// The ID of the IPv6 address scope for the network.
-    #[arg(long)]
-    ipv6_address_scope_id: Option<String>,
 
     /// Whether or not this is the default external network.
     #[arg(long)]
@@ -179,39 +86,19 @@ pub struct NetworkArgs {
     #[arg(long)]
     qos_policy_id: Option<String>,
 
-    /// None
-    #[arg(long)]
-    revision_number: Option<u32>,
-
     /// Whether or not the router is external.
     #[arg(long)]
     is_router_external: Option<bool>,
 
     /// A list of provider segment objects. Available for multiple provider
     /// extensions.
-    #[arg(long)]
-    segments: Option<String>,
+    #[arg(long, action=clap::ArgAction::Append, value_parser=parse_json, value_name="JSON_VALUE")]
+    segments: Option<Vec<Value>>,
 
     /// Indicates whether this network is shared across all tenants. By
     /// default, only administrative users can change this value.
     #[arg(long)]
     is_shared: Option<bool>,
-
-    /// The network status.
-    #[arg(long)]
-    status: Option<String>,
-
-    /// The associated subnet IDs.
-    #[arg(long, action=clap::ArgAction::Append)]
-    subnet_ids: Option<Vec<String>>,
-
-    /// Network Tags.
-    #[arg(long, action=clap::ArgAction::Append)]
-    tags: Option<Vec<String>>,
-
-    /// Timestamp when the network was last updated.
-    #[arg(long)]
-    updated_at: Option<String>,
 
     /// Indicates the VLAN transparency mode of the network
     #[arg(long)]
@@ -233,11 +120,11 @@ pub struct Network {
 
     /// Availability zone hints to use when scheduling the network.
     #[structable(optional)]
-    availability_zone_hints: Option<String>,
+    availability_zone_hints: Option<VecString>,
 
     /// Availability zones for the network.
     #[structable(optional)]
-    availability_zones: Option<String>,
+    availability_zones: Option<VecString>,
 
     /// Timestamp when the network was created.
     #[structable(optional)]
@@ -323,7 +210,7 @@ pub struct Network {
     /// A list of provider segment objects. Available for multiple provider
     /// extensions.
     #[structable(optional)]
-    segments: Option<String>,
+    segments: Option<VecValue>,
 
     /// Indicates whether this network is shared across all tenants. By
     /// default, only administrative users can change this value.
@@ -368,90 +255,18 @@ impl Command for NetworkCmd {
         let mut ep_builder = post::Network::builder();
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.args.limit {
-            ep_builder.limit(val);
-        }
-        if let Some(val) = &self.args.marker {
-            ep_builder.marker(val);
-        }
-        if let Some(val) = &self.args.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.args.name {
-            ep_builder.name(val);
-        }
-        if let Some(val) = &self.args.status {
-            ep_builder.status(val);
-        }
-        if let Some(val) = &self.args.project_id {
-            ep_builder.project_id(val);
-        }
-        if let Some(val) = &self.args.ipv4_address_scope_id {
-            ep_builder.ipv4_address_scope_id(val);
-        }
-        if let Some(val) = &self.args.ipv6_address_scope_id {
-            ep_builder.ipv6_address_scope_id(val);
-        }
-        if let Some(val) = &self.args.is_admin_state_up {
-            ep_builder.is_admin_state_up(*val);
-        }
-        if let Some(val) = &self.args.is_port_security_enabled {
-            ep_builder.is_port_security_enabled(*val);
-        }
-        if let Some(val) = &self.args.is_router_external {
-            ep_builder.is_router_external(*val);
-        }
-        if let Some(val) = &self.args.is_shared {
-            ep_builder.is_shared(*val);
-        }
-        if let Some(val) = &self.args.provider_network_type {
-            ep_builder.provider_network_type(val);
-        }
-        if let Some(val) = &self.args.provider_physical_network {
-            ep_builder.provider_physical_network(val);
-        }
-        if let Some(val) = &self.args.provider_segmentation_id {
-            ep_builder.provider_segmentation_id(val);
-        }
-        if let Some(val) = &self.args.tags {
-            ep_builder.tags(val.iter());
-        }
-        if let Some(val) = &self.args.any_tags {
-            ep_builder.any_tags(val.iter());
-        }
-        if let Some(val) = &self.args.not_tags {
-            ep_builder.not_tags(val.iter());
-        }
-        if let Some(val) = &self.args.not_any_tags {
-            ep_builder.not_any_tags(val.iter());
-        }
         // Set body parameters
         if let Some(val) = &self.args.is_admin_state_up {
             ep_builder.is_admin_state_up(*val);
         }
         if let Some(val) = &self.args.availability_zone_hints {
-            ep_builder.availability_zone_hints(val);
-        }
-        if let Some(val) = &self.args.availability_zones {
-            ep_builder.availability_zones(val);
-        }
-        if let Some(val) = &self.args.created_at {
-            ep_builder.created_at(val);
+            ep_builder.availability_zone_hints(val.iter().cloned());
         }
         if let Some(val) = &self.args.description {
             ep_builder.description(val);
         }
         if let Some(val) = &self.args.dns_domain {
             ep_builder.dns_domain(val);
-        }
-        if let Some(val) = &self.args.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.args.ipv4_address_scope_id {
-            ep_builder.ipv4_address_scope_id(val);
-        }
-        if let Some(val) = &self.args.ipv6_address_scope_id {
-            ep_builder.ipv6_address_scope_id(val);
         }
         if let Some(val) = &self.args.is_default {
             ep_builder.is_default(*val);
@@ -480,29 +295,14 @@ impl Command for NetworkCmd {
         if let Some(val) = &self.args.qos_policy_id {
             ep_builder.qos_policy_id(val);
         }
-        if let Some(val) = &self.args.revision_number {
-            ep_builder.revision_number(*val);
-        }
         if let Some(val) = &self.args.is_router_external {
             ep_builder.is_router_external(*val);
         }
         if let Some(val) = &self.args.segments {
-            ep_builder.segments(val);
+            ep_builder.segments(val.iter().cloned());
         }
         if let Some(val) = &self.args.is_shared {
             ep_builder.is_shared(*val);
-        }
-        if let Some(val) = &self.args.status {
-            ep_builder.status(val);
-        }
-        if let Some(val) = &self.args.subnet_ids {
-            ep_builder.subnet_ids(val.iter().cloned());
-        }
-        if let Some(val) = &self.args.tags {
-            ep_builder.tags(val.iter().cloned());
-        }
-        if let Some(val) = &self.args.updated_at {
-            ep_builder.updated_at(val);
         }
         if let Some(val) = &self.args.is_vlan_transparent {
             ep_builder.is_vlan_transparent(*val);

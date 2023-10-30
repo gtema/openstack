@@ -17,11 +17,14 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use crate::common::parse_json;
 use crate::common::VecString;
+use crate::common::VecValue;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network::find;
 use openstack_sdk::api::network::v2::network::get;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 
 /// Get single Network
 #[derive(Args, Clone, Debug)]
@@ -46,11 +49,11 @@ pub struct Network {
 
     /// Availability zone hints to use when scheduling the network.
     #[structable(optional)]
-    availability_zone_hints: Option<String>,
+    availability_zone_hints: Option<VecString>,
 
     /// Availability zones for the network.
     #[structable(optional)]
-    availability_zones: Option<String>,
+    availability_zones: Option<VecString>,
 
     /// Timestamp when the network was created.
     #[structable(optional)]
@@ -136,7 +139,7 @@ pub struct Network {
     /// A list of provider segment objects. Available for multiple provider
     /// extensions.
     #[structable(optional)]
-    segments: Option<String>,
+    segments: Option<VecValue>,
 
     /// Indicates whether this network is shared across all tenants. By
     /// default, only administrative users can change this value.

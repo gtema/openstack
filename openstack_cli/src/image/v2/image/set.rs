@@ -227,7 +227,7 @@ pub struct ImageArgs {
     /// A list of URLs to access the image file in external store. This list
     /// appears if the show_multiple_locations option is set to true in the
     /// Image service's configuration file.
-    #[arg(long, action=clap::ArgAction::Append, value_parser=parse_json)]
+    #[arg(long, action=clap::ArgAction::Append, value_parser=parse_json, value_name="JSON_VALUE")]
     locations: Option<Vec<Value>>,
 
     /// The minimum disk size in GB that is required to boot the image.

@@ -1,8 +1,14 @@
+pub mod network;
+pub mod port;
 pub mod router;
+pub mod subnet;
 
 use clap::{Args, Subcommand};
 
+use crate::network::v2::network::{NetworkArgs, NetworkCommand};
+use crate::network::v2::port::{PortArgs, PortCommand};
 use crate::network::v2::router::{RouterArgs, RouterCommand};
+use crate::network::v2::subnet::{SubnetArgs, SubnetCommand};
 use crate::{Command, ResourceCommands, ServiceCommands};
 
 #[derive(Args, Clone)]
@@ -15,8 +21,14 @@ pub struct NetworkSrvArgs {
 
 #[derive(Clone, Subcommand)]
 pub enum NetworkSrvCommands {
+    /// Network commands
+    Network(NetworkArgs),
+    /// Port commands
+    Port(PortArgs),
     /// Router commands
     Router(RouterArgs),
+    /// Subnet commands
+    Subnet(SubnetArgs),
 }
 
 pub struct NetworkSrvCommand {
@@ -26,7 +38,12 @@ pub struct NetworkSrvCommand {
 impl ServiceCommands for NetworkSrvCommand {
     fn get_command(&self) -> Box<dyn Command> {
         match &self.args.command {
+            NetworkSrvCommands::Network(args) => {
+                NetworkCommand { args: args.clone() }.get_command()
+            }
+            NetworkSrvCommands::Port(args) => PortCommand { args: args.clone() }.get_command(),
             NetworkSrvCommands::Router(args) => RouterCommand { args: args.clone() }.get_command(),
+            NetworkSrvCommands::Subnet(args) => SubnetCommand { args: args.clone() }.get_command(),
         }
     }
 }

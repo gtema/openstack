@@ -20,7 +20,7 @@ pub struct ExternalGatewayInfo<'a> {
 
     /// Fixed IPs
     #[serde(skip_serializing_if = "Option::is_none")]
-    external_fixed_ips: Option<ExternalFixedIps<'a>>,
+    external_fixed_ips: Option<Vec<ExternalFixedIps<'a>>>,
 
     /// ID of the network
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -50,7 +50,7 @@ pub struct Router<'a> {
 
     /// Availability zone hints to use when scheduling the router.
     #[builder(default, private, setter(name = "_availability_zone_hints"))]
-    availability_zone_hints: BTreeSet<Cow<'a, str>>,
+    availability_zone_hints: Option<BTreeSet<Cow<'a, str>>>,
 
     /// The router description.
     #[builder(default, setter(into))]
@@ -111,6 +111,7 @@ impl<'a> RouterBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.availability_zone_hints
+            .get_or_insert(None)
             .get_or_insert_with(BTreeSet::new)
             .extend(iter.map(Into::into));
         self
@@ -157,7 +158,10 @@ impl<'a> RestEndpoint for Router<'a> {
         let mut params = JsonBodyParams::default();
 
         params.push_opt("admin_state_up", self.is_admin_state_up);
-        params.push("availability_zone_hints", &self.availability_zone_hints);
+        params.push_opt(
+            "availability_zone_hints",
+            self.availability_zone_hints.as_ref(),
+        );
         params.push_opt("description", self.description.as_ref());
         params.push_opt("distributed", self.is_distributed);
         params.push_opt("enable_ndp_proxy", self.enable_ndp_proxy);
