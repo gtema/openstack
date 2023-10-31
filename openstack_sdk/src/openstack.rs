@@ -342,6 +342,22 @@ impl api::RestClient for OpenStack {
         endpoint: &str,
     ) -> Result<Url, api::ApiError<Self::Error>> {
         let service_url = self.get_service_endpoint(service_type)?.url;
+        if let Some(project) = self.get_current_project() {
+            // We are in the project scope
+            if service_url.as_str().contains(&project.id) && endpoint.starts_with(&project.id) {
+                // Catalog endpoint contains project_id and suffix contains same project_id -> deduplicate
+                trace!(
+                    "Preventing double project_id in url for {:?}: {:?}",
+                    service_type,
+                    endpoint
+                );
+                return Ok(service_url.join(
+                    endpoint
+                        .get(project.id.len() + 1..)
+                        .expect("Endpoint contains project_id"),
+                )?);
+            }
+        }
         Ok(service_url.join(endpoint)?)
     }
 
@@ -404,6 +420,22 @@ impl api::RestClient for AsyncOpenStack {
         endpoint: &str,
     ) -> Result<Url, api::ApiError<Self::Error>> {
         let service_url = self.get_service_endpoint(service_type)?.url;
+        if let Some(project) = self.get_current_project() {
+            // We are in the project scope
+            if service_url.as_str().contains(&project.id) && endpoint.starts_with(&project.id) {
+                // Catalog endpoint contains project_id and suffix contains same project_id -> deduplicate
+                trace!(
+                    "Preventing double project_id in url for {:?}: {:?}",
+                    service_type,
+                    endpoint
+                );
+                return Ok(service_url.join(
+                    endpoint
+                        .get(project.id.len() + 1..)
+                        .expect("Endpoint contains project_id"),
+                )?);
+            }
+        }
         Ok(service_url.join(endpoint)?)
     }
 

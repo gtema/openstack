@@ -69,7 +69,8 @@ where
 
         let ep = client.get_service_endpoint(&self.endpoint.service_type())?;
         let url = {
-            let mut url = ep.url.join(&self.endpoint.endpoint())?;
+            let mut url =
+                client.rest_endpoint(&self.endpoint.service_type(), &self.endpoint.endpoint())?;
             self.endpoint.parameters().add_to_url(&mut url);
             url
         };
