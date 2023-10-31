@@ -1,6 +1,4 @@
-//! Lists all Block Storage volumes, with details, that the project can access,
-//! since v3.31 if non-admin users specify invalid filters in the url, API will
-//! return bad request.
+//! Create Volume
 use async_trait::async_trait;
 use clap::Args;
 use http::Response;
@@ -19,68 +17,121 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::parse_json;
+use crate::common::parse_key_val;
 use crate::common::HashMapStringString;
 use crate::common::VecValue;
-use openstack_sdk::api::block_storage::v3::volumes::detail::get;
+use openstack_sdk::api::block_storage::v3::volumes::post;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::RestClient;
-use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
+use std::collections::HashMap;
 
-/// Lists all Block Storage volumes, with details, that the project can access,
-/// since v3.31 if non-admin users specify invalid filters in the url, API will
-/// return bad request.
+/// Create Volume
 #[derive(Args, Clone, Debug)]
-pub struct VolumesArgs {
+pub struct VolumeArgs {
     /// The UUID of the project in a multi-tenancy cloud.
     #[arg(long)]
     project_id: Option<String>,
 
-    /// all_projects filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    all_projects: Option<bool>,
+    /// The name of the availability zone.
+    #[arg(long)]
+    availabilitiy_zone: Option<String>,
 
-    /// Name filter
+    /// Backup ID
+    #[arg(long)]
+    backup_id: Option<String>,
+
+    /// Enables or disables the bootable attribute. You can boot an instance
+    /// from a bootable volume.
+    #[arg(long)]
+    bootable: Option<bool>,
+
+    /// The UUID of the consistency group.
+    #[arg(long)]
+    consistencygroup_id: Option<String>,
+
+    /// The volume description.
+    #[arg(long)]
+    description: Option<String>,
+
+    /// The volume name.
+    #[arg(long)]
+    display_name: Option<String>,
+
+    /// The ID o fthe group the volume belongs to.
+    #[arg(long)]
+    group_id: Option<String>,
+
+    /// The UUID of the image from which you want to create the volume.
+    /// Required to create a bootable volume.
+    #[arg(long)]
+    image_id: Option<String>,
+
+    /// A metadata object. Contains one or more metadata key and value pairs
+    /// that are associated with the volume.
+    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    metadata: Option<Vec<(String, String)>>,
+
+    /// If true, this volume can attach to more than one instance.
+    #[arg(long)]
+    is_multiattach: Option<bool>,
+
+    /// The volume name.
     #[arg(long)]
     name: Option<String>,
 
-    /// Total limit of entities count to return. Use this when there are too many entries.
-    #[arg(long, default_value_t = 10000)]
-    max_items: usize,
+    /// The UUID of the source volume. The API creates a new volume with the
+    /// same size as the source volume unless a larger size is requested.
+    #[arg(long)]
+    source_volid: Option<String>,
+
+    /// To create a volume from an existing snapshot, specify the UUID of the
+    /// volume snapshot. The volume is created in same availability zone and
+    /// with same size as the snapshot.
+    #[arg(long)]
+    snapshot_id: Option<String>,
+
+    /// The size of the volume, in gibibytes (GiB).
+    #[arg(long)]
+    size: Option<u64>,
+
+    /// The associated volume type name for the volume.
+    #[arg(long)]
+    volume_type: Option<String>,
 }
 
-pub struct VolumesCmd {
-    pub args: VolumesArgs,
+pub struct VolumeCmd {
+    pub args: VolumeArgs,
 }
 
-/// Volumes
+/// Volume
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Volumes {
+pub struct Volume {
     /// Instance attachment information. If this volume is attached to a server
     /// instance, the attachments list includes the UUID of the attached
     /// server, an attachment UUID, the name of the attached host, if any, the
     /// volume UUID, the device, and the device UUID. Otherwise, this list is
     /// empty.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     attachments: Option<VecValue>,
 
     /// The name of the availability zone.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availabilitiy_zone: Option<String>,
 
     /// Current back-end of the volume. Host format is host@backend#pool.
     #[serde(rename = "os-vol-host-attr:host")]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     host: Option<String>,
 
     /// If true, this volume is encrypted.
     #[serde(rename = "encrypted")]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     is_encrypted: Option<bool>,
 
     /// The UUID of the encryption key. Only included for encrypted volumes.
     /// New in version 3.64
-    #[structable(optional, wide)]
+    #[structable(optional)]
     encryption_key_id: Option<String>,
 
     /// The date and time when the resource was updated.
@@ -89,13 +140,13 @@ pub struct Volumes {
     updated_at: Option<String>,
 
     /// The volume replication status.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     replication_status: Option<String>,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
     /// with same size as the snapshot.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     snapshot_id: Option<String>,
 
     /// The UUID of the volume.
@@ -103,55 +154,55 @@ pub struct Volumes {
     id: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
-    #[structable(optional, wide)]
+    #[structable(optional)]
     size: Option<u64>,
 
     /// The UUID of the user.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     user_id: Option<String>,
 
     /// The status of this volume migration (None means that a migration is not
     /// currently in progress).
     #[serde(rename = "os-vol-mig-status-attr:migstat")]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     migration_status: Option<String>,
 
     /// A metadata object. Contains one or more metadata key and value pairs
     /// that are associated with the volume.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     metadata: Option<HashMapStringString>,
 
     /// The volume description.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// List of image metadata entries. Only included for volumes that were
     /// created from an image, or from a snapshot of a volume originally
     /// created from an image.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     volume_image_metadata: Option<Value>,
 
     /// The volume description.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// If true, this volume can attach to more than one instance.
     #[serde(rename = "multiattach")]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     is_multiattach: Option<bool>,
 
     /// The UUID of the source volume. The API creates a new volume with the
     /// same size as the source volume unless a larger size is requested.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     source_volid: Option<String>,
 
     /// The UUID of the consistency group.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     consistencygroup_id: Option<String>,
 
     /// The volume ID that this volume name on the back- end is based on.
     #[serde(rename = "os-vol-mig-status-attr:name_id")]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     migration_id: Option<String>,
 
     /// The volume name.
@@ -160,7 +211,7 @@ pub struct Volumes {
 
     /// Enables or disables the bootable attribute. You can boot an instance
     /// from a bootable volume.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     bootable: Option<String>,
 
     /// The date and time when the resource was created.
@@ -169,68 +220,68 @@ pub struct Volumes {
     created_at: Option<String>,
 
     /// The associated volume type name for the volume.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
     /// New in version 3.63
-    #[structable(optional, wide)]
+    #[structable(optional)]
     volume_type_id: Option<String>,
 
     /// The ID of the group.
     /// New in version 3.13
-    #[structable(optional, wide)]
+    #[structable(optional)]
     group_id: Option<String>,
 
     /// The volume links.
-    #[structable(optional, wide)]
+    #[structable(optional)]
     volumes_links: Option<VecValue>,
 
     /// The provider ID for the volume. The value is either a string set by the
     /// driver or null if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
     /// New in version 3.21
-    #[structable(optional, wide)]
+    #[structable(optional)]
     provider_id: Option<String>,
 
     /// A unique identifier that’s used to indicate what node the volume-
     /// service for a particular volume is being serviced by.
     /// New in version 3.48
-    #[structable(optional, wide)]
+    #[structable(optional)]
     service_uuid: Option<String>,
 
     /// An indicator whether the back-end hosting the volume utilizes
     /// shared_targets or not. Default=true.
     /// New in version 3.48
     /// Available until version 3.68
-    #[structable(optional, wide)]
+    #[structable(optional)]
     shared_targets: Option<bool>,
 
     /// The cluster name of volume backend.
     /// New in version 3.61
-    #[structable(optional, wide)]
+    #[structable(optional)]
     cluster_name: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
     /// New in version 3.65
-    #[structable(optional, wide)]
+    #[structable(optional)]
     consumes_quota: Option<bool>,
 }
 
 #[async_trait]
-impl Command for VolumesCmd {
+impl Command for VolumeCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Volumes with {:?}", self.args);
+        info!("Post Volume with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = get::Volumes::builder();
+        let mut ep_builder = post::Volume::builder();
         // Set path parameters
         if let Some(val) = &self.args.project_id {
             ep_builder.project_id(val);
@@ -243,24 +294,60 @@ impl Command for VolumesCmd {
             );
         }
         // Set query parameters
-        if let Some(val) = &self.args.all_projects {
-            ep_builder.all_projects(*val);
+        // Set body parameters
+        if let Some(val) = &self.args.availabilitiy_zone {
+            ep_builder.availabilitiy_zone(val);
+        }
+        if let Some(val) = &self.args.backup_id {
+            ep_builder.backup_id(val);
+        }
+        if let Some(val) = &self.args.bootable {
+            ep_builder.bootable(*val);
+        }
+        if let Some(val) = &self.args.consistencygroup_id {
+            ep_builder.consistencygroup_id(val);
+        }
+        if let Some(val) = &self.args.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.args.display_name {
+            ep_builder.display_name(val);
+        }
+        if let Some(val) = &self.args.group_id {
+            ep_builder.group_id(val);
+        }
+        if let Some(val) = &self.args.image_id {
+            ep_builder.image_id(val);
+        }
+        if let Some(val) = &self.args.metadata {
+            ep_builder.metadata(val.iter().cloned());
+        }
+        if let Some(val) = &self.args.is_multiattach {
+            ep_builder.is_multiattach(*val);
         }
         if let Some(val) = &self.args.name {
             ep_builder.name(val);
         }
-        // Set body parameters
+        if let Some(val) = &self.args.source_volid {
+            ep_builder.source_volid(val);
+        }
+        if let Some(val) = &self.args.snapshot_id {
+            ep_builder.snapshot_id(val);
+        }
+        if let Some(val) = &self.args.size {
+            ep_builder.size(*val);
+        }
+        if let Some(val) = &self.args.volume_type {
+            ep_builder.volume_type(val);
+        }
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         client
             .discover_service_endpoint(&ServiceType::BlockStorage)
             .await?;
-        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.args.max_items))
-            .query_async(client)
-            .await?;
-
-        op.output_list::<Volumes>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<Volume>(data)?;
         Ok(())
     }
 }

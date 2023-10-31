@@ -9,6 +9,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
 * [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
+* [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
+* [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
 * [`osc compute`↴](#osc-compute)
 * [`osc compute server`↴](#osc-compute-server)
 * [`osc compute server list`↴](#osc-compute-server-list)
@@ -146,6 +148,8 @@ Volume commands
 
 * `list` — List Volumes
 * `show` — Show single volume
+* `create` — Create volume
+* `set` — Update volume
 
 
 
@@ -182,6 +186,59 @@ Show single volume
 ###### **Options:**
 
 * `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
+
+
+
+## `osc block-storage volume create`
+
+Create volume
+
+**Usage:** `osc block-storage volume create [OPTIONS]`
+
+###### **Options:**
+
+* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
+* `--availabilitiy-zone <AVAILABILITIY_ZONE>` — The name of the availability zone
+* `--backup-id <BACKUP_ID>` — Backup ID
+* `--bootable <BOOTABLE>` — Enables or disables the bootable attribute. You can boot an instance from a bootable volume
+
+  Possible values: `true`, `false`
+
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>` — The volume name
+* `--group-id <GROUP_ID>` — The ID o fthe group the volume belongs to
+* `--image-id <IMAGE_ID>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--metadata <key=value>` — A metadata object. Contains one or more metadata key and value pairs that are associated with the volume
+* `--is-multiattach <IS_MULTIATTACH>` — If true, this volume can attach to more than one instance
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The volume name
+* `--source-volid <SOURCE_VOLID>` — The UUID of the source volume. The API creates a new volume with the same size as the source volume unless a larger size is requested
+* `--snapshot-id <SNAPSHOT_ID>` — To create a volume from an existing snapshot, specify the UUID of the volume snapshot. The volume is created in same availability zone and with same size as the snapshot
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--volume-type <VOLUME_TYPE>` — The associated volume type name for the volume
+
+
+
+## `osc block-storage volume set`
+
+Update volume
+
+**Usage:** `osc block-storage volume set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Volume ID
+
+###### **Options:**
+
+* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>` — The volume name
+* `--metadata <key=value>` — A metadata object. Contains one or more metadata key and value pairs that are associated with the volume
+* `--name <NAME>` — The volume name
 
 
 

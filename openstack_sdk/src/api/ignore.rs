@@ -30,7 +30,11 @@ where
 {
     fn query(&self, client: &C) -> Result<(), ApiError<C::Error>> {
         let ep = client.get_service_endpoint(&self.endpoint.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, &self.endpoint)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.endpoint.service_type(), &self.endpoint.endpoint())?,
+            &self.endpoint,
+        )?;
 
         let rsp = client.rest(req, data)?;
 
@@ -56,7 +60,11 @@ where
 {
     async fn query_async(&self, client: &C) -> Result<(), ApiError<C::Error>> {
         let ep = client.get_service_endpoint(&self.endpoint.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, &self.endpoint)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.endpoint.service_type(), &self.endpoint.endpoint())?,
+            &self.endpoint,
+        )?;
 
         let rsp = client.rest_async(req, data).await?;
 

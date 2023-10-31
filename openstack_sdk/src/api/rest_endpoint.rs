@@ -100,13 +100,13 @@ pub(crate) fn set_latest_microversion<E>(
 
 pub(crate) fn prepare_request<C, E>(
     service_endpoint: &ServiceEndpoint,
+    mut url: Url,
     endpoint: &E,
 ) -> Result<(Builder, Vec<u8>), ApiError<C::Error>>
 where
     E: RestEndpoint,
     C: RestClient,
 {
-    let mut url = service_endpoint.url.clone().join(&endpoint.endpoint())?;
     endpoint.parameters().add_to_url(&mut url);
     let mut req = Request::builder()
         .method(endpoint.method())
@@ -154,7 +154,11 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, self)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
+            self,
+        )?;
 
         let rsp = client.rest(req, data)?;
 
@@ -191,7 +195,11 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, self)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
+            self,
+        )?;
 
         let rsp = client.rest_async(req, data).await?;
         let mut v = get_json::<C>(&rsp)?;
@@ -226,7 +234,11 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, self)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
+            self,
+        )?;
 
         let rsp = client.rest(req, data)?;
 
@@ -246,7 +258,11 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, self)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
+            self,
+        )?;
 
         let rsp = client.rest_async(req, data).await?;
 
@@ -272,7 +288,7 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type())?;
-        let mut url = ep.url.clone().join(&self.endpoint())?;
+        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
         self.parameters().add_to_url(&mut url);
         let mut req = Request::builder()
             .method(self.method())
@@ -309,7 +325,11 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(&ep, self)?;
+        let (req, data) = prepare_request::<C, E>(
+            &ep,
+            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
+            self,
+        )?;
 
         let rsp = client.download_async(req, data).await?;
 

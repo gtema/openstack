@@ -3,7 +3,6 @@ use async_trait::async_trait;
 use clap::Args;
 use http::Response;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;
@@ -18,7 +17,6 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::parse_json;
-use crate::common::parse_key_val;
 use crate::common::HashMapStringString;
 use crate::common::VecValue;
 use openstack_sdk::api::block_storage::v3::volume::find;
@@ -120,7 +118,7 @@ pub struct Volume {
     /// created from an image, or from a snapshot of a volume originally
     /// created from an image.
     #[structable(optional)]
-    volume_image_metadata: Option<HashMapStringString>,
+    volume_image_metadata: Option<Value>,
 
     /// The volume description.
     #[structable(optional)]
@@ -191,7 +189,7 @@ pub struct Volume {
     service_uuid: Option<String>,
 
     /// An indicator whether the back-end hosting the volume utilizes
-    /// shared_targets or not. Default=True.
+    /// shared_targets or not. Default=true.
     /// New in version 3.48
     /// Available until version 3.68
     #[structable(optional)]

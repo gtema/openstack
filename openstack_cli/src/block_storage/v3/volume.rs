@@ -2,7 +2,9 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+mod create;
 mod list;
+mod set;
 mod show;
 
 #[derive(Args, Clone, Debug)]
@@ -18,6 +20,10 @@ pub enum VolumeCommands {
     List(list::VolumesArgs),
     /// Show single volume
     Show(show::VolumeArgs),
+    /// Create volume
+    Create(create::VolumeArgs),
+    /// Update volume
+    Set(set::VolumeArgs),
 }
 
 pub struct VolumeCommand {
@@ -29,6 +35,8 @@ impl ResourceCommands for VolumeCommand {
         match &self.args.command {
             VolumeCommands::List(args) => Box::new(list::VolumesCmd { args: args.clone() }),
             VolumeCommands::Show(args) => Box::new(show::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Create(args) => Box::new(create::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Set(args) => Box::new(set::VolumeCmd { args: args.clone() }),
         }
     }
 }
