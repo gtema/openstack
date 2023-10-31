@@ -12,10 +12,11 @@
 //! API calls.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
-use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+
+use std::collections::BTreeSet;
 
 /// Query for image.post operation.
 #[derive(Debug, Builder, Clone)]
@@ -62,7 +63,7 @@ pub struct Image<'a> {
     /// List of tags for this image. Each tag is a string of at most 255 chars.
     /// The maximum number of tags allowed on an image is set by the operator.
     #[builder(default, private, setter(name = "_tags"))]
-    tags: BTreeSet<Cow<'a, str>>,
+    tags: Option<BTreeSet<Cow<'a, str>>>,
 
     /// Visibility for this image. Valid value is one of: ``public``,
     /// ``private``, ``shared``, or ``community``. At most sites, only an
@@ -93,6 +94,7 @@ impl<'a> ImageBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.tags
+            .get_or_insert(None)
             .get_or_insert_with(BTreeSet::new)
             .extend(iter.map(Into::into));
         self
@@ -144,7 +146,7 @@ impl<'a> RestEndpoint for Image<'a> {
         params.push_opt("min_ram", self.min_ram);
         params.push_opt("name", self.name.as_ref());
         params.push_opt("protected", self.is_protected);
-        params.push("tags", &self.tags);
+        params.push_opt("tags", self.tags.as_ref());
         params.push_opt("visibility", self.visibility.as_ref());
         params.into_body()
     }

@@ -6,7 +6,6 @@ use clap::Args;
 use http::Response;
 use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;

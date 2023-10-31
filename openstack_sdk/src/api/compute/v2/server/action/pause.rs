@@ -5,7 +5,6 @@
 //! permissions through the policy.json file.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
-use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;

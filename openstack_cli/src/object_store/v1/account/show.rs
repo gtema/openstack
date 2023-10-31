@@ -10,7 +10,6 @@ use clap::Args;
 use http::Response;
 use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;
@@ -28,6 +27,7 @@ use crate::common::HashMapStringString;
 use openstack_sdk::api::object_store::v1::account::head;
 use openstack_sdk::api::RawQueryAsync;
 use regex::Regex;
+use std::collections::HashMap;
 
 /// Shows metadata for an account.
 /// Because the storage system can store large amounts of data, take care when

@@ -3,7 +3,6 @@ use async_trait::async_trait;
 use clap::Args;
 use http::Response;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;
@@ -18,7 +17,6 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::common::parse_json;
-use crate::common::parse_key_val;
 use crate::common::HashMapStringString;
 use crate::common::VecString;
 use crate::common::VecValue;
@@ -314,7 +312,7 @@ pub struct Servers {
     /// The dictionary of data to send to the scheduler.
     #[serde(rename = "OS-SCH-HNT:scheduler_hints")]
     #[structable(optional, wide)]
-    scheduler_hints: Option<HashMapStringString>,
+    scheduler_hints: Option<Value>,
 
     /// The timestamp when the server was launched.
     #[serde(rename = "OS-SRV-USG:launched_at")]
@@ -343,7 +341,7 @@ pub struct Servers {
     /// ``version``, which is either 4 or 6 depending on the protocol of the IP
     /// address.
     #[structable(optional, wide)]
-    addresses: Option<HashMapStringString>,
+    addresses: Option<Value>,
 
     /// When a server is first created, it provides the administrator password.
     #[serde(rename = "adminPass")]
@@ -379,7 +377,7 @@ pub struct Servers {
 
     /// The flavor property as returned from server.
     #[structable(optional, wide)]
-    flavor: Option<HashMapStringString>,
+    flavor: Option<Value>,
 
     /// The flavor reference, as a ID or full URL, for the flavor to use for
     /// this server.

@@ -3,7 +3,6 @@ use async_trait::async_trait;
 use clap::Args;
 use http::Response;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;
@@ -17,12 +16,11 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_key_val;
-use crate::common::HashMapStringString;
 use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavors::detail::get;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use serde_json::Value;
 
 /// List Flavors
 #[derive(Args, Clone, Debug)]
@@ -102,7 +100,7 @@ pub struct Flavors {
 
     /// A dictionary of the flavor's extra-specs key-and-value pairs.
     #[structable(optional, wide)]
-    extra_specs: Option<HashMapStringString>,
+    extra_specs: Option<Value>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.

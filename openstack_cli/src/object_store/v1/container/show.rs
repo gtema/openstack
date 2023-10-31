@@ -6,7 +6,6 @@ use clap::Args;
 use http::Response;
 use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;
@@ -24,6 +23,7 @@ use crate::common::HashMapStringString;
 use openstack_sdk::api::object_store::v1::container::head;
 use openstack_sdk::api::RawQueryAsync;
 use regex::Regex;
+use std::collections::HashMap;
 
 /// Shows container metadata, including the number of objects and the total
 /// bytes of all objects stored in the container.

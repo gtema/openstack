@@ -27,7 +27,7 @@ pub struct ExternalGatewayInfo<'a> {
     network_id: Option<Cow<'a, str>>,
 }
 
-/// Fixed IPs
+/// ExternalFixedIps
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct ExternalFixedIps<'a> {
     /// IP address

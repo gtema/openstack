@@ -14,7 +14,6 @@ use async_trait::async_trait;
 use clap::Args;
 use http::Response;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use tracing::info;
 
 use anyhow::Result;

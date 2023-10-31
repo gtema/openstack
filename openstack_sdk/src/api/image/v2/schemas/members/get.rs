@@ -2,7 +2,6 @@
 //! An image members entity is a container of image member entities.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
-use std::collections::BTreeSet;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
