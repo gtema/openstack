@@ -148,10 +148,55 @@ impl fmt::Display for VecHashMapStringString {
     }
 }
 
-/// NumString (Number or Number as string)
+/// IntString (Integer or Integer as string)
 #[derive(Clone, Debug, Serialize)]
 #[serde(transparent)]
-pub struct NumString(u64);
+pub struct IntString(u64);
+impl fmt::Display for IntString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+impl<'de> Deserialize<'de> for IntString {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct MyVisitor;
+
+        impl<'de> Visitor<'de> for MyVisitor {
+            type Value = IntString;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+                fmt.write_str("integer or string")
+            }
+
+            fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(IntString(val))
+            }
+
+            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match val.parse::<u64>() {
+                    Ok(val) => self.visit_u64(val),
+                    Err(_) => Ok(IntString(0)),
+                }
+            }
+        }
+
+        deserializer.deserialize_any(MyVisitor)
+    }
+}
+
+/// NumString (Any number or number as string)
+#[derive(Clone, Debug, Serialize)]
+#[serde(transparent)]
+pub struct NumString(f64);
 impl fmt::Display for NumString {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.0)
@@ -168,10 +213,17 @@ impl<'de> Deserialize<'de> for NumString {
             type Value = NumString;
 
             fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-                fmt.write_str("integer or string")
+                fmt.write_str("number or string")
             }
 
             fn visit_u64<E>(self, val: u64) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(NumString(val as f64))
+            }
+
+            fn visit_f64<E>(self, val: f64) -> Result<Self::Value, E>
             where
                 E: serde::de::Error,
             {
@@ -182,9 +234,9 @@ impl<'de> Deserialize<'de> for NumString {
             where
                 E: serde::de::Error,
             {
-                match val.parse::<u64>() {
-                    Ok(val) => self.visit_u64(val),
-                    Err(_) => Ok(NumString(0)),
+                match val.parse::<f64>() {
+                    Ok(val) => self.visit_f64(val),
+                    Err(_) => Ok(NumString(0.0)),
                 }
             }
         }
