@@ -21,7 +21,7 @@ futures-core = { version = "~0.3" }
 glob = "~0.3"
 http = { workspace = true }
 #http-types = { workspace = true }
-itertools = { version = "~0.11" }
+itertools = { version = "~0.12" }
 json-patch = { workspace = true }
 reqwest = { workspace = true }
 #hyper = { workspace = true }
@@ -40,4 +40,4 @@ url = { workspace = true }
 httpmock = "~0.6"
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 log = "~0.4"
-simple_logger="~4.2"
+simple_logger="~4.3"
