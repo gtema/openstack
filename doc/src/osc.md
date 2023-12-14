@@ -12,6 +12,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
 * [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
 * [`osc compute`↴](#osc-compute)
+* [`osc compute extension`↴](#osc-compute-extension)
+* [`osc compute extension list`↴](#osc-compute-extension-list)
+* [`osc compute extension show`↴](#osc-compute-extension-show)
 * [`osc compute server`↴](#osc-compute-server)
 * [`osc compute server list`↴](#osc-compute-server-list)
 * [`osc compute server show`↴](#osc-compute-server-show)
@@ -251,6 +254,7 @@ Compute service (Nova) commands
 
 ###### **Subcommands:**
 
+* `extension` — Extension commands
 * `server` — Server (VM) commands
 * `flavor` — Flavor commands
 * `keypair` — Keypair commands
@@ -258,6 +262,39 @@ Compute service (Nova) commands
 ###### **Options:**
 
 * `--os-compute-api-version <OS_COMPUTE_API_VERSION>` — Compute API microversion
+
+
+
+## `osc compute extension`
+
+Extension commands
+
+**Usage:** `osc compute extension <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Extensions
+* `show` — Show single extension
+
+
+
+## `osc compute extension list`
+
+List Extensions
+
+**Usage:** `osc compute extension list`
+
+
+
+## `osc compute extension show`
+
+Show single extension
+
+**Usage:** `osc compute extension show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/extensions/{id} API
 
 
 

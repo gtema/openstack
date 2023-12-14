@@ -1,9 +1,11 @@
+pub mod extension;
 pub mod flavor;
 pub mod keypair;
 pub mod server;
 
 use clap::{Args, Parser, Subcommand};
 
+use crate::compute::v2::extension::{ExtensionArgs, ExtensionCommand};
 use crate::compute::v2::flavor::{FlavorArgs, FlavorCommand};
 use crate::compute::v2::keypair::{KeypairArgs, KeypairCommand};
 use crate::compute::v2::server::{ServerArgs, ServerCommand};
@@ -22,6 +24,8 @@ pub struct ComputeSrvArgs {
 
 #[derive(Clone, Subcommand)]
 pub enum ComputeSrvCommands {
+    /// Extension commands
+    Extension(ExtensionArgs),
     /// Server (VM) commands
     Server(ServerArgs),
     /// Flavor commands
@@ -37,6 +41,9 @@ pub struct ComputeSrvCommand {
 impl ServiceCommands for ComputeSrvCommand {
     fn get_command(&self) -> Box<dyn Command> {
         match &self.args.command {
+            ComputeSrvCommands::Extension(args) => {
+                ExtensionCommand { args: args.clone() }.get_command()
+            }
             ComputeSrvCommands::Server(args) => ServerCommand { args: args.clone() }.get_command(),
             ComputeSrvCommands::Flavor(args) => FlavorCommand { args: args.clone() }.get_command(),
             ComputeSrvCommands::Keypair(args) => {
