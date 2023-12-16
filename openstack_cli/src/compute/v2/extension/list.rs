@@ -87,7 +87,7 @@ pub struct ResponseData {
     ///
     ///
     ///
-    /// ```
+    /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
