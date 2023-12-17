@@ -40,7 +40,6 @@ fn dist() -> Result<(), DynError> {
 
     dist_binary(None)?;
     dist_binary(Some("x86_64-unknown-linux-musl"))?;
-    dist_manpage()?;
     build_doc()?;
 
     Ok(())
@@ -99,6 +98,7 @@ fn dist_manpage() -> Result<(), DynError> {
 }
 
 fn build_doc() -> Result<(), DynError> {
+    dist_manpage()?;
     Command::new("mdbook")
         .current_dir(project_root().join("doc"))
         .args(&["build"])

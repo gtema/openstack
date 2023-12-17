@@ -1,4 +1,5 @@
 pub mod availability_zone;
+pub mod extension;
 pub mod network;
 pub mod port;
 pub mod router;
@@ -7,6 +8,7 @@ pub mod subnet;
 use clap::{Args, Subcommand};
 
 use crate::network::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
+use crate::network::v2::extension::{ExtensionArgs, ExtensionCommand};
 use crate::network::v2::network::{NetworkArgs, NetworkCommand};
 use crate::network::v2::port::{PortArgs, PortCommand};
 use crate::network::v2::router::{RouterArgs, RouterCommand};
@@ -25,6 +27,8 @@ pub struct NetworkSrvArgs {
 pub enum NetworkSrvCommands {
     /// Availability Zones commands
     AvailabilityZone(AvailabilityZoneArgs),
+    /// Extensions commands
+    Extension(ExtensionArgs),
     /// Network commands
     Network(NetworkArgs),
     /// Port commands
@@ -44,6 +48,9 @@ impl ServiceCommands for NetworkSrvCommand {
         match &self.args.command {
             NetworkSrvCommands::AvailabilityZone(args) => {
                 AvailabilityZoneCommand { args: args.clone() }.get_command()
+            }
+            NetworkSrvCommands::Extension(args) => {
+                ExtensionCommand { args: args.clone() }.get_command()
             }
             NetworkSrvCommands::Network(args) => {
                 NetworkCommand { args: args.clone() }.get_command()

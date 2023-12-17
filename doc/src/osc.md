@@ -50,6 +50,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network`↴](#osc-network)
 * [`osc network availability-zone`↴](#osc-network-availability-zone)
 * [`osc network availability-zone list`↴](#osc-network-availability-zone-list)
+* [`osc network extension`↴](#osc-network-extension)
+* [`osc network extension list`↴](#osc-network-extension-list)
+* [`osc network extension show`↴](#osc-network-extension-show)
 * [`osc network network`↴](#osc-network-network)
 * [`osc network network list`↴](#osc-network-network-list)
 * [`osc network network show`↴](#osc-network-network-show)
@@ -874,6 +877,7 @@ Network (Neutron) commands
 ###### **Subcommands:**
 
 * `availability-zone` — Availability Zones commands
+* `extension` — Extensions commands
 * `network` — Network commands
 * `port` — Port commands
 * `router` — Router commands
@@ -908,6 +912,40 @@ List AvailabilityZones
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
+
+
+
+## `osc network extension`
+
+Extensions commands
+
+**Usage:** `osc network extension
+       extension <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Extensions
+* `show` — show Extensions
+
+
+
+## `osc network extension list`
+
+List Extensions
+
+**Usage:** `osc network extension list`
+
+
+
+## `osc network extension show`
+
+show Extensions
+
+**Usage:** `osc network extension show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/extensions/{id} API
 
 
 
