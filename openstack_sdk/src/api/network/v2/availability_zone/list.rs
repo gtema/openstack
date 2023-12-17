@@ -1,43 +1,45 @@
-//! List Availability zones
+//! Lists all availability zones.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
+
+use std::borrow::Cow;
 
 use crate::api::Pageable;
-
-/// Query for availability_zone.get operation.
-#[derive(Debug, Builder, Clone)]
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct AvailabilityZone<'a> {
-    /// Filter the list result by the state of the availability zone, which is
-    /// either available or unavailable.
-    #[builder(default, setter(into))]
-    state: Option<Cow<'a, str>>,
+pub struct Request<'a> {
+    /// name query parameter for /v2.0/availability_zones API
+    #[builder(setter(into), default)]
+    name: Option<Cow<'a, str>>,
 
-    /// Filter the list result by the resource type of the availability zone.
-    /// The supported resource types are network and router.
-    #[builder(default, setter(into))]
+    /// resource query parameter for /v2.0/availability_zones API
+    #[builder(setter(into), default)]
     resource: Option<Cow<'a, str>>,
 
-    /// Filter the list result by the human-readable name of the resource.
-    #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    /// state query parameter for /v2.0/availability_zones API
+    #[builder(setter(into), default)]
+    state: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> AvailabilityZone<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> AvailabilityZoneBuilder<'a> {
-        AvailabilityZoneBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> AvailabilityZoneBuilder<'a> {
-    /// Add a single header to the AvailabilityZone.
+impl<'a> RequestBuilder<'a> {
+    /// Add a single header to the Availability_Zone.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -61,20 +63,20 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for AvailabilityZone<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "availability_zones".to_string().into()
+        format!("v2.0/availability_zones",).into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("state", self.state.as_ref());
-        params.push_opt("resource", self.resource.as_ref());
         params.push_opt("name", self.name.as_ref());
+        params.push_opt("resource", self.resource.as_ref());
+        params.push_opt("state", self.state.as_ref());
 
         params
     }
@@ -92,7 +94,6 @@ impl<'a> RestEndpoint for AvailabilityZone<'a> {
         self._headers.as_ref()
     }
 }
-impl<'a> Pageable for AvailabilityZone<'a> {}
 
 #[cfg(test)]
 mod tests {
@@ -102,12 +103,13 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            AvailabilityZone::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Network
         );
     }
@@ -115,11 +117,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            AvailabilityZone::builder()
-                .build()
-                .unwrap()
-                .response_key()
-                .unwrap(),
+            Request::builder().build().unwrap().response_key().unwrap(),
             "availability_zones"
         );
     }
@@ -129,14 +127,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/availability_zones",));
+                .path(format!("/v2.0/availability_zones",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "availability_zones": {} }));
         });
 
-        let endpoint = AvailabilityZone::builder().build().unwrap();
+        let endpoint = Request::builder().build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -146,7 +144,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/availability_zones",))
+                .path(format!("/v2.0/availability_zones",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -154,7 +152,7 @@ mod tests {
                 .json_body(json!({ "availability_zones": {} }));
         });
 
-        let endpoint = AvailabilityZone::builder()
+        let endpoint = Request::builder()
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
