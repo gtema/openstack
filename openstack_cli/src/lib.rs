@@ -33,7 +33,7 @@ use anyhow::Context;
 
 use tracing::Level;
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use cli_table::{print_stdout, Table};
 
@@ -198,6 +198,29 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         ))?;
 
     let mut session = AsyncOpenStack::new(&profile).await?;
+    match &cli.command {
+        TopLevelCommands::BlockStorage(args) => {
+            session
+                .discover_service_endpoint(&ServiceType::BlockStorage)
+                .await?;
+        }
+        TopLevelCommands::Compute(args) => {
+            session
+                .discover_service_endpoint(&ServiceType::Compute)
+                .await?;
+        }
+        TopLevelCommands::Image(args) => {
+            session
+                .discover_service_endpoint(&ServiceType::Image)
+                .await?;
+        }
+        TopLevelCommands::Network(args) => {
+            session
+                .discover_service_endpoint(&ServiceType::Network)
+                .await?;
+        }
+        _ => {}
+    };
     cmd.take_action(&cli, &mut session).await?;
     Ok(())
 }
