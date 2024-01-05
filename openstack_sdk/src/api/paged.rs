@@ -119,7 +119,7 @@ where
             if let Some(request_headers) = self.endpoint.request_headers() {
                 let headers = req.headers_mut().unwrap();
                 for (k, v) in request_headers.iter() {
-                    headers.append(k, v.clone());
+                    headers.insert(k, v.clone());
                 }
             }
 

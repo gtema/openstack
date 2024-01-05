@@ -245,6 +245,51 @@ impl<'de> Deserialize<'de> for NumString {
     }
 }
 
+/// BoolString (Boolean or boolean as string)
+#[derive(Clone, Debug, Serialize)]
+#[serde(transparent)]
+pub struct BoolString(bool);
+impl fmt::Display for BoolString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+impl<'de> Deserialize<'de> for BoolString {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct MyVisitor;
+
+        impl<'de> Visitor<'de> for MyVisitor {
+            type Value = BoolString;
+
+            fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+                fmt.write_str("boolean or string")
+            }
+
+            fn visit_bool<E>(self, val: bool) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ok(BoolString(val))
+            }
+
+            fn visit_str<E>(self, val: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                match val.parse::<bool>() {
+                    Ok(val) => self.visit_bool(val),
+                    Err(_) => Ok(BoolString(false)),
+                }
+            }
+        }
+
+        deserializer.deserialize_any(MyVisitor)
+    }
+}
+
 /// Try to deserialize data and return `Default` if that fails
 pub fn deser_ok_or_default<'a, T, D>(deserializer: D) -> Result<T, D::Error>
 where

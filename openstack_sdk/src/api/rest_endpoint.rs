@@ -92,7 +92,7 @@ pub(crate) fn set_latest_microversion<E>(
     {
         if let (Some(hdrs), Some(ref ver)) = (request.headers_mut(), curr_ver.version.clone()) {
             if let Ok(val) = HeaderValue::from_str(format!("{} {}", st, ver).as_str()) {
-                hdrs.append("Openstack-API-Version", val);
+                hdrs.insert("Openstack-API-Version", val);
             }
         }
     }
@@ -112,13 +112,13 @@ where
         .method(endpoint.method())
         .uri(query::url_to_http_uri(url))
         .header(header::ACCEPT, HeaderValue::from_static("application/json"));
+    set_latest_microversion(&mut req, service_endpoint, endpoint);
     if let Some(request_headers) = endpoint.request_headers() {
         let headers = req.headers_mut().unwrap();
         for (k, v) in request_headers.iter() {
-            headers.append(k, v.clone());
+            headers.insert(k, v.clone());
         }
     }
-    set_latest_microversion(&mut req, service_endpoint, endpoint);
     if let Some((mime, data)) = endpoint.body()? {
         let req = req.header(header::CONTENT_TYPE, mime);
         Ok((req, data))
@@ -293,13 +293,13 @@ where
         let mut req = Request::builder()
             .method(self.method())
             .uri(query::url_to_http_uri(url));
+        set_latest_microversion(&mut req, &ep, self);
         if let Some(request_headers) = self.request_headers() {
             let headers = req.headers_mut().unwrap();
             for (k, v) in request_headers.iter() {
-                headers.append(k, v.clone());
+                headers.insert(k, v.clone());
             }
         }
-        set_latest_microversion(&mut req, &ep, self);
 
         let rsp = client.rest_read_body_async(req, data).await?;
 

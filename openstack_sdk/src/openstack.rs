@@ -351,7 +351,7 @@ impl api::RestClient for OpenStack {
             // the service catalog and for each entry ensure target url does
             // not start with that value.
             for part in segments {
-                if part != "" && work_endpoint.starts_with(part) {
+                if !part.is_empty() && work_endpoint.starts_with(part) {
                     work_endpoint = work_endpoint
                         .get(part.len() + 1..)
                         .expect("Cannot remove prefix from url");
@@ -429,7 +429,7 @@ impl api::RestClient for AsyncOpenStack {
             // the service catalog and for each entry ensure target url does
             // not start with that value.
             for part in segments {
-                if part != "" && work_endpoint.starts_with(part) {
+                if !part.is_empty() && work_endpoint.starts_with(part) {
                     work_endpoint = work_endpoint
                         .get(part.len() + 1..)
                         .expect("Cannot remove prefix from url");
@@ -677,8 +677,24 @@ impl AsyncOpenStack {
         })
     }
 
+    /// Return catalog infrormation given in the token
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {
         self.catalog.get_token_catalog()
+    }
+
+    /// Return service endpoint information
+    pub fn get_service_endpoint(&mut self, service_type: &ServiceType) -> Option<ServiceEndpoint> {
+        self.catalog.get_service_endpoint(service_type)
+    }
+
+    /// Return service endpoint version information
+    pub fn get_service_endpoint_version(
+        &mut self,
+        service_type: &ServiceType,
+    ) -> Option<EndpointVersion> {
+        self.catalog
+            .get_service_endpoint(service_type)
+            .map(|v| v.current_version)?
     }
 
     /// Perform HTTP request with given request and return raw response.
