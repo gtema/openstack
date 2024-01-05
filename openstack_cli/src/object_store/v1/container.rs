@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod create;
 mod delete;
 mod list;
@@ -29,7 +31,7 @@ pub struct ContainerCommand {
 }
 
 impl ResourceCommands for ContainerCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             ContainerCommands::List(args) => Box::new(list::ContainersCmd { args: args.clone() }),
             ContainerCommands::Set(args) => Box::new(set::ContainerCmd { args: args.clone() }),

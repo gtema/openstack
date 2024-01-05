@@ -26,6 +26,11 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair list`↴](#osc-compute-keypair-list)
 * [`osc compute keypair show`↴](#osc-compute-keypair-show)
 * [`osc compute keypair create`↴](#osc-compute-keypair-create)
+* [`osc compute keypair create292`↴](#osc-compute-keypair-create292)
+* [`osc compute keypair create210`↴](#osc-compute-keypair-create210)
+* [`osc compute keypair create22`↴](#osc-compute-keypair-create22)
+* [`osc compute keypair create21`↴](#osc-compute-keypair-create21)
+* [`osc compute keypair create20`↴](#osc-compute-keypair-create20)
 * [`osc compute keypair delete`↴](#osc-compute-keypair-delete)
 * [`osc image`↴](#osc-image)
 * [`osc image image`↴](#osc-image-image)
@@ -252,7 +257,7 @@ Update volume
 
 Compute service (Nova) commands
 
-**Usage:** `osc compute [OPTIONS]
+**Usage:** `osc compute
        compute <COMMAND>`
 
 ###### **Subcommands:**
@@ -261,10 +266,6 @@ Compute service (Nova) commands
 * `server` — Server (VM) commands
 * `flavor` — Flavor commands
 * `keypair` — Keypair commands
-
-###### **Options:**
-
-* `--os-compute-api-version <OS_COMPUTE_API_VERSION>` — Compute API microversion
 
 
 
@@ -454,24 +455,29 @@ Keypair commands
 
 ###### **Subcommands:**
 
-* `list` — List Keypairs
-* `show` — Show single Keypair
-* `create` — Create Keypair
-* `delete` — Delete Keypair
+* `list` — List keypairs
+* `show` — Show single keypair details
+* `create` — Imports (or generates) Keypair (with highest possible microversion)
+* `create292` — Import keypair (microversion >= 2.92)
+* `create210` — Import (or generate) keypair (2.10 <= microversion < 2.92)
+* `create22` — Import (or generate) keypair (2.2 <= microversion < 2.10)
+* `create21` — Import (or generate) keypair (2.1 <= microversion < 2.2)
+* `create20` — Import (or generate) keypair (microversion == 2.0)
+* `delete` — Delete keypair
 
 
 
 ## `osc compute keypair list`
 
-List Keypairs
+List keypairs
 
 **Usage:** `osc compute keypair list [OPTIONS]`
 
 ###### **Options:**
 
-* `--user-id <USER_ID>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
-* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the last-seen item from the response as the marker parameter value in a subsequent limited request. New in version 2.35
-* `--marker <MARKER>` — The last-seen item. Use the limit parameter to make an initial limited request and use the last-seen item from the response as the marker parameter value in a subsequent limited request. New in version 2.35
+* `--user-id <USER_ID>`
+* `--limit <LIMIT>`
+* `--marker <MARKER>`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -480,48 +486,132 @@ List Keypairs
 
 ## `osc compute keypair show`
 
-Show single Keypair
+Show single keypair details
 
-**Usage:** `osc compute keypair show [OPTIONS] <KEYPAIR_NAME>`
+Shows details for a keypair that is associated with the account.
+
+**Usage:** `osc compute keypair show [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
-* `<KEYPAIR_NAME>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+* `<ID>` — id parameter for /v2.1/os-keypairs/{id} API
 
 ###### **Options:**
 
-* `--user-id <USER_ID>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+* `--user-id <USER_ID>`
 
 
 
 ## `osc compute keypair create`
 
-Create Keypair
+Imports (or generates) Keypair (with highest possible microversion)
 
 **Usage:** `osc compute keypair create [OPTIONS] --name <NAME> --public-key <PUBLIC_KEY>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A name for the keypair which will be used to reference it later. Note: Since microversion 2.92, allowed characters are ASCII letters [a-zA-Z], digits [0-9] and the following special characters: [@._- ]
+* `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
+
+  Possible values: `x509`, `ssh`
+
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
-* `--xtype <XTYPE>` — The type of the keypair. Allowed values are ssh or x509. New in version 2.2
-* `--user-id <USER_ID>` — The user_id for a keypair
+* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+
+
+
+## `osc compute keypair create292`
+
+Import keypair (microversion >= 2.92)
+
+**Usage:** `osc compute keypair create292 [OPTIONS] --name <NAME> --public-key <PUBLIC_KEY>`
+
+###### **Options:**
+
+* `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
+
+  Possible values: `x509`, `ssh`
+
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
+* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+
+
+
+## `osc compute keypair create210`
+
+Import (or generate) keypair (2.10 <= microversion < 2.92)
+
+**Usage:** `osc compute keypair create210 [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
+
+  Possible values: `x509`, `ssh`
+
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
+* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+
+
+
+## `osc compute keypair create22`
+
+Import (or generate) keypair (2.2 <= microversion < 2.10)
+
+**Usage:** `osc compute keypair create22 [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
+
+  Possible values: `x509`, `ssh`
+
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
+
+
+
+## `osc compute keypair create21`
+
+Import (or generate) keypair (2.1 <= microversion < 2.2)
+
+**Usage:** `osc compute keypair create21 [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
+
+
+
+## `osc compute keypair create20`
+
+Import (or generate) keypair (microversion == 2.0)
+
+**Usage:** `osc compute keypair create20 [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 
 
 
 ## `osc compute keypair delete`
 
-Delete Keypair
+Delete keypair
 
-**Usage:** `osc compute keypair delete [OPTIONS] <KEYPAIR_NAME>`
+**Usage:** `osc compute keypair delete [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
-* `<KEYPAIR_NAME>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+* `<ID>` — id parameter for /v2.1/os-keypairs/{id} API
 
 ###### **Options:**
 
-* `--user-id <USER_ID>` — This allows administrative users to operate key-pairs of specified user ID. New in version 2.10
+* `--user-id <USER_ID>`
 
 
 
@@ -906,12 +996,9 @@ List AvailabilityZones
 
 ###### **Options:**
 
-* `--state <STATE>` — Filter the list result by the state of the availability zone, which is either available or unavailable
-* `--resource <RESOURCE>` — Filter the list result by the resource type of the availability zone. The supported resource types are network and router
-* `--name <NAME>` — Filter the list result by the human-readable name of the resource
-* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
-
-  Default value: `10000`
+* `--name <NAME>` — name query parameter for /v2.0/availability_zones API
+* `--resource <RESOURCE>` — resource query parameter for /v2.0/availability_zones API
+* `--state <STATE>` — state query parameter for /v2.0/availability_zones API
 
 
 

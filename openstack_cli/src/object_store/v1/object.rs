@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod delete;
 mod download;
 mod list;
@@ -29,7 +31,7 @@ pub struct ObjectCommand {
 }
 
 impl ResourceCommands for ObjectCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             ObjectCommands::List(args) => Box::new(list::ObjectsCmd { args: args.clone() }),
             ObjectCommands::Download(args) => Box::new(download::ObjectCmd { args: args.clone() }),

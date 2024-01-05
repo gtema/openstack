@@ -4,6 +4,8 @@ pub mod object;
 
 use clap::{Args, Subcommand};
 
+use openstack_sdk::AsyncOpenStack;
+
 use crate::object_store::v1::account::{AccountArgs, AccountCommand};
 use crate::object_store::v1::container::{ContainerArgs, ContainerCommand};
 use crate::object_store::v1::object::{ObjectArgs, ObjectCommand};
@@ -32,16 +34,16 @@ pub struct ObjectStoreSrvCommand {
 }
 
 impl ServiceCommands for ObjectStoreSrvCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             ObjectStoreSrvCommands::Account(args) => {
-                AccountCommand { args: args.clone() }.get_command()
+                AccountCommand { args: args.clone() }.get_command(session)
             }
             ObjectStoreSrvCommands::Container(args) => {
-                ContainerCommand { args: args.clone() }.get_command()
+                ContainerCommand { args: args.clone() }.get_command(session)
             }
             ObjectStoreSrvCommands::Object(args) => {
-                ObjectCommand { args: args.clone() }.get_command()
+                ObjectCommand { args: args.clone() }.get_command(session)
             }
         }
     }

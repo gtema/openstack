@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod create;
 mod delete;
 mod list;
@@ -31,7 +33,7 @@ pub struct SubnetCommand {
 }
 
 impl ResourceCommands for SubnetCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             SubnetCommands::List(args) => Box::new(list::SubnetsCmd { args: args.clone() }),
             SubnetCommands::Show(args) => Box::new(show::SubnetCmd { args: args.clone() }),

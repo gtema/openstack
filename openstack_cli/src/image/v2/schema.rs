@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod image;
 mod images;
 mod member;
@@ -31,17 +33,19 @@ pub struct SchemaCommand {
 }
 
 impl ResourceCommands for SchemaCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            SchemaCommands::Image(args) => image::ImageCommand { args: args.clone() }.get_command(),
+            SchemaCommands::Image(args) => {
+                image::ImageCommand { args: args.clone() }.get_command(session)
+            }
             SchemaCommands::Images(args) => {
-                images::ImagesCommand { args: args.clone() }.get_command()
+                images::ImagesCommand { args: args.clone() }.get_command(session)
             }
             SchemaCommands::Member(args) => {
-                member::MemberCommand { args: args.clone() }.get_command()
+                member::MemberCommand { args: args.clone() }.get_command(session)
             }
             SchemaCommands::Members(args) => {
-                members::MembersCommand { args: args.clone() }.get_command()
+                members::MembersCommand { args: args.clone() }.get_command(session)
             }
         }
     }

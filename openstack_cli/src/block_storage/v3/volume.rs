@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod create;
 mod list;
 mod set;
@@ -31,7 +33,7 @@ pub struct VolumeCommand {
 }
 
 impl ResourceCommands for VolumeCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             VolumeCommands::List(args) => Box::new(list::VolumesCmd { args: args.clone() }),
             VolumeCommands::Show(args) => Box::new(show::VolumeCmd { args: args.clone() }),

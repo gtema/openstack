@@ -2,6 +2,8 @@ pub mod volume;
 
 use clap::{Args, Parser, Subcommand};
 
+use openstack_sdk::AsyncOpenStack;
+
 use crate::block_storage::v3::volume::{VolumeArgs, VolumeCommand};
 use crate::{Command, ResourceCommands, ServiceCommands};
 
@@ -27,10 +29,10 @@ pub struct BlockStorageSrvCommand {
 }
 
 impl ServiceCommands for BlockStorageSrvCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             BlockStorageSrvCommands::Volume(args) => {
-                VolumeCommand { args: args.clone() }.get_command()
+                VolumeCommand { args: args.clone() }.get_command(session)
             }
         }
     }

@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod list;
 mod show;
 
@@ -25,7 +27,7 @@ pub struct FlavorCommand {
 }
 
 impl ResourceCommands for FlavorCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             FlavorCommands::List(args) => Box::new(list::FlavorsCmd { args: args.clone() }),
             FlavorCommands::Show(args) => Box::new(show::FlavorCmd { args: args.clone() }),

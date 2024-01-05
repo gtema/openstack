@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod list;
 mod show;
 
@@ -25,7 +27,7 @@ pub struct ExtensionCommand {
 }
 
 impl ResourceCommands for ExtensionCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             ExtensionCommands::List(args) => Box::new(list::ExtensionsCmd { args: args.clone() }),
             ExtensionCommands::Show(args) => Box::new(show::ExtensionCmd { args: args.clone() }),

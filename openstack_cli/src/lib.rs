@@ -20,6 +20,7 @@
 //! re-evaluated
 //!
 //! More description to come
+// #![deny(missing_docs)]
 #![allow(dead_code, unused_imports, unused_variables, unused_mut)]
 use std::io::{self, Write};
 
@@ -58,21 +59,19 @@ use crate::image::v2::{ImageSrvArgs, ImageSrvCommand};
 use crate::network::v2::{NetworkSrvArgs, NetworkSrvCommand};
 use crate::object_store::v1::{ObjectStoreSrvArgs, ObjectStoreSrvCommand};
 
-/// OpenStack CLI rewritten in Rust
+/// Main CLI parser
 #[derive(Parser)]
 #[command(name="osc", author, version, about, long_about = None)]
 #[command(propagate_version = true)]
 pub struct Cli {
-    /// Global options
     #[command(flatten)]
     pub global_opts: GlobalOpts,
 
-    /// Command
     #[command(subcommand)]
     pub command: TopLevelCommands,
 }
 
-/// Supported Top Level commands
+/// Supported Top Level commands (services)
 #[derive(Subcommand)]
 pub enum TopLevelCommands {
     /// Block Storage (Volume) service (Cinder) commands
@@ -148,12 +147,12 @@ pub trait Command {
 
 /// Service trait as service resources wrapper
 pub trait ServiceCommands {
-    fn get_command(&self) -> Box<dyn Command>;
+    fn get_command(&self, client: &mut AsyncOpenStack) -> Box<dyn Command>;
 }
 
 /// Individual resource trait
 pub trait ResourceCommands {
-    fn get_command(&self) -> Box<dyn Command>;
+    fn get_command(&self, client: &mut AsyncOpenStack) -> Box<dyn Command>;
 }
 
 /// Entry point for the CLI wrapper
@@ -170,21 +169,6 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         })
         .init();
 
-    let cmd = match &cli.command {
-        TopLevelCommands::BlockStorage(args) => {
-            BlockStorageSrvCommand { args: args.clone() }.get_command()
-        }
-        TopLevelCommands::Compute(args) => ComputeSrvCommand { args: args.clone() }.get_command(),
-        TopLevelCommands::Image(args) => ImageSrvCommand { args: args.clone() }.get_command(),
-        TopLevelCommands::Network(args) => NetworkSrvCommand { args: args.clone() }.get_command(),
-        TopLevelCommands::ObjectStore(args) => {
-            ObjectStoreSrvCommand { args: args.clone() }.get_command()
-        }
-        TopLevelCommands::Catalog(args) => {
-            catalog::CatalogCommand { args: args.clone() }.get_command()
-        }
-        TopLevelCommands::Api(args) => Box::new(api::ApiCommand { args: args.clone() }),
-    };
     let cfg = openstack_sdk::config::ConfigFile::new().unwrap();
     let profile = cfg
         .get_cloud_config(
@@ -198,28 +182,39 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         ))?;
 
     let mut session = AsyncOpenStack::new(&profile).await?;
-    match &cli.command {
+    let cmd = match &cli.command {
         TopLevelCommands::BlockStorage(args) => {
             session
                 .discover_service_endpoint(&ServiceType::BlockStorage)
                 .await?;
+
+            BlockStorageSrvCommand { args: args.clone() }.get_command(&mut session)
         }
         TopLevelCommands::Compute(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Compute)
                 .await?;
+            ComputeSrvCommand { args: args.clone() }.get_command(&mut session)
         }
         TopLevelCommands::Image(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Image)
                 .await?;
+            ImageSrvCommand { args: args.clone() }.get_command(&mut session)
         }
         TopLevelCommands::Network(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Network)
                 .await?;
+            NetworkSrvCommand { args: args.clone() }.get_command(&mut session)
         }
-        _ => {}
+        TopLevelCommands::ObjectStore(args) => {
+            ObjectStoreSrvCommand { args: args.clone() }.get_command(&mut session)
+        }
+        TopLevelCommands::Catalog(args) => {
+            catalog::CatalogCommand { args: args.clone() }.get_command(&mut session)
+        }
+        TopLevelCommands::Api(args) => Box::new(api::ApiCommand { args: args.clone() }),
     };
     cmd.take_action(&cli, &mut session).await?;
     Ok(())

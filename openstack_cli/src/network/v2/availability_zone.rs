@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod list;
 
 #[derive(Args, Clone)]
@@ -22,7 +24,7 @@ pub struct AvailabilityZoneCommand {
 }
 
 impl ResourceCommands for AvailabilityZoneCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             AvailabilityZoneCommands::List(args) => {
                 Box::new(list::AvailabilityZonesCmd { args: args.clone() })

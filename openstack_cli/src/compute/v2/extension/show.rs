@@ -127,7 +127,7 @@ impl fmt::Display for Links {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 

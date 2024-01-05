@@ -1,39 +1,39 @@
 //! Deletes a keypair.
+//!
+//! Normal response codes: 202, 204
+//!
+//! Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for keypair.delete operation.
-#[derive(Debug, Builder, Clone)]
+use std::borrow::Cow;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Keypair<'a> {
-    /// This allows administrative users to operate key-pairs of specified user
-    /// ID.
-    /// New in version 2.10
-    #[builder(default, setter(into))]
-    keypair_name: Cow<'a, str>,
+pub struct Request<'a> {
+    /// id parameter for /v2.1/os-keypairs/{id} API
+    #[builder(setter(into), default)]
+    id: Cow<'a, str>,
 
-    /// This allows administrative users to operate key-pairs of specified user
-    /// ID.
-    /// New in version 2.10
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     user_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Keypair<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> KeypairBuilder<'a> {
-        KeypairBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> KeypairBuilder<'a> {
-    /// Add a single header to the Keypair.
+impl<'a> RequestBuilder<'a> {
+    /// Add a single header to the Os_Keypair.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -57,17 +57,13 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Keypair<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> Method {
         Method::DELETE
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!(
-            "os-keypairs/{keypair_name}",
-            keypair_name = self.keypair_name.as_ref(),
-        )
-        .into()
+        format!("v2.1/os-keypairs/{id}", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -99,39 +95,35 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Keypair::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Compute
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Keypair::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path(format!(
-                "/os-keypairs/{keypair_name}",
-                keypair_name = "keypair_name",
-            ));
+            when.method(httpmock::Method::DELETE)
+                .path(format!("/v2.1/os-keypairs/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Keypair::builder()
-            .keypair_name("keypair_name")
-            .build()
-            .unwrap();
+        let endpoint = Request::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -141,10 +133,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
-                .path(format!(
-                    "/os-keypairs/{keypair_name}",
-                    keypair_name = "keypair_name",
-                ))
+                .path(format!("/v2.1/os-keypairs/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -152,8 +141,8 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Keypair::builder()
-            .keypair_name("keypair_name")
+        let endpoint = Request::builder()
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

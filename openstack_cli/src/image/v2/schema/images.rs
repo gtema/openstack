@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod show;
 
 #[derive(Args, Clone)]
@@ -22,7 +24,7 @@ pub struct ImagesCommand {
 }
 
 impl ResourceCommands for ImagesCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             ImagesCommands::Show(args) => Box::new(show::ImagesCmd { args: args.clone() }),
         }

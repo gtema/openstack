@@ -58,7 +58,7 @@ pub struct CatalogCommand {
 }
 
 impl ResourceCommands for CatalogCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             CatalogCommands::List(args) => Box::new(ListCmd { args: args.clone() }),
         }

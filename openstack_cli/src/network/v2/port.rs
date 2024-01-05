@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod create;
 mod delete;
 mod list;
@@ -31,7 +33,7 @@ pub struct PortCommand {
 }
 
 impl ResourceCommands for PortCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             PortCommands::List(args) => Box::new(list::PortsCmd { args: args.clone() }),
             PortCommands::Show(args) => Box::new(show::PortCmd { args: args.clone() }),

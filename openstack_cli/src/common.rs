@@ -412,3 +412,14 @@ pub(crate) async fn build_upload_asyncread(
         }
     }
 }
+
+#[derive(Debug, PartialEq, PartialOrd)]
+pub(crate) struct ServiceApiVersion(pub i8, pub i8);
+
+impl TryFrom<String> for ServiceApiVersion {
+    type Error = ();
+    fn try_from(ver: String) -> Result<Self, Self::Error> {
+        let parts: Vec<i8> = ver.split('.').flat_map(|v| v.parse::<i8>()).collect();
+        Ok(ServiceApiVersion(parts[0], parts[1]))
+    }
+}

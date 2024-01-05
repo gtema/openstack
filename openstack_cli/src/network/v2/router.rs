@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod create;
 mod delete;
 mod list;
@@ -31,7 +33,7 @@ pub struct RouterCommand {
 }
 
 impl ResourceCommands for RouterCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             RouterCommands::List(args) => Box::new(list::RoutersCmd { args: args.clone() }),
             RouterCommands::Show(args) => Box::new(show::RouterCmd { args: args.clone() }),

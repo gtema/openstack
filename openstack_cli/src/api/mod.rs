@@ -68,6 +68,7 @@ impl From<Method> for http::Method {
     }
 }
 
+/// Perform direct REST API requests with authorization
 #[derive(Args, Clone, Debug)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct ApiArgs {

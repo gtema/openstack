@@ -7,6 +7,8 @@ pub mod subnet;
 
 use clap::{Args, Subcommand};
 
+use openstack_sdk::AsyncOpenStack;
+
 use crate::network::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
 use crate::network::v2::extension::{ExtensionArgs, ExtensionCommand};
 use crate::network::v2::network::{NetworkArgs, NetworkCommand};
@@ -44,20 +46,26 @@ pub struct NetworkSrvCommand {
 }
 
 impl ServiceCommands for NetworkSrvCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             NetworkSrvCommands::AvailabilityZone(args) => {
-                AvailabilityZoneCommand { args: args.clone() }.get_command()
+                AvailabilityZoneCommand { args: args.clone() }.get_command(session)
             }
             NetworkSrvCommands::Extension(args) => {
-                ExtensionCommand { args: args.clone() }.get_command()
+                ExtensionCommand { args: args.clone() }.get_command(session)
             }
             NetworkSrvCommands::Network(args) => {
-                NetworkCommand { args: args.clone() }.get_command()
+                NetworkCommand { args: args.clone() }.get_command(session)
             }
-            NetworkSrvCommands::Port(args) => PortCommand { args: args.clone() }.get_command(),
-            NetworkSrvCommands::Router(args) => RouterCommand { args: args.clone() }.get_command(),
-            NetworkSrvCommands::Subnet(args) => SubnetCommand { args: args.clone() }.get_command(),
+            NetworkSrvCommands::Port(args) => {
+                PortCommand { args: args.clone() }.get_command(session)
+            }
+            NetworkSrvCommands::Router(args) => {
+                RouterCommand { args: args.clone() }.get_command(session)
+            }
+            NetworkSrvCommands::Subnet(args) => {
+                SubnetCommand { args: args.clone() }.get_command(session)
+            }
         }
     }
 }

@@ -2,6 +2,8 @@ use clap::{Args, Subcommand};
 
 use crate::{Command, ResourceCommands};
 
+use openstack_sdk::AsyncOpenStack;
+
 mod list;
 mod pause;
 mod show;
@@ -28,7 +30,7 @@ pub struct ServerCommand {
 }
 
 impl ResourceCommands for ServerCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
             ServerCommands::List(args) => Box::new(list::ServersCmd { args: args.clone() }),
             ServerCommands::Show(args) => Box::new(show::ServerCmd { args: args.clone() }),
