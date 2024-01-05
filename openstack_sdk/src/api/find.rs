@@ -33,7 +33,6 @@ pub trait Findable {
             0 => Err(ApiError::ResourceNotFound),
             1 => Ok(data[0].clone()),
             2.. => Err(ApiError::IdNotUnique),
-            _ => todo!(),
         }
     }
 }
