@@ -19,9 +19,10 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::network::v2::floatingip::tag::list;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct TagsArgs {
     /// Request Query parameters
@@ -32,8 +33,12 @@ pub struct TagsArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
@@ -42,6 +47,7 @@ pub struct PathParameters {
     floatingip_id: String,
 }
 
+/// Tags list command
 pub struct TagsCmd {
     pub args: TagsArgs,
 }
@@ -53,7 +59,7 @@ impl Command for TagsCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Put Tags with {:?}", self.args);
+        info!("List Tags with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -67,12 +73,10 @@ impl Command for TagsCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

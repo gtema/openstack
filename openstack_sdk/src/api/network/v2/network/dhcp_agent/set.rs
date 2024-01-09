@@ -30,7 +30,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the Network/Dhcp_Agent.
+    /// Add a single header to the Dhcp_Agent.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers

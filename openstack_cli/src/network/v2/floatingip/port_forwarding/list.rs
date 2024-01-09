@@ -39,22 +39,7 @@ use openstack_sdk::api::network::v2::floatingip::port_forwarding::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
-/// Lists floating IP port forwardings that the project has access to.
-///
-/// Default policy settings return only the port forwardings associated to
-/// floating
-/// IPs owned by the project of the user submitting the request, unless the
-/// user has administrative role.
-///
-/// Use the `fields` query parameter to control which fields are returned in
-/// the response body.
-/// Additionally, you can filter results by using query string parameters.
-/// For information, see [Filtering and Column Selection](https://wiki.openstac
-/// k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 404
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct PortForwardingsArgs {
     /// Request Query parameters
@@ -65,6 +50,8 @@ pub struct PortForwardingsArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {
     /// id query parameter for
@@ -97,6 +84,8 @@ pub struct QueryParameters {
     #[arg(long)]
     external_port_range: Option<f32>,
 }
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
@@ -105,10 +94,11 @@ pub struct PathParameters {
     floatingip_id: String,
 }
 
+/// PortForwardings list command
 pub struct PortForwardingsCmd {
     pub args: PortForwardingsArgs,
 }
-/// PortForwardings
+/// PortForwardings response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// The ID of the floating IP port forwarding.
@@ -121,13 +111,13 @@ pub struct ResponseData {
     /// address.
     #[serde()]
     #[structable(optional, wide)]
-    external_port: Option<Option<f32>>,
+    external_port: Option<f32>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     #[serde()]
     #[structable(optional, wide)]
-    internal_port: Option<Option<f32>>,
+    internal_port: Option<f32>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP
@@ -174,7 +164,7 @@ impl Command for PortForwardingsCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get PortForwardings with {:?}", self.args);
+        info!("List PortForwardings with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -206,9 +196,7 @@ impl Command for PortForwardingsCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
+
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;

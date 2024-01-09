@@ -40,22 +40,7 @@ use openstack_sdk::api::network::v2::floatingip::find;
 use openstack_sdk::api::network::v2::floatingip::set;
 use openstack_sdk::api::QueryAsync;
 
-/// Updates a floating IP and its association with an internal port.
-///
-/// The association process is the same as the process for the create
-/// floating IP operation.
-///
-/// To disassociate a floating IP from a port, set the `port\_id`
-/// attribute to null or omit it from the request body.
-///
-/// This example updates a floating IP:
-///
-/// Depending on the request body that you submit, this request
-/// associates a port with or disassociates a port from a floating IP.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 404, 409, 412
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct FloatingipArgs {
     /// Request Query parameters
@@ -67,18 +52,22 @@ pub struct FloatingipArgs {
     path: PathParameters,
 
     #[command(flatten)]
-    floatingip: Option<Floatingip>,
+    floatingip: Floatingip,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.0/floatingips/{id} API
     #[arg()]
     id: String,
 }
+/// Floatingip Body data
 #[derive(Args, Debug, Clone)]
-
 struct Floatingip {
     /// The ID of a port associated with the floating IP.
     /// To associate the floating IP with a fixed IP,
@@ -103,10 +92,11 @@ struct Floatingip {
     description: Option<String>,
 }
 
+/// Floatingip set command
 pub struct FloatingipCmd {
     pub args: FloatingipArgs,
 }
-/// Floatingip
+/// Floatingip response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// The ID of the floating IP address.
@@ -237,7 +227,7 @@ impl Command for FloatingipCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Put Floatingip with {:?}", self.args);
+        info!("Set Floatingip with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -249,33 +239,29 @@ impl Command for FloatingipCmd {
         // Set body parameters
 
         // Set Request.floatingip data
-        if let Some(args) = &self.args.floatingip {
-            let mut floatingip_builder = set::FloatingipBuilder::default();
-            if let Some(val) = &args.port_id {
-                floatingip_builder.port_id(val);
-            }
-
-            if let Some(val) = &args.fixed_ip_address {
-                floatingip_builder.fixed_ip_address(val);
-            }
-
-            if let Some(val) = &args.qos_policy_id {
-                floatingip_builder.qos_policy_id(val);
-            }
-
-            if let Some(val) = &args.description {
-                floatingip_builder.description(val);
-            }
-
-            ep_builder.floatingip(floatingip_builder.build().unwrap());
+        let args = &self.args.floatingip;
+        let mut floatingip_builder = set::FloatingipBuilder::default();
+        if let Some(val) = &args.port_id {
+            floatingip_builder.port_id(Some(val.into()));
         }
+
+        if let Some(val) = &args.fixed_ip_address {
+            floatingip_builder.fixed_ip_address(val);
+        }
+
+        if let Some(val) = &args.qos_policy_id {
+            floatingip_builder.qos_policy_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.description {
+            floatingip_builder.description(val);
+        }
+
+        ep_builder.floatingip(floatingip_builder.build().unwrap());
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
         Ok(())

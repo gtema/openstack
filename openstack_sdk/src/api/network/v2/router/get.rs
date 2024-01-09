@@ -1,30 +1,41 @@
-//! Get single Router
+//! Shows details for a router.
+//!
+//! Use the `fields` query parameter to control which fields are
+//! returned in the response body. For information, see [Filtering and
+//! Column Selection](http://specs.openstack.org/openstack/neutron-
+//! specs/specs/api/networking_general_api_information.html#filtering-and-
+//! column-selection).
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401, 403, 404
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for router.get operation.
-#[derive(Debug, Builder, Clone)]
+use std::borrow::Cow;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Router<'a> {
-    /// Router ID
-    #[builder(default, setter(into))]
+pub struct Request<'a> {
+    /// id parameter for /v2.0/routers/{id} API
+    #[builder(setter(into), default)]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Router<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RouterBuilder<'a> {
-        RouterBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> RouterBuilder<'a> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Router.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -49,17 +60,19 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Router<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("routers/{router_id}", router_id = self.id.as_ref(),).into()
+        format!("v2.0/routers/{id}", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -84,12 +97,13 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Router::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Network
         );
     }
@@ -97,7 +111,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Router::builder().build().unwrap().response_key().unwrap(),
+            Request::builder().build().unwrap().response_key().unwrap(),
             "router"
         );
     }
@@ -107,14 +121,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/routers/{router_id}", router_id = "router_id",));
+                .path(format!("/v2.0/routers/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "router": {} }));
         });
 
-        let endpoint = Router::builder().id("router_id").build().unwrap();
+        let endpoint = Request::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -124,7 +138,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/routers/{router_id}", router_id = "router_id",))
+                .path(format!("/v2.0/routers/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -132,8 +146,8 @@ mod tests {
                 .json_body(json!({ "router": {} }));
         });
 
-        let endpoint = Router::builder()
-            .id("router_id")
+        let endpoint = Request::builder()
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

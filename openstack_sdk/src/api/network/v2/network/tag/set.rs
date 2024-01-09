@@ -10,11 +10,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     network_id: Cow<'a, str>,
 
     /// id parameter for /v2.0/networks/{network_id}/tags/{id} API
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

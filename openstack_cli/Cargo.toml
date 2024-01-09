@@ -10,7 +10,7 @@ categories = ["command-line-interface"]
 
 [[bin]]
 name = "osc"
-path = "src/bin/openstack.rs"
+path = "src/bin/osc.rs"
 
 [dependencies]
 anyhow = {workspace = true}
@@ -36,3 +36,6 @@ thiserror = { workspace = true }
 tracing = { workspace = true}
 tracing-subscriber = { version = "~0.3" }
 url = { workspace = true }
+
+[dev-dependencies]
+assert_cmd = "~2.0"

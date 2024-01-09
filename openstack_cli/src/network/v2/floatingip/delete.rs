@@ -31,13 +31,7 @@ use openstack_sdk::api::network::v2::floatingip::delete;
 use openstack_sdk::api::network::v2::floatingip::find;
 use openstack_sdk::api::RawQueryAsync;
 
-/// Deletes a floating IP and, if present, its associated port.
-///
-/// This example deletes a floating IP:
-///
-/// Normal response codes: 204
-///
-/// Error response codes: 401, 404, 412
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct FloatingipArgs {
     /// Request Query parameters
@@ -48,8 +42,12 @@ pub struct FloatingipArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.0/floatingips/{id} API
@@ -57,6 +55,7 @@ pub struct PathParameters {
     id: String,
 }
 
+/// Floatingip delete command
 pub struct FloatingipCmd {
     pub args: FloatingipArgs,
 }
@@ -82,9 +81,6 @@ impl Command for FloatingipCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         Ok(())
     }

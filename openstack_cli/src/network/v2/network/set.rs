@@ -33,11 +33,7 @@ use openstack_sdk::api::network::v2::network::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 
-/// Updates a network.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 403, 404, 412
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct NetworkArgs {
     /// Request Query parameters
@@ -49,18 +45,22 @@ pub struct NetworkArgs {
     path: PathParameters,
 
     #[command(flatten)]
-    network: Option<Network>,
+    network: Network,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
     #[arg()]
     id: String,
 }
+/// Network Body data
 #[derive(Args, Debug, Clone)]
-
 struct Network {
     /// Human-readable name of the network.
     #[arg(long)]
@@ -126,10 +126,11 @@ struct Network {
     description: Option<String>,
 }
 
+/// Network set command
 pub struct NetworkCmd {
     pub args: NetworkArgs,
 }
-/// Network
+/// Network response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// The ID of the network.
@@ -190,7 +191,7 @@ pub struct ResponseData {
     /// the unused floating IPs of this network are automatically deleted when
     /// extension `floatingip-autodelete-internal` is present.
     #[serde(rename = "router:external")]
-    #[structable(optional, wide)]
+    #[structable(optional, title = "router:external", wide)]
     router_external: Option<BoolString>,
 
     /// Indicates whether L2 connectivity is available throughout
@@ -202,7 +203,7 @@ pub struct ResponseData {
     /// A list of provider `segment` objects.
     #[serde()]
     #[structable(optional, wide)]
-    segments: Option<VecSegments>,
+    segments: Option<VecResponseSegments>,
 
     /// The maximum transmission unit (MTU) value to
     /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
@@ -230,15 +231,15 @@ pub struct ResponseData {
     port_security_enabled: Option<BoolString>,
 
     #[serde(rename = "provider:network_type")]
-    #[structable(optional, wide)]
+    #[structable(optional, title = "provider:network_type", wide)]
     provider_network_type: Option<String>,
 
     #[serde(rename = "provider:physical_network")]
-    #[structable(optional, wide)]
+    #[structable(optional, title = "provider:physical_network", wide)]
     provider_physical_network: Option<String>,
 
     #[serde(rename = "provider:segmentation_id")]
-    #[structable(optional, wide)]
+    #[structable(optional, title = "provider:segmentation_id", wide)]
     provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
@@ -297,13 +298,13 @@ impl fmt::Display for VecString {
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
-struct Segments {
+struct ResponseSegments {
     provider_segmentation_id: Option<i32>,
     provider_physical_network: Option<String>,
     provider_network_type: Option<String>,
 }
 
-impl fmt::Display for Segments {
+impl fmt::Display for ResponseSegments {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(
@@ -332,8 +333,8 @@ impl fmt::Display for Segments {
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
-pub struct VecSegments(Vec<Segments>);
-impl fmt::Display for VecSegments {
+pub struct VecResponseSegments(Vec<ResponseSegments>);
+impl fmt::Display for VecResponseSegments {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         return write!(
             f,
@@ -354,7 +355,7 @@ impl Command for NetworkCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Put Network with {:?}", self.args);
+        info!("Set Network with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -366,77 +367,73 @@ impl Command for NetworkCmd {
         // Set body parameters
 
         // Set Request.network data
-        if let Some(args) = &self.args.network {
-            let mut network_builder = set::NetworkBuilder::default();
-            if let Some(val) = &args.name {
-                network_builder.name(val);
-            }
-
-            if let Some(val) = &args.admin_state_up {
-                network_builder.admin_state_up(*val);
-            }
-
-            if let Some(val) = &args.shared {
-                network_builder.shared(*val);
-            }
-
-            if let Some(val) = &args.router_external {
-                network_builder.router_external(*val);
-            }
-
-            if let Some(val) = &args.segments {
-                let sub: Vec<set::Segments> = val
-                    .iter()
-                    .flat_map(|v| serde_json::from_value::<set::Segments>(v.clone()))
-                    .collect::<Vec<set::Segments>>();
-                network_builder.segments(sub);
-            }
-
-            if let Some(val) = &args.mtu {
-                network_builder.mtu(*val);
-            }
-
-            if let Some(val) = &args.port_security_enabled {
-                network_builder.port_security_enabled(*val);
-            }
-
-            if let Some(val) = &args.provider_network_type {
-                network_builder.provider_network_type(val);
-            }
-
-            if let Some(val) = &args.provider_physical_network {
-                network_builder.provider_physical_network(val);
-            }
-
-            if let Some(val) = &args.provider_segmentation_id {
-                network_builder.provider_segmentation_id(val);
-            }
-
-            if let Some(val) = &args.qos_policy_id {
-                network_builder.qos_policy_id(val);
-            }
-
-            if let Some(val) = &args.is_default {
-                network_builder.is_default(*val);
-            }
-
-            if let Some(val) = &args.dns_domain {
-                network_builder.dns_domain(val);
-            }
-
-            if let Some(val) = &args.description {
-                network_builder.description(val);
-            }
-
-            ep_builder.network(network_builder.build().unwrap());
+        let args = &self.args.network;
+        let mut network_builder = set::NetworkBuilder::default();
+        if let Some(val) = &args.name {
+            network_builder.name(val);
         }
+
+        if let Some(val) = &args.admin_state_up {
+            network_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.shared {
+            network_builder.shared(*val);
+        }
+
+        if let Some(val) = &args.router_external {
+            network_builder.router_external(*val);
+        }
+
+        if let Some(val) = &args.segments {
+            let sub: Vec<set::Segments> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<set::Segments>(v.clone()))
+                .collect::<Vec<set::Segments>>();
+            network_builder.segments(sub);
+        }
+
+        if let Some(val) = &args.mtu {
+            network_builder.mtu(*val);
+        }
+
+        if let Some(val) = &args.port_security_enabled {
+            network_builder.port_security_enabled(*val);
+        }
+
+        if let Some(val) = &args.provider_network_type {
+            network_builder.provider_network_type(val);
+        }
+
+        if let Some(val) = &args.provider_physical_network {
+            network_builder.provider_physical_network(val);
+        }
+
+        if let Some(val) = &args.provider_segmentation_id {
+            network_builder.provider_segmentation_id(val);
+        }
+
+        if let Some(val) = &args.qos_policy_id {
+            network_builder.qos_policy_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.is_default {
+            network_builder.is_default(*val);
+        }
+
+        if let Some(val) = &args.dns_domain {
+            network_builder.dns_domain(val);
+        }
+
+        if let Some(val) = &args.description {
+            network_builder.description(val);
+        }
+
+        ep_builder.network(network_builder.build().unwrap());
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
         Ok(())

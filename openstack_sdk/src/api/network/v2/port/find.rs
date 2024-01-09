@@ -1,41 +1,41 @@
-//! Port find
 use derive_builder::Builder;
 use serde::de::DeserializeOwned;
-use tracing::{debug, info, span, trace, Level};
-
-use itertools::Itertools;
+use tracing::trace;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::find::Findable;
 use crate::api::rest_endpoint_prelude::*;
 use crate::api::ParamValue;
 
-use crate::api::{ApiError, Client, Pageable, Query};
+use crate::api::{ApiError, Client, Pageable, Query, RestClient};
 
-use crate::api::network::v2::{port::get::Port as GetPort, ports::get::Ports as ListPorts};
+use crate::api::network::v2::port::{get as Get, list as List};
 
-/// Find for port by NameOrId.
+/// Find for port by nameOrId.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Port<'a> {
+pub struct Request<'a> {
     #[builder(setter(into), default)]
     id: Cow<'a, str>,
 }
 
-impl<'a> Port<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> PortBuilder<'a> {
-        PortBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> Findable for Port<'a> {
-    type G = GetPort<'a>;
-    type L = ListPorts<'a>;
-    fn get_ep(&self) -> GetPort<'a> {
-        GetPort::builder().id(self.id.clone()).build().unwrap()
+impl<'a> Findable for Request<'a> {
+    type G = Get::Request<'a>;
+    type L = List::Request<'a>;
+    fn get_ep(&self) -> Get::Request<'a> {
+        Get::Request::builder().id(self.id.clone()).build().unwrap()
     }
-    fn list_ep(&self) -> ListPorts<'a> {
-        ListPorts::builder().name(self.id.clone()).build().unwrap()
+    fn list_ep(&self) -> List::Request<'a> {
+        List::Request::builder()
+            .name(self.id.clone())
+            .build()
+            .unwrap()
     }
 }

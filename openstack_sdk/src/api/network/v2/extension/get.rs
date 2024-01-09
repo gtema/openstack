@@ -66,7 +66,9 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

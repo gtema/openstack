@@ -139,7 +139,7 @@ impl<'a> RestEndpoint for Images<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "images".to_string().into()
+        "v2/images".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -211,7 +211,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path(format!("/images",));
+            when.method(httpmock::Method::GET)
+                .path(format!("/v2/images",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -228,7 +229,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/images",))
+                .path(format!("/v2/images",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

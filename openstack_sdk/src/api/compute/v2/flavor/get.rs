@@ -1,30 +1,35 @@
-//! Get single Flavor
+//! Shows details for a flavor.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for flavor.get operation.
-#[derive(Debug, Builder, Clone)]
+use std::borrow::Cow;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Flavor<'a> {
-    /// Flavor ID
+pub struct Request<'a> {
+    /// id parameter for /v2.1/flavors/{id}/action API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Flavor<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> FlavorBuilder<'a> {
-        FlavorBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> FlavorBuilder<'a> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Flavor.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -49,17 +54,19 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Flavor<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> Method {
         Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("flavors/{id}", id = self.id.as_ref(),).into()
+        format!("v2.1/flavors/{id}", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -84,12 +91,13 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Flavor::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Compute
         );
     }
@@ -97,7 +105,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Flavor::builder().build().unwrap().response_key().unwrap(),
+            Request::builder().build().unwrap().response_key().unwrap(),
             "flavor"
         );
     }
@@ -107,14 +115,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/flavors/{id}", id = "id",));
+                .path(format!("/v2.1/flavors/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "flavor": {} }));
         });
 
-        let endpoint = Flavor::builder().id("id").build().unwrap();
+        let endpoint = Request::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -124,7 +132,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/flavors/{id}", id = "id",))
+                .path(format!("/v2.1/flavors/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -132,7 +140,7 @@ mod tests {
                 .json_body(json!({ "flavor": {} }));
         });
 
-        let endpoint = Flavor::builder()
+        let endpoint = Request::builder()
             .id("id")
             .headers(
                 [(

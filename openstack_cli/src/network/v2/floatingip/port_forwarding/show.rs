@@ -34,16 +34,7 @@ use openstack_sdk::api::network::v2::floatingip::port_forwarding::find;
 use openstack_sdk::api::network::v2::floatingip::port_forwarding::get;
 use openstack_sdk::api::QueryAsync;
 
-/// Shows information for a floating IP port forwarding.
-///
-/// Use the `fields` query parameter to control which fields are returned in
-/// the response body.
-/// For information, see [Filtering and Column Selection](https://wiki.openstac
-/// k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 404
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct PortForwardingArgs {
     /// Request Query parameters
@@ -54,8 +45,12 @@ pub struct PortForwardingArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
@@ -69,10 +64,11 @@ pub struct PathParameters {
     id: String,
 }
 
+/// PortForwarding show command
 pub struct PortForwardingCmd {
     pub args: PortForwardingArgs,
 }
-/// PortForwarding
+/// PortForwarding response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// The ID of the floating IP port forwarding.
@@ -85,13 +81,13 @@ pub struct ResponseData {
     /// address.
     #[serde()]
     #[structable(optional, wide)]
-    external_port: Option<Option<f32>>,
+    external_port: Option<f32>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     #[serde()]
     #[structable(optional, wide)]
-    internal_port: Option<Option<f32>>,
+    internal_port: Option<f32>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP
@@ -138,7 +134,7 @@ impl Command for PortForwardingCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get PortForwarding with {:?}", self.args);
+        info!("Show PortForwarding with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -153,9 +149,6 @@ impl Command for PortForwardingCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
         let data = find(ep).query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
         Ok(())

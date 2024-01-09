@@ -1,30 +1,39 @@
-//! Delete Port
+//! Deletes a port.
+//!
+//! Any IP addresses that are associated with the port are returned to
+//! the respective subnets allocation pools.
+//!
+//! Normal response codes: 204
+//!
+//! Error response codes: 401, 403, 404, 412
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for port.delete operation.
-#[derive(Debug, Builder, Clone)]
+use std::borrow::Cow;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Port<'a> {
-    /// Port ID
-    #[builder(default, setter(into))]
+pub struct Request<'a> {
+    /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
+    /// API
+    #[builder(setter(into), default)]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Port<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> PortBuilder<'a> {
-        PortBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> PortBuilder<'a> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Port.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -49,17 +58,19 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Port<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> Method {
         Method::DELETE
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("ports/{port_id}", port_id = self.id.as_ref(),).into()
+        format!("v2.0/ports/{id}", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -84,19 +95,20 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Port::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Network
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Port::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
@@ -104,14 +116,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
-                .path(format!("/ports/{port_id}", port_id = "port_id",));
+                .path(format!("/v2.0/ports/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Port::builder().id("port_id").build().unwrap();
+        let endpoint = Request::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -121,7 +133,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
-                .path(format!("/ports/{port_id}", port_id = "port_id",))
+                .path(format!("/v2.0/ports/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -129,8 +141,8 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Port::builder()
-            .id("port_id")
+        let endpoint = Request::builder()
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

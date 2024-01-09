@@ -69,7 +69,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "v2.0/availability_zones".to_string().into()
+        format!("v2.0/availability_zones",).into()
     }
 
     fn parameters(&self) -> QueryParams {

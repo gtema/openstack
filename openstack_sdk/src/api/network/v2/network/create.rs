@@ -144,7 +144,7 @@ pub struct Network<'a> {
     /// The ID of the QoS policy associated with the network.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    qos_policy_id: Option<Cow<'a, str>>,
+    qos_policy_id: Option<Option<Cow<'a, str>>>,
 
     /// The network is default or not.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -167,8 +167,8 @@ pub struct Network<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `network` object.
-    #[builder(default, setter(into))]
-    network: Option<Network<'a>>,
+    #[builder(setter(into))]
+    network: Network<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -221,9 +221,7 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        if let Some(val) = &self.network {
-            params.push("network", serde_json::to_value(val)?);
-        }
+        params.push("network", serde_json::to_value(&self.network)?);
 
         params.into_body()
     }
@@ -256,7 +254,11 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .network(NetworkBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Network
         );
     }
@@ -264,7 +266,12 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
+            Request::builder()
+                .network(NetworkBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
             "network"
         );
     }
@@ -281,7 +288,10 @@ mod tests {
                 .json_body(json!({ "network": {} }));
         });
 
-        let endpoint = Request::builder().build().unwrap();
+        let endpoint = Request::builder()
+            .network(NetworkBuilder::default().build().unwrap())
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -300,6 +310,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
+            .network(NetworkBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

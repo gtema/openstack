@@ -29,11 +29,7 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 
-/// Lists all extensions to the API.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: unauthorized(401)
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct ExtensionsArgs {
     /// Request Query parameters
@@ -44,32 +40,37 @@ pub struct ExtensionsArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {}
 
+/// Extensions list command
 pub struct ExtensionsCmd {
     pub args: ExtensionsArgs,
 }
-/// Extensions
+/// Extensions response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// A short name by which this extension is also known.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     alias: Option<String>,
 
     /// Text describing this extension’s purpose.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// Links pertaining to this extension. This is a list of dictionaries,
     /// each including
     /// keys `href` and `rel`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     links: Option<Value>,
 
     /// Name of the extension.
@@ -79,7 +80,7 @@ pub struct ResponseData {
 
     /// A URL pointing to the namespace for this extension.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     namespace: Option<String>,
 
     /// The date and time when the resource was updated. The date and time
@@ -97,16 +98,16 @@ pub struct ResponseData {
     /// value, if included, is the time zone as an offset from UTC. In
     /// the previous example, the offset value is `-05:00`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     updated: Option<String>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
-struct Links {
+struct ResponseLinks {
     href: Option<String>,
     rel: Option<String>,
 }
 
-impl fmt::Display for Links {
+impl fmt::Display for ResponseLinks {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(
@@ -124,7 +125,7 @@ impl fmt::Display for Links {
                     .unwrap_or("".to_string())
             ),
         ]);
-        write!(f, "{}", data.join(";"))
+        return write!(f, "{}", data.join(";"));
     }
 }
 
@@ -135,7 +136,7 @@ impl Command for ExtensionsCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Extensions with {:?}", self.args);
+        info!("List Extensions with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -148,9 +149,7 @@ impl Command for ExtensionsCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Compute)
-            .await?;
+
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;

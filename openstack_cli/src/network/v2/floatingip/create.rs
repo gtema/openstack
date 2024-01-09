@@ -58,50 +58,10 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::floatingip::create;
-use openstack_sdk::api::network::v2::floatingip::find;
 use openstack_sdk::api::QueryAsync;
 
-/// Creates a floating IP, and, if you specify port information, associates the
-/// floating IP with an internal port.
-///
-/// To associate the floating IP with an internal port, specify the
-/// port ID attribute in the request body. If you do not specify a
-/// port ID in the request, you can issue a PUT request instead of a
-/// POST request.
-///
-/// Default policy settings enable only administrative users to set
-/// floating IP addresses and some non-administrative users might
-/// require a floating IP address. If you do not specify a floating IP
-/// address in the request, the operation automatically allocates one.
-///
-/// By default, this operation associates the floating IP address with
-/// a single fixed IP address that is configured on an OpenStack
-/// Networking port. If a port has multiple IP addresses, you must
-/// specify the `fixed\_ip\_address` attribute in the request body to
-/// associate a fixed IP address with the floating IP address.
-///
-/// You can create floating IPs on only external networks. When you
-/// create a floating IP, you must specify the ID of the network on
-/// which you want to create the floating IP. Alternatively, you can
-/// create a floating IP on a subnet in the external network, based on
-/// the costs and quality of that subnet.
-///
-/// You must configure an IP address with the internal OpenStack
-/// Networking port that is associated with the floating IP address.
-///
-/// The operation returns the `Bad Request (400)` response code for one of
-/// reasons:
-///
-/// If the port ID is not valid, this operation returns `404` response code.
-///
-/// The operation returns the `Conflict (409)` response code for one of
-/// reasons:
-///
-/// Normal response codes: 201
-///
-/// Error response codes: 400, 401, 404, 409
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct FloatingipArgs {
     /// Request Query parameters
@@ -113,14 +73,18 @@ pub struct FloatingipArgs {
     path: PathParameters,
 
     #[command(flatten)]
-    floatingip: Option<Floatingip>,
+    floatingip: Floatingip,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {}
+/// Floatingip Body data
 #[derive(Args, Debug, Clone)]
-
 struct Floatingip {
     /// The floating IP address.
     #[arg(long)]
@@ -170,10 +134,11 @@ struct Floatingip {
     description: Option<String>,
 }
 
+/// Floatingip create command
 pub struct FloatingipCmd {
     pub args: FloatingipArgs,
 }
-/// Floatingip
+/// Floatingip response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// The ID of the floating IP address.
@@ -304,7 +269,7 @@ impl Command for FloatingipCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Post Floatingip with {:?}", self.args);
+        info!("Create Floatingip with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -315,57 +280,53 @@ impl Command for FloatingipCmd {
         // Set body parameters
 
         // Set Request.floatingip data
-        if let Some(args) = &self.args.floatingip {
-            let mut floatingip_builder = create::FloatingipBuilder::default();
-            if let Some(val) = &args.floating_ip_address {
-                floatingip_builder.floating_ip_address(val);
-            }
-
-            if let Some(val) = &args.subnet_id {
-                floatingip_builder.subnet_id(val);
-            }
-
-            if let Some(val) = &args.floating_network_id {
-                floatingip_builder.floating_network_id(val);
-            }
-
-            if let Some(val) = &args.port_id {
-                floatingip_builder.port_id(val);
-            }
-
-            if let Some(val) = &args.fixed_ip_address {
-                floatingip_builder.fixed_ip_address(val);
-            }
-
-            if let Some(val) = &args.tenant_id {
-                floatingip_builder.tenant_id(val);
-            }
-
-            if let Some(val) = &args.qos_policy_id {
-                floatingip_builder.qos_policy_id(val);
-            }
-
-            if let Some(val) = &args.dns_name {
-                floatingip_builder.dns_name(val);
-            }
-
-            if let Some(val) = &args.dns_domain {
-                floatingip_builder.dns_domain(val);
-            }
-
-            if let Some(val) = &args.description {
-                floatingip_builder.description(val);
-            }
-
-            ep_builder.floatingip(floatingip_builder.build().unwrap());
+        let args = &self.args.floatingip;
+        let mut floatingip_builder = create::FloatingipBuilder::default();
+        if let Some(val) = &args.floating_ip_address {
+            floatingip_builder.floating_ip_address(val);
         }
+
+        if let Some(val) = &args.subnet_id {
+            floatingip_builder.subnet_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.floating_network_id {
+            floatingip_builder.floating_network_id(val);
+        }
+
+        if let Some(val) = &args.port_id {
+            floatingip_builder.port_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.fixed_ip_address {
+            floatingip_builder.fixed_ip_address(val);
+        }
+
+        if let Some(val) = &args.tenant_id {
+            floatingip_builder.tenant_id(val);
+        }
+
+        if let Some(val) = &args.qos_policy_id {
+            floatingip_builder.qos_policy_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.dns_name {
+            floatingip_builder.dns_name(val);
+        }
+
+        if let Some(val) = &args.dns_domain {
+            floatingip_builder.dns_domain(val);
+        }
+
+        if let Some(val) = &args.description {
+            floatingip_builder.description(val);
+        }
+
+        ep_builder.floatingip(floatingip_builder.build().unwrap());
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;

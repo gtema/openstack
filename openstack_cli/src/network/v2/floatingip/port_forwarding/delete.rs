@@ -27,13 +27,9 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::floatingip::port_forwarding::delete;
 use openstack_sdk::api::network::v2::floatingip::port_forwarding::find;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 
-/// Deletes a floating IP port forwarding.
-///
-/// Normal response codes: 204
-///
-/// Error response codes: 404
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct PortForwardingArgs {
     /// Request Query parameters
@@ -44,8 +40,12 @@ pub struct PortForwardingArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
@@ -59,6 +59,7 @@ pub struct PathParameters {
     id: String,
 }
 
+/// PortForwarding delete command
 pub struct PortForwardingCmd {
     pub args: PortForwardingArgs,
 }
@@ -75,7 +76,7 @@ impl Command for PortForwardingCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
-        let mut ep_builder = find::Request::builder();
+        let mut ep_builder = delete::Request::builder();
         // Set path parameters
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         ep_builder.id(&self.args.path.id);
@@ -85,11 +86,7 @@ impl Command for PortForwardingCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
-        let data = find(ep).query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         Ok(())
     }
 }

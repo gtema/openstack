@@ -1,7 +1,6 @@
 use derive_builder::Builder;
-use tracing::{debug, info, span, trace, Level};
-
-use itertools::Itertools;
+use serde::de::DeserializeOwned;
+use tracing::trace;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::find::Findable;
@@ -10,40 +9,39 @@ use crate::api::ParamValue;
 
 use crate::api::{ApiError, Client, Pageable, Query, RestClient};
 
-use crate::api::compute::v2::flavor::get::Flavor as Get;
-use crate::api::compute::v2::flavors::detail::get::Flavors as List;
+use crate::api::compute::v2::flavor::{get as Get, list_detailed as List};
 
-/// Find for Flavor by NameOrId.
+/// Find for flavor by nameOrId.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Flavor<'a> {
+pub struct Request<'a> {
     #[builder(setter(into), default)]
     id: Cow<'a, str>,
 }
 
-impl<'a> Flavor<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> FlavorBuilder<'a> {
-        FlavorBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> Findable for Flavor<'a> {
-    type G = Get<'a>;
-    type L = List<'a>;
-    fn get_ep(&self) -> Get<'a> {
-        Get::builder().id(self.id.clone()).build().unwrap()
+impl<'a> Findable for Request<'a> {
+    type G = Get::Request<'a>;
+    type L = List::Request<'a>;
+    fn get_ep(&self) -> Get::Request<'a> {
+        Get::Request::builder().id(self.id.clone()).build().unwrap()
     }
-    fn list_ep(&self) -> List<'a> {
-        List::builder().build().unwrap()
+    fn list_ep(&self) -> List::Request<'a> {
+        List::Request::builder().build().unwrap()
     }
     /// Locate flavor in a list
     fn locate_resource_in_list<C: RestClient>(
         &self,
         data: Vec<serde_json::Value>,
     ) -> Result<serde_json::Value, ApiError<C::Error>> {
-        // Flavor is not supporting name as query parameter to the list.
-        // Therefore it is necessary to go through complete list of flavors.
+        // flavor is not supporting name as query parameter to the list.
+        // Therefore it is necessary to go through complete list of results.
         let mut maybe_result: Option<serde_json::Value> = None;
         for item in data.iter() {
             trace!("Validate item {:?} is what we search for", item);

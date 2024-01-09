@@ -1,4 +1,13 @@
-//! Delete Router
+//! Deletes a logical router and, if present, its external gateway interface.
+//!
+//! This operation fails if the router has attached interfaces.
+//! Use the remove router interface operation to remove all router
+//! interfaces before you delete the router.
+//!
+//! Normal response codes: 204
+//!
+//! Error response codes: 401, 404, 409, 412
+//!
 use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
@@ -14,6 +23,7 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -23,21 +33,34 @@ use openstack_sdk::api::network::v2::router::delete;
 use openstack_sdk::api::network::v2::router::find;
 use openstack_sdk::api::RawQueryAsync;
 
-/// Delete Router
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct RouterArgs {
-    /// Router ID
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
+
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
+}
+
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {
+    /// id parameter for /v2.0/routers/{id} API
     #[arg()]
     id: String,
 }
 
+/// Router delete command
 pub struct RouterCmd {
     pub args: RouterArgs,
 }
-
-/// Router
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Router {}
 
 #[async_trait]
 impl Command for RouterCmd {
@@ -50,17 +73,16 @@ impl Command for RouterCmd {
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = delete::Router::builder();
+        info!("Parsed args: {:?}", self.args);
+        let mut ep_builder = delete::Request::builder();
         // Set path parameters
-        ep_builder.id(&self.args.id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         Ok(())
     }

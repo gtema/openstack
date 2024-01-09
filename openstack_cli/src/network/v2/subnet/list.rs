@@ -1,7 +1,26 @@
-//! List Subnets
+//! Lists subnets that the project has access to.
+//!
+//! Default policy settings return only subnets owned by the
+//! project of the user submitting the request, unless the
+//! user has administrative role. You can control which attributes
+//! are returned by using the fields query parameter. You can filter
+//! results by using query string parameters.
+//!
+//! Use the `fields` query parameter to control which fields are
+//! returned in the response body. Additionally, you can filter results
+//! by using query string parameters. For information, see [Filtering
+//! and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
+//! specification#Filtering_and_Column_Selection).
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401
+//!
 use async_trait::async_trait;
+use bytes::Bytes;
 use clap::Args;
 use http::Response;
+use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -12,219 +31,335 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_json;
-use crate::common::VecString;
-use crate::common::VecValue;
-use openstack_sdk::api::network::v2::subnets::get;
+use crate::common::BoolString;
+use openstack_sdk::api::network::v2::subnet::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
-use serde_json::Value;
 
-/// List Subnets
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct SubnetsArgs {
-    /// limit filter parameter
-    #[arg(long)]
-    limit: Option<String>,
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
 
-    /// marker filter parameter
-    #[arg(long)]
-    marker: Option<String>,
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
+}
 
-    /// cidr filter parameter
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {
+    /// id query parameter for /v2.0/subnets API
     #[arg(long)]
-    cidr: Option<String>,
+    id: Option<String>,
 
-    /// description filter parameter
-    #[arg(long)]
-    description: Option<String>,
-
-    /// gateway_ip filter parameter
-    #[arg(long)]
-    gateway_ip: Option<String>,
-
-    /// ip_version filter parameter
-    #[arg(long)]
-    ip_version: Option<u32>,
-
-    /// ipv6_address_mode filter parameter
-    #[arg(long)]
-    ipv6_address_mode: Option<String>,
-
-    /// ipv6_ra_mode filter parameter
-    #[arg(long)]
-    ipv6_ra_mode: Option<String>,
-
-    /// name filter parameter
+    /// name query parameter for /v2.0/subnets API
     #[arg(long)]
     name: Option<String>,
 
-    /// network_id filter parameter
+    /// ip_version query parameter for /v2.0/subnets API
+    #[arg(long)]
+    ip_version: Option<String>,
+
+    /// network_id query parameter for /v2.0/subnets API
     #[arg(long)]
     network_id: Option<String>,
 
-    /// segment_id filter parameter
+    /// subnetpool_id query parameter for /v2.0/subnets API
     #[arg(long)]
-    segment_id: Option<String>,
+    subnetpool_id: Option<String>,
 
-    /// dns_publish_fixed_ip filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    dns_publish_fixed_ip: Option<bool>,
-
-    /// project_id filter parameter
+    /// cidr query parameter for /v2.0/subnets API
     #[arg(long)]
-    project_id: Option<String>,
+    cidr: Option<String>,
 
-    /// is_dhcp_enabled filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    is_dhcp_enabled: Option<bool>,
-
-    /// subnet_pool_id filter parameter
+    /// gateway_ip query parameter for /v2.0/subnets API
     #[arg(long)]
-    subnet_pool_id: Option<String>,
+    gateway_ip: Option<String>,
 
-    /// use_default_subnet_pool filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    use_default_subnet_pool: Option<bool>,
+    /// tenant_id query parameter for /v2.0/subnets API
+    #[arg(long)]
+    tenant_id: Option<String>,
 
-    /// tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
+    /// enable_dhcp query parameter for /v2.0/subnets API
+    #[arg(long)]
+    enable_dhcp: Option<bool>,
+
+    /// ipv6_ra_mode query parameter for /v2.0/subnets API
+    #[arg(long)]
+    ipv6_ra_mode: Option<String>,
+
+    /// ipv6_address_mode query parameter for /v2.0/subnets API
+    #[arg(long)]
+    ipv6_address_mode: Option<String>,
+
+    /// shared query parameter for /v2.0/subnets API
+    #[arg(long)]
+    shared: Option<bool>,
+
+    /// revision_number query parameter for /v2.0/subnets API
+    #[arg(long)]
+    revision_number: Option<String>,
+
+    /// tags query parameter for /v2.0/subnets API
+    #[arg(long)]
     tags: Option<Vec<String>>,
 
-    /// any_tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    any_tags: Option<Vec<String>>,
+    /// tags-any query parameter for /v2.0/subnets API
+    #[arg(long)]
+    tags_any: Option<Vec<String>>,
 
-    /// not_tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
+    /// not-tags query parameter for /v2.0/subnets API
+    #[arg(long)]
     not_tags: Option<Vec<String>>,
 
-    /// not_any_tags filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    not_any_tags: Option<Vec<String>>,
+    /// not-tags-any query parameter for /v2.0/subnets API
+    #[arg(long)]
+    not_tags_any: Option<Vec<String>>,
 
-    /// Total limit of entities count to return. Use this when there are too many entries.
-    #[arg(long, default_value_t = 10000)]
-    max_items: usize,
+    /// description query parameter for /v2.0/subnets API
+    #[arg(long)]
+    description: Option<String>,
+
+    /// segment_id query parameter for /v2.0/subnets API
+    #[arg(long)]
+    segment_id: Option<String>,
 }
 
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {}
+
+/// Subnets list command
 pub struct SubnetsCmd {
     pub args: SubnetsArgs,
 }
-
-/// Subnets
+/// Subnets response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Subnets {
-    /// List of allocation pools each of which has a start and an end address
-    /// for this subnet
-    #[structable(optional, wide)]
-    allocation_pools: Option<VecValue>,
-
-    /// The CIDR.
-    #[structable(optional, wide)]
-    cidr: Option<String>,
-
-    /// Timestamp when the subnet was created.
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The subnet description.
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// A list of DNS nameservers.
-    #[structable(optional, wide)]
-    dns_nameservers: Option<VecString>,
-
-    /// Whether to publish DNS records for fixed IPs
-    #[structable(optional, wide)]
-    dns_publish_fixed_ip: Option<bool>,
-
-    /// Set to ``True`` if DHCP is enabled and ``False`` if DHCP is disabled.
-    #[serde(rename = "enable_dhcp")]
-    #[structable(optional, wide)]
-    is_dhcp_enabled: Option<bool>,
-
-    /// The gateway IP address.
-    #[structable(optional, wide)]
-    gateway_ip: Option<String>,
-
-    /// A list of host routes.
-    #[structable(optional, wide)]
-    host_routes: Option<VecString>,
-
-    /// Id of the resource
+pub struct ResponseData {
+    /// The ID of the subnet.
+    #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The IP version, which is 4 or 6.
-    #[structable(optional, wide)]
-    ip_version: Option<u32>,
-
-    /// The IPv6 address modes which are 'dhcpv6-stateful', 'dhcpv6-stateless'
-    /// or 'slaac'.
-    #[structable(optional, wide)]
-    ipv6_address_mode: Option<String>,
-
-    /// The IPv6 router advertisements modes which can be 'slaac',
-    /// 'dhcpv6-stateful', 'dhcpv6-stateless'.
-    #[structable(optional, wide)]
-    ipv6_ra_mode: Option<String>,
-
-    /// The subnet name.
+    /// Human-readable name of the resource.
+    #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// The ID of the attached network.
+    /// The IP protocol version. Value is `4` or `6`.
+    #[serde()]
+    #[structable(optional, wide)]
+    ip_version: Option<i32>,
+
+    /// The ID of the network to which the subnet belongs.
+    #[serde()]
     #[structable(optional, wide)]
     network_id: Option<String>,
 
-    /// The prefix length to use for subnet allocation from a subnet pool
-    #[serde(rename = "prefixlen")]
+    /// The ID of the subnet pool associated with the subnet.
+    #[serde()]
     #[structable(optional, wide)]
-    prefix_length: Option<String>,
+    subnetpool_id: Option<String>,
 
-    /// The ID of the project this subnet is associated with.
+    /// The CIDR of the subnet.
+    #[serde()]
     #[structable(optional, wide)]
-    project_id: Option<String>,
+    cidr: Option<String>,
 
-    /// None
+    /// Gateway IP of this subnet. If the value is `null` that implies no
+    /// gateway is associated with the subnet.
+    #[serde()]
     #[structable(optional, wide)]
-    revision_number: Option<u32>,
+    gateway_ip: Option<String>,
 
-    /// The ID of the segment this subnet is associated with.
+    /// Allocation pools with `start` and `end` IP addresses
+    /// for this subnet.
+    #[serde()]
     #[structable(optional, wide)]
-    segment_id: Option<String>,
+    allocation_pools: Option<VecResponseAllocationPools>,
 
-    /// Service types for this subnet
+    /// List of dns name servers associated with the subnet.
+    #[serde()]
     #[structable(optional, wide)]
-    service_types: Option<VecString>,
+    dns_nameservers: Option<VecString>,
 
-    /// The subnet pool ID from which to obtain a CIDR.
-    #[serde(rename = "subnetpool_id")]
+    /// Additional routes for the subnet. A list of dictionaries with
+    /// `destination` and `nexthop` parameters.
+    #[serde()]
     #[structable(optional, wide)]
-    subnet_pool_id: Option<String>,
+    host_routes: Option<VecResponseHostRoutes>,
 
-    /// Subnet Tags.
-    #[structable(optional, wide)]
-    tags: Option<VecString>,
-
-    /// Tenant_id (deprecated attribute).
+    /// The ID of the project.
+    #[serde()]
     #[structable(optional, wide)]
     tenant_id: Option<String>,
 
-    /// Timestamp when the subnet was last updated.
+    /// Indicates whether dhcp is enabled or disabled
+    /// for the subnet.
+    #[serde()]
+    #[structable(optional, wide)]
+    enable_dhcp: Option<BoolString>,
+
+    /// The IPv6 router advertisement specifies whether the networking service
+    /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
+    /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    #[serde()]
+    #[structable(optional, wide)]
+    ipv6_ra_mode: Option<String>,
+
+    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
+    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    #[serde()]
+    #[structable(optional, wide)]
+    ipv6_address_mode: Option<String>,
+
+    /// The revision number of the resource.
+    #[serde()]
+    #[structable(optional, wide)]
+    revision_number: Option<i32>,
+
+    /// The service types associated with the subnet.
+    #[serde()]
+    #[structable(optional, wide)]
+    service_types: Option<VecString>,
+
+    /// The list of tags on the resource.
+    #[serde()]
+    #[structable(optional, wide)]
+    tags: Option<VecString>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// Whether to use the default subnet pool to obtain a CIDR.
-    #[serde(rename = "use_default_subnetpool")]
+    /// Whether to publish DNS records for IPs from this subnet.
+    #[serde()]
     #[structable(optional, wide)]
-    use_default_subnet_pool: Option<bool>,
+    dns_publish_fixed_ip: Option<BoolString>,
+
+    /// A human-readable description for the resource.
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// The ID of a network segment the subnet is associated with.
+    /// It is available when `segment` extension is enabled.
+    #[serde()]
+    #[structable(optional, wide)]
+    segment_id: Option<String>,
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseAllocationPools {
+    start: Option<String>,
+    end: Option<String>,
+}
+
+impl fmt::Display for ResponseAllocationPools {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "start={}",
+                self.start
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "end={}",
+                self.end
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        return write!(f, "{}", data.join(";"));
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseAllocationPools(Vec<ResponseAllocationPools>);
+impl fmt::Display for VecResponseAllocationPools {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecString(Vec<String>);
+impl fmt::Display for VecString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseHostRoutes {
+    destination: Option<String>,
+    nexthop: Option<String>,
+}
+
+impl fmt::Display for ResponseHostRoutes {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "destination={}",
+                self.destination
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "nexthop={}",
+                self.nexthop
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        return write!(f, "{}", data.join(";"));
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseHostRoutes(Vec<ResponseHostRoutes>);
+impl fmt::Display for VecResponseHostRoutes {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
 }
 
 #[async_trait]
@@ -234,85 +369,80 @@ impl Command for SubnetsCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Subnets with {:?}", self.args);
+        info!("List Subnets with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = get::Subnets::builder();
+        info!("Parsed args: {:?}", self.args);
+        let mut ep_builder = list::Request::builder();
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.args.limit {
-            ep_builder.limit(val);
+        if let Some(val) = &self.args.query.id {
+            ep_builder.id(val);
         }
-        if let Some(val) = &self.args.marker {
-            ep_builder.marker(val);
-        }
-        if let Some(val) = &self.args.cidr {
-            ep_builder.cidr(val);
-        }
-        if let Some(val) = &self.args.description {
-            ep_builder.description(val);
-        }
-        if let Some(val) = &self.args.gateway_ip {
-            ep_builder.gateway_ip(val);
-        }
-        if let Some(val) = &self.args.ip_version {
-            ep_builder.ip_version(*val);
-        }
-        if let Some(val) = &self.args.ipv6_address_mode {
-            ep_builder.ipv6_address_mode(val);
-        }
-        if let Some(val) = &self.args.ipv6_ra_mode {
-            ep_builder.ipv6_ra_mode(val);
-        }
-        if let Some(val) = &self.args.name {
+        if let Some(val) = &self.args.query.name {
             ep_builder.name(val);
         }
-        if let Some(val) = &self.args.network_id {
+        if let Some(val) = &self.args.query.ip_version {
+            ep_builder.ip_version(val);
+        }
+        if let Some(val) = &self.args.query.network_id {
             ep_builder.network_id(val);
         }
-        if let Some(val) = &self.args.segment_id {
+        if let Some(val) = &self.args.query.subnetpool_id {
+            ep_builder.subnetpool_id(val);
+        }
+        if let Some(val) = &self.args.query.cidr {
+            ep_builder.cidr(val);
+        }
+        if let Some(val) = &self.args.query.gateway_ip {
+            ep_builder.gateway_ip(val);
+        }
+        if let Some(val) = &self.args.query.tenant_id {
+            ep_builder.tenant_id(val);
+        }
+        if let Some(val) = &self.args.query.enable_dhcp {
+            ep_builder.enable_dhcp(*val);
+        }
+        if let Some(val) = &self.args.query.ipv6_ra_mode {
+            ep_builder.ipv6_ra_mode(val);
+        }
+        if let Some(val) = &self.args.query.ipv6_address_mode {
+            ep_builder.ipv6_address_mode(val);
+        }
+        if let Some(val) = &self.args.query.shared {
+            ep_builder.shared(*val);
+        }
+        if let Some(val) = &self.args.query.revision_number {
+            ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.args.query.tags {
+            ep_builder.tags(val.into_iter());
+        }
+        if let Some(val) = &self.args.query.tags_any {
+            ep_builder.tags_any(val.into_iter());
+        }
+        if let Some(val) = &self.args.query.not_tags {
+            ep_builder.not_tags(val.into_iter());
+        }
+        if let Some(val) = &self.args.query.not_tags_any {
+            ep_builder.not_tags_any(val.into_iter());
+        }
+        if let Some(val) = &self.args.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.args.query.segment_id {
             ep_builder.segment_id(val);
         }
-        if let Some(val) = &self.args.dns_publish_fixed_ip {
-            ep_builder.dns_publish_fixed_ip(*val);
-        }
-        if let Some(val) = &self.args.project_id {
-            ep_builder.project_id(val);
-        }
-        if let Some(val) = &self.args.is_dhcp_enabled {
-            ep_builder.is_dhcp_enabled(*val);
-        }
-        if let Some(val) = &self.args.subnet_pool_id {
-            ep_builder.subnet_pool_id(val);
-        }
-        if let Some(val) = &self.args.use_default_subnet_pool {
-            ep_builder.use_default_subnet_pool(*val);
-        }
-        if let Some(val) = &self.args.tags {
-            ep_builder.tags(val.iter());
-        }
-        if let Some(val) = &self.args.any_tags {
-            ep_builder.any_tags(val.iter());
-        }
-        if let Some(val) = &self.args.not_tags {
-            ep_builder.not_tags(val.iter());
-        }
-        if let Some(val) = &self.args.not_any_tags {
-            ep_builder.not_any_tags(val.iter());
-        }
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
-        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.args.max_items))
-            .query_async(client)
-            .await?;
 
-        op.output_list::<Subnets>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

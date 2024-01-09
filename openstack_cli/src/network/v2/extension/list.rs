@@ -31,14 +31,7 @@ use openstack_sdk::api::network::v2::extension::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
-/// Lists available extensions.
-///
-/// Lists available Networking API v2.0 extensions and shows details
-/// for an extension.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 401
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct ExtensionsArgs {
     /// Request Query parameters
@@ -49,26 +42,31 @@ pub struct ExtensionsArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {}
 
+/// Extensions list command
 pub struct ExtensionsCmd {
     pub args: ExtensionsArgs,
 }
-/// Extensions
+/// Extensions response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// The alias for the extension. For example “quotas” or
     /// “security-group”.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     alias: Option<String>,
 
     /// The human-readable description for the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// Human-readable name of the resource.
@@ -78,13 +76,13 @@ pub struct ResponseData {
 
     /// A URL pointing to the namespace for this extension.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     namespace: Option<String>,
 
     /// The date and timestamp when the extension was
     /// last updated.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     updated: Option<String>,
 }
 
@@ -95,7 +93,7 @@ impl Command for ExtensionsCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Extensions with {:?}", self.args);
+        info!("List Extensions with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -108,9 +106,7 @@ impl Command for ExtensionsCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
+
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;

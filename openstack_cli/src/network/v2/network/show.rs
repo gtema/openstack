@@ -1,7 +1,20 @@
-//! Get single Network
+//! Shows details for a network.
+//!
+//! Use the `fields` query parameter to control which fields are
+//! returned in the response body. For information, see [Filtering and
+//! Column Selection](http://specs.openstack.org/openstack/neutron-
+//! specs/specs/api/networking_general_api_information.html#filtering-and-
+//! column-selection).
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401, 404
+//!
 use async_trait::async_trait;
+use bytes::Bytes;
 use clap::Args;
 use http::Response;
+use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -12,161 +25,262 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_json;
-use crate::common::VecString;
-use crate::common::VecValue;
+use crate::common::BoolString;
+use crate::common::IntString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network::find;
 use openstack_sdk::api::network::v2::network::get;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 
-/// Get single Network
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct NetworkArgs {
-    /// Network ID
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
+
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
+}
+
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {
+    /// network_id parameter for /v2.0/networks/{network_id} API
     #[arg()]
     id: String,
 }
 
+/// Network show command
 pub struct NetworkCmd {
     pub args: NetworkArgs,
 }
-
-/// Network
+/// Network response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Network {
-    /// The administrative state of the network, which is up ``True`` or down
-    /// ``False``.
-    #[serde(rename = "admin_state_up")]
-    #[structable(optional)]
-    is_admin_state_up: Option<bool>,
-
-    /// Availability zone hints to use when scheduling the network.
-    #[structable(optional)]
-    availability_zone_hints: Option<VecString>,
-
-    /// Availability zones for the network.
-    #[structable(optional)]
-    availability_zones: Option<VecString>,
-
-    /// Timestamp when the network was created.
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The network description.
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The DNS domain associated.
-    #[structable(optional)]
-    dns_domain: Option<String>,
-
-    /// Id of the resource
+pub struct ResponseData {
+    /// The ID of the network.
+    #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The ID of the IPv4 address scope for the network.
-    #[serde(rename = "ipv4_address_scope")]
-    #[structable(optional)]
-    ipv4_address_scope_id: Option<String>,
-
-    /// The ID of the IPv6 address scope for the network.
-    #[serde(rename = "ipv6_address_scope")]
-    #[structable(optional)]
-    ipv6_address_scope_id: Option<String>,
-
-    /// Whether or not this is the default external network.
-    #[structable(optional)]
-    is_default: Option<bool>,
-
-    /// Read-only. The maximum transmission unit (MTU) of the network resource.
-    #[structable(optional)]
-    mtu: Option<u32>,
-
-    /// The network name.
+    /// Human-readable name of the network.
+    #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// The port security status, which is enabled ``True`` or disabled
-    /// ``False``.  Available for multiple provider extensions.
-    #[serde(rename = "port_security_enabled")]
-    #[structable(optional)]
-    is_port_security_enabled: Option<bool>,
+    /// The associated subnets.
+    #[serde()]
+    #[structable(optional, wide)]
+    subnets: Option<VecString>,
 
-    /// The ID of the project this network is associated with.
-    #[structable(optional)]
-    project_id: Option<String>,
+    /// The administrative state of the network, which is
+    /// up (`true`) or down (`false`).
+    #[serde()]
+    #[structable(optional, wide)]
+    admin_state_up: Option<BoolString>,
 
-    /// The type of physical network that maps to this network resource. For
-    /// example, ``flat``, ``vlan``, ``vxlan``, or ``gre``. Available for
-    /// multiple provider extensions.
-    #[serde(rename = "provider:network_type")]
-    #[structable(optional)]
-    provider_network_type: Option<String>,
-
-    /// The physical network where this network object is implemented.
-    /// Available for multiple provider extensions.
-    #[serde(rename = "provider:physical_network")]
-    #[structable(optional)]
-    provider_physical_network: Option<String>,
-
-    /// An isolated segment ID on the physical network. The provider network
-    /// type defines the segmentation model. Available for multiple provider
-    /// extensions.
-    #[serde(rename = "provider:segmentation_id")]
-    #[structable(optional)]
-    provider_segmentation_id: Option<String>,
-
-    /// The ID of the QoS policy attached to the port.
-    #[structable(optional)]
-    qos_policy_id: Option<String>,
-
-    /// None
-    #[structable(optional)]
-    revision_number: Option<u32>,
-
-    /// Whether or not the router is external.
-    #[serde(rename = "router:external")]
-    #[structable(optional)]
-    is_router_external: Option<bool>,
-
-    /// A list of provider segment objects. Available for multiple provider
-    /// extensions.
-    #[structable(optional)]
-    segments: Option<VecValue>,
-
-    /// Indicates whether this network is shared across all tenants. By
-    /// default, only administrative users can change this value.
-    #[serde(rename = "shared")]
-    #[structable(optional)]
-    is_shared: Option<bool>,
-
-    /// The network status.
-    #[structable(optional)]
+    /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
+    #[serde()]
+    #[structable(optional, wide)]
     status: Option<String>,
 
-    /// The associated subnet IDs.
-    #[serde(rename = "subnets")]
-    #[structable(optional)]
-    subnet_ids: Option<VecString>,
+    /// The ID of the project.
+    #[serde()]
+    #[structable(optional, wide)]
+    tenant_id: Option<String>,
 
-    /// Network Tags.
-    #[structable(optional)]
+    /// Indicates whether this network is shared across all tenants. By
+    /// default,
+    /// only administrative users can change this value.
+    #[serde()]
+    #[structable(optional, wide)]
+    shared: Option<BoolString>,
+
+    /// The ID of the IPv4 address scope that the network is associated with.
+    #[serde()]
+    #[structable(optional, wide)]
+    ipv4_address_scope: Option<String>,
+
+    /// The ID of the IPv6 address scope that the network is associated with.
+    #[serde()]
+    #[structable(optional, wide)]
+    ipv6_address_scope: Option<String>,
+
+    /// Defines whether the network may be used for creation of floating IPs.
+    /// Only
+    /// networks with this flag may be an external gateway for routers.
+    /// The network must have an external routing facility that is not managed
+    /// by
+    /// the networking service. If the network is updated from external to
+    /// internal
+    /// the unused floating IPs of this network are automatically deleted when
+    /// extension `floatingip-autodelete-internal` is present.
+    #[serde(rename = "router:external")]
+    #[structable(optional, title = "router:external", wide)]
+    router_external: Option<BoolString>,
+
+    /// Indicates whether L2 connectivity is available throughout
+    /// the `network`.
+    #[serde()]
+    #[structable(optional, wide)]
+    l2_adjacency: Option<String>,
+
+    /// A list of provider `segment` objects.
+    #[serde()]
+    #[structable(optional, wide)]
+    segments: Option<VecResponseSegments>,
+
+    /// The maximum transmission unit (MTU) value to
+    /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
+    /// IPv6.
+    #[serde()]
+    #[structable(optional, wide)]
+    mtu: Option<i32>,
+
+    /// The availability zone for the network.
+    #[serde()]
+    #[structable(optional, wide)]
+    availability_zones: Option<VecString>,
+
+    /// The availability zone candidate for the network.
+    #[serde()]
+    #[structable(optional, wide)]
+    availability_zone_hints: Option<VecString>,
+
+    /// The port security status of the network. Valid values are
+    /// enabled (`true`) and disabled (`false`).
+    /// This value is used as the default value of `port\_security\_enabled`
+    /// field of a newly created port.
+    #[serde()]
+    #[structable(optional, wide)]
+    port_security_enabled: Option<BoolString>,
+
+    #[serde(rename = "provider:network_type")]
+    #[structable(optional, title = "provider:network_type", wide)]
+    provider_network_type: Option<String>,
+
+    #[serde(rename = "provider:physical_network")]
+    #[structable(optional, title = "provider:physical_network", wide)]
+    provider_physical_network: Option<String>,
+
+    #[serde(rename = "provider:segmentation_id")]
+    #[structable(optional, title = "provider:segmentation_id", wide)]
+    provider_segmentation_id: Option<IntString>,
+
+    /// The ID of the QoS policy associated with the network.
+    #[serde()]
+    #[structable(optional, wide)]
+    qos_policy_id: Option<String>,
+
+    /// The revision number of the resource.
+    #[serde()]
+    #[structable(optional, wide)]
+    revision_number: Option<i32>,
+
+    /// The list of tags on the resource.
+    #[serde()]
+    #[structable(optional, wide)]
     tags: Option<VecString>,
 
-    /// Timestamp when the network was last updated.
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// Indicates the VLAN transparency mode of the network
-    #[serde(rename = "vlan_transparent")]
-    #[structable(optional)]
-    is_vlan_transparent: Option<bool>,
+    /// The network is default pool or not.
+    #[serde()]
+    #[structable(optional, wide)]
+    is_default: Option<BoolString>,
+
+    /// A valid DNS domain.
+    #[serde()]
+    #[structable(optional, wide)]
+    dns_domain: Option<String>,
+
+    /// A human-readable description for the resource.
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecString(Vec<String>);
+impl fmt::Display for VecString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseSegments {
+    provider_segmentation_id: Option<i32>,
+    provider_physical_network: Option<String>,
+    provider_network_type: Option<String>,
+}
+
+impl fmt::Display for ResponseSegments {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "provider_segmentation_id={}",
+                self.provider_segmentation_id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "provider_physical_network={}",
+                self.provider_physical_network
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "provider_network_type={}",
+                self.provider_network_type
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        return write!(f, "{}", data.join(";"));
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseSegments(Vec<ResponseSegments>);
+impl fmt::Display for VecResponseSegments {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
 }
 
 #[async_trait]
@@ -176,23 +290,22 @@ impl Command for NetworkCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Network with {:?}", self.args);
+        info!("Show Network with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = find::Network::builder();
+        info!("Parsed args: {:?}", self.args);
+        let mut ep_builder = find::Request::builder();
         // Set path parameters
-        ep_builder.id(&self.args.id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
         let data = find(ep).query_async(client).await?;
-        op.output_single::<Network>(data)?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

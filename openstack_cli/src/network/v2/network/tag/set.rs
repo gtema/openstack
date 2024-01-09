@@ -19,8 +19,9 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::network::v2::network::tag::set;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct TagArgs {
     /// Request Query parameters
@@ -31,8 +32,12 @@ pub struct TagArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
@@ -44,6 +49,7 @@ pub struct PathParameters {
     id: String,
 }
 
+/// Tag set command
 pub struct TagCmd {
     pub args: TagArgs,
 }
@@ -55,7 +61,7 @@ impl Command for TagCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Put Tag with {:?}", self.args);
+        info!("Set Tag with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -70,10 +76,10 @@ impl Command for TagCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
-        let data = ep.query_async(client).await?;
+        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

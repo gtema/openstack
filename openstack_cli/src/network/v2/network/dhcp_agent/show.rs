@@ -19,8 +19,11 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::network::v2::network::dhcp_agent::get;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
+use std::collections::HashMap;
 
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct DhcpAgentArgs {
     /// Request Query parameters
@@ -31,8 +34,12 @@ pub struct DhcpAgentArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {}
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
@@ -44,6 +51,7 @@ pub struct PathParameters {
     id: String,
 }
 
+/// DhcpAgent show command
 pub struct DhcpAgentCmd {
     pub args: DhcpAgentArgs,
 }
@@ -55,7 +63,7 @@ impl Command for DhcpAgentCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get DhcpAgent with {:?}", self.args);
+        info!("Show DhcpAgent with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -70,11 +78,10 @@ impl Command for DhcpAgentCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

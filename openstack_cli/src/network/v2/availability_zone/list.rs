@@ -28,11 +28,7 @@ use openstack_sdk::api::network::v2::availability_zone::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
-/// Lists all availability zones.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 401
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct AvailabilityZonesArgs {
     /// Request Query parameters
@@ -43,6 +39,8 @@ pub struct AvailabilityZonesArgs {
     #[command(flatten)]
     path: PathParameters,
 }
+
+/// Query parameters
 #[derive(Args, Clone, Debug)]
 pub struct QueryParameters {
     /// name query parameter for /v2.0/availability_zones API
@@ -57,13 +55,16 @@ pub struct QueryParameters {
     #[arg(long)]
     state: Option<String>,
 }
+
+/// Path parameters
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {}
 
+/// AvailabilityZones list command
 pub struct AvailabilityZonesCmd {
     pub args: AvailabilityZonesArgs,
 }
-/// AvailabilityZones
+/// AvailabilityZones response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     /// Human-readable name of the resource.
@@ -75,13 +76,13 @@ pub struct ResponseData {
     /// types
     /// are `network` and `router`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     resource: Option<String>,
 
     /// The state of the availability zone, which is either `available` or
     /// `unavailable`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     state: Option<String>,
 }
 
@@ -92,7 +93,7 @@ impl Command for AvailabilityZonesCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get AvailabilityZones with {:?}", self.args);
+        info!("List AvailabilityZones with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -114,9 +115,7 @@ impl Command for AvailabilityZonesCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Network)
-            .await?;
+
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
