@@ -1,0 +1,38 @@
+CHANGES
+=======
+
+* chore(image): regenerate schema resources
+* chore: sort enum items
+* feat(network): Add floatingip implementation
+* feat: major new generator content
+* chore(lock): update cargo lock file
+* chore: update rust before building
+* feat: add microversion base keypair mgmt
+* chore: fix minor compilation warning
+* fix(sdk): ensure microversion header can be overriden
+* do version discovery centrally
+* chore: regenerate network az list
+* feat: add network extension[s] command
+* fix: correct docstrings containing codeblocks
+* feat: add compute.extensions support
+* chore: update dependencies
+* feat: modify target url construction
+* feat: add IntString result type
+* chore: update generator templates
+* chore: update lock file
+* feat: add block storage volume create and set
+* fix: deduplicate project_id in url
+* feat: add network.availability-zone
+* feat: add more network resources
+* chore: add build for musl with xtask
+* feat: add few network bindings
+* feat: add network.router to sdk
+* fix: flavor.swap can be empty string
+* fix: only use url from discovery if it is more preciese
+* fix: drop few tricky image fields
+* fix: post keypair require wrapping container
+* doc: add tiny "try" instructions
+* feat: add few commands
+* feat: add volume show
+* feat: add block_storage volume list
+* feat: first usable version
