@@ -4,7 +4,7 @@ use crate::{Command, ResourceCommands};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod show;
+mod get;
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -16,7 +16,7 @@ pub struct MembersArgs {
 #[derive(Subcommand, Clone)]
 pub enum MembersCommands {
     /// Show Members Schema
-    Show(show::MembersArgs),
+    Show(get::MembersArgs),
 }
 
 pub struct MembersCommand {
@@ -26,7 +26,7 @@ pub struct MembersCommand {
 impl ResourceCommands for MembersCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            MembersCommands::Show(args) => Box::new(show::MembersCmd { args: args.clone() }),
+            MembersCommands::Show(args) => Box::new(get::MembersCmd { args: args.clone() }),
         }
     }
 }

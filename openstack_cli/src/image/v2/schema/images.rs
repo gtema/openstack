@@ -4,7 +4,7 @@ use crate::{Command, ResourceCommands};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod show;
+mod get;
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -16,7 +16,7 @@ pub struct ImagesArgs {
 #[derive(Subcommand, Clone)]
 pub enum ImagesCommands {
     /// Show Images Schema
-    Show(show::ImagesArgs),
+    Show(get::ImagesArgs),
 }
 
 pub struct ImagesCommand {
@@ -26,7 +26,7 @@ pub struct ImagesCommand {
 impl ResourceCommands for ImagesCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            ImagesCommands::Show(args) => Box::new(show::ImagesCmd { args: args.clone() }),
+            ImagesCommands::Show(args) => Box::new(get::ImagesCmd { args: args.clone() }),
         }
     }
 }
