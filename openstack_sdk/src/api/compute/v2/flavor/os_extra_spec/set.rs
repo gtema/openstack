@@ -18,11 +18,11 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     flavor_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

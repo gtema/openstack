@@ -16,13 +16,13 @@ use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 
     #[builder(default)]
     limit: Option<i32>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]

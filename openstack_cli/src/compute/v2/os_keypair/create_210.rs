@@ -54,8 +54,8 @@ pub struct PathParameters {}
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Type {
-    X509,
     Ssh,
+    X509,
 }
 
 /// Keypair Body data
@@ -196,8 +196,8 @@ impl Command for OsKeypairCmd {
 
         if let Some(val) = &args._type {
             let tmp = match val {
-                Type::X509 => create_210::Type::X509,
                 Type::Ssh => create_210::Type::Ssh,
+                Type::X509 => create_210::Type::X509,
             };
             keypair_builder._type(tmp);
         }

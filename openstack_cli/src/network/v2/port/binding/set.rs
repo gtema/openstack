@@ -60,17 +60,17 @@ pub struct PathParameters {
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum VnicType {
-    SmartNic,
     AcceleratorDirect,
-    Normal,
+    AcceleratorDirectPhysical,
     Baremetal,
+    Direct,
     DirectPhysical,
     Macvtap,
-    Direct,
-    VirtioForwarder,
-    AcceleratorDirectPhysical,
-    Vdpa,
+    Normal,
     RemoteManaged,
+    SmartNic,
+    Vdpa,
+    VirtioForwarder,
 }
 
 /// Binding Body data
@@ -165,17 +165,17 @@ impl Command for BindingCmd {
 
         if let Some(val) = &args.vnic_type {
             let tmp = match val {
-                VnicType::SmartNic => set::VnicType::SmartNic,
                 VnicType::AcceleratorDirect => set::VnicType::AcceleratorDirect,
-                VnicType::Normal => set::VnicType::Normal,
+                VnicType::AcceleratorDirectPhysical => set::VnicType::AcceleratorDirectPhysical,
                 VnicType::Baremetal => set::VnicType::Baremetal,
+                VnicType::Direct => set::VnicType::Direct,
                 VnicType::DirectPhysical => set::VnicType::DirectPhysical,
                 VnicType::Macvtap => set::VnicType::Macvtap,
-                VnicType::Direct => set::VnicType::Direct,
-                VnicType::VirtioForwarder => set::VnicType::VirtioForwarder,
-                VnicType::AcceleratorDirectPhysical => set::VnicType::AcceleratorDirectPhysical,
-                VnicType::Vdpa => set::VnicType::Vdpa,
+                VnicType::Normal => set::VnicType::Normal,
                 VnicType::RemoteManaged => set::VnicType::RemoteManaged,
+                VnicType::SmartNic => set::VnicType::SmartNic,
+                VnicType::Vdpa => set::VnicType::Vdpa,
+                VnicType::VirtioForwarder => set::VnicType::VirtioForwarder,
             };
             binding_builder.vnic_type(tmp);
         }

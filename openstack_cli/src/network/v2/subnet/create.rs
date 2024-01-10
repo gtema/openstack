@@ -60,15 +60,15 @@ pub struct PathParameters {}
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Ipv6RaMode {
-    Dhcpv6Stateless,
     Dhcpv6Stateful,
+    Dhcpv6Stateless,
     Slaac,
 }
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Ipv6AddressMode {
-    Dhcpv6Stateless,
     Dhcpv6Stateful,
+    Dhcpv6Stateless,
     Slaac,
 }
 
@@ -473,8 +473,8 @@ impl Command for SubnetCmd {
 
         if let Some(val) = &args.ipv6_ra_mode {
             let tmp = match val {
-                Ipv6RaMode::Dhcpv6Stateless => create::Ipv6RaMode::Dhcpv6Stateless,
                 Ipv6RaMode::Dhcpv6Stateful => create::Ipv6RaMode::Dhcpv6Stateful,
+                Ipv6RaMode::Dhcpv6Stateless => create::Ipv6RaMode::Dhcpv6Stateless,
                 Ipv6RaMode::Slaac => create::Ipv6RaMode::Slaac,
             };
             subnet_builder.ipv6_ra_mode(tmp);
@@ -482,8 +482,8 @@ impl Command for SubnetCmd {
 
         if let Some(val) = &args.ipv6_address_mode {
             let tmp = match val {
-                Ipv6AddressMode::Dhcpv6Stateless => create::Ipv6AddressMode::Dhcpv6Stateless,
                 Ipv6AddressMode::Dhcpv6Stateful => create::Ipv6AddressMode::Dhcpv6Stateful,
+                Ipv6AddressMode::Dhcpv6Stateless => create::Ipv6AddressMode::Dhcpv6Stateless,
                 Ipv6AddressMode::Slaac => create::Ipv6AddressMode::Slaac,
             };
             subnet_builder.ipv6_address_mode(tmp);

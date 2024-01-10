@@ -12,28 +12,28 @@ use std::collections::BTreeMap;
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum VnicType {
-    #[serde(alias = "vdpa")]
-    Vdpa,
-    #[serde(alias = "normal")]
-    Normal,
+    #[serde(alias = "direct-physical")]
+    DirectPhysical,
+    #[serde(alias = "remote-managed")]
+    RemoteManaged,
+    #[serde(alias = "virtio-forwarder")]
+    VirtioForwarder,
+    #[serde(alias = "macvtap")]
+    Macvtap,
+    #[serde(alias = "accelerator-direct")]
+    AcceleratorDirect,
+    #[serde(alias = "smart-nic")]
+    SmartNic,
     #[serde(alias = "baremetal")]
     Baremetal,
     #[serde(alias = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
+    #[serde(alias = "normal")]
+    Normal,
     #[serde(alias = "direct")]
     Direct,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "accelerator-direct")]
-    AcceleratorDirect,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
-    #[serde(alias = "macvtap")]
-    Macvtap,
+    #[serde(alias = "vdpa")]
+    Vdpa,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]

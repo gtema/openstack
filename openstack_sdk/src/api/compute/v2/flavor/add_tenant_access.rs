@@ -25,7 +25,7 @@ pub struct Request<'a> {
     add_tenant_access: AddTenantAccess<'a>,
 
     /// id parameter for /v2.1/flavors/{id}/action API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

@@ -19,22 +19,22 @@ pub struct Request<'a> {
     #[builder(default)]
     limit: Option<i32>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     is_public: Option<Cow<'a, str>>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     min_ram: Option<Cow<'a, str>>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     min_disk: Option<Cow<'a, str>>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     sort_dir: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]

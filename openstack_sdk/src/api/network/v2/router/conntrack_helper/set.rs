@@ -16,16 +16,16 @@ use std::borrow::Cow;
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    #[serde(alias = "icmp")]
-    Icmp,
-    #[serde(alias = "ipv6-icmp")]
-    Ipv6Icmp,
-    #[serde(alias = "udp")]
-    Udp,
     #[serde(alias = "tcp")]
     Tcp,
     #[serde(alias = "dccp")]
     Dccp,
+    #[serde(alias = "ipv6-icmp")]
+    Ipv6Icmp,
+    #[serde(alias = "udp")]
+    Udp,
+    #[serde(alias = "icmp")]
+    Icmp,
     #[serde(alias = "sctp")]
     Sctp,
 }

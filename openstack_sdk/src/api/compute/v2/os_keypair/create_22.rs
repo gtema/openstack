@@ -17,10 +17,10 @@ use std::borrow::Cow;
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    #[serde(alias = "ssh")]
-    Ssh,
     #[serde(alias = "x509")]
     X509,
+    #[serde(alias = "ssh")]
+    Ssh,
 }
 
 /// Keypair object

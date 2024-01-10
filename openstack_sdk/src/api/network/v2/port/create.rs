@@ -49,37 +49,37 @@ pub struct AllowedAddressPairs<'a> {
 pub enum NumaAffinityPolicy {
     #[serde(alias = "preferred")]
     Preferred,
-    #[serde(alias = "required")]
-    Required,
     #[serde(alias = "legacy")]
     Legacy,
+    #[serde(alias = "required")]
+    Required,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum BindingVnicType {
-    #[serde(alias = "vdpa")]
-    Vdpa,
-    #[serde(alias = "normal")]
-    Normal,
+    #[serde(alias = "direct-physical")]
+    DirectPhysical,
+    #[serde(alias = "remote-managed")]
+    RemoteManaged,
+    #[serde(alias = "virtio-forwarder")]
+    VirtioForwarder,
+    #[serde(alias = "macvtap")]
+    Macvtap,
+    #[serde(alias = "accelerator-direct")]
+    AcceleratorDirect,
+    #[serde(alias = "smart-nic")]
+    SmartNic,
     #[serde(alias = "baremetal")]
     Baremetal,
     #[serde(alias = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
+    #[serde(alias = "normal")]
+    Normal,
     #[serde(alias = "direct")]
     Direct,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "accelerator-direct")]
-    AcceleratorDirect,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
-    #[serde(alias = "macvtap")]
-    Macvtap,
+    #[serde(alias = "vdpa")]
+    Vdpa,
 }
 
 /// A `port` object.

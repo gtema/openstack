@@ -57,12 +57,12 @@ pub struct PathParameters {
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Protocol {
-    Ipv6Icmp,
-    Icmp,
     Dccp,
+    Icmp,
+    Ipv6Icmp,
     Sctp,
-    Udp,
     Tcp,
+    Udp,
 }
 
 /// ConntrackHelper Body data
@@ -139,12 +139,12 @@ impl Command for ConntrackHelperCmd {
 
         if let Some(val) = &args.protocol {
             let tmp = match val {
-                Protocol::Ipv6Icmp => create::Protocol::Ipv6Icmp,
-                Protocol::Icmp => create::Protocol::Icmp,
                 Protocol::Dccp => create::Protocol::Dccp,
+                Protocol::Icmp => create::Protocol::Icmp,
+                Protocol::Ipv6Icmp => create::Protocol::Ipv6Icmp,
                 Protocol::Sctp => create::Protocol::Sctp,
-                Protocol::Udp => create::Protocol::Udp,
                 Protocol::Tcp => create::Protocol::Tcp,
+                Protocol::Udp => create::Protocol::Udp,
             };
             conntrack_helper_builder.protocol(tmp);
         }
