@@ -57,6 +57,9 @@ pub struct PathParameters {
 pub struct NetworkCmd {
     pub args: NetworkArgs,
 }
+/// Network response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for NetworkCmd {

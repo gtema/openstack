@@ -12,28 +12,28 @@ use std::collections::BTreeMap;
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum VnicType {
-    #[serde(alias = "baremetal")]
-    Baremetal,
-    #[serde(alias = "normal")]
-    Normal,
-    #[serde(alias = "macvtap")]
-    Macvtap,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
     #[serde(alias = "vdpa")]
     Vdpa,
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
+    #[serde(alias = "normal")]
+    Normal,
+    #[serde(alias = "baremetal")]
+    Baremetal,
     #[serde(alias = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "accelerator-direct")]
-    AcceleratorDirect,
+    #[serde(alias = "direct-physical")]
+    DirectPhysical,
     #[serde(alias = "direct")]
     Direct,
+    #[serde(alias = "virtio-forwarder")]
+    VirtioForwarder,
+    #[serde(alias = "accelerator-direct")]
+    AcceleratorDirect,
+    #[serde(alias = "remote-managed")]
+    RemoteManaged,
+    #[serde(alias = "smart-nic")]
+    SmartNic,
+    #[serde(alias = "macvtap")]
+    Macvtap,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -75,11 +75,11 @@ pub struct Request<'a> {
 
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

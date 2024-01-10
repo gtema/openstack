@@ -16,14 +16,14 @@ use std::borrow::Cow;
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    #[serde(alias = "ipv6-icmp")]
-    Ipv6Icmp,
-    #[serde(alias = "tcp")]
-    Tcp,
-    #[serde(alias = "udp")]
-    Udp,
     #[serde(alias = "icmp")]
     Icmp,
+    #[serde(alias = "ipv6-icmp")]
+    Ipv6Icmp,
+    #[serde(alias = "udp")]
+    Udp,
+    #[serde(alias = "tcp")]
+    Tcp,
     #[serde(alias = "dccp")]
     Dccp,
     #[serde(alias = "sctp")]
@@ -98,7 +98,7 @@ pub struct Request<'a> {
 
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

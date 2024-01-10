@@ -17,15 +17,15 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// name query parameter for /v2.0/availability_zones API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// resource query parameter for /v2.0/availability_zones API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     resource: Option<Cow<'a, str>>,
 
     /// state query parameter for /v2.0/availability_zones API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     state: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]

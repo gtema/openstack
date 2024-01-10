@@ -58,6 +58,19 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network extension`↴](#osc-network-extension)
 * [`osc network extension list`↴](#osc-network-extension-list)
 * [`osc network extension show`↴](#osc-network-extension-show)
+* [`osc network floating-ip`↴](#osc-network-floating-ip)
+* [`osc network floating-ip create`↴](#osc-network-floating-ip-create)
+* [`osc network floating-ip delete`↴](#osc-network-floating-ip-delete)
+* [`osc network floating-ip list`↴](#osc-network-floating-ip-list)
+* [`osc network floating-ip set`↴](#osc-network-floating-ip-set)
+* [`osc network floating-ip show`↴](#osc-network-floating-ip-show)
+* [`osc network floating-ip tag`↴](#osc-network-floating-ip-tag)
+* [`osc network floating-ip tag add`↴](#osc-network-floating-ip-tag-add)
+* [`osc network floating-ip tag check`↴](#osc-network-floating-ip-tag-check)
+* [`osc network floating-ip tag delete`↴](#osc-network-floating-ip-tag-delete)
+* [`osc network floating-ip tag list`↴](#osc-network-floating-ip-tag-list)
+* [`osc network floating-ip tag purge`↴](#osc-network-floating-ip-tag-purge)
+* [`osc network floating-ip tag replace`↴](#osc-network-floating-ip-tag-replace)
 * [`osc network network`↴](#osc-network-network)
 * [`osc network network list`↴](#osc-network-network-list)
 * [`osc network network show`↴](#osc-network-network-show)
@@ -421,14 +434,13 @@ List Servers
 
 ###### **Options:**
 
-* `--min-disk <MIN_DISK>` — Filters the response by a minimum disk space, in GiB. For example, 100
-* `--min-ram <MIN_RAM>` — Filters the response by a minimum RAM, in MiB. For example, 512
-* `--is-public <IS_PUBLIC>` — This parameter is only applicable to users with the administrative role. For all other non-admin users, the parameter is ignored and only public flavors will be returned. Filters the flavor list based on whether the flavor is public or private. If the value of this parameter is not specified, it is treated as True. If the value is specified, 1, t, true, on, y and yes are treated as True. 0, f, false, off, n and no are treated as False (they are case-insensitive). If the value is None (case-insensitive) both public and private flavors will be listed in a single request
-
-  Possible values: `true`, `false`
-
-* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
-* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--limit <LIMIT>`
+* `--marker <MARKER>`
+* `--is-public <IS_PUBLIC>`
+* `--min-ram <MIN_RAM>`
+* `--min-disk <MIN_DISK>`
+* `--sort-key <SORT_KEY>`
+* `--sort-dir <SORT_DIR>`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -443,7 +455,7 @@ Show single Server
 
 ###### **Arguments:**
 
-* `<ID>` — Flavor ID
+* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
 
 
 
@@ -968,6 +980,7 @@ Network (Neutron) commands
 
 * `availability-zone` — Availability Zones commands
 * `extension` — Extensions commands
+* `floating-ip` — Floating IP commands
 * `network` — Network commands
 * `port` — Port commands
 * `router` — Router commands
@@ -1036,6 +1049,223 @@ show Extensions
 
 
 
+## `osc network floating-ip`
+
+Floating IP commands
+
+**Usage:** `osc network floating-ip
+       floating-ip <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create single FloatingIP
+* `delete` — Delete single FloatingIP
+* `list` — List FloatingIPs
+* `set` — Update FloatingIP attributes
+* `show` — Show single FloatingIP
+* `tag` — FloatingIP Tags management
+
+
+
+## `osc network floating-ip create`
+
+Create single FloatingIP
+
+**Usage:** `osc network floating-ip create [OPTIONS] --floating-network-id <FLOATING_NETWORK_ID>`
+
+###### **Options:**
+
+* `--floating-ip-address <FLOATING_IP_ADDRESS>` — The floating IP address
+* `--subnet-id <SUBNET_ID>` — The subnet ID on which you want to create the floating IP
+* `--floating-network-id <FLOATING_NETWORK_ID>` — The ID of the network associated with the floating IP
+* `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP at creation time, you must specify the identifier of the internal port
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed\_ip\_address` parameter
+* `--tenant-id <TENANT_ID>` — The ID of the project
+* `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy associated with the floating IP
+* `--dns-name <DNS_NAME>` — A valid DNS name
+* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+
+
+
+## `osc network floating-ip delete`
+
+Delete single FloatingIP
+
+**Usage:** `osc network floating-ip delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/floatingips/{id} API
+
+
+
+## `osc network floating-ip list`
+
+List FloatingIPs
+
+**Usage:** `osc network floating-ip list [OPTIONS]`
+
+###### **Options:**
+
+* `--floating-ip-address <FLOATING_IP_ADDRESS>` — floating_ip_address query parameter for /v2.0/floatingips API
+* `--floating-network-id <FLOATING_NETWORK_ID>` — floating_network_id query parameter for /v2.0/floatingips API
+* `--router-id <ROUTER_ID>` — router_id query parameter for /v2.0/floatingips API
+* `--port-id <PORT_ID>` — port_id query parameter for /v2.0/floatingips API
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — fixed_ip_address query parameter for /v2.0/floatingips API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/floatingips API
+* `--status <STATUS>` — status query parameter for /v2.0/floatingips API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/floatingips API
+* `--tags <TAGS>` — tags query parameter for /v2.0/floatingips API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/floatingips API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/floatingips API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/floatingips API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips API
+
+
+
+## `osc network floating-ip set`
+
+Update FloatingIP attributes
+
+**Usage:** `osc network floating-ip set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/floatingips/{id} API
+
+###### **Options:**
+
+* `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP, you must specify the ID of the internal port. To disassociate the floating IP, `null` should be specified
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed\_ip\_address` parameter
+* `--qos-policy-id <QOS_POLICY_ID>`
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+
+
+
+## `osc network floating-ip show`
+
+Show single FloatingIP
+
+**Usage:** `osc network floating-ip show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/floatingips/{id} API
+
+
+
+## `osc network floating-ip tag`
+
+FloatingIP Tags management
+
+Shows details for, updates, and deletes tags. The maximum number of characters allowed in a tag is 60.
+
+**Usage:** `osc network floating-ip tag
+       tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Add a tag
+* `check` — Confirm tag presence
+* `delete` — Remove a single tag
+* `list` — List all tags
+* `purge` — Remove all tags
+* `replace` — Replace all tags
+
+
+
+## `osc network floating-ip tag add`
+
+Add a tag
+
+Adds a tag on the resource.
+
+**Usage:** `osc network floating-ip tag add <FLOATINGIP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+
+
+## `osc network floating-ip tag check`
+
+Confirm tag presence
+
+Confirms a given tag is set on the resource. This method does not return any reasonable response, but fails with "not found" when tag is not present.
+
+**Usage:** `osc network floating-ip tag check <FLOATINGIP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+
+
+## `osc network floating-ip tag delete`
+
+Remove a single tag
+
+Removes a tag on the resource.
+
+**Usage:** `osc network floating-ip tag delete <FLOATINGIP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+
+
+## `osc network floating-ip tag list`
+
+List all tags
+
+Obtains the tags for a resource.
+
+**Usage:** `osc network floating-ip tag list <FLOATINGIP_ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+
+
+## `osc network floating-ip tag purge`
+
+Remove all tags
+
+Removes all tags on the resource.
+
+**Usage:** `osc network floating-ip tag purge <FLOATINGIP_ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+
+
+## `osc network floating-ip tag replace`
+
+Replace all tags
+
+Replaces all tags on the resource.
+
+**Usage:** `osc network floating-ip tag replace [OPTIONS] <FLOATINGIP_ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+###### **Options:**
+
+* `--tags <TAGS>`
+
+
+
 ## `osc network network`
 
 Network commands
@@ -1060,40 +1290,36 @@ List Networks
 
 ###### **Options:**
 
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
-* `--description <DESCRIPTION>` — description filter parameter
-* `--name <NAME>` — name filter parameter
-* `--status <STATUS>` — status filter parameter
-* `--project-id <PROJECT_ID>` — project_id filter parameter
-* `--ipv4-address-scope-id <IPV4_ADDRESS_SCOPE_ID>` — ipv4_address_scope_id filter parameter
-* `--ipv6-address-scope-id <IPV6_ADDRESS_SCOPE_ID>` — ipv6_address_scope_id filter parameter
-* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — is_admin_state_up filter parameter
+* `--id <ID>` — id query parameter for /v2.0/networks API
+* `--name <NAME>` — name query parameter for /v2.0/networks API
+* `--admin-state-up <ADMIN_STATE_UP>` — admin_state_up query parameter for /v2.0/networks API
 
   Possible values: `true`, `false`
 
-* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — is_port_security_enabled filter parameter
+* `--status <STATUS>` — status query parameter for /v2.0/networks API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/networks API
+* `--shared <SHARED>` — shared query parameter for /v2.0/networks API
 
   Possible values: `true`, `false`
 
-* `--is-router-external <IS_ROUTER_EXTERNAL>` — is_router_external filter parameter
+* `--router-external <ROUTER_EXTERNAL>` — router:external query parameter for /v2.0/networks API
 
   Possible values: `true`, `false`
 
-* `--is-shared <IS_SHARED>` — is_shared filter parameter
+* `--mtu <MTU>` — mtu query parameter for /v2.0/networks API
+* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — provider:network_type query parameter for /v2.0/networks API
+* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — provider:physical_network query parameter for /v2.0/networks API
+* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — provider:segmentation_id query parameter for /v2.0/networks API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/networks API
+* `--tags <TAGS>` — tags query parameter for /v2.0/networks API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/networks API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/networks API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/networks API
+* `--is-default <IS_DEFAULT>` — is_default query parameter for /v2.0/networks API
 
   Possible values: `true`, `false`
 
-* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — provider_network_type filter parameter
-* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — provider_physical_network filter parameter
-* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — provider_segmentation_id filter parameter
-* `--tags <TAGS>` — tags filter parameter
-* `--any-tags <ANY_TAGS>` — any_tags filter parameter
-* `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
-* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
-
-  Default value: `10000`
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/networks API
 
 
 
@@ -1105,7 +1331,7 @@ Show single Network
 
 ###### **Arguments:**
 
-* `<ID>` — Network ID
+* `<ID>` — network_id parameter for /v2.0/networks/{network_id} API
 
 
 
@@ -1117,41 +1343,41 @@ Create single Network
 
 ###### **Options:**
 
-* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — The administrative state of the network, which is up ``True`` or down ``False``
+* `--name <NAME>` — Human-readable name of the network
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the network, which is up (`true`) or down (`false`)
 
   Possible values: `true`, `false`
 
-* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — Availability zone hints to use when scheduling the network
-* `--description <DESCRIPTION>` — The network description
-* `--dns-domain <DNS_DOMAIN>` — The DNS domain associated
-* `--is-default <IS_DEFAULT>` — Whether or not this is the default external network
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
+* `--shared <SHARED>` — Indicates whether this resource is shared across all projects. By default, only administrative users can change this value
 
   Possible values: `true`, `false`
 
-* `--mtu <MTU>` — Read-only. The maximum transmission unit (MTU) of the network resource
-* `--name <NAME>` — The network name
-* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — The port security status, which is enabled ``True`` or disabled ``False``.  Available for multiple provider extensions
+* `--router-external <ROUTER_EXTERNAL>` — Indicates whether the network has an external routing facility that’s not managed by the networking service
 
   Possible values: `true`, `false`
 
-* `--project-id <PROJECT_ID>` — The ID of the project this network is associated with
-* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — The type of physical network that maps to this network resource. For example, ``flat``, ``vlan``, ``vxlan``, or ``gre``. Available for multiple provider extensions
-* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — The physical network where this network object is implemented. Available for multiple provider extensions
-* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — An isolated segment ID on the physical network. The provider network type defines the segmentation model. Available for multiple provider extensions
-* `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy attached to the port
-* `--is-router-external <IS_ROUTER_EXTERNAL>` — Whether or not the router is external
+* `--segments <JSON>` — A list of provider `segment` objects
+* `--mtu <MTU>` — The maximum transmission unit (MTU) value to address fragmentation. Minimum value is 68 for IPv4, and 1280 for IPv6
+* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidate for the network
+* `--ha <HA>`
 
   Possible values: `true`, `false`
 
-* `--segments <JSON_VALUE>` — A list of provider segment objects. Available for multiple provider extensions
-* `--is-shared <IS_SHARED>` — Indicates whether this network is shared across all tenants. By default, only administrative users can change this value
+* `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status of the network. Valid values are enabled (`true`) and disabled (`false`). This value is used as the default value of `port\_security\_enabled` field of a newly created port
 
   Possible values: `true`, `false`
 
-* `--is-vlan-transparent <IS_VLAN_TRANSPARENT>` — Indicates the VLAN transparency mode of the network
+* `--provider-network-type <PROVIDER_NETWORK_TYPE>`
+* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>`
+* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>`
+* `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy associated with the network
+* `--is-default <IS_DEFAULT>` — The network is default or not
 
   Possible values: `true`, `false`
 
+* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
 
 
 
@@ -1163,7 +1389,7 @@ Delete single Network
 
 ###### **Arguments:**
 
-* `<ID>` — Network ID
+* `<ID>` — network_id parameter for /v2.0/networks/{network_id} API
 
 
 
@@ -1191,42 +1417,28 @@ List Ports
 
 ###### **Options:**
 
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
-* `--binding-host-id <BINDING_HOST_ID>` — binding:host_id filter parameter
-* `--binding-profile <BINDING_PROFILE>` — binding:profile filter parameter
-* `--binding-vif-details <BINDING_VIF_DETAILS>` — binding:vif_details filter parameter
-* `--binding-vif-type <BINDING_VIF_TYPE>` — binding:vif_type filter parameter
-* `--binding-vnic-type <BINDING_VNIC_TYPE>` — binding:vnic_type filter parameter
-* `--description <DESCRIPTION>` — description filter parameter
-* `--device-id <DEVICE_ID>` — device_id filter parameter
-* `--device-owner <DEVICE_OWNER>` — device_owner filter parameter
-* `--fields <FIELDS>` — fields filter parameter
-* `--fixed-ips <FIXED_IPS>` — fixed_ips filter parameter
-* `--id <ID>` — id filter parameter
-* `--ip-address <IP_ADDRESS>` — ip_address filter parameter
-* `--mac-address <MAC_ADDRESS>` — mac_address filter parameter
-* `--name <NAME>` — name filter parameter
-* `--network-id <NETWORK_ID>` — network_id filter parameter
-* `--status <STATUS>` — status filter parameter
-* `--subnet-id <SUBNET_ID>` — subnet_id filter parameter
-* `--project-id <PROJECT_ID>` — project_id filter parameter
-* `--security-groups <SECURITY_GROUPS>` — security_groups filter parameter
-* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — is_admin_state_up filter parameter
+* `--id <ID>` — id query parameter for /v2.0/ports API
+* `--name <NAME>` — name query parameter for /v2.0/ports API
+* `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/ports API
+* `--admin-state-up <ADMIN_STATE_UP>` — admin_state_up query parameter for /v2.0/ports API
 
   Possible values: `true`, `false`
 
-* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — is_port_security_enabled filter parameter
-
-  Possible values: `true`, `false`
-
-* `--tags <TAGS>` — tags filter parameter
-* `--any-tags <ANY_TAGS>` — any_tags filter parameter
-* `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
-* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
-
-  Default value: `10000`
+* `--mac-address <MAC_ADDRESS>` — mac_address query parameter for /v2.0/ports API
+* `--fixed-ips <FIXED_IPS>` — fixed_ips query parameter for /v2.0/ports API
+* `--device-id <DEVICE_ID>` — device_id query parameter for /v2.0/ports API
+* `--device-owner <DEVICE_OWNER>` — device_owner query parameter for /v2.0/ports API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/ports API
+* `--status <STATUS>` — status query parameter for /v2.0/ports API
+* `--ip-allocation <IP_ALLOCATION>` — ip_allocation query parameter for /v2.0/ports API
+* `--binding-host-id <BINDING_HOST_ID>` — binding:host_id query parameter for /v2.0/ports API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/ports API
+* `--tags <TAGS>` — tags query parameter for /v2.0/ports API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/ports API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/ports API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/ports API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/ports API
+* `--security-groups <SECURITY_GROUPS>` — security_groups query parameter for /v2.0/ports API
 
 
 
@@ -1238,7 +1450,7 @@ Show single Port
 
 ###### **Arguments:**
 
-* `<ID>` — Port ID
+* `<ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
 
 
 
@@ -1250,47 +1462,45 @@ Create single Port
 
 ###### **Options:**
 
-* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — The administrative state of the port, which is up ``True`` or down ``False``
-
-  Possible values: `true`, `false`
-
-* `--allowed-address-pairs <ALLOWED_ADDRESS_PAIRS>` — Allowed address pairs list. Dictionary key ``ip_address`` is required and key ``mac_address`` is optional
-* `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port is allocated. In some cases, different implementations can run on different hosts
-* `--binding-profile <JSON_VALUE>` — A dictionary the enables the application running on the specified host to pass and receive vif port-specific information to the plug-in
-* `--binding-vif-details <JSON_VALUE>` — Read-only. A dictionary that enables the application to pass information about functions that the Networking API provides. To enable or disable port filtering features such as security group and anti- MAC/IP spoofing, specify ``port_filter: True`` or ``port_filter: False``
-* `--binding-vif-type <BINDING_VIF_TYPE>` — Read-only. The vif type for the specified port
-* `--binding-vnic-type <BINDING_VNIC_TYPE>` — The vnic type that is bound to the neutron port.  In POST and PUT operations, specify a value of ``normal`` (virtual nic), ``direct`` (pci passthrough), or ``macvtap`` (virtual interface with a tap-like software interface). These values support SR-IOV PCI passthrough networking. The ML2 plug-in supports the vnic_type.  In GET operations, the binding:vnic_type extended attribute is visible to only port owners and administrative users
-* `--data-plane-status <DATA_PLANE_STATUS>` — Underlying data plane status of this port
-* `--description <DESCRIPTION>` — The port description
-* `--device-id <DEVICE_ID>` — Device ID of this port
-* `--device-owner <DEVICE_OWNER>` — Device owner of this port (e.g. ``network:dhcp``)
-* `--device-profile <DEVICE_PROFILE>` — None
-* `--dns-assignment <DNS_ASSIGNMENT>` — DNS assignment for the port
-* `--dns-domain <DNS_DOMAIN>` — DNS domain assigned to the port
-* `--dns-name <DNS_NAME>` — DNS name for the port
-* `--extra-dhcp-opts <EXTRA_DHCP_OPTS>` — Extra DHCP options
-* `--fixed-ips <JSON_VALUE>` — IP addresses for the port. Includes the IP address and subnet ID
-* `--ip-allocation <IP_ALLOCATION>` — None
-* `--mac-address <MAC_ADDRESS>` — The MAC address of an allowed address pair
-* `--name <NAME>` — The port name
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
 * `--network-id <NETWORK_ID>` — The ID of the attached network
-* `--numa-affinity-policy <NUMA_AFFINITY_POLICY>` — The NUMA affinity policy defined for this port
-* `--is-port-security-enabled <IS_PORT_SECURITY_ENABLED>` — The port security status, which is enabled ``True`` or disabled ``False``
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
 
   Possible values: `true`, `false`
 
-* `--project-id <PROJECT_ID>` — The ID of the project who owns the network. Only administrative users can specify a project ID other than their own
-* `--propagate-uplink-status <PROPAGATE_UPLINK_STATUS>` — Whether to propagate uplink status of the port
+* `--mac-address <MAC_ADDRESS>` — The MAC address of the port. If unspecified, a MAC address is automatically generated
+* `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip\_address`) and the subnet ID from which the IP address is assigned (`subnet\_id`)
+* `--device-id <DEVICE_ID>` — The ID of the device that uses this port. For example, a server instance or a logical router
+* `--device-owner <DEVICE_OWNER>` — The entity type that uses this port. For example, `compute:nova` (server instance), `network:dhcp` (DHCP agent) or `network:router\_interface` (router interface)
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
+* `--allowed-address-pairs <JSON>` — A set of zero or more allowed address pair objects each where address pair object contains an `ip\_address` and `mac\_address`. While the `ip\_address` is required, the `mac\_address` will be taken from the port if not specified. The value of `ip\_address` can be an IP Address or a CIDR (if supported by the underlying extension plugin). A server connected to the port can send a packet with source address which matches one of the specified allowed address pairs
+* `--extra-dhcp-opts <JSON>` — A set of zero or more extra DHCP option pairs. An option pair consists of an option value and name
+* `--device-profile <DEVICE_PROFILE>`
+* `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
+* `--numa-affinity-policy <NUMA_AFFINITY_POLICY>` — The port NUMA affinity policy requested during the virtual machine scheduling. Values: `None`, `required`, `preferred` or `legacy`
+
+  Possible values: `required`, `legacy`, `preferred`
+
+* `--binding-vnic-type <BINDING_VNIC_TYPE>` — The type of vNIC which this port should be attached to. This is used to determine which mechanism driver(s) to be used to bind the port. The valid values are `normal`, `macvtap`, `direct`, `baremetal`, `direct-physical`, `virtio-forwarder`, `smart-nic` and `remote-managed`. What type of vNIC is actually available depends on deployments. The default is `normal`
+
+  Possible values: `smart-nic`, `accelerator-direct`, `normal`, `baremetal`, `direct-physical`, `macvtap`, `direct`, `virtio-forwarder`, `accelerator-direct-physical`, `vdpa`, `remote-managed`
+
+* `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port resides. The default is an empty string
+* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back- end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device\_mac\_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac\_address` field of the port resource will be updated to the MAC from the active binding
+* `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status. A valid value is enabled (`true`) or disabled (`false`). If port security is enabled for the port, security group rules and anti-spoofing rules are applied to the traffic on the port. If disabled, no such rules are applied
 
   Possible values: `true`, `false`
 
-* `--qos-network-policy-id <QOS_NETWORK_POLICY_ID>` — None
-* `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy attached to the port
-* `--resource-request <JSON_VALUE>` — None
-* `--revision-number <REVISION_NUMBER>` — None
-* `--security-group-ids <SECURITY_GROUP_IDS>` — The IDs of any attached security groups
-* `--tags <TAGS>` — Port Tags
-* `--tenant-id <TENANT_ID>` — Tenant_id (deprecated attribute)
+* `--qos-policy-id <QOS_POLICY_ID>` — QoS policy associated with the port
+* `--tags <TAGS>`
+* `--propagate-uplink-status <PROPAGATE_UPLINK_STATUS>` — The uplink status propagation of the port. Valid values are enabled (`true`) and disabled (`false`)
+
+  Possible values: `true`, `false`
+
+* `--dns-name <DNS_NAME>` — A valid DNS name
+* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--security-groups <SECURITY_GROUPS>` — The IDs of security groups applied to the port
 
 
 
@@ -1302,7 +1512,7 @@ Delete single Port
 
 ###### **Arguments:**
 
-* `<ID>` — Port ID
+* `<ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
 
 
 
@@ -1330,32 +1540,22 @@ List Routers
 
 ###### **Options:**
 
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
-* `--description <DESCRIPTION>` — description filter parameter
-* `--flavor-id <FLAVOR_ID>` — flavor_id filter parameter
-* `--name <NAME>` — name filter parameter
-* `--status <STATUS>` — status filter parameter
-* `--project-id <PROJECT_ID>` — project_id filter parameter
-* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — is_admin_state_up filter parameter
+* `--name <NAME>` — name query parameter for /v2.0/routers API
+* `--admin-state-up <ADMIN_STATE_UP>` — admin_state_up query parameter for /v2.0/routers API
 
   Possible values: `true`, `false`
 
-* `--is-distributed <IS_DISTRIBUTED>` — is_distributed filter parameter
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/routers API
+* `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — enable_ndp_proxy query parameter for /v2.0/routers API
 
   Possible values: `true`, `false`
 
-* `--is-ha <IS_HA>` — is_ha filter parameter
-
-  Possible values: `true`, `false`
-
-* `--tags <TAGS>` — tags filter parameter
-* `--any-tags <ANY_TAGS>` — any_tags filter parameter
-* `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
-* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
-
-  Default value: `10000`
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/routers API
+* `--tags <TAGS>` — tags query parameter for /v2.0/routers API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/routers API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/routers API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/routers API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/routers API
 
 
 
@@ -1367,7 +1567,7 @@ Show single Router
 
 ###### **Arguments:**
 
-* `<ID>` — Router ID
+* `<ID>` — id parameter for /v2.0/routers/{id} API
 
 
 
@@ -1379,29 +1579,33 @@ Create single Router
 
 ###### **Options:**
 
-* `--is-admin-state-up <IS_ADMIN_STATE_UP>` — The administrative state of the router, which is up ``True`` or down ``False``
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
 
   Possible values: `true`, `false`
 
-* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — Availability zone hints to use when scheduling the router
-* `--description <DESCRIPTION>` — The router description
-* `--is-distributed <IS_DISTRIBUTED>` — The distributed state of the router, which is distributed ``True`` or not ``False``
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
+* `--network-id <NETWORK_ID>`
+* `--enable-snat <ENABLE_SNAT>`
 
   Possible values: `true`, `false`
 
-* `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — The ndp proxy state of the router
+* `--external-fixed-ips <JSON>`
+* `--ha <HA>` — `true` indicates a highly-available router. It is available when `l3-ha` extension is enabled
 
   Possible values: `true`, `false`
 
-* `--external-gateway-info <JSON_VALUE>` — The external gateway information of the router. If the router has an external gateway, this would be a dict with network_id, enable_snat, external_fixed_ips and qos_policy_id. Otherwise, this would be null
-* `--flavor-id <FLAVOR_ID>` — The ID of the flavor
-* `--is-ha <IS_HA>` — The highly-available state of the router, which is highly available ``True`` or not ``False``
+* `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — Enable NDP proxy attribute. Default is `false`, To persist this attribute value, set the `enable\_ndp\_proxy\_by\_default` option in the `neutron.conf` file. It is available when `router-extend-ndp-proxy` extension is enabled
 
   Possible values: `true`, `false`
 
-* `--name <NAME>` — The router name
-* `--project-id <PROJECT_ID>` — The ID of the project this router is associated with
-* `--tenant-id <TENANT_ID>` — Tenant_id (deprecated attribute)
+* `--flavor-id <FLAVOR_ID>` — The ID of the flavor associated with the router
+* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidates for the router. It is available when `router\_availability\_zone` extension is enabled
+* `--distributed <DISTRIBUTED>` — `true` indicates a distributed router. It is available when `dvr` extension is enabled
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
 
 
 
@@ -1413,7 +1617,7 @@ Delete single Router
 
 ###### **Arguments:**
 
-* `<ID>` — Router ID
+* `<ID>` — id parameter for /v2.0/routers/{id} API
 
 
 
@@ -1441,38 +1645,31 @@ List Subnets
 
 ###### **Options:**
 
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
-* `--cidr <CIDR>` — cidr filter parameter
-* `--description <DESCRIPTION>` — description filter parameter
-* `--gateway-ip <GATEWAY_IP>` — gateway_ip filter parameter
-* `--ip-version <IP_VERSION>` — ip_version filter parameter
-* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — ipv6_address_mode filter parameter
-* `--ipv6-ra-mode <IPV6_RA_MODE>` — ipv6_ra_mode filter parameter
-* `--name <NAME>` — name filter parameter
-* `--network-id <NETWORK_ID>` — network_id filter parameter
-* `--segment-id <SEGMENT_ID>` — segment_id filter parameter
-* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — dns_publish_fixed_ip filter parameter
+* `--id <ID>` — id query parameter for /v2.0/subnets API
+* `--name <NAME>` — name query parameter for /v2.0/subnets API
+* `--ip-version <IP_VERSION>` — ip_version query parameter for /v2.0/subnets API
+* `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/subnets API
+* `--subnetpool-id <SUBNETPOOL_ID>` — subnetpool_id query parameter for /v2.0/subnets API
+* `--cidr <CIDR>` — cidr query parameter for /v2.0/subnets API
+* `--gateway-ip <GATEWAY_IP>` — gateway_ip query parameter for /v2.0/subnets API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnets API
+* `--enable-dhcp <ENABLE_DHCP>` — enable_dhcp query parameter for /v2.0/subnets API
 
   Possible values: `true`, `false`
 
-* `--project-id <PROJECT_ID>` — project_id filter parameter
-* `--is-dhcp-enabled <IS_DHCP_ENABLED>` — is_dhcp_enabled filter parameter
+* `--ipv6-ra-mode <IPV6_RA_MODE>` — ipv6_ra_mode query parameter for /v2.0/subnets API
+* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — ipv6_address_mode query parameter for /v2.0/subnets API
+* `--shared <SHARED>` — shared query parameter for /v2.0/subnets API
 
   Possible values: `true`, `false`
 
-* `--subnet-pool-id <SUBNET_POOL_ID>` — subnet_pool_id filter parameter
-* `--use-default-subnet-pool <USE_DEFAULT_SUBNET_POOL>` — use_default_subnet_pool filter parameter
-
-  Possible values: `true`, `false`
-
-* `--tags <TAGS>` — tags filter parameter
-* `--any-tags <ANY_TAGS>` — any_tags filter parameter
-* `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
-* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
-
-  Default value: `10000`
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/subnets API
+* `--tags <TAGS>` — tags query parameter for /v2.0/subnets API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/subnets API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/subnets API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/subnets API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/subnets API
+* `--segment-id <SEGMENT_ID>` — segment_id query parameter for /v2.0/subnets API
 
 
 
@@ -1484,7 +1681,7 @@ Show single Subnet
 
 ###### **Arguments:**
 
-* `<ID>` — Subnet ID
+* `<ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
 
 
 
@@ -1492,41 +1689,44 @@ Show single Subnet
 
 Create single Subnet
 
-**Usage:** `osc network subnet create [OPTIONS]`
+**Usage:** `osc network subnet create [OPTIONS] --ip-version <IP_VERSION> --network-id <NETWORK_ID>`
 
 ###### **Options:**
 
-* `--allocation-pools <JSON_VALUE>` — List of allocation pools each of which has a start and an end address for this subnet
-* `--cidr <CIDR>` — The CIDR
-* `--description <DESCRIPTION>` — The subnet description
-* `--dns-nameservers <DNS_NAMESERVERS>` — A list of DNS nameservers
-* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for fixed IPs
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--ip-version <IP_VERSION>` — The IP protocol version. Value is `4` or `6`
+* `--network-id <NETWORK_ID>` — The ID of the network to which the subnet belongs
+* `--subnetpool-id <SUBNETPOOL_ID>` — The ID of the subnet pool associated with the subnet
+* `--prefixlen <PREFIXLEN>` — The prefix length to use for subnet allocation from a subnet pool. If not specified, the `default\_prefixlen` value of the subnet pool will be used
+* `--cidr <CIDR>` — The CIDR of the subnet
+* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway\_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
+* `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation\_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
+* `--dns-nameservers <DNS_NAMESERVERS>` — List of dns name servers associated with the subnet. Default is an empty list
+* `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
+* `--enable-dhcp <ENABLE_DHCP>` — Indicates whether dhcp is enabled or disabled for the subnet. Default is `true`
 
   Possible values: `true`, `false`
 
-* `--is-dhcp-enabled <IS_DHCP_ENABLED>` — Set to ``True`` if DHCP is enabled and ``False`` if DHCP is disabled
+* `--ipv6-ra-mode <IPV6_RA_MODE>` — The IPv6 router advertisement specifies whether the networking service should transmit ICMPv6 packets, for a subnet. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
+
+  Possible values: `dhcpv6-stateless`, `dhcpv6-stateful`, `slaac`
+
+* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — The IPv6 address modes specifies mechanisms for assigning IP addresses. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
+
+  Possible values: `dhcpv6-stateless`, `dhcpv6-stateful`, `slaac`
+
+* `--service-types <SERVICE_TYPES>` — The service types associated with the subnet
+* `--use-default-subnetpool <USE_DEFAULT_SUBNETPOOL>` — Whether to allocate this subnet from the default subnet pool
 
   Possible values: `true`, `false`
 
-* `--gateway-ip <GATEWAY_IP>` — The gateway IP address
-* `--host-routes <HOST_ROUTES>` — A list of host routes
-* `--ip-version <IP_VERSION>` — The IP version, which is 4 or 6
-* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — The IPv6 address modes which are 'dhcpv6-stateful', 'dhcpv6-stateless' or 'slaac'
-* `--ipv6-ra-mode <IPV6_RA_MODE>` — The IPv6 router advertisements modes which can be 'slaac', 'dhcpv6-stateful', 'dhcpv6-stateless'
-* `--name <NAME>` — The subnet name
-* `--network-id <NETWORK_ID>` — The ID of the attached network
-* `--prefix-length <PREFIX_LENGTH>` — The prefix length to use for subnet allocation from a subnet pool
-* `--project-id <PROJECT_ID>` — The ID of the project this subnet is associated with
-* `--revision-number <REVISION_NUMBER>` — None
-* `--segment-id <SEGMENT_ID>` — The ID of the segment this subnet is associated with
-* `--service-types <SERVICE_TYPES>` — Service types for this subnet
-* `--subnet-pool-id <SUBNET_POOL_ID>` — The subnet pool ID from which to obtain a CIDR
-* `--tags <TAGS>` — Subnet Tags
-* `--tenant-id <TENANT_ID>` — Tenant_id (deprecated attribute)
-* `--use-default-subnet-pool <USE_DEFAULT_SUBNET_POOL>` — Whether to use the default subnet pool to obtain a CIDR
+* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for IPs from this subnet. Default is `false`
 
   Possible values: `true`, `false`
 
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--segment-id <SEGMENT_ID>` — The ID of a network segment the subnet is associated with. It is available when `segment` extension is enabled
 
 
 
@@ -1538,7 +1738,7 @@ Delete single Subnet
 
 ###### **Arguments:**
 
-* `<ID>` — Subnet ID
+* `<ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
 
 
 

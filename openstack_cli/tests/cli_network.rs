@@ -27,6 +27,17 @@ mod cli {
 
         #[test]
         #[ignore]
+        fn fip_list() -> Result<(), Box<dyn std::error::Error>> {
+            let mut cmd = Command::cargo_bin("osc")?;
+
+            cmd.arg("network").arg("floating-ip").arg("list");
+            cmd.assert().success();
+
+            Ok(())
+        }
+
+        #[test]
+        #[ignore]
         fn network_list() -> Result<(), Box<dyn std::error::Error>> {
             let mut cmd = Command::cargo_bin("osc")?;
 

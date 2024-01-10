@@ -61,24 +61,24 @@ pub struct PathParameters {}
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum NumaAffinityPolicy {
-    Preferred,
     Required,
     Legacy,
+    Preferred,
 }
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum BindingVnicType {
-    RemoteManaged,
-    Macvtap,
-    DirectPhysical,
-    AcceleratorDirect,
-    Baremetal,
-    AcceleratorDirectPhysical,
-    Direct,
-    Normal,
-    VirtioForwarder,
-    Vdpa,
     SmartNic,
+    AcceleratorDirect,
+    Normal,
+    Baremetal,
+    DirectPhysical,
+    Macvtap,
+    Direct,
+    VirtioForwarder,
+    AcceleratorDirectPhysical,
+    Vdpa,
+    RemoteManaged,
 }
 
 /// Port Body data
@@ -736,28 +736,28 @@ impl Command for PortCmd {
 
         if let Some(val) = &args.numa_affinity_policy {
             let tmp = match val {
-                NumaAffinityPolicy::Preferred => create::NumaAffinityPolicy::Preferred,
                 NumaAffinityPolicy::Required => create::NumaAffinityPolicy::Required,
                 NumaAffinityPolicy::Legacy => create::NumaAffinityPolicy::Legacy,
+                NumaAffinityPolicy::Preferred => create::NumaAffinityPolicy::Preferred,
             };
             port_builder.numa_affinity_policy(tmp);
         }
 
         if let Some(val) = &args.binding_vnic_type {
             let tmp = match val {
-                BindingVnicType::RemoteManaged => create::BindingVnicType::RemoteManaged,
-                BindingVnicType::Macvtap => create::BindingVnicType::Macvtap,
-                BindingVnicType::DirectPhysical => create::BindingVnicType::DirectPhysical,
+                BindingVnicType::SmartNic => create::BindingVnicType::SmartNic,
                 BindingVnicType::AcceleratorDirect => create::BindingVnicType::AcceleratorDirect,
+                BindingVnicType::Normal => create::BindingVnicType::Normal,
                 BindingVnicType::Baremetal => create::BindingVnicType::Baremetal,
+                BindingVnicType::DirectPhysical => create::BindingVnicType::DirectPhysical,
+                BindingVnicType::Macvtap => create::BindingVnicType::Macvtap,
+                BindingVnicType::Direct => create::BindingVnicType::Direct,
+                BindingVnicType::VirtioForwarder => create::BindingVnicType::VirtioForwarder,
                 BindingVnicType::AcceleratorDirectPhysical => {
                     create::BindingVnicType::AcceleratorDirectPhysical
                 }
-                BindingVnicType::Direct => create::BindingVnicType::Direct,
-                BindingVnicType::Normal => create::BindingVnicType::Normal,
-                BindingVnicType::VirtioForwarder => create::BindingVnicType::VirtioForwarder,
                 BindingVnicType::Vdpa => create::BindingVnicType::Vdpa,
-                BindingVnicType::SmartNic => create::BindingVnicType::SmartNic,
+                BindingVnicType::RemoteManaged => create::BindingVnicType::RemoteManaged,
             };
             port_builder.binding_vnic_type(tmp);
         }
@@ -779,7 +779,6 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.tags {
-            // None
             port_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 
@@ -800,7 +799,6 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.security_groups {
-            // None
             port_builder.security_groups(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 

@@ -16,11 +16,11 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     flavor_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

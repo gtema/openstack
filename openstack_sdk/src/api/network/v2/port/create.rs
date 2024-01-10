@@ -47,10 +47,10 @@ pub struct AllowedAddressPairs<'a> {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum NumaAffinityPolicy {
-    #[serde(alias = "required")]
-    Required,
     #[serde(alias = "preferred")]
     Preferred,
+    #[serde(alias = "required")]
+    Required,
     #[serde(alias = "legacy")]
     Legacy,
 }
@@ -58,28 +58,28 @@ pub enum NumaAffinityPolicy {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum BindingVnicType {
-    #[serde(alias = "baremetal")]
-    Baremetal,
-    #[serde(alias = "normal")]
-    Normal,
-    #[serde(alias = "macvtap")]
-    Macvtap,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
     #[serde(alias = "vdpa")]
     Vdpa,
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
+    #[serde(alias = "normal")]
+    Normal,
+    #[serde(alias = "baremetal")]
+    Baremetal,
     #[serde(alias = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "accelerator-direct")]
-    AcceleratorDirect,
+    #[serde(alias = "direct-physical")]
+    DirectPhysical,
     #[serde(alias = "direct")]
     Direct,
+    #[serde(alias = "virtio-forwarder")]
+    VirtioForwarder,
+    #[serde(alias = "accelerator-direct")]
+    AcceleratorDirect,
+    #[serde(alias = "remote-managed")]
+    RemoteManaged,
+    #[serde(alias = "smart-nic")]
+    SmartNic,
+    #[serde(alias = "macvtap")]
+    Macvtap,
 }
 
 /// A `port` object.

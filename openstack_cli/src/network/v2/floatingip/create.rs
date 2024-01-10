@@ -97,7 +97,7 @@ struct Floatingip {
     /// The ID of the network associated with the
     /// floating IP.
     #[arg(long)]
-    floating_network_id: Option<String>,
+    floating_network_id: String,
 
     /// The ID of a port associated with the floating IP.
     /// To associate the floating IP with a fixed IP at creation time,
@@ -290,9 +290,7 @@ impl Command for FloatingipCmd {
             floatingip_builder.subnet_id(Some(val.into()));
         }
 
-        if let Some(val) = &args.floating_network_id {
-            floatingip_builder.floating_network_id(val);
-        }
+        floatingip_builder.floating_network_id(&args.floating_network_id);
 
         if let Some(val) = &args.port_id {
             floatingip_builder.port_id(Some(val.into()));

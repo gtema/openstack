@@ -383,7 +383,6 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.dns_nameservers {
-            // None
             subnet_builder.dns_nameservers(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 
@@ -400,7 +399,6 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.service_types {
-            // None
             subnet_builder.service_types(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 

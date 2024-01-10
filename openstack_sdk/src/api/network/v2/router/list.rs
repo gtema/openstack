@@ -28,7 +28,7 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// name query parameter for /v2.0/routers API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// admin_state_up query parameter for /v2.0/routers API
@@ -36,7 +36,7 @@ pub struct Request<'a> {
     admin_state_up: Option<bool>,
 
     /// tenant_id query parameter for /v2.0/routers API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// enable_ndp_proxy query parameter for /v2.0/routers API
@@ -44,27 +44,27 @@ pub struct Request<'a> {
     enable_ndp_proxy: Option<bool>,
 
     /// revision_number query parameter for /v2.0/routers API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/routers API
-    #[builder(default, setter(name = "_tags"), private)]
+    #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/routers API
-    #[builder(default, setter(name = "_tags_any"), private)]
+    #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/routers API
-    #[builder(setter(name = "_not_tags"), default, private)]
+    #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/routers API
-    #[builder(default, setter(name = "_not_tags_any"), private)]
+    #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// description query parameter for /v2.0/routers API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]

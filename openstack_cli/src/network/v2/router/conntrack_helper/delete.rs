@@ -61,6 +61,9 @@ pub struct PathParameters {
 pub struct ConntrackHelperCmd {
     pub args: ConntrackHelperArgs,
 }
+/// ConntrackHelper response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for ConntrackHelperCmd {

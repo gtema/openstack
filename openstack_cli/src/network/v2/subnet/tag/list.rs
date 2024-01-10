@@ -19,7 +19,7 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::network::v2::subnet::tag::list;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
 /// Command arguments
@@ -50,6 +50,29 @@ pub struct PathParameters {
 pub struct TagsCmd {
     pub args: TagsArgs,
 }
+/// Tags response representation
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct ResponseData(String);
+
+impl StructTable for ResponseData {
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Value".to_string()]);
+        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
+        (headers, res)
+    }
+}
+
+impl StructTable for Vec<ResponseData> {
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Values".to_string()]);
+        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
+            .into_iter()
+            .map(|v| v.0.to_string())
+            .collect::<Vec<_>>()
+            .join(", ")])]);
+        (headers, res)
+    }
+}
 
 #[async_trait]
 impl Command for TagsCmd {
@@ -72,10 +95,10 @@ impl Command for TagsCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

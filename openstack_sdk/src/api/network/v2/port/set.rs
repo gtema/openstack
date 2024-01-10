@@ -67,19 +67,19 @@ pub struct AllowedAddressPairs<'a> {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum DataPlaneStatus {
-    #[serde(alias = "DOWN")]
-    Down,
     #[serde(alias = "ACTIVE")]
     Active,
+    #[serde(alias = "DOWN")]
+    Down,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum NumaAffinityPolicy {
-    #[serde(alias = "required")]
-    Required,
     #[serde(alias = "preferred")]
     Preferred,
+    #[serde(alias = "required")]
+    Required,
     #[serde(alias = "legacy")]
     Legacy,
 }
@@ -87,28 +87,28 @@ pub enum NumaAffinityPolicy {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum BindingVnicType {
-    #[serde(alias = "baremetal")]
-    Baremetal,
-    #[serde(alias = "normal")]
-    Normal,
-    #[serde(alias = "macvtap")]
-    Macvtap,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
     #[serde(alias = "vdpa")]
     Vdpa,
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
+    #[serde(alias = "normal")]
+    Normal,
+    #[serde(alias = "baremetal")]
+    Baremetal,
     #[serde(alias = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "accelerator-direct")]
-    AcceleratorDirect,
+    #[serde(alias = "direct-physical")]
+    DirectPhysical,
     #[serde(alias = "direct")]
     Direct,
+    #[serde(alias = "virtio-forwarder")]
+    VirtioForwarder,
+    #[serde(alias = "accelerator-direct")]
+    AcceleratorDirect,
+    #[serde(alias = "remote-managed")]
+    RemoteManaged,
+    #[serde(alias = "smart-nic")]
+    SmartNic,
+    #[serde(alias = "macvtap")]
+    Macvtap,
 }
 
 /// A `port` object.
@@ -362,7 +362,7 @@ pub struct Request<'a> {
 
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

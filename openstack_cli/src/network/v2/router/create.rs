@@ -443,7 +443,6 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.availability_zone_hints {
-            // None
             router_builder
                 .availability_zone_hints(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }

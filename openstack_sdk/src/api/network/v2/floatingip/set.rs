@@ -69,7 +69,7 @@ pub struct Request<'a> {
     floatingip: Floatingip<'a>,
 
     /// id parameter for /v2.0/floatingips/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

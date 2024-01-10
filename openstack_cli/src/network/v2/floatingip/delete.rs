@@ -59,6 +59,9 @@ pub struct PathParameters {
 pub struct FloatingipCmd {
     pub args: FloatingipArgs,
 }
+/// Floatingip response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for FloatingipCmd {

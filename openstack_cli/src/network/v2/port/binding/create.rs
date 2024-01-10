@@ -56,17 +56,17 @@ pub struct PathParameters {
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum VnicType {
-    RemoteManaged,
-    Macvtap,
-    DirectPhysical,
-    AcceleratorDirect,
-    Baremetal,
-    AcceleratorDirectPhysical,
-    Direct,
-    Normal,
-    VirtioForwarder,
-    Vdpa,
     SmartNic,
+    AcceleratorDirect,
+    Normal,
+    Baremetal,
+    DirectPhysical,
+    Macvtap,
+    Direct,
+    VirtioForwarder,
+    AcceleratorDirectPhysical,
+    Vdpa,
+    RemoteManaged,
 }
 
 /// Binding Body data
@@ -163,17 +163,17 @@ impl Command for BindingCmd {
 
         if let Some(val) = &args.vnic_type {
             let tmp = match val {
-                VnicType::RemoteManaged => create::VnicType::RemoteManaged,
-                VnicType::Macvtap => create::VnicType::Macvtap,
-                VnicType::DirectPhysical => create::VnicType::DirectPhysical,
-                VnicType::AcceleratorDirect => create::VnicType::AcceleratorDirect,
-                VnicType::Baremetal => create::VnicType::Baremetal,
-                VnicType::AcceleratorDirectPhysical => create::VnicType::AcceleratorDirectPhysical,
-                VnicType::Direct => create::VnicType::Direct,
-                VnicType::Normal => create::VnicType::Normal,
-                VnicType::VirtioForwarder => create::VnicType::VirtioForwarder,
-                VnicType::Vdpa => create::VnicType::Vdpa,
                 VnicType::SmartNic => create::VnicType::SmartNic,
+                VnicType::AcceleratorDirect => create::VnicType::AcceleratorDirect,
+                VnicType::Normal => create::VnicType::Normal,
+                VnicType::Baremetal => create::VnicType::Baremetal,
+                VnicType::DirectPhysical => create::VnicType::DirectPhysical,
+                VnicType::Macvtap => create::VnicType::Macvtap,
+                VnicType::Direct => create::VnicType::Direct,
+                VnicType::VirtioForwarder => create::VnicType::VirtioForwarder,
+                VnicType::AcceleratorDirectPhysical => create::VnicType::AcceleratorDirectPhysical,
+                VnicType::Vdpa => create::VnicType::Vdpa,
+                VnicType::RemoteManaged => create::VnicType::RemoteManaged,
             };
             binding_builder.vnic_type(tmp);
         }

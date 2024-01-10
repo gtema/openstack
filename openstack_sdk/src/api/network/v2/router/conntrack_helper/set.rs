@@ -16,14 +16,14 @@ use std::borrow::Cow;
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    #[serde(alias = "ipv6-icmp")]
-    Ipv6Icmp,
-    #[serde(alias = "tcp")]
-    Tcp,
-    #[serde(alias = "udp")]
-    Udp,
     #[serde(alias = "icmp")]
     Icmp,
+    #[serde(alias = "ipv6-icmp")]
+    Ipv6Icmp,
+    #[serde(alias = "udp")]
+    Udp,
+    #[serde(alias = "tcp")]
+    Tcp,
     #[serde(alias = "dccp")]
     Dccp,
     #[serde(alias = "sctp")]
@@ -56,11 +56,11 @@ pub struct Request<'a> {
     conntrack_helper: ConntrackHelper<'a>,
 
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     router_id: Cow<'a, str>,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

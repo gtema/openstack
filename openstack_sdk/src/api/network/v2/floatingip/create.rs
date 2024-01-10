@@ -66,9 +66,9 @@ pub struct Floatingip<'a> {
 
     /// The ID of the network associated with the
     /// floating IP.
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    floating_network_id: Option<Cow<'a, str>>,
+    #[serde()]
+    #[builder(setter(into))]
+    floating_network_id: Cow<'a, str>,
 
     /// The ID of a port associated with the floating IP.
     /// To associate the floating IP with a fixed IP at creation time,
@@ -207,7 +207,12 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .floatingip(FloatingipBuilder::default().build().unwrap())
+                .floatingip(
+                    FloatingipBuilder::default()
+                        .floating_network_id("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .service_type(),
@@ -219,7 +224,12 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .floatingip(FloatingipBuilder::default().build().unwrap())
+                .floatingip(
+                    FloatingipBuilder::default()
+                        .floating_network_id("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .response_key()
@@ -241,7 +251,12 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .floatingip(FloatingipBuilder::default().build().unwrap())
+            .floatingip(
+                FloatingipBuilder::default()
+                    .floating_network_id("foo")
+                    .build()
+                    .unwrap(),
+            )
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -262,7 +277,12 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .floatingip(FloatingipBuilder::default().build().unwrap())
+            .floatingip(
+                FloatingipBuilder::default()
+                    .floating_network_id("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

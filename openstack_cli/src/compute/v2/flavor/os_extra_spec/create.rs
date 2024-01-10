@@ -62,6 +62,9 @@ pub struct PathParameters {
 pub struct OsExtraSpecCmd {
     pub args: OsExtraSpecArgs,
 }
+/// OsExtraSpec response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for OsExtraSpecCmd {

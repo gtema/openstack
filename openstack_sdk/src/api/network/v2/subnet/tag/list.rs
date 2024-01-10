@@ -11,7 +11,7 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     subnet_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

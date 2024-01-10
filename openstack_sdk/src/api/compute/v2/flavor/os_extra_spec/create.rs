@@ -26,7 +26,7 @@ pub struct Request<'a> {
     extra_specs: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     flavor_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
@@ -51,7 +51,6 @@ impl<'a> RequestBuilder<'a> {
         V: Into<Cow<'a, str>>,
     {
         self.extra_specs
-            //    .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
         self

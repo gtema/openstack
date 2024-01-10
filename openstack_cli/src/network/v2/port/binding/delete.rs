@@ -54,6 +54,9 @@ pub struct PathParameters {
 pub struct BindingCmd {
     pub args: BindingArgs,
 }
+/// Binding response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for BindingCmd {

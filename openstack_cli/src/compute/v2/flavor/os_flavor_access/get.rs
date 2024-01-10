@@ -55,6 +55,9 @@ pub struct PathParameters {
 pub struct OsFlavorAccessCmd {
     pub args: OsFlavorAccessArgs,
 }
+/// OsFlavorAccess response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for OsFlavorAccessCmd {

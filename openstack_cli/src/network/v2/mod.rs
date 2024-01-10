@@ -1,5 +1,6 @@
 pub mod availability_zone;
 pub mod extension;
+pub mod floatingip;
 pub mod network;
 pub mod port;
 pub mod router;
@@ -11,6 +12,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::network::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
 use crate::network::v2::extension::{ExtensionArgs, ExtensionCommand};
+use crate::network::v2::floatingip::{FloatingIPArgs, FloatingIPCommand};
 use crate::network::v2::network::{NetworkArgs, NetworkCommand};
 use crate::network::v2::port::{PortArgs, PortCommand};
 use crate::network::v2::router::{RouterArgs, RouterCommand};
@@ -31,6 +33,8 @@ pub enum NetworkSrvCommands {
     AvailabilityZone(AvailabilityZoneArgs),
     /// Extensions commands
     Extension(ExtensionArgs),
+    /// Floating IP commands
+    FloatingIP(FloatingIPArgs),
     /// Network commands
     Network(NetworkArgs),
     /// Port commands
@@ -53,6 +57,9 @@ impl ServiceCommands for NetworkSrvCommand {
             }
             NetworkSrvCommands::Extension(args) => {
                 ExtensionCommand { args: args.clone() }.get_command(session)
+            }
+            NetworkSrvCommands::FloatingIP(args) => {
+                FloatingIPCommand { args: args.clone() }.get_command(session)
             }
             NetworkSrvCommands::Network(args) => {
                 NetworkCommand { args: args.clone() }.get_command(session)

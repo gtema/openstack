@@ -65,12 +65,12 @@ pub struct PathParameters {
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Protocol {
-    Dccp,
-    Tcp,
-    Sctp,
-    Udp,
     Ipv6Icmp,
     Icmp,
+    Dccp,
+    Sctp,
+    Udp,
+    Tcp,
 }
 
 /// PortForwarding Body data
@@ -216,12 +216,12 @@ impl Command for PortForwardingCmd {
 
         if let Some(val) = &args.protocol {
             let tmp = match val {
-                Protocol::Dccp => set::Protocol::Dccp,
-                Protocol::Tcp => set::Protocol::Tcp,
-                Protocol::Sctp => set::Protocol::Sctp,
-                Protocol::Udp => set::Protocol::Udp,
                 Protocol::Ipv6Icmp => set::Protocol::Ipv6Icmp,
                 Protocol::Icmp => set::Protocol::Icmp,
+                Protocol::Dccp => set::Protocol::Dccp,
+                Protocol::Sctp => set::Protocol::Sctp,
+                Protocol::Udp => set::Protocol::Udp,
+                Protocol::Tcp => set::Protocol::Tcp,
             };
             port_forwarding_builder.protocol(tmp);
         }

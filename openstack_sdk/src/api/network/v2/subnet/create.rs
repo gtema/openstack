@@ -44,23 +44,23 @@ pub struct HostRoutes<'a> {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ipv6RaMode {
-    #[serde(alias = "dhcpv6-stateful")]
-    Dhcpv6Stateful,
-    #[serde(alias = "dhcpv6-stateless")]
-    Dhcpv6Stateless,
     #[serde(alias = "slaac")]
     Slaac,
+    #[serde(alias = "dhcpv6-stateless")]
+    Dhcpv6Stateless,
+    #[serde(alias = "dhcpv6-stateful")]
+    Dhcpv6Stateful,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ipv6AddressMode {
-    #[serde(alias = "dhcpv6-stateful")]
-    Dhcpv6Stateful,
-    #[serde(alias = "dhcpv6-stateless")]
-    Dhcpv6Stateless,
     #[serde(alias = "slaac")]
     Slaac,
+    #[serde(alias = "dhcpv6-stateless")]
+    Dhcpv6Stateless,
+    #[serde(alias = "dhcpv6-stateful")]
+    Dhcpv6Stateful,
 }
 
 /// A `subnet` object.

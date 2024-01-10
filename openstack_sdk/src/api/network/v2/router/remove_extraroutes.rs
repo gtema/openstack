@@ -41,7 +41,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/routers/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

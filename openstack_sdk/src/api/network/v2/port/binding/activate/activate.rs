@@ -17,11 +17,11 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

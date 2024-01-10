@@ -60,16 +60,16 @@ pub struct PathParameters {}
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Ipv6RaMode {
-    Slaac,
-    Dhcpv6Stateful,
     Dhcpv6Stateless,
+    Dhcpv6Stateful,
+    Slaac,
 }
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Ipv6AddressMode {
-    Slaac,
-    Dhcpv6Stateful,
     Dhcpv6Stateless,
+    Dhcpv6Stateful,
+    Slaac,
 }
 
 /// Subnet Body data
@@ -452,7 +452,6 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.dns_nameservers {
-            // None
             subnet_builder.dns_nameservers(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 
@@ -474,24 +473,23 @@ impl Command for SubnetCmd {
 
         if let Some(val) = &args.ipv6_ra_mode {
             let tmp = match val {
-                Ipv6RaMode::Slaac => create::Ipv6RaMode::Slaac,
-                Ipv6RaMode::Dhcpv6Stateful => create::Ipv6RaMode::Dhcpv6Stateful,
                 Ipv6RaMode::Dhcpv6Stateless => create::Ipv6RaMode::Dhcpv6Stateless,
+                Ipv6RaMode::Dhcpv6Stateful => create::Ipv6RaMode::Dhcpv6Stateful,
+                Ipv6RaMode::Slaac => create::Ipv6RaMode::Slaac,
             };
             subnet_builder.ipv6_ra_mode(tmp);
         }
 
         if let Some(val) = &args.ipv6_address_mode {
             let tmp = match val {
-                Ipv6AddressMode::Slaac => create::Ipv6AddressMode::Slaac,
-                Ipv6AddressMode::Dhcpv6Stateful => create::Ipv6AddressMode::Dhcpv6Stateful,
                 Ipv6AddressMode::Dhcpv6Stateless => create::Ipv6AddressMode::Dhcpv6Stateless,
+                Ipv6AddressMode::Dhcpv6Stateful => create::Ipv6AddressMode::Dhcpv6Stateful,
+                Ipv6AddressMode::Slaac => create::Ipv6AddressMode::Slaac,
             };
             subnet_builder.ipv6_address_mode(tmp);
         }
 
         if let Some(val) = &args.service_types {
-            // None
             subnet_builder.service_types(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 

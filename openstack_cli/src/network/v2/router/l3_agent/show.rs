@@ -55,6 +55,9 @@ pub struct PathParameters {
 pub struct L3AgentCmd {
     pub args: L3AgentArgs,
 }
+/// L3Agent response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for L3AgentCmd {

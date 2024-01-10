@@ -36,15 +36,15 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// network_id query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     network_id: Option<Cow<'a, str>>,
 
     /// admin_state_up query parameter for /v2.0/ports API
@@ -52,7 +52,7 @@ pub struct Request<'a> {
     admin_state_up: Option<bool>,
 
     /// mac_address query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     mac_address: Option<Cow<'a, str>>,
 
     /// fixed_ips query parameter for /v2.0/ports API
@@ -60,55 +60,55 @@ pub struct Request<'a> {
     fixed_ips: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// device_id query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     device_id: Option<Cow<'a, str>>,
 
     /// device_owner query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     device_owner: Option<Cow<'a, str>>,
 
     /// tenant_id query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// status query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// ip_allocation query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     ip_allocation: Option<Cow<'a, str>>,
 
     /// binding:host_id query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     binding_host_id: Option<Cow<'a, str>>,
 
     /// revision_number query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/ports API
-    #[builder(default, setter(name = "_tags"), private)]
+    #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/ports API
-    #[builder(default, setter(name = "_tags_any"), private)]
+    #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/ports API
-    #[builder(setter(name = "_not_tags"), default, private)]
+    #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/ports API
-    #[builder(default, setter(name = "_not_tags_any"), private)]
+    #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// description query parameter for /v2.0/ports API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// security_groups query parameter for /v2.0/ports API
-    #[builder(setter(name = "_security_groups"), default, private)]
+    #[builder(default, private, setter(name = "_security_groups"))]
     security_groups: BTreeSet<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]

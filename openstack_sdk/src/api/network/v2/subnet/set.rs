@@ -116,7 +116,7 @@ pub struct Request<'a> {
     subnet: Subnet<'a>,
 
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]

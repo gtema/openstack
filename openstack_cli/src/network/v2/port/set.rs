@@ -88,30 +88,30 @@ pub struct PathParameters {
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum DataPlaneStatus {
-    Down,
     Active,
+    Down,
 }
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum NumaAffinityPolicy {
-    Preferred,
     Required,
     Legacy,
+    Preferred,
 }
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum BindingVnicType {
-    RemoteManaged,
-    Macvtap,
-    DirectPhysical,
-    AcceleratorDirect,
-    Baremetal,
-    AcceleratorDirectPhysical,
-    Direct,
-    Normal,
-    VirtioForwarder,
-    Vdpa,
     SmartNic,
+    AcceleratorDirect,
+    Normal,
+    Baremetal,
+    DirectPhysical,
+    Macvtap,
+    Direct,
+    VirtioForwarder,
+    AcceleratorDirectPhysical,
+    Vdpa,
+    RemoteManaged,
 }
 
 /// Port Body data
@@ -722,8 +722,8 @@ impl Command for PortCmd {
 
         if let Some(val) = &args.data_plane_status {
             let tmp = match val {
-                DataPlaneStatus::Down => set::DataPlaneStatus::Down,
                 DataPlaneStatus::Active => set::DataPlaneStatus::Active,
+                DataPlaneStatus::Down => set::DataPlaneStatus::Down,
             };
             port_builder.data_plane_status(tmp);
         }
@@ -749,28 +749,28 @@ impl Command for PortCmd {
 
         if let Some(val) = &args.numa_affinity_policy {
             let tmp = match val {
-                NumaAffinityPolicy::Preferred => set::NumaAffinityPolicy::Preferred,
                 NumaAffinityPolicy::Required => set::NumaAffinityPolicy::Required,
                 NumaAffinityPolicy::Legacy => set::NumaAffinityPolicy::Legacy,
+                NumaAffinityPolicy::Preferred => set::NumaAffinityPolicy::Preferred,
             };
             port_builder.numa_affinity_policy(tmp);
         }
 
         if let Some(val) = &args.binding_vnic_type {
             let tmp = match val {
-                BindingVnicType::RemoteManaged => set::BindingVnicType::RemoteManaged,
-                BindingVnicType::Macvtap => set::BindingVnicType::Macvtap,
-                BindingVnicType::DirectPhysical => set::BindingVnicType::DirectPhysical,
+                BindingVnicType::SmartNic => set::BindingVnicType::SmartNic,
                 BindingVnicType::AcceleratorDirect => set::BindingVnicType::AcceleratorDirect,
+                BindingVnicType::Normal => set::BindingVnicType::Normal,
                 BindingVnicType::Baremetal => set::BindingVnicType::Baremetal,
+                BindingVnicType::DirectPhysical => set::BindingVnicType::DirectPhysical,
+                BindingVnicType::Macvtap => set::BindingVnicType::Macvtap,
+                BindingVnicType::Direct => set::BindingVnicType::Direct,
+                BindingVnicType::VirtioForwarder => set::BindingVnicType::VirtioForwarder,
                 BindingVnicType::AcceleratorDirectPhysical => {
                     set::BindingVnicType::AcceleratorDirectPhysical
                 }
-                BindingVnicType::Direct => set::BindingVnicType::Direct,
-                BindingVnicType::Normal => set::BindingVnicType::Normal,
-                BindingVnicType::VirtioForwarder => set::BindingVnicType::VirtioForwarder,
                 BindingVnicType::Vdpa => set::BindingVnicType::Vdpa,
-                BindingVnicType::SmartNic => set::BindingVnicType::SmartNic,
+                BindingVnicType::RemoteManaged => set::BindingVnicType::RemoteManaged,
             };
             port_builder.binding_vnic_type(tmp);
         }
@@ -804,7 +804,6 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.security_groups {
-            // None
             port_builder.security_groups(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 

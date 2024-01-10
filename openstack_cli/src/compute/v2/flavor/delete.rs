@@ -61,6 +61,9 @@ pub struct PathParameters {
 pub struct FlavorCmd {
     pub args: FlavorArgs,
 }
+/// Flavor response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for FlavorCmd {

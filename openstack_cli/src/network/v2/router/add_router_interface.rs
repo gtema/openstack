@@ -88,6 +88,9 @@ pub struct PathParameters {
 pub struct RouterCmd {
     pub args: RouterArgs,
 }
+/// Router response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for RouterCmd {

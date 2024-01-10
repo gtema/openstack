@@ -414,7 +414,6 @@ impl Command for NetworkCmd {
         }
 
         if let Some(val) = &args.availability_zone_hints {
-            // None
             network_builder
                 .availability_zone_hints(val.iter().map(|v| v.into()).collect::<Vec<_>>());
         }

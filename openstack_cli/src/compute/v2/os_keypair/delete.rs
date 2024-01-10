@@ -60,6 +60,9 @@ pub struct PathParameters {
 pub struct OsKeypairCmd {
     pub args: OsKeypairArgs,
 }
+/// OsKeypair response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for OsKeypairCmd {

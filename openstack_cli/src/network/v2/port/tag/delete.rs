@@ -54,6 +54,9 @@ pub struct PathParameters {
 pub struct TagCmd {
     pub args: TagArgs,
 }
+/// Tag response representation
+#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for TagCmd {

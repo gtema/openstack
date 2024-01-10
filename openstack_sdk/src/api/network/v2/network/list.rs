@@ -35,11 +35,11 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// admin_state_up query parameter for /v2.0/networks API
@@ -47,11 +47,11 @@ pub struct Request<'a> {
     admin_state_up: Option<bool>,
 
     /// status query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// tenant_id query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// shared query parameter for /v2.0/networks API
@@ -67,11 +67,11 @@ pub struct Request<'a> {
     mtu: Option<i32>,
 
     /// provider:network_type query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     provider_network_type: Option<Cow<'a, str>>,
 
     /// provider:physical_network query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     provider_physical_network: Option<Cow<'a, str>>,
 
     /// provider:segmentation_id query parameter for /v2.0/networks API
@@ -79,23 +79,23 @@ pub struct Request<'a> {
     provider_segmentation_id: Option<i32>,
 
     /// revision_number query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/networks API
-    #[builder(default, setter(name = "_tags"), private)]
+    #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/networks API
-    #[builder(default, setter(name = "_tags_any"), private)]
+    #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/networks API
-    #[builder(setter(name = "_not_tags"), default, private)]
+    #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/networks API
-    #[builder(default, setter(name = "_not_tags_any"), private)]
+    #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// is_default query parameter for /v2.0/networks API
@@ -103,7 +103,7 @@ pub struct Request<'a> {
     is_default: Option<bool>,
 
     /// description query parameter for /v2.0/networks API
-    #[builder(setter(into), default)]
+    #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]

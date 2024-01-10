@@ -43,7 +43,7 @@ pub struct Request<'a> {
     flavor: Flavor<'a>,
 
     /// id parameter for /v2.1/flavors/{id}/action API
-    #[builder(default, setter(into))]
+    #[builder(setter(into), default)]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
