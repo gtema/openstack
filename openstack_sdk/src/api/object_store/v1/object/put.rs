@@ -109,8 +109,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Object<'a> {
-    fn method(&self) -> Method {
-        Method::PUT
+    fn method(&self) -> http::Method {
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {

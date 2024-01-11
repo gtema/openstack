@@ -53,8 +53,8 @@ where {
 }
 
 impl RestEndpoint for Request {
-    fn method(&self) -> Method {
-        Method::GET
+    fn method(&self) -> http::Method {
+        http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {

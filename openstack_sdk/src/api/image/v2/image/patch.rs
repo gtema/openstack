@@ -94,8 +94,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Image<'a> {
-    fn method(&self) -> Method {
-        Method::PATCH
+    fn method(&self) -> http::Method {
+        http::Method::PATCH
     }
 
     fn endpoint(&self) -> Cow<'static, str> {

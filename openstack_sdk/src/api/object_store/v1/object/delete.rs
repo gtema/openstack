@@ -72,8 +72,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Object<'a> {
-    fn method(&self) -> Method {
-        Method::DELETE
+    fn method(&self) -> http::Method {
+        http::Method::DELETE
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
