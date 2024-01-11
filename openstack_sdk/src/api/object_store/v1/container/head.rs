@@ -57,8 +57,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Container<'a> {
-    fn method(&self) -> Method {
-        Method::HEAD
+    fn method(&self) -> http::Method {
+        http::Method::HEAD
     }
 
     fn endpoint(&self) -> Cow<'static, str> {

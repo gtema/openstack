@@ -51,8 +51,8 @@ where {
 }
 
 impl RestEndpoint for Account {
-    fn method(&self) -> Method {
-        Method::HEAD
+    fn method(&self) -> http::Method {
+        http::Method::HEAD
     }
 
     fn endpoint(&self) -> Cow<'static, str> {

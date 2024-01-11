@@ -133,8 +133,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Volume<'a> {
-    fn method(&self) -> Method {
-        Method::POST
+    fn method(&self) -> http::Method {
+        http::Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
