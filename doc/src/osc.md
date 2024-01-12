@@ -525,7 +525,7 @@ Imports (or generates) Keypair (with highest possible microversion)
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
-  Possible values: `x509`, `ssh`
+  Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
@@ -543,7 +543,7 @@ Import keypair (microversion >= 2.92)
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
-  Possible values: `x509`, `ssh`
+  Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
@@ -561,7 +561,7 @@ Import (or generate) keypair (2.10 <= microversion < 2.92)
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
-  Possible values: `x509`, `ssh`
+  Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
@@ -579,7 +579,7 @@ Import (or generate) keypair (2.2 <= microversion < 2.10)
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
-  Possible values: `x509`, `ssh`
+  Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 
@@ -651,46 +651,91 @@ Image commands
 ###### **Subcommands:**
 
 * `list` — List Images
-* `show` — Show single Image
-* `create` — Create Image
-* `set` — Update Image
-* `download` — Download Image
-* `upload` — Upload Image
-* `delete` — Delete Image
-* `deactivate` — Deactivate Image
-* `reactivate` — Reactivate Image
+* `show` — Show single image
+* `create` — Create image
+* `set` — Update image
+* `download` — Download image data
+* `upload` — Upload image data
+* `delete` — Download image data
+* `deactivate` — Deactivate image
+* `reactivate` — Reactivate image
 
 
 
 ## `osc image image list`
 
-List Images
+Lists public virtual machine (VM) images.
+
+*Pagination*
+
+Returns a subset of the larger collection of images and a link that you can use to get the next set of images. You should always check for the presence of a next link and use it as the URI in a subsequent HTTP GET request. You should follow this pattern until a next link is no longer provided.
+
+The next link preserves any query parameters that you send in your initial request. You can use the first link to jump back to the first page of the collection. If you prefer to paginate through images manually, use the limit and marker parameters.
+
+*Query Filters*
+
+The list operation accepts query parameters to filter the response.
+
+A client can provide direct comparison filters by using most image attributes, such as name=Ubuntu, visibility=public, and so on.
+
+To filter using image tags, use the filter tag (note the singular). To filter on multiple tags, include each tag separately in the query. For example, to find images with the tag ready, include tag=ready in your query string. To find images tagged with ready and approved, include tag=ready&tag=approved in your query string. (Note that only images containing both tags will be included in the response.)
+
+A client cannot use any link in the json-schema, such as self, file, or schema, to filter the response.
+
+You can list VM images that have a status of active, queued, or saving.
+
+*The `in` Operator*
+
+As a convenience, you may specify several values for any of the following fields by using the in operator: [container_format, disk_format, id, name, status]
+
+For most of these, usage is straight forward. For example, to list images in queued or saving status, use: `--status "in:saving,queued"`
+
+To find images in a particular list of image IDs, use: `--id "in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-44b5-baf2-2eb4babae53d"
+
+Using the in operator with the name property of images can be a bit trickier, depending upon how creatively you have named your images. The general rule is that if an image name contains a comma (,), you must enclose the entire name in quotation marks ("). As usual, you must URL encode any characters that require it.
+
+For example, to find images named glass, darkly or share me, you would use the following filter specification: `--name: 'in:"glass,%20darkly",share%20me'`
+
+As with regular filtering by name, you must specify the complete name you are looking for. Thus, for example, the query `--name "in:glass,share"` will only match images with the exact name glass or the exact name share. It will not find an image named glass, darkly or an image named share me.
+
+*Size Comparison Filters*
+
+You can use the size_min and size_max query parameters to filter images that are greater than or less than the image size. The size, in bytes, is the size of an image on disk.
+
+For example, to filter the container to include only images that are from 1 to 4 MB, set the size_min query parameter to 1048576 and the size_max query parameter to 4194304.
+
+*Time Comparison Filters*
+
+You can use a comparison operator along with the created_at or updated_at fields to filter your results. Specify the operator first, a colon (:) as a separator, and then the time in ISO 8601 Format. Available comparison operators are: [gt, gte, eq, neq, lt, lte]
 
 **Usage:** `osc image image list [OPTIONS]`
 
 ###### **Options:**
 
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--name <NAME>` — Filters the response by a name, as a string. A valid value is the name of an image
 * `--id <ID>` — id filter parameter
-* `--name <NAME>` — name filter parameter
-* `--visibility <VISIBILITY>` — visibility filter parameter
-* `--member-status <MEMBER_STATUS>` — member_status filter parameter
-* `--owner <OWNER>` — owner filter parameter
-* `--status <STATUS>` — status filter parameter
-* `--size-min <SIZE_MIN>` — size_min filter parameter
-* `--size-max <SIZE_MAX>` — size_max filter parameter
-* `--protected <PROTECTED>` — protected filter parameter
-* `--is-hidden <IS_HIDDEN>` — is_hidden filter parameter
+* `--owner <OWNER>` — Filters the response by a project (also called a “tenant”) ID. Shows only images that are shared with you by the specified owner
+* `--protected <PROTECTED>` — Filters the response by the ‘protected’ image property. A valid value is one of ‘true’, ‘false’ (must be all lowercase). Any other value will result in a 400 response
 
   Possible values: `true`, `false`
 
-* `--sort-key <SORT_KEY>` — sort_key filter parameter
-* `--sort-dir <SORT_DIR>` — sort_dir filter parameter
-* `--sort <SORT>` — sort filter parameter
-* `--tag <TAG>` — tag filter parameter
-* `--created-at <CREATED_AT>` — created_at filter parameter
-* `--updated-at <UPDATED_AT>` — updated_at filter parameter
+* `--status <STATUS>` — Filters the response by an image status
+* `--tag <TAG>` — Filters the response by the specified tag value. May be repeated, but keep in mind that you’re making a conjunctive query, so only images containing all the tags specified will appear in the response
+* `--visibility <VISIBILITY>` — Filters the response by an image visibility value. A valid value is public, private, community, shared, or all. (Note that if you filter on shared, the images included in the response will only be those where your member status is accepted unless you explicitly include a member_status filter in the request.) If you omit this parameter, the response shows public, private, and those shared images with a member status of accepted
+* `--os-hidden <OS_HIDDEN>` — When true, filters the response to display only "hidden" images. By default, "hidden" images are not included in the image-list response. (Since Image API v2.7)
+
+  Possible values: `true`, `false`
+
+* `--member-status <MEMBER_STATUS>` — Filters the response by a member status. A valid value is accepted, pending, rejected, or all. Default is accepted
+* `--size-max <SIZE_MAX>` — Filters the response by a maximum image size, in bytes
+* `--size-min <SIZE_MIN>` — Filters the response by a minimum image size, in bytes
+* `--created-at <CREATED_AT>` — Specify a comparison filter based on the date and time when the resource was created
+* `--updated-at <UPDATED_AT>` — Specify a comparison filter based on the date and time when the resource was most recently modified
+* `--sort-dir <SORT_DIR>` — Sorts the response by a set of one or more sort direction and attribute (sort_key) combinations. A valid value for the sort direction is asc (ascending) or desc (descending). If you omit the sort direction in a set, the default is desc
+* `--sort-key <SORT_KEY>` — Sorts the response by an attribute, such as name, id, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key image attribute
+* `--sort <SORT>` — Sorts the response by one or more attribute and sort direction combinations. You can also set multiple sort keys and directions. Default direction is desc. Use the comma (,) character to separate multiple values. For example: `sort=name:asc,status:desc`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -699,117 +744,136 @@ List Images
 
 ## `osc image image show`
 
-Show single Image
+Show single image
 
 **Usage:** `osc image image show <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 
 
 ## `osc image image create`
 
-Create Image
+Creates a catalog record for an operating system disk image. (Since Image API v2.0)
+
+The Location response header contains the URI for the image.
+
+A multiple store backend support is introduced in the Rocky release as a part of the EXPERIMENTAL Image API v2.8. Since Image API v2.8 a new header OpenStack-image-store-ids which contains the list of available stores will be included in response. This header is only included if multiple backend stores are supported.
+
+The response body contains the new image entity.
+
+*Synchronous Postconditions*
+
+With correct permissions, you can see the image status as queued through API calls.
 
 **Usage:** `osc image image create [OPTIONS]`
 
 ###### **Options:**
 
-* `--container-format <CONTAINER_FORMAT>` — The container format refers to whether the VM image is in a file format that also contains metadata about the actual VM. Container formats include OVF and Amazon AMI. In addition, a VM image might not have a container format - instead, the image is just a blob of unstructured data
-* `--disk-format <DISK_FORMAT>` — The format of the disk. Values may vary based on the configuration available in a particular OpenStack cloud. See the Image Schema response from the cloud itself for the valid values available. Example formats are: ami, ari, aki, vhd, vhdx, vmdk, raw, qcow2, vdi, ploop or iso
-* `--min-disk <MIN_DISK>` — Amount of disk space in GB that is required to boot the image
-* `--min-ram <MIN_RAM>` — Amount of RAM in MB that is required to boot the image
-* `--name <NAME>` — The name of the image
-* `--is-protected <IS_PROTECTED>` — Image protection for deletion. Valid value is true or false. Default is false
+* `--id <ID>`
+* `--name <NAME>`
+* `--visibility <VISIBILITY>`
+
+  Possible values: `community`, `private`, `public`, `shared`
+
+* `--protected <PROTECTED>`
 
   Possible values: `true`, `false`
 
-* `--tags <TAGS>` — List of tags for this image. Each tag is a string of at most 255 chars. The maximum number of tags allowed on an image is set by the operator
-* `--visibility <VISIBILITY>` — Visibility for this image. Valid value is one of: ``public``, ``private``, ``shared``, or ``community``. At most sites, only an administrator can make an image public. Some sites may restrict what users can make an image community. Some sites may restrict what users can perform member operations on a shared image. Since the Image API v2.5, the default value is ``shared``
+* `--os-hidden <OS_HIDDEN>`
+
+  Possible values: `true`, `false`
+
+* `--owner <OWNER>`
+* `--container-format <CONTAINER_FORMAT>`
+
+  Possible values: `aki`, `ami`, `ari`, `bare`, `compressed`, `docker`, `ova`, `ovf`
+
+* `--disk-format <DISK_FORMAT>`
+
+  Possible values: `aki`, `ami`, `ari`, `iso`, `ploop`, `qcow2`, `raw`, `vdi`, `vhd`, `vhdx`, `vmdk`
+
+* `--tags <TAGS>`
+* `--min-ram <MIN_RAM>`
+* `--min-disk <MIN_DISK>`
+* `--locations <JSON>`
+* `--property <key=value>` — Additional properties to be sent with the request
 
 
 
 ## `osc image image set`
 
-Update Image
+Update image
 
 **Usage:** `osc image image set [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 ###### **Options:**
 
-* `--architecture <ARCHITECTURE>` — The CPU architecture that must be supported by the hypervisor
-* `--has-auto-disk-config <HAS_AUTO_DISK_CONFIG>` — If true, the root partition on the disk is automatically resized before the instance boots
-* `--container-format <CONTAINER_FORMAT>` — The container format refers to whether the VM image is in a file format that also contains metadata about the actual VM. Container formats include OVF and Amazon AMI. In addition, a VM image might not have a container format - instead, the image is just a blob of unstructured data
-* `--disk-format <DISK_FORMAT>` — Valid values are: aki, ari, ami, raw, iso, vhd, vdi, qcow2, or vmdk. The disk format of a VM image is the format of the underlying disk image. Virtual appliance vendors have different formats for laying out the information contained in a VM disk image
-* `--hw-cpu-cores <HW_CPU_CORES>` — The preferred number of cores to expose to the guest
-* `--hw-cpu-policy <HW_CPU_POLICY>` — Used to pin the virtual CPUs (vCPUs) of instances to the host's physical CPU cores (pCPUs)
-* `--hw-cpu-thread-policy <HW_CPU_THREAD_POLICY>` — Defines how hardware CPU threads in a simultaneous multithreading-based (SMT) architecture be used
-* `--hw-cpu-threads <HW_CPU_THREADS>` — The preferred number of threads to expose to the guest
-* `--hw-disk-bus <HW_DISK_BUS>` — Specifies the type of disk controller to attach disk devices to. One of scsi, virtio, uml, xen, ide, or usb
-* `--hw-machine-type <HW_MACHINE_TYPE>` — For libvirt: Enables booting an ARM system using the specified machine type. For Hyper-V: Specifies whether the Hyper-V instance will be a generation 1 or generation 2 VM
-* `--hw-qemu-guest-agent <HW_QEMU_GUEST_AGENT>` — A string boolean, which if "true", QEMU guest agent will be exposed to the instance
-* `--hw-rng-model <HW_RNG_MODEL>` — Adds a random-number generator device to the image's instances
-* `--hw-scsi-model <HW_SCSI_MODEL>` — Enables the use of VirtIO SCSI (virtio-scsi) to provide block device access for compute instances; by default, instances use VirtIO Block (virtio-blk)
-* `--hw-serial-port-count <HW_SERIAL_PORT_COUNT>` — Specifies the count of serial ports that should be provided
-* `--hw-video-model <HW_VIDEO_MODEL>` — The video image driver used
-* `--hw-video-ram <HW_VIDEO_RAM>` — Maximum RAM for the video image
-* `--hw-vif-model <HW_VIF_MODEL>` — Specifies the model of virtual network interface device to use
-* `--hw-watchdog-action <HW_WATCHDOG_ACTION>` — Enables a virtual hardware watchdog device that carries out the specified action if the server hangs
-* `--hypervisor-type <HYPERVISOR_TYPE>` — The hypervisor type. Note that qemu is used for both QEMU and KVM hypervisor types
-* `--needs-config-drive <NEEDS_CONFIG_DRIVE>` — Specifies whether the image needs a config drive. `mandatory` or `optional` (default if property is not used)
-* `--instance-type-rxtx-factor <INSTANCE_TYPE_RXTX_FACTOR>` — Optional property allows created servers to have a different bandwidth cap than that defined in the network they are attached to
-* `--instance-uuid <INSTANCE_UUID>` — create this image
-* `--kernel-id <KERNEL_ID>` — The ID of an image stored in the Image service that should be used as the kernel when booting an AMI-style image
-* `--locations <JSON_VALUE>` — A list of URLs to access the image file in external store. This list appears if the show_multiple_locations option is set to true in the Image service's configuration file
-* `--min-disk <MIN_DISK>` — The minimum disk size in GB that is required to boot the image
-* `--min-ram <MIN_RAM>` — The minimum amount of RAM in MB that is required to boot the image
-* `--name <NAME>` — The name of the image
-* `--os-admin-user <OS_ADMIN_USER>` — The operating system admin username
-* `--os-command-line <OS_COMMAND_LINE>` — The kernel command line to be used by the libvirt driver, instead of the default
-* `--os-distro <OS_DISTRO>` — The common name of the operating system distribution in lowercase
-* `--is-hidden <IS_HIDDEN>` — This field controls whether an image is displayed in the default image- list response
+* `--name <NAME>`
+* `--visibility <VISIBILITY>`
+
+  Possible values: `community`, `private`, `public`, `shared`
+
+* `--protected <PROTECTED>`
 
   Possible values: `true`, `false`
 
-* `--os-require-quiesce <OS_REQUIRE_QUIESCE>` — If true, require quiesce on snapshot via QEMU guest agent
+* `--os-hidden <OS_HIDDEN>`
 
   Possible values: `true`, `false`
 
-* `--needs-secure-boot <NEEDS_SECURE_BOOT>` — Secure Boot is a security standard. When the instance starts, Secure Boot first examines software such as firmware and OS by their signature and only allows them to run if the signatures are valid
-* `--os-shutdown-timeout <OS_SHUTDOWN_TIMEOUT>` — Time for graceful shutdown
-* `--os-type <OS_TYPE>` — The operating system installed on the image
-* `--os-version <OS_VERSION>` — The operating system version as specified by the distributor
-* `--owner-id <OWNER_ID>` — The ID of the owner, or project, of the image. (backwards compat)
-* `--is-protected <IS_PROTECTED>` — Defines whether the image can be deleted
+* `--owner <OWNER>`
+* `--container-format <CONTAINER_FORMAT>`
 
-  Possible values: `true`, `false`
+  Possible values: `aki`, `ami`, `ari`, `bare`, `compressed`, `docker`, `ova`, `ovf`
 
-* `--ramdisk-id <RAMDISK_ID>` — The ID of image stored in the Image service that should be used as the ramdisk when booting an AMI-style image
-* `--store <STORE>` — When present, Glance will attempt to store the disk image data in the backing store indicated by the value of the header. When not present, Glance will store the disk image data in the backing store that is marked default. Valid values are: file, s3, rbd, swift, cinder, gridfs, sheepdog, or vsphere
-* `--tags <TAGS>` — List of tags for this image, possibly an empty list
-* `--url <URL>` — The URL to access the image file kept in external store
-* `--visibility <VISIBILITY>` — The image visibility
-* `--vm-mode <VM_MODE>` — The virtual machine mode. This represents the host/guest ABI (application binary interface) used for the virtual machine
-* `--vmware-adaptertype <VMWARE_ADAPTERTYPE>` — The virtual SCSI or IDE controller used by the hypervisor
-* `--vmware-ostype <VMWARE_OSTYPE>` — A VMware GuestID which describes the operating system installed in the image
+* `--disk-format <DISK_FORMAT>`
+
+  Possible values: `aki`, `ami`, `ari`, `iso`, `ploop`, `qcow2`, `raw`, `vdi`, `vhd`, `vhdx`, `vmdk`
+
+* `--tags <TAGS>`
+* `--min-ram <MIN_RAM>`
+* `--min-disk <MIN_DISK>`
+* `--locations <JSON>`
+* `--property <key=value>` — Additional properties to be sent with the request
 
 
 
 ## `osc image image download`
 
-Download Image
+Downloads binary image data. (Since Image API v2.0)
 
-**Usage:** `osc image image download [OPTIONS] <ID>`
+The response body contains the raw binary data that represents the actual virtual disk. The Content-Type header contains the application/octet-stream value. The Content-MD5 header contains an MD5 checksum of the image data. Use this checksum to verify the integrity of the image data.
+
+*Preconditions*
+
+- The image must exist.
+
+*Synchronous Postconditions*
+
+- You can download the binary image data in your machine if the image has image data.
+
+- If image data exists, the call returns the HTTP 200 response code for a full image download request.
+
+- If image data exists, the call returns the HTTP 206 response code for a partial download request.
+
+- If no image data exists, the call returns the HTTP 204 (No Content) response code.
+
+- If no image record exists, the call returns the HTTP 404 response code for an attempted full image download request.
+
+- For an unsatisfiable partial download request, the call returns the HTTP 416 response code.
+
+**Usage:** `osc image image download [OPTIONS] <IMAGE_ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<IMAGE_ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 ###### **Options:**
 
@@ -819,13 +883,39 @@ Download Image
 
 ## `osc image image upload`
 
-Upload Image
+Uploads binary image data.
 
-**Usage:** `osc image image upload [OPTIONS] <ID>`
+These operation may be restricted to administrators. Consult your cloud operator’s documentation for details.
+
+*Preconditions* Before you can store binary image data, you must meet the following preconditions:
+
+- The image must exist.
+
+- You must set the disk and container formats in the image.
+
+- The image status must be queued.
+
+- Your image storage quota must be sufficient.
+
+- The size of the data that you want to store must not exceed the size that the OpenStack Image service allows.
+
+*Synchronous Postconditions*
+
+- With correct permissions, you can see the image status as active through API calls.
+
+- With correct access, you can see the stored data in the storage system that the OpenStack Image Service manages.
+
+*Troubleshooting*
+
+- If you cannot store the data, either your request lacks required information or you exceeded your allotted quota. Ensure that you meet the preconditions and run the request again. If the request fails again, review your API request.
+
+- The storage back ends for storing the data must have enough free storage space to accommodate the size of the data.
+
+**Usage:** `osc image image upload [OPTIONS] <IMAGE_ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<IMAGE_ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 ###### **Options:**
 
@@ -835,37 +925,59 @@ Upload Image
 
 ## `osc image image delete`
 
-Delete Image
+Deletes an image.
+
+You cannot delete images with the protected attribute set to true (boolean).
+
+*Preconditions*
+
+- You can delete an image in any status except deleted.
+
+- The protected attribute of the image cannot be true.
+
+- You have permission to perform image deletion under the configured image deletion policy.
+
+*Synchronous Postconditions*
+
+- The response is empty and returns the HTTP 204 response code.
+
+- The API deletes the image from the images index.
+
+-  If the image has associated binary image data in the storage backend, the OpenStack Image service deletes the data.
 
 **Usage:** `osc image image delete <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 
 
 ## `osc image image deactivate`
 
-Deactivate Image
+Deactivates an image. (Since Image API v2.3)
+
+By default, this operation is restricted to administrators only.
 
 **Usage:** `osc image image deactivate <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 
 
 ## `osc image image reactivate`
 
-Reactivate Image
+Reactivates an image. (Since Image API v2.3)
+
+By default, this operation is restricted to administrators only
 
 **Usage:** `osc image image reactivate <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Image ID
+* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
 
 
 
@@ -1479,11 +1591,11 @@ Create single Port
 * `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
 * `--numa-affinity-policy <NUMA_AFFINITY_POLICY>` — The port NUMA affinity policy requested during the virtual machine scheduling. Values: `None`, `required`, `preferred` or `legacy`
 
-  Possible values: `required`, `legacy`, `preferred`
+  Possible values: `legacy`, `preferred`, `required`
 
 * `--binding-vnic-type <BINDING_VNIC_TYPE>` — The type of vNIC which this port should be attached to. This is used to determine which mechanism driver(s) to be used to bind the port. The valid values are `normal`, `macvtap`, `direct`, `baremetal`, `direct-physical`, `virtio-forwarder`, `smart-nic` and `remote-managed`. What type of vNIC is actually available depends on deployments. The default is `normal`
 
-  Possible values: `smart-nic`, `accelerator-direct`, `normal`, `baremetal`, `direct-physical`, `macvtap`, `direct`, `virtio-forwarder`, `accelerator-direct-physical`, `vdpa`, `remote-managed`
+  Possible values: `accelerator-direct`, `accelerator-direct-physical`, `baremetal`, `direct`, `direct-physical`, `macvtap`, `normal`, `remote-managed`, `smart-nic`, `vdpa`, `virtio-forwarder`
 
 * `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port resides. The default is an empty string
 * `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back- end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device\_mac\_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac\_address` field of the port resource will be updated to the MAC from the active binding
@@ -1710,11 +1822,11 @@ Create single Subnet
 
 * `--ipv6-ra-mode <IPV6_RA_MODE>` — The IPv6 router advertisement specifies whether the networking service should transmit ICMPv6 packets, for a subnet. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
 
-  Possible values: `dhcpv6-stateless`, `dhcpv6-stateful`, `slaac`
+  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
 * `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — The IPv6 address modes specifies mechanisms for assigning IP addresses. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
 
-  Possible values: `dhcpv6-stateless`, `dhcpv6-stateful`, `slaac`
+  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
 * `--service-types <SERVICE_TYPES>` — The service types associated with the subnet
 * `--use-default-subnetpool <USE_DEFAULT_SUBNETPOOL>` — Whether to allocate this subnet from the default subnet pool
