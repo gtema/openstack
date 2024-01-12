@@ -24,7 +24,10 @@
 #![allow(dead_code, unused_imports, unused_variables, unused_mut)]
 use std::io::{self, Write};
 
-use clap::builder::{styling, Styles};
+use clap::builder::{
+    styling::{AnsiColor, Effects},
+    Styles,
+};
 use clap::{Args, Parser, Subcommand, ValueEnum};
 
 use async_trait::async_trait;
@@ -60,15 +63,17 @@ use crate::image::v2::{ImageSrvArgs, ImageSrvCommand};
 use crate::network::v2::{NetworkSrvArgs, NetworkSrvCommand};
 use crate::object_store::v1::{ObjectStoreSrvArgs, ObjectStoreSrvCommand};
 
-static STYLES: Styles = Styles::styled()
-    .header(styling::AnsiColor::Green.on_default())
-    .usage(styling::AnsiColor::Green.on_default())
-    .literal(styling::AnsiColor::White.on_default())
-    .placeholder(styling::AnsiColor::Cyan.on_default());
+fn styles() -> Styles {
+    Styles::styled()
+        .header(AnsiColor::Green.on_default() | Effects::BOLD)
+        .usage(AnsiColor::Green.on_default() | Effects::BOLD)
+        .literal(AnsiColor::White.on_default() | Effects::BOLD)
+        .placeholder(AnsiColor::Cyan.on_default())
+}
 
 /// Main CLI parser
 #[derive(Parser)]
-#[command(name="osc", author, version, about, long_about = None, styles = STYLES.clone())]
+#[command(name="osc", author, version, about, long_about = None, styles = styles())]
 #[command(propagate_version = true)]
 pub struct Cli {
     #[command(flatten)]
