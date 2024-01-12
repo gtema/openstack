@@ -136,8 +136,8 @@ mod tests {
     }
 
     impl<'a> RestEndpoint for GetDummy<'a> {
-        fn method(&self) -> Method {
-            Method::GET
+        fn method(&self) -> http::Method {
+            http::Method::GET
         }
 
         fn endpoint(&self) -> Cow<'static, str> {
@@ -164,8 +164,8 @@ mod tests {
     }
 
     impl<'a> RestEndpoint for ListDummies<'a> {
-        fn method(&self) -> Method {
-            Method::GET
+        fn method(&self) -> http::Method {
+            http::Method::GET
         }
 
         fn endpoint(&self) -> Cow<'static, str> {

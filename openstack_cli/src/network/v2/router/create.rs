@@ -288,14 +288,14 @@ impl fmt::Display for ResponseExternalFixedIps {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseExternalFixedIps(Vec<ResponseExternalFixedIps>);
 impl fmt::Display for VecResponseExternalFixedIps {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -303,7 +303,7 @@ impl fmt::Display for VecResponseExternalFixedIps {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -320,7 +320,6 @@ impl fmt::Display for ResponseExternalGatewayInfo {
             format!(
                 "enable_snat={}",
                 self.enable_snat
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -332,14 +331,14 @@ impl fmt::Display for ResponseExternalGatewayInfo {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -347,7 +346,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -374,14 +373,14 @@ impl fmt::Display for ResponseRoutes {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseRoutes(Vec<ResponseRoutes>);
 impl fmt::Display for VecResponseRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -389,7 +388,7 @@ impl fmt::Display for VecResponseRoutes {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -405,9 +404,11 @@ impl Command for RouterCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = create::Request::builder();
-        // Set path parameters
+
         // Set query parameters
+
         // Set body parameters
 
         // Set Request.router data
@@ -431,11 +432,11 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.ha {
-            router_builder.ha(val.clone().map(|v| v.into()));
+            router_builder.ha((*val).map(|v| v));
         }
 
         if let Some(val) = &args.enable_ndp_proxy {
-            router_builder.enable_ndp_proxy(val.clone().map(|v| v.into()));
+            router_builder.enable_ndp_proxy((*val).map(|v| v));
         }
 
         if let Some(val) = &args.flavor_id {
@@ -448,7 +449,7 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.distributed {
-            router_builder.distributed(val.clone().map(|v| v.into()));
+            router_builder.distributed((*val).map(|v| v));
         }
 
         if let Some(val) = &args.description {
@@ -463,6 +464,7 @@ impl Command for RouterCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
+
         Ok(())
     }
 }

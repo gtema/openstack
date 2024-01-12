@@ -43,12 +43,12 @@ where {
 }
 
 impl RestEndpoint for Request {
-    fn method(&self) -> Method {
-        Method::GET
+    fn method(&self) -> http::Method {
+        http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/schemas/metadefs/tag",).into()
+        "v2/schemas/metadefs/tag".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

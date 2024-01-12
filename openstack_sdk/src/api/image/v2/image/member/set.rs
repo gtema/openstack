@@ -1,61 +1,59 @@
-//! Downloads binary image data. (Since Image API v2.0)
-//! Example call: `curl -i -X GET -H "X-Auth-Token: $token"
-//!   $image_url/v2/images/{image_id}/file`
+//! Sets the status for an image member.
+//! *(Since Image API v2.1)*
 //!
-//! The response body contains the raw binary data that represents the actual
-//! virtual disk. The Content-Type header contains the application/octet-stream
-//! value. The Content-MD5 header contains an MD5 checksum of the image data.
-//! Use this checksum to verify the integrity of the image data.
-//! Preconditions:
+//! This call allows an image member to change his or her *member status*.
 //!
-//!   - The image must exist.
+//! When an image is shared with you, you have immediate access to the image.
+//! What
+//! updating your member status on the image does for you is that it affects
+//! whether the image will appear in your image list response.
 //!
-//! Synchronous Postconditions:
+//! For a more detailed discussion of image sharing, please consult [Image API
+//! v2
+//! Sharing](http://specs.openstack.org/openstack/glance-
+//! specs/specs/api/v2/sharing-image-api-v2.html).
 //!
-//!   - You can download the binary image data in your machine if the image
-//!     has image data.
+//! Preconditions
 //!
-//!   - If image data exists, the call returns the HTTP 200 response code
-//!     for a full image download request.
+//! Synchronous Postconditions
 //!
-//!   - If image data exists, the call returns the HTTP 206 response code
-//!     for a partial download request.
+//! Normal response codes: 200
 //!
-//!   - If no image data exists, the call returns the HTTP 204 (No Content)
-//!     response code.
+//! Error response codes: 400, 401, 404, 403
 //!
-//!   - If no image record exists, the call returns the HTTP 404 response
-//!     code for an attempted full image download request.
-//!
-//!   - For an unsatisfiable partial download request, the call returns the
-//!     HTTP 416 response code.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for image.download operation.
-#[derive(Debug, Builder, Clone)]
+use serde_json::Value;
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Image<'a> {
-    /// Image ID
+pub struct Request<'a> {
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    #[builder(default, setter(into))]
+    image_id: Cow<'a, str>,
+
+    /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Image<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> ImageBuilder<'a> {
-        ImageBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> ImageBuilder<'a> {
-    /// Add a single header to the Image.
+impl<'a> RequestBuilder<'a> {
+    /// Add a single header to the Member.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -79,13 +77,18 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Image<'a> {
-    fn method(&self) -> Method {
-        Method::GET
+impl<'a> RestEndpoint for Request<'a> {
+    fn method(&self) -> http::Method {
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("images/{id}/file", id = self.id.as_ref(),).into()
+        format!(
+            "v2/images/{image_id}/members/{id}",
+            image_id = self.image_id.as_ref(),
+            id = self.id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -114,34 +117,42 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Image::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Image
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Image::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/images/{id}/file", id = "id",));
+            when.method(httpmock::Method::PUT).path(format!(
+                "/v2/images/{image_id}/members/{id}",
+                image_id = "image_id",
+                id = "id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .image_id("image_id")
+            .id("id")
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -150,8 +161,12 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/images/{id}/file", id = "id",))
+            when.method(httpmock::Method::PUT)
+                .path(format!(
+                    "/v2/images/{image_id}/members/{id}",
+                    image_id = "image_id",
+                    id = "id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -159,7 +174,8 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder()
+        let endpoint = Request::builder()
+            .image_id("image_id")
             .id("id")
             .headers(
                 [(

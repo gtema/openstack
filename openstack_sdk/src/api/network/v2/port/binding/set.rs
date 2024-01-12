@@ -10,30 +10,29 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum VnicType {
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "macvtap")]
-    Macvtap,
-    #[serde(alias = "accelerator-direct")]
+    #[serde(rename = "accelerator-direct")]
     AcceleratorDirect,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
-    #[serde(alias = "baremetal")]
-    Baremetal,
-    #[serde(alias = "accelerator-direct-physical")]
+    #[serde(rename = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "normal")]
-    Normal,
-    #[serde(alias = "direct")]
+    #[serde(rename = "baremetal")]
+    Baremetal,
+    #[serde(rename = "direct")]
     Direct,
-    #[serde(alias = "vdpa")]
+    #[serde(rename = "direct-physical")]
+    DirectPhysical,
+    #[serde(rename = "macvtap")]
+    Macvtap,
+    #[serde(rename = "normal")]
+    Normal,
+    #[serde(rename = "remote-managed")]
+    RemoteManaged,
+    #[serde(rename = "smart-nic")]
+    SmartNic,
+    #[serde(rename = "vdpa")]
     Vdpa,
+    #[serde(rename = "virtio-forwarder")]
+    VirtioForwarder,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -118,8 +117,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Request<'a> {
-    fn method(&self) -> Method {
-        Method::PUT
+    fn method(&self) -> http::Method {
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
@@ -132,9 +131,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {

@@ -1,82 +1,50 @@
-//! Uploads binary image data. (Since Image API v2.0)
-//! Set the Content-Type request header to application/octet-stream.
-//! A multiple store backend support is introduced in the Rocky release as a
-//! part of the EXPERIMENTAL Image API v2.8.
-//! Beginning with API version 2.8, an optional X-Image-Meta-Store header may
-//! be added to the request. When present, the image data will be placed into
-//! the backing store whose identifier is the value of this header. If the
-//! store identifier specified is not recognized, a 400 (Bad Request) response
-//! is returned. When the header is not present, the image data is placed into
-//! the default backing store.
-//! Store identifiers are site-specific. Use the Store Discovery call to
-//! determine what stores are available in a particular cloud.
-//! The default store may be determined from the Store Discovery response.
-//! A default store is always defined, so if you do not have a need to use a
-//! particular store, simply omit this header and the default store will be
-//! used.
-//! For API versions before version 2.8, this header is silently ignored.
+//! Deactivates an image.
+//! *(Since Image API v2.3)*
+//!
+//! By default, this operation is restricted to administrators only.
+//!
+//! If you try to download a deactivated image, you will receive a 403
+//! (Forbidden)
+//! response code. Additionally, only administrative users can view image
+//! locations for deactivated images.
+//!
+//! The deactivate operation returns an error if the image status is
+//! not `active` or `deactivated`.
+//!
 //! Preconditions
-//! Before you can store binary image data, you must meet the following
-//! preconditions:
 //!
-//!   - The image must exist.
+//! Normal response codes: 204
 //!
-//!   - You must set the disk and container formats in the image.
+//! Error response codes: 400, 403, 404
 //!
-//!   - The image status must be queued.
-//!
-//!   - Your image storage quota must be sufficient.
-//!
-//!   - The size of the data that you want to store must not exceed the size
-//! that
-//!     the OpenStack Image service allows.
-//!
-//! Synchronous Postconditions:
-//!
-//!   - With correct permissions, you can see the image status as active
-//! through
-//!     API calls.
-//!
-//!   - With correct access, you can see the stored data in the storage system
-//!     that the OpenStack Image Service manages.
-//!
-//! Troubleshooting
-//!
-//!   - If you cannot store the data, either your request lacks required
-//!     information or you exceeded your allotted quota. Ensure that you meet
-//! the
-//!     preconditions and run the request again. If the request fails again,
-//!     review your API request.
-//!
-//!   - The storage back ends for storing the data must have enough free
-//! storage
-//!     space to accommodate the size of the data.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for image.upload operation.
-#[derive(Debug, Builder, Clone)]
+use serde_json::Value;
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Image<'a> {
-    /// Image ID
+pub struct Request<'a> {
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Image<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> ImageBuilder<'a> {
-        ImageBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> ImageBuilder<'a> {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Image.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -101,13 +69,13 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Image<'a> {
-    fn method(&self) -> Method {
-        Method::PUT
+impl<'a> RestEndpoint for Request<'a> {
+    fn method(&self) -> http::Method {
+        http::Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("images/{id}/file", id = self.id.as_ref(),).into()
+        format!("v2/images/{id}/actions/deactivate", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -136,34 +104,35 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Image::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Image
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Image::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::PUT)
-                .path(format!("/images/{id}/file", id = "id",));
+            when.method(httpmock::Method::POST)
+                .path(format!("/v2/images/{id}/actions/deactivate", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder().id("id").build().unwrap();
+        let endpoint = Request::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -172,8 +141,8 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::PUT)
-                .path(format!("/images/{id}/file", id = "id",))
+            when.method(httpmock::Method::POST)
+                .path(format!("/v2/images/{id}/actions/deactivate", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -181,7 +150,7 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder()
+        let endpoint = Request::builder()
             .id("id")
             .headers(
                 [(

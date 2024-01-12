@@ -193,12 +193,12 @@ where {
 }
 
 impl<'a> RestEndpoint for Request<'a> {
-    fn method(&self) -> Method {
-        Method::GET
+    fn method(&self) -> http::Method {
+        http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.0/subnets",).into()
+        "v2.0/subnets".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

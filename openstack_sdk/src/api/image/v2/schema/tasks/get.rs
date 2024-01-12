@@ -1,3 +1,17 @@
+//! *(Since Images v2.2)*
+//!
+//! Shows a JSON schema document that represents a list of *tasks*.
+//!
+//! An tasks list entity is a container of entities containing abbreviated
+//! information about individual tasks.
+//!
+//! The following schema is solely an example. Consider only the
+//! response to the API call as authoritative.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -43,12 +57,12 @@ where {
 }
 
 impl RestEndpoint for Request {
-    fn method(&self) -> Method {
-        Method::GET
+    fn method(&self) -> http::Method {
+        http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/schemas/tasks",).into()
+        "v2/schemas/tasks".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

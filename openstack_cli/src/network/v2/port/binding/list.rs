@@ -165,8 +165,9 @@ impl Command for BindingsCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         ep_builder.port_id(&self.args.path.port_id);
         // Set query parameters
         if let Some(val) = &self.args.query.host {
@@ -181,6 +182,7 @@ impl Command for BindingsCmd {
         if let Some(val) = &self.args.query.status {
             ep_builder.status(val);
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -190,6 +192,7 @@ impl Command for BindingsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

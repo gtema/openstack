@@ -541,14 +541,14 @@ impl fmt::Display for ResponseFixedIps {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseFixedIps(Vec<ResponseFixedIps>);
 impl fmt::Display for VecResponseFixedIps {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -556,7 +556,7 @@ impl fmt::Display for VecResponseFixedIps {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -583,14 +583,14 @@ impl fmt::Display for ResponseAllowedAddressPairs {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseAllowedAddressPairs(Vec<ResponseAllowedAddressPairs>);
 impl fmt::Display for VecResponseAllowedAddressPairs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -598,7 +598,7 @@ impl fmt::Display for VecResponseAllowedAddressPairs {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -620,7 +620,7 @@ impl fmt::Display for HashMapStringValue {
 pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -628,14 +628,14 @@ impl fmt::Display for VecHashMapStringValue {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -643,7 +643,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -659,9 +659,11 @@ impl Command for PortCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = create::Request::builder();
-        // Set path parameters
+
         // Set query parameters
+
         // Set body parameters
 
         // Set Request.port data
@@ -719,7 +721,7 @@ impl Command for PortCmd {
                         v.as_object()
                             .expect("Is a valid Json object")
                             .iter()
-                            .map(|(k, v)| (k.clone().into(), v.clone().into()))
+                            .map(|(k, v)| (k.clone().into(), v.clone()))
                             .collect::<BTreeMap<_, Value>>()
                     })
                     .collect::<Vec<_>>(),
@@ -810,6 +812,7 @@ impl Command for PortCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
+
         Ok(())
     }
 }

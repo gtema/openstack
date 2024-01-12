@@ -117,8 +117,9 @@ impl Command for ConntrackHelpersCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         ep_builder.router_id(&self.args.path.router_id);
         // Set query parameters
         if let Some(val) = &self.args.query.id {
@@ -133,6 +134,7 @@ impl Command for ConntrackHelpersCmd {
         if let Some(val) = &self.args.query.helper {
             ep_builder.helper(val);
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -142,6 +144,7 @@ impl Command for ConntrackHelpersCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

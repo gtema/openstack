@@ -1,36 +1,36 @@
-//! Reactivates an image. (Since Image API v2.3)
-//! By default, this operation is restricted to administrators only.
-//! The reactivate operation returns an error if the image status is not active
-//! or deactivated.
-//! Preconditions:
-//!   - The image must exist.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for image.reactivate operation.
-#[derive(Debug, Builder, Clone)]
+use serde_json::Value;
+use std::borrow::Cow;
+use std::collections::BTreeMap;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Image<'a> {
-    /// Image ID
+pub struct Request<'a> {
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
-    id: Cow<'a, str>,
+    image_id: Cow<'a, str>,
+
+    /// tag_value parameter for /v2/images/{image_id}/tags/{tag_value} API
+    #[builder(default, setter(into))]
+    tag_value: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Image<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> ImageBuilder<'a> {
-        ImageBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> ImageBuilder<'a> {
-    /// Add a single header to the Image.
+impl<'a> RequestBuilder<'a> {
+    /// Add a single header to the Tag.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -54,13 +54,18 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Image<'a> {
-    fn method(&self) -> Method {
-        Method::POST
+impl<'a> RestEndpoint for Request<'a> {
+    fn method(&self) -> http::Method {
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("images/{id}/actions/reactivate", id = self.id.as_ref(),).into()
+        format!(
+            "v2/images/{image_id}/tags/{tag_value}",
+            image_id = self.image_id.as_ref(),
+            tag_value = self.tag_value.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -89,34 +94,42 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Image::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Image
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Image::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::POST)
-                .path(format!("/images/{id}/actions/reactivate", id = "id",));
+            when.method(httpmock::Method::PUT).path(format!(
+                "/v2/images/{image_id}/tags/{tag_value}",
+                image_id = "image_id",
+                tag_value = "tag_value",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .image_id("image_id")
+            .tag_value("tag_value")
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -125,8 +138,12 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::POST)
-                .path(format!("/images/{id}/actions/reactivate", id = "id",))
+            when.method(httpmock::Method::PUT)
+                .path(format!(
+                    "/v2/images/{image_id}/tags/{tag_value}",
+                    image_id = "image_id",
+                    tag_value = "tag_value",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -134,8 +151,9 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder()
-            .id("id")
+        let endpoint = Request::builder()
+            .image_id("image_id")
+            .tag_value("tag_value")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

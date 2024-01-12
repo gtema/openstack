@@ -53,8 +53,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Request<'a> {
-    fn method(&self) -> Method {
-        Method::DELETE
+    fn method(&self) -> http::Method {
+        http::Method::DELETE
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
@@ -67,9 +67,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {

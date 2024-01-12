@@ -1,4 +1,16 @@
-//! Delete Image
+//! (Since Image API v2.0) Deletes an image.
+//!
+//! You cannot delete images with the `protected` attribute set to
+//! `true` (boolean).
+//!
+//! Preconditions
+//!
+//! Synchronous Postconditions
+//!
+//! Normal response codes: 204
+//!
+//! Error response codes: 400, 401, 403, 404, 409
+//!
 use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
@@ -14,6 +26,7 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -23,21 +36,37 @@ use openstack_sdk::api::image::v2::image::delete;
 use openstack_sdk::api::image::v2::image::find;
 use openstack_sdk::api::RawQueryAsync;
 
-/// Delete Image
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct ImageArgs {
-    /// Image ID
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
+
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
+}
+
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[arg()]
     id: String,
 }
 
+/// Image delete command
 pub struct ImageCmd {
     pub args: ImageArgs,
 }
-
-/// Image
+/// Image response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Image {}
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for ImageCmd {
@@ -50,17 +79,19 @@ impl Command for ImageCmd {
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = delete::Image::builder();
+        info!("Parsed args: {:?}", self.args);
+
+        let mut ep_builder = delete::Request::builder();
+
         // Set path parameters
-        ep_builder.id(&self.args.id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Image)
-            .await?;
+
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         Ok(())
     }

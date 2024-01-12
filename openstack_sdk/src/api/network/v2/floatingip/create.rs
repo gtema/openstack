@@ -158,12 +158,12 @@ where {
 }
 
 impl<'a> RestEndpoint for Request<'a> {
-    fn method(&self) -> Method {
-        Method::POST
+    fn method(&self) -> http::Method {
+        http::Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.0/floatingips",).into()
+        "v2.0/floatingips".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

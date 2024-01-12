@@ -1,9 +1,17 @@
-//! Reactivates an image. (Since Image API v2.3)
+//! Reactivates an image.
+//! *(Since Image API v2.3)*
+//!
 //! By default, this operation is restricted to administrators only.
-//! The reactivate operation returns an error if the image status is not active
-//! or deactivated.
-//! Preconditions:
-//!   - The image must exist.
+//!
+//! The reactivate operation returns an error if the image status is
+//! not `active` or `deactivated`.
+//!
+//! Preconditions
+//!
+//! Normal response codes: 204
+//!
+//! Error response codes: 400, 403, 404
+//!
 use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
@@ -19,35 +27,51 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use crate::common::parse_json;
+use crate::common::parse_key_val;
 use openstack_sdk::api::find;
-use openstack_sdk::api::image::v2::image::actions::reactivate::post;
 use openstack_sdk::api::image::v2::image::find;
+use openstack_sdk::api::image::v2::image::reactivate;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
+use std::collections::HashMap;
 
-/// Reactivates an image. (Since Image API v2.3)
-/// By default, this operation is restricted to administrators only.
-/// The reactivate operation returns an error if the image status is not active
-/// or deactivated.
-/// Preconditions:
-///   - The image must exist.
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct ImageArgs {
-    /// Image ID
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
+
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
+}
+
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[arg()]
     id: String,
 }
 
+/// Image action command
 pub struct ImageCmd {
     pub args: ImageArgs,
 }
-
-/// Image
+/// Image response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Image {}
+pub struct ResponseData {}
 
 #[async_trait]
 impl Command for ImageCmd {
@@ -56,25 +80,27 @@ impl Command for ImageCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Post Image with {:?}", self.args);
+        info!("Action Image with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = post::Image::builder();
+        info!("Parsed args: {:?}", self.args);
+
+        let mut ep_builder = reactivate::Request::builder();
+
         // Set path parameters
-        ep_builder.id(&self.args.id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Image)
-            .await?;
+
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = Image {};
+        let data = ResponseData {};
         // Maybe output some headers metadata
-        op.output_human::<Image>(&data)?;
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

@@ -182,10 +182,12 @@ impl Command for OsKeypairCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = create_292::Request::builder();
         ep_builder.header("OpenStack-API-Version", "compute 2.92");
-        // Set path parameters
+
         // Set query parameters
+
         // Set body parameters
 
         // Set Request.keypair data
@@ -216,6 +218,7 @@ impl Command for OsKeypairCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
+
         Ok(())
     }
 }

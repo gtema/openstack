@@ -1,3 +1,14 @@
+//! *(Since Images v2.1)*
+//!
+//! Shows a JSON schema document that represents an *image member* entity.
+//!
+//! The following schema is solely an example. Consider only the
+//! response to the API call as authoritative.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 400, 401
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -43,12 +54,12 @@ where {
 }
 
 impl RestEndpoint for Request {
-    fn method(&self) -> Method {
-        Method::GET
+    fn method(&self) -> http::Method {
+        http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/schemas/member",).into()
+        "v2/schemas/member".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

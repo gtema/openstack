@@ -14,20 +14,19 @@ use serde::Deserialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum Protocol {
-    #[serde(alias = "tcp")]
-    Tcp,
-    #[serde(alias = "dccp")]
+    #[serde(rename = "dccp")]
     Dccp,
-    #[serde(alias = "ipv6-icmp")]
-    Ipv6Icmp,
-    #[serde(alias = "udp")]
-    Udp,
-    #[serde(alias = "icmp")]
+    #[serde(rename = "icmp")]
     Icmp,
-    #[serde(alias = "sctp")]
+    #[serde(rename = "ipv6-icmp")]
+    Ipv6Icmp,
+    #[serde(rename = "sctp")]
     Sctp,
+    #[serde(rename = "tcp")]
+    Tcp,
+    #[serde(rename = "udp")]
+    Udp,
 }
 
 /// A `floating IP port forwarding` object.
@@ -136,8 +135,8 @@ where {
 }
 
 impl<'a> RestEndpoint for Request<'a> {
-    fn method(&self) -> Method {
-        Method::PUT
+    fn method(&self) -> http::Method {
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
@@ -150,9 +149,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {

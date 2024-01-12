@@ -69,7 +69,7 @@ impl StructTable for Vec<ResponseData> {
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Values".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .into_iter()
+            .iter()
             .map(|v| v.0.to_string())
             .collect::<Vec<_>>()
             .join(", ")])]);
@@ -89,10 +89,12 @@ impl Command for TagCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = replace::Request::builder();
-        // Set path parameters
+
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         // Set query parameters
+
         // Set body parameters
 
         // Set Request.tags data
@@ -103,8 +105,10 @@ impl Command for TagCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

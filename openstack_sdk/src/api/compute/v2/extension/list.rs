@@ -50,12 +50,12 @@ where {
 }
 
 impl RestEndpoint for Request {
-    fn method(&self) -> Method {
-        Method::GET
+    fn method(&self) -> http::Method {
+        http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.1/extensions",).into()
+        "v2.1/extensions".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
