@@ -1,3 +1,16 @@
+//! *(Since Images v2.0)*
+//!
+//! Shows a JSON schema document that represents an *images* entity.
+//!
+//! An images entity is a container of image entities.
+//!
+//! The following schema is solely an example. Consider only the
+//! response to the API call as authoritative.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 400, 401
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -48,7 +61,7 @@ impl RestEndpoint for Request {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/schemas/images",).into()
+        "v2/schemas/images".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

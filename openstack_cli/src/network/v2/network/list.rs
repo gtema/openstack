@@ -299,7 +299,7 @@ pub struct ResponseData {
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -307,7 +307,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -323,7 +323,6 @@ impl fmt::Display for ResponseSegments {
             format!(
                 "provider_segmentation_id={}",
                 self.provider_segmentation_id
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -342,14 +341,14 @@ impl fmt::Display for ResponseSegments {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseSegments(Vec<ResponseSegments>);
 impl fmt::Display for VecResponseSegments {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -357,7 +356,7 @@ impl fmt::Display for VecResponseSegments {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -373,8 +372,9 @@ impl Command for NetworksCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         // Set query parameters
         if let Some(val) = &self.args.query.id {
             ep_builder.id(val);
@@ -413,16 +413,16 @@ impl Command for NetworksCmd {
             ep_builder.revision_number(val);
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.into_iter());
+            ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.into_iter());
+            ep_builder.tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.into_iter());
+            ep_builder.not_tags(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.into_iter());
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.is_default {
             ep_builder.is_default(*val);
@@ -430,6 +430,7 @@ impl Command for NetworksCmd {
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val);
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -439,6 +440,7 @@ impl Command for NetworksCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

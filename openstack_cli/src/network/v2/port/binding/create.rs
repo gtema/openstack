@@ -148,10 +148,12 @@ impl Command for BindingCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = create::Request::builder();
-        // Set path parameters
+
         ep_builder.port_id(&self.args.path.port_id);
         // Set query parameters
+
         // Set body parameters
 
         // Set Request.binding data
@@ -194,6 +196,7 @@ impl Command for BindingCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
+
         Ok(())
     }
 }

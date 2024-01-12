@@ -428,14 +428,14 @@ impl fmt::Display for ResponseFixedIps {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseFixedIps(Vec<ResponseFixedIps>);
 impl fmt::Display for VecResponseFixedIps {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -443,7 +443,7 @@ impl fmt::Display for VecResponseFixedIps {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -470,14 +470,14 @@ impl fmt::Display for ResponseAllowedAddressPairs {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseAllowedAddressPairs(Vec<ResponseAllowedAddressPairs>);
 impl fmt::Display for VecResponseAllowedAddressPairs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -485,7 +485,7 @@ impl fmt::Display for VecResponseAllowedAddressPairs {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -507,7 +507,7 @@ impl fmt::Display for HashMapStringValue {
 pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -515,14 +515,14 @@ impl fmt::Display for VecHashMapStringValue {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -530,7 +530,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -546,8 +546,9 @@ impl Command for PortsCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         // Set query parameters
         if let Some(val) = &self.args.query.id {
             ep_builder.id(val);
@@ -565,7 +566,7 @@ impl Command for PortsCmd {
             ep_builder.mac_address(val);
         }
         if let Some(val) = &self.args.query.fixed_ips {
-            ep_builder.fixed_ips(val.into_iter());
+            ep_builder.fixed_ips(val.iter());
         }
         if let Some(val) = &self.args.query.device_id {
             ep_builder.device_id(val);
@@ -589,23 +590,24 @@ impl Command for PortsCmd {
             ep_builder.revision_number(val);
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.into_iter());
+            ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.into_iter());
+            ep_builder.tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.into_iter());
+            ep_builder.not_tags(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.into_iter());
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val);
         }
         if let Some(val) = &self.args.query.security_groups {
-            ep_builder.security_groups(val.into_iter());
+            ep_builder.security_groups(val.iter());
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -615,6 +617,7 @@ impl Command for PortsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

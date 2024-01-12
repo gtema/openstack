@@ -400,7 +400,7 @@ pub struct ResponseData {
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -408,7 +408,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -446,7 +446,7 @@ impl fmt::Display for ResponseValidationData {
             format!("os_hash_algo={}", self.os_hash_algo),
             format!("os_hash_value={}", self.os_hash_value),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -469,14 +469,14 @@ impl fmt::Display for ResponseLocations {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseLocations(Vec<ResponseLocations>);
 impl fmt::Display for VecResponseLocations {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -484,7 +484,7 @@ impl fmt::Display for VecResponseLocations {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -527,7 +527,7 @@ impl Command for ImagesCmd {
             ep_builder.status(val);
         }
         if let Some(val) = &self.args.query.tag {
-            ep_builder.tag(val.into_iter());
+            ep_builder.tag(val.iter());
         }
         if let Some(val) = &self.args.query.visibility {
             ep_builder.visibility(val);

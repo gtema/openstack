@@ -1,3 +1,14 @@
+//! *(Since Images v2.2)*
+//!
+//! Shows a JSON schema document that represents an *task* entity.
+//!
+//! The following schema is solely an example. Consider only the
+//! response to the API call as authoritative.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401
+//!
 use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
@@ -61,7 +72,9 @@ impl Command for TaskCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = get::Request::builder();
+
         // Set path parameters
         // Set query parameters
         // Set body parameters
@@ -69,6 +82,7 @@ impl Command for TaskCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data: serde_json::Value = serde_json::from_slice(rsp.body())?;
         op.output_machine(data)?;

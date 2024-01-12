@@ -286,14 +286,14 @@ impl fmt::Display for ResponseAllocationPools {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseAllocationPools(Vec<ResponseAllocationPools>);
 impl fmt::Display for VecResponseAllocationPools {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -301,14 +301,14 @@ impl fmt::Display for VecResponseAllocationPools {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -316,7 +316,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -343,14 +343,14 @@ impl fmt::Display for ResponseHostRoutes {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseHostRoutes(Vec<ResponseHostRoutes>);
 impl fmt::Display for VecResponseHostRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -358,7 +358,7 @@ impl fmt::Display for VecResponseHostRoutes {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -374,8 +374,9 @@ impl Command for SubnetsCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         // Set query parameters
         if let Some(val) = &self.args.query.id {
             ep_builder.id(val);
@@ -417,16 +418,16 @@ impl Command for SubnetsCmd {
             ep_builder.revision_number(val);
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.into_iter());
+            ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.into_iter());
+            ep_builder.tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.into_iter());
+            ep_builder.not_tags(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.into_iter());
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val);
@@ -434,6 +435,7 @@ impl Command for SubnetsCmd {
         if let Some(val) = &self.args.query.segment_id {
             ep_builder.segment_id(val);
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -443,6 +445,7 @@ impl Command for SubnetsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

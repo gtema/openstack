@@ -42,24 +42,22 @@ pub struct HostRoutes<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum Ipv6RaMode {
-    #[serde(alias = "dhcpv6-stateless")]
-    Dhcpv6Stateless,
-    #[serde(alias = "dhcpv6-stateful")]
+    #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
-    #[serde(alias = "slaac")]
+    #[serde(rename = "dhcpv6-stateless")]
+    Dhcpv6Stateless,
+    #[serde(rename = "slaac")]
     Slaac,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum Ipv6AddressMode {
-    #[serde(alias = "dhcpv6-stateless")]
-    Dhcpv6Stateless,
-    #[serde(alias = "dhcpv6-stateful")]
+    #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
-    #[serde(alias = "slaac")]
+    #[serde(rename = "dhcpv6-stateless")]
+    Dhcpv6Stateless,
+    #[serde(rename = "slaac")]
     Slaac,
 }
 
@@ -233,7 +231,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.0/subnets",).into()
+        "v2.0/subnets".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

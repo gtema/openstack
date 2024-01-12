@@ -89,7 +89,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.1/os-keypairs",).into()
+        "v2.1/os-keypairs".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
