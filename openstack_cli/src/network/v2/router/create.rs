@@ -432,11 +432,11 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.ha {
-            router_builder.ha((*val).map(|v| v));
+            router_builder.ha(*val);
         }
 
         if let Some(val) = &args.enable_ndp_proxy {
-            router_builder.enable_ndp_proxy((*val).map(|v| v));
+            router_builder.enable_ndp_proxy(*val);
         }
 
         if let Some(val) = &args.flavor_id {
@@ -449,7 +449,7 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.distributed {
-            router_builder.distributed((*val).map(|v| v));
+            router_builder.distributed(*val);
         }
 
         if let Some(val) = &args.description {

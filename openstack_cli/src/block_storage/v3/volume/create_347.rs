@@ -1,4 +1,9 @@
-//! Return data about the given volume.
+//! Creates a new volume.
+//!
+//! :param req: the request
+//! :param body: the request body
+//! :returns: dict -- the new volume dictionary
+//! :raises HTTPNotFound, HTTPBadRequest:
 use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
@@ -19,9 +24,9 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use openstack_sdk::api::block_storage::v3::volume::find;
-use openstack_sdk::api::block_storage::v3::volume::get;
-use openstack_sdk::api::find;
+use crate::common::parse_json;
+use crate::common::parse_key_val;
+use openstack_sdk::api::block_storage::v3::volume::create_347;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -37,6 +42,11 @@ pub struct VolumeArgs {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[command(flatten)]
+    volume: Volume,
+    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    os_sch_hnt_scheduler_hints: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -45,13 +55,60 @@ pub struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args, Clone, Debug)]
-pub struct PathParameters {
-    /// id parameter for /v3/volumes/{id} API
-    #[arg()]
-    id: String,
+pub struct PathParameters {}
+/// Volume Body data
+#[derive(Args, Debug, Clone)]
+struct Volume {
+    #[arg(long)]
+    name: Option<String>,
+
+    #[arg(long)]
+    description: Option<String>,
+
+    #[arg(long)]
+    display_name: Option<String>,
+
+    #[arg(long)]
+    display_description: Option<String>,
+
+    #[arg(long)]
+    volume_type: Option<String>,
+
+    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    metadata: Option<Vec<(String, String)>>,
+
+    #[arg(long)]
+    snapshot_id: Option<String>,
+
+    #[arg(long)]
+    source_volid: Option<String>,
+
+    #[arg(long)]
+    consistencygroup_id: Option<String>,
+
+    #[arg(long)]
+    size: Option<Option<i32>>,
+
+    #[arg(long)]
+    availability_zone: Option<String>,
+
+    #[arg(action=clap::ArgAction::Set, long)]
+    multiattach: Option<Option<bool>>,
+
+    #[arg(long)]
+    image_id: Option<String>,
+
+    #[arg(long)]
+    image_ref: Option<String>,
+
+    #[arg(long)]
+    group_id: Option<String>,
+
+    #[arg(long)]
+    backup_id: Option<String>,
 }
 
-/// Volume show command
+/// Volume create command
 pub struct VolumeCmd {
     pub args: VolumeArgs,
 }
@@ -339,21 +396,98 @@ impl Command for VolumeCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Show Volume with {:?}", self.args);
+        info!("Create Volume with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
 
-        let mut find_builder = find::Request::builder();
+        let mut ep_builder = create_347::Request::builder();
+        ep_builder.header("OpenStack-API-Version", "volume 3.47");
 
-        find_builder.id(&self.args.path.id);
-        let find_ep = find_builder
+        // Set path parameters
+        // Set query parameters
+        // Set body parameters
+        // Set Request.volume data
+        let args = &self.args.volume;
+        let mut volume_builder = create_347::VolumeBuilder::default();
+        if let Some(val) = &args.name {
+            volume_builder.name(Some(val.into()));
+        }
+
+        if let Some(val) = &args.description {
+            volume_builder.description(Some(val.into()));
+        }
+
+        if let Some(val) = &args.display_name {
+            volume_builder.display_name(Some(val.into()));
+        }
+
+        if let Some(val) = &args.display_description {
+            volume_builder.display_description(Some(val.into()));
+        }
+
+        if let Some(val) = &args.volume_type {
+            volume_builder.volume_type(Some(val.into()));
+        }
+
+        if let Some(val) = &args.metadata {
+            volume_builder.metadata(val.iter().cloned());
+        }
+
+        if let Some(val) = &args.snapshot_id {
+            volume_builder.snapshot_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.source_volid {
+            volume_builder.source_volid(Some(val.into()));
+        }
+
+        if let Some(val) = &args.consistencygroup_id {
+            volume_builder.consistencygroup_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.size {
+            volume_builder.size((*val).map(|v| v));
+        }
+
+        if let Some(val) = &args.availability_zone {
+            volume_builder.availability_zone(Some(val.into()));
+        }
+
+        if let Some(val) = &args.multiattach {
+            volume_builder.multiattach(*val);
+        }
+
+        if let Some(val) = &args.image_id {
+            volume_builder.image_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.image_ref {
+            volume_builder.image_ref(Some(val.into()));
+        }
+
+        if let Some(val) = &args.group_id {
+            volume_builder.group_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.backup_id {
+            volume_builder.backup_id(Some(val.into()));
+        }
+
+        ep_builder.volume(volume_builder.build().unwrap());
+
+        // Set Request.os_sch_hnt_scheduler_hints data
+        if let Some(args) = &self.args.os_sch_hnt_scheduler_hints {
+            ep_builder.os_sch_hnt_scheduler_hints(args.iter().cloned());
+        }
+
+        let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }
