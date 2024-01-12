@@ -429,7 +429,7 @@ impl api::RestClient for AsyncOpenStack {
             // the service catalog and for each entry ensure target url does
             // not start with that value.
             for part in segments {
-                if !part.is_empty() && work_endpoint.starts_with(part) {
+                if !part.is_empty() && work_endpoint.starts_with(format!("{}/", part).as_str()) {
                     work_endpoint = work_endpoint
                         .get(part.len() + 1..)
                         .expect("Cannot remove prefix from url");
@@ -701,9 +701,12 @@ impl AsyncOpenStack {
     async fn execute_request(&self, request: Request) -> Result<Response, reqwest::Error> {
         info!("Sending request {:?}", request);
         // Body may contain sensitive info.
-        //if let Some(body) = request.body() {
-        //  debug!("Body: {:?}", std::str::from_utf8(body.as_bytes().unwrap()));
-        //}
+        if let Some(body) = request.body() {
+            trace!(
+                "Request Body: {:?}",
+                std::str::from_utf8(body.as_bytes().unwrap())
+            );
+        }
         let start = SystemTime::now();
         let rsp = self.client.execute(request).await?;
         let elapsed = SystemTime::now().duration_since(start);

@@ -1,13 +1,25 @@
-//! Shows details for an image.
-//! *(Since Image API v2.0)*
+//! Sets the status for an image member.
+//! *(Since Image API v2.1)*
 //!
-//! The response body contains a single image entity.
+//! This call allows an image member to change his or her *member status*.
+//!
+//! When an image is shared with you, you have immediate access to the image.
+//! What
+//! updating your member status on the image does for you is that it affects
+//! whether the image will appear in your image list response.
+//!
+//! For a more detailed discussion of image sharing, please consult [Image API
+//! v2
+//! Sharing](http://specs.openstack.org/openstack/glance-
+//! specs/specs/api/v2/sharing-image-api-v2.html).
 //!
 //! Preconditions
 //!
+//! Synchronous Postconditions
+//!
 //! Normal response codes: 200
 //!
-//! Error response codes: 400, 401, 403, 404
+//! Error response codes: 400, 401, 404, 403
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -15,12 +27,18 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    #[builder(default, setter(into))]
+    image_id: Cow<'a, str>,
+
+    /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
@@ -35,7 +53,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the Image.
+    /// Add a single header to the Member.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -61,11 +79,16 @@ where {
 
 impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
-        http::Method::GET
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/images/{id}", id = self.id.as_ref(),).into()
+        format!(
+            "v2/images/{image_id}/members/{id}",
+            image_id = self.image_id.as_ref(),
+            id = self.id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -116,15 +139,22 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",));
+            when.method(httpmock::Method::PUT).path(format!(
+                "/v2/images/{image_id}/members/{id}",
+                image_id = "image_id",
+                id = "id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .image_id("image_id")
+            .id("id")
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -133,8 +163,12 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",))
+            when.method(httpmock::Method::PUT)
+                .path(format!(
+                    "/v2/images/{image_id}/members/{id}",
+                    image_id = "image_id",
+                    id = "id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -143,6 +177,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
+            .image_id("image_id")
             .id("id")
             .headers(
                 [(

@@ -1,13 +1,35 @@
-//! Shows details for an image.
+//! Updates an image.
 //! *(Since Image API v2.0)*
 //!
-//! The response body contains a single image entity.
+//! Conceptually, you update an image record by patching the JSON
+//! representation of
+//! the image, passing a request body conforming to one of the following media
+//! types:
 //!
-//! Preconditions
+//! Attempting to make a PATCH call using some other media type will provoke a
+//! response code of 415 (Unsupported media type).
+//!
+//! The `application/openstack-images-v2.1-json-patch` media type provides a
+//! useful and compatible subset of the functionality defined in JavaScript
+//! Object
+//! Notation (JSON) Patch [RFC6902](http://tools.ietf.org/html/rfc6902), which
+//! defines the `application/json-patch+json` media type.
+//!
+//! For information about the PATCH method and the available media types, see
+//! [Image API v2 HTTP PATCH media
+//! types](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/http-
+//! patch-image-api-v2.html).
+//!
+//! Attempting to modify some image properties will cause the entire request to
+//! fail with a 403 (Forbidden) response code:
+//!
+//! Attempting to add a location path to an image that is not in `queued` or
+//! `active` state will result in a 409 (Conflict) response code
+//! *(since Image API v2.4)*.
 //!
 //! Normal response codes: 200
 //!
-//! Error response codes: 400, 401, 403, 404
+//! Error response codes: 400, 401, 403, 404, 409, 413, 415
 //!
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -29,10 +51,16 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use crate::common::parse_json;
+use crate::common::parse_key_val;
+use clap::ValueEnum;
+use json_patch::{diff, Patch};
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::find;
-use openstack_sdk::api::image::v2::image::get;
+use openstack_sdk::api::image::v2::image::patch;
 use openstack_sdk::api::QueryAsync;
+use serde_json::json;
+use serde_json::to_value;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -47,6 +75,32 @@ pub struct ImageArgs {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(long)]
+    name: Option<String>,
+    #[arg(long)]
+    visibility: Option<Visibility>,
+    #[arg(action=clap::ArgAction::Set, long)]
+    protected: Option<bool>,
+    #[arg(action=clap::ArgAction::Set, long)]
+    os_hidden: Option<bool>,
+    #[arg(long)]
+    owner: Option<String>,
+    #[arg(long)]
+    container_format: Option<ContainerFormat>,
+    #[arg(long)]
+    disk_format: Option<DiskFormat>,
+    #[arg(action=clap::ArgAction::Append, long)]
+    tags: Option<Vec<String>>,
+    #[arg(long)]
+    min_ram: Option<i32>,
+    #[arg(long)]
+    min_disk: Option<i32>,
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    locations: Option<Vec<Value>>,
+    /// Additional properties to be sent with the request
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    properties: Option<Vec<(String, String)>>,
 }
 
 /// Query parameters
@@ -61,7 +115,56 @@ pub struct PathParameters {
     id: String,
 }
 
-/// Image show command
+#[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Visibility {
+    Community,
+    Private,
+    Public,
+    Shared,
+}
+
+#[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum ContainerFormat {
+    Aki,
+    Ami,
+    Ari,
+    Bare,
+    Compressed,
+    Docker,
+    Ova,
+    Ovf,
+}
+
+#[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum DiskFormat {
+    Aki,
+    Ami,
+    Ari,
+    Iso,
+    Ploop,
+    Qcow2,
+    Raw,
+    Vdi,
+    Vhd,
+    Vhdx,
+    Vmdk,
+}
+
+/// ValidationData Body data
+#[derive(Args, Debug, Clone)]
+#[group(required = false, multiple = true)]
+struct ValidationData {
+    #[arg(long)]
+    checksum: Option<String>,
+
+    #[arg(long, required = false)]
+    os_hash_algo: String,
+
+    #[arg(long, required = false)]
+    os_hash_value: String,
+}
+
+/// Image set command
 pub struct ImageCmd {
     pub args: ImageArgs,
 }
@@ -169,13 +272,12 @@ pub struct ResponseData {
     /// might be `null` (JSON null data type).
     #[serde()]
     #[structable(optional, wide)]
-    size: Option<i64>,
+    size: Option<i32>,
 
-    /// The virtual size of the image. The value might
-    /// be `null` (JSON null data type).
+    /// Virtual size of image in bytes
     #[serde()]
     #[structable(optional, wide)]
-    virtual_size: Option<i64>,
+    virtual_size: Option<i32>,
 
     /// Format of the image container.
     ///
@@ -431,7 +533,7 @@ impl Command for ImageCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Show Image with {:?}", self.args);
+        info!("Set Image with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -445,7 +547,101 @@ impl Command for ImageCmd {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        // Patching resource requires fetching and calculating diff
+        let resource_id = find_data["id"]
+            .as_str()
+            .expect("Resource ID is a string")
+            .to_string();
+
+        let data: ResponseData = serde_json::from_value(find_data)?;
+        let mut new = data.clone();
+        if let Some(val) = &self.args.name {
+            new.name = Some(val.into());
+        }
+        if let Some(val) = &self.args.visibility {
+            // StringEnum
+            let tmp = match val {
+                Visibility::Community => "community",
+                Visibility::Private => "private",
+                Visibility::Public => "public",
+                Visibility::Shared => "shared",
+            };
+            new.visibility = Some(tmp.to_string());
+        }
+        if let Some(val) = &self.args.protected {
+            new.protected = Some(*val);
+        }
+        if let Some(val) = &self.args.os_hidden {
+            new.os_hidden = Some(*val);
+        }
+        if let Some(val) = &self.args.owner {
+            new.owner = Some(val.into());
+        }
+        if let Some(val) = &self.args.container_format {
+            // StringEnum
+            let tmp = match val {
+                ContainerFormat::Aki => "aki",
+                ContainerFormat::Ami => "ami",
+                ContainerFormat::Ari => "ari",
+                ContainerFormat::Bare => "bare",
+                ContainerFormat::Compressed => "compressed",
+                ContainerFormat::Docker => "docker",
+                ContainerFormat::Ova => "ova",
+                ContainerFormat::Ovf => "ovf",
+            };
+            new.container_format = Some(tmp.to_string());
+        }
+        if let Some(val) = &self.args.disk_format {
+            // StringEnum
+            let tmp = match val {
+                DiskFormat::Aki => "aki",
+                DiskFormat::Ami => "ami",
+                DiskFormat::Ari => "ari",
+                DiskFormat::Iso => "iso",
+                DiskFormat::Ploop => "ploop",
+                DiskFormat::Qcow2 => "qcow2",
+                DiskFormat::Raw => "raw",
+                DiskFormat::Vdi => "vdi",
+                DiskFormat::Vhd => "vhd",
+                DiskFormat::Vhdx => "vhdx",
+                DiskFormat::Vmdk => "vmdk",
+            };
+            new.disk_format = Some(tmp.to_string());
+        }
+        if let Some(val) = &self.args.tags {
+            new.tags = Some(VecString(val.clone()));
+        }
+        if let Some(val) = &self.args.min_ram {
+            new.min_ram = Some(*val);
+        }
+        if let Some(val) = &self.args.min_disk {
+            new.min_disk = Some(*val);
+        }
+        if let Some(val) = &self.args.locations {
+            new.locations = Some(serde_json::from_value(serde_json::Value::from(
+                val.clone(),
+            ))?);
+        }
+
+        let curr_json = serde_json::to_value(&data).unwrap();
+        let mut new_json = serde_json::to_value(&new).unwrap();
+        if let Some(properties) = &self.args.properties {
+            for (key, val) in properties {
+                new_json[key] = json!(val);
+            }
+        }
+
+        let patch = diff(&curr_json, &new_json);
+
+        let mut patch_ep_builder = patch::Request::builder();
+        patch_ep_builder.id(&resource_id);
+        patch_ep_builder.patch(patch);
+
+        let patch_ep = patch_ep_builder
+            .build()
+            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let new_data = patch_ep.query_async(client).await?;
+        op.output_single::<ResponseData>(new_data)?;
         Ok(())
     }
 }

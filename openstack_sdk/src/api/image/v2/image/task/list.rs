@@ -1,13 +1,14 @@
-//! Shows details for an image.
-//! *(Since Image API v2.0)*
+//! Shows tasks associated with an image.
+//! *(Since Image API v2.12)*
 //!
-//! The response body contains a single image entity.
+//! The response body contains list of tasks, possibly empty, associated
+//! with the specified image.
 //!
 //! Preconditions
 //!
 //! Normal response codes: 200
 //!
-//! Error response codes: 400, 401, 403, 404
+//! Error response codes: 404
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -17,12 +18,13 @@ use serde::Serialize;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
-    id: Cow<'a, str>,
+    image_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -35,7 +37,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the Image.
+    /// Add a single header to the Task.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -65,7 +67,11 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/images/{id}", id = self.id.as_ref(),).into()
+        format!(
+            "v2/images/{image_id}/tasks",
+            image_id = self.image_id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -79,7 +85,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("tasks".into())
     }
 
     /// Returns headers to be set into the request
@@ -109,22 +115,27 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder().build().unwrap().response_key().unwrap(),
+            "tasks"
+        );
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",));
+            when.method(httpmock::Method::GET).path(format!(
+                "/v2/images/{image_id}/tasks",
+                image_id = "image_id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "tasks": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder().image_id("image_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -134,16 +145,19 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",))
+                .path(format!(
+                    "/v2/images/{image_id}/tasks",
+                    image_id = "image_id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "tasks": {} }));
         });
 
         let endpoint = Request::builder()
-            .id("id")
+            .image_id("image_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

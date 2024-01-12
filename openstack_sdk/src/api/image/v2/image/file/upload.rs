@@ -1,83 +1,72 @@
-//! Uploads binary image data. (Since Image API v2.0)
-//! Set the Content-Type request header to application/octet-stream.
-//! A multiple store backend support is introduced in the Rocky release as a
-//! part of the EXPERIMENTAL Image API v2.8.
-//! Beginning with API version 2.8, an optional X-Image-Meta-Store header may
-//! be added to the request. When present, the image data will be placed into
-//! the backing store whose identifier is the value of this header. If the
-//! store identifier specified is not recognized, a 400 (Bad Request) response
-//! is returned. When the header is not present, the image data is placed into
-//! the default backing store.
-//! Store identifiers are site-specific. Use the Store Discovery call to
-//! determine what stores are available in a particular cloud.
-//! The default store may be determined from the Store Discovery response.
-//! A default store is always defined, so if you do not have a need to use a
-//! particular store, simply omit this header and the default store will be
-//! used.
-//! For API versions before version 2.8, this header is silently ignored.
-//! Preconditions
+//! Uploads binary image data.
+//! *(Since Image API v2.0)*
+//!
+//! Set the `Content-Type` request header to `application/octet-stream`.
+//!
+//! A multiple store backend support is introduced in the Rocky release
+//! as a part of the EXPERIMENTAL Image API v2.8.
+//!
+//! Beginning with API version 2.8, an optional `X-Image-Meta-Store`
+//! header may be added to the request. When present, the image data will be
+//! placed into the backing store whose identifier is the value of this
+//! header. If the store identifier specified is not recognized, a 400 (Bad
+//! Request) response is returned. When the header is not present, the image
+//! data is placed into the default backing store.
+//!
+//! Example call:
+//!
+//! **Preconditions**
+//!
 //! Before you can store binary image data, you must meet the following
 //! preconditions:
 //!
-//!   - The image must exist.
+//! **Synchronous Postconditions**
 //!
-//!   - You must set the disk and container formats in the image.
+//! **Troubleshooting**
 //!
-//!   - The image status must be queued.
+//! Normal response codes: 204
 //!
-//!   - Your image storage quota must be sufficient.
+//! Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
 //!
-//!   - The size of the data that you want to store must not exceed the size
-//! that
-//!     the OpenStack Image service allows.
-//!
-//! Synchronous Postconditions:
-//!
-//!   - With correct permissions, you can see the image status as active
-//! through
-//!     API calls.
-//!
-//!   - With correct access, you can see the stored data in the storage system
-//!     that the OpenStack Image Service manages.
-//!
-//! Troubleshooting
-//!
-//!   - If you cannot store the data, either your request lacks required
-//!     information or you exceeded your allotted quota. Ensure that you meet
-//! the
-//!     preconditions and run the request again. If the request fails again,
-//!     review your API request.
-//!
-//!   - The storage back ends for storing the data must have enough free
-//! storage
-//!     space to accommodate the size of the data.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
-/// Query for image.upload operation.
-#[derive(Debug, Builder, Clone)]
+use std::borrow::Cow;
+
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Image<'a> {
-    /// Image ID
+pub struct Request<'a> {
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
-    id: Cow<'a, str>,
+    image_id: Cow<'a, str>,
+
+    /// The media type descriptor of the body, namely application/octet-stream
+    #[builder(default, setter(into))]
+    content_type: Option<Cow<'a, str>>,
+
+    /// A store identifier to upload or import image data. Should only be
+    /// included when making a request to a cloud that supports multiple
+    /// backing stores. Use the Store Discovery call to determine an
+    /// appropriate store identifier. Simply omit this header to use the
+    /// default store.
+    #[builder(default, setter(into))]
+    x_image_meta_store: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Image<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> ImageBuilder<'a> {
-        ImageBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> ImageBuilder<'a> {
-    /// Add a single header to the Image.
+impl<'a> RequestBuilder<'a> {
+    /// Add a single header to the File.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -101,17 +90,23 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Image<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("images/{id}/file", id = self.id.as_ref(),).into()
+        format!(
+            "v2/images/{image_id}/file",
+            image_id = self.image_id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -136,19 +131,20 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Image::builder().build().unwrap().service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Image
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Image::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
@@ -156,14 +152,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
-                .path(format!("/images/{id}/file", id = "id",));
+                .path(format!("/v2/images/{image_id}/file", image_id = "image_id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder().id("id").build().unwrap();
+        let endpoint = Request::builder().image_id("image_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -173,7 +169,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
-                .path(format!("/images/{id}/file", id = "id",))
+                .path(format!("/v2/images/{image_id}/file", image_id = "image_id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -181,8 +177,8 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Image::builder()
-            .id("id")
+        let endpoint = Request::builder()
+            .image_id("image_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

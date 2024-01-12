@@ -1,16 +1,3 @@
-//! (Since Image API v2.0) Deletes an image.
-//!
-//! You cannot delete images with the `protected` attribute set to
-//! `true` (boolean).
-//!
-//! Preconditions
-//!
-//! Synchronous Postconditions
-//!
-//! Normal response codes: 204
-//!
-//! Error response codes: 400, 401, 403, 404, 409
-//!
 use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
@@ -31,14 +18,16 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use openstack_sdk::api::find;
-use openstack_sdk::api::image::v2::image::delete;
-use openstack_sdk::api::image::v2::image::find;
+use crate::common::parse_json;
+use crate::common::parse_key_val;
+use openstack_sdk::api::image::v2::image::tag::set;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
+use std::collections::HashMap;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
-pub struct ImageArgs {
+pub struct TagArgs {
     /// Request Query parameters
     #[command(flatten)]
     query: QueryParameters,
@@ -57,34 +46,39 @@ pub struct QueryParameters {}
 pub struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[arg()]
-    id: String,
+    image_id: String,
+
+    /// tag_value parameter for /v2/images/{image_id}/tags/{tag_value} API
+    #[arg()]
+    tag_value: String,
 }
 
-/// Image delete command
-pub struct ImageCmd {
-    pub args: ImageArgs,
+/// Tag set command
+pub struct TagCmd {
+    pub args: TagArgs,
 }
-/// Image response representation
+/// Tag response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for ImageCmd {
+impl Command for TagCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Delete Image with {:?}", self.args);
+        info!("Set Tag with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
 
-        let mut ep_builder = delete::Request::builder();
+        let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.id(&self.args.path.id);
+        ep_builder.image_id(&self.args.path.image_id);
+        ep_builder.tag_value(&self.args.path.tag_value);
         // Set query parameters
         // Set body parameters
 
@@ -93,6 +87,9 @@ impl Command for ImageCmd {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }
