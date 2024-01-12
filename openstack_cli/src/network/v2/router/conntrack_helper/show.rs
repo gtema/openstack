@@ -102,18 +102,18 @@ impl Command for ConntrackHelperCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
-        let mut ep_builder = find::Request::builder();
-        // Set path parameters
-        ep_builder.router_id(&self.args.path.router_id);
-        ep_builder.id(&self.args.path.id);
-        // Set query parameters
-        // Set body parameters
 
-        let ep = ep_builder
+        let mut find_builder = find::Request::builder();
+
+        find_builder.router_id(&self.args.path.router_id);
+        find_builder.id(&self.args.path.id);
+        let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let data = find(ep).query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
+        op.output_single::<ResponseData>(find_data)?;
+
         Ok(())
     }
 }

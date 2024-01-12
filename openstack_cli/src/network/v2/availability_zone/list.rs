@@ -98,8 +98,9 @@ impl Command for AvailabilityZonesCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         // Set query parameters
         if let Some(val) = &self.args.query.name {
             ep_builder.name(val);
@@ -110,6 +111,7 @@ impl Command for AvailabilityZonesCmd {
         if let Some(val) = &self.args.query.state {
             ep_builder.state(val);
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -119,6 +121,7 @@ impl Command for AvailabilityZonesCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

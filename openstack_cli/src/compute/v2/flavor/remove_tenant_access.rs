@@ -124,10 +124,12 @@ impl Command for FlavorCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = remove_tenant_access::Request::builder();
-        // Set path parameters
+
         ep_builder.id(&self.args.path.id);
         // Set query parameters
+
         // Set body parameters
 
         // Set Request.remove_tenant_access data
@@ -142,8 +144,10 @@ impl Command for FlavorCmd {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
+
         Ok(())
     }
 }

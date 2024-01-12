@@ -104,8 +104,9 @@ impl Command for OsKeypairsCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = list::Request::builder();
-        // Set path parameters
+
         // Set query parameters
         if let Some(val) = &self.args.query.user_id {
             ep_builder.user_id(val);
@@ -116,6 +117,7 @@ impl Command for OsKeypairsCmd {
         if let Some(val) = &self.args.query.marker {
             ep_builder.marker(val);
         }
+
         // Set body parameters
 
         let ep = ep_builder
@@ -127,6 +129,7 @@ impl Command for OsKeypairsCmd {
             .await?;
 
         op.output_list::<ResponseData>(data)?;
+
         Ok(())
     }
 }

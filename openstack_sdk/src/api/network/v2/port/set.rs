@@ -65,50 +65,47 @@ pub struct AllowedAddressPairs<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum DataPlaneStatus {
-    #[serde(alias = "DOWN")]
-    Down,
-    #[serde(alias = "ACTIVE")]
+    #[serde(rename = "ACTIVE")]
     Active,
+    #[serde(rename = "DOWN")]
+    Down,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum NumaAffinityPolicy {
-    #[serde(alias = "preferred")]
-    Preferred,
-    #[serde(alias = "legacy")]
+    #[serde(rename = "legacy")]
     Legacy,
-    #[serde(alias = "required")]
+    #[serde(rename = "preferred")]
+    Preferred,
+    #[serde(rename = "required")]
     Required,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum BindingVnicType {
-    #[serde(alias = "direct-physical")]
-    DirectPhysical,
-    #[serde(alias = "remote-managed")]
-    RemoteManaged,
-    #[serde(alias = "virtio-forwarder")]
-    VirtioForwarder,
-    #[serde(alias = "macvtap")]
-    Macvtap,
-    #[serde(alias = "accelerator-direct")]
+    #[serde(rename = "accelerator-direct")]
     AcceleratorDirect,
-    #[serde(alias = "smart-nic")]
-    SmartNic,
-    #[serde(alias = "baremetal")]
-    Baremetal,
-    #[serde(alias = "accelerator-direct-physical")]
+    #[serde(rename = "accelerator-direct-physical")]
     AcceleratorDirectPhysical,
-    #[serde(alias = "normal")]
-    Normal,
-    #[serde(alias = "direct")]
+    #[serde(rename = "baremetal")]
+    Baremetal,
+    #[serde(rename = "direct")]
     Direct,
-    #[serde(alias = "vdpa")]
+    #[serde(rename = "direct-physical")]
+    DirectPhysical,
+    #[serde(rename = "macvtap")]
+    Macvtap,
+    #[serde(rename = "normal")]
+    Normal,
+    #[serde(rename = "remote-managed")]
+    RemoteManaged,
+    #[serde(rename = "smart-nic")]
+    SmartNic,
+    #[serde(rename = "vdpa")]
     Vdpa,
+    #[serde(rename = "virtio-forwarder")]
+    VirtioForwarder,
 }
 
 /// A `port` object.
@@ -410,9 +407,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-
-        params
+        QueryParams::default()
     }
 
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {

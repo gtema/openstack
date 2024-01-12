@@ -15,12 +15,11 @@ use serde::Deserialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
 pub enum Type {
-    #[serde(alias = "x509")]
-    X509,
-    #[serde(alias = "ssh")]
+    #[serde(rename = "ssh")]
     Ssh,
+    #[serde(rename = "x509")]
+    X509,
 }
 
 /// Keypair object
@@ -106,7 +105,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.1/os-keypairs",).into()
+        "v2.1/os-keypairs".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

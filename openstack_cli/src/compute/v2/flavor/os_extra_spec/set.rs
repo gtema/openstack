@@ -79,20 +79,24 @@ impl Command for OsExtraSpecCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = set::Request::builder();
-        // Set path parameters
+
         ep_builder.flavor_id(&self.args.path.flavor_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
+
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
+
         Ok(())
     }
 }

@@ -79,17 +79,21 @@ impl Command for PortForwardingCmd {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
+
         let mut ep_builder = delete::Request::builder();
-        // Set path parameters
+
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
+
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+
         Ok(())
     }
 }

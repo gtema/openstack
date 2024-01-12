@@ -48,7 +48,7 @@ impl RestEndpoint for Request {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/schemas/metadefs/resource_type",).into()
+        "v2/schemas/metadefs/resource_type".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

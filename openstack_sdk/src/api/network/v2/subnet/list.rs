@@ -198,7 +198,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2.0/subnets",).into()
+        "v2.0/subnets".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {

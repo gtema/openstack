@@ -1,3 +1,14 @@
+//! *(Since Images v2.2)*
+//!
+//! Shows a JSON schema document that represents an *task* entity.
+//!
+//! The following schema is solely an example. Consider only the
+//! response to the API call as authoritative.
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 401
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -48,7 +59,7 @@ impl RestEndpoint for Request {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/schemas/task",).into()
+        "v2/schemas/task".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
