@@ -1,15 +1,27 @@
-//! (Since Image API v2.0) Deletes an image.
+//! Places the binary image data in a staging area. It is not stored in
+//! the storage backend and is not accessible for download until after
+//! the [Image Import](#image-import-call) call is made.
+//! *(Since Image API v2.6)*
 //!
-//! You cannot delete images with the `protected` attribute set to
-//! `true` (boolean).
+//! Set the `Content-Type` request header to `application/octet-stream`.
 //!
-//! Preconditions
+//! Example call:
 //!
-//! Synchronous Postconditions
+//! **Preconditions**
+//!
+//! Before you can stage binary image data, you must meet the following
+//! preconditions:
+//!
+//! **Synchronous Postconditions**
+//!
+//! **Troubleshooting**
 //!
 //! Normal response codes: 204
 //!
-//! Error response codes: 400, 401, 403, 404, 409
+//! Error response codes: 400, 401, 403, 404, 405, 409, 410, 413, 415, 503
+//!
+//! If the image import process is not enabled in your cloud, this request
+//! will result in a 404 response code with an appropriate message.
 //!
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -31,14 +43,16 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use openstack_sdk::api::find;
-use openstack_sdk::api::image::v2::image::delete;
-use openstack_sdk::api::image::v2::image::find;
+use crate::common::parse_json;
+use crate::common::parse_key_val;
+use openstack_sdk::api::image::v2::image::stage::stage;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
+use std::collections::HashMap;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
-pub struct ImageArgs {
+pub struct StageArgs {
     /// Request Query parameters
     #[command(flatten)]
     query: QueryParameters,
@@ -57,34 +71,34 @@ pub struct QueryParameters {}
 pub struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[arg()]
-    id: String,
+    image_id: String,
 }
 
-/// Image delete command
-pub struct ImageCmd {
-    pub args: ImageArgs,
+/// Stage action command
+pub struct StageCmd {
+    pub args: StageArgs,
 }
-/// Image response representation
+/// Stage response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for ImageCmd {
+impl Command for StageCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Delete Image with {:?}", self.args);
+        info!("Action Stage with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
 
-        let mut ep_builder = delete::Request::builder();
+        let mut ep_builder = stage::Request::builder();
 
         // Set path parameters
-        ep_builder.id(&self.args.path.id);
+        ep_builder.image_id(&self.args.path.image_id);
         // Set query parameters
         // Set body parameters
 
@@ -93,6 +107,9 @@ impl Command for ImageCmd {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

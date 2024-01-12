@@ -1,13 +1,16 @@
-//! Shows details for an image.
-//! *(Since Image API v2.0)*
+//! Reactivates an image.
+//! *(Since Image API v2.3)*
 //!
-//! The response body contains a single image entity.
+//! By default, this operation is restricted to administrators only.
+//!
+//! The reactivate operation returns an error if the image status is
+//! not `active` or `deactivated`.
 //!
 //! Preconditions
 //!
-//! Normal response codes: 200
+//! Normal response codes: 204
 //!
-//! Error response codes: 400, 401, 403, 404
+//! Error response codes: 400, 403, 404
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -15,7 +18,9 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
@@ -61,11 +66,11 @@ where {
 
 impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
-        http::Method::GET
+        http::Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/images/{id}", id = self.id.as_ref(),).into()
+        format!("v2/images/{id}/actions/reactivate", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -116,8 +121,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",));
+            when.method(httpmock::Method::POST)
+                .path(format!("/v2/images/{id}/actions/reactivate", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -133,8 +138,8 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",))
+            when.method(httpmock::Method::POST)
+                .path(format!("/v2/images/{id}/actions/reactivate", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

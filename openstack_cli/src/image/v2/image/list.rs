@@ -1,7 +1,118 @@
-//! List Images
+//! Lists public virtual machine (VM) images.
+//! *(Since Image API v2.0)*
+//!
+//! **Pagination**
+//!
+//! Returns a subset of the larger collection of images and a link that you can
+//! use
+//! to get the next set of images. You should always check for the presence of
+//! a
+//! `next` link and use it as the URI in a subsequent HTTP GET request. You
+//! should follow this pattern until a `next` link is no longer provided.
+//!
+//! The `next` link preserves any query parameters that you send in your
+//! initial
+//! request. You can use the `first` link to jump back to the first page of the
+//! collection. If you prefer to paginate through images manually, use the
+//! `limit` and `marker` parameters.
+//!
+//! **Query Filters**
+//!
+//! The list operation accepts query parameters to filter the response.
+//!
+//! A client can provide direct comparison filters by using most image
+//! attributes,
+//! such as `name=Ubuntu`, `visibility=public`, and so on.
+//!
+//! To filter using image tags, use the filter `tag` (note the singular). To
+//! filter on multiple tags, include each tag separately in the query. For
+//! example, to find images with the tag **ready**, include `tag=ready` in your
+//! query string. To find images tagged with **ready** and **approved**,
+//! include
+//! `tag=ready&tag=approved` in your query string. (Note that only images
+//! containing *both* tags will be included in the response.)
+//!
+//! A client cannot use any `link` in the json-schema, such as self, file, or
+//! schema, to filter the response.
+//!
+//! You can list VM images that have a status of `active`, `queued`, or
+//! `saving`.
+//!
+//! **The** `in` **Operator**
+//!
+//! As a convenience, you may specify several values for any of the following
+//! fields by using the `in` operator:
+//!
+//! For most of these, usage is straight forward. For example, to list images
+//! in queued or saving status, use:
+//!
+//! `GET /v2/images?status=in:saving,queued`
+//!
+//! To find images in a particular list of image IDs, use:
+//!
+//! `GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-
+//! 44b5-baf2-2eb4babae53d`
+//!
+//! Using the `in` operator with the `name` property of images can be a bit
+//! trickier, depending upon how creatively you have named your images. The
+//! general rule is that if an image name contains a comma (`,`), you must
+//! enclose the entire name in quotation marks (`"`). As usual, you must URL
+//! encode any characters that require it.
+//!
+//! For example, to find images named `glass, darkly` or `share me`, you would
+//! use the following filter specification:
+//!
+//! `GET v2/images?name=in:"glass,%20darkly",share%20me`
+//!
+//! As with regular filtering by name, you must specify the complete name you
+//! are
+//! looking for. Thus, for example, the query string `name=in:glass,share` will
+//! only match images with the exact name `glass` or the exact name `share`.
+//! It will not find an image named `glass, darkly` or an image named `share
+//! me`.
+//!
+//! **Size Comparison Filters**
+//!
+//! You can use the `size\_min` and `size\_max` query parameters to filter
+//! images
+//! that are greater than or less than the image size. The size, in bytes, is
+//! the
+//! size of an image on disk.
+//!
+//! For example, to filter the container to include only images that are from 1
+//! to
+//! 4 MB, set the `size\_min` query parameter to `1048576` and the `size\_max`
+//! query parameter to `4194304`.
+//!
+//! **Time Comparison Filters**
+//!
+//! You can use a *comparison operator* along with the `created\_at` or
+//! `updated\_at` fields to filter your results. Specify the operator first, a
+//! colon (`:`) as a separator, and then the time in [ISO 8601
+//! Format](https://en.wikipedia.org/wiki/ISO_8601). Available comparison
+//! operators
+//! are:
+//!
+//! For example:
+//!
+//! **Sorting**
+//!
+//! You can use query parameters to sort the results of this operation.
+//!
+//! To sort the response, use the `sort\_key` and `sort\_dir` query
+//! parameters:
+//!
+//! Alternatively, specify the `sort` query parameter:
+//!
+//! Normal response codes: 200
+//!
+//! Error response codes: 400, 401, 403
+//!
 use async_trait::async_trait;
+use bytes::Bytes;
 use clap::Args;
 use http::Response;
+use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -12,382 +123,369 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_json;
-use crate::common::VecString;
-use crate::common::VecValue;
-use openstack_sdk::api::image::v2::images::get;
+use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
+use std::collections::BTreeMap;
+use std::collections::HashMap;
 
-/// List Images
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct ImagesArgs {
-    /// limit filter parameter
-    #[arg(long)]
-    limit: Option<String>,
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
 
-    /// marker filter parameter
-    #[arg(long)]
-    marker: Option<String>,
-
-    /// id filter parameter
-    #[arg(long)]
-    id: Option<String>,
-
-    /// name filter parameter
-    #[arg(long)]
-    name: Option<String>,
-
-    /// visibility filter parameter
-    #[arg(long)]
-    visibility: Option<String>,
-
-    /// member_status filter parameter
-    #[arg(long)]
-    member_status: Option<String>,
-
-    /// owner filter parameter
-    #[arg(long)]
-    owner: Option<String>,
-
-    /// status filter parameter
-    #[arg(long)]
-    status: Option<String>,
-
-    /// size_min filter parameter
-    #[arg(long)]
-    size_min: Option<String>,
-
-    /// size_max filter parameter
-    #[arg(long)]
-    size_max: Option<String>,
-
-    /// protected filter parameter
-    #[arg(long)]
-    protected: Option<String>,
-
-    /// is_hidden filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    is_hidden: Option<bool>,
-
-    /// sort_key filter parameter
-    #[arg(long)]
-    sort_key: Option<String>,
-
-    /// sort_dir filter parameter
-    #[arg(long)]
-    sort_dir: Option<String>,
-
-    /// sort filter parameter
-    #[arg(long)]
-    sort: Option<String>,
-
-    /// tag filter parameter
-    #[arg(long, action=clap::ArgAction::Append)]
-    tag: Option<Vec<String>>,
-
-    /// created_at filter parameter
-    #[arg(long)]
-    created_at: Option<String>,
-
-    /// updated_at filter parameter
-    #[arg(long)]
-    updated_at: Option<String>,
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
 
     /// Total limit of entities count to return. Use this when there are too many entries.
     #[arg(long, default_value_t = 10000)]
     max_items: usize,
 }
 
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    #[arg(long)]
+    limit: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    #[arg(long)]
+    marker: Option<String>,
+
+    /// Filters the response by a name, as a string. A valid value is the name
+    /// of an image.
+    #[arg(long)]
+    name: Option<String>,
+
+    /// id filter parameter
+    #[arg(long)]
+    id: Option<String>,
+
+    /// Filters the response by a project (also called a “tenant”) ID. Shows
+    /// only images that are shared with you by the specified owner.
+    #[arg(long)]
+    owner: Option<String>,
+
+    /// Filters the response by the ‘protected’ image property. A valid value
+    /// is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
+    /// result in a 400 response.
+    #[arg(long)]
+    protected: Option<bool>,
+
+    /// Filters the response by an image status.
+    #[arg(long)]
+    status: Option<String>,
+
+    /// Filters the response by the specified tag value. May be repeated, but
+    /// keep in mind that you’re making a conjunctive query, so only images
+    /// containing all the tags specified will appear in the response.
+    #[arg(long)]
+    tag: Option<Vec<String>>,
+
+    /// Filters the response by an image visibility value. A valid value is
+    /// public, private, community, shared, or all. (Note that if you filter on
+    /// shared, the images included in the response will only be those where
+    /// your member status is accepted unless you explicitly include a
+    /// member_status filter in the request.) If you omit this parameter, the
+    /// response shows public, private, and those shared images with a member
+    /// status of accepted.
+    #[arg(long)]
+    visibility: Option<String>,
+
+    /// When true, filters the response to display only "hidden" images. By
+    /// default, "hidden" images are not included in the image-list response.
+    /// (Since Image API v2.7)
+    #[arg(long)]
+    os_hidden: Option<bool>,
+
+    /// Filters the response by a member status. A valid value is accepted,
+    /// pending, rejected, or all. Default is accepted.
+    #[arg(long)]
+    member_status: Option<String>,
+
+    /// Filters the response by a maximum image size, in bytes.
+    #[arg(long)]
+    size_max: Option<String>,
+
+    /// Filters the response by a minimum image size, in bytes.
+    #[arg(long)]
+    size_min: Option<String>,
+
+    /// Specify a comparison filter based on the date and time when the
+    /// resource was created.
+    #[arg(long)]
+    created_at: Option<String>,
+
+    /// Specify a comparison filter based on the date and time when the
+    /// resource was most recently modified.
+    #[arg(long)]
+    updated_at: Option<String>,
+
+    /// Sorts the response by a set of one or more sort direction and attribute
+    /// (sort_key) combinations. A valid value for the sort direction is asc
+    /// (ascending) or desc (descending). If you omit the sort direction in a
+    /// set, the default is desc.
+    #[arg(long)]
+    sort_dir: Option<String>,
+
+    /// Sorts the response by an attribute, such as name, id, or updated_at.
+    /// Default is created_at. The API uses the natural sorting direction of
+    /// the sort_key image attribute.
+    #[arg(long)]
+    sort_key: Option<String>,
+
+    /// Sorts the response by one or more attribute and sort direction
+    /// combinations. You can also set multiple sort keys and directions.
+    /// Default direction is desc. Use the comma (,) character to separate
+    /// multiple values. For example: `sort=name:asc,status:desc`
+    #[arg(long)]
+    sort: Option<String>,
+}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {}
+
+/// Images list command
 pub struct ImagesCmd {
     pub args: ImagesArgs,
 }
-
-/// Images
+/// Images response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Images {
-    /// The CPU architecture that must be supported by the hypervisor.
-    #[structable(optional, wide)]
-    architecture: Option<String>,
-
-    /// If true, the root partition on the disk is automatically resized before
-    /// the instance boots.
-    #[serde(rename = "auto_disk_config")]
-    #[structable(optional, wide)]
-    has_auto_disk_config: Option<String>,
-
-    /// Hash of the image data used. The Image service uses this value for
-    /// verification.
-    #[structable(optional, wide)]
-    checksum: Option<String>,
-
-    /// The container format refers to whether the VM image is in a file format
-    /// that also contains metadata about the actual VM. Container formats
-    /// include OVF and Amazon AMI. In addition, a VM image might not have a
-    /// container format - instead, the image is just a blob of unstructured
-    /// data.
-    #[structable(optional, wide)]
-    container_format: Option<String>,
-
-    /// The date and time when the image was created.
+pub struct ResponseData {
+    /// An identifier for the image
+    #[serde()]
     #[structable(optional)]
-    created_at: Option<String>,
+    id: Option<String>,
 
-    /// The URL to access the image file kept in external store. It appears
-    /// when you set the show_image_direct_url option to true in the Image
-    /// service's configuration file.
-    #[structable(optional, wide)]
-    direct_url: Option<String>,
-
-    /// Valid values are: aki, ari, ami, raw, iso, vhd, vdi, qcow2, or vmdk.
-    /// The disk format of a VM image is the format of the underlying disk
-    /// image. Virtual appliance vendors have different formats for laying out
-    /// the information contained in a VM disk image.
-    #[structable(optional, wide)]
-    disk_format: Option<String>,
-
-    /// The URL for the virtual machine image file.
-    #[structable(optional, wide)]
-    file: Option<String>,
-
-    /// The preferred number of cores to expose to the guest.
-    #[structable(optional, wide)]
-    hw_cpu_cores: Option<u32>,
-
-    /// Used to pin the virtual CPUs (vCPUs) of instances to the host's
-    /// physical CPU cores (pCPUs).
-    #[structable(optional, wide)]
-    hw_cpu_policy: Option<String>,
-
-    /// Defines how hardware CPU threads in a simultaneous multithreading-based
-    /// (SMT) architecture be used.
-    #[structable(optional, wide)]
-    hw_cpu_thread_policy: Option<String>,
-
-    /// The preferred number of threads to expose to the guest.
-    #[structable(optional, wide)]
-    hw_cpu_threads: Option<u32>,
-
-    /// Specifies the type of disk controller to attach disk devices to. One of
-    /// scsi, virtio, uml, xen, ide, or usb.
-    #[structable(optional, wide)]
-    hw_disk_bus: Option<String>,
-
-    /// For libvirt: Enables booting an ARM system using the specified machine
-    /// type. For Hyper-V: Specifies whether the Hyper-V instance will be a
-    /// generation 1 or generation 2 VM.
-    #[structable(optional, wide)]
-    hw_machine_type: Option<String>,
-
-    /// A string boolean, which if "true", QEMU guest agent will be exposed to
-    /// the instance.
-    #[structable(optional, wide)]
-    hw_qemu_guest_agent: Option<String>,
-
-    /// Adds a random-number generator device to the image's instances.
-    #[structable(optional, wide)]
-    hw_rng_model: Option<String>,
-
-    /// Enables the use of VirtIO SCSI (virtio-scsi) to provide block device
-    /// access for compute instances; by default, instances use VirtIO Block
-    /// (virtio-blk).
-    #[structable(optional, wide)]
-    hw_scsi_model: Option<String>,
-
-    /// Specifies the count of serial ports that should be provided.
-    #[structable(optional, wide)]
-    hw_serial_port_count: Option<u32>,
-
-    /// The video image driver used.
-    #[structable(optional, wide)]
-    hw_video_model: Option<String>,
-
-    /// Maximum RAM for the video image.
-    #[structable(optional, wide)]
-    hw_video_ram: Option<u32>,
-
-    /// Specifies the model of virtual network interface device to use.
-    #[structable(optional, wide)]
-    hw_vif_model: Option<String>,
-
-    /// Enables a virtual hardware watchdog device that carries out the
-    /// specified action if the server hangs.
-    #[structable(optional, wide)]
-    hw_watchdog_action: Option<String>,
-
-    /// The hypervisor type. Note that qemu is used for both QEMU and KVM
-    /// hypervisor types.
-    #[structable(optional, wide)]
-    hypervisor_type: Option<String>,
-
-    /// Id of the resource
-    id: String,
-
-    /// Specifies whether the image needs a config drive. `mandatory` or
-    /// `optional` (default if property is not used).
-    #[serde(rename = "img_config_drive")]
-    #[structable(optional, wide)]
-    needs_config_drive: Option<String>,
-
-    /// Optional property allows created servers to have a different bandwidth
-    /// cap than that defined in the network they are attached to.
-    #[structable(optional, wide)]
-    instance_type_rxtx_factor: Option<f32>,
-
-    /// create this image.
-    #[structable(optional, wide)]
-    instance_uuid: Option<String>,
-
-    /// The ID of an image stored in the Image service that should be used as
-    /// the kernel when booting an AMI-style image.
-    #[structable(optional, wide)]
-    kernel_id: Option<String>,
-
-    /// A list of URLs to access the image file in external store. This list
-    /// appears if the show_multiple_locations option is set to true in the
-    /// Image service's configuration file.
-    #[structable(optional, wide)]
-    locations: Option<VecValue>,
-
-    /// The minimum disk size in GB that is required to boot the image.
-    #[structable(optional, wide)]
-    min_disk: Option<u32>,
-
-    /// The minimum amount of RAM in MB that is required to boot the image.
-    #[structable(optional, wide)]
-    min_ram: Option<u32>,
-
-    /// The name of the image.
+    /// Descriptive name for the image
+    #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// The operating system admin username.
-    #[structable(optional, wide)]
-    os_admin_user: Option<u32>,
-
-    /// The kernel command line to be used by the libvirt driver, instead of
-    /// the default.
-    #[structable(optional, wide)]
-    os_command_line: Option<String>,
-
-    /// The common name of the operating system distribution in lowercase
-    #[structable(optional, wide)]
-    os_distro: Option<String>,
-
-    /// The algorithm used to compute a secure hash of the image data for this
-    /// image
-    #[serde(rename = "os_hash_algo")]
-    #[structable(optional, wide)]
-    hash_algo: Option<String>,
-
-    /// The hexdigest of the secure hash of the image data computed using the
-    /// algorithm whose name is the value of the os_hash_algo property.
-    #[serde(rename = "os_hash_value")]
-    #[structable(optional, wide)]
-    hash_value: Option<String>,
-
-    /// This field controls whether an image is displayed in the default image-
-    /// list response
-    #[serde(rename = "os_hidden")]
-    #[structable(optional, wide)]
-    is_hidden: Option<bool>,
-
-    /// If true, require quiesce on snapshot via QEMU guest agent.
-    #[structable(optional, wide)]
-    os_require_quiesce: Option<bool>,
-
-    /// Secure Boot is a security standard. When the instance starts, Secure
-    /// Boot first examines software such as firmware and OS by their signature
-    /// and only allows them to run if the signatures are valid.
-    #[serde(rename = "os_secure_boot")]
-    #[structable(optional, wide)]
-    needs_secure_boot: Option<String>,
-
-    /// Time for graceful shutdown
-    #[structable(optional, wide)]
-    os_shutdown_timeout: Option<u32>,
-
-    /// The operating system installed on the image.
-    #[structable(optional, wide)]
-    os_type: Option<String>,
-
-    /// The operating system version as specified by the distributor.
-    #[structable(optional, wide)]
-    os_version: Option<String>,
-
-    /// The ID of the owner, or project, of the image. (backwards compat)
-    #[serde(rename = "owner")]
-    #[structable(optional, wide)]
-    owner_id: Option<String>,
-
-    /// Defines whether the image can be deleted.
-    #[serde(rename = "protected")]
-    #[structable(optional, wide)]
-    is_protected: Option<bool>,
-
-    /// The ID of image stored in the Image service that should be used as the
-    /// ramdisk when booting an AMI-style image.
-    #[structable(optional, wide)]
-    ramdisk_id: Option<String>,
-
-    /// The URL for the schema describing a virtual machine image.
-    #[structable(optional, wide)]
-    schema: Option<String>,
-
-    /// The size of the image data, in bytes.
-    #[structable(optional, wide)]
-    size: Option<u64>,
-
-    /// The image status.
+    /// Status of the image
+    #[serde()]
     #[structable(optional, wide)]
     status: Option<String>,
 
-    /// When present, Glance will attempt to store the disk image data in the
-    /// backing store indicated by the value of the header. When not present,
-    /// Glance will store the disk image data in the backing store that is
-    /// marked default. Valid values are: file, s3, rbd, swift, cinder, gridfs,
-    /// sheepdog, or vsphere.
-    #[structable(optional, wide)]
-    store: Option<String>,
-
-    /// List of tags for this image, possibly an empty list.
-    #[structable(optional, wide)]
-    tags: Option<VecString>,
-
-    /// The date and time when the image was updated.
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The URL to access the image file kept in external store.
-    #[structable(optional, wide)]
-    url: Option<String>,
-
-    /// The virtual size of the image.
-    #[structable(optional, wide)]
-    virtual_size: Option<u64>,
-
-    /// The image visibility.
+    /// Scope of image accessibility
+    #[serde()]
     #[structable(optional, wide)]
     visibility: Option<String>,
 
-    /// The virtual machine mode. This represents the host/guest ABI
-    /// (application binary interface) used for the virtual machine.
+    /// If true, image will not be deletable.
+    #[serde()]
     #[structable(optional, wide)]
-    vm_mode: Option<String>,
+    protected: Option<bool>,
 
-    /// The virtual SCSI or IDE controller used by the hypervisor.
+    /// If true, image will not appear in default image list response.
+    #[serde()]
     #[structable(optional, wide)]
-    vmware_adaptertype: Option<String>,
+    os_hidden: Option<bool>,
 
-    /// A VMware GuestID which describes the operating system installed in the
-    /// image.
+    /// md5 hash of image contents.
+    #[serde()]
     #[structable(optional, wide)]
-    vmware_ostype: Option<String>,
+    checksum: Option<String>,
+
+    /// Algorithm to calculate the os_hash_value
+    #[serde()]
+    #[structable(optional, wide)]
+    os_hash_algo: Option<String>,
+
+    /// Hexdigest of the image contents using the algorithm specified by the
+    /// os_hash_algo
+    #[serde()]
+    #[structable(optional, wide)]
+    os_hash_value: Option<String>,
+
+    /// Owner of the image
+    #[serde()]
+    #[structable(optional, wide)]
+    owner: Option<String>,
+
+    /// Size of image file in bytes
+    #[serde()]
+    #[structable(optional, wide)]
+    size: Option<i64>,
+
+    /// Virtual size of image in bytes
+    #[serde()]
+    #[structable(optional, wide)]
+    virtual_size: Option<i64>,
+
+    /// Format of the container
+    #[serde()]
+    #[structable(optional, wide)]
+    container_format: Option<String>,
+
+    /// Format of the disk
+    #[serde()]
+    #[structable(optional, wide)]
+    disk_format: Option<String>,
+
+    /// Date and time of image registration
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// Date and time of the last image modification
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// List of strings related to the image
+    #[serde()]
+    #[structable(optional, wide)]
+    tags: Option<VecString>,
+
+    /// URL to access the image file kept in external store
+    #[serde()]
+    #[structable(optional, wide)]
+    direct_url: Option<String>,
+
+    /// Amount of ram (in MB) required to boot image.
+    #[serde()]
+    #[structable(optional, wide)]
+    min_ram: Option<i32>,
+
+    /// Amount of disk space (in GB) required to boot image.
+    #[serde()]
+    #[structable(optional, wide)]
+    min_disk: Option<i32>,
+
+    /// An image self url
+    #[serde(rename = "self")]
+    #[structable(optional, title = "self", wide)]
+    _self: Option<String>,
+
+    /// An image file url
+    #[serde()]
+    #[structable(optional, wide)]
+    file: Option<String>,
+
+    /// Store in which image data resides.  Only present when the operator has
+    /// enabled multiple stores.  May be a comma-separated list of store
+    /// identifiers.
+    #[serde()]
+    #[structable(optional, wide)]
+    stores: Option<String>,
+
+    /// An image schema url
+    #[serde()]
+    #[structable(optional, wide)]
+    schema: Option<String>,
+
+    /// A set of URLs to access the image file kept in external store
+    #[serde()]
+    #[structable(optional, wide)]
+    locations: Option<VecResponseLocations>,
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecString(Vec<String>);
+impl fmt::Display for VecString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct HashMapStringValue(HashMap<String, Value>);
+impl fmt::Display for HashMapStringValue {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{{{}}}",
+            self.0
+                .iter()
+                .map(|v| format!("{}={}", v.0, v.1))
+                .collect::<Vec<String>>()
+                .join("\n")
+        )
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseValidationData {
+    checksum: Option<String>,
+    os_hash_algo: String,
+    os_hash_value: String,
+}
+
+impl fmt::Display for ResponseValidationData {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "checksum={}",
+                self.checksum
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!("os_hash_algo={}", self.os_hash_algo),
+            format!("os_hash_value={}", self.os_hash_value),
+        ]);
+        return write!(f, "{}", data.join(";"));
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseLocations {
+    url: String,
+    metadata: HashMapStringValue,
+    validation_data: Option<ResponseValidationData>,
+}
+
+impl fmt::Display for ResponseLocations {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!("url={}", self.url),
+            format!("metadata={}", self.metadata),
+            format!(
+                "validation_data={}",
+                self.validation_data
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        return write!(f, "{}", data.join(";"));
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseLocations(Vec<ResponseLocations>);
+impl fmt::Display for VecResponseLocations {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        return write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        );
+    }
 }
 
 #[async_trait]
@@ -397,79 +495,81 @@ impl Command for ImagesCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Images with {:?}", self.args);
+        info!("List Images with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = get::Images::builder();
+        info!("Parsed args: {:?}", self.args);
+
+        let mut ep_builder = list::Request::builder();
+
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.args.limit {
-            ep_builder.limit(val);
+        if let Some(val) = &self.args.query.limit {
+            ep_builder.limit(*val);
         }
-        if let Some(val) = &self.args.marker {
+        if let Some(val) = &self.args.query.marker {
             ep_builder.marker(val);
         }
-        if let Some(val) = &self.args.id {
-            ep_builder.id(val);
-        }
-        if let Some(val) = &self.args.name {
+        if let Some(val) = &self.args.query.name {
             ep_builder.name(val);
         }
-        if let Some(val) = &self.args.visibility {
-            ep_builder.visibility(val);
+        if let Some(val) = &self.args.query.id {
+            ep_builder.id(val);
         }
-        if let Some(val) = &self.args.member_status {
-            ep_builder.member_status(val);
-        }
-        if let Some(val) = &self.args.owner {
+        if let Some(val) = &self.args.query.owner {
             ep_builder.owner(val);
         }
-        if let Some(val) = &self.args.status {
+        if let Some(val) = &self.args.query.protected {
+            ep_builder.protected(*val);
+        }
+        if let Some(val) = &self.args.query.status {
             ep_builder.status(val);
         }
-        if let Some(val) = &self.args.size_min {
-            ep_builder.size_min(val);
+        if let Some(val) = &self.args.query.tag {
+            ep_builder.tag(val.into_iter());
         }
-        if let Some(val) = &self.args.size_max {
+        if let Some(val) = &self.args.query.visibility {
+            ep_builder.visibility(val);
+        }
+        if let Some(val) = &self.args.query.os_hidden {
+            ep_builder.os_hidden(*val);
+        }
+        if let Some(val) = &self.args.query.member_status {
+            ep_builder.member_status(val);
+        }
+        if let Some(val) = &self.args.query.size_max {
             ep_builder.size_max(val);
         }
-        if let Some(val) = &self.args.protected {
-            ep_builder.protected(val);
+        if let Some(val) = &self.args.query.size_min {
+            ep_builder.size_min(val);
         }
-        if let Some(val) = &self.args.is_hidden {
-            ep_builder.is_hidden(*val);
-        }
-        if let Some(val) = &self.args.sort_key {
-            ep_builder.sort_key(val);
-        }
-        if let Some(val) = &self.args.sort_dir {
-            ep_builder.sort_dir(val);
-        }
-        if let Some(val) = &self.args.sort {
-            ep_builder.sort(val);
-        }
-        if let Some(val) = &self.args.tag {
-            ep_builder.tag(val.iter());
-        }
-        if let Some(val) = &self.args.created_at {
+        if let Some(val) = &self.args.query.created_at {
             ep_builder.created_at(val);
         }
-        if let Some(val) = &self.args.updated_at {
+        if let Some(val) = &self.args.query.updated_at {
             ep_builder.updated_at(val);
         }
+        if let Some(val) = &self.args.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.args.query.sort_key {
+            ep_builder.sort_key(val);
+        }
+        if let Some(val) = &self.args.query.sort {
+            ep_builder.sort(val);
+        }
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Image)
-            .await?;
+
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.args.max_items))
             .query_async(client)
             .await?;
 
-        op.output_list::<Images>(data)?;
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

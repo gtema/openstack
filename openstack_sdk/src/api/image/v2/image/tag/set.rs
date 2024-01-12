@@ -1,28 +1,23 @@
-//! Shows details for an image.
-//! *(Since Image API v2.0)*
-//!
-//! The response body contains a single image entity.
-//!
-//! Preconditions
-//!
-//! Normal response codes: 200
-//!
-//! Error response codes: 400, 401, 403, 404
-//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]
-    id: Cow<'a, str>,
+    image_id: Cow<'a, str>,
+
+    /// tag_value parameter for /v2/images/{image_id}/tags/{tag_value} API
+    #[builder(default, setter(into))]
+    tag_value: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -35,7 +30,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the Image.
+    /// Add a single header to the Tag.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -61,11 +56,16 @@ where {
 
 impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
-        http::Method::GET
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v2/images/{id}", id = self.id.as_ref(),).into()
+        format!(
+            "v2/images/{image_id}/tags/{tag_value}",
+            image_id = self.image_id.as_ref(),
+            tag_value = self.tag_value.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -116,15 +116,22 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",));
+            when.method(httpmock::Method::PUT).path(format!(
+                "/v2/images/{image_id}/tags/{tag_value}",
+                image_id = "image_id",
+                tag_value = "tag_value",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .image_id("image_id")
+            .tag_value("tag_value")
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -133,8 +140,12 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v2/images/{id}", id = "id",))
+            when.method(httpmock::Method::PUT)
+                .path(format!(
+                    "/v2/images/{image_id}/tags/{tag_value}",
+                    image_id = "image_id",
+                    tag_value = "tag_value",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -143,7 +154,8 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .id("id")
+            .image_id("image_id")
+            .tag_value("tag_value")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
