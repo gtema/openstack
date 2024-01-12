@@ -1,15 +1,58 @@
-//! Return data about the given volume.
+//! Update a volume.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
+use serde::Deserialize;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Volume<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    name: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    description: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    display_name: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    display_description: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, private, setter(name = "_metadata"))]
+    metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+}
+
+impl<'a> VolumeBuilder<'a> {
+    pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Cow<'a, str>>,
+    {
+        self.metadata
+            .get_or_insert(None)
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+}
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(setter(into))]
+    volume: Volume<'a>,
+
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
@@ -51,7 +94,7 @@ where {
 
 impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
-        http::Method::GET
+        http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
@@ -60,6 +103,14 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn parameters(&self) -> QueryParams {
         QueryParams::default()
+    }
+
+    fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let mut params = JsonBodyParams::default();
+
+        params.push("volume", serde_json::to_value(&self.volume)?);
+
+        params.into_body()
     }
 
     fn service_type(&self) -> ServiceType {
@@ -90,7 +141,11 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .volume(VolumeBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::BlockStorage
         );
     }
@@ -98,7 +153,12 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
+            Request::builder()
+                .volume(VolumeBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
             "volume"
         );
     }
@@ -107,7 +167,7 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
+            when.method(httpmock::Method::PUT)
                 .path(format!("/v3/volumes/{id}", id = "id",));
 
             then.status(200)
@@ -115,7 +175,11 @@ mod tests {
                 .json_body(json!({ "volume": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .volume(VolumeBuilder::default().build().unwrap())
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -124,7 +188,7 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
+            when.method(httpmock::Method::PUT)
                 .path(format!("/v3/volumes/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
@@ -135,6 +199,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
+            .volume(VolumeBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

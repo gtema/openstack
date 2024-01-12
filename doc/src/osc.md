@@ -10,7 +10,11 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
-* [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
+* [`osc block-storage volume create30`↴](#osc-block-storage-volume-create30)
+* [`osc block-storage volume create313`↴](#osc-block-storage-volume-create313)
+* [`osc block-storage volume create347`↴](#osc-block-storage-volume-create347)
+* [`osc block-storage volume create353`↴](#osc-block-storage-volume-create353)
+* [`osc block-storage volume delete`↴](#osc-block-storage-volume-delete)
 * [`osc compute`↴](#osc-compute)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
@@ -171,9 +175,13 @@ Volume commands
 ###### **Subcommands:**
 
 * `list` — List Volumes
-* `show` — Show single volume
-* `create` — Create volume
-* `set` — Update volume
+* `show` — Show single volume details
+* `create` — Create new volume (with highest possible microversion)
+* `create30` — Create new volume (microversion = 3.0)
+* `create313` — Create new volume (microversion = 3.13)
+* `create347` — Create new volume (microversion = 3.47)
+* `create353` — Create new volume (microversion = 3.53)
+* `delete` — Delete volume
 
 
 
@@ -185,12 +193,26 @@ List Volumes
 
 ###### **Options:**
 
-* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
-* `--all-projects <ALL_PROJECTS>` — all_projects filter parameter
+* `--all-tenans <ALL_TENANS>` — Shows details for all project. Admin only
 
   Possible values: `true`, `false`
 
-* `--name <NAME>` — Name filter
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of < key > [: < direction > ]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--with-count <WITH_COUNT>` — Whether to show count in API response or not, default is False
+
+  Possible values: `true`, `false`
+
+* `--created-at <CREATED_AT>` — Filters reuslts by a time that resources are created at with time comparison operators: gt/gte/eq/neq/lt/lte
+* `--updated-at <UPDATED_AT>` — Filters reuslts by a time that resources are updated at with time comaprison operators: gt/gte/eq/neq/lt/lte
+* `--consumes-quota <CONSUMES_QUOTA>` — Filters results by consumes_quota field. Resources that don’t use quotas are usually temporary internal resources created to perform an operation. Default is to not filter by it. Filtering by this option may not be always possible in a cloud, see List Resource Filters to determine whether this filter is available in your cloud
+
+  Possible values: `true`, `false`
+
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -199,70 +221,223 @@ List Volumes
 
 ## `osc block-storage volume show`
 
-Show single volume
+Shows details for a volume.
 
-**Usage:** `osc block-storage volume show [OPTIONS] <ID>`
+**Preconditions**
+
+- The volume must exist.
+
+**Usage:** `osc block-storage volume show <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Volume ID
-
-###### **Options:**
-
-* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
+* `<ID>` — id parameter for /v3/volumes/{id} API
 
 
 
 ## `osc block-storage volume create`
 
-Create volume
+Create volume (with highest possible microversion)
+
+To create a bootable volume, include the UUID of the image from which you want to create the volume in the imageRef attribute in the request body.
+
+Since the Train release, every volume must have a volume type. It is optional to specify a volume type as part of your Create a volume request. If you do not specify one, a default volume type will be supplied for you. This type may vary according to what project you are in and how the operator has configured the Block Storage service. Use the Show default volume type request to determine your effective default volume type.
+
+**Preconditions**
+
+- You must have enough volume storage quota remaining to create a volume of size requested.
+
+**Asynchronous Postconditions**
+
+- With correct permissions, you can see the volume status as available through API calls.
+
+- With correct access, you can see the created volume in the storage system that OpenStack Block Storage manages.
+
+**Troubleshooting**
+
+-  If volume status remains creating or shows another error status, the request failed. Ensure you meet the preconditions then investigate the storage back end.
+
+- Volume is not created in the storage system that OpenStack Block Storage manages.
+
+- The storage node needs enough free storage space to match the size of the volume creation request.
 
 **Usage:** `osc block-storage volume create [OPTIONS]`
 
 ###### **Options:**
 
-* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
-* `--availabilitiy-zone <AVAILABILITIY_ZONE>` — The name of the availability zone
-* `--backup-id <BACKUP_ID>` — Backup ID
-* `--bootable <BOOTABLE>` — Enables or disables the bootable attribute. You can boot an instance from a bootable volume
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>`
+* `--metadata <key=value>`
+* `--snapshot-id <SNAPSHOT_ID>`
+* `--source-volid <SOURCE_VOLID>`
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
+* `--size <SIZE>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--multiattach <MULTIATTACH>`
 
   Possible values: `true`, `false`
 
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>` — The volume name
-* `--group-id <GROUP_ID>` — The ID o fthe group the volume belongs to
-* `--image-id <IMAGE_ID>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
-* `--metadata <key=value>` — A metadata object. Contains one or more metadata key and value pairs that are associated with the volume
-* `--is-multiattach <IS_MULTIATTACH>` — If true, this volume can attach to more than one instance
-
-  Possible values: `true`, `false`
-
-* `--name <NAME>` — The volume name
-* `--source-volid <SOURCE_VOLID>` — The UUID of the source volume. The API creates a new volume with the same size as the source volume unless a larger size is requested
-* `--snapshot-id <SNAPSHOT_ID>` — To create a volume from an existing snapshot, specify the UUID of the volume snapshot. The volume is created in same availability zone and with same size as the snapshot
-* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
-* `--volume-type <VOLUME_TYPE>` — The associated volume type name for the volume
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>`
+* `--group-id <GROUP_ID>`
+* `--backup-id <BACKUP_ID>`
+* `--os-sch-hnt-scheduler-hints <key=value>`
 
 
 
-## `osc block-storage volume set`
+## `osc block-storage volume create30`
 
-Update volume
+Create new volume (microversion = 3.0)
 
-**Usage:** `osc block-storage volume set [OPTIONS] <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — Volume ID
+**Usage:** `osc block-storage volume create30 [OPTIONS]`
 
 ###### **Options:**
 
-* `--project-id <PROJECT_ID>` — The UUID of the project in a multi-tenancy cloud
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>` — The volume name
-* `--metadata <key=value>` — A metadata object. Contains one or more metadata key and value pairs that are associated with the volume
-* `--name <NAME>` — The volume name
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>`
+* `--metadata <key=value>`
+* `--snapshot-id <SNAPSHOT_ID>`
+* `--source-volid <SOURCE_VOLID>`
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
+* `--size <SIZE>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--multiattach <MULTIATTACH>`
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>`
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create313`
+
+Create new volume (microversion = 3.13)
+
+**Usage:** `osc block-storage volume create313 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>`
+* `--metadata <key=value>`
+* `--snapshot-id <SNAPSHOT_ID>`
+* `--source-volid <SOURCE_VOLID>`
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
+* `--size <SIZE>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--multiattach <MULTIATTACH>`
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>`
+* `--group-id <GROUP_ID>`
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create347`
+
+Create new volume (microversion = 3.47)
+
+**Usage:** `osc block-storage volume create347 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>`
+* `--metadata <key=value>`
+* `--snapshot-id <SNAPSHOT_ID>`
+* `--source-volid <SOURCE_VOLID>`
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
+* `--size <SIZE>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--multiattach <MULTIATTACH>`
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>`
+* `--group-id <GROUP_ID>`
+* `--backup-id <BACKUP_ID>`
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create353`
+
+Create new volume (microversion = 3.53)
+
+**Usage:** `osc block-storage volume create353 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>`
+* `--metadata <key=value>`
+* `--snapshot-id <SNAPSHOT_ID>`
+* `--source-volid <SOURCE_VOLID>`
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
+* `--size <SIZE>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--multiattach <MULTIATTACH>`
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>`
+* `--group-id <GROUP_ID>`
+* `--backup-id <BACKUP_ID>`
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume delete`
+
+Deletes a volume.
+
+**Preconditions**
+
+- Volume status must be available, in-use, error, error_restoring, error_extending, error_managing, and must not be migrating, attached, awaiting-transfer, belong to a group, have snapshots or be disassociated from snapshots after volume transfer.
+
+- The cascade option can be passed in the request if you want all snapshots of this volume to be deleted automatically, which should allow the volume deletion to succeed.
+
+- You cannot delete a volume that is in a migration.
+
+**Asynchronous Postconditions**
+
+- The volume is deleted in volume index.
+
+- The volume managed by OpenStack Block Storage is deleted in storage node.
+
+**Troubleshooting**
+
+- If volume status remains in deleting or becomes error_deleting the request failed. Ensure you meet the preconditions then investigate the storage back end.
+
+- The volume managed by OpenStack Block Storage is not deleted from the storage system.
+
+**Usage:** `osc block-storage volume delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volumes/{id} API
 
 
 

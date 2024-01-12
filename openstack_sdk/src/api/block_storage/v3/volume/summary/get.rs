@@ -1,31 +1,25 @@
-//! Return data about the given volume.
+//! Return summary of volumes.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
-use std::borrow::Cow;
-
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request<'a> {
-    /// id parameter for /v3/volumes/{id} API
-    #[builder(default, setter(into))]
-    id: Cow<'a, str>,
-
+pub struct Request {
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl<'a> Request<'a> {
+impl Request {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder<'a> {
+    pub fn builder() -> RequestBuilder {
         RequestBuilder::default()
     }
 }
 
-impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the Volume.
+impl RequestBuilder {
+    /// Add a single header to the Summary.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -49,13 +43,13 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v3/volumes/{id}", id = self.id.as_ref(),).into()
+        "v3/volumes/summary".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -67,7 +61,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("volume".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -97,10 +91,7 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
-            "volume"
-        );
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
@@ -108,14 +99,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/v3/volumes/{id}", id = "id",));
+                .path(format!("/v3/volumes/summary",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder().build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -125,16 +116,15 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!("/v3/volumes/{id}", id = "id",))
+                .path(format!("/v3/volumes/summary",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
-            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

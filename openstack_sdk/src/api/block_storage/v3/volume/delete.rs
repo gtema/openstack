@@ -1,4 +1,4 @@
-//! Return data about the given volume.
+//! Delete a volume.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -51,7 +51,7 @@ where {
 
 impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
-        http::Method::GET
+        http::Method::DELETE
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
@@ -67,7 +67,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("volume".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -97,22 +97,19 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
-            "volume"
-        );
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
+            when.method(httpmock::Method::DELETE)
                 .path(format!("/v3/volumes/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder().id("id").build().unwrap();
@@ -124,13 +121,13 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
+            when.method(httpmock::Method::DELETE)
                 .path(format!("/v3/volumes/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()

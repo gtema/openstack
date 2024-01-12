@@ -1,69 +1,51 @@
-//! Update Volume Details
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
+use serde::Serialize;
 
+use serde::Deserialize;
+use std::borrow::Cow;
 use std::collections::BTreeMap;
 
-/// Query for volume.put operation.
-#[derive(Debug, Builder, Clone)]
+#[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Volume<'a> {
-    /// The UUID of the project in a multi-tenancy cloud.
-    #[builder(default, setter(into))]
-    project_id: Cow<'a, str>,
+pub struct Request<'a> {
+    #[builder(private, setter(name = "_meta"))]
+    meta: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
-    /// Volume ID
+    /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+    #[builder(default, setter(into))]
+    volume_id: Cow<'a, str>,
+
+    /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
-
-    /// The volume description.
-    #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
-
-    /// The volume name.
-    #[builder(default, setter(into))]
-    display_name: Option<Cow<'a, str>>,
-
-    /// A metadata object. Contains one or more metadata key and value pairs
-    /// that are associated with the volume.
-    #[builder(default, private, setter(name = "_metadata"))]
-    metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
-
-    /// The volume name.
-    #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-
-impl<'a> Volume<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> VolumeBuilder<'a> {
-        VolumeBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> VolumeBuilder<'a> {
-    /// A metadata object. Contains one or more metadata key and value pairs
-    /// that are associated with the volume.
-    pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
+impl<'a> RequestBuilder<'a> {
+    pub fn meta<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
         V: Into<Cow<'a, str>>,
     {
-        self.metadata
-            .get_or_insert(None)
+        self.meta
             .get_or_insert_with(BTreeMap::new)
             .extend(iter.map(|(k, v)| (k.into(), v.into())));
         self
     }
 
-    /// Add a single header to the Volume.
+    /// Add a single header to the Metadata.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -87,15 +69,15 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Volume<'a> {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::PUT
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "{project_id}/volumes/{id}",
-            project_id = self.project_id.as_ref(),
+            "v3/volumes/{volume_id}/metadata/{id}",
+            volume_id = self.volume_id.as_ref(),
             id = self.id.as_ref(),
         )
         .into()
@@ -108,11 +90,9 @@ impl<'a> RestEndpoint for Volume<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push_opt("description", self.description.as_ref());
-        params.push_opt("display_name", self.display_name.as_ref());
-        params.push_opt("metadata", self.metadata.as_ref());
-        params.push_opt("name", self.name.as_ref());
-        params.into_body_with_root_key("volume")
+        params.push("meta", serde_json::to_value(&self.meta)?);
+
+        params.into_body()
     }
 
     fn service_type(&self) -> ServiceType {
@@ -120,7 +100,7 @@ impl<'a> RestEndpoint for Volume<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("volume".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -137,22 +117,29 @@ mod tests {
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use serde::Deserialize;
+    use serde::Serialize;
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Volume::builder().build().unwrap().service_type(),
+            Request::builder()
+                .meta(BTreeMap::<String, String>::new().into_iter())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::BlockStorage
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Volume::builder().build().unwrap().response_key().unwrap(),
-            "volume"
-        );
+        assert!(Request::builder()
+            .meta(BTreeMap::<String, String>::new().into_iter())
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[test]
@@ -160,19 +147,20 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
-                "/{project_id}/volumes/{id}",
-                project_id = "project_id",
+                "/v3/volumes/{volume_id}/metadata/{id}",
+                volume_id = "volume_id",
                 id = "id",
             ));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Volume::builder()
-            .project_id("project_id")
+        let endpoint = Request::builder()
+            .volume_id("volume_id")
             .id("id")
+            .meta(BTreeMap::<String, String>::new().into_iter())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -185,20 +173,21 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
                 .path(format!(
-                    "/{project_id}/volumes/{id}",
-                    project_id = "project_id",
+                    "/v3/volumes/{volume_id}/metadata/{id}",
+                    volume_id = "volume_id",
                     id = "id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Volume::builder()
-            .project_id("project_id")
+        let endpoint = Request::builder()
+            .volume_id("volume_id")
             .id("id")
+            .meta(BTreeMap::<String, String>::new().into_iter())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
@@ -212,28 +201,5 @@ mod tests {
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
-    }
-
-    #[test]
-    fn endpoint_body() {
-        let endpoint = Volume::builder()
-            .description("description")
-            .display_name("display_name")
-            .name("name")
-            .build()
-            .unwrap();
-
-        let (mime, body) = endpoint.body().unwrap().unwrap();
-        assert_eq!(
-            std::str::from_utf8(&body).unwrap(),
-            json!({
-              "volume": {
-                 "description": "description",
-                 "display_name": "display_name",
-                 "name": "name",
-             }
-            })
-            .to_string()
-        );
     }
 }

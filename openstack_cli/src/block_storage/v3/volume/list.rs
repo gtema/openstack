@@ -1,9 +1,9 @@
-//! Lists all Block Storage volumes, with details, that the project can access,
-//! since v3.31 if non-admin users specify invalid filters in the url, API will
-//! return bad request.
+//! Returns a detailed list of volumes.
 use async_trait::async_trait;
+use bytes::Bytes;
 use clap::Args;
 use http::Response;
+use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -14,209 +14,386 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, Command};
+use std::fmt;
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_json;
-use crate::common::HashMapStringString;
-use crate::common::VecValue;
-use openstack_sdk::api::block_storage::v3::volumes::detail::get;
+use openstack_sdk::api::block_storage::v3::volume::find;
+use openstack_sdk::api::block_storage::v3::volume::list_detailed;
+use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RestClient;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
+use std::collections::BTreeMap;
+use std::collections::HashMap;
 
-/// Lists all Block Storage volumes, with details, that the project can access,
-/// since v3.31 if non-admin users specify invalid filters in the url, API will
-/// return bad request.
+/// Command arguments
 #[derive(Args, Clone, Debug)]
 pub struct VolumesArgs {
-    /// The UUID of the project in a multi-tenancy cloud.
-    #[arg(long)]
-    project_id: Option<String>,
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
 
-    /// all_projects filter parameter
-    #[arg(long, action=clap::ArgAction::Set)]
-    all_projects: Option<bool>,
-
-    /// Name filter
-    #[arg(long)]
-    name: Option<String>,
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
 
     /// Total limit of entities count to return. Use this when there are too many entries.
     #[arg(long, default_value_t = 10000)]
     max_items: usize,
 }
 
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {
+    /// Shows details for all project. Admin only.
+    #[arg(long)]
+    all_tenans: Option<bool>,
+
+    /// Comma-separated list of sort keys and optional sort directions in the
+    /// form of < key > [: < direction > ]. A valid direction is asc
+    /// (ascending) or desc (descending).
+    #[arg(long)]
+    sort: Option<String>,
+
+    /// Sorts by an attribute. A valid value is name, status, container_format,
+    /// disk_format, size, id, created_at, or updated_at. Default is
+    /// created_at. The API uses the natural sorting direction of the sort_key
+    /// attribute value. Deprecated in favour of the combined sort parameter.
+    #[arg(long)]
+    sort_key: Option<String>,
+
+    /// Sorts by one or more sets of attribute and sort direction combinations.
+    /// If you omit the sort direction in a set, default is desc. Deprecated in
+    /// favour of the combined sort parameter.
+    #[arg(long)]
+    sort_dir: Option<String>,
+
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    #[arg(long)]
+    limit: Option<i32>,
+
+    /// Used in conjunction with limit to return a slice of items. offset is
+    /// where to start in the list.
+    #[arg(long)]
+    offset: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    #[arg(long)]
+    marker: Option<String>,
+
+    /// Whether to show count in API response or not, default is False.
+    #[arg(long)]
+    with_count: Option<bool>,
+
+    /// Filters reuslts by a time that resources are created at with time
+    /// comparison operators: gt/gte/eq/neq/lt/lte.
+    #[arg(long)]
+    created_at: Option<String>,
+
+    /// Filters reuslts by a time that resources are updated at with time
+    /// comaprison operators: gt/gte/eq/neq/lt/lte.
+    #[arg(long)]
+    updated_at: Option<String>,
+
+    /// Filters results by consumes_quota field. Resources that don’t use
+    /// quotas are usually temporary internal resources created to perform an
+    /// operation. Default is to not filter by it. Filtering by this option may
+    /// not be always possible in a cloud, see List Resource Filters to
+    /// determine whether this filter is available in your cloud.
+    #[arg(long)]
+    consumes_quota: Option<bool>,
+}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {}
+
+/// Volumes list command
 pub struct VolumesCmd {
     pub args: VolumesArgs,
 }
-
-/// Volumes
+/// Volumes response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Volumes {
+pub struct ResponseData {
+    /// The volume name.
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The volume description.
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// The associated volume type name for the volume.
+    #[serde()]
+    #[structable(optional, wide)]
+    volume_type: Option<String>,
+
+    /// A metadata object. Contains one or more metadata key and value pairs
+    /// that are associated with the resource.
+    #[serde()]
+    #[structable(optional, wide)]
+    metadata: Option<HashMapStringString>,
+
+    /// To create a volume from an existing snapshot, specify the UUID of the
+    /// volume snapshot. The volume is created in same availability zone and
+    /// with same size as the snapshot.
+    #[serde()]
+    #[structable(optional, wide)]
+    snapshot_id: Option<String>,
+
+    /// The UUID of the source volume. The API creates a new volume with the
+    /// same size as the source volume unless a larger size is requested.
+    #[serde()]
+    #[structable(optional, wide)]
+    source_volid: Option<String>,
+
+    /// The UUID of the consistency group.
+    #[serde()]
+    #[structable(optional, wide)]
+    consistencygroup_id: Option<String>,
+
+    /// The size of the volume, in gibibytes (GiB).
+    #[serde()]
+    #[structable(optional, wide)]
+    size: Option<i64>,
+
+    /// The name of the availability zone.
+    #[serde()]
+    #[structable(optional, wide)]
+    availability_zone: Option<String>,
+
+    /// If true, this volume can attach to more than one instance.
+    #[serde()]
+    #[structable(optional, wide)]
+    multiattach: Option<bool>,
+
+    /// The volume migration status. Admin only.
+    #[serde()]
+    #[structable(optional, wide)]
+    migration_status: Option<String>,
+
     /// Instance attachment information. If this volume is attached to a server
     /// instance, the attachments list includes the UUID of the attached
     /// server, an attachment UUID, the name of the attached host, if any, the
     /// volume UUID, the device, and the device UUID. Otherwise, this list is
     /// empty.
+    #[serde()]
     #[structable(optional, wide)]
-    attachments: Option<VecValue>,
+    attachments: Option<VecResponseAttachments>,
 
-    /// The name of the availability zone.
+    /// Links to the resources in question. See [API Guide / Links and
+    /// References](https://docs.openstack.org/api-
+    /// guide/compute/links_and_references.html) for more info.
+    #[serde()]
     #[structable(optional, wide)]
-    availabilitiy_zone: Option<String>,
-
-    /// Current back-end of the volume. Host format is host@backend#pool.
-    #[serde(rename = "os-vol-host-attr:host")]
-    #[structable(optional, wide)]
-    host: Option<String>,
+    links: Option<Value>,
 
     /// If true, this volume is encrypted.
-    #[serde(rename = "encrypted")]
+    #[serde()]
     #[structable(optional, wide)]
-    is_encrypted: Option<bool>,
+    encrypted: Option<bool>,
 
-    /// The UUID of the encryption key. Only included for encrypted volumes.
-    /// New in version 3.64
-    #[structable(optional, wide)]
-    encryption_key_id: Option<String>,
+    /// The date and time when the resource was created.
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
 
     /// The date and time when the resource was updated.
-    /// The date and time stamp format is ISO 8601.
+    #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// The volume replication status.
+    #[serde()]
     #[structable(optional, wide)]
     replication_status: Option<String>,
 
-    /// To create a volume from an existing snapshot, specify the UUID of the
-    /// volume snapshot. The volume is created in same availability zone and
-    /// with same size as the snapshot.
-    #[structable(optional, wide)]
-    snapshot_id: Option<String>,
-
     /// The UUID of the volume.
+    #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The size of the volume, in gibibytes (GiB).
-    #[structable(optional, wide)]
-    size: Option<u64>,
-
     /// The UUID of the user.
+    #[serde()]
     #[structable(optional, wide)]
     user_id: Option<String>,
 
-    /// The status of this volume migration (None means that a migration is not
-    /// currently in progress).
-    #[serde(rename = "os-vol-mig-status-attr:migstat")]
-    #[structable(optional, wide)]
-    migration_status: Option<String>,
-
-    /// A metadata object. Contains one or more metadata key and value pairs
-    /// that are associated with the volume.
-    #[structable(optional, wide)]
-    metadata: Option<HashMapStringString>,
-
-    /// The volume description.
-    #[structable(optional, wide)]
-    status: Option<String>,
-
-    /// List of image metadata entries. Only included for volumes that were
-    /// created from an image, or from a snapshot of a volume originally
-    /// created from an image.
-    #[structable(optional, wide)]
-    volume_image_metadata: Option<Value>,
-
-    /// The volume description.
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// If true, this volume can attach to more than one instance.
-    #[serde(rename = "multiattach")]
-    #[structable(optional, wide)]
-    is_multiattach: Option<bool>,
-
-    /// The UUID of the source volume. The API creates a new volume with the
-    /// same size as the source volume unless a larger size is requested.
-    #[structable(optional, wide)]
-    source_volid: Option<String>,
-
-    /// The UUID of the consistency group.
-    #[structable(optional, wide)]
-    consistencygroup_id: Option<String>,
-
-    /// The volume ID that this volume name on the back- end is based on.
-    #[serde(rename = "os-vol-mig-status-attr:name_id")]
-    #[structable(optional, wide)]
-    migration_id: Option<String>,
-
-    /// The volume name.
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Enables or disables the bootable attribute. You can boot an instance
-    /// from a bootable volume.
-    #[structable(optional, wide)]
-    bootable: Option<String>,
-
-    /// The date and time when the resource was created.
-    /// The date and time stamp format is ISO 8601.
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The associated volume type name for the volume.
-    #[structable(optional, wide)]
-    volume_type: Option<String>,
-
     /// The associated volume type ID for the volume.
-    /// New in version 3.63
+    #[serde()]
     #[structable(optional, wide)]
     volume_type_id: Option<String>,
 
     /// The ID of the group.
-    /// New in version 3.13
+    #[serde()]
     #[structable(optional, wide)]
     group_id: Option<String>,
-
-    /// The volume links.
-    #[structable(optional, wide)]
-    volumes_links: Option<VecValue>,
 
     /// The provider ID for the volume. The value is either a string set by the
     /// driver or null if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
-    /// New in version 3.21
+    #[serde()]
     #[structable(optional, wide)]
     provider_id: Option<String>,
 
     /// A unique identifier that’s used to indicate what node the volume-
     /// service for a particular volume is being serviced by.
-    /// New in version 3.48
+    #[serde()]
     #[structable(optional, wide)]
     service_uuid: Option<String>,
 
-    /// An indicator whether the back-end hosting the volume utilizes
-    /// shared_targets or not. Default=true.
-    /// New in version 3.48
-    /// Available until version 3.68
+    /// An indicator whether the host connecting the volume should lock for the
+    /// whole attach/detach process or not. true means only is iSCSI initiator
+    /// running on host doesn’t support manual scans, false means never use
+    /// locks, and null means to always use locks. Look at os-brick’s
+    /// guard_connection context manager. Default=True.
+    #[serde()]
     #[structable(optional, wide)]
     shared_targets: Option<bool>,
 
     /// The cluster name of volume backend.
-    /// New in version 3.61
+    #[serde()]
     #[structable(optional, wide)]
     cluster_name: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
-    /// New in version 3.65
+    #[serde()]
     #[structable(optional, wide)]
     consumes_quota: Option<bool>,
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct HashMapStringString(HashMap<String, String>);
+impl fmt::Display for HashMapStringString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{{{}}}",
+            self.0
+                .iter()
+                .map(|v| format!("{}={}", v.0, v.1))
+                .collect::<Vec<String>>()
+                .join("\n")
+        )
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseAttachments {
+    server_id: Option<String>,
+    attachment_id: Option<String>,
+    attached_at: Option<String>,
+    host_name: Option<String>,
+    volume_id: Option<String>,
+    device: Option<String>,
+    id: Option<String>,
+}
+
+impl fmt::Display for ResponseAttachments {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "server_id={}",
+                self.server_id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "attachment_id={}",
+                self.attachment_id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "attached_at={}",
+                self.attached_at
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "host_name={}",
+                self.host_name
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "volume_id={}",
+                self.volume_id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "device={}",
+                self.device
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseAttachments(Vec<ResponseAttachments>);
+impl fmt::Display for VecResponseAttachments {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        )
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseLinks {
+    href: Option<String>,
+    rel: Option<String>,
+}
+
+impl fmt::Display for ResponseLinks {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "href={}",
+                self.href
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "rel={}",
+                self.rel
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 
 #[async_trait]
@@ -226,41 +403,60 @@ impl Command for VolumesCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Volumes with {:?}", self.args);
+        info!("List Volumes with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = get::Volumes::builder();
+        info!("Parsed args: {:?}", self.args);
+
+        let mut ep_builder = list_detailed::Request::builder();
+
         // Set path parameters
-        if let Some(val) = &self.args.project_id {
-            ep_builder.project_id(val);
-        } else {
-            ep_builder.project_id(
-                client
-                    .get_current_project()
-                    .expect("Project ID must be known")
-                    .id,
-            );
-        }
         // Set query parameters
-        if let Some(val) = &self.args.all_projects {
-            ep_builder.all_projects(*val);
+        if let Some(val) = &self.args.query.all_tenans {
+            ep_builder.all_tenans(*val);
         }
-        if let Some(val) = &self.args.name {
-            ep_builder.name(val);
+        if let Some(val) = &self.args.query.sort {
+            ep_builder.sort(val);
+        }
+        if let Some(val) = &self.args.query.sort_key {
+            ep_builder.sort_key(val);
+        }
+        if let Some(val) = &self.args.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.args.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.args.query.offset {
+            ep_builder.offset(*val);
+        }
+        if let Some(val) = &self.args.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.args.query.with_count {
+            ep_builder.with_count(*val);
+        }
+        if let Some(val) = &self.args.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.args.query.updated_at {
+            ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.args.query.consumes_quota {
+            ep_builder.consumes_quota(*val);
         }
         // Set body parameters
+
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::BlockStorage)
-            .await?;
+
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.args.max_items))
             .query_async(client)
             .await?;
 
-        op.output_list::<Volumes>(data)?;
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

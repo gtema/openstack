@@ -1,7 +1,6 @@
 use derive_builder::Builder;
-use tracing::{debug, info, span, trace, Level};
-
-use itertools::Itertools;
+use serde::de::DeserializeOwned;
+use tracing::trace;
 
 use crate::api::common::CommaSeparatedList;
 use crate::api::find::Findable;
@@ -10,41 +9,54 @@ use crate::api::ParamValue;
 
 use crate::api::{ApiError, Client, Pageable, Query, RestClient};
 
-use crate::api::block_storage::v3::volume::get::Volume as Get;
-use crate::api::block_storage::v3::volumes::detail::get::Volumes as List;
+use crate::api::block_storage::v3::volume::{get as Get, list_detailed as List};
 
-/// Find for Volume by NameOrId.
+/// Find for volume by nameOrId.
 #[derive(Debug, Builder, Clone)]
 #[builder(setter(strip_option))]
-pub struct Volume<'a> {
+pub struct Request<'a> {
     #[builder(setter(into), default)]
     id: Cow<'a, str>,
-    #[builder(setter(into), default)]
-    project_id: Cow<'a, str>,
 }
 
-impl<'a> Volume<'a> {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> VolumeBuilder<'a> {
-        VolumeBuilder::default()
+    pub fn builder() -> RequestBuilder<'a> {
+        RequestBuilder::default()
     }
 }
 
-impl<'a> Findable for Volume<'a> {
-    type G = Get<'a>;
-    type L = List<'a>;
-    fn get_ep(&self) -> Get<'a> {
-        Get::builder()
-            .id(self.id.clone())
-            .project_id(self.project_id.clone())
-            .build()
-            .unwrap()
+impl<'a> Findable for Request<'a> {
+    type G = Get::Request<'a>;
+    type L = List::Request<'a>;
+    fn get_ep(&self) -> Get::Request<'a> {
+        Get::Request::builder().id(self.id.clone()).build().unwrap()
     }
-    fn list_ep(&self) -> List<'a> {
-        List::builder()
-            .project_id(self.project_id.clone())
-            .name(self.id.clone())
-            .build()
-            .unwrap()
+    fn list_ep(&self) -> List::Request<'a> {
+        List::Request::builder().build().unwrap()
+    }
+    /// Locate volume in a list
+    fn locate_resource_in_list<C: RestClient>(
+        &self,
+        data: Vec<serde_json::Value>,
+    ) -> Result<serde_json::Value, ApiError<C::Error>> {
+        // volume is not supporting name as query parameter to the list.
+        // Therefore it is necessary to go through complete list of results.
+        let mut maybe_result: Option<serde_json::Value> = None;
+        for item in data.iter() {
+            trace!("Validate item {:?} is what we search for", item);
+            if let Some(name_as_val) = item.get("name") {
+                if let Some(name) = name_as_val.as_str() {
+                    if name == self.id {
+                        if maybe_result.is_none() {
+                            maybe_result = Some(item.clone());
+                        } else {
+                            return Err(ApiError::IdNotUnique);
+                        }
+                    }
+                }
+            }
+        }
+        maybe_result.ok_or(ApiError::ResourceNotFound)
     }
 }

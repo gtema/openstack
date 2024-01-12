@@ -1,15 +1,34 @@
-//! Return data about the given volume.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
+use serde::Deserialize;
 use std::borrow::Cow;
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct OsMigrateVolume<'a> {
+    #[serde()]
+    #[builder(setter(into))]
+    host: Cow<'a, str>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    force_host_copy: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    lock_volume: Option<bool>,
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(setter(into))]
+    os_migrate_volume: OsMigrateVolume<'a>,
+
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
@@ -51,15 +70,26 @@ where {
 
 impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
-        http::Method::GET
+        http::Method::POST
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v3/volumes/{id}", id = self.id.as_ref(),).into()
+        format!("v3/volumes/{id}/action", id = self.id.as_ref(),).into()
     }
 
     fn parameters(&self) -> QueryParams {
         QueryParams::default()
+    }
+
+    fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let mut params = JsonBodyParams::default();
+
+        params.push(
+            "os-migrate_volume",
+            serde_json::to_value(&self.os_migrate_volume)?,
+        );
+
+        params.into_body()
     }
 
     fn service_type(&self) -> ServiceType {
@@ -67,7 +97,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("volume".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -90,32 +120,57 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .os_migrate_volume(
+                    OsMigrateVolumeBuilder::default()
+                        .host("foo")
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::BlockStorage
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
-            "volume"
-        );
+        assert!(Request::builder()
+            .os_migrate_volume(
+                OsMigrateVolumeBuilder::default()
+                    .host("foo")
+                    .build()
+                    .unwrap()
+            )
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v3/volumes/{id}", id = "id",));
+            when.method(httpmock::Method::POST)
+                .path(format!("/v3/volumes/{id}/action", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .os_migrate_volume(
+                OsMigrateVolumeBuilder::default()
+                    .host("foo")
+                    .build()
+                    .unwrap(),
+            )
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -124,17 +179,23 @@ mod tests {
     fn endpoint_headers() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path(format!("/v3/volumes/{id}", id = "id",))
+            when.method(httpmock::Method::POST)
+                .path(format!("/v3/volumes/{id}/action", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "volume": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
             .id("id")
+            .os_migrate_volume(
+                OsMigrateVolumeBuilder::default()
+                    .host("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
