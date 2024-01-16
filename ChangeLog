@@ -9,7 +9,7 @@ CHANGES
 * chore: update rust before building
 * feat: add microversion base keypair mgmt
 * chore: fix minor compilation warning
-* fix(sdk): ensure microversion header can be overriden
+* fix(sdk): ensure microversion header can be overridden
 * do version discovery centrally
 * chore: regenerate network az list
 * feat: add network extension[s] command

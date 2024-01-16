@@ -99,7 +99,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/volumes/summary".to_string());
+                .path(format!("/v3/volumes/summary",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -116,7 +116,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/volumes/summary".to_string())
+                .path(format!("/v3/volumes/summary",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

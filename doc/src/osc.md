@@ -458,7 +458,7 @@ List Volumes
   Possible values: `true`, `false`
 
 * `--created-at <CREATED_AT>` — Filters reuslts by a time that resources are created at with time comparison operators: gt/gte/eq/neq/lt/lte
-* `--updated-at <UPDATED_AT>` — Filters reuslts by a time that resources are updated at with time comaprison operators: gt/gte/eq/neq/lt/lte
+* `--updated-at <UPDATED_AT>` — Filters reuslts by a time that resources are updated at with time comparison operators: gt/gte/eq/neq/lt/lte
 * `--consumes-quota <CONSUMES_QUOTA>` — Filters results by consumes_quota field. Resources that don’t use quotas are usually temporary internal resources created to perform an operation. Default is to not filter by it. Filtering by this option may not be always possible in a cloud, see List Resource Filters to determine whether this filter is available in your cloud
 
   Possible values: `true`, `false`

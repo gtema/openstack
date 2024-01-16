@@ -1,4 +1,5 @@
-//! Paged endpoint iterator implements an interator interface to lazily fetch pages when required. This is similar to the python generator.
+//! Paged endpoint iterator implements an iterator interface to lazily fetch
+//! pages when required. This is similar to the python generator.
 //!
 use std::borrow::Cow;
 use std::sync::RwLock;

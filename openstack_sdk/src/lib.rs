@@ -3,7 +3,7 @@
 //! This SDK provides synchronous and asynchronous interfaces to
 //! communicate with OpenStack based clouds.
 //!
-//! The simplies example demonstrating how to list compute flavors:
+//! The simplest example demonstrating how to list compute flavors:
 //! ```rust
 //! use openstack_sdk::api::{paged, Pagination, QueryAsync};
 //! use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};

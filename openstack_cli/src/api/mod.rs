@@ -2,7 +2,7 @@
 //!
 //! This command enables direct REST API call with
 //! the authorization and version discovery
-//! handeled transparently. This may be used when
+//! handled transparently. This may be used when
 //! required operation is not implemented by the
 //! `osc` or some of the parameters require
 //! special handling.

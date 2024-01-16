@@ -98,7 +98,7 @@ pub struct QueryParameters {
     created_at: Option<String>,
 
     /// Filters reuslts by a time that resources are updated at with time
-    /// comaprison operators: gt/gte/eq/neq/lt/lte.
+    /// comparison operators: gt/gte/eq/neq/lt/lte.
     #[arg(long)]
     updated_at: Option<String>,
 

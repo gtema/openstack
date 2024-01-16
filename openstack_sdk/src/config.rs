@@ -240,7 +240,7 @@ impl ConfigFile {
 
     /// Get cloud connection configuration by name.
     ///
-    /// This method does not raise the expection when the cloud is
+    /// This method does not raise the exception when the cloud is
     /// not found.
     pub fn get_cloud_config(&self, cloud_name: String) -> Result<Option<CloudConfig>, ConfigError> {
         if let Some(clouds) = &self.clouds {

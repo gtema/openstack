@@ -62,7 +62,7 @@ pub struct Request<'a> {
     created_at: Option<Cow<'a, str>>,
 
     /// Filters reuslts by a time that resources are updated at with time
-    /// comaprison operators: gt/gte/eq/neq/lt/lte.
+    /// comparison operators: gt/gte/eq/neq/lt/lte.
     #[builder(default, setter(into))]
     updated_at: Option<Cow<'a, str>>,
 
@@ -182,7 +182,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/volumes".to_string());
+                .path(format!("/v3/volumes",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -199,7 +199,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/volumes".to_string())
+                .path(format!("/v3/volumes",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

@@ -18,7 +18,7 @@ impl Request {
 }
 
 impl RequestBuilder {
-    /// Add a single header to the Propertys.
+    /// Add a single header to the Properties.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -98,7 +98,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v2/schemas/metadefs/properties".to_string());
+                .path(format!("/v2/schemas/metadefs/properties",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -115,7 +115,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v2/schemas/metadefs/properties".to_string())
+                .path(format!("/v2/schemas/metadefs/properties",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

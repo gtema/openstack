@@ -136,7 +136,8 @@ impl TryFrom<&config::CloudConfig> for token_v3::Scope {
 ///
 #[derive(Clone)]
 pub enum Auth {
-    /// A session access token, obtained after sucessful authorization to OpenStack
+    /// A session access token, obtained after successful authorization to
+    /// OpenStack
     Token(String),
     /// Unauthenticated access
     None,

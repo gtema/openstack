@@ -29,7 +29,7 @@ pub trait RestClient {
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>>;
 
-    /// Get current token project infomation
+    /// Get current token project information
     fn get_current_project(&self) -> Option<Project>;
 
     /// Get service endpoint information

@@ -11,6 +11,8 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// One or more metadata key and value pairs that are
+    /// associated with the volume.
     #[builder(private, setter(name = "_metadata"))]
     metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
@@ -29,6 +31,8 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
+    /// One or more metadata key and value pairs that are
+    /// associated with the volume.
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

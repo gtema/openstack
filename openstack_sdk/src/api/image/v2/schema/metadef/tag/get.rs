@@ -98,7 +98,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v2/schemas/metadefs/tag".to_string());
+                .path(format!("/v2/schemas/metadefs/tag",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -115,7 +115,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v2/schemas/metadefs/tag".to_string())
+                .path(format!("/v2/schemas/metadefs/tag",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

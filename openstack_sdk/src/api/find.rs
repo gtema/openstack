@@ -27,7 +27,7 @@ pub trait Findable {
         // Nearly all resources support name as a query parameter to the
         // list. Therefore it is ok to just get there is a singe entry.
         // There are, however, exceptions like compute.flavor. In this case
-        // this method can be overriden to go through list of received
+        // this method can be overridden to go through list of received
         // elements and compare entries one by one.
         match data.len() {
             0 => Err(ApiError::ResourceNotFound),

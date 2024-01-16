@@ -15,13 +15,16 @@ use serde_json::Value;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
+/// A `volume` object.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Volume<'a> {
+    /// The volume name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     name: Option<Option<Cow<'a, str>>>,
 
+    /// The volume description.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     description: Option<Option<Cow<'a, str>>>,
@@ -34,34 +37,57 @@ pub struct Volume<'a> {
     #[builder(default, setter(into))]
     display_description: Option<Option<Cow<'a, str>>>,
 
+    /// The volume type (either name or ID). To create an environment with
+    /// multiple-storage back ends, you must specify a volume type. Block
+    /// Storage volume back ends are spawned as children to `cinder-
+    /// volume`, and they are keyed from a unique queue. They are named
+    /// `cinder- volume.HOST.BACKEND`. For example, `cinder-
+    /// volume.ubuntu.lvmdriver`. When a volume is created, the scheduler
+    /// chooses an appropriate back end to handle the request based on the
+    /// volume type. Default is `None`. For information about how to
+    /// use volume types to create multiple- storage back ends, see
+    /// [Configure multiple-storage back
+    /// ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-
+    /// multi-backend.html).
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     volume_type: Option<Option<Cow<'a, str>>>,
 
+    /// One or more metadata key and value pairs to be associated
+    /// with the new volume.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_metadata"))]
     metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
+    /// The UUID of the consistency group.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     snapshot_id: Option<Option<Cow<'a, str>>>,
 
+    /// The UUID of the consistency group.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     source_volid: Option<Option<Cow<'a, str>>>,
 
+    /// The UUID of the consistency group.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     consistencygroup_id: Option<Option<Cow<'a, str>>>,
 
+    /// The size of the volume, in gibibytes (GiB).
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     size: Option<Option<i32>>,
 
+    /// The name of the availability zone.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     availability_zone: Option<Option<Cow<'a, str>>>,
 
+    /// To enable this volume to attach to more than one
+    /// server, set this value to `true`. Default is `false`.
+    /// Note that support for multiattach volumes depends on the volume
+    /// type being used. See [valid boolean values](#valid-boolean-values)
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     multiattach: Option<Option<bool>>,
@@ -70,6 +96,8 @@ pub struct Volume<'a> {
     #[builder(default, setter(into))]
     image_id: Option<Option<Cow<'a, str>>>,
 
+    /// The UUID of the image from which you want to
+    /// create the volume. Required to create a bootable volume.
     #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     image_ref: Option<Option<Cow<'a, str>>>,
@@ -80,6 +108,8 @@ pub struct Volume<'a> {
 }
 
 impl<'a> VolumeBuilder<'a> {
+    /// One or more metadata key and value pairs to be associated
+    /// with the new volume.
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -97,9 +127,11 @@ impl<'a> VolumeBuilder<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// A `volume` object.
     #[builder(setter(into))]
     volume: Volume<'a>,
 
+    /// The dictionary of data to send to the scheduler.
     #[builder(default, private, setter(name = "_os_sch_hnt_scheduler_hints"))]
     os_sch_hnt_scheduler_hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
@@ -114,6 +146,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
+    /// The dictionary of data to send to the scheduler.
     pub fn os_sch_hnt_scheduler_hints<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -231,7 +264,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
-                .path("/v3/volumes".to_string());
+                .path(format!("/v3/volumes",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -251,7 +284,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
-                .path("/v3/volumes".to_string())
+                .path(format!("/v3/volumes",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

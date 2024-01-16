@@ -314,7 +314,7 @@ impl OpenStack {
             let rsp = self.client.execute(request)?;
             let elapsed = SystemTime::now().duration_since(start);
             info!(
-                "Request completed whith status {} in {}ms",
+                "Request completed with status {} in {}ms",
                 rsp.status(),
                 elapsed.unwrap_or_default().as_millis()
             );
@@ -677,7 +677,7 @@ impl AsyncOpenStack {
         })
     }
 
-    /// Return catalog infrormation given in the token
+    /// Return catalog information given in the token
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {
         self.catalog.get_token_catalog()
     }
@@ -711,7 +711,7 @@ impl AsyncOpenStack {
         let rsp = self.client.execute(request).await?;
         let elapsed = SystemTime::now().duration_since(start);
         info!(
-            "Request completed whith status {} in {}ms",
+            "Request completed with status {} in {}ms",
             rsp.status(),
             elapsed.unwrap_or_default().as_millis()
         );
