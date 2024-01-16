@@ -48,6 +48,7 @@ mod catalog;
 mod common;
 mod compute;
 pub mod error;
+mod identity;
 mod image;
 mod network;
 mod object_store;
@@ -59,6 +60,7 @@ use crate::api::{ApiArgs, ApiCommand};
 use crate::block_storage::v3::{BlockStorageSrvArgs, BlockStorageSrvCommand};
 use crate::catalog::{CatalogArgs, CatalogCommand};
 use crate::compute::v2::{ComputeSrvArgs, ComputeSrvCommand};
+use crate::identity::v3::{IdentitySrvArgs, IdentitySrvCommand};
 use crate::image::v2::{ImageSrvArgs, ImageSrvCommand};
 use crate::network::v2::{NetworkSrvArgs, NetworkSrvCommand};
 use crate::object_store::v1::{ObjectStoreSrvArgs, ObjectStoreSrvCommand};
@@ -90,6 +92,8 @@ pub enum TopLevelCommands {
     BlockStorage(BlockStorageSrvArgs),
     /// Compute service (Nova) commands
     Compute(ComputeSrvArgs),
+    /// Identity (Keystone) commands
+    Identity(IdentitySrvArgs),
     /// Image (Glance) commands
     Image(ImageSrvArgs),
     /// Network (Neutron) commands
@@ -207,6 +211,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
                 .discover_service_endpoint(&ServiceType::Compute)
                 .await?;
             ComputeSrvCommand { args: args.clone() }.get_command(&mut session)
+        }
+        TopLevelCommands::Identity(args) => {
+            session
+                .discover_service_endpoint(&ServiceType::Identity)
+                .await?;
+            IdentitySrvCommand { args: args.clone() }.get_command(&mut session)
         }
         TopLevelCommands::Image(args) => {
             session

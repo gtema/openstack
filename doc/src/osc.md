@@ -40,6 +40,13 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair create21`↴](#osc-compute-keypair-create21)
 * [`osc compute keypair create20`↴](#osc-compute-keypair-create20)
 * [`osc compute keypair delete`↴](#osc-compute-keypair-delete)
+* [`osc identity`↴](#osc-identity)
+* [`osc identity project`↴](#osc-identity-project)
+* [`osc identity project create`↴](#osc-identity-project-create)
+* [`osc identity project delete`↴](#osc-identity-project-delete)
+* [`osc identity project list`↴](#osc-identity-project-list)
+* [`osc identity project set`↴](#osc-identity-project-set)
+* [`osc identity project show`↴](#osc-identity-project-show)
 * [`osc image`↴](#osc-image)
 * [`osc image image`↴](#osc-image-image)
 * [`osc image image list`↴](#osc-image-image-list)
@@ -129,6 +136,7 @@ OpenStack client rewritten in Rust
 
 * `block-storage` — Block Storage (Volume) service (Cinder) commands
 * `compute` — Compute service (Nova) commands
+* `identity` — Identity (Keystone) commands
 * `image` — Image (Glance) commands
 * `network` — Network (Neutron) commands
 * `object-store` — Object Store service (Swift) commands
@@ -903,6 +911,141 @@ Delete keypair
 ###### **Options:**
 
 * `--user-id <USER_ID>`
+
+
+
+## `osc identity`
+
+Identity (Keystone) commands
+
+**Usage:** `osc identity
+       identity <COMMAND>`
+
+###### **Subcommands:**
+
+* `project` — Project commands
+
+
+
+## `osc identity project`
+
+Project commands
+
+**Usage:** `osc identity project <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create project
+* `delete` — Delete project
+* `list` — List Projects
+* `set` — Update project details
+* `show` — Show project details
+
+
+
+## `osc identity project create`
+
+Create project
+
+**Usage:** `osc identity project create [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the project
+* `--domain-id <DOMAIN_ID>` — The ID of the domain for the project
+* `--enabled <ENABLED>` — If set to `true`, project is enabled. If set to `false`, project is disabled. The default is `true`
+
+  Possible values: `true`, `false`
+
+* `--is-domain <IS_DOMAIN>` — If set to `true`, project is enabled. If set to `false`, project is disabled. The default is `true`
+
+  Possible values: `true`, `false`
+
+* `--parent-id <PARENT_ID>` — The ID of the parent of the project
+* `--name <NAME>` — The name of the project, which must be unique within the owning domain. A project can have the same name as its domain
+* `--tags <TAGS>` — A list of simple strings assigned to a project. Tags can be used to classify projects into groups
+* `--immutable <IMMUTABLE>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity project delete`
+
+Delete project
+
+**Usage:** `osc identity project delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity project list`
+
+List Projects
+
+**Usage:** `osc identity project list [OPTIONS]`
+
+###### **Options:**
+
+* `--domain-id <DOMAIN_ID>` — Filters the response by a domain ID
+* `--enabled <ENABLED>` — If set to true, then only enabled projects will be returned. Any value other than 0 (including no value) will be interpreted as true
+
+  Possible values: `true`, `false`
+
+* `--is-domain <IS_DOMAIN>` — If this is specified as true, then only projects acting as a domain are included. Otherwise, only projects that are not acting as a domain are included
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — Filters the response by a project name
+* `--parent-id <PARENT_ID>` — Filters the response by a parent ID
+
+
+
+## `osc identity project set`
+
+Update project details
+
+**Usage:** `osc identity project set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the project
+* `--domain-id <DOMAIN_ID>` — The ID of the new domain for the project. The ability to change the domain of a project is now deprecated, and will be removed in subequent release. It is already disabled by default in most Identity service implementations
+* `--enabled <ENABLED>` — If set to `true`, project is enabled. If set to `false`, project is disabled
+
+  Possible values: `true`, `false`
+
+* `--is-domain <IS_DOMAIN>` — If set to `true`, project is enabled. If set to `false`, project is disabled
+
+  Possible values: `true`, `false`
+
+* `--parent-id <PARENT_ID>`
+* `--name <NAME>` — The name of the project, which must be unique within the owning domain. A project can have the same name as its domain
+* `--tags <TAGS>` — A list of simple strings assigned to a project. Tags can be used to classify projects into groups
+* `--immutable <IMMUTABLE>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity project show`
+
+Show project details
+
+**Usage:** `osc identity project show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
 
 
 
