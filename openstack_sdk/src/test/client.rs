@@ -353,7 +353,7 @@ impl RestClient for MockServerClient {
         service_type: &ServiceType,
     ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
         Ok(ServiceEndpoint {
-            url: Url::parse(&format!("{}", self.server.base_url()))?,
+            url: Url::parse(&self.server.base_url().to_string())?,
             discovered: true,
             versions: Vec::new(),
             current_version: None,
@@ -425,7 +425,7 @@ impl RestClient for MockAsyncServerClient {
         service_type: &ServiceType,
     ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
         Ok(ServiceEndpoint {
-            url: Url::parse(&format!("{}", self.server.base_url()))?,
+            url: Url::parse(&self.server.base_url().to_string())?,
             discovered: true,
             versions: Vec::new(),
             current_version: None,

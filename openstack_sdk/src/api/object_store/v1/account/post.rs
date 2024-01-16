@@ -112,7 +112,7 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::POST).path(format!("/",));
+            when.method(httpmock::Method::POST).path("/".to_string());
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -129,7 +129,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
-                .path(format!("/",))
+                .path("/".to_string())
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
