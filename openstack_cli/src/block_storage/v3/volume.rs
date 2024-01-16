@@ -14,6 +14,7 @@ mod create_347;
 mod create_353;
 mod delete;
 mod list;
+mod os_extend;
 mod set_30;
 mod set_353;
 mod show;
@@ -28,27 +29,6 @@ pub struct VolumeArgs {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum VolumeCommands {
-    /// Lists all Block Storage volumes, with details, that the project can
-    /// access, since v3.31 if non-admin users specify invalid filters in the
-    /// url, API will return bad request.
-    #[command(about = "List Volumes")]
-    List(list::VolumesArgs),
-    /// Updates a volume.
-    #[command(about = "Updates a volume (highest possible microversion).")]
-    Set(Set),
-    /// Updates a volume (microversion 3.53)
-    #[command(about = "Updates a volume (microversion = 3.53).")]
-    Set353(set_353::VolumeArgs),
-    /// Updates a volume (microversion 3.0).
-    #[command(about = "Updates a volume (microversion = 3.0).")]
-    Set30(set_30::VolumeArgs),
-    /// Shows details for a volume.
-    ///
-    /// **Preconditions**
-    ///
-    ///  - The volume must exist.
-    #[command(about = "Show single volume details")]
-    Show(show::VolumeArgs),
     /// Create volume (with highest possible microversion)
     ///
     /// To create a bootable volume, include the UUID of the image from which
@@ -133,6 +113,65 @@ pub enum VolumeCommands {
     ///  the storage system.
     #[command(about = "Delete volume")]
     Delete(delete::VolumeArgs),
+    /// Extends the size of a volume to a requested size, in gibibytes (GiB).
+    /// Specify the os-extend action in the request body.
+    ///
+    /// **Preconditions**
+    ///
+    ///  - Prior to microversion 3.42 the volume status must be available.
+    ///  Starting with microversion 3.42, attached volumes with status in-use
+    ///  may be able to be extended depending on policy and backend volume and
+    ///  compute driver constraints in the cloud. Note that reserved is not a
+    ///  valid state for extend.
+    ///
+    ///  - Sufficient amount of storage must exist to extend the volume.
+    ///
+    ///  - The user quota must have sufficient volume storage.
+    ///
+    /// **Postconditions**
+    ///
+    ///  - If the request is processed successfully, the volume status will
+    ///  change to extending while the volume size is being extended.
+    ///
+    ///  - Upon successful completion of the extend operation, the volume
+    ///  status will go back to its original value.
+    ///
+    ///  - Starting with microversion 3.42, when extending the size of an
+    ///  attached volume, the Block Storage service will notify the Compute
+    ///  service that an attached volume has been extended. The Compute service
+    ///  will asynchronously process the volume size change for the related
+    ///  server instance. This can be monitored using the GET
+    ///  /servers/{server_id}/os-instance-actions API in the Compute service.
+    ///
+    /// **Troubleshooting**
+    ///
+    ///  - An error_extending volume status indicates that the request failed.
+    ///  Ensure that you meet the preconditions and retry the request. If the
+    ///  request fails again, investigate the storage back end.
+    ///
+    #[command(about = "Extend volume")]
+    Extend(os_extend::VolumeArgs),
+    /// Lists all Block Storage volumes, with details, that the project can
+    /// access, since v3.31 if non-admin users specify invalid filters in the
+    /// url, API will return bad request.
+    #[command(about = "List Volumes")]
+    List(list::VolumesArgs),
+    /// Updates a volume.
+    #[command(about = "Updates a volume (highest possible microversion).")]
+    Set(Set),
+    /// Updates a volume (microversion 3.53)
+    #[command(about = "Updates a volume (microversion = 3.53).")]
+    Set353(set_353::VolumeArgs),
+    /// Updates a volume (microversion 3.0).
+    #[command(about = "Updates a volume (microversion = 3.0).")]
+    Set30(set_30::VolumeArgs),
+    /// Shows details for a volume.
+    ///
+    /// **Preconditions**
+    ///
+    ///  - The volume must exist.
+    #[command(about = "Show single volume details")]
+    Show(show::VolumeArgs),
 }
 
 #[derive(Default, Clone, Debug)]
@@ -255,6 +294,7 @@ impl ResourceCommands for VolumeCommand {
                 })
             }
             VolumeCommands::Delete(args) => Box::new(delete::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Extend(args) => Box::new(os_extend::VolumeCmd { args: args.clone() }),
             VolumeCommands::List(args) => Box::new(list::VolumesCmd { args: args.clone() }),
             VolumeCommands::Set30(args) => Box::new(set_30::VolumeCmd { args: args.clone() }),
             VolumeCommands::Set353(args) => Box::new(set_353::VolumeCmd { args: args.clone() }),

@@ -95,21 +95,22 @@ pub struct ResponseData {
     #[structable(optional, wide)]
     volume_type: Option<String>,
 
-    /// A metadata object. Contains one or more metadata key and value pairs
-    /// that are associated with the resource.
+    /// A `metadata` object. Contains one or more
+    /// metadata key and value pairs that are associated with the volume.
     #[serde()]
     #[structable(optional, wide)]
     metadata: Option<HashMapStringString>,
 
-    /// To create a volume from an existing snapshot, specify the UUID of the
-    /// volume snapshot. The volume is created in same availability zone and
-    /// with same size as the snapshot.
+    /// To create a volume from an existing snapshot,
+    /// specify the UUID of the volume snapshot. The volume is created in
+    /// same availability zone and with same size as the snapshot.
     #[serde()]
     #[structable(optional, wide)]
     snapshot_id: Option<String>,
 
     /// The UUID of the source volume. The API creates a new volume with the
-    /// same size as the source volume unless a larger size is requested.
+    /// same
+    /// size as the source volume unless a larger size is requested.
     #[serde()]
     #[structable(optional, wide)]
     source_volid: Option<String>,
@@ -129,28 +130,49 @@ pub struct ResponseData {
     #[structable(optional, wide)]
     availability_zone: Option<String>,
 
-    /// If true, this volume can attach to more than one instance.
+    /// If true, this volume can attach to more than one
+    /// instance.
     #[serde()]
     #[structable(optional, wide)]
     multiattach: Option<bool>,
+
+    /// The volume status.
+    #[serde()]
+    #[structable(optional, wide)]
+    status: Option<String>,
 
     /// The volume migration status. Admin only.
     #[serde()]
     #[structable(optional, wide)]
     migration_status: Option<String>,
 
-    /// Instance attachment information. If this volume is attached to a server
-    /// instance, the attachments list includes the UUID of the attached
-    /// server, an attachment UUID, the name of the attached host, if any, the
-    /// volume UUID, the device, and the device UUID. Otherwise, this list is
-    /// empty.
+    /// Instance attachment information. If this volume
+    /// is attached to a server instance, the attachments list includes
+    /// the UUID of the attached server, an attachment UUID, the name of
+    /// the attached host, if any, the volume UUID, the device, and the
+    /// device UUID. Otherwise, this list is empty. For example:
+    ///
+    ///
+    ///
+    /// ```text
+    /// [
+    ///   {
+    ///     'server\_id': '6c8cf6e0-4c8f-442f-9196-9679737feec6',
+    ///     'attachment\_id': '3dafcac4-1cb9-4b60-a227-d729baa10cf6',
+    ///     'attached\_at': '2019-09-30T19:30:34.000000',
+    ///     'host\_name': null,
+    ///     'volume\_id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53',
+    ///     'device': '/dev/vda',
+    ///     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
+    ///   }
+    /// ]
+    ///
+    /// ```
     #[serde()]
     #[structable(optional, wide)]
     attachments: Option<VecResponseAttachments>,
 
-    /// Links to the resources in question. See [API Guide / Links and
-    /// References](https://docs.openstack.org/api-
-    /// guide/compute/links_and_references.html) for more info.
+    /// The volume links.
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,
@@ -161,11 +183,51 @@ pub struct ResponseData {
     encrypted: Option<bool>,
 
     /// The date and time when the resource was created.
+    ///
+    ///
+    /// The date and time stamp format is [ISO
+    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    ///
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset
+    /// from UTC.
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// The date and time when the resource was updated.
+    ///
+    ///
+    /// The date and time stamp format is [ISO
+    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    ///
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset
+    /// from UTC. In the previous example, the offset value is `-05:00`.
+    ///
+    ///
+    /// If the `updated\_at` date and time stamp is not set, its value is
+    /// `null`.
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,

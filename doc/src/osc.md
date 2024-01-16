@@ -7,17 +7,18 @@ This document contains the help content for the `osc` command-line program.
 * [`osc`↴](#osc)
 * [`osc block-storage`↴](#osc-block-storage)
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
-* [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
-* [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
-* [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
-* [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
-* [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
 * [`osc block-storage volume create30`↴](#osc-block-storage-volume-create30)
 * [`osc block-storage volume create313`↴](#osc-block-storage-volume-create313)
 * [`osc block-storage volume create347`↴](#osc-block-storage-volume-create347)
 * [`osc block-storage volume create353`↴](#osc-block-storage-volume-create353)
 * [`osc block-storage volume delete`↴](#osc-block-storage-volume-delete)
+* [`osc block-storage volume extend`↴](#osc-block-storage-volume-extend)
+* [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
+* [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
+* [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
+* [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
+* [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc compute`↴](#osc-compute)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
@@ -177,17 +178,260 @@ Volume commands
 
 ###### **Subcommands:**
 
-* `list` — List Volumes
-* `set` — Updates a volume (highest possible microversion).
-* `set353` — Updates a volume (microversion = 3.53).
-* `set30` — Updates a volume (microversion = 3.0).
-* `show` — Show single volume details
 * `create` — Create new volume (with highest possible microversion)
 * `create30` — Create new volume (microversion = 3.0)
 * `create313` — Create new volume (microversion = 3.13)
 * `create347` — Create new volume (microversion = 3.47)
 * `create353` — Create new volume (microversion = 3.53)
 * `delete` — Delete volume
+* `extend` — Extend volume
+* `list` — List Volumes
+* `set` — Updates a volume (highest possible microversion).
+* `set353` — Updates a volume (microversion = 3.53).
+* `set30` — Updates a volume (microversion = 3.0).
+* `show` — Show single volume details
+
+
+
+## `osc block-storage volume create`
+
+Create volume (with highest possible microversion)
+
+To create a bootable volume, include the UUID of the image from which you want to create the volume in the imageRef attribute in the request body.
+
+Since the Train release, every volume must have a volume type. It is optional to specify a volume type as part of your Create a volume request. If you do not specify one, a default volume type will be supplied for you. This type may vary according to what project you are in and how the operator has configured the Block Storage service. Use the Show default volume type request to determine your effective default volume type.
+
+**Preconditions**
+
+- You must have enough volume storage quota remaining to create a volume of size requested.
+
+**Asynchronous Postconditions**
+
+- With correct permissions, you can see the volume status as available through API calls.
+
+- With correct access, you can see the created volume in the storage system that OpenStack Block Storage manages.
+
+**Troubleshooting**
+
+-  If volume status remains creating or shows another error status, the request failed. Ensure you meet the preconditions then investigate the storage back end.
+
+- Volume is not created in the storage system that OpenStack Block Storage manages.
+
+- The storage node needs enough free storage space to match the size of the volume creation request.
+
+**Usage:** `osc block-storage volume create [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>` — The volume name
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--group-id <GROUP_ID>`
+* `--backup-id <BACKUP_ID>` — The UUID of the backup
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create30`
+
+Create new volume (microversion = 3.0)
+
+**Usage:** `osc block-storage volume create30 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>` — The volume name
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create313`
+
+Create new volume (microversion = 3.13)
+
+**Usage:** `osc block-storage volume create313 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>` — The volume name
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--group-id <GROUP_ID>`
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create347`
+
+Create new volume (microversion = 3.47)
+
+**Usage:** `osc block-storage volume create347 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>` — The volume name
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--group-id <GROUP_ID>`
+* `--backup-id <BACKUP_ID>` — The UUID of the backup
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume create353`
+
+Create new volume (microversion = 3.53)
+
+**Usage:** `osc block-storage volume create353 [OPTIONS]`
+
+###### **Options:**
+
+* `--name <NAME>` — The volume name
+* `--description <DESCRIPTION>` — The volume description
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--group-id <GROUP_ID>`
+* `--backup-id <BACKUP_ID>` — The UUID of the backup
+* `--os-sch-hnt-scheduler-hints <key=value>`
+
+
+
+## `osc block-storage volume delete`
+
+Deletes a volume.
+
+**Preconditions**
+
+- Volume status must be available, in-use, error, error_restoring, error_extending, error_managing, and must not be migrating, attached, awaiting-transfer, belong to a group, have snapshots or be disassociated from snapshots after volume transfer.
+
+- The cascade option can be passed in the request if you want all snapshots of this volume to be deleted automatically, which should allow the volume deletion to succeed.
+
+- You cannot delete a volume that is in a migration.
+
+**Asynchronous Postconditions**
+
+- The volume is deleted in volume index.
+
+- The volume managed by OpenStack Block Storage is deleted in storage node.
+
+**Troubleshooting**
+
+- If volume status remains in deleting or becomes error_deleting the request failed. Ensure you meet the preconditions then investigate the storage back end.
+
+- The volume managed by OpenStack Block Storage is not deleted from the storage system.
+
+**Usage:** `osc block-storage volume delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volumes/{id} API
+
+
+
+## `osc block-storage volume extend`
+
+Extends the size of a volume to a requested size, in gibibytes (GiB). Specify the os-extend action in the request body.
+
+**Preconditions**
+
+- Prior to microversion 3.42 the volume status must be available. Starting with microversion 3.42, attached volumes with status in-use may be able to be extended depending on policy and backend volume and compute driver constraints in the cloud. Note that reserved is not a valid state for extend.
+
+- Sufficient amount of storage must exist to extend the volume.
+
+- The user quota must have sufficient volume storage.
+
+**Postconditions**
+
+- If the request is processed successfully, the volume status will change to extending while the volume size is being extended.
+
+- Upon successful completion of the extend operation, the volume status will go back to its original value.
+
+- Starting with microversion 3.42, when extending the size of an attached volume, the Block Storage service will notify the Compute service that an attached volume has been extended. The Compute service will asynchronously process the volume size change for the related server instance. This can be monitored using the GET /servers/{server_id}/os-instance-actions API in the Compute service.
+
+**Troubleshooting**
+
+- An error_extending volume status indicates that the request failed. Ensure that you meet the preconditions and retry the request. If the request fails again, investigate the storage back end.
+
+**Usage:** `osc block-storage volume extend --new-size <NEW_SIZE> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volumes/{id} API
+
+###### **Options:**
+
+* `--new-size <NEW_SIZE>`
 
 
 
@@ -294,212 +538,6 @@ Shows details for a volume.
 - The volume must exist.
 
 **Usage:** `osc block-storage volume show <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/volumes/{id} API
-
-
-
-## `osc block-storage volume create`
-
-Create volume (with highest possible microversion)
-
-To create a bootable volume, include the UUID of the image from which you want to create the volume in the imageRef attribute in the request body.
-
-Since the Train release, every volume must have a volume type. It is optional to specify a volume type as part of your Create a volume request. If you do not specify one, a default volume type will be supplied for you. This type may vary according to what project you are in and how the operator has configured the Block Storage service. Use the Show default volume type request to determine your effective default volume type.
-
-**Preconditions**
-
-- You must have enough volume storage quota remaining to create a volume of size requested.
-
-**Asynchronous Postconditions**
-
-- With correct permissions, you can see the volume status as available through API calls.
-
-- With correct access, you can see the created volume in the storage system that OpenStack Block Storage manages.
-
-**Troubleshooting**
-
--  If volume status remains creating or shows another error status, the request failed. Ensure you meet the preconditions then investigate the storage back end.
-
-- Volume is not created in the storage system that OpenStack Block Storage manages.
-
-- The storage node needs enough free storage space to match the size of the volume creation request.
-
-**Usage:** `osc block-storage volume create [OPTIONS]`
-
-###### **Options:**
-
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>`
-* `--metadata <key=value>`
-* `--snapshot-id <SNAPSHOT_ID>`
-* `--source-volid <SOURCE_VOLID>`
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
-* `--size <SIZE>`
-* `--availability-zone <AVAILABILITY_ZONE>`
-* `--multiattach <MULTIATTACH>`
-
-  Possible values: `true`, `false`
-
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>`
-* `--group-id <GROUP_ID>`
-* `--backup-id <BACKUP_ID>`
-* `--os-sch-hnt-scheduler-hints <key=value>`
-
-
-
-## `osc block-storage volume create30`
-
-Create new volume (microversion = 3.0)
-
-**Usage:** `osc block-storage volume create30 [OPTIONS]`
-
-###### **Options:**
-
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>`
-* `--metadata <key=value>`
-* `--snapshot-id <SNAPSHOT_ID>`
-* `--source-volid <SOURCE_VOLID>`
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
-* `--size <SIZE>`
-* `--availability-zone <AVAILABILITY_ZONE>`
-* `--multiattach <MULTIATTACH>`
-
-  Possible values: `true`, `false`
-
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>`
-* `--os-sch-hnt-scheduler-hints <key=value>`
-
-
-
-## `osc block-storage volume create313`
-
-Create new volume (microversion = 3.13)
-
-**Usage:** `osc block-storage volume create313 [OPTIONS]`
-
-###### **Options:**
-
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>`
-* `--metadata <key=value>`
-* `--snapshot-id <SNAPSHOT_ID>`
-* `--source-volid <SOURCE_VOLID>`
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
-* `--size <SIZE>`
-* `--availability-zone <AVAILABILITY_ZONE>`
-* `--multiattach <MULTIATTACH>`
-
-  Possible values: `true`, `false`
-
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>`
-* `--group-id <GROUP_ID>`
-* `--os-sch-hnt-scheduler-hints <key=value>`
-
-
-
-## `osc block-storage volume create347`
-
-Create new volume (microversion = 3.47)
-
-**Usage:** `osc block-storage volume create347 [OPTIONS]`
-
-###### **Options:**
-
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>`
-* `--metadata <key=value>`
-* `--snapshot-id <SNAPSHOT_ID>`
-* `--source-volid <SOURCE_VOLID>`
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
-* `--size <SIZE>`
-* `--availability-zone <AVAILABILITY_ZONE>`
-* `--multiattach <MULTIATTACH>`
-
-  Possible values: `true`, `false`
-
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>`
-* `--group-id <GROUP_ID>`
-* `--backup-id <BACKUP_ID>`
-* `--os-sch-hnt-scheduler-hints <key=value>`
-
-
-
-## `osc block-storage volume create353`
-
-Create new volume (microversion = 3.53)
-
-**Usage:** `osc block-storage volume create353 [OPTIONS]`
-
-###### **Options:**
-
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>`
-* `--metadata <key=value>`
-* `--snapshot-id <SNAPSHOT_ID>`
-* `--source-volid <SOURCE_VOLID>`
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>`
-* `--size <SIZE>`
-* `--availability-zone <AVAILABILITY_ZONE>`
-* `--multiattach <MULTIATTACH>`
-
-  Possible values: `true`, `false`
-
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>`
-* `--group-id <GROUP_ID>`
-* `--backup-id <BACKUP_ID>`
-* `--os-sch-hnt-scheduler-hints <key=value>`
-
-
-
-## `osc block-storage volume delete`
-
-Deletes a volume.
-
-**Preconditions**
-
-- Volume status must be available, in-use, error, error_restoring, error_extending, error_managing, and must not be migrating, attached, awaiting-transfer, belong to a group, have snapshots or be disassociated from snapshots after volume transfer.
-
-- The cascade option can be passed in the request if you want all snapshots of this volume to be deleted automatically, which should allow the volume deletion to succeed.
-
-- You cannot delete a volume that is in a migration.
-
-**Asynchronous Postconditions**
-
-- The volume is deleted in volume index.
-
-- The volume managed by OpenStack Block Storage is deleted in storage node.
-
-**Troubleshooting**
-
-- If volume status remains in deleting or becomes error_deleting the request failed. Ensure you meet the preconditions then investigate the storage back end.
-
-- The volume managed by OpenStack Block Storage is not deleted from the storage system.
-
-**Usage:** `osc block-storage volume delete <ID>`
 
 ###### **Arguments:**
 
