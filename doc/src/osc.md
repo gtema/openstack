@@ -8,6 +8,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage`↴](#osc-block-storage)
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
 * [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
+* [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
+* [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
+* [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
 * [`osc block-storage volume create30`↴](#osc-block-storage-volume-create30)
@@ -175,6 +178,9 @@ Volume commands
 ###### **Subcommands:**
 
 * `list` — List Volumes
+* `set` — Updates a volume (highest possible microversion).
+* `set353` — Updates a volume (microversion = 3.53).
+* `set30` — Updates a volume (microversion = 3.0).
 * `show` — Show single volume details
 * `create` — Create new volume (with highest possible microversion)
 * `create30` — Create new volume (microversion = 3.0)
@@ -216,6 +222,66 @@ List Volumes
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
+
+
+
+## `osc block-storage volume set`
+
+Updates a volume (highest possible microversion).
+
+**Usage:** `osc block-storage volume set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volumes/{id} API
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--metadata <key=value>`
+
+
+
+## `osc block-storage volume set353`
+
+Updates a volume (microversion = 3.53).
+
+**Usage:** `osc block-storage volume set353 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volumes/{id} API
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--metadata <key=value>`
+
+
+
+## `osc block-storage volume set30`
+
+Updates a volume (microversion = 3.0).
+
+**Usage:** `osc block-storage volume set30 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volumes/{id} API
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--metadata <key=value>`
 
 
 

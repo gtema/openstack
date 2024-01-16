@@ -448,7 +448,7 @@ impl Command for VolumeCmd {
         }
 
         if let Some(val) = &args.size {
-            volume_builder.size((*val).map(|v| v));
+            volume_builder.size(*val);
         }
 
         if let Some(val) = &args.availability_zone {

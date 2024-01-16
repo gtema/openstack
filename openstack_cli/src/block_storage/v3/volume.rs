@@ -14,7 +14,8 @@ mod create_347;
 mod create_353;
 mod delete;
 mod list;
-//mod set;
+mod set_30;
+mod set_353;
 mod show;
 
 /// Block Storage Volume commands
@@ -32,6 +33,15 @@ pub enum VolumeCommands {
     /// url, API will return bad request.
     #[command(about = "List Volumes")]
     List(list::VolumesArgs),
+    /// Updates a volume.
+    #[command(about = "Updates a volume (highest possible microversion).")]
+    Set(Set),
+    /// Updates a volume (microversion 3.53)
+    #[command(about = "Updates a volume (microversion = 3.53).")]
+    Set353(set_353::VolumeArgs),
+    /// Updates a volume (microversion 3.0).
+    #[command(about = "Updates a volume (microversion = 3.0).")]
+    Set30(set_30::VolumeArgs),
     /// Shows details for a volume.
     ///
     /// **Preconditions**
@@ -164,6 +174,39 @@ impl Args for Create {
     }
 }
 
+#[derive(Default, Clone, Debug)]
+/// Update Volume arguments structure
+pub struct Set {
+    set_30: Option<set_30::VolumeArgs>,
+    set_353: Option<set_353::VolumeArgs>,
+}
+
+impl FromArgMatches for Set {
+    fn from_arg_matches(matches: &ArgMatches) -> Result<Self, Error> {
+        Ok(Self {
+            set_353: set_353::VolumeArgs::from_arg_matches(matches).ok(),
+            set_30: set_30::VolumeArgs::from_arg_matches(matches).ok(),
+        })
+    }
+
+    fn update_from_arg_matches(&mut self, matches: &ArgMatches) -> Result<(), Error> {
+        *self = Self {
+            set_353: set_353::VolumeArgs::from_arg_matches(matches).ok(),
+            set_30: set_30::VolumeArgs::from_arg_matches(matches).ok(),
+        };
+        Ok(())
+    }
+}
+
+impl Args for Set {
+    fn augment_args(cmd: ClapCommand) -> ClapCommand {
+        set_353::VolumeArgs::augment_args(cmd)
+    }
+    fn augment_args_for_update(cmd: ClapCommand) -> ClapCommand {
+        set_353::VolumeArgs::augment_args(cmd)
+    }
+}
+
 pub struct VolumeCommand {
     pub args: VolumeArgs,
 }
@@ -171,8 +214,6 @@ pub struct VolumeCommand {
 impl ResourceCommands for VolumeCommand {
     fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            VolumeCommands::List(args) => Box::new(list::VolumesCmd { args: args.clone() }),
-            VolumeCommands::Show(args) => Box::new(show::VolumeCmd { args: args.clone() }),
             VolumeCommands::Create30(args) => Box::new(create_30::VolumeCmd { args: args.clone() }),
             VolumeCommands::Create313(args) => {
                 Box::new(create_313::VolumeCmd { args: args.clone() })
@@ -214,6 +255,32 @@ impl ResourceCommands for VolumeCommand {
                 })
             }
             VolumeCommands::Delete(args) => Box::new(delete::VolumeCmd { args: args.clone() }),
+            VolumeCommands::List(args) => Box::new(list::VolumesCmd { args: args.clone() }),
+            VolumeCommands::Set30(args) => Box::new(set_30::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Set353(args) => Box::new(set_353::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Set(args) => {
+                if let Some(ep_ver) =
+                    session.get_service_endpoint_version(&ServiceType::BlockStorage)
+                {
+                    if let Some(vers) = ep_ver.version {
+                        if let Ok(ver) = ServiceApiVersion::try_from(vers) {
+                            if ver >= ServiceApiVersion(3, 53) {
+                                return Box::new(set_353::VolumeCmd {
+                                    args: args.set_353.clone().expect("All arguments present"),
+                                });
+                            } else if ver >= ServiceApiVersion(3, 0) {
+                                return Box::new(set_30::VolumeCmd {
+                                    args: args.set_30.clone().expect("All arguments present"),
+                                });
+                            }
+                        }
+                    }
+                }
+                Box::new(set_353::VolumeCmd {
+                    args: args.set_353.clone().expect("All arguments present"),
+                })
+            }
+            VolumeCommands::Show(args) => Box::new(show::VolumeCmd { args: args.clone() }),
         }
     }
 }
