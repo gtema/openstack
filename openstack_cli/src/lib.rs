@@ -89,21 +89,21 @@ pub struct Cli {
 #[derive(Subcommand)]
 pub enum TopLevelCommands {
     /// Block Storage (Volume) service (Cinder) commands
-    BlockStorage(BlockStorageSrvArgs),
+    BlockStorage(Box<BlockStorageSrvArgs>),
     /// Compute service (Nova) commands
-    Compute(ComputeSrvArgs),
+    Compute(Box<ComputeSrvArgs>),
     /// Identity (Keystone) commands
-    Identity(IdentitySrvArgs),
+    Identity(Box<IdentitySrvArgs>),
     /// Image (Glance) commands
-    Image(ImageSrvArgs),
+    Image(Box<ImageSrvArgs>),
     /// Network (Neutron) commands
-    Network(NetworkSrvArgs),
+    Network(Box<NetworkSrvArgs>),
     /// Object Store service (Swift) commands
-    ObjectStore(ObjectStoreSrvArgs),
+    ObjectStore(Box<ObjectStoreSrvArgs>),
     /// Shows current catalog information
-    Catalog(CatalogArgs),
+    Catalog(Box<CatalogArgs>),
     /// Perform direct REST API requests with authorization
-    Api(ApiArgs),
+    Api(Box<ApiArgs>),
 }
 
 /// Global CLI options
@@ -204,39 +204,58 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
                 .discover_service_endpoint(&ServiceType::BlockStorage)
                 .await?;
 
-            BlockStorageSrvCommand { args: args.clone() }.get_command(&mut session)
+            BlockStorageSrvCommand {
+                args: *args.clone(),
+            }
+            .get_command(&mut session)
         }
         TopLevelCommands::Compute(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Compute)
                 .await?;
-            ComputeSrvCommand { args: args.clone() }.get_command(&mut session)
+            ComputeSrvCommand {
+                args: *args.clone(),
+            }
+            .get_command(&mut session)
         }
         TopLevelCommands::Identity(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Identity)
                 .await?;
-            IdentitySrvCommand { args: args.clone() }.get_command(&mut session)
+            IdentitySrvCommand {
+                args: *args.clone(),
+            }
+            .get_command(&mut session)
         }
         TopLevelCommands::Image(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Image)
                 .await?;
-            ImageSrvCommand { args: args.clone() }.get_command(&mut session)
+            ImageSrvCommand {
+                args: *args.clone(),
+            }
+            .get_command(&mut session)
         }
         TopLevelCommands::Network(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Network)
                 .await?;
-            NetworkSrvCommand { args: args.clone() }.get_command(&mut session)
+            NetworkSrvCommand {
+                args: *args.clone(),
+            }
+            .get_command(&mut session)
         }
-        TopLevelCommands::ObjectStore(args) => {
-            ObjectStoreSrvCommand { args: args.clone() }.get_command(&mut session)
+        TopLevelCommands::ObjectStore(args) => ObjectStoreSrvCommand {
+            args: *args.clone(),
         }
-        TopLevelCommands::Catalog(args) => {
-            catalog::CatalogCommand { args: args.clone() }.get_command(&mut session)
+        .get_command(&mut session),
+        TopLevelCommands::Catalog(args) => catalog::CatalogCommand {
+            args: *args.clone(),
         }
-        TopLevelCommands::Api(args) => Box::new(api::ApiCommand { args: args.clone() }),
+        .get_command(&mut session),
+        TopLevelCommands::Api(args) => Box::new(api::ApiCommand {
+            args: *args.clone(),
+        }),
     };
     cmd.take_action(&cli, &mut session).await?;
     Ok(())

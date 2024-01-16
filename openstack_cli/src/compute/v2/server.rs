@@ -18,9 +18,9 @@ pub struct ServerArgs {
 #[derive(Subcommand, Clone)]
 pub enum ServerCommands {
     /// List Servers
-    List(list::ServersArgs),
+    List(Box<list::ServersArgs>),
     /// Show single Server
-    Show(show::ServerArgs),
+    Show(Box<show::ServerArgs>),
     /// Pause Server
     Pause(pause::ServerArgs),
 }
@@ -32,8 +32,12 @@ pub struct ServerCommand {
 impl ResourceCommands for ServerCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            ServerCommands::List(args) => Box::new(list::ServersCmd { args: args.clone() }),
-            ServerCommands::Show(args) => Box::new(show::ServerCmd { args: args.clone() }),
+            ServerCommands::List(args) => Box::new(list::ServersCmd {
+                args: *args.clone(),
+            }),
+            ServerCommands::Show(args) => Box::new(show::ServerCmd {
+                args: *args.clone(),
+            }),
             ServerCommands::Pause(args) => Box::new(pause::ServerCmd { args: args.clone() }),
         }
     }

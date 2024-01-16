@@ -19,11 +19,11 @@ pub struct PortArgs {
 #[derive(Subcommand, Clone)]
 pub enum PortCommands {
     /// List Ports
-    List(list::PortsArgs),
+    List(Box<list::PortsArgs>),
     /// Show single Port
-    Show(show::PortArgs),
+    Show(Box<show::PortArgs>),
     /// Create single Port
-    Create(create::PortArgs),
+    Create(Box<create::PortArgs>),
     /// Delete single Port
     Delete(delete::PortArgs),
 }
@@ -35,9 +35,15 @@ pub struct PortCommand {
 impl ResourceCommands for PortCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            PortCommands::List(args) => Box::new(list::PortsCmd { args: args.clone() }),
-            PortCommands::Show(args) => Box::new(show::PortCmd { args: args.clone() }),
-            PortCommands::Create(args) => Box::new(create::PortCmd { args: args.clone() }),
+            PortCommands::List(args) => Box::new(list::PortsCmd {
+                args: *args.clone(),
+            }),
+            PortCommands::Show(args) => Box::new(show::PortCmd {
+                args: *args.clone(),
+            }),
+            PortCommands::Create(args) => Box::new(create::PortCmd {
+                args: *args.clone(),
+            }),
             PortCommands::Delete(args) => Box::new(delete::PortCmd { args: args.clone() }),
         }
     }

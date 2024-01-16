@@ -19,11 +19,11 @@ pub struct SubnetArgs {
 #[derive(Subcommand, Clone)]
 pub enum SubnetCommands {
     /// List Subnets
-    List(list::SubnetsArgs),
+    List(Box<list::SubnetsArgs>),
     /// Show single Subnet
-    Show(show::SubnetArgs),
+    Show(Box<show::SubnetArgs>),
     /// Create single Subnet
-    Create(create::SubnetArgs),
+    Create(Box<create::SubnetArgs>),
     /// Delete single Subnet
     Delete(delete::SubnetArgs),
 }
@@ -35,9 +35,15 @@ pub struct SubnetCommand {
 impl ResourceCommands for SubnetCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            SubnetCommands::List(args) => Box::new(list::SubnetsCmd { args: args.clone() }),
-            SubnetCommands::Show(args) => Box::new(show::SubnetCmd { args: args.clone() }),
-            SubnetCommands::Create(args) => Box::new(create::SubnetCmd { args: args.clone() }),
+            SubnetCommands::List(args) => Box::new(list::SubnetsCmd {
+                args: *args.clone(),
+            }),
+            SubnetCommands::Show(args) => Box::new(show::SubnetCmd {
+                args: *args.clone(),
+            }),
+            SubnetCommands::Create(args) => Box::new(create::SubnetCmd {
+                args: *args.clone(),
+            }),
             SubnetCommands::Delete(args) => Box::new(delete::SubnetCmd { args: args.clone() }),
         }
     }

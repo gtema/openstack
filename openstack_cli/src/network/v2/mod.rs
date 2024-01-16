@@ -30,19 +30,19 @@ pub struct NetworkSrvArgs {
 #[derive(Clone, Subcommand)]
 pub enum NetworkSrvCommands {
     /// Availability Zones commands
-    AvailabilityZone(AvailabilityZoneArgs),
+    AvailabilityZone(Box<AvailabilityZoneArgs>),
     /// Extensions commands
-    Extension(ExtensionArgs),
+    Extension(Box<ExtensionArgs>),
     /// Floating IP commands
-    FloatingIP(FloatingIPArgs),
+    FloatingIP(Box<FloatingIPArgs>),
     /// Network commands
-    Network(NetworkArgs),
+    Network(Box<NetworkArgs>),
     /// Port commands
-    Port(PortArgs),
+    Port(Box<PortArgs>),
     /// Router commands
-    Router(RouterArgs),
+    Router(Box<RouterArgs>),
     /// Subnet commands
-    Subnet(SubnetArgs),
+    Subnet(Box<SubnetArgs>),
 }
 
 pub struct NetworkSrvCommand {
@@ -52,27 +52,34 @@ pub struct NetworkSrvCommand {
 impl ServiceCommands for NetworkSrvCommand {
     fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            NetworkSrvCommands::AvailabilityZone(args) => {
-                AvailabilityZoneCommand { args: args.clone() }.get_command(session)
+            NetworkSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
+                args: *args.clone(),
             }
-            NetworkSrvCommands::Extension(args) => {
-                ExtensionCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            NetworkSrvCommands::Extension(args) => ExtensionCommand {
+                args: *args.clone(),
             }
-            NetworkSrvCommands::FloatingIP(args) => {
-                FloatingIPCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            NetworkSrvCommands::FloatingIP(args) => FloatingIPCommand {
+                args: *args.clone(),
             }
-            NetworkSrvCommands::Network(args) => {
-                NetworkCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            NetworkSrvCommands::Network(args) => NetworkCommand {
+                args: *args.clone(),
             }
-            NetworkSrvCommands::Port(args) => {
-                PortCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            NetworkSrvCommands::Port(args) => PortCommand {
+                args: *args.clone(),
             }
-            NetworkSrvCommands::Router(args) => {
-                RouterCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            NetworkSrvCommands::Router(args) => RouterCommand {
+                args: *args.clone(),
             }
-            NetworkSrvCommands::Subnet(args) => {
-                SubnetCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            NetworkSrvCommands::Subnet(args) => SubnetCommand {
+                args: *args.clone(),
             }
+            .get_command(session),
         }
     }
 }

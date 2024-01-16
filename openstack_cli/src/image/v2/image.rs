@@ -104,7 +104,7 @@ pub enum ImageCommands {
     /// colon (:) as a separator, and then the time in ISO 8601 Format.
     /// Available comparison operators are: [gt, gte, eq, neq, lt, lte]
     #[command(about = "List Images")]
-    List(list::ImagesArgs),
+    List(Box<list::ImagesArgs>),
     /// Shows details for an image.
     #[command(about = "Show single image")]
     Show(show::ImageArgs),
@@ -162,7 +162,7 @@ pub enum ImageCommands {
     ///  - For an unsatisfiable partial download request, the call returns the
     ///  HTTP 416 response code.
     #[command(about = "Download image data")]
-    Download(file::download::FileArgs),
+    Download(Box<file::download::FileArgs>),
     /// Uploads binary image data.
     ///
     /// These operation may be restricted to administrators. Consult your cloud
@@ -244,12 +244,14 @@ pub struct ImageCommand {
 impl ResourceCommands for ImageCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            ImageCommands::List(args) => Box::new(list::ImagesCmd { args: args.clone() }),
+            ImageCommands::List(args) => Box::new(list::ImagesCmd {
+                args: *args.clone(),
+            }),
             ImageCommands::Show(args) => Box::new(show::ImageCmd { args: args.clone() }),
             ImageCommands::Set(args) => Box::new(patch::ImageCmd { args: args.clone() }),
-            ImageCommands::Download(args) => {
-                Box::new(file::download::FileCmd { args: args.clone() })
-            }
+            ImageCommands::Download(args) => Box::new(file::download::FileCmd {
+                args: *args.clone(),
+            }),
             ImageCommands::Upload(args) => Box::new(file::upload::FileCmd { args: args.clone() }),
             ImageCommands::Create(args) => Box::new(create::ImageCmd { args: args.clone() }),
             ImageCommands::Delete(args) => Box::new(delete::ImageCmd { args: args.clone() }),

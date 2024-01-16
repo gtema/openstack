@@ -19,11 +19,11 @@ pub struct NetworkArgs {
 #[derive(Subcommand, Clone)]
 pub enum NetworkCommands {
     /// List Networks
-    List(list::NetworksArgs),
+    List(Box<list::NetworksArgs>),
     /// Show single Network
-    Show(show::NetworkArgs),
+    Show(Box<show::NetworkArgs>),
     /// Create single Network
-    Create(create::NetworkArgs),
+    Create(Box<create::NetworkArgs>),
     /// Delete single Network
     Delete(delete::NetworkArgs),
 }
@@ -35,9 +35,15 @@ pub struct NetworkCommand {
 impl ResourceCommands for NetworkCommand {
     fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            NetworkCommands::List(args) => Box::new(list::NetworksCmd { args: args.clone() }),
-            NetworkCommands::Show(args) => Box::new(show::NetworkCmd { args: args.clone() }),
-            NetworkCommands::Create(args) => Box::new(create::NetworkCmd { args: args.clone() }),
+            NetworkCommands::List(args) => Box::new(list::NetworksCmd {
+                args: *args.clone(),
+            }),
+            NetworkCommands::Show(args) => Box::new(show::NetworkCmd {
+                args: *args.clone(),
+            }),
+            NetworkCommands::Create(args) => Box::new(create::NetworkCmd {
+                args: *args.clone(),
+            }),
             NetworkCommands::Delete(args) => Box::new(delete::NetworkCmd { args: args.clone() }),
         }
     }

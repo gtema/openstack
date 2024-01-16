@@ -29,13 +29,13 @@ pub struct ComputeSrvArgs {
 #[derive(Clone, Subcommand)]
 pub enum ComputeSrvCommands {
     /// Extension commands
-    Extension(ExtensionArgs),
+    Extension(Box<ExtensionArgs>),
     /// Server (VM) commands
-    Server(ServerArgs),
+    Server(Box<ServerArgs>),
     /// Flavor commands
-    Flavor(FlavorArgs),
+    Flavor(Box<FlavorArgs>),
     /// Keypair commands
-    Keypair(KeypairArgs),
+    Keypair(Box<KeypairArgs>),
 }
 
 pub struct ComputeSrvCommand {
@@ -45,18 +45,22 @@ pub struct ComputeSrvCommand {
 impl ServiceCommands for ComputeSrvCommand {
     fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            ComputeSrvCommands::Extension(args) => {
-                ExtensionCommand { args: args.clone() }.get_command(session)
+            ComputeSrvCommands::Extension(args) => ExtensionCommand {
+                args: *args.clone(),
             }
-            ComputeSrvCommands::Server(args) => {
-                ServerCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            ComputeSrvCommands::Server(args) => ServerCommand {
+                args: *args.clone(),
             }
-            ComputeSrvCommands::Flavor(args) => {
-                FlavorCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            ComputeSrvCommands::Flavor(args) => FlavorCommand {
+                args: *args.clone(),
             }
-            ComputeSrvCommands::Keypair(args) => {
-                KeypairCommand { args: args.clone() }.get_command(session)
+            .get_command(session),
+            ComputeSrvCommands::Keypair(args) => KeypairCommand {
+                args: *args.clone(),
             }
+            .get_command(session),
         }
     }
 }

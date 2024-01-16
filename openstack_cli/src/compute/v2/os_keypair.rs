@@ -37,7 +37,7 @@ pub enum KeypairCommands {
     /// Shows details for a keypair that is associated with the account.
     Show(show::OsKeypairArgs),
     /// Imports (or generates) Keypair (with highest possible microversion)
-    Create(Create),
+    Create(Box<Create>),
     /// Import keypair (microversion >= 2.92)
     Create292(create_292::OsKeypairArgs),
     /// Import (or generate) keypair (2.10 <= microversion < 2.92)
