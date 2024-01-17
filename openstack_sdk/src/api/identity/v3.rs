@@ -1,2 +1,2 @@
-pub mod auth_tokens;
+pub mod auth;
 pub mod project;

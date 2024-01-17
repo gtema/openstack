@@ -9,7 +9,7 @@ use http::request::Builder as RequestBuilder;
 
 use crate::api::{self, Query};
 
-use crate::api::identity::v3::auth_tokens::create as token_v3;
+use crate::api::identity::v3::auth::token::create as token_v3_new;
 use crate::config;
 use crate::types::NameOrId;
 // TODO: complete adding error context through anyhow
@@ -33,7 +33,7 @@ pub enum AuthError {
     Config { msg: String },
 
     #[error("Unsupported auth_type: {}", auth_type)]
-    IdentityMethod { auth_type: &'static str },
+    IdentityMethod { auth_type: String },
 
     #[error("Cannot determine scope from config")]
     MissingScope,
@@ -47,6 +47,46 @@ pub enum AuthError {
     MissingUserId,
     #[error("Auth token is missing")]
     MissingToken,
+
+    #[error("Cannot construct password auth information from config: {}", source)]
+    AuthPasswordBuild {
+        #[from]
+        source: token_v3_new::PasswordBuilderError,
+    },
+    #[error("Cannot construct token auth information from config: {}", source)]
+    AuthTokenBuild {
+        #[from]
+        source: token_v3_new::TokenBuilderError,
+    },
+    #[error("Cannot construct identity auth information from config: {}", source)]
+    AuthIdentityBuild {
+        #[from]
+        source: token_v3_new::IdentityBuilderError,
+    },
+    #[error("Cannot construct user auth information from config: {}", source)]
+    AuthUserBuild {
+        #[from]
+        source: token_v3_new::UserBuilderError,
+    },
+    #[error(
+        "Cannot construct user/project domain information from config: {}",
+        source
+    )]
+    AuthDomainBuild {
+        #[from]
+        source: token_v3_new::DomainStructStructBuilderError,
+    },
+    #[error("Cannot construct project scope information from config: {}", source)]
+    AuthProjectScopeBuild {
+        #[from]
+        source: token_v3_new::ProjectBuilderError,
+    },
+    #[error("Cannot construct auth scope information from config: {}", source)]
+    AuthScopeBuild {
+        #[from]
+        source: token_v3_new::ScopeBuilderError,
+    },
+
     #[error(transparent)]
     Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
 }
@@ -56,84 +96,114 @@ impl AuthError {
         AuthError::Config { msg }
     }
 
-    pub fn auth_type(auth_type: &'static str) -> Self {
-        AuthError::IdentityMethod { auth_type }
+    pub fn auth_type(auth_type: &str) -> Self {
+        AuthError::IdentityMethod {
+            auth_type: auth_type.to_string(),
+        }
     }
 }
 
 pub(crate) type AuthResult<T> = Result<T, AuthError>;
 
 /// Extract AuthData from CloudConfig
-impl TryFrom<&config::CloudConfig> for token_v3::AuthData<'_> {
+impl TryFrom<&config::CloudConfig> for token_v3_new::Identity<'_> {
     type Error = AuthError;
 
     fn try_from(config: &config::CloudConfig) -> Result<Self, Self::Error> {
         let auth = config.auth.clone().ok_or(AuthError::MissingAuthData)?;
+        // Current OpenStackSDK defines auth_type as a
+        // single value string
         let auth_type = config.auth_type.clone().unwrap_or("password".to_string());
-        let auth_method = token_v3::IdentityMethod::try_from(auth_type)?;
-        let auth_data: token_v3::AuthData = match auth_method {
-            token_v3::IdentityMethod::Password => {
-                token_v3::AuthData::Password(token_v3::PasswordAuthData {
-                    user: token_v3::UserWithPassword {
-                        user: match (auth.username, auth.user_id) {
-                            (_, Some(id)) => NameOrId::Id(id),
-                            (Some(name), _) => NameOrId::Name(name),
-                            _ => return Err(AuthError::MissingUserId),
-                        },
-                        domain: match (auth.user_domain_name, auth.user_domain_id) {
-                            (_, Some(id)) => Some(NameOrId::Id(id)),
-                            (Some(name), _) => Some(NameOrId::Name(name)),
-                            _ => None,
-                        },
-                        password: auth.password.ok_or(AuthError::MissingPassword)?.into(),
-                    },
-                })
+        let mut identity = token_v3_new::IdentityBuilder::default();
+        identity.methods(Vec::from([auth_type.clone().into()]));
+        match auth_type.as_str() {
+            "password" => {
+                let mut password = token_v3_new::PasswordBuilder::default();
+                let mut user = token_v3_new::UserBuilder::default();
+                if let Some(val) = auth.user_id {
+                    user.id(val);
+                }
+                if let Some(val) = auth.username {
+                    user.name(val);
+                }
+                if let Some(val) = auth.password {
+                    user.password(val);
+                }
+                let mut user_domain = token_v3_new::DomainStructStructBuilder::default();
+                let mut user_domain_info_present: bool = false;
+                if let Some(val) = auth.user_domain_id {
+                    user_domain.id(val);
+                    user_domain_info_present = true;
+                }
+                if let Some(val) = auth.user_domain_name {
+                    user_domain.name(val);
+                    user_domain_info_present = true;
+                }
+                if user_domain_info_present {
+                    user.domain(user_domain.build()?);
+                }
+                password.user(user.build()?);
+                identity.password(password.build()?);
             }
-            token_v3::IdentityMethod::Token => token_v3::AuthData::Token(token_v3::TokenAuthData {
-                id: auth.token.ok_or(AuthError::MissingToken)?.into(),
-            }),
+            "token" => {
+                let token = token_v3_new::TokenBuilder::default()
+                    .id(auth.token.ok_or(AuthError::MissingToken)?)
+                    .build()?;
+                identity.token(token);
+            }
+            other => {
+                return Err(AuthError::auth_type(other));
+            }
         };
-        Ok(auth_data)
+        Ok(identity.build()?)
     }
 }
 
 /// Extract Scope from CloudConfig
-impl TryFrom<&config::CloudConfig> for token_v3::Scope {
+impl TryFrom<&config::CloudConfig> for token_v3_new::Scope<'_> {
     type Error = AuthError;
     fn try_from(config: &config::CloudConfig) -> Result<Self, Self::Error> {
         let auth = config.auth.clone().ok_or(AuthError::MissingAuthData)?;
+        let mut scope = token_v3_new::ScopeBuilder::default();
         if auth.project_id.is_some() || auth.project_name.is_some() {
             // Project scope
-            let domain = match (auth.project_domain_name, auth.project_domain_id) {
-                (_, Some(id)) => Some(NameOrId::Id(id)),
-                (Some(name), _) => Some(NameOrId::Name(name)),
-                _ => None,
+            let mut project_scope = token_v3_new::ProjectBuilder::default();
+            if auth.project_domain_name.is_some() || auth.project_domain_id.is_some() {
+                let mut project_domain = token_v3_new::DomainStructStructBuilder::default();
+                if let Some(val) = auth.project_domain_id {
+                    project_domain.id(val);
+                }
+                if let Some(val) = auth.project_domain_name {
+                    project_domain.name(val);
+                }
+                project_scope.domain(project_domain.build()?);
             };
-            let project = match (auth.project_name, auth.project_id) {
-                (_, Some(id)) => NameOrId::Id(id),
-                (Some(name), _) => NameOrId::Name(name),
-                _ => todo!(),
-            };
-            Ok(token_v3::Scope::Project(token_v3::Project {
-                project,
-                domain,
-            }))
+            if let Some(val) = auth.project_id {
+                project_scope.id(val);
+            }
+            if let Some(val) = auth.project_name {
+                project_scope.name(val);
+            }
+            scope.project(project_scope.build()?);
         } else if auth.domain_id.is_some() || auth.domain_name.is_some() {
             // Domain scope
-            let domain = match (auth.domain_name, auth.domain_id) {
-                (_, Some(id)) => NameOrId::Id(id),
-                (Some(name), _) => NameOrId::Name(name),
-                _ => todo!(),
-            };
-            Ok(token_v3::Scope::Domain(domain))
+            let mut domain_scope = token_v3_new::DomainStructStructBuilder::default();
+            if let Some(val) = auth.domain_id {
+                domain_scope.id(val);
+            }
+            if let Some(val) = auth.domain_name {
+                domain_scope.name(val);
+            }
+            scope.domain(domain_scope.build()?);
         } else {
             return Err(AuthError::MissingScope);
         }
+
+        Ok(scope.build()?)
     }
 }
 
 /// An OpenStack API token (X-Auth-Token)
-///
 #[derive(Clone)]
 pub enum Auth {
     /// A session access token, obtained after successful authorization to
@@ -166,9 +236,11 @@ impl Auth {
 
 #[cfg(test)]
 mod tests {
+    use serde::Serialize;
+    use serde_json::json;
     use std::collections::HashMap;
 
-    use crate::api::identity::v3::auth_tokens::create as token_v3;
+    use crate::api::identity::v3::auth::token::create as token_v3;
     use crate::config;
     use crate::types::NameOrId;
 
@@ -176,73 +248,61 @@ mod tests {
     fn test_config_into_auth_password() -> Result<(), &'static str> {
         let config = config::CloudConfig {
             auth: Some(config::Auth {
-                auth_url: None,
-                domain_id: None,
-                domain_name: None,
-                endpoint: None,
                 password: Some("pwd".into()),
-                project_id: None,
-                project_name: None,
-                project_domain_id: None,
-                project_domain_name: None,
-                token: None,
                 username: Some("un".into()),
                 user_id: Some("ui".into()),
                 user_domain_name: Some("udn".into()),
                 user_domain_id: Some("udi".into()),
+                ..Default::default()
             }),
             auth_type: Some("password".into()),
-            profile: None,
-            interface: None,
-            region_name: None,
-            options: HashMap::new(),
+            ..Default::default()
         };
 
-        let auth_data = token_v3::AuthData::try_from(&config).unwrap();
-        match auth_data {
-            token_v3::AuthData::Password(data) => {
-                assert_eq!("pwd", data.user.password);
-                assert_eq!(NameOrId::Id("ui".into()), data.user.user);
-                assert_eq!(Some(NameOrId::Id("udi".into())), data.user.domain);
-                Ok(())
-            }
-            _ => panic!("UserPassword expected"),
-        }
+        let auth_data = token_v3::Identity::try_from(&config).unwrap();
+        assert_eq!(
+            json!({
+              "methods": ["password"],
+              "password": {
+                "user": {
+                  "name": "un",
+                  "id": "ui",
+                  "password": "pwd",
+                  "domain": {
+                    "id": "udi",
+                    "name": "udn"
+                  }
+                }
+              }
+            }),
+            serde_json::to_value(auth_data).unwrap()
+        );
+        Ok(())
     }
 
     #[test]
     fn test_config_into_auth_token() -> Result<(), &'static str> {
         let config = config::CloudConfig {
             auth: Some(config::Auth {
-                auth_url: None,
-                domain_id: None,
-                domain_name: None,
-                endpoint: None,
-                password: None,
-                project_id: None,
-                project_name: None,
-                project_domain_id: None,
-                project_domain_name: None,
                 token: Some("token".into()),
-                username: None,
-                user_id: None,
                 user_domain_name: Some("udn".into()),
                 user_domain_id: Some("udi".into()),
+                ..Default::default()
             }),
             auth_type: Some("token".into()),
-            profile: None,
-            interface: None,
-            region_name: None,
-            options: HashMap::new(),
+            ..Default::default()
         };
 
-        let auth = token_v3::AuthData::try_from(&config).unwrap();
-        match auth {
-            token_v3::AuthData::Token(data) => {
-                assert_eq!("token", data.id);
-                Ok(())
-            }
-            _ => panic!("Token expected"),
-        }
+        let auth_data = token_v3::Identity::try_from(&config).unwrap();
+        assert_eq!(
+            json!({
+              "methods": ["token"],
+                "token": {
+                  "id": "token",
+              }
+            }),
+            serde_json::to_value(auth_data).unwrap()
+        );
+        Ok(())
     }
 }

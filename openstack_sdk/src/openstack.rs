@@ -35,7 +35,7 @@ use crate::config::ConfigError;
 use crate::types::identity::v3::{AuthResponse, AuthToken, Project, ServiceEndpoints};
 use crate::types::{BoxedAsyncRead, ServiceType, SupportedServiceTypes};
 
-use crate::api::identity::v3::auth_tokens::create as token_v3;
+use crate::api::identity::v3::auth::token::create as token_v3;
 
 use crate::catalog::{Catalog, CatalogError, EndpointVersion, EndpointVersions, ServiceEndpoint};
 
@@ -86,6 +86,17 @@ pub enum OpenStackError {
     AuthError {
         #[from]
         source: AuthError,
+    },
+
+    #[error("error preparing auth data: {}", source)]
+    AuthBuilderError {
+        #[from]
+        source: token_v3::AuthBuilderError,
+    },
+    #[error("error preparing auth request: {}", source)]
+    AuthTokenRequestBuilderError {
+        #[from]
+        source: token_v3::RequestBuilderError,
     },
 
     #[error("communication with cloud: {}", source)]
@@ -235,29 +246,20 @@ impl OpenStack {
             },
         );
 
-        let auth_data = token_v3::AuthData::try_from(config)?;
-        let scope = token_v3::Scope::try_from(config)?;
-        let auth: token_v3::Auth = match auth_data {
-            token_v3::AuthData::Password(d) => token_v3::Auth::builder()
-                .with_user(d.user)
-                .scope(scope)
-                .build()
-                .unwrap(),
-            token_v3::AuthData::Token(d) => token_v3::Auth::builder()
-                .with_token(d)
-                .scope(scope)
-                .build()
-                .unwrap(),
-            token_v3::AuthData::None => {
-                return Err(OpenStackError::Config {
-                    msg: "No auth possible".into(),
-                });
-            }
-        };
+        let identity_data = token_v3::Identity::try_from(config)?;
+        let mut auth_request_data = token_v3::AuthBuilder::default();
+        auth_request_data.identity(identity_data);
+        if let Ok(scope_data) = token_v3::Scope::try_from(config) {
+            auth_request_data.scope(token_v3::ScopeEnum::F1(scope_data));
+        }
+
+        let auth_ep = token_v3::RequestBuilder::default()
+            .auth(auth_request_data.build()?)
+            .build()?;
 
         debug!("Session: {:?}", session);
 
-        session.authorize(auth)?;
+        session.authorize(auth_ep)?;
 
         debug!("Config is {:?}", config);
 
@@ -269,15 +271,10 @@ impl OpenStack {
     }
 
     /// Authorize against the cloud using provided credentials and get the session token
-    pub fn authorize(
-        &mut self,
-        auth: crate::api::identity::Auth<'_>,
-    ) -> Result<(), OpenStackError> {
-        let auth_endpoint = crate::api::identity::CreateAuthToken::builder()
-            .auth(auth)
-            .build()
-            .unwrap();
-
+    pub fn authorize<E>(&mut self, auth_endpoint: E) -> Result<(), OpenStackError>
+    where
+        E: RestEndpoint,
+    {
         let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query(self).unwrap();
         let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
         self.auth = Auth::Token(
@@ -514,29 +511,20 @@ impl AsyncOpenStack {
             .catalog
             .add_service_endpoint("identity", identity_service_url)?;
 
-        let auth_data = token_v3::AuthData::try_from(config)?;
-        let scope = token_v3::Scope::try_from(config)?;
-        let auth: token_v3::Auth = match auth_data {
-            token_v3::AuthData::Password(d) => token_v3::Auth::builder()
-                .with_user(d.user)
-                .scope(scope)
-                .build()
-                .unwrap(),
-            token_v3::AuthData::Token(d) => token_v3::Auth::builder()
-                .with_token(d)
-                .scope(scope)
-                .build()
-                .unwrap(),
-            token_v3::AuthData::None => {
-                return Err(OpenStackError::Config {
-                    msg: "No auth possible".into(),
-                });
-            }
-        };
+        let identity_data = token_v3::Identity::try_from(config)?;
+        let mut auth_request_data = token_v3::AuthBuilder::default();
+        auth_request_data.identity(identity_data);
+        if let Ok(scope_data) = token_v3::Scope::try_from(config) {
+            auth_request_data.scope(token_v3::ScopeEnum::F1(scope_data));
+        }
+
+        let auth_ep = token_v3::RequestBuilder::default()
+            .auth(auth_request_data.build()?)
+            .build()?;
 
         debug!("Session: {:?}", session);
 
-        session.authorize(auth).await?;
+        session.authorize(auth_ep).await?;
 
         for (name, val) in config.options.iter() {
             // Consume endpoint overrides
@@ -553,15 +541,10 @@ impl AsyncOpenStack {
     }
 
     /// Authorize against the cloud using provided credentials and get the session token
-    pub async fn authorize(
-        &mut self,
-        auth: crate::api::identity::Auth<'_>,
-    ) -> Result<(), OpenStackError> {
-        let auth_endpoint = crate::api::identity::CreateAuthToken::builder()
-            .auth(auth)
-            .build()
-            .unwrap();
-
+    pub async fn authorize<E>(&mut self, auth_endpoint: E) -> Result<(), OpenStackError>
+    where
+        E: RestEndpoint + Sync,
+    {
         self.discover_service_endpoint(&ServiceType::Identity)
             .await?;
 

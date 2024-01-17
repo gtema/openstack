@@ -1,7 +1,13 @@
-//! Lists projects.
+//! New in version 3.3
+//!
+//! This call returns the list of projects that are available to be scoped
+//! to based on the X-Auth-Token provided in the request.
+//!
+//! The structure of the response is exactly the same as listing projects
+//! for a user.
 //!
 //! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/projects`
+//! identity/3/rel/auth\_projects`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -9,46 +15,21 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
-use std::borrow::Cow;
-
 use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request<'a> {
-    /// Filters the response by a domain ID.
-    #[builder(default, setter(into))]
-    domain_id: Option<Cow<'a, str>>,
-
-    /// If set to true, then only enabled projects will be returned. Any value
-    /// other than 0 (including no value) will be interpreted as true.
-    #[builder(default)]
-    enabled: Option<bool>,
-
-    /// If this is specified as true, then only projects acting as a domain are
-    /// included. Otherwise, only projects that are not acting as a domain are
-    /// included.
-    #[builder(default)]
-    is_domain: Option<bool>,
-
-    /// Filters the response by a project name.
-    #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
-
-    /// Filters the response by a parent ID.
-    #[builder(default, setter(into))]
-    parent_id: Option<Cow<'a, str>>,
-
+pub struct Request {
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl<'a> Request<'a> {
+impl Request {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder<'a> {
+    pub fn builder() -> RequestBuilder {
         RequestBuilder::default()
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder {
     /// Add a single header to the Project.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -73,24 +54,17 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "v3/projects".to_string().into()
+        "v3/auth/projects".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-        params.push_opt("domain_id", self.domain_id.as_ref());
-        params.push_opt("enabled", self.enabled);
-        params.push_opt("is_domain", self.is_domain);
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("parent_id", self.parent_id.as_ref());
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {
@@ -139,7 +113,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/projects".to_string());
+                .path("/v3/auth/projects".to_string());
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -156,7 +130,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/projects".to_string())
+                .path("/v3/auth/projects".to_string())
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

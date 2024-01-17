@@ -1,8 +1,4 @@
-//! Lists projects.
-//!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/projects`
-//!
+//! GET operation on /v3/auth/OS-FEDERATION/websso/{protocol_id}
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -11,32 +7,13 @@ use serde::Serialize;
 
 use std::borrow::Cow;
 
-use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a domain ID.
+    /// protocol_id parameter for /v3/auth/OS-FEDERATION/websso/{protocol_id}
+    /// API
     #[builder(default, setter(into))]
-    domain_id: Option<Cow<'a, str>>,
-
-    /// If set to true, then only enabled projects will be returned. Any value
-    /// other than 0 (including no value) will be interpreted as true.
-    #[builder(default)]
-    enabled: Option<bool>,
-
-    /// If this is specified as true, then only projects acting as a domain are
-    /// included. Otherwise, only projects that are not acting as a domain are
-    /// included.
-    #[builder(default)]
-    is_domain: Option<bool>,
-
-    /// Filters the response by a project name.
-    #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
-
-    /// Filters the response by a parent ID.
-    #[builder(default, setter(into))]
-    parent_id: Option<Cow<'a, str>>,
+    protocol_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -49,7 +26,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the Project.
+    /// Add a single header to the Websso.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -79,18 +56,15 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "v3/projects".to_string().into()
+        format!(
+            "v3/auth/OS-FEDERATION/websso/{protocol_id}",
+            protocol_id = self.protocol_id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
-        let mut params = QueryParams::default();
-        params.push_opt("domain_id", self.domain_id.as_ref());
-        params.push_opt("enabled", self.enabled);
-        params.push_opt("is_domain", self.is_domain);
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("parent_id", self.parent_id.as_ref());
-
-        params
+        QueryParams::default()
     }
 
     fn service_type(&self) -> ServiceType {
@@ -98,7 +72,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("projects".into())
+        Some("token".into())
     }
 
     /// Returns headers to be set into the request
@@ -130,7 +104,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder().build().unwrap().response_key().unwrap(),
-            "projects"
+            "token"
         );
     }
 
@@ -138,15 +112,20 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/v3/projects".to_string());
+            when.method(httpmock::Method::GET).path(format!(
+                "/v3/auth/OS-FEDERATION/websso/{protocol_id}",
+                protocol_id = "protocol_id",
+            ));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "projects": {} }));
+                .json_body(json!({ "token": {} }));
         });
 
-        let endpoint = Request::builder().build().unwrap();
+        let endpoint = Request::builder()
+            .protocol_id("protocol_id")
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -156,15 +135,19 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/projects".to_string())
+                .path(format!(
+                    "/v3/auth/OS-FEDERATION/websso/{protocol_id}",
+                    protocol_id = "protocol_id",
+                ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "projects": {} }));
+                .json_body(json!({ "token": {} }));
         });
 
         let endpoint = Request::builder()
+            .protocol_id("protocol_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

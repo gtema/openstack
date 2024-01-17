@@ -98,7 +98,7 @@ impl fmt::Debug for Auth {
 }
 
 /// CloudConfig structure
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Default, Debug, Clone)]
 pub struct CloudConfig {
     /// Authorization data
     pub(crate) auth: Option<Auth>,

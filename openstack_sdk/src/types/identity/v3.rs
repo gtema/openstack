@@ -30,7 +30,7 @@ impl ResourceWithHeaders for AuthResponse {
 #[derive(Deserialize, Debug, Clone)]
 pub struct AuthToken {
     pub catalog: Option<Vec<ServiceEndpoints>>,
-    pub roles: Vec<IdAndName>,
+    pub roles: Option<Vec<IdAndName>>,
     pub user: User,
     pub project: Option<Project>,
     pub issued_at: String,
