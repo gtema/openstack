@@ -29,7 +29,6 @@ use crate::api::{
 use crate::catalog::ServiceEndpoint;
 use crate::types::BoxedAsyncRead;
 use crate::types::ServiceType;
-//use crate::types::identity::v3::ResourceWithHeaders;
 
 /// A trait for providing the necessary information for a single REST API endpoint.
 pub trait RestEndpoint {

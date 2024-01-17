@@ -43,6 +43,7 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 use cli_table::{print_stdout, Table};
 
 mod api;
+mod auth;
 mod block_storage;
 mod catalog;
 mod common;
@@ -57,6 +58,7 @@ mod output;
 use crate::error::OpenStackCliError;
 
 use crate::api::{ApiArgs, ApiCommand};
+use crate::auth::{AuthArgs, AuthCommand};
 use crate::block_storage::v3::{BlockStorageSrvArgs, BlockStorageSrvCommand};
 use crate::catalog::{CatalogArgs, CatalogCommand};
 use crate::compute::v2::{ComputeSrvArgs, ComputeSrvCommand};
@@ -88,8 +90,14 @@ pub struct Cli {
 /// Supported Top Level commands (services)
 #[derive(Subcommand)]
 pub enum TopLevelCommands {
+    /// Perform direct REST API requests with authorization
+    Api(Box<ApiArgs>),
+    /// Cloud Authentication operations
+    Auth(Box<AuthArgs>),
     /// Block Storage (Volume) service (Cinder) commands
     BlockStorage(Box<BlockStorageSrvArgs>),
+    /// Shows current catalog information
+    Catalog(Box<CatalogArgs>),
     /// Compute service (Nova) commands
     Compute(Box<ComputeSrvArgs>),
     /// Identity (Keystone) commands
@@ -100,10 +108,6 @@ pub enum TopLevelCommands {
     Network(Box<NetworkSrvArgs>),
     /// Object Store service (Swift) commands
     ObjectStore(Box<ObjectStoreSrvArgs>),
-    /// Shows current catalog information
-    Catalog(Box<CatalogArgs>),
-    /// Perform direct REST API requests with authorization
-    Api(Box<ApiArgs>),
 }
 
 /// Global CLI options
@@ -199,6 +203,13 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
 
     let mut session = AsyncOpenStack::new(&profile).await?;
     let cmd = match &cli.command {
+        TopLevelCommands::Api(args) => Box::new(api::ApiCommand {
+            args: *args.clone(),
+        }),
+        TopLevelCommands::Auth(args) => auth::AuthCommand {
+            args: *args.clone(),
+        }
+        .get_command(&mut session),
         TopLevelCommands::BlockStorage(args) => {
             session
                 .discover_service_endpoint(&ServiceType::BlockStorage)
@@ -209,6 +220,10 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             }
             .get_command(&mut session)
         }
+        TopLevelCommands::Catalog(args) => catalog::CatalogCommand {
+            args: *args.clone(),
+        }
+        .get_command(&mut session),
         TopLevelCommands::Compute(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Compute)
@@ -249,13 +264,6 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             args: *args.clone(),
         }
         .get_command(&mut session),
-        TopLevelCommands::Catalog(args) => catalog::CatalogCommand {
-            args: *args.clone(),
-        }
-        .get_command(&mut session),
-        TopLevelCommands::Api(args) => Box::new(api::ApiCommand {
-            args: *args.clone(),
-        }),
     };
     cmd.take_action(&cli, &mut session).await?;
     Ok(())

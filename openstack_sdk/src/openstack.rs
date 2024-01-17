@@ -218,7 +218,7 @@ impl OpenStack {
         let mut session = OpenStack {
             client,
             config: config.clone(),
-            auth: Auth::None,
+            auth: Default::default(),
             token: None,
             catalog: Catalog::default(),
         };
@@ -277,14 +277,14 @@ impl OpenStack {
     {
         let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query(self).unwrap();
         let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
-        self.auth = Auth::Token(
+        self.auth.set_token(
             rsp.headers()
                 .get("x-subject-token")
                 .unwrap()
                 .to_str()
-                .unwrap()
-                .to_string(),
+                .unwrap(),
         );
+        self.auth.data = Some(data.clone());
         if let Some(endpoints) = data.token.catalog {
             self.catalog
                 .process_catalog_endpoints(&endpoints, Some("public"))?;
@@ -494,7 +494,7 @@ impl AsyncOpenStack {
         let mut session = AsyncOpenStack {
             client,
             config: config.clone(),
-            auth: Auth::None,
+            auth: Default::default(),
             token: None,
             catalog: Catalog::default(),
         };
@@ -552,14 +552,14 @@ impl AsyncOpenStack {
         debug!("Auth response is {:?}", rsp);
         let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
         info!("Auth token is {:?}", data);
-        self.auth = Auth::Token(
+        self.auth.set_token(
             rsp.headers()
                 .get("x-subject-token")
                 .unwrap()
                 .to_str()
-                .unwrap()
-                .to_string(),
+                .unwrap(),
         );
+        self.auth.data = Some(data.clone());
         self.token = Some(data.token.clone());
 
         if let Some(endpoints) = data.token.catalog {
@@ -678,6 +678,11 @@ impl AsyncOpenStack {
         self.catalog
             .get_service_endpoint(service_type)
             .map(|v| v.current_version)?
+    }
+
+    /// Return current authentication information
+    pub fn get_auth_info(&self) -> Option<AuthResponse> {
+        self.auth.data.clone()
     }
 
     /// Perform HTTP request with given request and return raw response.

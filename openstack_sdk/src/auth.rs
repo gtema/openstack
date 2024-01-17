@@ -11,7 +11,7 @@ use crate::api::{self, Query};
 
 use crate::api::identity::v3::auth::token::create as token_v3_new;
 use crate::config;
-use crate::types::NameOrId;
+use crate::types::identity::v3::AuthResponse;
 // TODO: complete adding error context through anyhow
 
 #[derive(Debug, Error)]
@@ -204,13 +204,13 @@ impl TryFrom<&config::CloudConfig> for token_v3_new::Scope<'_> {
 }
 
 /// An OpenStack API token (X-Auth-Token)
-#[derive(Clone)]
-pub enum Auth {
+#[derive(Clone, Default)]
+pub struct Auth {
     /// A session access token, obtained after successful authorization to
     /// OpenStack
-    Token(String),
-    /// Unauthenticated access
-    None,
+    token: Option<String>,
+    /// Authorization data (auth validity)
+    pub data: Option<AuthResponse>,
 }
 
 impl Auth {
@@ -221,16 +221,18 @@ impl Auth {
         &self,
         headers: &'a mut HeaderMap<HeaderValue>,
     ) -> AuthResult<&'a mut HeaderMap<HeaderValue>> {
-        match self {
-            Auth::Token(token) => {
-                let mut token_header_value = HeaderValue::from_str(token)?;
-                token_header_value.set_sensitive(true);
-                headers.insert("X-Auth-Token", token_header_value);
-            }
-            Auth::None => {}
+        if let Some(token) = &self.token {
+            let mut token_header_value = HeaderValue::from_str(&token.clone())?;
+            token_header_value.set_sensitive(true);
+            headers.insert("X-Auth-Token", token_header_value);
         }
 
         Ok(headers)
+    }
+
+    /// Set token for use as the authorization
+    pub fn set_token(&mut self, token: &str) {
+        self.token = Some(token.to_string());
     }
 }
 

@@ -1,7 +1,5 @@
 mod cli {
     mod identity {
-        use assert_cmd::prelude::*;
-        use std::process::Command;
 
         // TODO(gtema): devstack regular user (the one we want to
         // use for regular tests) has no permission to list

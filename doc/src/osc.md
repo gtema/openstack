@@ -5,6 +5,9 @@ This document contains the help content for the `osc` command-line program.
 **Command Overview:**
 
 * [`osc`↴](#osc)
+* [`osc api`↴](#osc-api)
+* [`osc auth`↴](#osc-auth)
+* [`osc auth show`↴](#osc-auth-show)
 * [`osc block-storage`↴](#osc-block-storage)
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
 * [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
@@ -19,6 +22,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
 * [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
+* [`osc catalog`↴](#osc-catalog)
+* [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
@@ -122,9 +127,6 @@ This document contains the help content for the `osc` command-line program.
 * [`osc object-store object upload`↴](#osc-object-store-object-upload)
 * [`osc object-store object show`↴](#osc-object-store-object-show)
 * [`osc object-store object delete`↴](#osc-object-store-object-delete)
-* [`osc catalog`↴](#osc-catalog)
-* [`osc catalog list`↴](#osc-catalog-list)
-* [`osc api`↴](#osc-api)
 
 ## `osc`
 
@@ -134,14 +136,15 @@ OpenStack client rewritten in Rust
 
 ###### **Subcommands:**
 
+* `api` — Perform direct REST API requests with authorization
+* `auth` — Cloud Authentication operations
 * `block-storage` — Block Storage (Volume) service (Cinder) commands
+* `catalog` — Shows current catalog information
 * `compute` — Compute service (Nova) commands
 * `identity` — Identity (Keystone) commands
 * `image` — Image (Glance) commands
 * `network` — Network (Neutron) commands
 * `object-store` — Object Store service (Swift) commands
-* `catalog` — Shows current catalog information
-* `api` — Perform direct REST API requests with authorization
 
 ###### **Options:**
 
@@ -158,6 +161,65 @@ OpenStack client rewritten in Rust
 
 * `-f`, `--fields <FIELDS>` — Fields to return in the output (only in normal and wide mode)
 * `-v`, `--verbose` — Verbosity level. Repeat to increase level
+
+
+
+## `osc api`
+
+Perform direct REST API requests with authorization
+
+**Usage:** `osc api [OPTIONS] <SERVICE> <URL>`
+
+###### **Arguments:**
+
+* `<SERVICE>` — Service name
+* `<URL>` — Rest URL (relative to the endpoint information from the service catalog). Do not start URL with the "/" to respect endpoint version information
+
+###### **Options:**
+
+* `-m`, `--method <METHOD>` — HTTP Method
+
+  Default value: `get`
+
+  Possible values:
+  - `head`:
+    HEAD
+  - `get`:
+    GET
+  - `put`:
+    PUT
+  - `post`:
+    POST
+  - `delete`:
+    DELETE
+
+* `--header <key=value>` — Additional headers
+* `--body <BODY>` — Request body to be used
+
+
+
+## `osc auth`
+
+Cloud Authentication operations
+
+**Usage:** `osc auth
+       auth <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show current auth information
+
+
+
+## `osc auth show`
+
+Show current authorization information for the cloud
+
+This command returns authentication and authorization information for the currently active connection. It includes issue and expiration information, user data, list of granted roles and project/domain information.
+
+**NOTE**: The command does not support selecting individual fields in the output, but it supports `-o json` command and returns full available information in json format what allows further processing with `jq`
+
+**Usage:** `osc auth show`
 
 
 
@@ -550,6 +612,26 @@ Shows details for a volume.
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/volumes/{id} API
+
+
+
+## `osc catalog`
+
+Shows current catalog information
+
+**Usage:** `osc catalog <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List catalog command arguments
+
+
+
+## `osc catalog list`
+
+List catalog command arguments
+
+**Usage:** `osc catalog list`
 
 
 
@@ -2539,60 +2621,6 @@ Permanently deletes an object from the object store. Object deletion occurs imme
 ###### **Options:**
 
 * `--multipart-manifest <MULTIPART_MANIFEST>` — If you include the multipart-manifest=get query parameter and the object is a large object, the object contents are not returned. Instead, the manifest is returned in the X-Object-Manifest response header for dynamic large objects or in the response body for static large objects
-
-
-
-## `osc catalog`
-
-Shows current catalog information
-
-**Usage:** `osc catalog <COMMAND>`
-
-###### **Subcommands:**
-
-* `list` — List catalog command arguments
-
-
-
-## `osc catalog list`
-
-List catalog command arguments
-
-**Usage:** `osc catalog list`
-
-
-
-## `osc api`
-
-Perform direct REST API requests with authorization
-
-**Usage:** `osc api [OPTIONS] <SERVICE> <URL>`
-
-###### **Arguments:**
-
-* `<SERVICE>` — Service name
-* `<URL>` — Rest URL (relative to the endpoint information from the service catalog). Do not start URL with the "/" to respect endpoint version information
-
-###### **Options:**
-
-* `-m`, `--method <METHOD>` — HTTP Method
-
-  Default value: `get`
-
-  Possible values:
-  - `head`:
-    HEAD
-  - `get`:
-    GET
-  - `put`:
-    PUT
-  - `post`:
-    POST
-  - `delete`:
-    DELETE
-
-* `--header <key=value>` — Additional headers
-* `--body <BODY>` — Request body to be used
 
 
 
