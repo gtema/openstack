@@ -549,9 +549,10 @@ impl AsyncOpenStack {
             .await?;
 
         let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query_async(self).await?;
-        debug!("Auth response is {:?}", rsp);
+
         let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
-        info!("Auth token is {:?}", data);
+        debug!("Auth token is {:?}", data);
+
         self.auth.set_token(
             rsp.headers()
                 .get("x-subject-token")
