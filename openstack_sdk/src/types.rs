@@ -1,4 +1,6 @@
 //! Types of the SDK
+
+#![allow(dead_code)]
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -7,7 +9,6 @@ pub mod identity;
 
 use futures::io::AsyncRead;
 use futures::io::Error;
-use futures::stream::IntoAsyncRead;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
@@ -84,7 +85,7 @@ impl From<&str> for ServiceType {
             "image" => ServiceType::Image,
             "network" => ServiceType::Network,
             "object-store" => ServiceType::ObjectStore,
-            other => ServiceType::Other(val.to_string()),
+            _ => ServiceType::Other(val.to_string()),
         }
     }
 }

@@ -26,13 +26,12 @@ impl StructTable for AuthResponse {
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Field".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.push(Vec::from([
-            "issued_at".to_string(),
-            self.token.issued_at.clone(),
-        ]));
+        if let Some(issued_at) = self.token.issued_at {
+            rows.push(Vec::from(["issued_at".to_string(), issued_at.to_string()]));
+        }
         rows.push(Vec::from([
             "expires_at".to_string(),
-            self.token.expires_at.clone(),
+            self.token.expires_at.to_string(),
         ]));
         rows.push(Vec::from([
             "user".to_string(),

@@ -1,17 +1,16 @@
 use bytes::Bytes;
-use serde::de::{Deserializer, IntoDeserializer};
+use serde::de::Deserializer;
 use serde::Deserialize;
-use serde_json::Value;
 use std::collections::HashMap;
-use std::str::FromStr;
 
 use anyhow::Context;
 use thiserror::Error;
 
 use url::Url;
 
-use tracing::{debug, error, info, trace, Level};
+use tracing::{debug, error, info, trace};
 
+use crate::config::CloudConfig;
 use crate::types::identity::v3::ServiceEndpoints;
 use crate::types::{ServiceType, SupportedServiceTypes};
 
@@ -164,40 +163,48 @@ pub(crate) struct EndpointVersionValues {
     pub values: Vec<EndpointVersion>,
 }
 
-/// Convert json value to `Option<String>`
-fn json_val_to_string(val: &Value) -> Option<String> {
-    val.as_str().map(|x| x.to_string())
-}
-
 /// Structure representing the ServiceCatalog
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Catalog {
     /// HashMap containing service endpoints by the service type
-    pub(crate) service_endpoints: HashMap<String, ServiceEndpoint>,
-    pub(crate) token_catalog: Option<Vec<ServiceEndpoints>>,
+    service_endpoints: HashMap<String, ServiceEndpoint>,
+    token_catalog: Option<Vec<ServiceEndpoints>>,
+    /// Configured endpoint overrides
+    endpoint_overrides: HashMap<String, String>,
 }
 
 impl Catalog {
+    /// Build service endpoint instance from parameters
+    fn build_service_endpoint(&self, url: &str) -> Result<ServiceEndpoint, CatalogError> {
+        let mut fixed_url: String = url.into();
+        if !fixed_url.ends_with('/') {
+            fixed_url.push('/');
+        }
+
+        Ok(ServiceEndpoint {
+            url: Url::parse(&fixed_url)
+                .with_context(|| format!("Wrong endpoint URL: `{}`", fixed_url))?,
+            discovered: false,
+            versions: Vec::new(),
+            current_version: None,
+        })
+    }
+
     /// Register single service endpoint
     pub(crate) fn add_service_endpoint(
         &mut self,
         service_type: &str,
         url: &str,
     ) -> Result<(), CatalogError> {
-        let mut fixed_url: String = url.into();
-        if !fixed_url.ends_with('/') {
-            fixed_url.push('/');
-        }
+        // Get the URL from catalog/input respecting known overrides
+        let real_url = match self.endpoint_overrides.get(&service_type.to_string()) {
+            Some(new_url) => new_url.as_str(),
+            None => url,
+        };
 
         self.service_endpoints.insert(
             service_type.to_string(),
-            ServiceEndpoint {
-                url: Url::parse(&fixed_url)
-                    .with_context(|| format!("Wrong endpoint URL: `{}`", fixed_url))?,
-                discovered: false,
-                versions: Vec::new(),
-                current_version: None,
-            },
+            self.build_service_endpoint(real_url)?,
         );
         Ok(())
     }
@@ -236,7 +243,6 @@ impl Catalog {
         &self,
         service_type: &ServiceType,
     ) -> Option<ServiceEndpoint> {
-        trace!("Requested service {} endpoint", service_type);
         for cat_type in service_type.get_supported_catalog_types() {
             if let Some(sep) = self.service_endpoints.get(&cat_type.to_string()) {
                 debug!("Service endpoint url = {}", sep.url);
@@ -247,8 +253,45 @@ impl Catalog {
         None
     }
 
+    /// Invoke process_discovery of the endpoint by the service type
+    ///
+    /// This is implemented this way since it is hard to get mutable entry
+    /// from the mutable catalog in the main client while invoking non
+    /// mutable methods (in openstack::discover_service_endpoint).
+    pub(crate) fn process_endpoint_discovery(
+        &mut self,
+        service_type: &ServiceType,
+        data: &Bytes,
+    ) -> Result<(), CatalogError> {
+        for cat_type in service_type.get_supported_catalog_types() {
+            if let Some(sep) = self.service_endpoints.get_mut(&cat_type.to_string()) {
+                return sep.process_discovery(data);
+            }
+        }
+
+        Ok(())
+    }
+
     /// Return catalog endpoints as returned in the authorization response
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {
         self.token_catalog.clone()
+    }
+
+    // Save endpoint overrides given in the config
+    pub fn set_endpoint_overrides(
+        &mut self,
+        config: &CloudConfig,
+    ) -> Result<&mut Self, CatalogError> {
+        for (name, val) in config.options.iter() {
+            if name.ends_with("_endpoint_override") {
+                let len = name.len();
+                let srv_type = &name[..(len - 18)];
+                let service_type = &srv_type.replace('_', "-");
+
+                self.endpoint_overrides
+                    .insert(service_type.to_string(), val.to_string());
+            }
+        }
+        Ok(self)
     }
 }

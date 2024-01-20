@@ -1,26 +1,22 @@
+#![deny(dead_code, unused_imports, unused_variables, unused_mut)]
 use std::any;
-use std::borrow::Cow;
-use std::collections::HashMap;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
-use std::pin::Pin;
 use std::time::SystemTime;
 
 use tracing::{debug, error, info, span, trace, Level};
 
+use anyhow::anyhow;
 use async_trait::async_trait;
 use bytes::Bytes;
-use futures::io::{AsyncRead, Error as IoError, ErrorKind as IoErrorKind};
+use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
-use http::{request::Builder, HeaderMap, Method, Response as HttpResponse, StatusCode, Uri};
+use http::{HeaderMap, Response as HttpResponse, StatusCode};
 
-//use http::{self, request::Builder, Method, Request, Response};
-use itertools::Itertools;
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
 
 use reqwest::{blocking::Client, Body, Client as AsyncClient, Request, Response};
-use serde::{de::DeserializeOwned, Deserialize};
 use thiserror::Error;
 use url::Url;
 
@@ -28,18 +24,17 @@ use crate::config::CloudConfig;
 
 use crate::api;
 use crate::api::query;
-use crate::api::query::{Query, QueryAsync, RawQuery, RawQueryAsync};
-use crate::api::rest_endpoint_prelude::RestEndpoint;
-use crate::auth::{Auth, AuthError};
-use crate::config::ConfigError;
-use crate::types::identity::v3::{AuthResponse, AuthToken, Project, ServiceEndpoints};
-use crate::types::{BoxedAsyncRead, ServiceType, SupportedServiceTypes};
+use crate::api::query::{RawQuery, RawQueryAsync};
+use crate::api::RestClient;
+use crate::auth::{self, Auth, AuthError, AuthorizationScope};
+use crate::config::{ConfigError, ConfigFile};
+use crate::state;
+use crate::types::identity::v3::{AuthResponse, Project, ServiceEndpoints};
+use crate::types::{BoxedAsyncRead, ServiceType};
 
 use crate::api::identity::v3::auth::token::create as token_v3;
 
-use crate::catalog::{Catalog, CatalogError, EndpointVersion, EndpointVersions, ServiceEndpoint};
-
-use crate::utils;
+use crate::catalog::{Catalog, CatalogError, EndpointVersion, ServiceEndpoint};
 
 #[derive(Debug, Error)]
 #[non_exhaustive]
@@ -88,17 +83,6 @@ pub enum OpenStackError {
         source: AuthError,
     },
 
-    #[error("error preparing auth data: {}", source)]
-    AuthBuilderError {
-        #[from]
-        source: token_v3::AuthBuilderError,
-    },
-    #[error("error preparing auth request: {}", source)]
-    AuthTokenRequestBuilderError {
-        #[from]
-        source: token_v3::RequestBuilderError,
-    },
-
     #[error("communication with cloud: {}", source)]
     Communication {
         #[from]
@@ -140,6 +124,9 @@ pub enum OpenStackError {
 
     #[error("Endpoint version discovery error: {}", msg)]
     Discovery { msg: String },
+
+    #[error(transparent)]
+    Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
 }
 
 impl OpenStackError {
@@ -164,6 +151,7 @@ pub type OpenStackResult<T> = Result<T, OpenStackError>;
 // Private enum that enables the parsing of the cert bytes to be
 // delayed until the client is built rather than when they're passed
 // to a builder.
+#[allow(dead_code)]
 #[derive(Clone)]
 enum ClientCert {
     None,
@@ -180,15 +168,18 @@ enum ClientCert {
 pub struct OpenStack {
     /// The client to use for API calls.
     client: Client,
+    /// Cloud configuration
     config: CloudConfig,
-    // /// The base URL to use for API calls.
-    // rest_url: Url,
     /// The authentication information to use when communicating with OpenStack.
     auth: Auth,
-    /// Authorization information as received from the server
-    token: Option<AuthToken>,
-
+    /// Endpoints catalog
     catalog: Catalog,
+    /// Session state.
+    ///
+    /// In order to save authentication roundtrips save/load authentication
+    /// information in the file (similar to how other cli tools are doing)
+    /// and check auth expiration upon load.
+    state: state::State,
 }
 
 impl Debug for OpenStack {
@@ -201,6 +192,7 @@ impl Debug for OpenStack {
 
 /// Should a certificate be validated in tls connections.
 /// The Insecure option is used for self-signed certificates.
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 enum CertPolicy {
     Default,
@@ -208,88 +200,189 @@ enum CertPolicy {
 }
 
 impl OpenStack {
+    /// Basic constructor
+    fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
+        let span = span!(Level::DEBUG, "new_impl");
+        let _enter = span.enter();
+
+        let mut session = OpenStack {
+            client: Client::new(),
+            config: config.clone(),
+            auth,
+            catalog: Catalog::default(),
+            state: state::State::new(),
+        };
+
+        let auth_data = session
+            .config
+            .auth
+            .as_ref()
+            .ok_or(AuthError::MissingAuthData)?;
+
+        let identity_service_url = auth_data
+            .auth_url
+            .as_ref()
+            .ok_or(AuthError::MissingAuthUrl)?;
+
+        session
+            .catalog
+            .add_service_endpoint("identity", identity_service_url)?;
+
+        session.catalog.set_endpoint_overrides(config)?;
+
+        Ok(session)
+    }
+
     /// Create a new OpenStack API session from CloudConfig
     pub fn new(config: &CloudConfig) -> OpenStackResult<Self> {
         trace!("Building new session");
         let span = span!(Level::TRACE, "Session span");
         let _enter = span.enter();
-        let client = Client::new();
 
-        let mut session = OpenStack {
-            client,
-            config: config.clone(),
-            auth: Default::default(),
-            token: None,
-            catalog: Catalog::default(),
-        };
+        let mut session = Self::new_impl(config, Auth::None)?;
 
-        // TODO: no readable error from urlparse
-        let identity_service_url = Url::parse(
+        // Ensure we resolve identity endpoint using version discovery
+        session.discover_service_endpoint(&ServiceType::Identity)?;
+
+        // Get the authorization RestEndpoint
+        let auth_data = token_v3::Identity::try_from(config)?;
+        let authz_data = AuthorizationScope::try_from(config)?;
+
+        // Calculate hash of the auth information
+        let auth_hash = auth::get_auth_hash(
             session
-                .config
-                .auth
-                .as_ref()
-                .expect("Auth is missing")
-                .auth_url
-                .as_ref()
-                .expect("Auth_url is missing")
-                .as_str(),
-        )?;
-
-        session.catalog.service_endpoints.insert(
-            "identity".to_string(),
-            ServiceEndpoint {
-                url: identity_service_url,
-                discovered: false,
-                versions: Vec::new(),
-                current_version: None,
-            },
+                .get_service_endpoint(&ServiceType::Identity)
+                .expect("Identity endpoint is known")
+                .url,
+            &auth_data,
         );
+        session
+            .state
+            .set_auth_hash_key(auth_hash)
+            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
 
-        let identity_data = token_v3::Identity::try_from(config)?;
-        let mut auth_request_data = token_v3::AuthBuilder::default();
-        auth_request_data.identity(identity_data);
-        if let Ok(scope_data) = token_v3::Scope::try_from(config) {
-            auth_request_data.scope(token_v3::ScopeEnum::F1(scope_data));
-        }
-
-        let auth_ep = token_v3::RequestBuilder::default()
-            .auth(auth_request_data.build()?)
-            .build()?;
-
-        debug!("Session: {:?}", session);
-
-        session.authorize(auth_ep)?;
-
-        debug!("Config is {:?}", config);
-
-        for (name, val) in config.options.iter() {
-            info!("Option {}={}", name, val);
-        }
+        session.authorize(&auth_data, Some(authz_data))?;
 
         Ok(session)
     }
 
     /// Authorize against the cloud using provided credentials and get the session token
-    pub fn authorize<E>(&mut self, auth_endpoint: E) -> Result<(), OpenStackError>
-    where
-        E: RestEndpoint,
-    {
-        let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query(self).unwrap();
-        let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
-        self.auth.set_token(
-            rsp.headers()
-                .get("x-subject-token")
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        );
-        self.auth.data = Some(data.clone());
-        if let Some(endpoints) = data.token.catalog {
-            self.catalog
-                .process_catalog_endpoints(&endpoints, Some("public"))?;
-        } else {
-            error!("No catalog information");
+    pub fn authorize(
+        &mut self,
+        auth_data: &token_v3::Identity<'_>,
+        scope: Option<AuthorizationScope>,
+    ) -> Result<(), OpenStackError> {
+        let requested_scope = scope.unwrap_or(AuthorizationScope::try_from(&self.config)?);
+
+        match self.state.get_scope_auth(&requested_scope) {
+            Some(auth) => {
+                // Valid authorization is already available
+                trace!("Auth already available");
+                self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+            }
+            None => {
+                // No valid authorization data is available in the state
+                let rsp: HttpResponse<Bytes>;
+                if let Some(available_auth) = self.state.get_any_valid_auth() {
+                    // State contain valid authentication for different
+                    // scope/unscoped. It is possible to request new authz
+                    // using this other auth
+                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                    let auth_endpoint =
+                        auth::build_reauth_request(&available_auth, &requested_scope)?;
+                    rsp = auth_endpoint.raw_query(self)?;
+                } else {
+                    // No auth/authz information available. Proceed with new auth
+                    trace!("No Auth already available. Proceeding with new login");
+                    let auth_endpoint = auth::build_auth_request_with_identity_and_scope(
+                        auth_data,
+                        &requested_scope,
+                    )?;
+                    rsp = auth_endpoint.raw_query(self)?;
+                }
+
+                // TODO(gtema): here would be the MFA handling
+
+                let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+                debug!("Auth token is {:?}", data);
+
+                let token = rsp
+                    .headers()
+                    .get("x-subject-token")
+                    .unwrap()
+                    .to_str()
+                    .unwrap();
+
+                let token_auth = auth::AuthToken {
+                    token: token.to_string().clone(),
+                    auth_info: Some(data.clone()),
+                };
+                let full_scope = AuthorizationScope::from(&data);
+
+                self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
+
+                self.state.set_scope_auth(&full_scope, &token_auth);
+            }
+        }
+
+        if let auth::Auth::AuthToken(token_data) = &self.auth {
+            match &token_data.auth_info {
+                Some(auth_data) => {
+                    if let Some(endpoints) = &auth_data.token.catalog {
+                        self.catalog
+                            .process_catalog_endpoints(endpoints, Some("public"))?;
+                    } else {
+                        error!("No catalog information");
+                    }
+                }
+                _ => return Err(anyhow!("No authentication information available").into()),
+            }
+        }
+        // TODO: without AuthToken authorization we may want to read catalog separately
+        Ok(())
+    }
+
+    pub fn discover_service_endpoint(
+        &mut self,
+        service_type: &ServiceType,
+    ) -> Result<(), OpenStackError> {
+        if let Some(ep) = self.catalog.get_service_endpoint(service_type) {
+            if !ep.discovered {
+                info!("Performing `{}` endpoint version discovery", service_type);
+
+                let mut try_url = ep.url.clone();
+                let mut max_depth = 10;
+                loop {
+                    let req = http::Request::builder()
+                        .method(http::Method::GET)
+                        .uri(query::url_to_http_uri(try_url.clone()));
+
+                    let rsp = self.rest_with_auth(req, Vec::new(), &self.auth)?;
+                    if rsp.status() != StatusCode::NOT_FOUND {
+                        return Ok(self
+                            .catalog
+                            .process_endpoint_discovery(service_type, rsp.body())?);
+                    }
+                    if try_url.path() != "/" {
+                        // We are not at the root yet and have not found a
+                        // valid version document so far, try one level up
+                        try_url = try_url.join("../")?;
+                    } else {
+                        return Err(OpenStackError::Discovery {
+                            msg: "No Version document discovered".to_string(),
+                        });
+                    }
+
+                    max_depth -= 1;
+                    if max_depth == 0 {
+                        break;
+                    }
+                }
+                return Err(OpenStackError::Discovery {
+                    msg: "Unknown".to_string(),
+                });
+            }
+            return Ok(());
         }
         Ok(())
     }
@@ -369,7 +462,10 @@ impl api::RestClient for OpenStack {
     }
 
     fn get_current_project(&self) -> Option<Project> {
-        self.token.clone().and_then(|x| x.project)
+        if let Auth::AuthToken(token) = &self.auth {
+            return token.auth_info.clone().and_then(|x| x.token.project);
+        }
+        None
     }
 }
 
@@ -392,10 +488,14 @@ pub struct AsyncOpenStack {
     config: CloudConfig,
     /// The authentication information to use when communicating with OpenStack.
     auth: Auth,
-    /// Authorization information as received from the server
-    token: Option<AuthToken>,
     /// Endpoints catalog
     catalog: Catalog,
+    /// Session state.
+    ///
+    /// In order to save authentication roundtrips save/load authentication
+    /// information in the file (similar to how other cli tools are doing)
+    /// and check auth expiration upon load.
+    state: state::State,
 }
 
 impl Debug for AsyncOpenStack {
@@ -447,7 +547,10 @@ impl api::RestClient for AsyncOpenStack {
     }
 
     fn get_current_project(&self) -> Option<Project> {
-        self.token.clone().and_then(|x| x.project)
+        if let Auth::AuthToken(token) = &self.auth {
+            return token.auth_info.clone().and_then(|x| x.token.project);
+        }
+        None
     }
 }
 
@@ -484,90 +587,147 @@ impl api::AsyncClient for AsyncOpenStack {
 }
 
 impl AsyncOpenStack {
-    /// Create a new OpenStack API session from CloudConfig
-    pub async fn new(config: &CloudConfig) -> OpenStackResult<Self> {
-        let span = span!(Level::DEBUG, "Session span");
+    /// Basic constructor
+    fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
+        let span = span!(Level::DEBUG, "new_impl");
         let _enter = span.enter();
-        debug!("Building new session");
-        let client = AsyncClient::new();
 
         let mut session = AsyncOpenStack {
-            client,
+            client: AsyncClient::new(),
             config: config.clone(),
-            auth: Default::default(),
-            token: None,
+            auth,
             catalog: Catalog::default(),
+            state: state::State::new(),
         };
 
-        let auth = session
+        let auth_data = session
             .config
             .auth
             .as_ref()
             .ok_or(AuthError::MissingAuthData)?;
 
-        let identity_service_url = auth.auth_url.as_ref().ok_or(AuthError::MissingAuthUrl)?;
+        let identity_service_url = auth_data
+            .auth_url
+            .as_ref()
+            .ok_or(AuthError::MissingAuthUrl)?;
 
         session
             .catalog
             .add_service_endpoint("identity", identity_service_url)?;
 
-        let identity_data = token_v3::Identity::try_from(config)?;
-        let mut auth_request_data = token_v3::AuthBuilder::default();
-        auth_request_data.identity(identity_data);
-        if let Ok(scope_data) = token_v3::Scope::try_from(config) {
-            auth_request_data.scope(token_v3::ScopeEnum::F1(scope_data));
-        }
+        session.catalog.set_endpoint_overrides(config)?;
 
-        let auth_ep = token_v3::RequestBuilder::default()
-            .auth(auth_request_data.build()?)
-            .build()?;
+        Ok(session)
+    }
 
-        debug!("Session: {:?}", session);
+    /// Create a new OpenStack API session from CloudConfig
+    pub async fn new(config: &CloudConfig) -> OpenStackResult<Self> {
+        let span = span!(Level::DEBUG, "Session span");
+        let _enter = span.enter();
+        debug!("Building new session");
+        let mut session = Self::new_impl(config, Auth::None)?;
 
-        session.authorize(auth_ep).await?;
+        // Ensure we resolve identity endpoint using version discovery
+        session
+            .discover_service_endpoint(&ServiceType::Identity)
+            .await?;
 
-        for (name, val) in config.options.iter() {
-            // Consume endpoint overrides
-            if name.ends_with("_endpoint_override") {
-                let len = name.len();
-                let srv_type = &name[..(len - 18)];
-                session
-                    .catalog
-                    .add_service_endpoint(&srv_type.replace('_', "-"), &val.to_string())?;
-            }
-        }
+        // Get the authorization RestEndpoint
+        let auth_data = token_v3::Identity::try_from(config)?;
+        let authz_data = AuthorizationScope::try_from(config)?;
+
+        // Calculate hash of the auth information
+        let auth_hash = auth::get_auth_hash(
+            session
+                .get_service_endpoint(&ServiceType::Identity)
+                .expect("Identity endpoint is known")
+                .url,
+            &auth_data,
+        );
+        session
+            .state
+            .set_auth_hash_key(auth_hash)
+            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
+
+        session.authorize(&auth_data, Some(authz_data)).await?;
 
         Ok(session)
     }
 
     /// Authorize against the cloud using provided credentials and get the session token
-    pub async fn authorize<E>(&mut self, auth_endpoint: E) -> Result<(), OpenStackError>
-    where
-        E: RestEndpoint + Sync,
-    {
-        self.discover_service_endpoint(&ServiceType::Identity)
-            .await?;
+    pub async fn authorize(
+        &mut self,
+        auth_data: &token_v3::Identity<'_>,
+        scope: Option<AuthorizationScope>,
+    ) -> Result<(), OpenStackError>
+where {
+        let requested_scope = scope.unwrap_or(AuthorizationScope::try_from(&self.config)?);
 
-        let rsp: HttpResponse<Bytes> = auth_endpoint.raw_query_async(self).await?;
-        debug!("Auth response is {:?}", rsp);
-        let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
-        info!("Auth token is {:?}", data);
-        self.auth.set_token(
-            rsp.headers()
-                .get("x-subject-token")
-                .unwrap()
-                .to_str()
-                .unwrap(),
-        );
-        self.auth.data = Some(data.clone());
-        self.token = Some(data.token.clone());
+        match self.state.get_scope_auth(&requested_scope) {
+            Some(auth) => {
+                // Valid authorization is already available
+                trace!("Auth already available");
+                self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+            }
+            None => {
+                // No valid authorization data is available in the state
+                let rsp: HttpResponse<Bytes>;
+                if let Some(available_auth) = self.state.get_any_valid_auth() {
+                    // State contain valid authentication for different
+                    // scope/unscoped. It is possible to request new authz
+                    // using this other auth
+                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                    let auth_endpoint =
+                        auth::build_reauth_request(&available_auth, &requested_scope)?;
+                    rsp = auth_endpoint.raw_query_async(self).await?;
+                } else {
+                    // No auth/authz information available. Proceed with new auth
+                    trace!("No Auth already available. Proceeding with new login");
+                    let auth_endpoint = auth::build_auth_request_with_identity_and_scope(
+                        auth_data,
+                        &requested_scope,
+                    )?;
+                    rsp = auth_endpoint.raw_query_async(self).await?;
+                }
 
-        if let Some(endpoints) = data.token.catalog {
-            self.catalog
-                .process_catalog_endpoints(&endpoints, Some("public"))?;
-        } else {
-            error!("No catalog information");
+                // TODO(gtema): here would be the MFA handling
+
+                let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+                debug!("Auth token is {:?}", data);
+
+                let token = rsp
+                    .headers()
+                    .get("x-subject-token")
+                    .unwrap()
+                    .to_str()
+                    .unwrap();
+
+                let token_auth = auth::AuthToken {
+                    token: token.to_string().clone(),
+                    auth_info: Some(data.clone()),
+                };
+                let full_scope = AuthorizationScope::from(&data);
+
+                self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
+
+                self.state.set_scope_auth(&full_scope, &token_auth);
+            }
         }
+
+        if let auth::Auth::AuthToken(token_data) = &self.auth {
+            match &token_data.auth_info {
+                Some(auth_data) => {
+                    if let Some(endpoints) = &auth_data.token.catalog {
+                        self.catalog
+                            .process_catalog_endpoints(endpoints, Some("public"))?;
+                    } else {
+                        error!("No catalog information");
+                    }
+                }
+                _ => return Err(anyhow!("No authentication information available").into()),
+            }
+        }
+        // TODO: without AuthToken authorization we may want to read catalog separately
         Ok(())
     }
 
@@ -575,91 +735,50 @@ impl AsyncOpenStack {
         &mut self,
         service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
-        for cat_type in service_type.get_supported_catalog_types() {
-            if let Some(mut ep) = self.catalog.service_endpoints.get(&cat_type.to_string()) {
-                if !ep.discovered {
-                    info!("Performing `{}` endpoint version discovery", service_type);
+        if let Some(ep) = self.catalog.get_service_endpoint(service_type) {
+            if !ep.discovered {
+                info!("Performing `{}` endpoint version discovery", service_type);
 
-                    let mut try_url = ep.url.clone();
-                    let mut max_depth = 10;
-                    loop {
-                        let req = http::Request::builder()
-                            .method(http::Method::GET)
-                            .uri(query::url_to_http_uri(try_url.clone()));
+                let mut try_url = ep.url.clone();
+                let mut max_depth = 10;
+                loop {
+                    let req = http::Request::builder()
+                        .method(http::Method::GET)
+                        .uri(query::url_to_http_uri(try_url.clone()));
 
-                        let rsp = self
-                            .rest_with_auth_async(req, Vec::new(), &self.auth)
-                            .await?;
-                        if rsp.status() != StatusCode::NOT_FOUND {
-                            let dt = self
-                                .catalog
-                                .service_endpoints
-                                .get_mut(&cat_type.to_string())
-                                .unwrap();
-
-                            if dt.process_discovery(rsp.body()).is_ok() {
-                                // We have found a valid version document. Exit.
-                                return Ok(());
-                            }
-                        }
-                        if try_url.path() != "/" {
-                            // We are not at the root yet and have not found a
-                            // valid version document so far, try one level up
-                            try_url = try_url.join("../")?;
-                        } else {
-                            return Err(OpenStackError::Discovery {
-                                msg: "No Version document discovered".to_string(),
-                            });
-                        }
-
-                        max_depth -= 1;
-                        if max_depth == 0 {
-                            break;
-                        }
+                    let rsp = self
+                        .rest_with_auth_async(req, Vec::new(), &self.auth)
+                        .await?;
+                    if rsp.status() != StatusCode::NOT_FOUND {
+                        return Ok(self
+                            .catalog
+                            .process_endpoint_discovery(service_type, rsp.body())?);
                     }
-                    return Err(OpenStackError::Discovery {
-                        msg: "Unknown".to_string(),
-                    });
+                    if try_url.path() != "/" {
+                        // We are not at the root yet and have not found a
+                        // valid version document so far, try one level up
+                        try_url = try_url.join("../")?;
+                    } else {
+                        return Err(OpenStackError::Discovery {
+                            msg: "No Version document discovered".to_string(),
+                        });
+                    }
+
+                    max_depth -= 1;
+                    if max_depth == 0 {
+                        break;
+                    }
                 }
-                return Ok(());
+                return Err(OpenStackError::Discovery {
+                    msg: "Unknown".to_string(),
+                });
             }
+            return Ok(());
         }
         Ok(())
     }
 
-    pub async fn find_version_document(
-        &self,
-        url: Url,
-    ) -> Result<HttpResponse<Bytes>, OpenStackError> {
-        let mut try_url = url.clone();
-        let mut max_depth = 10;
-        loop {
-            let req = http::Request::builder()
-                .method(http::Method::GET)
-                .uri(query::url_to_http_uri(try_url.clone()));
-
-            let rsp = self
-                .rest_with_auth_async(req, Vec::new(), &self.auth)
-                .await?;
-            if rsp.status() == StatusCode::NOT_FOUND {
-                if try_url.path() != "/" {
-                    try_url = try_url.join("../")?;
-                } else {
-                    break;
-                }
-            } else {
-                return Ok(rsp);
-            }
-            max_depth -= 1;
-            if max_depth == 0 {
-                break;
-            }
-        }
-        Err(OpenStackError::Discovery {
-            msg: "Unknown".to_string(),
-        })
-    }
-
+    // TODO(gtema): rename to `get_catalog`)
     /// Return catalog information given in the token
     pub fn get_token_catalog(&self) -> Option<Vec<ServiceEndpoints>> {
         self.catalog.get_token_catalog()
@@ -682,7 +801,10 @@ impl AsyncOpenStack {
 
     /// Return current authentication information
     pub fn get_auth_info(&self) -> Option<AuthResponse> {
-        self.auth.data.clone()
+        if let Auth::AuthToken(token) = &self.auth {
+            return token.auth_info.clone();
+        }
+        None
     }
 
     /// Perform HTTP request with given request and return raw response.

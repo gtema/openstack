@@ -15,17 +15,25 @@ use serde::Serialize;
 use serde::Deserialize;
 use std::borrow::Cow;
 
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Methods {
+    #[serde(rename = "password")]
+    Password,
+    #[serde(rename = "token")]
+    Token,
+}
+
 /// A `domain` object
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct DomainStructStruct<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 }
 
 /// A `user` object, required if an application credential is identified by
@@ -38,22 +46,22 @@ pub struct User<'a> {
     /// its owning user.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 
     /// The name of the application credential used for authentication. If
     /// provided, must be accompanied by a user object.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    password: Option<Cow<'a, str>>,
+    pub(crate) password: Option<Cow<'a, str>>,
 
     /// A `domain` object
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    domain: Option<DomainStructStruct<'a>>,
+    pub(crate) domain: Option<DomainStructStruct<'a>>,
 }
 
 /// The `password` object, contains the authentication information.
@@ -64,7 +72,7 @@ pub struct Password<'a> {
     /// name and not ID.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    user: Option<User<'a>>,
+    pub(crate) user: Option<User<'a>>,
 }
 
 /// A `token` object. The token authentication
@@ -75,7 +83,7 @@ pub struct Password<'a> {
 pub struct Token<'a> {
     #[serde()]
     #[builder(setter(into))]
-    id: Cow<'a, str>,
+    pub(crate) id: Cow<'a, str>,
 }
 
 /// An `identity` object.
@@ -87,19 +95,19 @@ pub struct Identity<'a> {
     /// specify `application\_credential`.
     #[serde()]
     #[builder(setter(into))]
-    methods: Vec<Cow<'a, str>>,
+    pub(crate) methods: Vec<Methods>,
 
     /// The `password` object, contains the authentication information.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    password: Option<Password<'a>>,
+    pub(crate) password: Option<Password<'a>>,
 
     /// A `token` object. The token authentication
     /// method is used. This method is typically used in combination with
     /// a request to change authorization scope.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    token: Option<Token<'a>>,
+    pub(crate) token: Option<Token<'a>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -107,15 +115,15 @@ pub struct Identity<'a> {
 pub struct Project<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    domain: Option<DomainStructStruct<'a>>,
+    pub(crate) domain: Option<DomainStructStruct<'a>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -123,7 +131,7 @@ pub struct Project<'a> {
 pub struct OsTrustTrust<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -131,7 +139,7 @@ pub struct OsTrustTrust<'a> {
 pub struct System {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    all: Option<bool>,
+    pub(crate) all: Option<bool>,
 }
 
 /// The authorization scope (Since v3.4). Specify
@@ -149,26 +157,19 @@ pub struct System {
 pub struct Scope<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    project: Option<Project<'a>>,
+    pub(crate) project: Option<Project<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    domain: Option<DomainStructStruct<'a>>,
+    pub(crate) domain: Option<DomainStructStruct<'a>>,
 
     #[serde(rename = "OS-TRUST:trust", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    os_trust_trust: Option<OsTrustTrust<'a>>,
+    pub(crate) os_trust_trust: Option<OsTrustTrust<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    system: Option<System>,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
-#[serde(untagged)]
-pub enum ScopeEnum<'a> {
-    F1(Scope<'a>),
-    F2(Cow<'a, str>),
+    pub(crate) system: Option<System>,
 }
 
 /// An `auth` object.
@@ -178,7 +179,7 @@ pub struct Auth<'a> {
     /// An `identity` object.
     #[serde()]
     #[builder(setter(into))]
-    identity: Identity<'a>,
+    pub(crate) identity: Identity<'a>,
 
     /// The authorization scope (Since v3.4). Specify
     /// `unscoped` to make an explicit unscoped token request, which
@@ -192,7 +193,7 @@ pub struct Auth<'a> {
     /// which is the same as asking for an explicit unscoped token.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    scope: Option<ScopeEnum<'a>>,
+    pub(crate) scope: Option<Scope<'a>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -200,7 +201,7 @@ pub struct Auth<'a> {
 pub struct Request<'a> {
     /// An `auth` object.
     #[builder(setter(into))]
-    auth: Auth<'a>,
+    pub(crate) auth: Auth<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -291,7 +292,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from(["foo".into()]))
+                                .methods(Vec::from([Methods::Password]))
                                 .build()
                                 .unwrap()
                         )
@@ -313,7 +314,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from(["foo".into()]))
+                                .methods(Vec::from([Methods::Password]))
                                 .build()
                                 .unwrap()
                         )
@@ -345,7 +346,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from(["foo".into()]))
+                            .methods(Vec::from([Methods::Password]))
                             .build()
                             .unwrap(),
                     )
@@ -376,7 +377,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from(["foo".into()]))
+                            .methods(Vec::from([Methods::Password]))
                             .build()
                             .unwrap(),
                     )
