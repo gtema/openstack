@@ -1,4 +1,4 @@
-#![deny(dead_code, unused_imports, unused_variables, unused_mut)]
+#![deny(dead_code, unused_imports, unused_mut)]
 use std::any;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
@@ -261,7 +261,7 @@ impl OpenStack {
             .set_auth_hash_key(auth_hash)
             .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
 
-        session.authorize(&auth_data, Some(authz_data))?;
+        session.authorize(&auth_data, Some(authz_data), false, false)?;
 
         Ok(session)
     }
@@ -271,58 +271,55 @@ impl OpenStack {
         &mut self,
         auth_data: &token_v3::Identity<'_>,
         scope: Option<AuthorizationScope>,
+        interactive: bool,
+        renew_auth: bool,
     ) -> Result<(), OpenStackError> {
         let requested_scope = scope.unwrap_or(AuthorizationScope::try_from(&self.config)?);
 
-        match self.state.get_scope_auth(&requested_scope) {
-            Some(auth) => {
-                // Valid authorization is already available
-                trace!("Auth already available");
-                self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+        if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
+            // Valid authorization is already available and no renewal is required
+            trace!("Auth already available");
+            self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+        } else {
+            // No valid authorization data is available in the state or
+            // renewal is requested
+            let rsp: HttpResponse<Bytes>;
+            if let Some(available_auth) = self.state.get_any_valid_auth() {
+                // State contain valid authentication for different
+                // scope/unscoped. It is possible to request new authz
+                // using this other auth
+                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                let auth_endpoint = auth::build_reauth_request(&available_auth, &requested_scope)?;
+                rsp = auth_endpoint.raw_query(self)?;
+            } else {
+                // No auth/authz information available. Proceed with new auth
+                trace!("No Auth already available. Proceeding with new login");
+                let auth_endpoint =
+                    auth::build_auth_request_with_identity_and_scope(auth_data, &requested_scope)?;
+                rsp = auth_endpoint.raw_query(self)?;
             }
-            None => {
-                // No valid authorization data is available in the state
-                let rsp: HttpResponse<Bytes>;
-                if let Some(available_auth) = self.state.get_any_valid_auth() {
-                    // State contain valid authentication for different
-                    // scope/unscoped. It is possible to request new authz
-                    // using this other auth
-                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                    let auth_endpoint =
-                        auth::build_reauth_request(&available_auth, &requested_scope)?;
-                    rsp = auth_endpoint.raw_query(self)?;
-                } else {
-                    // No auth/authz information available. Proceed with new auth
-                    trace!("No Auth already available. Proceeding with new login");
-                    let auth_endpoint = auth::build_auth_request_with_identity_and_scope(
-                        auth_data,
-                        &requested_scope,
-                    )?;
-                    rsp = auth_endpoint.raw_query(self)?;
-                }
 
-                // TODO(gtema): here would be the MFA handling
+            // TODO(gtema): here would be the MFA handling
 
-                let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
-                debug!("Auth token is {:?}", data);
+            let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+            debug!("Auth token is {:?}", data);
 
-                let token = rsp
-                    .headers()
-                    .get("x-subject-token")
-                    .unwrap()
-                    .to_str()
-                    .unwrap();
+            let token = rsp
+                .headers()
+                .get("x-subject-token")
+                .unwrap()
+                .to_str()
+                .unwrap();
 
-                let token_auth = auth::AuthToken {
-                    token: token.to_string().clone(),
-                    auth_info: Some(data.clone()),
-                };
-                let full_scope = AuthorizationScope::from(&data);
+            let token_auth = auth::AuthToken {
+                token: token.to_string().clone(),
+                auth_info: Some(data.clone()),
+            };
+            let full_scope = AuthorizationScope::from(&data);
 
-                self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
+            self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
 
-                self.state.set_scope_auth(&full_scope, &token_auth);
-            }
+            self.state.set_scope_auth(&full_scope, &token_auth);
         }
 
         if let auth::Auth::AuthToken(token_data) = &self.auth {
@@ -649,7 +646,45 @@ impl AsyncOpenStack {
             .set_auth_hash_key(auth_hash)
             .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
 
-        session.authorize(&auth_data, Some(authz_data)).await?;
+        session
+            .authorize(&auth_data, Some(authz_data), false, false)
+            .await?;
+
+        Ok(session)
+    }
+
+    /// Create a new OpenStack API session from CloudConfig
+    pub async fn new_interactive(config: &CloudConfig, renew_auth: bool) -> OpenStackResult<Self> {
+        let span = span!(Level::DEBUG, "Session span");
+        let _enter = span.enter();
+        debug!("Building new session");
+        let mut session = Self::new_impl(config, Auth::None)?;
+
+        // Ensure we resolve identity endpoint using version discovery
+        session
+            .discover_service_endpoint(&ServiceType::Identity)
+            .await?;
+
+        // Get the authorization RestEndpoint
+        let auth_data = token_v3::Identity::try_from(config)?;
+        let authz_data = AuthorizationScope::try_from(config)?;
+
+        // Calculate hash of the auth information
+        let auth_hash = auth::get_auth_hash(
+            session
+                .get_service_endpoint(&ServiceType::Identity)
+                .expect("Identity endpoint is known")
+                .url,
+            &auth_data,
+        );
+        session
+            .state
+            .set_auth_hash_key(auth_hash)
+            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
+
+        session
+            .authorize(&auth_data, Some(authz_data), true, renew_auth)
+            .await?;
 
         Ok(session)
     }
@@ -659,59 +694,56 @@ impl AsyncOpenStack {
         &mut self,
         auth_data: &token_v3::Identity<'_>,
         scope: Option<AuthorizationScope>,
+        interactive: bool,
+        renew_auth: bool,
     ) -> Result<(), OpenStackError>
 where {
         let requested_scope = scope.unwrap_or(AuthorizationScope::try_from(&self.config)?);
 
-        match self.state.get_scope_auth(&requested_scope) {
-            Some(auth) => {
-                // Valid authorization is already available
-                trace!("Auth already available");
-                self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+        if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
+            // Valid authorization is already available and no renewal is required
+            trace!("Auth already available");
+            self.auth = auth::Auth::AuthToken(Box::new(auth.clone()));
+        } else {
+            // No valid authorization data is available in the state or
+            // renewal is requested
+            let rsp: HttpResponse<Bytes>;
+            if let Some(available_auth) = self.state.get_any_valid_auth() {
+                // State contain valid authentication for different
+                // scope/unscoped. It is possible to request new authz
+                // using this other auth
+                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                let auth_endpoint = auth::build_reauth_request(&available_auth, &requested_scope)?;
+                rsp = auth_endpoint.raw_query_async(self).await?;
+            } else {
+                // No auth/authz information available. Proceed with new auth
+                trace!("No Auth already available. Proceeding with new login");
+                let auth_endpoint =
+                    auth::build_auth_request_with_identity_and_scope(auth_data, &requested_scope)?;
+                rsp = auth_endpoint.raw_query_async(self).await?;
             }
-            None => {
-                // No valid authorization data is available in the state
-                let rsp: HttpResponse<Bytes>;
-                if let Some(available_auth) = self.state.get_any_valid_auth() {
-                    // State contain valid authentication for different
-                    // scope/unscoped. It is possible to request new authz
-                    // using this other auth
-                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                    let auth_endpoint =
-                        auth::build_reauth_request(&available_auth, &requested_scope)?;
-                    rsp = auth_endpoint.raw_query_async(self).await?;
-                } else {
-                    // No auth/authz information available. Proceed with new auth
-                    trace!("No Auth already available. Proceeding with new login");
-                    let auth_endpoint = auth::build_auth_request_with_identity_and_scope(
-                        auth_data,
-                        &requested_scope,
-                    )?;
-                    rsp = auth_endpoint.raw_query_async(self).await?;
-                }
 
-                // TODO(gtema): here would be the MFA handling
+            // TODO(gtema): here would be the MFA handling
 
-                let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
-                debug!("Auth token is {:?}", data);
+            let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+            debug!("Auth token is {:?}", data);
 
-                let token = rsp
-                    .headers()
-                    .get("x-subject-token")
-                    .unwrap()
-                    .to_str()
-                    .unwrap();
+            let token = rsp
+                .headers()
+                .get("x-subject-token")
+                .unwrap()
+                .to_str()
+                .unwrap();
 
-                let token_auth = auth::AuthToken {
-                    token: token.to_string().clone(),
-                    auth_info: Some(data.clone()),
-                };
-                let full_scope = AuthorizationScope::from(&data);
+            let token_auth = auth::AuthToken {
+                token: token.to_string().clone(),
+                auth_info: Some(data.clone()),
+            };
+            let full_scope = AuthorizationScope::from(&data);
 
-                self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
+            self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
 
-                self.state.set_scope_auth(&full_scope, &token_auth);
-            }
+            self.state.set_scope_auth(&full_scope, &token_auth);
         }
 
         if let auth::Auth::AuthToken(token_data) = &self.auth {
@@ -803,6 +835,14 @@ where {
     pub fn get_auth_info(&self) -> Option<AuthResponse> {
         if let Auth::AuthToken(token) = &self.auth {
             return token.auth_info.clone();
+        }
+        None
+    }
+
+    /// Return current authentication token
+    pub fn get_auth_token(&self) -> Option<String> {
+        if let Auth::AuthToken(token) = &self.auth {
+            return Some(token.token.clone());
         }
         None
     }

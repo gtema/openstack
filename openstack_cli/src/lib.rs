@@ -201,6 +201,21 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             cli.global_opts.os_cloud.clone().unwrap(),
         ))?;
 
+    // Login command need to be executed before authorization
+    if let TopLevelCommands::Auth(args) = &cli.command {
+        if let auth::AuthCommands::Login(login_args) = &args.command {
+            let mut session = AsyncOpenStack::new_interactive(&profile, login_args.renew).await?;
+            // Invoke the command and exit. This is required since when cache
+            // is disabled a following session creation will lead to again a
+            // new session
+            return auth::login::AuthCmd {
+                args: login_args.clone(),
+            }
+            .take_action(&cli, &mut session)
+            .await;
+        }
+    }
+
     let mut session = AsyncOpenStack::new(&profile).await?;
     let cmd = match &cli.command {
         TopLevelCommands::Api(args) => Box::new(api::ApiCommand {
