@@ -219,7 +219,14 @@ Fetch a new valid authorization token for the cloud.
 
 This command writes token to the stdout
 
-**Usage:** `osc auth login`
+**Usage:** `osc auth login [OPTIONS]`
+
+###### **Options:**
+
+* `--renew` — Require token renewal
+
+  Possible values: `true`, `false`
+
 
 
 
