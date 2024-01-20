@@ -22,7 +22,8 @@ use thiserror::Error;
 use config::Environment;
 use config::File;
 
-/// Errors which may occur when creating form data.
+/// Errors which may occur when dealing with OpenStack connection
+/// configuration data.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ConfigError {
@@ -51,14 +52,22 @@ impl ConfigError {
     }
 }
 
+/// CacheConfig structure
+#[derive(Deserialize, Debug, Clone)]
+pub struct CacheConfig {
+    pub auth: Option<bool>,
+}
+
 /// ConfigFile structure
 #[derive(Deserialize, Debug, Clone)]
 pub struct ConfigFile {
+    /// Cache configuration
+    pub cache: Option<CacheConfig>,
     /// clouds configuration
-    clouds: Option<HashMap<String, CloudConfig>>,
+    pub clouds: Option<HashMap<String, CloudConfig>>,
     /// vendor clouds information (profiles)
     #[serde(rename = "public-clouds")]
-    public_clouds: Option<HashMap<String, CloudConfig>>,
+    pub public_clouds: Option<HashMap<String, CloudConfig>>,
 }
 
 /// Authentication data
@@ -267,6 +276,11 @@ impl ConfigFile {
             }
         }
         Ok(None)
+    }
+
+    /// Return true if auth caching is enabled
+    pub fn is_auth_cache_enabled(&self) -> bool {
+        self.cache.as_ref().and_then(|c| c.auth).unwrap_or(false)
     }
 }
 

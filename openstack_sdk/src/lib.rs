@@ -59,6 +59,7 @@ mod auth;
 mod catalog;
 pub mod config;
 mod openstack;
+mod state;
 mod utils;
 
 pub mod types;

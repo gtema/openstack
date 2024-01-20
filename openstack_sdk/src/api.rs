@@ -12,11 +12,17 @@ mod params;
 pub(crate) mod query;
 mod rest_endpoint;
 
+#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod block_storage;
+#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod compute;
+#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod identity;
+#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod image;
+#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod network;
+#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod object_store;
 
 pub use self::error::ApiError;
