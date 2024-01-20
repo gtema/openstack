@@ -225,16 +225,24 @@ impl State {
                             trace!("Cached Auth info: {:?}", auth);
                             Some(auth)
                         }
-                        _ => None,
+                        Err(x) => {
+                            warn!(
+                                "Corrupted cache file {}: {:?}. Removing ",
+                                fname.display(),
+                                x
+                            );
+                            let _ = std::fs::remove_file(fname);
+                            None
+                        }
                     },
                     _ => {
-                        warn!("Error reading file {:?}", fname);
+                        warn!("Error reading file {}", fname.display());
                         None
                     }
                 }
             }
             _ => {
-                warn!("Error opening file {:?}", fname);
+                warn!("Error opening file {}", fname.display());
                 None
             }
         }

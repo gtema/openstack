@@ -42,8 +42,13 @@ pub struct User {
     pub domain: Option<Domain>,
     pub name: String,
     pub id: String,
-    #[serde(deserialize_with = "deser_ok_or_default")]
-    pub password_expires_at: Option<DateTime<Local>>,
+    // Note(gtema): some clouds return empty string instead of null when
+    // password doesnot expire. It is technically possible to use
+    // deserialize_with to capture errors, but that leads bincode to fail
+    // when deserializing. For now just leave it as optional string instead
+    // of DateTime
+    // #[serde(deserialize_with = "deser_ok_or_default")]
+    pub password_expires_at: Option<String>,
 }
 
 /// Authorization project details.

@@ -7,6 +7,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc`↴](#osc)
 * [`osc api`↴](#osc-api)
 * [`osc auth`↴](#osc-auth)
+* [`osc auth login`↴](#osc-auth-login)
 * [`osc auth show`↴](#osc-auth-show)
 * [`osc block-storage`↴](#osc-block-storage)
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
@@ -207,7 +208,18 @@ Cloud Authentication operations
 
 ###### **Subcommands:**
 
+* `login` — Login to the cloud and get a valid authorization token
 * `show` — Show current auth information
+
+
+
+## `osc auth login`
+
+Fetch a new valid authorization token for the cloud.
+
+This command writes token to the stdout
+
+**Usage:** `osc auth login`
 
 
 
