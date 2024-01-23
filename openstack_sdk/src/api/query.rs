@@ -66,6 +66,14 @@ where
     /// Perform the query asynchronously against the client.
     async fn raw_query_async(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>>;
 
+    /// Perform the low level query asynchronously against
+    /// the client.
+    async fn raw_query_async_ll(
+        &self,
+        client: &C,
+        inspect_error: Option<bool>,
+    ) -> Result<Response<Bytes>, ApiError<C::Error>>;
+
     /// Perform the query asynchronously against the client.
     async fn raw_query_read_body_async(
         &self,

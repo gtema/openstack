@@ -21,12 +21,14 @@ pub enum Methods {
     Password,
     #[serde(rename = "token")]
     Token,
+    #[serde(rename = "totp")]
+    Totp,
 }
 
 /// A `domain` object
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct DomainStructStruct<'a> {
+pub struct Domain<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
@@ -61,7 +63,7 @@ pub struct User<'a> {
     /// A `domain` object
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<DomainStructStruct<'a>>,
+    pub(crate) domain: Option<Domain<'a>>,
 }
 
 /// The `password` object, contains the authentication information.
@@ -86,6 +88,50 @@ pub struct Token<'a> {
     pub(crate) id: Cow<'a, str>,
 }
 
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct UserDomain<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct TotpUser<'a> {
+    /// The user ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    /// The user name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) domain: Option<UserDomain<'a>>,
+
+    /// MFA passcode
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) passcode: Cow<'a, str>,
+}
+
+/// Multi Factor Authentication information
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Totp<'a> {
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) user: TotpUser<'a>,
+}
+
 /// An `identity` object.
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -108,6 +154,23 @@ pub struct Identity<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) token: Option<Token<'a>>,
+
+    /// Multi Factor Authentication information
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) totp: Option<Totp<'a>>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct ProjectDomain<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -123,7 +186,19 @@ pub struct Project<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<DomainStructStruct<'a>>,
+    pub(crate) domain: Option<ProjectDomain<'a>>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct ScopeDomain<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -161,7 +236,7 @@ pub struct Scope<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<DomainStructStruct<'a>>,
+    pub(crate) domain: Option<ScopeDomain<'a>>,
 
     #[serde(rename = "OS-TRUST:trust", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
