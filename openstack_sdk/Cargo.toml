@@ -14,7 +14,7 @@ bincode = { version = "~1.3" }
 bytes = {workspace = true}
 chrono = { workspace= true }
 config = "~0.13"
-derive_builder = "~0.12"
+derive_builder = "~0.13"
 dialoguer = "~0.11"
 dirs = "~5.0"
 futures = {workspace = true}
