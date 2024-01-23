@@ -252,7 +252,11 @@ where
     E: RestEndpoint + Sync,
     C: AsyncClient + Sync,
 {
-    async fn raw_query_async(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
+    async fn raw_query_async_ll(
+        &self,
+        client: &C,
+        inspect_error: Option<bool>,
+    ) -> Result<Response<Bytes>, ApiError<C::Error>> {
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
@@ -266,7 +270,7 @@ where
         let rsp = client.rest_async(req, data).await?;
 
         let status = rsp.status();
-        if !status.is_success() {
+        if inspect_error.unwrap_or(true) && !status.is_success() {
             let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
@@ -276,6 +280,10 @@ where
         }
 
         Ok(rsp)
+    }
+
+    async fn raw_query_async(&self, client: &C) -> Result<Response<Bytes>, ApiError<C::Error>> {
+        self.raw_query_async_ll(client, Some(true)).await
     }
 
     async fn raw_query_read_body_async(

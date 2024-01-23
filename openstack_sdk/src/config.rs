@@ -13,9 +13,11 @@ use std::path::{Path, PathBuf};
 use tracing::{debug, error, warn};
 
 use serde::Deserialize;
+use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::env;
+use std::hash::{Hash, Hasher};
 
 use thiserror::Error;
 
@@ -73,20 +75,39 @@ pub struct ConfigFile {
 /// Authentication data
 #[derive(Clone, Default, Deserialize)]
 pub(crate) struct Auth {
+    /// Authentication URL
     pub(crate) auth_url: Option<String>,
-    pub(crate) domain_id: Option<String>,
-    pub(crate) domain_name: Option<String>,
+    /// Authentication endpoint type (public/internal/admin)
     pub(crate) endpoint: Option<String>,
-    pub(crate) password: Option<String>,
-    pub(crate) project_id: Option<String>,
-    pub(crate) project_name: Option<String>,
-    pub(crate) project_domain_id: Option<String>,
-    pub(crate) project_domain_name: Option<String>,
+    /// Auth Token
     pub(crate) token: Option<String>,
+
+    /// Auth User.Name
     pub(crate) username: Option<String>,
+    /// Auth User.ID
     pub(crate) user_id: Option<String>,
+    /// Auth User.Domain.Name
     pub(crate) user_domain_name: Option<String>,
+    /// Auth User.Domain.ID
     pub(crate) user_domain_id: Option<String>,
+    /// Auth User password
+    pub(crate) password: Option<String>,
+
+    /// Auth (totp) MFA passcode
+    pub(crate) passcode: Option<String>,
+
+    /// `Domain` scope Domain.ID
+    pub(crate) domain_id: Option<String>,
+    /// `Domain` scope Domain.Name
+    pub(crate) domain_name: Option<String>,
+    /// `Project` scope Project.ID
+    pub(crate) project_id: Option<String>,
+    /// `Project` scope Project.Name
+    pub(crate) project_name: Option<String>,
+    /// `Project` scope Project.Domain.ID
+    pub(crate) project_domain_id: Option<String>,
+    /// `Project` scope Project.Domain.Name
+    pub(crate) project_domain_name: Option<String>,
 }
 
 impl fmt::Debug for Auth {
@@ -113,6 +134,8 @@ pub struct CloudConfig {
     pub(crate) auth: Option<Auth>,
     /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations
     pub auth_type: Option<String>,
+    /// Authorization methods (in the case when auth_type = `multifactor`.
+    pub auth_methods: Option<Vec<String>>,
 
     /// Vendor Profile (by name from clouds-public.yaml or TBD: URL)
     pub profile: Option<String>,
@@ -124,6 +147,33 @@ pub struct CloudConfig {
     /// All other options
     #[serde(flatten)]
     pub options: HashMap<String, config::Value>,
+}
+
+/// Get a user authentication hash
+pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
+    // Calculate hash of the auth information
+    let mut s = DefaultHasher::new();
+    if let Some(auth) = &config.auth {
+        if let Some(data) = &auth.auth_url {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.username {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.user_id {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.user_domain_id {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.user_domain_name {
+            data.hash(&mut s);
+        }
+    }
+    if let Some(data) = &config.profile {
+        data.hash(&mut s);
+    }
+    s.finish()
 }
 
 /// CloudConfig struct implementation

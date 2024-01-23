@@ -69,6 +69,22 @@ pub struct Domain {
     pub name: Option<String>,
 }
 
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct AuthReceiptResponse {
+    pub receipt: AuthReceipt,
+    pub required_auth_methods: Vec<Vec<String>>,
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct AuthReceipt {
+    pub catalog: Option<Vec<ServiceEndpoints>>,
+    pub roles: Option<Vec<IdAndName>>,
+    pub methods: Vec<String>,
+    pub user: User,
+    pub issued_at: Option<DateTime<Local>>,
+    pub expires_at: DateTime<Local>,
+}
+
 /// Build Domain type if id or name are given
 #[inline]
 pub(crate) fn get_domain(id: Option<String>, name: Option<String>) -> Option<Domain> {

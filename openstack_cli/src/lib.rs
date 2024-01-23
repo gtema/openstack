@@ -22,7 +22,7 @@
 //! More description to come
 // #![deny(missing_docs)]
 #![allow(dead_code, unused_imports, unused_variables, unused_mut)]
-use std::io::{self, Write};
+use std::io::{self, IsTerminal, Write};
 
 use clap::builder::{
     styling::{AnsiColor, Effects},
@@ -200,23 +200,23 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .ok_or(OpenStackCliError::ConnectionNotFound(
             cli.global_opts.os_cloud.clone().unwrap(),
         ))?;
+    let mut renew_auth: bool = false;
 
-    // Login command need to be executed before authorization
+    // Login command need to be analyzed before authorization
     if let TopLevelCommands::Auth(args) = &cli.command {
         if let auth::AuthCommands::Login(login_args) = &args.command {
-            let mut session = AsyncOpenStack::new_interactive(&profile, login_args.renew).await?;
-            // Invoke the command and exit. This is required since when cache
-            // is disabled a following session creation will lead to again a
-            // new session
-            return auth::login::AuthCmd {
-                args: login_args.clone(),
+            if login_args.renew {
+                renew_auth = true;
             }
-            .take_action(&cli, &mut session)
-            .await;
         }
     }
 
-    let mut session = AsyncOpenStack::new(&profile).await?;
+    let mut session;
+    if std::io::stdin().is_terminal() {
+        session = AsyncOpenStack::new_interactive(&profile, renew_auth).await?;
+    } else {
+        session = AsyncOpenStack::new(&profile).await?;
+    }
     let cmd = match &cli.command {
         TopLevelCommands::Api(args) => Box::new(api::ApiCommand {
             args: *args.clone(),

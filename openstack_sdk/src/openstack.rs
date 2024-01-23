@@ -1,9 +1,11 @@
 #![deny(dead_code, unused_imports, unused_mut)]
 use std::any;
+//use std::collections::hash_map::DefaultHasher;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
+//use std::hash::Hash;
+//use std::hash::Hasher;
 use std::time::SystemTime;
-
 use tracing::{debug, error, info, span, trace, Level};
 
 use anyhow::anyhow;
@@ -25,11 +27,13 @@ use crate::config::CloudConfig;
 use crate::api;
 use crate::api::query;
 use crate::api::query::{RawQuery, RawQueryAsync};
-use crate::api::RestClient;
+//use crate::api::RestClient;
+//use crate::api::RestEndpoint;
+//use crate::api::AsyncClient;
 use crate::auth::{self, Auth, AuthError, AuthorizationScope};
-use crate::config::{ConfigError, ConfigFile};
+use crate::config::{get_config_identity_hash, ConfigError, ConfigFile};
 use crate::state;
-use crate::types::identity::v3::{AuthResponse, Project, ServiceEndpoints};
+use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project, ServiceEndpoints};
 use crate::types::{BoxedAsyncRead, ServiceType};
 
 use crate::api::identity::v3::auth::token::create as token_v3;
@@ -230,6 +234,11 @@ impl OpenStack {
 
         session.catalog.set_endpoint_overrides(config)?;
 
+        session
+            .state
+            .set_auth_hash_key(get_config_identity_hash(config))
+            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
+
         Ok(session)
     }
 
@@ -244,24 +253,7 @@ impl OpenStack {
         // Ensure we resolve identity endpoint using version discovery
         session.discover_service_endpoint(&ServiceType::Identity)?;
 
-        // Get the authorization RestEndpoint
-        let auth_data = token_v3::Identity::try_from(config)?;
-        let authz_data = AuthorizationScope::try_from(config)?;
-
-        // Calculate hash of the auth information
-        let auth_hash = auth::get_auth_hash(
-            session
-                .get_service_endpoint(&ServiceType::Identity)
-                .expect("Identity endpoint is known")
-                .url,
-            &auth_data,
-        );
-        session
-            .state
-            .set_auth_hash_key(auth_hash)
-            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
-
-        session.authorize(&auth_data, Some(authz_data), false, false)?;
+        session.authorize(None, None, false, false)?;
 
         Ok(session)
     }
@@ -269,7 +261,7 @@ impl OpenStack {
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize(
         &mut self,
-        auth_data: &token_v3::Identity<'_>,
+        auth_data: Option<token_v3::Identity<'_>>,
         scope: Option<AuthorizationScope>,
         interactive: bool,
         renew_auth: bool,
@@ -283,23 +275,43 @@ impl OpenStack {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
-            let rsp: HttpResponse<Bytes>;
-            if let Some(available_auth) = self.state.get_any_valid_auth() {
-                // State contain valid authentication for different
-                // scope/unscoped. It is possible to request new authz
-                // using this other auth
-                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let auth_endpoint = auth::build_reauth_request(&available_auth, &requested_scope)?;
-                rsp = auth_endpoint.raw_query(self)?;
-            } else {
-                // No auth/authz information available. Proceed with new auth
-                trace!("No Auth already available. Proceeding with new login");
-                let auth_endpoint =
-                    auth::build_auth_request_with_identity_and_scope(auth_data, &requested_scope)?;
-                rsp = auth_endpoint.raw_query(self)?;
-            }
+            let auth_ep = match self.state.get_any_valid_auth() {
+                Some(available_auth) => {
+                    // State contain valid authentication for different
+                    // scope/unscoped. It is possible to request new authz
+                    // using this other auth
+                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                    auth::build_reauth_request(&available_auth, &requested_scope)?
+                }
+                None => {
+                    // No auth/authz information available. Proceed with new auth
+                    trace!("No Auth already available. Proceeding with new login");
 
-            // TODO(gtema): here would be the MFA handling
+                    let auth_data = auth_data
+                        .unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+
+                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?
+                }
+            };
+            let mut rsp = auth_ep.raw_query(self)?;
+
+            // TODO(gtema): here would be the MFA handling. When Keystone
+            // returns 401 with recept we currently not land here due to error
+            // processing
+            if let StatusCode::UNAUTHORIZED = rsp.status() {
+                if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
+                    let receipt_data: AuthReceiptResponse = serde_json::from_slice(rsp.body())
+                        .expect("A valid OpenStack Auth receipt body");
+                    let auth_endpoint = auth::build_auth_request_from_receipt(
+                        &self.config,
+                        receipt.clone(),
+                        &receipt_data,
+                        &requested_scope,
+                        interactive,
+                    )?;
+                    rsp = auth_endpoint.raw_query(self)?;
+                }
+            }
 
             let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
             debug!("Auth token is {:?}", data);
@@ -614,6 +626,11 @@ impl AsyncOpenStack {
 
         session.catalog.set_endpoint_overrides(config)?;
 
+        session
+            .state
+            .set_auth_hash_key(get_config_identity_hash(config))
+            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
+
         Ok(session)
     }
 
@@ -629,26 +646,7 @@ impl AsyncOpenStack {
             .discover_service_endpoint(&ServiceType::Identity)
             .await?;
 
-        // Get the authorization RestEndpoint
-        let auth_data = token_v3::Identity::try_from(config)?;
-        let authz_data = AuthorizationScope::try_from(config)?;
-
-        // Calculate hash of the auth information
-        let auth_hash = auth::get_auth_hash(
-            session
-                .get_service_endpoint(&ServiceType::Identity)
-                .expect("Identity endpoint is known")
-                .url,
-            &auth_data,
-        );
-        session
-            .state
-            .set_auth_hash_key(auth_hash)
-            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
-
-        session
-            .authorize(&auth_data, Some(authz_data), false, false)
-            .await?;
+        session.authorize(None, None, false, false).await?;
 
         Ok(session)
     }
@@ -665,26 +663,7 @@ impl AsyncOpenStack {
             .discover_service_endpoint(&ServiceType::Identity)
             .await?;
 
-        // Get the authorization RestEndpoint
-        let auth_data = token_v3::Identity::try_from(config)?;
-        let authz_data = AuthorizationScope::try_from(config)?;
-
-        // Calculate hash of the auth information
-        let auth_hash = auth::get_auth_hash(
-            session
-                .get_service_endpoint(&ServiceType::Identity)
-                .expect("Identity endpoint is known")
-                .url,
-            &auth_data,
-        );
-        session
-            .state
-            .set_auth_hash_key(auth_hash)
-            .enable_auth_cache(ConfigFile::new()?.is_auth_cache_enabled());
-
-        session
-            .authorize(&auth_data, Some(authz_data), true, renew_auth)
-            .await?;
+        session.authorize(None, None, true, renew_auth).await?;
 
         Ok(session)
     }
@@ -692,7 +671,7 @@ impl AsyncOpenStack {
     /// Authorize against the cloud using provided credentials and get the session token
     pub async fn authorize(
         &mut self,
-        auth_data: &token_v3::Identity<'_>,
+        auth_data: Option<token_v3::Identity<'_>>,
         scope: Option<AuthorizationScope>,
         interactive: bool,
         renew_auth: bool,
@@ -707,23 +686,43 @@ where {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
-            let rsp: HttpResponse<Bytes>;
-            if let Some(available_auth) = self.state.get_any_valid_auth() {
-                // State contain valid authentication for different
-                // scope/unscoped. It is possible to request new authz
-                // using this other auth
-                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let auth_endpoint = auth::build_reauth_request(&available_auth, &requested_scope)?;
-                rsp = auth_endpoint.raw_query_async(self).await?;
-            } else {
-                // No auth/authz information available. Proceed with new auth
-                trace!("No Auth already available. Proceeding with new login");
-                let auth_endpoint =
-                    auth::build_auth_request_with_identity_and_scope(auth_data, &requested_scope)?;
-                rsp = auth_endpoint.raw_query_async(self).await?;
-            }
+            let auth_ep = match self.state.get_any_valid_auth() {
+                Some(available_auth) => {
+                    // State contain valid authentication for different
+                    // scope/unscoped. It is possible to request new authz
+                    // using this other auth
+                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                    auth::build_reauth_request(&available_auth, &requested_scope)?
+                }
+                None => {
+                    // No auth/authz information available. Proceed with new auth
+                    trace!("No Auth already available. Proceeding with new login");
 
-            // TODO(gtema): here would be the MFA handling
+                    let auth_data = auth_data
+                        .unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+
+                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?
+                }
+            };
+            let mut rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
+
+            // TODO(gtema): here would be the MFA handling. When Keystone
+            // returns 401 with recept we currently not land here due to error
+            // processing
+            if let StatusCode::UNAUTHORIZED = rsp.status() {
+                if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
+                    let receipt_data: AuthReceiptResponse = serde_json::from_slice(rsp.body())
+                        .expect("A valid OpenStack Auth receipt body");
+                    let auth_endpoint = auth::build_auth_request_from_receipt(
+                        &self.config,
+                        receipt.clone(),
+                        &receipt_data,
+                        &requested_scope,
+                        interactive,
+                    )?;
+                    rsp = auth_endpoint.raw_query_async(self).await?;
+                }
+            }
 
             let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
             debug!("Auth token is {:?}", data);
