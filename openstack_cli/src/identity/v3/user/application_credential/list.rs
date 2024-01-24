@@ -41,7 +41,11 @@ pub struct ApplicationCredentialsArgs {
 
 /// Query parameters
 #[derive(Args, Clone, Debug)]
-pub struct QueryParameters {}
+pub struct QueryParameters {
+    /// The name of the application credential. Must be unique to a user.
+    #[arg(long)]
+    name: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args, Clone, Debug)]
@@ -59,11 +63,16 @@ pub struct ApplicationCredentialsCmd {
 /// ApplicationCredentials response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
+    /// The ID of the application credential.
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
     /// scoped to.
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     project_id: Option<String>,
 
     #[serde()]
@@ -71,27 +80,23 @@ pub struct ResponseData {
     name: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     description: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
-    secret: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     expires_at: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     roles: Option<VecResponseRoles>,
 
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     unrestricted: Option<bool>,
 
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     access_rules: Option<VecResponseAccessRules>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -213,6 +218,9 @@ impl Command for ApplicationCredentialsCmd {
         // Set path parameters
         ep_builder.user_id(&self.args.path.user_id);
         // Set query parameters
+        if let Some(val) = &self.args.query.name {
+            ep_builder.name(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

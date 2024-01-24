@@ -8,6 +8,8 @@ use crate::{Command, ResourceCommands};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+pub mod access_rule;
+pub mod application_credential;
 mod create;
 mod delete;
 mod list;

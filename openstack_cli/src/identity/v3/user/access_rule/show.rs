@@ -23,6 +23,8 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use openstack_sdk::api::find;
+use openstack_sdk::api::identity::v3::user::access_rule::find;
 use openstack_sdk::api::identity::v3::user::access_rule::get;
 use openstack_sdk::api::QueryAsync;
 
@@ -53,7 +55,7 @@ pub struct PathParameters {
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
     #[arg()]
-    access_rule_id: String,
+    id: String,
 }
 
 /// AccessRule show command
@@ -93,20 +95,16 @@ impl Command for AccessRuleCmd {
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
 
-        let mut ep_builder = get::Request::builder();
+        let mut find_builder = find::Request::builder();
 
-        // Set path parameters
-        ep_builder.user_id(&self.args.path.user_id);
-        ep_builder.access_rule_id(&self.args.path.access_rule_id);
-        // Set query parameters
-        // Set body parameters
-
-        let ep = ep_builder
+        find_builder.user_id(&self.args.path.user_id);
+        find_builder.id(&self.args.path.id);
+        let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResponseData>(find_data)?;
         Ok(())
     }
 }

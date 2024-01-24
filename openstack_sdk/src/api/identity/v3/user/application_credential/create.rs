@@ -18,12 +18,11 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Roles<'a> {
-    /// The ID of the domain.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
-    /// The role name.
+    /// The name of the application credential. Must be unique to a user.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -40,35 +39,38 @@ pub struct AccessRules<'a> {
     #[builder(default, setter(into))]
     pub(crate) method: Option<Cow<'a, str>>,
 
-    /// The ID of the domain.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) service: Option<Cow<'a, str>>,
 
-    /// The ID of the domain.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 }
 
-#[derive(Builder, Debug, Clone)]
+/// An application credential object.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Request<'a> {
-    /// The role name.
+pub struct ApplicationCredential<'a> {
+    /// The name of the application credential. Must be unique to a user.
+    #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// A description of the application credential’s purpose.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The secret that the application credential will be created with. If not
     /// provided, one will be generated.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) secret: Option<Option<Cow<'a, str>>>,
 
     /// An optional expiry time for the application credential. If unset, the
     /// application credential does not expire.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) expires_at: Option<Option<Cow<'a, str>>>,
 
@@ -76,17 +78,30 @@ pub struct Request<'a> {
     /// may only contain roles that the user has assigned on the project.
     /// If not provided, the roles assigned to the application credential will
     /// be the same as the roles in the current token.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) roles: Option<Vec<Roles<'a>>>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// An optional flag to restrict whether the application credential may be
+    /// used for the creation or destruction of other application credentials
+    /// or
+    /// trusts. Defaults to false.
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) unrestricted: Option<bool>,
 
     /// A list of `access\_rules` objects
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_rules: Option<Vec<AccessRules<'a>>>,
+}
+
+#[derive(Builder, Debug, Clone)]
+#[builder(setter(strip_option))]
+pub struct Request<'a> {
+    /// An application credential object.
+    #[builder(setter(into))]
+    pub(crate) application_credential: ApplicationCredential<'a>,
 
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
@@ -95,8 +110,6 @@ pub struct Request<'a> {
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-    #[builder(setter(name = "_properties"), default, private)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -128,18 +141,6 @@ where {
             .extend(iter.map(Into::into));
         self
     }
-
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 impl<'a> RestEndpoint for Request<'a> {
@@ -162,28 +163,10 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("name", serde_json::to_value(&self.name)?);
-        if let Some(val) = &self.description {
-            params.push("description", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.secret {
-            params.push("secret", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.expires_at {
-            params.push("expires_at", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.roles {
-            params.push("roles", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.unrestricted {
-            params.push("unrestricted", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.access_rules {
-            params.push("access_rules", serde_json::to_value(val)?);
-        }
-        for (key, val) in &self._properties {
-            params.push(key.clone(), val.clone());
-        }
+        params.push(
+            "application_credential",
+            serde_json::to_value(&self.application_credential)?,
+        );
 
         params.into_body()
     }
@@ -193,7 +176,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("application_credentials".into())
+        Some("application_credential".into())
     }
 
     /// Returns headers to be set into the request
@@ -217,7 +200,12 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .name("foo")
+                .application_credential(
+                    ApplicationCredentialBuilder::default()
+                        .name("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .service_type(),
@@ -229,12 +217,17 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .name("foo")
+                .application_credential(
+                    ApplicationCredentialBuilder::default()
+                        .name("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .response_key()
                 .unwrap(),
-            "application_credentials"
+            "application_credential"
         );
     }
 
@@ -249,12 +242,17 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "application_credentials": {} }));
+                .json_body(json!({ "application_credential": {} }));
         });
 
         let endpoint = Request::builder()
             .user_id("user_id")
-            .name("foo")
+            .application_credential(
+                ApplicationCredentialBuilder::default()
+                    .name("foo")
+                    .build()
+                    .unwrap(),
+            )
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -274,12 +272,17 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "application_credentials": {} }));
+                .json_body(json!({ "application_credential": {} }));
         });
 
         let endpoint = Request::builder()
             .user_id("user_id")
-            .name("foo")
+            .application_credential(
+                ApplicationCredentialBuilder::default()
+                    .name("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

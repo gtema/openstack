@@ -107,7 +107,7 @@ pub enum AuthError {
     #[error("Cannot construct TOTP user domain information: {}", source)]
     AuthTotpUserDomainBuild {
         #[from]
-        source: token_v3::UserDomainBuilderError,
+        source: token_v3::UserDomainStructBuilderError,
     },
     #[error("Cannot construct TOTP auth information: {}", source)]
     AuthTotpBuild {
@@ -252,7 +252,7 @@ pub fn fill_identity_using_totp(
     }
     // Process user domain information
     if auth_data.user_domain_id.is_some() || auth_data.user_domain_name.is_some() {
-        let mut user_domain = token_v3::UserDomainBuilder::default();
+        let mut user_domain = token_v3::UserDomainStructBuilder::default();
         if let Some(val) = &auth_data.user_domain_id {
             user_domain.id(val.clone());
         }

@@ -20,6 +20,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 
+    /// The name of the application credential. Must be unique to a user.
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
@@ -69,7 +73,10 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("name", self.name.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

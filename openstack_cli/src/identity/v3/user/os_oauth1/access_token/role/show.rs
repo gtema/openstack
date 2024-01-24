@@ -59,7 +59,7 @@ pub struct PathParameters {
     /// role_id parameter for /v3/users/{user_id}/OS-
     /// OAUTH1/access_tokens/{access_token_id}/roles/{role_id} API
     #[arg()]
-    role_id: String,
+    id: String,
 }
 
 /// Role show command
@@ -88,7 +88,7 @@ impl Command for RoleCmd {
         // Set path parameters
         ep_builder.user_id(&self.args.path.user_id);
         ep_builder.access_token_id(&self.args.path.access_token_id);
-        ep_builder.role_id(&self.args.path.role_id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
 

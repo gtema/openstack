@@ -58,6 +58,7 @@ pub struct PathParameters {}
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Methods {
+    ApplicationCredential,
     Password,
     Token,
     Totp,
@@ -119,10 +120,10 @@ struct Token {
     id: Option<String>,
 }
 
-/// UserDomain Body data
+/// UserDomainStructInput Body data
 #[derive(Args, Debug, Clone)]
 #[group(required = false, multiple = true)]
-struct UserDomain {
+struct UserDomainStructInput {
     #[arg(long)]
     id: Option<String>,
 
@@ -143,7 +144,7 @@ struct TotpUser {
     name: Option<String>,
 
     #[command(flatten)]
-    domain: Option<UserDomain>,
+    domain: Option<UserDomainStructInput>,
 
     /// MFA passcode
     #[arg(long, required = false)]
@@ -156,6 +157,42 @@ struct TotpUser {
 struct Totp {
     #[command(flatten)]
     user: TotpUser,
+}
+
+/// ApplicationCredentialUser Body data
+#[derive(Args, Debug, Clone)]
+#[group(required = false, multiple = true)]
+struct ApplicationCredentialUser {
+    /// The user ID
+    #[arg(long)]
+    id: Option<String>,
+
+    /// The user name
+    #[arg(long)]
+    name: Option<String>,
+
+    #[command(flatten)]
+    domain: Option<UserDomainStructInput>,
+}
+
+/// ApplicationCredential Body data
+#[derive(Args, Debug, Clone)]
+#[group(required = false, multiple = true)]
+struct ApplicationCredential {
+    #[arg(long)]
+    id: Option<String>,
+
+    #[arg(long)]
+    name: Option<String>,
+
+    /// The secret for authenticating the application credential.
+    #[arg(long, required = false)]
+    secret: Option<String>,
+
+    /// A user object, required if an application credential is identified by
+    /// name and not ID.
+    #[command(flatten)]
+    user: Option<ApplicationCredentialUser>,
 }
 
 /// Identity Body data
@@ -181,6 +218,10 @@ struct Identity {
     /// Multi Factor Authentication information
     #[command(flatten)]
     totp: Option<Totp>,
+
+    /// An application credential object.
+    #[command(flatten)]
+    application_credential: Option<ApplicationCredential>,
 }
 
 /// ProjectDomain Body data
@@ -787,7 +828,7 @@ impl Command for TokenCmd {
                 sub.name(val);
             }
             if let Some(val) = &&args.user.domain {
-                let mut sub = create::UserDomainBuilder::default();
+                let mut sub = create::UserDomainStructInputBuilder::default();
                 if let Some(val) = &val.id {
                     sub.id(val);
                 }
@@ -800,6 +841,38 @@ impl Command for TokenCmd {
             sub.passcode(&args.passcode);
             sub.user(sub.build().expect("A valid object"));
             sub.totp(sub.build().expect("A valid object"));
+        }
+        if let Some(val) = &&args.identity.application_credential {
+            let mut sub = create::ApplicationCredentialBuilder::default();
+            if let Some(val) = &val.id {
+                sub.id(val);
+            }
+            if let Some(val) = &val.name {
+                sub.name(val);
+            }
+
+            sub.secret(&args.secret);
+            if let Some(val) = &val.user {
+                let mut sub = create::ApplicationCredentialUserBuilder::default();
+                if let Some(val) = &val.id {
+                    sub.id(val);
+                }
+                if let Some(val) = &val.name {
+                    sub.name(val);
+                }
+                if let Some(val) = &val.domain {
+                    let mut sub = create::UserDomainStructInputBuilder::default();
+                    if let Some(val) = &val.id {
+                        sub.id(val);
+                    }
+                    if let Some(val) = &val.name {
+                        sub.name(val);
+                    }
+                    sub.domain(sub.build().expect("A valid object"));
+                }
+                sub.user(sub.build().expect("A valid object"));
+            }
+            sub.application_credential(sub.build().expect("A valid object"));
         }
         auth_builder.identity(sub.build().expect("A valid object"));
 

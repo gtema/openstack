@@ -83,7 +83,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("application_credential".into())
     }
 
     /// Returns headers to be set into the request
@@ -113,7 +113,10 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder().build().unwrap().response_key().unwrap(),
+            "application_credential"
+        );
     }
 
     #[test]
@@ -128,7 +131,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "application_credential": {} }));
         });
 
         let endpoint = Request::builder()
@@ -154,7 +157,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "application_credential": {} }));
         });
 
         let endpoint = Request::builder()

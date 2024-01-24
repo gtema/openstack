@@ -23,7 +23,9 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::application_credential::delete;
+use openstack_sdk::api::identity::v3::user::application_credential::find;
 use openstack_sdk::api::RawQueryAsync;
 
 /// Command arguments
@@ -54,7 +56,7 @@ pub struct PathParameters {
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
     #[arg()]
-    application_credential_id: String,
+    id: String,
 }
 
 /// ApplicationCredential delete command
@@ -82,7 +84,7 @@ impl Command for ApplicationCredentialCmd {
 
         // Set path parameters
         ep_builder.user_id(&self.args.path.user_id);
-        ep_builder.application_credential_id(&self.args.path.application_credential_id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
 

@@ -1,4 +1,4 @@
-//! `/v3/users/{user_id}/access_rules/{id}` REST operations of identity
+//! `dummy` REST operations of identity
 pub mod catalog;
 pub mod domain;
 pub mod os_federation;

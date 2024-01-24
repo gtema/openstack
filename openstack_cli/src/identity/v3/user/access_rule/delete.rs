@@ -25,7 +25,9 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::access_rule::delete;
+use openstack_sdk::api::identity::v3::user::access_rule::find;
 use openstack_sdk::api::RawQueryAsync;
 
 /// Command arguments
@@ -55,7 +57,7 @@ pub struct PathParameters {
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
     #[arg()]
-    access_rule_id: String,
+    id: String,
 }
 
 /// AccessRule delete command
@@ -83,7 +85,7 @@ impl Command for AccessRuleCmd {
 
         // Set path parameters
         ep_builder.user_id(&self.args.path.user_id);
-        ep_builder.access_rule_id(&self.args.path.access_rule_id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
 

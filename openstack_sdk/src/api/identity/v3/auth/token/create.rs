@@ -17,6 +17,8 @@ use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Methods {
+    #[serde(rename = "application_credential")]
+    ApplicationCredential,
     #[serde(rename = "password")]
     Password,
     #[serde(rename = "token")]
@@ -94,7 +96,7 @@ pub struct Token<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct UserDomain<'a> {
+pub struct UserDomainStruct<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
@@ -119,7 +121,7 @@ pub struct TotpUser<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<UserDomain<'a>>,
+    pub(crate) domain: Option<UserDomainStruct<'a>>,
 
     /// MFA passcode
     #[serde()]
@@ -134,6 +136,50 @@ pub struct Totp<'a> {
     #[serde()]
     #[builder(setter(into))]
     pub(crate) user: TotpUser<'a>,
+}
+
+/// A user object, required if an application credential is identified by name
+/// and not ID.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct ApplicationCredentialUser<'a> {
+    /// The user ID
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    /// The user name
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) domain: Option<UserDomainStruct<'a>>,
+}
+
+/// An application credential object.
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct ApplicationCredential<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    /// The secret for authenticating the application credential.
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) secret: Cow<'a, str>,
+
+    /// A user object, required if an application credential is identified by
+    /// name and not ID.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) user: Option<ApplicationCredentialUser<'a>>,
 }
 
 /// An `identity` object.
@@ -163,6 +209,11 @@ pub struct Identity<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) totp: Option<Totp<'a>>,
+
+    /// An application credential object.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) application_credential: Option<ApplicationCredential<'a>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -377,7 +428,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::Totp]))
+                                .methods(Vec::from([Methods::ApplicationCredential]))
                                 .build()
                                 .unwrap()
                         )
@@ -399,7 +450,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::Totp]))
+                                .methods(Vec::from([Methods::ApplicationCredential]))
                                 .build()
                                 .unwrap()
                         )
@@ -431,7 +482,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::Totp]))
+                            .methods(Vec::from([Methods::ApplicationCredential]))
                             .build()
                             .unwrap(),
                     )
@@ -462,7 +513,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::Totp]))
+                            .methods(Vec::from([Methods::ApplicationCredential]))
                             .build()
                             .unwrap(),
                     )

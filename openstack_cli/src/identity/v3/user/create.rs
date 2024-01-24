@@ -218,7 +218,7 @@ impl Command for UserCmd {
                 sub.multi_factor_auth_rules(
                     val.iter()
                         .cloned()
-                        .map(|x| Vec::from([x.split(",").collect()]))
+                        .map(|x| Vec::from([x.split(',').collect()]))
                         .collect::<Vec<_>>(),
                 );
             }

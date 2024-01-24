@@ -330,35 +330,30 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "ignore_change_password_upon_first_use={}",
                 self.ignore_change_password_upon_first_use
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_password_expiry={}",
                 self.ignore_password_expiry
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_lockout_failure_attempts={}",
                 self.ignore_lockout_failure_attempts
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "lock_password={}",
                 self.lock_password
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_user_inactivity={}",
                 self.ignore_user_inactivity
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -372,7 +367,6 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "multi_factor_auth_enabled={}",
                 self.multi_factor_auth_enabled
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -467,7 +461,7 @@ impl Command for UserCmd {
                 sub.multi_factor_auth_rules(
                     val.iter()
                         .cloned()
-                        .map(|x| Vec::from([x.split(",").collect()]))
+                        .map(|x| Vec::from([x.split(',').collect()]))
                         .collect::<Vec<_>>(),
                 );
             }

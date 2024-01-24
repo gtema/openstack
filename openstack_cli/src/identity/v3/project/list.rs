@@ -155,7 +155,6 @@ impl fmt::Display for ResponseOptions {
         let data = Vec::from([format!(
             "immutable={}",
             self.immutable
-                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);

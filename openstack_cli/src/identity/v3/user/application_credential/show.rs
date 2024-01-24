@@ -23,6 +23,8 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
+use openstack_sdk::api::find;
+use openstack_sdk::api::identity::v3::user::application_credential::find;
 use openstack_sdk::api::identity::v3::user::application_credential::get;
 use openstack_sdk::api::QueryAsync;
 
@@ -54,7 +56,7 @@ pub struct PathParameters {
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
     #[arg()]
-    application_credential_id: String,
+    id: String,
 }
 
 /// ApplicationCredential show command
@@ -64,52 +66,40 @@ pub struct ApplicationCredentialCmd {
 /// ApplicationCredential response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
+    /// The ID of the application credential.
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
     /// scoped to.
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     project_id: Option<String>,
 
-    /// The role name.
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// A description of the application credential’s purpose.
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     description: Option<String>,
 
-    /// The secret that the application credential will be created with. If not
-    /// provided, one will be generated.
     #[serde()]
-    #[structable(optional)]
-    secret: Option<String>,
-
-    /// An optional expiry time for the application credential. If unset, the
-    /// application credential does not expire.
-    #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     expires_at: Option<String>,
 
-    /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project.
-    /// If not provided, the roles assigned to the application credential will
-    /// be the same as the roles in the current token.
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     roles: Option<VecResponseRoles>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     unrestricted: Option<bool>,
 
-    /// A list of `access\_rules` objects
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, wide)]
     access_rules: Option<VecResponseAccessRules>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -226,20 +216,16 @@ impl Command for ApplicationCredentialCmd {
         op.validate_args(parsed_args)?;
         info!("Parsed args: {:?}", self.args);
 
-        let mut ep_builder = get::Request::builder();
+        let mut find_builder = find::Request::builder();
 
-        // Set path parameters
-        ep_builder.user_id(&self.args.path.user_id);
-        ep_builder.application_credential_id(&self.args.path.application_credential_id);
-        // Set query parameters
-        // Set body parameters
-
-        let ep = ep_builder
+        find_builder.user_id(&self.args.path.user_id);
+        find_builder.id(&self.args.path.id);
+        let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        op.output_single::<ResponseData>(find_data)?;
         Ok(())
     }
 }
