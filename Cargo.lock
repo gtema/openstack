@@ -1722,6 +1722,7 @@ dependencies = [
  "bytes",
  "clap",
  "cli-table",
+ "dialoguer",
  "futures",
  "http",
  "indicatif",

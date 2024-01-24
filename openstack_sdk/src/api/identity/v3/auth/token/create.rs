@@ -29,10 +29,12 @@ pub enum Methods {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Domain<'a> {
+    /// User Domain ID
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
+    /// User Domain Name
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -56,6 +58,7 @@ pub struct User<'a> {
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
+    /// User Password
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) password: Option<Cow<'a, str>>,
@@ -83,6 +86,7 @@ pub struct Password<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Token<'a> {
+    /// Authorization Token value
     #[serde()]
     #[builder(setter(into))]
     pub(crate) id: Cow<'a, str>,
@@ -164,10 +168,12 @@ pub struct Identity<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ProjectDomain<'a> {
+    /// Project domain Id
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
+    /// Project domain name
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -176,10 +182,12 @@ pub struct ProjectDomain<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Project<'a> {
+    /// Project Name
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
+    /// Project Id
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
@@ -192,10 +200,12 @@ pub struct Project<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ScopeDomain<'a> {
+    /// Domain id
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
+    /// Domain name
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -367,7 +377,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::Password]))
+                                .methods(Vec::from([Methods::Totp]))
                                 .build()
                                 .unwrap()
                         )
@@ -389,7 +399,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::Password]))
+                                .methods(Vec::from([Methods::Totp]))
                                 .build()
                                 .unwrap()
                         )
@@ -421,7 +431,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::Password]))
+                            .methods(Vec::from([Methods::Totp]))
                             .build()
                             .unwrap(),
                     )
@@ -452,7 +462,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::Password]))
+                            .methods(Vec::from([Methods::Totp]))
                             .build()
                             .unwrap(),
                     )

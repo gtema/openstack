@@ -18,6 +18,7 @@ async-trait = {workspace = true}
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 cli-table = "~0.4"
+dialoguer = {workspace = true}
 futures = {workspace = true}
 http = { workspace = true }
 json-patch = { workspace = true }

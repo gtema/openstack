@@ -53,6 +53,16 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity project list`↴](#osc-identity-project-list)
 * [`osc identity project set`↴](#osc-identity-project-set)
 * [`osc identity project show`↴](#osc-identity-project-show)
+* [`osc identity user`↴](#osc-identity-user)
+* [`osc identity user create`↴](#osc-identity-user-create)
+* [`osc identity user delete`↴](#osc-identity-user-delete)
+* [`osc identity user list`↴](#osc-identity-user-list)
+* [`osc identity user set`↴](#osc-identity-user-set)
+* [`osc identity user show`↴](#osc-identity-user-show)
+* [`osc identity user password`↴](#osc-identity-user-password)
+* [`osc identity user password set`↴](#osc-identity-user-password-set)
+* [`osc identity user projects`↴](#osc-identity-user-projects)
+* [`osc identity user groups`↴](#osc-identity-user-groups)
 * [`osc image`↴](#osc-image)
 * [`osc image image`↴](#osc-image-image)
 * [`osc image image list`↴](#osc-image-image-list)
@@ -1025,6 +1035,7 @@ Identity (Keystone) commands
 ###### **Subcommands:**
 
 * `project` — Project commands
+* `user` — User commands
 
 
 
@@ -1101,7 +1112,7 @@ List Projects
 
   Possible values: `true`, `false`
 
-* `--name <NAME>` — Filters the response by a project name
+* `--name <NAME>` — Filters the response by a resource name
 * `--parent-id <PARENT_ID>` — Filters the response by a parent ID
 
 
@@ -1147,6 +1158,227 @@ Show project details
 ###### **Arguments:**
 
 * `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity user`
+
+User commands
+
+A user is an individual API consumer that is owned by a domain. A role explicitly associates a user with projects or domains. A user with no assigned roles has no access to OpenStack resources.
+
+You can list, create, show details for, update, delete, and change the password for users.
+
+You can also list groups, projects, and role assignments for a specified user.
+
+**Usage:** `osc identity user <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create user
+* `delete` — Delete user
+* `list` — List Users
+* `set` — Update user details
+* `show` — Show user details
+* `password` — User password operations
+* `projects` — List projects for user
+* `groups` — List groups to which a user belongs
+
+
+
+## `osc identity user create`
+
+Create user
+
+**Usage:** `osc identity user create [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
+* `--description <DESCRIPTION>` — The new description of the group
+* `--domain-id <DOMAIN_ID>` — The ID of the domain
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp\_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol\_id` and `unique\_id` of the protocol and user respectively. For example:
+* `--name <NAME>` — The user name. Must be unique within the owning domain
+* `--password <PASSWORD>` — The new password for the user
+* `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-lockout-failure-attempts <IGNORE_LOCKOUT_FAILURE_ATTEMPTS>`
+
+  Possible values: `true`, `false`
+
+* `--lock-password <LOCK_PASSWORD>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-user-inactivity <IGNORE_USER_INACTIVITY>`
+
+  Possible values: `true`, `false`
+
+* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--multi-factor-auth-enabled <MULTI_FACTOR_AUTH_ENABLED>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity user delete`
+
+Delete user
+
+**Usage:** `osc identity user delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity user list`
+
+List Users
+
+**Usage:** `osc identity user list [OPTIONS]`
+
+###### **Options:**
+
+* `--domain-id <DOMAIN_ID>` — Filters the response by a domain ID
+* `--enabled <ENABLED>` — If set to true, then only enabled projects will be returned. Any value other than 0 (including no value) will be interpreted as true
+
+  Possible values: `true`, `false`
+
+* `--idp-id <IDP_ID>` — Filters the response by a domain ID
+* `--name <NAME>` — Filters the response by a resource name
+* `--password-expires-at <PASSWORD_EXPIRES_AT>` — Filter results based on which user passwords have expired. The query should include an operator and a timestamp with a colon (:) separating the two, for example: `password_expires_at={operator}:{timestamp}`. Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ
+* `--protocol-id <PROTOCOL_ID>` — Filters the response by a protocol ID
+* `--unique-id <UNIQUE_ID>` — Filters the response by a unique ID
+
+
+
+## `osc identity user set`
+
+Update user details
+
+**Usage:** `osc identity user set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
+* `--description <DESCRIPTION>` — The new description of the group
+* `--domain-id <DOMAIN_ID>` — The ID of the domain
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp\_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol\_id` and `unique\_id` of the protocol and user respectively. For example:
+* `--name <NAME>` — The user name. Must be unique within the owning domain
+* `--password <PASSWORD>` — The new password for the user
+* `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-lockout-failure-attempts <IGNORE_LOCKOUT_FAILURE_ATTEMPTS>`
+
+  Possible values: `true`, `false`
+
+* `--lock-password <LOCK_PASSWORD>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-user-inactivity <IGNORE_USER_INACTIVITY>`
+
+  Possible values: `true`, `false`
+
+* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--multi-factor-auth-enabled <MULTI_FACTOR_AUTH_ENABLED>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity user show`
+
+Show user details
+
+**Usage:** `osc identity user show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity user password`
+
+User password commands
+
+This subcommand allows user to change the password
+
+**Usage:** `osc identity user password <COMMAND>`
+
+###### **Subcommands:**
+
+* `set` — Update user password
+
+
+
+## `osc identity user password set`
+
+Update user password
+
+**Usage:** `osc identity user password set [OPTIONS] <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--original-password <ORIGINAL_PASSWORD>` — The original password for the user
+* `--password <PASSWORD>` — The new password for the user
+
+
+
+## `osc identity user projects`
+
+List projects for user
+
+**Usage:** `osc identity user projects <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity user groups`
+
+List groups to which a user belongs
+
+**Usage:** `osc identity user groups <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 
 
 

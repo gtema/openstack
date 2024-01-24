@@ -221,6 +221,7 @@ impl fmt::Display for ResponseOptions {
         let data = Vec::from([format!(
             "immutable={}",
             self.immutable
+                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);
@@ -276,7 +277,10 @@ impl Command for ProjectCmd {
         }
 
         if let Some(val) = &args.options {
-            let sub = create::OptionsBuilder::default();
+            let mut sub = create::OptionsBuilder::default();
+            if let Some(val) = &val.immutable {
+                sub.immutable(*val);
+            }
             project_builder.options(sub.build().expect("A valid object"));
         }
 

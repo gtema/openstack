@@ -686,23 +686,22 @@ where {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
-            let auth_ep = match self.state.get_any_valid_auth() {
-                Some(available_auth) => {
-                    // State contain valid authentication for different
-                    // scope/unscoped. It is possible to request new authz
-                    // using this other auth
-                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                    auth::build_reauth_request(&available_auth, &requested_scope)?
-                }
-                None => {
-                    // No auth/authz information available. Proceed with new auth
-                    trace!("No Auth already available. Proceeding with new login");
+            let auth_ep;
+            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), renew_auth) {
+                // State contain valid authentication for different
+                // scope/unscoped. It is possible to request new authz
+                // using this other auth
+                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                auth_ep = auth::build_reauth_request(&available_auth, &requested_scope)?;
+            } else {
+                // No auth/authz information available. Proceed with new auth
+                trace!("No Auth already available. Proceeding with new login");
 
-                    let auth_data = auth_data
-                        .unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+                let auth_data =
+                    auth_data.unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
 
-                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?
-                }
+                auth_ep =
+                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?;
             };
             let mut rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
 

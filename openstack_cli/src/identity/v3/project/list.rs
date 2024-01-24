@@ -59,7 +59,7 @@ pub struct QueryParameters {
     #[arg(long)]
     is_domain: Option<bool>,
 
-    /// Filters the response by a project name.
+    /// Filters the response by a resource name.
     #[arg(long)]
     name: Option<String>,
 
@@ -155,6 +155,7 @@ impl fmt::Display for ResponseOptions {
         let data = Vec::from([format!(
             "immutable={}",
             self.immutable
+                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);
