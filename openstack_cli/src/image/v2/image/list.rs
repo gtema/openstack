@@ -192,7 +192,7 @@ pub struct QueryParameters {
     status: Option<String>,
 
     /// Filters the response by the specified tag value. May be repeated, but
-    /// keep in mind that you’re making a conjunctive query, so only images
+    /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
     #[arg(long)]
     tag: Option<Vec<String>>,

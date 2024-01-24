@@ -285,11 +285,11 @@ impl Command for ApplicationCredentialCmd {
         }
 
         if let Some(val) = &args.roles {
-            let sub: Vec<create::Roles> = val
+            let roles_builder: Vec<create::Roles> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::Roles>(v.clone()))
                 .collect::<Vec<create::Roles>>();
-            application_credential_builder.roles(sub);
+            application_credential_builder.roles(roles_builder);
         }
 
         if let Some(val) = &args.unrestricted {
@@ -297,11 +297,11 @@ impl Command for ApplicationCredentialCmd {
         }
 
         if let Some(val) = &args.access_rules {
-            let sub: Vec<create::AccessRules> = val
+            let access_rules_builder: Vec<create::AccessRules> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::AccessRules>(v.clone()))
                 .collect::<Vec<create::AccessRules>>();
-            application_credential_builder.access_rules(sub);
+            application_credential_builder.access_rules(access_rules_builder);
         }
 
         ep_builder.application_credential(application_credential_builder.build().unwrap());

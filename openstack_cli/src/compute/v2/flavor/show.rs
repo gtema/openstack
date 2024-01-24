@@ -208,7 +208,6 @@ impl Command for FlavorCmd {
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
         op.output_single::<ResponseData>(find_data)?;
-
         Ok(())
     }
 }

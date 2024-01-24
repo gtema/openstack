@@ -14,7 +14,7 @@ pub struct RemoveTenantAccess<'a> {
     /// The UUID of the tenant in a multi-tenancy cloud.
     #[serde()]
     #[builder(setter(into))]
-    tenant: Cow<'a, str>,
+    pub(crate) tenant: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -22,7 +22,7 @@ pub struct RemoveTenantAccess<'a> {
 pub struct Request<'a> {
     /// The action.
     #[builder(setter(into))]
-    remove_tenant_access: RemoveTenantAccess<'a>,
+    pub(crate) remove_tenant_access: RemoveTenantAccess<'a>,
 
     /// id parameter for /v2.1/flavors/{id}/action API
     #[builder(default, setter(into))]

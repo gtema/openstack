@@ -610,11 +610,11 @@ impl Command for ImageCmd {
 
         // Set Request.locations data
         if let Some(args) = &self.args.locations {
-            let sub: Vec<create::Locations> = args
+            let locations_builder: Vec<create::Locations> = args
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::Locations>(v.clone()))
                 .collect::<Vec<create::Locations>>();
-            ep_builder.locations(sub);
+            ep_builder.locations(locations_builder);
         }
 
         if let Some(properties) = &self.args.properties {

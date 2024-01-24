@@ -44,12 +44,12 @@ pub struct FixedIps<'a> {
     /// IP Address
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    ip_address: Option<Cow<'a, str>>,
+    pub(crate) ip_address: Option<Cow<'a, str>>,
 
     /// The subnet ID from which the IP address is assigned
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    subnet_id: Option<Cow<'a, str>>,
+    pub(crate) subnet_id: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -57,11 +57,11 @@ pub struct FixedIps<'a> {
 pub struct AllowedAddressPairs<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    ip_address: Option<Cow<'a, str>>,
+    pub(crate) ip_address: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    max_address: Option<Cow<'a, str>>,
+    pub(crate) max_address: Option<Cow<'a, str>>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -116,21 +116,21 @@ pub struct Port<'a> {
     /// Default is an empty string.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// The administrative state of the resource, which is
     /// up (`true`) or down (`false`).
     /// Default is `true`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    admin_state_up: Option<bool>,
+    pub(crate) admin_state_up: Option<bool>,
 
     /// The MAC address of the port.
     /// By default, only administrative users and users with advsvc role
     /// can change this value.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    mac_address: Option<Cow<'a, str>>,
+    pub(crate) mac_address: Option<Cow<'a, str>>,
 
     /// The IP addresses for the port.
     /// If you would like to assign multiple IP addresses for the port,
@@ -149,20 +149,20 @@ pub struct Port<'a> {
     /// for any of the subnets on the specified network.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    fixed_ips: Option<Vec<FixedIps<'a>>>,
+    pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
 
     /// The ID of the device that uses this port.
     /// For example, a server instance or a logical router.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    device_id: Option<Cow<'a, str>>,
+    pub(crate) device_id: Option<Cow<'a, str>>,
 
     /// The entity type that uses this port.
     /// For example, `compute:nova` (server instance), `network:dhcp`
     /// (DHCP agent) or `network:router\_interface` (router interface).
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    device_owner: Option<Cow<'a, str>>,
+    pub(crate) device_owner: Option<Cow<'a, str>>,
 
     /// A set of zero or more allowed address pair objects each where address
     /// pair
@@ -175,18 +175,18 @@ pub struct Port<'a> {
     /// matches one of the specified allowed address pairs.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    allowed_address_pairs: Option<Vec<AllowedAddressPairs<'a>>>,
+    pub(crate) allowed_address_pairs: Option<Vec<AllowedAddressPairs<'a>>>,
 
     /// Status of the underlying data plane of a port.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    data_plane_status: Option<DataPlaneStatus>,
+    pub(crate) data_plane_status: Option<DataPlaneStatus>,
 
     /// A set of zero or more extra DHCP option pairs. An
     /// option pair consists of an option value and name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    extra_dhcp_opts: Option<Vec<BTreeMap<Cow<'a, str>, Value>>>,
+    pub(crate) extra_dhcp_opts: Option<Vec<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// Admin-only. A dict, at the top level keyed by mechanism driver
     /// aliases (as defined in setup.cfg). To following values can be used to
@@ -201,13 +201,13 @@ pub struct Port<'a> {
     /// The field cannot be longer than 4095 characters.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_hints"))]
-    hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+    pub(crate) hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    numa_affinity_policy: Option<NumaAffinityPolicy>,
+    pub(crate) numa_affinity_policy: Option<NumaAffinityPolicy>,
 
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port.
@@ -218,13 +218,13 @@ pub struct Port<'a> {
     /// The default is `normal`.
     #[serde(rename = "binding:vnic_type", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    binding_vnic_type: Option<BindingVnicType>,
+    pub(crate) binding_vnic_type: Option<BindingVnicType>,
 
     /// The ID of the host where the port resides.
     /// The default is an empty string.
     #[serde(rename = "binding:host_id", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    binding_host_id: Option<Cow<'a, str>>,
+    pub(crate) binding_host_id: Option<Cow<'a, str>>,
 
     /// A dictionary that enables the application running on the specific host
     /// to
@@ -250,7 +250,7 @@ pub struct Port<'a> {
     /// from the active binding.
     #[serde(rename = "binding:profile", skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_binding_profile"))]
-    binding_profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+    pub(crate) binding_profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     /// The port security status. A valid value is
     /// enabled (`true`) or disabled (`false`).
@@ -259,33 +259,33 @@ pub struct Port<'a> {
     /// the traffic on the port. If disabled, no such rules are applied.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    port_security_enabled: Option<bool>,
+    pub(crate) port_security_enabled: Option<bool>,
 
     /// QoS policy associated with the port.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    qos_policy_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
     /// A valid DNS name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    dns_name: Option<Cow<'a, str>>,
+    pub(crate) dns_name: Option<Cow<'a, str>>,
 
     /// A valid DNS domain.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    dns_domain: Option<Cow<'a, str>>,
+    pub(crate) dns_domain: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
     /// Default is an empty string.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Cow<'a, str>>,
 
     /// The IDs of security groups applied to the port.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    security_groups: Option<Vec<Cow<'a, str>>>,
+    pub(crate) security_groups: Option<Vec<Cow<'a, str>>>,
 }
 
 impl<'a> PortBuilder<'a> {
@@ -355,7 +355,7 @@ impl<'a> PortBuilder<'a> {
 pub struct Request<'a> {
     /// A `port` object.
     #[builder(setter(into))]
-    port: Port<'a>,
+    pub(crate) port: Port<'a>,
 
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API

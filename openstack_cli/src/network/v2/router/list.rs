@@ -368,6 +368,7 @@ impl Command for RoutersCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.name {
             ep_builder.name(val);
@@ -399,7 +400,6 @@ impl Command for RoutersCmd {
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val);
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -409,7 +409,6 @@ impl Command for RoutersCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

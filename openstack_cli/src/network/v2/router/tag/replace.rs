@@ -91,11 +91,10 @@ impl Command for TagCmd {
 
         let mut ep_builder = replace::Request::builder();
 
+        // Set path parameters
         ep_builder.router_id(&self.args.path.router_id);
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.tags data
         let args = &self.args.tags;
 
@@ -107,7 +106,6 @@ impl Command for TagCmd {
 
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

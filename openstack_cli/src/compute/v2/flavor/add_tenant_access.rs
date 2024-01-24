@@ -93,14 +93,14 @@ impl fmt::Display for ResponseFlavorAccess {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseFlavorAccess(Vec<ResponseFlavorAccess>);
 impl fmt::Display for VecResponseFlavorAccess {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -108,7 +108,7 @@ impl fmt::Display for VecResponseFlavorAccess {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -127,11 +127,10 @@ impl Command for FlavorCmd {
 
         let mut ep_builder = add_tenant_access::Request::builder();
 
+        // Set path parameters
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.add_tenant_access data
         let args = &self.args.add_tenant_access;
         let mut add_tenant_access_builder = add_tenant_access::AddTenantAccessBuilder::default();
@@ -146,7 +145,6 @@ impl Command for FlavorCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

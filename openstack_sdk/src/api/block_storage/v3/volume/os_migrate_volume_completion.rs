@@ -12,18 +12,18 @@ use std::borrow::Cow;
 pub struct OsMigrateVolumeCompletion<'a> {
     #[serde()]
     #[builder(setter(into))]
-    new_volume: Cow<'a, str>,
+    pub(crate) new_volume: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    error: Option<Option<bool>>,
+    pub(crate) error: Option<Option<bool>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_migrate_volume_completion: OsMigrateVolumeCompletion<'a>,
+    pub(crate) os_migrate_volume_completion: OsMigrateVolumeCompletion<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

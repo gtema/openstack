@@ -12,14 +12,14 @@ use std::borrow::Cow;
 pub struct OsDetach<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    attachment_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) attachment_id: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_detach: Option<OsDetach<'a>>,
+    pub(crate) os_detach: Option<OsDetach<'a>>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

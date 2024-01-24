@@ -20,18 +20,18 @@ pub enum MigrationPolicy {
 pub struct OsRetype<'a> {
     #[serde()]
     #[builder(setter(into))]
-    new_type: Cow<'a, str>,
+    pub(crate) new_type: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    migration_policy: Option<MigrationPolicy>,
+    pub(crate) migration_policy: Option<MigrationPolicy>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_retype: OsRetype<'a>,
+    pub(crate) os_retype: OsRetype<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

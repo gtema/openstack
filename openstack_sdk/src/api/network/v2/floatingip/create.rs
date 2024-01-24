@@ -57,25 +57,25 @@ pub struct Floatingip<'a> {
     /// The floating IP address.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    floating_ip_address: Option<Cow<'a, str>>,
+    pub(crate) floating_ip_address: Option<Cow<'a, str>>,
 
     /// The subnet ID on which you want to create the floating IP.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    subnet_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) subnet_id: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the network associated with the
     /// floating IP.
     #[serde()]
     #[builder(setter(into))]
-    floating_network_id: Cow<'a, str>,
+    pub(crate) floating_network_id: Cow<'a, str>,
 
     /// The ID of a port associated with the floating IP.
     /// To associate the floating IP with a fixed IP at creation time,
     /// you must specify the identifier of the internal port.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    port_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) port_id: Option<Option<Cow<'a, str>>>,
 
     /// The fixed IP address that is associated with the floating IP.
     /// If an internal port has multiple associated IP addresses,
@@ -83,33 +83,33 @@ pub struct Floatingip<'a> {
     /// define a fixed IP address in the `fixed\_ip\_address` parameter.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    fixed_ip_address: Option<Cow<'a, str>>,
+    pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
 
     /// The ID of the project.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    tenant_id: Option<Cow<'a, str>>,
+    pub(crate) tenant_id: Option<Cow<'a, str>>,
 
     /// The ID of the QoS policy associated with the floating IP.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    qos_policy_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
     /// A valid DNS name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    dns_name: Option<Cow<'a, str>>,
+    pub(crate) dns_name: Option<Cow<'a, str>>,
 
     /// A valid DNS domain.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    dns_domain: Option<Cow<'a, str>>,
+    pub(crate) dns_domain: Option<Cow<'a, str>>,
 
     /// A human-readable description for the resource.
     /// Default is an empty string.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -120,7 +120,7 @@ pub struct Request<'a> {
     /// address each time that it boots, basically to maintain a
     /// consistent IP address for maintaining DNS assignment.
     #[builder(setter(into))]
-    floatingip: Floatingip<'a>,
+    pub(crate) floatingip: Floatingip<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

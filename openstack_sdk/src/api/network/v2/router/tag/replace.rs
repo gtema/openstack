@@ -11,7 +11,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    tags: Vec<Cow<'a, str>>,
+    pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     #[builder(default, setter(into))]

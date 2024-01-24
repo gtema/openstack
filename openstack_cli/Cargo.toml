@@ -19,7 +19,6 @@ bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 cli-table = "~0.4"
 dialoguer = {workspace = true}
-futures = {workspace = true}
 http = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk" }
@@ -27,9 +26,7 @@ indicatif = "~0.17"
 regex = "~1.10"
 reqwest = { workspace = true }
 serde = { workspace = true }
-serde_bytes = {workspace = true}
 serde_json = {workspace = true}
-serde_yaml = {workspace = true}
 structable_derive = { path = "../structable_derive" }
 tokio = { workspace = true, features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std"]}
 tokio-util = {workspace = true}

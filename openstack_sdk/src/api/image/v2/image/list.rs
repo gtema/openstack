@@ -159,7 +159,7 @@ pub struct Request<'a> {
     status: Option<Cow<'a, str>>,
 
     /// Filters the response by the specified tag value. May be repeated, but
-    /// keep in mind that you’re making a conjunctive query, so only images
+    /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
     #[builder(default, private, setter(name = "_tag"))]
     tag: BTreeSet<Cow<'a, str>>,
@@ -235,7 +235,7 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// Filters the response by the specified tag value. May be repeated, but
-    /// keep in mind that you’re making a conjunctive query, so only images
+    /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
     pub fn tag<I, T>(&mut self, iter: I) -> &mut Self
     where

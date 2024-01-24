@@ -223,6 +223,7 @@ impl Command for FlavorsCmd {
 
         let mut ep_builder = list_detailed::Request::builder();
 
+        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.limit {
             ep_builder.limit(*val);
@@ -245,7 +246,6 @@ impl Command for FlavorsCmd {
         if let Some(val) = &self.args.query.sort_dir {
             ep_builder.sort_dir(val);
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -257,7 +257,6 @@ impl Command for FlavorsCmd {
             .await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

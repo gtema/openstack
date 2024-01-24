@@ -12,14 +12,14 @@ use std::borrow::Cow;
 pub struct OsSetBootable {
     #[serde()]
     #[builder()]
-    bootable: bool,
+    pub(crate) bootable: bool,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_set_bootable: OsSetBootable,
+    pub(crate) os_set_bootable: OsSetBootable,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

@@ -27,7 +27,7 @@ pub struct Flavor<'a> {
     /// The display name of a flavor.
     #[serde()]
     #[builder(setter(into))]
-    name: Cow<'a, str>,
+    pub(crate) name: Cow<'a, str>,
 
     /// Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces
     /// and dots ‘.’ are permitted. If an ID is not provided, then a default
@@ -35,23 +35,23 @@ pub struct Flavor<'a> {
     /// will be assigned.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    id: Option<Option<Cow<'a, str>>>,
+    pub(crate) id: Option<Option<Cow<'a, str>>>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[serde()]
     #[builder(setter(into))]
-    ram: Cow<'a, str>,
+    pub(crate) ram: Cow<'a, str>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[serde()]
     #[builder(setter(into))]
-    vcpus: Cow<'a, str>,
+    pub(crate) vcpus: Cow<'a, str>,
 
     /// The size of a dedicated swap disk that will be allocated, in
     /// MiB. If 0 (the default), no dedicated swap disk will be created.
     #[serde()]
     #[builder(setter(into))]
-    disk: Cow<'a, str>,
+    pub(crate) disk: Cow<'a, str>,
 
     /// The size of a dedicated swap disk that will be allocated, in
     /// MiB. If 0 (the default), no dedicated swap disk will be created.
@@ -60,20 +60,20 @@ pub struct Flavor<'a> {
         skip_serializing_if = "Option::is_none"
     )]
     #[builder(default, setter(into))]
-    os_flv_ext_data_ephemeral: Option<Cow<'a, str>>,
+    pub(crate) os_flv_ext_data_ephemeral: Option<Cow<'a, str>>,
 
     /// The size of a dedicated swap disk that will be allocated, in
     /// MiB. If 0 (the default), no dedicated swap disk will be created.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    swap: Option<Cow<'a, str>>,
+    pub(crate) swap: Option<Cow<'a, str>>,
 
     /// The receive / transmit factor (as a float) that will be set on
     /// ports if the network backend supports the QOS extension.
     /// Otherwise it will be ignored. It defaults to 1.0.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    rxtx_factor: Option<Cow<'a, str>>,
+    pub(crate) rxtx_factor: Option<Cow<'a, str>>,
 
     /// Whether the flavor is public (available to all projects) or scoped
     /// to a set of projects. Default is True if not specified.
@@ -82,7 +82,7 @@ pub struct Flavor<'a> {
         skip_serializing_if = "Option::is_none"
     )]
     #[builder(default)]
-    os_flavor_access_is_public: Option<bool>,
+    pub(crate) os_flavor_access_is_public: Option<bool>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -92,7 +92,7 @@ pub struct Request<'a> {
     /// combination
     /// of memory, disk size, and CPUs.
     #[builder(setter(into))]
-    flavor: Flavor<'a>,
+    pub(crate) flavor: Flavor<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

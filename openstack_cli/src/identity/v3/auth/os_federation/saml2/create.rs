@@ -343,148 +343,161 @@ impl Command for Saml2Cmd {
         let args = &self.args.auth;
         let mut auth_builder = create::AuthBuilder::default();
 
-        let mut sub = create::IdentityBuilder::default();
+        let mut identity_builder = create::IdentityBuilder::default();
 
-        sub.methods(&args.methods.iter().map(|v| v.into()).collect::<Vec<_>>());
+        identity_builder.methods(
+            &&args
+                .identity
+                .methods
+                .iter()
+                .map(|v| v.into())
+                .collect::<Vec<_>>(),
+        );
         if let Some(val) = &&args.identity.password {
-            let mut sub = create::PasswordBuilder::default();
+            let mut password_builder = create::PasswordBuilder::default();
             if let Some(val) = &val.user {
-                let mut sub = create::UserBuilder::default();
+                let mut user_builder = create::UserBuilder::default();
                 if let Some(val) = &val.id {
-                    sub.id(val);
+                    user_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    sub.name(val);
+                    user_builder.name(val);
                 }
                 if let Some(val) = &val.password {
-                    sub.password(val);
+                    user_builder.password(val);
                 }
                 if let Some(val) = &val.domain {
-                    let mut sub = create::DomainBuilder::default();
+                    let mut domain_builder = create::DomainBuilder::default();
                     if let Some(val) = &val.id {
-                        sub.id(val);
+                        domain_builder.id(val);
                     }
                     if let Some(val) = &val.name {
-                        sub.name(val);
+                        domain_builder.name(val);
                     }
-                    sub.domain(sub.build().expect("A valid object"));
+                    user_builder.domain(domain_builder.build().expect("A valid object"));
                 }
-                sub.user(sub.build().expect("A valid object"));
+                password_builder.user(user_builder.build().expect("A valid object"));
             }
-            sub.password(sub.build().expect("A valid object"));
+            identity_builder.password(password_builder.build().expect("A valid object"));
         }
         if let Some(val) = &&args.identity.token {
-            let mut sub = create::TokenBuilder::default();
+            let mut token_builder = create::TokenBuilder::default();
 
-            sub.id(&args.id);
-            sub.token(sub.build().expect("A valid object"));
+            token_builder.id(&val.id);
+            identity_builder.token(token_builder.build().expect("A valid object"));
         }
         if let Some(val) = &&args.identity.totp {
-            let mut sub = create::TotpBuilder::default();
+            let mut totp_builder = create::TotpBuilder::default();
 
-            let mut sub = create::TotpUserBuilder::default();
-            if let Some(val) = &&args.user.id {
-                sub.id(val);
+            let mut user_builder = create::TotpUserBuilder::default();
+            if let Some(val) = &&val.user.id {
+                user_builder.id(val);
             }
-            if let Some(val) = &&args.user.name {
-                sub.name(val);
+            if let Some(val) = &&val.user.name {
+                user_builder.name(val);
             }
-            if let Some(val) = &&args.user.domain {
-                let mut sub = create::UserDomainStructInputBuilder::default();
+            if let Some(val) = &&val.user.domain {
+                let mut domain_builder = create::UserDomainStructInputBuilder::default();
                 if let Some(val) = &val.id {
-                    sub.id(val);
+                    domain_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    sub.name(val);
+                    domain_builder.name(val);
                 }
-                sub.domain(sub.build().expect("A valid object"));
+                user_builder.domain(domain_builder.build().expect("A valid object"));
             }
 
-            sub.passcode(&args.passcode);
-            sub.user(sub.build().expect("A valid object"));
-            sub.totp(sub.build().expect("A valid object"));
+            user_builder.passcode(&&val.user.passcode);
+            totp_builder.user(user_builder.build().expect("A valid object"));
+            identity_builder.totp(totp_builder.build().expect("A valid object"));
         }
         if let Some(val) = &&args.identity.application_credential {
-            let mut sub = create::ApplicationCredentialBuilder::default();
+            let mut application_credential_builder =
+                create::ApplicationCredentialBuilder::default();
             if let Some(val) = &val.id {
-                sub.id(val);
+                application_credential_builder.id(val);
             }
             if let Some(val) = &val.name {
-                sub.name(val);
+                application_credential_builder.name(val);
             }
 
-            sub.secret(&args.secret);
+            application_credential_builder.secret(&val.secret);
             if let Some(val) = &val.user {
-                let mut sub = create::ApplicationCredentialUserBuilder::default();
+                let mut user_builder = create::ApplicationCredentialUserBuilder::default();
                 if let Some(val) = &val.id {
-                    sub.id(val);
+                    user_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    sub.name(val);
+                    user_builder.name(val);
                 }
                 if let Some(val) = &val.domain {
-                    let mut sub = create::UserDomainStructInputBuilder::default();
+                    let mut domain_builder = create::UserDomainStructInputBuilder::default();
                     if let Some(val) = &val.id {
-                        sub.id(val);
+                        domain_builder.id(val);
                     }
                     if let Some(val) = &val.name {
-                        sub.name(val);
+                        domain_builder.name(val);
                     }
-                    sub.domain(sub.build().expect("A valid object"));
+                    user_builder.domain(domain_builder.build().expect("A valid object"));
                 }
-                sub.user(sub.build().expect("A valid object"));
+                application_credential_builder.user(user_builder.build().expect("A valid object"));
             }
-            sub.application_credential(sub.build().expect("A valid object"));
+            identity_builder.application_credential(
+                application_credential_builder
+                    .build()
+                    .expect("A valid object"),
+            );
         }
-        auth_builder.identity(sub.build().expect("A valid object"));
+        auth_builder.identity(identity_builder.build().expect("A valid object"));
 
         if let Some(val) = &args.scope {
-            let mut sub = create::ScopeBuilder::default();
+            let mut scope_builder = create::ScopeBuilder::default();
             if let Some(val) = &val.project {
-                let mut sub = create::ProjectBuilder::default();
+                let mut project_builder = create::ProjectBuilder::default();
                 if let Some(val) = &val.name {
-                    sub.name(val);
+                    project_builder.name(val);
                 }
                 if let Some(val) = &val.id {
-                    sub.id(val);
+                    project_builder.id(val);
                 }
                 if let Some(val) = &val.domain {
-                    let mut sub = create::ProjectDomainBuilder::default();
+                    let mut domain_builder = create::ProjectDomainBuilder::default();
                     if let Some(val) = &val.id {
-                        sub.id(val);
+                        domain_builder.id(val);
                     }
                     if let Some(val) = &val.name {
-                        sub.name(val);
+                        domain_builder.name(val);
                     }
-                    sub.domain(sub.build().expect("A valid object"));
+                    project_builder.domain(domain_builder.build().expect("A valid object"));
                 }
-                sub.project(sub.build().expect("A valid object"));
+                scope_builder.project(project_builder.build().expect("A valid object"));
             }
             if let Some(val) = &val.domain {
-                let mut sub = create::ScopeDomainBuilder::default();
+                let mut domain_builder = create::ScopeDomainBuilder::default();
                 if let Some(val) = &val.id {
-                    sub.id(val);
+                    domain_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    sub.name(val);
+                    domain_builder.name(val);
                 }
-                sub.domain(sub.build().expect("A valid object"));
+                scope_builder.domain(domain_builder.build().expect("A valid object"));
             }
             if let Some(val) = &val.os_trust_trust {
-                let mut sub = create::OsTrustTrustBuilder::default();
+                let mut os_trust_trust_builder = create::OsTrustTrustBuilder::default();
                 if let Some(val) = &val.id {
-                    sub.id(val);
+                    os_trust_trust_builder.id(val);
                 }
-                sub.os_trust_trust(sub.build().expect("A valid object"));
+                scope_builder
+                    .os_trust_trust(os_trust_trust_builder.build().expect("A valid object"));
             }
             if let Some(val) = &val.system {
-                let mut sub = create::SystemBuilder::default();
+                let mut system_builder = create::SystemBuilder::default();
                 if let Some(val) = &val.all {
-                    sub.all(*val);
+                    system_builder.all(*val);
                 }
-                sub.system(sub.build().expect("A valid object"));
+                scope_builder.system(system_builder.build().expect("A valid object"));
             }
-            auth_builder.scope(sub.build().expect("A valid object"));
+            auth_builder.scope(scope_builder.build().expect("A valid object"));
         }
 
         ep_builder.auth(auth_builder.build().unwrap());

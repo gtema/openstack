@@ -94,9 +94,9 @@ impl Command for RouterCmd {
 
         let mut ep_builder = remove_external_gateways::Request::builder();
 
+        // Set path parameters
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -107,7 +107,6 @@ impl Command for RouterCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

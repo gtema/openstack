@@ -30,7 +30,7 @@ pub struct Keypair<'a> {
     /// characters: `[@.\_- ]`.
     #[serde()]
     #[builder(setter(into))]
-    name: Cow<'a, str>,
+    pub(crate) name: Cow<'a, str>,
 
     /// The public ssh key to import.
     /// Was optional before microversion 2.92 : if you were omitting this
@@ -38,7 +38,7 @@ pub struct Keypair<'a> {
     /// keypair was generated for you.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    public_key: Option<Cow<'a, str>>,
+    pub(crate) public_key: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -46,7 +46,7 @@ pub struct Keypair<'a> {
 pub struct Request<'a> {
     /// Keypair object
     #[builder(setter(into))]
-    keypair: Keypair<'a>,
+    pub(crate) keypair: Keypair<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

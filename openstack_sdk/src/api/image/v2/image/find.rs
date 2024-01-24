@@ -1,4 +1,5 @@
 use derive_builder::Builder;
+use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::de::DeserializeOwned;
 use tracing::trace;
 
@@ -17,6 +18,9 @@ use crate::api::image::v2::image::{get as Get, list as List};
 pub struct Request<'a> {
     #[builder(setter(into), default)]
     id: Cow<'a, str>,
+
+    #[builder(setter(name = "_headers"), default, private)]
+    _headers: Option<HeaderMap>,
 }
 
 impl<'a> Request<'a> {
@@ -26,16 +30,48 @@ impl<'a> Request<'a> {
     }
 }
 
+impl<'a> RequestBuilder<'a> {
+    /// Add a single header to the Volume.
+    pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
+where {
+        self._headers
+            .get_or_insert(None)
+            .get_or_insert_with(HeaderMap::new)
+            .insert(header_name, HeaderValue::from_static(header_value));
+        self
+    }
+
+    /// Add multiple headers.
+    pub fn headers<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<(Option<HeaderName>, HeaderValue)>,
+    {
+        self._headers
+            .get_or_insert(None)
+            .get_or_insert_with(HeaderMap::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+}
+
 impl<'a> Findable for Request<'a> {
     type G = Get::Request<'a>;
     type L = List::Request<'a>;
     fn get_ep(&self) -> Get::Request<'a> {
-        Get::Request::builder().id(self.id.clone()).build().unwrap()
+        let mut ep = Get::Request::builder();
+        ep.id(self.id.clone());
+        if let Some(headers) = &self._headers {
+            ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
+        }
+        ep.build().unwrap()
     }
     fn list_ep(&self) -> List::Request<'a> {
-        List::Request::builder()
-            .name(self.id.clone())
-            .build()
-            .unwrap()
+        let mut ep = List::Request::builder();
+        if let Some(headers) = &self._headers {
+            ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
+        }
+        ep.name(self.id.clone());
+        ep.build().unwrap()
     }
 }

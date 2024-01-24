@@ -163,10 +163,9 @@ impl Command for OsKeypairCmd {
         let mut ep_builder = create_21::Request::builder();
         ep_builder.header("OpenStack-API-Version", "compute 2.1");
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.keypair data
         let args = &self.args.keypair;
         let mut keypair_builder = create_21::KeypairBuilder::default();
@@ -185,7 +184,6 @@ impl Command for OsKeypairCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

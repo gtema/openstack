@@ -232,7 +232,7 @@ impl fmt::Display for ResponseLinks {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 
@@ -252,10 +252,9 @@ impl Command for FlavorCmd {
         let mut ep_builder = create_21::Request::builder();
         ep_builder.header("OpenStack-API-Version", "compute 2.1");
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.flavor data
         let args = &self.args.flavor;
         let mut flavor_builder = create_21::FlavorBuilder::default();
@@ -296,7 +295,6 @@ impl Command for FlavorCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

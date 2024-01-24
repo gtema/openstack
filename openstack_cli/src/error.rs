@@ -11,12 +11,12 @@ pub enum OpenStackCliError {
         #[from]
         source: serde_json::Error,
     },
-    #[error("failed to serialize data to yaml: {}", source)]
-    SerializeYaml {
-        /// The source of the error.
-        #[from]
-        source: serde_yaml::Error,
-    },
+    // #[error("failed to serialize data to yaml: {}", source)]
+    // SerializeYaml {
+    //     /// The source of the error.
+    //     #[from]
+    //     source: serde_yaml::Error,
+    // },
     #[error("OpenStackSDK error: {}", source)]
     OpenStackSDK {
         /// The source of the error.

@@ -74,9 +74,9 @@ impl Command for OsFlavorAccessCmd {
 
         let mut ep_builder = get::Request::builder();
 
+        // Set path parameters
         ep_builder.flavor_id(&self.args.path.flavor_id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -87,7 +87,6 @@ impl Command for OsFlavorAccessCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

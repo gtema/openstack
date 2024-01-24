@@ -38,48 +38,48 @@ pub struct PortForwarding<'a> {
     /// address.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    external_port: Option<Option<f32>>,
+    pub(crate) external_port: Option<Option<f32>>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    internal_port: Option<Option<f32>>,
+    pub(crate) internal_port: Option<Option<f32>>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP
     /// port forwarding.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    internal_ip_address: Option<Cow<'a, str>>,
+    pub(crate) internal_ip_address: Option<Cow<'a, str>>,
 
     /// The IP protocol used in the floating IP port forwarding.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    protocol: Option<Protocol>,
+    pub(crate) protocol: Option<Protocol>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    internal_port_id: Option<Cow<'a, str>>,
+    pub(crate) internal_port_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Cow<'a, str>>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
     /// IP
     /// address.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    external_port_range: Option<f32>,
+    pub(crate) external_port_range: Option<f32>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    internal_port_range: Option<f32>,
+    pub(crate) internal_port_range: Option<f32>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -87,7 +87,7 @@ pub struct PortForwarding<'a> {
 pub struct Request<'a> {
     /// A `floating IP port forwarding` object.
     #[builder(setter(into))]
-    port_forwarding: PortForwarding<'a>,
+    pub(crate) port_forwarding: PortForwarding<'a>,
 
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API

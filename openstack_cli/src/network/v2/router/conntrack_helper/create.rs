@@ -127,11 +127,10 @@ impl Command for ConntrackHelperCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         ep_builder.router_id(&self.args.path.router_id);
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.conntrack_helper data
         let args = &self.args.conntrack_helper;
         let mut conntrack_helper_builder = create::ConntrackHelperBuilder::default();
@@ -167,7 +166,6 @@ impl Command for ConntrackHelperCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

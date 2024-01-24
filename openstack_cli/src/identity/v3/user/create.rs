@@ -184,11 +184,11 @@ impl Command for UserCmd {
         }
 
         if let Some(val) = &args.federated {
-            let sub: Vec<create::Federated> = val
+            let federated_builder: Vec<create::Federated> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::Federated>(v.clone()))
                 .collect::<Vec<create::Federated>>();
-            user_builder.federated(sub);
+            user_builder.federated(federated_builder);
         }
 
         user_builder.name(&args.name);
@@ -198,24 +198,24 @@ impl Command for UserCmd {
         }
 
         if let Some(val) = &args.options {
-            let mut sub = create::OptionsBuilder::default();
+            let mut options_builder = create::OptionsBuilder::default();
             if let Some(val) = &val.ignore_change_password_upon_first_use {
-                sub.ignore_change_password_upon_first_use(*val);
+                options_builder.ignore_change_password_upon_first_use(*val);
             }
             if let Some(val) = &val.ignore_password_expiry {
-                sub.ignore_password_expiry(*val);
+                options_builder.ignore_password_expiry(*val);
             }
             if let Some(val) = &val.ignore_lockout_failure_attempts {
-                sub.ignore_lockout_failure_attempts(*val);
+                options_builder.ignore_lockout_failure_attempts(*val);
             }
             if let Some(val) = &val.lock_password {
-                sub.lock_password(*val);
+                options_builder.lock_password(*val);
             }
             if let Some(val) = &val.ignore_user_inactivity {
-                sub.ignore_user_inactivity(*val);
+                options_builder.ignore_user_inactivity(*val);
             }
             if let Some(val) = &val.multi_factor_auth_rules {
-                sub.multi_factor_auth_rules(
+                options_builder.multi_factor_auth_rules(
                     val.iter()
                         .cloned()
                         .map(|x| Vec::from([x.split(',').collect()]))
@@ -223,9 +223,9 @@ impl Command for UserCmd {
                 );
             }
             if let Some(val) = &val.multi_factor_auth_enabled {
-                sub.multi_factor_auth_enabled(*val);
+                options_builder.multi_factor_auth_enabled(*val);
             }
-            user_builder.options(sub.build().expect("A valid object"));
+            user_builder.options(options_builder.build().expect("A valid object"));
         }
 
         ep_builder.user(user_builder.build().unwrap());

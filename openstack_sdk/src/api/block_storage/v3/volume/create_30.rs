@@ -22,20 +22,20 @@ pub struct Volume<'a> {
     /// The volume name.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Option<Cow<'a, str>>>,
+    pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     /// The volume description.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    description: Option<Option<Cow<'a, str>>>,
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    display_name: Option<Option<Cow<'a, str>>>,
+    pub(crate) display_name: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    display_description: Option<Option<Cow<'a, str>>>,
+    pub(crate) display_description: Option<Option<Cow<'a, str>>>,
 
     /// The volume type (either name or ID). To create an environment with
     /// multiple-storage back ends, you must specify a volume type. Block
@@ -51,38 +51,38 @@ pub struct Volume<'a> {
     /// multi-backend.html).
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    volume_type: Option<Option<Cow<'a, str>>>,
+    pub(crate) volume_type: Option<Option<Cow<'a, str>>>,
 
     /// One or more metadata key and value pairs to be associated
     /// with the new volume.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_metadata"))]
-    metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
+    pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
     /// The UUID of the consistency group.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    snapshot_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) snapshot_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the consistency group.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    source_volid: Option<Option<Cow<'a, str>>>,
+    pub(crate) source_volid: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the consistency group.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    consistencygroup_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) consistencygroup_id: Option<Option<Cow<'a, str>>>,
 
     /// The size of the volume, in gibibytes (GiB).
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    size: Option<Option<i32>>,
+    pub(crate) size: Option<Option<i32>>,
 
     /// The name of the availability zone.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    availability_zone: Option<Option<Cow<'a, str>>>,
+    pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
 
     /// To enable this volume to attach to more than one
     /// server, set this value to `true`. Default is `false`.
@@ -90,17 +90,17 @@ pub struct Volume<'a> {
     /// type being used. See [valid boolean values](#valid-boolean-values)
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    multiattach: Option<Option<bool>>,
+    pub(crate) multiattach: Option<Option<bool>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    image_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) image_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the image from which you want to
     /// create the volume. Required to create a bootable volume.
     #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    image_ref: Option<Option<Cow<'a, str>>>,
+    pub(crate) image_ref: Option<Option<Cow<'a, str>>>,
 }
 
 impl<'a> VolumeBuilder<'a> {
@@ -125,11 +125,11 @@ impl<'a> VolumeBuilder<'a> {
 pub struct Request<'a> {
     /// A `volume` object.
     #[builder(setter(into))]
-    volume: Volume<'a>,
+    pub(crate) volume: Volume<'a>,
 
     /// The dictionary of data to send to the scheduler.
     #[builder(default, private, setter(name = "_os_sch_hnt_scheduler_hints"))]
-    os_sch_hnt_scheduler_hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+    pub(crate) os_sch_hnt_scheduler_hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

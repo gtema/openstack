@@ -30,7 +30,7 @@ pub struct Flavor<'a> {
     /// in length. Only printable characters are allowed.
     #[serde()]
     #[builder(setter(into))]
-    description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -40,7 +40,7 @@ pub struct Request<'a> {
     /// combination
     /// of memory, disk size, and CPUs.
     #[builder(setter(into))]
-    flavor: Flavor<'a>,
+    pub(crate) flavor: Flavor<'a>,
 
     /// id parameter for /v2.1/flavors/{id}/action API
     #[builder(default, setter(into))]

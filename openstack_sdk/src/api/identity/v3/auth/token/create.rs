@@ -428,7 +428,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::ApplicationCredential]))
+                                .methods(Vec::from([Methods::Totp]))
                                 .build()
                                 .unwrap()
                         )
@@ -450,7 +450,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::ApplicationCredential]))
+                                .methods(Vec::from([Methods::Totp]))
                                 .build()
                                 .unwrap()
                         )
@@ -482,7 +482,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::ApplicationCredential]))
+                            .methods(Vec::from([Methods::Totp]))
                             .build()
                             .unwrap(),
                     )
@@ -513,7 +513,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::ApplicationCredential]))
+                            .methods(Vec::from([Methods::Totp]))
                             .build()
                             .unwrap(),
                     )

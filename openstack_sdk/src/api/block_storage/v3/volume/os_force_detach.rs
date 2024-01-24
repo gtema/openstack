@@ -14,18 +14,18 @@ use std::collections::BTreeMap;
 pub struct OsForceDetach<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    connector: Option<Option<Value>>,
+    pub(crate) connector: Option<Option<Value>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    attachment_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) attachment_id: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_force_detach: OsForceDetach<'a>,
+    pub(crate) os_force_detach: OsForceDetach<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

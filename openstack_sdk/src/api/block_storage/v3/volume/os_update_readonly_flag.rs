@@ -12,14 +12,14 @@ use std::borrow::Cow;
 pub struct OsUpdateReadonlyFlag {
     #[serde()]
     #[builder()]
-    readonly: bool,
+    pub(crate) readonly: bool,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_update_readonly_flag: OsUpdateReadonlyFlag,
+    pub(crate) os_update_readonly_flag: OsUpdateReadonlyFlag,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

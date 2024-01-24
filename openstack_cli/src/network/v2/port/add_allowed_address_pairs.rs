@@ -82,9 +82,9 @@ impl Command for PortCmd {
 
         let mut ep_builder = add_allowed_address_pairs::Request::builder();
 
+        // Set path parameters
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -95,7 +95,6 @@ impl Command for PortCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

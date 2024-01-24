@@ -136,9 +136,9 @@ impl Command for ConntrackHelperCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
-
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
@@ -150,9 +150,7 @@ impl Command for ConntrackHelperCmd {
             .to_string();
         ep_builder.id(resource_id.clone());
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.conntrack_helper data
         let args = &self.args.conntrack_helper;
         let mut conntrack_helper_builder = set::ConntrackHelperBuilder::default();
@@ -184,7 +182,6 @@ impl Command for ConntrackHelperCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

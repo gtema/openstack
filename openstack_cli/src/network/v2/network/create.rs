@@ -375,10 +375,9 @@ impl Command for NetworkCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.network data
         let args = &self.args.network;
         let mut network_builder = create::NetworkBuilder::default();
@@ -403,11 +402,11 @@ impl Command for NetworkCmd {
         }
 
         if let Some(val) = &args.segments {
-            let sub: Vec<create::Segments> = val
+            let segments_builder: Vec<create::Segments> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::Segments>(v.clone()))
                 .collect::<Vec<create::Segments>>();
-            network_builder.segments(sub);
+            network_builder.segments(segments_builder);
         }
 
         if let Some(val) = &args.mtu {
@@ -463,7 +462,6 @@ impl Command for NetworkCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

@@ -73,10 +73,10 @@ impl Command for BindingCmd {
 
         let mut ep_builder = delete::Request::builder();
 
+        // Set path parameters
         ep_builder.port_id(&self.args.path.port_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -84,7 +84,6 @@ impl Command for BindingCmd {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-
         Ok(())
     }
 }

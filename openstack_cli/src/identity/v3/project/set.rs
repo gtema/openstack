@@ -264,11 +264,11 @@ impl Command for ProjectCmd {
         }
 
         if let Some(val) = &args.options {
-            let mut sub = set::OptionsBuilder::default();
+            let mut options_builder = set::OptionsBuilder::default();
             if let Some(val) = &val.immutable {
-                sub.immutable(*val);
+                options_builder.immutable(*val);
             }
-            project_builder.options(sub.build().expect("A valid object"));
+            project_builder.options(options_builder.build().expect("A valid object"));
         }
 
         ep_builder.project(project_builder.build().unwrap());

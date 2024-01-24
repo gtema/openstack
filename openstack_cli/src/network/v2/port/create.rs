@@ -662,10 +662,9 @@ impl Command for PortCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.port data
         let args = &self.args.port;
         let mut port_builder = create::PortBuilder::default();
@@ -686,11 +685,11 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.fixed_ips {
-            let sub: Vec<create::FixedIps> = val
+            let fixed_ips_builder: Vec<create::FixedIps> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::FixedIps>(v.clone()))
                 .collect::<Vec<create::FixedIps>>();
-            port_builder.fixed_ips(sub);
+            port_builder.fixed_ips(fixed_ips_builder);
         }
 
         if let Some(val) = &args.device_id {
@@ -706,11 +705,11 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.allowed_address_pairs {
-            let sub: Vec<create::AllowedAddressPairs> = val
+            let allowed_address_pairs_builder: Vec<create::AllowedAddressPairs> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::AllowedAddressPairs>(v.clone()))
                 .collect::<Vec<create::AllowedAddressPairs>>();
-            port_builder.allowed_address_pairs(sub);
+            port_builder.allowed_address_pairs(allowed_address_pairs_builder);
         }
 
         if let Some(val) = &args.extra_dhcp_opts {
@@ -812,7 +811,6 @@ impl Command for PortCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

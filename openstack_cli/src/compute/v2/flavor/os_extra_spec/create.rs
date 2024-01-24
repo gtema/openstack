@@ -81,11 +81,10 @@ impl Command for OsExtraSpecCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         ep_builder.flavor_id(&self.args.path.flavor_id);
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.extra_specs data
         let args = &self.args.extra_specs;
 
@@ -99,7 +98,6 @@ impl Command for OsExtraSpecCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

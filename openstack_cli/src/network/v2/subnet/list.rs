@@ -377,6 +377,7 @@ impl Command for SubnetsCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.id {
             ep_builder.id(val);
@@ -435,7 +436,6 @@ impl Command for SubnetsCmd {
         if let Some(val) = &self.args.query.segment_id {
             ep_builder.segment_id(val);
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -445,7 +445,6 @@ impl Command for SubnetsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }
