@@ -286,7 +286,7 @@ pub struct ResponseData {
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -294,7 +294,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -329,14 +329,14 @@ impl fmt::Display for ResponseSegments {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseSegments(Vec<ResponseSegments>);
 impl fmt::Display for VecResponseSegments {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -344,7 +344,7 @@ impl fmt::Display for VecResponseSegments {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -368,18 +368,16 @@ impl Command for NetworkCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
-
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.network data
         let args = &self.args.network;
         let mut network_builder = set::NetworkBuilder::default();
@@ -400,11 +398,11 @@ impl Command for NetworkCmd {
         }
 
         if let Some(val) = &args.segments {
-            let sub: Vec<set::Segments> = val
+            let segments_builder: Vec<set::Segments> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<set::Segments>(v.clone()))
                 .collect::<Vec<set::Segments>>();
-            network_builder.segments(sub);
+            network_builder.segments(segments_builder);
         }
 
         if let Some(val) = &args.mtu {
@@ -451,7 +449,6 @@ impl Command for NetworkCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

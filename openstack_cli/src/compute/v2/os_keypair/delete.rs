@@ -79,12 +79,12 @@ impl Command for OsKeypairCmd {
 
         let mut ep_builder = delete::Request::builder();
 
+        // Set path parameters
         ep_builder.id(&self.args.path.id);
         // Set query parameters
         if let Some(val) = &self.args.query.user_id {
             ep_builder.user_id(val);
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -92,7 +92,6 @@ impl Command for OsKeypairCmd {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-
         Ok(())
     }
 }

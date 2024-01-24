@@ -172,6 +172,7 @@ impl Command for PortForwardingsCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         // Set query parameters
         if let Some(val) = &self.args.query.id {
@@ -192,7 +193,6 @@ impl Command for PortForwardingsCmd {
         if let Some(val) = &self.args.query.external_port_range {
             ep_builder.external_port_range(*val);
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -202,7 +202,6 @@ impl Command for PortForwardingsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

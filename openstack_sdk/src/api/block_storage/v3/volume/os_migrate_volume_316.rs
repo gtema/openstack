@@ -12,26 +12,26 @@ use std::borrow::Cow;
 pub struct OsMigrateVolume<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    host: Option<Option<Cow<'a, str>>>,
+    pub(crate) host: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    force_host_copy: Option<bool>,
+    pub(crate) force_host_copy: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    lock_volume: Option<bool>,
+    pub(crate) lock_volume: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    cluster: Option<Option<Cow<'a, str>>>,
+    pub(crate) cluster: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_migrate_volume: OsMigrateVolume<'a>,
+    pub(crate) os_migrate_volume: OsMigrateVolume<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

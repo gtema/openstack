@@ -69,9 +69,9 @@ impl Command for TagCmd {
 
         let mut ep_builder = delete_all::Request::builder();
 
+        // Set path parameters
         ep_builder.port_id(&self.args.path.port_id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -79,7 +79,6 @@ impl Command for TagCmd {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-
         Ok(())
     }
 }

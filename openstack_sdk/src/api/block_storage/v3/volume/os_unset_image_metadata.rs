@@ -12,14 +12,14 @@ use std::borrow::Cow;
 pub struct OsUnsetImageMetadata<'a> {
     #[serde()]
     #[builder(setter(into))]
-    key: Cow<'a, str>,
+    pub(crate) key: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_unset_image_metadata: OsUnsetImageMetadata<'a>,
+    pub(crate) os_unset_image_metadata: OsUnsetImageMetadata<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

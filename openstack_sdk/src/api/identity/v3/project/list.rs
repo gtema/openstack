@@ -30,7 +30,7 @@ pub struct Request<'a> {
     #[builder(default)]
     is_domain: Option<bool>,
 
-    /// Filters the response by a project name.
+    /// Filters the response by a resource name.
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 

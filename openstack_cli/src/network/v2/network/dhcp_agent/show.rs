@@ -74,10 +74,10 @@ impl Command for DhcpAgentCmd {
 
         let mut ep_builder = get::Request::builder();
 
+        // Set path parameters
         ep_builder.network_id(&self.args.path.network_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -88,7 +88,6 @@ impl Command for DhcpAgentCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

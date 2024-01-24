@@ -407,10 +407,9 @@ impl Command for RouterCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.router data
         let args = &self.args.router;
         let mut router_builder = create::RouterBuilder::default();
@@ -427,8 +426,24 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.external_gateway_info {
-            let sub = create::ExternalGatewayInfoBuilder::default();
-            router_builder.external_gateway_info(sub.build().expect("A valid object"));
+            let mut external_gateway_info_builder = create::ExternalGatewayInfoBuilder::default();
+
+            external_gateway_info_builder.network_id(&val.network_id);
+            if let Some(val) = &val.enable_snat {
+                external_gateway_info_builder.enable_snat(*val);
+            }
+            if let Some(val) = &val.external_fixed_ips {
+                let external_fixed_ips_builder: Vec<create::ExternalFixedIps> = val
+                    .iter()
+                    .flat_map(|v| serde_json::from_value::<create::ExternalFixedIps>(v.clone()))
+                    .collect::<Vec<create::ExternalFixedIps>>();
+                external_gateway_info_builder.external_fixed_ips(external_fixed_ips_builder);
+            }
+            router_builder.external_gateway_info(
+                external_gateway_info_builder
+                    .build()
+                    .expect("A valid object"),
+            );
         }
 
         if let Some(val) = &args.ha {
@@ -464,7 +479,6 @@ impl Command for RouterCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

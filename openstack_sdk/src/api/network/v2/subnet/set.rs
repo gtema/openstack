@@ -22,11 +22,11 @@ use std::borrow::Cow;
 pub struct AllocationPools<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    start: Option<Cow<'a, str>>,
+    pub(crate) start: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    end: Option<Cow<'a, str>>,
+    pub(crate) end: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -34,11 +34,11 @@ pub struct AllocationPools<'a> {
 pub struct HostRoutes<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    destination: Option<Cow<'a, str>>,
+    pub(crate) destination: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    nexthop: Option<Cow<'a, str>>,
+    pub(crate) nexthop: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -47,7 +47,7 @@ pub struct Subnet<'a> {
     /// Human-readable name of the resource.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet. If the gateway\_ip is not
@@ -55,7 +55,7 @@ pub struct Subnet<'a> {
     /// for the gateway for the subnet by default.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    gateway_ip: Option<Cow<'a, str>>,
+    pub(crate) gateway_ip: Option<Cow<'a, str>>,
 
     /// Allocation pools with `start` and `end` IP addresses
     /// for this subnet. If allocation\_pools are not specified, OpenStack
@@ -64,56 +64,56 @@ pub struct Subnet<'a> {
     /// default.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    allocation_pools: Option<Vec<AllocationPools<'a>>>,
+    pub(crate) allocation_pools: Option<Vec<AllocationPools<'a>>>,
 
     /// List of dns name servers associated with the subnet. Default is an
     /// empty list.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    dns_nameservers: Option<Vec<Cow<'a, str>>>,
+    pub(crate) dns_nameservers: Option<Vec<Cow<'a, str>>>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is
     /// an empty list.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    host_routes: Option<Vec<HostRoutes<'a>>>,
+    pub(crate) host_routes: Option<Vec<HostRoutes<'a>>>,
 
     /// Indicates whether dhcp is enabled or disabled
     /// for the subnet. Default is `true`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    enable_dhcp: Option<bool>,
+    pub(crate) enable_dhcp: Option<bool>,
 
     /// The service types associated with the subnet.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    service_types: Option<Vec<Cow<'a, str>>>,
+    pub(crate) service_types: Option<Vec<Cow<'a, str>>>,
 
     /// Whether to publish DNS records for IPs from this subnet. Default
     /// is `false`.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    dns_publish_fixed_ip: Option<bool>,
+    pub(crate) dns_publish_fixed_ip: Option<bool>,
 
     /// A human-readable description for the resource.
     /// Default is an empty string.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Cow<'a, str>>,
 
     /// The ID of a network segment the subnet is associated with.
     /// It is available when `segment` extension is enabled.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    segment_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) segment_id: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    subnet: Subnet<'a>,
+    pub(crate) subnet: Subnet<'a>,
 
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
     #[builder(default, setter(into))]

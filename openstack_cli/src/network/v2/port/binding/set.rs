@@ -152,12 +152,11 @@ impl Command for BindingCmd {
 
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         ep_builder.port_id(&self.args.path.port_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.binding data
         let args = &self.args.binding;
         let mut binding_builder = set::BindingBuilder::default();
@@ -194,7 +193,6 @@ impl Command for BindingCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

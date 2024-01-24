@@ -23,7 +23,7 @@ pub struct Request<'a> {
     /// in the os-extra-specs’ “create” REQUEST body, as well as the
     /// os-extra-specs’ “create” and “list” RESPONSE body.
     #[builder(private, setter(name = "_extra_specs"))]
-    extra_specs: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
+    pub(crate) extra_specs: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
     #[builder(default, setter(into))]

@@ -90,9 +90,9 @@ impl Command for TagsCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -102,7 +102,6 @@ impl Command for TagsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

@@ -14,23 +14,23 @@ use std::collections::BTreeMap;
 pub struct Volume<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Option<Cow<'a, str>>>,
+    pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    description: Option<Option<Cow<'a, str>>>,
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    display_name: Option<Option<Cow<'a, str>>>,
+    pub(crate) display_name: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    display_description: Option<Option<Cow<'a, str>>>,
+    pub(crate) display_description: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_metadata"))]
-    metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+    pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 }
 
 impl<'a> VolumeBuilder<'a> {
@@ -51,7 +51,7 @@ impl<'a> VolumeBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    volume: Volume<'a>,
+    pub(crate) volume: Volume<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

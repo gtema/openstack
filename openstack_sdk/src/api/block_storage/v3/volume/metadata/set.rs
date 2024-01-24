@@ -12,7 +12,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(private, setter(name = "_meta"))]
-    meta: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
+    pub(crate) meta: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
     #[builder(default, setter(into))]

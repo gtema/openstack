@@ -269,14 +269,14 @@ impl fmt::Display for ResponseAllocationPools {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseAllocationPools(Vec<ResponseAllocationPools>);
 impl fmt::Display for VecResponseAllocationPools {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -284,14 +284,14 @@ impl fmt::Display for VecResponseAllocationPools {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -299,7 +299,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -326,14 +326,14 @@ impl fmt::Display for ResponseHostRoutes {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseHostRoutes(Vec<ResponseHostRoutes>);
 impl fmt::Display for VecResponseHostRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -341,7 +341,7 @@ impl fmt::Display for VecResponseHostRoutes {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -365,18 +365,16 @@ impl Command for SubnetCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
-
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.subnet data
         let args = &self.args.subnet;
         let mut subnet_builder = set::SubnetBuilder::default();
@@ -389,11 +387,11 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.allocation_pools {
-            let sub: Vec<set::AllocationPools> = val
+            let allocation_pools_builder: Vec<set::AllocationPools> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<set::AllocationPools>(v.clone()))
                 .collect::<Vec<set::AllocationPools>>();
-            subnet_builder.allocation_pools(sub);
+            subnet_builder.allocation_pools(allocation_pools_builder);
         }
 
         if let Some(val) = &args.dns_nameservers {
@@ -401,11 +399,11 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.host_routes {
-            let sub: Vec<set::HostRoutes> = val
+            let host_routes_builder: Vec<set::HostRoutes> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<set::HostRoutes>(v.clone()))
                 .collect::<Vec<set::HostRoutes>>();
-            subnet_builder.host_routes(sub);
+            subnet_builder.host_routes(host_routes_builder);
         }
 
         if let Some(val) = &args.enable_dhcp {
@@ -436,7 +434,6 @@ impl Command for SubnetCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

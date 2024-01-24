@@ -557,14 +557,14 @@ impl fmt::Display for ResponseFixedIps {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseFixedIps(Vec<ResponseFixedIps>);
 impl fmt::Display for VecResponseFixedIps {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -572,7 +572,7 @@ impl fmt::Display for VecResponseFixedIps {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -599,14 +599,14 @@ impl fmt::Display for ResponseAllowedAddressPairs {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseAllowedAddressPairs(Vec<ResponseAllowedAddressPairs>);
 impl fmt::Display for VecResponseAllowedAddressPairs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -614,7 +614,7 @@ impl fmt::Display for VecResponseAllowedAddressPairs {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -636,7 +636,7 @@ impl fmt::Display for HashMapStringValue {
 pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -644,14 +644,14 @@ impl fmt::Display for VecHashMapStringValue {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -659,7 +659,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -683,18 +683,16 @@ impl Command for PortCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
-
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.port data
         let args = &self.args.port;
         let mut port_builder = set::PortBuilder::default();
@@ -711,11 +709,11 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.fixed_ips {
-            let sub: Vec<set::FixedIps> = val
+            let fixed_ips_builder: Vec<set::FixedIps> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<set::FixedIps>(v.clone()))
                 .collect::<Vec<set::FixedIps>>();
-            port_builder.fixed_ips(sub);
+            port_builder.fixed_ips(fixed_ips_builder);
         }
 
         if let Some(val) = &args.device_id {
@@ -727,11 +725,11 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.allowed_address_pairs {
-            let sub: Vec<set::AllowedAddressPairs> = val
+            let allowed_address_pairs_builder: Vec<set::AllowedAddressPairs> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<set::AllowedAddressPairs>(v.clone()))
                 .collect::<Vec<set::AllowedAddressPairs>>();
-            port_builder.allowed_address_pairs(sub);
+            port_builder.allowed_address_pairs(allowed_address_pairs_builder);
         }
 
         if let Some(val) = &args.data_plane_status {
@@ -829,7 +827,6 @@ impl Command for PortCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

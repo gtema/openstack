@@ -12,7 +12,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(default = "Value::Null")]
-    os_reset_status: Value,
+    pub(crate) os_reset_status: Value,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

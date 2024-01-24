@@ -40,19 +40,19 @@ pub enum VnicType {
 pub struct Binding<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    host: Option<Cow<'a, str>>,
+    pub(crate) host: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    vnic_type: Option<VnicType>,
+    pub(crate) vnic_type: Option<VnicType>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_profile"))]
-    profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+    pub(crate) profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    project_id: Option<Cow<'a, str>>,
+    pub(crate) project_id: Option<Cow<'a, str>>,
 }
 
 impl<'a> BindingBuilder<'a> {
@@ -74,7 +74,7 @@ impl<'a> BindingBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    binding: Binding<'a>,
+    pub(crate) binding: Binding<'a>,
 
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API

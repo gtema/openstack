@@ -20,26 +20,26 @@ pub enum Mode {
 pub struct OsAttach<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    instance_uuid: Option<Cow<'a, str>>,
+    pub(crate) instance_uuid: Option<Cow<'a, str>>,
 
     #[serde()]
     #[builder(setter(into))]
-    mountpoint: Cow<'a, str>,
+    pub(crate) mountpoint: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    host_name: Option<Cow<'a, str>>,
+    pub(crate) host_name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    mode: Option<Mode>,
+    pub(crate) mode: Option<Mode>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_attach: OsAttach<'a>,
+    pub(crate) os_attach: OsAttach<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

@@ -201,9 +201,9 @@ impl Command for PortForwardingCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
-
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
@@ -215,9 +215,7 @@ impl Command for PortForwardingCmd {
             .to_string();
         ep_builder.id(resource_id.clone());
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.port_forwarding data
         let args = &self.args.port_forwarding;
         let mut port_forwarding_builder = set::PortForwardingBuilder::default();
@@ -269,7 +267,6 @@ impl Command for PortForwardingCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

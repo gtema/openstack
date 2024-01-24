@@ -77,9 +77,9 @@ impl Command for L3AgentsCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         ep_builder.router_id(&self.args.path.router_id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -90,7 +90,6 @@ impl Command for L3AgentsCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

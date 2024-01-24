@@ -193,11 +193,10 @@ impl Command for PortForwardingCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.port_forwarding data
         let args = &self.args.port_forwarding;
         let mut port_forwarding_builder = create::PortForwardingBuilder::default();
@@ -253,7 +252,6 @@ impl Command for PortForwardingCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

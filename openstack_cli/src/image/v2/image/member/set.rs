@@ -72,7 +72,7 @@ pub struct PathParameters {
 
     /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[arg()]
-    member_id: String,
+    id: String,
 }
 
 /// Member set command
@@ -172,7 +172,7 @@ impl Command for MemberCmd {
 
         // Set path parameters
         ep_builder.image_id(&self.args.path.image_id);
-        ep_builder.member_id(&self.args.path.member_id);
+        ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
 

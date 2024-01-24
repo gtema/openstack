@@ -103,9 +103,9 @@ impl Command for ExtensionCmd {
 
         let mut ep_builder = get::Request::builder();
 
+        // Set path parameters
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -114,7 +114,6 @@ impl Command for ExtensionCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

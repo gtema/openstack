@@ -414,10 +414,9 @@ impl Command for SubnetCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.subnet data
         let args = &self.args.subnet;
         let mut subnet_builder = create::SubnetBuilder::default();
@@ -446,11 +445,11 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.allocation_pools {
-            let sub: Vec<create::AllocationPools> = val
+            let allocation_pools_builder: Vec<create::AllocationPools> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::AllocationPools>(v.clone()))
                 .collect::<Vec<create::AllocationPools>>();
-            subnet_builder.allocation_pools(sub);
+            subnet_builder.allocation_pools(allocation_pools_builder);
         }
 
         if let Some(val) = &args.dns_nameservers {
@@ -458,11 +457,11 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.host_routes {
-            let sub: Vec<create::HostRoutes> = val
+            let host_routes_builder: Vec<create::HostRoutes> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::HostRoutes>(v.clone()))
                 .collect::<Vec<create::HostRoutes>>();
-            subnet_builder.host_routes(sub);
+            subnet_builder.host_routes(host_routes_builder);
         }
 
         if let Some(val) = &args.tenant_id {
@@ -519,7 +518,6 @@ impl Command for SubnetCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

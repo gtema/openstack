@@ -96,23 +96,23 @@ use std::borrow::Cow;
 pub struct Method<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    uri: Option<Cow<'a, str>>,
+    pub(crate) uri: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    glance_image_id: Option<Cow<'a, str>>,
+    pub(crate) glance_image_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    glance_region: Option<Cow<'a, str>>,
+    pub(crate) glance_region: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    glance_service_interface: Option<Cow<'a, str>>,
+    pub(crate) glance_service_interface: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -123,13 +123,13 @@ pub struct Request<'a> {
     /// with a `name` field whose value is the identifier for the import
     /// method.
     #[builder(default, setter(into))]
-    method: Option<Method<'a>>,
+    pub(crate) method: Option<Method<'a>>,
 
     /// If present contains the list of store id to import the image binary
     /// data
     /// to.
     #[builder(default, setter(into))]
-    stores: Option<Vec<Cow<'a, str>>>,
+    pub(crate) stores: Option<Vec<Cow<'a, str>>>,
 
     /// When set to True the data will be imported to the set of stores you may
     /// consume from this particular deployment of Glance (ie: the same set of
@@ -138,10 +138,10 @@ pub struct Request<'a> {
     /// hits).
     /// This can’t be used simultaneously with the `stores` parameter.
     #[builder(default)]
-    all_stores: Option<bool>,
+    pub(crate) all_stores: Option<bool>,
 
     #[builder(default)]
-    all_stores_must_success: Option<bool>,
+    pub(crate) all_stores_must_success: Option<bool>,
 
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     #[builder(default, setter(into))]

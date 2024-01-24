@@ -73,10 +73,10 @@ impl Command for TagCmd {
 
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -87,7 +87,6 @@ impl Command for TagCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }

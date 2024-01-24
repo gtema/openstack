@@ -47,12 +47,31 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair create20`↴](#osc-compute-keypair-create20)
 * [`osc compute keypair delete`↴](#osc-compute-keypair-delete)
 * [`osc identity`↴](#osc-identity)
+* [`osc identity application-credential`↴](#osc-identity-application-credential)
+* [`osc identity application-credential create`↴](#osc-identity-application-credential-create)
+* [`osc identity application-credential delete`↴](#osc-identity-application-credential-delete)
+* [`osc identity application-credential list`↴](#osc-identity-application-credential-list)
+* [`osc identity application-credential show`↴](#osc-identity-application-credential-show)
+* [`osc identity access-rule`↴](#osc-identity-access-rule)
+* [`osc identity access-rule delete`↴](#osc-identity-access-rule-delete)
+* [`osc identity access-rule list`↴](#osc-identity-access-rule-list)
+* [`osc identity access-rule show`↴](#osc-identity-access-rule-show)
 * [`osc identity project`↴](#osc-identity-project)
 * [`osc identity project create`↴](#osc-identity-project-create)
 * [`osc identity project delete`↴](#osc-identity-project-delete)
 * [`osc identity project list`↴](#osc-identity-project-list)
 * [`osc identity project set`↴](#osc-identity-project-set)
 * [`osc identity project show`↴](#osc-identity-project-show)
+* [`osc identity user`↴](#osc-identity-user)
+* [`osc identity user create`↴](#osc-identity-user-create)
+* [`osc identity user delete`↴](#osc-identity-user-delete)
+* [`osc identity user list`↴](#osc-identity-user-list)
+* [`osc identity user set`↴](#osc-identity-user-set)
+* [`osc identity user show`↴](#osc-identity-user-show)
+* [`osc identity user password`↴](#osc-identity-user-password)
+* [`osc identity user password set`↴](#osc-identity-user-password-set)
+* [`osc identity user projects`↴](#osc-identity-user-projects)
+* [`osc identity user groups`↴](#osc-identity-user-groups)
 * [`osc image`↴](#osc-image)
 * [`osc image image`↴](#osc-image-image)
 * [`osc image image list`↴](#osc-image-image-list)
@@ -1024,7 +1043,198 @@ Identity (Keystone) commands
 
 ###### **Subcommands:**
 
+* `application-credential` — **Application Credentials**
+* `access-rule` — **Application Credentials - Access Rules**
 * `project` — Project commands
+* `user` — User commands
+
+
+
+## `osc identity application-credential`
+
+**Application Credentials**
+
+Application credentials provide a way to delegate a user’s authorization to an application without sharing the user’s password authentication. This is a useful security measure, especially for situations where the user’s identification is provided by an external source, such as LDAP or a single-sign-on service. Instead of storing user passwords in config files, a user creates an application credential for a specific project, with all or a subset of the role assignments they have on that project, and then stores the application credential identifier and secret in the config file.
+
+Multiple application credentials may be active at once, so you can easily rotate application credentials by creating a second one, converting your applications to use it one by one, and finally deleting the first one.
+
+Application credentials are limited by the lifespan of the user that created them. If the user is deleted, disabled, or loses a role assignment on a project, the application credential is deleted.
+
+Application credentials can have their privileges limited in two ways. First, the owner may specify a subset of their own roles that the application credential may assume when getting a token for a project. For example, if a user has the member role on a project, they also have the implied role reader and can grant the application credential only the reader role for the project:
+
+"roles": [ {"name": "reader"} ]
+
+Users also have the option of delegating more fine-grained access control to their application credentials by using access rules. For example, to create an application credential that is constricted to creating servers in nova, the user can add the following access rules:
+
+"access_rules": [ { "path": "/v2.1/servers", "method": "POST", "service": "compute" } ]
+
+The "path" attribute of application credential access rules uses a wildcard syntax to make it more flexible. For example, to create an application credential that is constricted to listing server IP addresses, you could use either of the following access rules:
+
+"access_rules": [ { "path": "/v2.1/servers/*/ips", "method": "GET", "service": "compute" } ]
+
+or equivalently:
+
+"access_rules": [ { "path": "/v2.1/servers/{server_id}/ips", "method": "GET", "service": "compute" } ]
+
+In both cases, a request path containing any server ID will match the access rule. For even more flexibility, the recursive wildcard ** indicates that request paths containing any number of / will be matched. For example:
+
+"access_rules": [ { "path": "/v2.1/**", "method": "GET", "service": "compute" } ]
+
+will match any nova API for version 2.1.
+
+An access rule created for one application credential can be re-used by providing its ID to another application credential, for example:
+
+"access_rules": [ { "id": "abcdef" } ]
+
+**Usage:** `osc identity application-credential <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create application credential
+* `delete` — Delete application credential
+* `list` — List application credentials
+* `show` — Show application credential details
+
+
+
+## `osc identity application-credential create`
+
+Create application credential
+
+**Usage:** `osc identity application-credential create [OPTIONS] --name <NAME> <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the application credential. Must be unique to a user
+* `--description <DESCRIPTION>` — A description of the application credential’s purpose
+* `--secret <SECRET>` — The secret that the application credential will be created with. If not provided, one will be generated
+* `--expires-at <EXPIRES_AT>` — An optional expiry time for the application credential. If unset, the application credential does not expire
+* `--roles <JSON>` — An optional list of role objects, identified by ID or name. The list may only contain roles that the user has assigned on the project. If not provided, the roles assigned to the application credential will be the same as the roles in the current token
+* `--unrestricted <UNRESTRICTED>` — An optional flag to restrict whether the application credential may be used for the creation or destruction of other application credentials or trusts. Defaults to false
+
+  Possible values: `true`, `false`
+
+* `--access-rules <JSON>` — A list of `access\_rules` objects
+
+
+
+## `osc identity application-credential delete`
+
+Delete application credential
+
+**Usage:** `osc identity application-credential delete <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+
+
+## `osc identity application-credential list`
+
+List application credentials
+
+**Usage:** `osc identity application-credential list [OPTIONS] <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the application credential. Must be unique to a user
+
+
+
+## `osc identity application-credential show`
+
+Show application credential details
+
+**Usage:** `osc identity application-credential show <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+
+
+## `osc identity access-rule`
+
+**Application Credentials - Access Rules**
+
+Users also have the option of delegating more fine-grained access control to their application credentials by using access rules. For example, to create an application credential that is constricted to creating servers in nova, the user can add the following access rules:
+
+```json { "access_rules": [{ "path": "/v2.1/servers", "method": "POST", "service": "compute" }] } ```
+
+The "path" attribute of application credential access rules uses a wildcard syntax to make it more flexible. For example, to create an application credential that is constricted to listing server IP addresses, you could use either of the following access rules:
+
+```json { "access_rules": [ { "path": "/v2.1/servers/*/ips", "method": "GET", "service": "compute" } ] } ```
+
+or equivalently:
+
+```json { "access_rules": [ { "path": "/v2.1/servers/{server_id}/ips", "method": "GET", "service": "compute" } ] } ```
+
+In both cases, a request path containing any server ID will match the access rule. For even more flexibility, the recursive wildcard ** indicates that request paths containing any number of / will be matched. For example:
+
+```json { "access_rules": [ { "path": "/v2.1/**", "method": "GET", "service": "compute" } ] } ```
+
+will match any nova API for version 2.1.
+
+An access rule created for one application credential can be re-used by providing its ID to another application credential, for example:
+
+```json { "access_rules": [ { "id": "abcdef" } ] } ```
+
+**Usage:** `osc identity access-rule <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Delete access rule
+* `list` — List access rules
+* `show` — Show access rule details
+
+
+
+## `osc identity access-rule delete`
+
+Delete access rule
+
+**Usage:** `osc identity access-rule delete <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity access-rule list`
+
+List access rules
+
+**Usage:** `osc identity access-rule list <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity access-rule show`
+
+Show access rule details
+
+**Usage:** `osc identity access-rule show <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 
 
 
@@ -1101,7 +1311,7 @@ List Projects
 
   Possible values: `true`, `false`
 
-* `--name <NAME>` — Filters the response by a project name
+* `--name <NAME>` — Filters the response by a resource name
 * `--parent-id <PARENT_ID>` — Filters the response by a parent ID
 
 
@@ -1147,6 +1357,227 @@ Show project details
 ###### **Arguments:**
 
 * `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity user`
+
+User commands
+
+A user is an individual API consumer that is owned by a domain. A role explicitly associates a user with projects or domains. A user with no assigned roles has no access to OpenStack resources.
+
+You can list, create, show details for, update, delete, and change the password for users.
+
+You can also list groups, projects, and role assignments for a specified user.
+
+**Usage:** `osc identity user <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create user
+* `delete` — Delete user
+* `list` — List Users
+* `set` — Update user details
+* `show` — Show user details
+* `password` — User password operations
+* `projects` — List projects for user
+* `groups` — List groups to which a user belongs
+
+
+
+## `osc identity user create`
+
+Create user
+
+**Usage:** `osc identity user create [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
+* `--description <DESCRIPTION>` — The new description of the group
+* `--domain-id <DOMAIN_ID>` — The ID of the domain
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp\_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol\_id` and `unique\_id` of the protocol and user respectively. For example:
+* `--name <NAME>` — The user name. Must be unique within the owning domain
+* `--password <PASSWORD>` — The new password for the user
+* `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-lockout-failure-attempts <IGNORE_LOCKOUT_FAILURE_ATTEMPTS>`
+
+  Possible values: `true`, `false`
+
+* `--lock-password <LOCK_PASSWORD>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-user-inactivity <IGNORE_USER_INACTIVITY>`
+
+  Possible values: `true`, `false`
+
+* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--multi-factor-auth-enabled <MULTI_FACTOR_AUTH_ENABLED>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity user delete`
+
+Delete user
+
+**Usage:** `osc identity user delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity user list`
+
+List Users
+
+**Usage:** `osc identity user list [OPTIONS]`
+
+###### **Options:**
+
+* `--domain-id <DOMAIN_ID>` — Filters the response by a domain ID
+* `--enabled <ENABLED>` — If set to true, then only enabled projects will be returned. Any value other than 0 (including no value) will be interpreted as true
+
+  Possible values: `true`, `false`
+
+* `--idp-id <IDP_ID>` — Filters the response by a domain ID
+* `--name <NAME>` — Filters the response by a resource name
+* `--password-expires-at <PASSWORD_EXPIRES_AT>` — Filter results based on which user passwords have expired. The query should include an operator and a timestamp with a colon (:) separating the two, for example: `password_expires_at={operator}:{timestamp}`. Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ
+* `--protocol-id <PROTOCOL_ID>` — Filters the response by a protocol ID
+* `--unique-id <UNIQUE_ID>` — Filters the response by a unique ID
+
+
+
+## `osc identity user set`
+
+Update user details
+
+**Usage:** `osc identity user set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
+* `--description <DESCRIPTION>` — The new description of the group
+* `--domain-id <DOMAIN_ID>` — The ID of the domain
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp\_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol\_id` and `unique\_id` of the protocol and user respectively. For example:
+* `--name <NAME>` — The user name. Must be unique within the owning domain
+* `--password <PASSWORD>` — The new password for the user
+* `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-lockout-failure-attempts <IGNORE_LOCKOUT_FAILURE_ATTEMPTS>`
+
+  Possible values: `true`, `false`
+
+* `--lock-password <LOCK_PASSWORD>`
+
+  Possible values: `true`, `false`
+
+* `--ignore-user-inactivity <IGNORE_USER_INACTIVITY>`
+
+  Possible values: `true`, `false`
+
+* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--multi-factor-auth-enabled <MULTI_FACTOR_AUTH_ENABLED>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity user show`
+
+Show user details
+
+**Usage:** `osc identity user show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity user password`
+
+User password commands
+
+This subcommand allows user to change the password
+
+**Usage:** `osc identity user password <COMMAND>`
+
+###### **Subcommands:**
+
+* `set` — Update user password
+
+
+
+## `osc identity user password set`
+
+Update user password
+
+**Usage:** `osc identity user password set [OPTIONS] <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--original-password <ORIGINAL_PASSWORD>` — The original password for the user
+* `--password <PASSWORD>` — The new password for the user
+
+
+
+## `osc identity user projects`
+
+List projects for user
+
+**Usage:** `osc identity user projects <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity user groups`
+
+List groups to which a user belongs
+
+**Usage:** `osc identity user groups <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 
 
 

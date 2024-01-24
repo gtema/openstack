@@ -59,7 +59,7 @@ pub struct QueryParameters {
     #[arg(long)]
     is_domain: Option<bool>,
 
-    /// Filters the response by a project name.
+    /// Filters the response by a resource name.
     #[arg(long)]
     name: Option<String>,
 

@@ -14,7 +14,7 @@ pub struct Request<'a> {
     /// One or more metadata key and value pairs that are
     /// associated with the volume.
     #[builder(private, setter(name = "_metadata"))]
-    metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
+    pub(crate) metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
     #[builder(default, setter(into))]

@@ -42,34 +42,34 @@ pub enum Visibility {
 pub struct OsVolumeUploadImage<'a> {
     #[serde()]
     #[builder(setter(into))]
-    image_name: Cow<'a, str>,
+    pub(crate) image_name: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    force: Option<bool>,
+    pub(crate) force: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    disk_format: Option<DiskFormat>,
+    pub(crate) disk_format: Option<DiskFormat>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    container_format: Option<Option<Cow<'a, str>>>,
+    pub(crate) container_format: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    visibility: Option<Visibility>,
+    pub(crate) visibility: Option<Visibility>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    protected: Option<bool>,
+    pub(crate) protected: Option<bool>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_volume_upload_image: OsVolumeUploadImage<'a>,
+    pub(crate) os_volume_upload_image: OsVolumeUploadImage<'a>,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

@@ -94,15 +94,15 @@ pub enum DiskFormat {
 pub struct ValidationData<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    checksum: Option<Cow<'a, str>>,
+    pub(crate) checksum: Option<Cow<'a, str>>,
 
     #[serde()]
     #[builder(setter(into))]
-    os_hash_algo: Cow<'a, str>,
+    pub(crate) os_hash_algo: Cow<'a, str>,
 
     #[serde()]
     #[builder(setter(into))]
-    os_hash_value: Cow<'a, str>,
+    pub(crate) os_hash_value: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -110,18 +110,18 @@ pub struct ValidationData<'a> {
 pub struct Locations<'a> {
     #[serde()]
     #[builder(setter(into))]
-    url: Cow<'a, str>,
+    pub(crate) url: Cow<'a, str>,
 
     #[serde()]
     #[builder(private, setter(name = "_metadata"))]
-    metadata: BTreeMap<Cow<'a, str>, Value>,
+    pub(crate) metadata: BTreeMap<Cow<'a, str>, Value>,
 
     /// Values to be used to populate the corresponding image properties. If
     /// the image status is not 'queued', values must exactly match those
     /// already contained in the image properties.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    validation_data: Option<ValidationData<'a>>,
+    pub(crate) validation_data: Option<ValidationData<'a>>,
 }
 
 impl<'a> LocationsBuilder<'a> {
@@ -167,11 +167,11 @@ pub struct Request<'a> {
     /// specify a value that has already been assigned, the request fails with
     /// a `409` response code.
     #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 
     /// The name of the image.
     #[builder(default, setter(into))]
-    name: Option<Option<Cow<'a, str>>>,
+    pub(crate) name: Option<Option<Cow<'a, str>>>,
 
     /// Visibility for this image. Valid value is one of: `public`, `private`,
     /// `shared`, or `community`.
@@ -181,20 +181,20 @@ pub struct Request<'a> {
     /// a `shared` image.
     /// *Since the Image API v2.5, the default value is ``shared``.*
     #[builder(default)]
-    visibility: Option<Visibility>,
+    pub(crate) visibility: Option<Visibility>,
 
     /// Image protection for deletion. Valid value is `true` or `false`.
     /// Default is `false`.
     #[builder(default)]
-    protected: Option<bool>,
+    pub(crate) protected: Option<bool>,
 
     /// If true, image will not appear in default image list response.
     #[builder(default)]
-    os_hidden: Option<bool>,
+    pub(crate) os_hidden: Option<bool>,
 
     /// Owner of the image
     #[builder(default, setter(into))]
-    owner: Option<Option<Cow<'a, str>>>,
+    pub(crate) owner: Option<Option<Cow<'a, str>>>,
 
     /// Format of the image container.
     ///
@@ -210,7 +210,7 @@ pub struct Request<'a> {
     ///
     /// The value might be `null` (JSON null data type).
     #[builder(default)]
-    container_format: Option<ContainerFormat>,
+    pub(crate) container_format: Option<ContainerFormat>,
 
     /// The format of the disk.
     ///
@@ -234,24 +234,24 @@ pub struct Request<'a> {
     /// **Ocata changes**: The `ploop` disk format is a supported
     /// value.
     #[builder(default)]
-    disk_format: Option<DiskFormat>,
+    pub(crate) disk_format: Option<DiskFormat>,
 
     /// List of tags for this image. Each tag is a string of at most 255 chars.
     /// The maximum number of tags allowed on an image is set by the operator.
     #[builder(default, setter(into))]
-    tags: Option<Vec<Cow<'a, str>>>,
+    pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     /// Amount of RAM in MB that is required to boot the image.
     #[builder(default)]
-    min_ram: Option<i32>,
+    pub(crate) min_ram: Option<i32>,
 
     /// Amount of disk space in GB that is required to boot the image.
     #[builder(default)]
-    min_disk: Option<i32>,
+    pub(crate) min_disk: Option<i32>,
 
     /// A set of URLs to access the image file kept in external store
     #[builder(default, setter(into))]
-    locations: Option<Vec<Locations<'a>>>,
+    pub(crate) locations: Option<Vec<Locations<'a>>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

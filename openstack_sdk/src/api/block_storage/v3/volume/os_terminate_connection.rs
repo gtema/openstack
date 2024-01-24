@@ -14,14 +14,14 @@ use std::collections::BTreeMap;
 pub struct OsTerminateConnection {
     #[serde()]
     #[builder(setter(into))]
-    connector: Option<Value>,
+    pub(crate) connector: Option<Value>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_terminate_connection: OsTerminateConnection,
+    pub(crate) os_terminate_connection: OsTerminateConnection,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

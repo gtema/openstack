@@ -277,10 +277,9 @@ impl Command for FloatingipCmd {
 
         let mut ep_builder = create::Request::builder();
 
+        // Set path parameters
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.floatingip data
         let args = &self.args.floatingip;
         let mut floatingip_builder = create::FloatingipBuilder::default();
@@ -330,7 +329,6 @@ impl Command for FloatingipCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

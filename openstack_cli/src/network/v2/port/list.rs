@@ -549,6 +549,7 @@ impl Command for PortsCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.id {
             ep_builder.id(val);
@@ -607,7 +608,6 @@ impl Command for PortsCmd {
         if let Some(val) = &self.args.query.security_groups {
             ep_builder.security_groups(val.iter());
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -617,7 +617,6 @@ impl Command for PortsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

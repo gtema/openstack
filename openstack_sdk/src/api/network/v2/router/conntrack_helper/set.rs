@@ -35,24 +35,24 @@ pub struct ConntrackHelper<'a> {
     /// The network protocol for the netfilter conntrack target rule.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    protocol: Option<Protocol>,
+    pub(crate) protocol: Option<Protocol>,
 
     /// The network port for the netfilter conntrack target rule.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    port: Option<f32>,
+    pub(crate) port: Option<f32>,
 
     /// The netfilter conntrack helper module.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    helper: Option<Cow<'a, str>>,
+    pub(crate) helper: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    conntrack_helper: ConntrackHelper<'a>,
+    pub(crate) conntrack_helper: ConntrackHelper<'a>,
 
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     #[builder(default, setter(into))]

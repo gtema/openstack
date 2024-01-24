@@ -12,7 +12,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(default = "Value::Null")]
-    os_roll_detaching: Value,
+    pub(crate) os_roll_detaching: Value,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

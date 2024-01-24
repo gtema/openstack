@@ -254,6 +254,7 @@ impl Command for FloatingipsCmd {
 
         let mut ep_builder = list::Request::builder();
 
+        // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.floating_ip_address {
             ep_builder.floating_ip_address(val);
@@ -294,7 +295,6 @@ impl Command for FloatingipsCmd {
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val);
         }
-
         // Set body parameters
 
         let ep = ep_builder
@@ -304,7 +304,6 @@ impl Command for FloatingipsCmd {
         let data: Vec<serde_json::Value> = ep.query_async(client).await?;
 
         op.output_list::<ResponseData>(data)?;
-
         Ok(())
     }
 }

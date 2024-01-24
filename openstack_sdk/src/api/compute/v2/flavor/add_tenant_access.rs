@@ -14,7 +14,7 @@ pub struct AddTenantAccess<'a> {
     /// The UUID of the tenant in a multi-tenancy cloud.
     #[serde()]
     #[builder(setter(into))]
-    tenant: Cow<'a, str>,
+    pub(crate) tenant: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -22,7 +22,7 @@ pub struct AddTenantAccess<'a> {
 pub struct Request<'a> {
     /// The action.
     #[builder(setter(into))]
-    add_tenant_access: AddTenantAccess<'a>,
+    pub(crate) add_tenant_access: AddTenantAccess<'a>,
 
     /// id parameter for /v2.1/flavors/{id}/action API
     #[builder(default, setter(into))]

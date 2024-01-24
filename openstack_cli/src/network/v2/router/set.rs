@@ -277,14 +277,14 @@ impl fmt::Display for ResponseExternalFixedIps {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseExternalFixedIps(Vec<ResponseExternalFixedIps>);
 impl fmt::Display for VecResponseExternalFixedIps {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -292,7 +292,7 @@ impl fmt::Display for VecResponseExternalFixedIps {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -321,14 +321,14 @@ impl fmt::Display for ResponseExternalGatewayInfo {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -336,7 +336,7 @@ impl fmt::Display for VecString {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -363,14 +363,14 @@ impl fmt::Display for ResponseRoutes {
                     .unwrap_or("".to_string())
             ),
         ]);
-        return write!(f, "{}", data.join(";"));
+        write!(f, "{}", data.join(";"))
     }
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct VecResponseRoutes(Vec<ResponseRoutes>);
 impl fmt::Display for VecResponseRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        return write!(
+        write!(
             f,
             "[{}]",
             self.0
@@ -378,7 +378,7 @@ impl fmt::Display for VecResponseRoutes {
                 .map(|v| v.to_string())
                 .collect::<Vec<String>>()
                 .join(",")
-        );
+        )
     }
 }
 
@@ -402,18 +402,16 @@ impl Command for RouterCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
-
         let mut ep_builder = set::Request::builder();
 
+        // Set path parameters
         let resource_id = find_data["id"]
             .as_str()
             .expect("Resource ID is a string")
             .to_string();
         ep_builder.id(resource_id.clone());
         // Set query parameters
-
         // Set body parameters
-
         // Set Request.router data
         let args = &self.args.router;
         let mut router_builder = set::RouterBuilder::default();
@@ -426,28 +424,44 @@ impl Command for RouterCmd {
         }
 
         if let Some(val) = &args.external_gateway_info {
-            let sub = set::ExternalGatewayInfoBuilder::default();
-            router_builder.external_gateway_info(sub.build().expect("A valid object"));
+            let mut external_gateway_info_builder = set::ExternalGatewayInfoBuilder::default();
+
+            external_gateway_info_builder.network_id(&val.network_id);
+            if let Some(val) = &val.enable_snat {
+                external_gateway_info_builder.enable_snat(*val);
+            }
+            if let Some(val) = &val.external_fixed_ips {
+                let external_fixed_ips_builder: Vec<set::ExternalFixedIps> = val
+                    .iter()
+                    .flat_map(|v| serde_json::from_value::<set::ExternalFixedIps>(v.clone()))
+                    .collect::<Vec<set::ExternalFixedIps>>();
+                external_gateway_info_builder.external_fixed_ips(external_fixed_ips_builder);
+            }
+            router_builder.external_gateway_info(
+                external_gateway_info_builder
+                    .build()
+                    .expect("A valid object"),
+            );
         }
 
         if let Some(val) = &args.ha {
-            router_builder.ha(val.clone().map(|v| v.into()));
+            router_builder.ha(*val);
         }
 
         if let Some(val) = &args.enable_ndp_proxy {
-            router_builder.enable_ndp_proxy(val.clone().map(|v| v.into()));
+            router_builder.enable_ndp_proxy(*val);
         }
 
         if let Some(val) = &args.distributed {
-            router_builder.distributed(val.clone().map(|v| v.into()));
+            router_builder.distributed(*val);
         }
 
         if let Some(val) = &args.routes {
-            let sub: Vec<set::Routes> = val
+            let routes_builder: Vec<set::Routes> = val
                 .iter()
                 .flat_map(|v| serde_json::from_value::<set::Routes>(v.clone()))
                 .collect::<Vec<set::Routes>>();
-            router_builder.routes(sub);
+            router_builder.routes(routes_builder);
         }
 
         if let Some(val) = &args.description {
@@ -462,7 +476,6 @@ impl Command for RouterCmd {
 
         let data = ep.query_async(client).await?;
         op.output_single::<ResponseData>(data)?;
-
         Ok(())
     }
 }

@@ -12,14 +12,14 @@ use std::borrow::Cow;
 pub struct OsExtend {
     #[serde()]
     #[builder()]
-    new_size: i32,
+    pub(crate) new_size: i32,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(setter(into))]
-    os_extend: OsExtend,
+    pub(crate) os_extend: OsExtend,
 
     /// id parameter for /v3/volumes/{id} API
     #[builder(default, setter(into))]

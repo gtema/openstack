@@ -81,10 +81,10 @@ impl Command for ActivateCmd {
 
         let mut ep_builder = activate::Request::builder();
 
+        // Set path parameters
         ep_builder.port_id(&self.args.path.port_id);
         ep_builder.id(&self.args.path.id);
         // Set query parameters
-
         // Set body parameters
 
         let ep = ep_builder
@@ -95,7 +95,6 @@ impl Command for ActivateCmd {
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;
-
         Ok(())
     }
 }
