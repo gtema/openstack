@@ -116,39 +116,42 @@ pub struct FlavorCmd {
 pub struct ResponseData {
     /// The display name of a flavor.
     #[serde()]
-    #[structable()]
-    name: String,
+    #[structable(optional)]
+    name: Option<String>,
 
     /// The ID of the flavor. While people often make this look like
     /// an int, this is really a string.
     #[serde()]
     #[structable(optional)]
-    id: Option<NumString>,
+    id: Option<String>,
+
+    /// The amount of RAM a flavor has, in MiB.
+    #[serde()]
+    #[structable(optional, wide)]
+    ram: Option<IntString>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[serde()]
-    #[structable(wide)]
-    ram: IntString,
+    #[structable(optional, wide)]
+    vcpus: Option<IntString>,
 
-    /// The number of virtual CPUs that will be allocated to the server.
+    /// The size of the root disk that will be created in GiB. If 0 the
+    /// root disk will be set to exactly the size of the image used to
+    /// deploy the instance. However, in this case the scheduler cannot
+    /// select the compute host based on the virtual image size. Therefore,
+    /// 0 should only be used for volume booted instances or for testing
+    /// purposes. Volume-backed instances can be enforced for flavors with
+    /// zero root disk via the
+    /// `os\_compute\_api:servers:create:zero\_disk\_flavor`
+    /// policy rule.
     #[serde()]
-    #[structable(wide)]
-    vcpus: IntString,
+    #[structable(optional, wide)]
+    disk: Option<IntString>,
 
-    /// The size of a dedicated swap disk that will be allocated, in
-    /// MiB. If 0 (the default), no dedicated swap disk will be created.
-    /// Currently, the empty string (‘’) is used to represent 0.
-    /// As of microversion 2.75 default return value of swap is 0
-    /// instead of empty string.
-    #[serde()]
-    #[structable(wide)]
-    disk: IntString,
-
-    /// The size of a dedicated swap disk that will be allocated, in
-    /// MiB. If 0 (the default), no dedicated swap disk will be created.
-    /// Currently, the empty string (‘’) is used to represent 0.
-    /// As of microversion 2.75 default return value of swap is 0
-    /// instead of empty string.
+    /// The size of the ephemeral disk that will be created, in
+    /// GiB. Ephemeral disks may be written over on server state
+    /// changes. So should only be used as a scratch space for
+    /// applications that are aware of its limitations. Defaults to 0.
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
     #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral", wide)]
     os_flv_ext_data_ephemeral: Option<IntString>,
@@ -259,28 +262,28 @@ impl Command for FlavorCmd {
         let args = &self.args.flavor;
         let mut flavor_builder = create_21::FlavorBuilder::default();
 
-        flavor_builder.name(&args.name);
+        flavor_builder.name(args.name.clone());
 
         if let Some(val) = &args.id {
             flavor_builder.id(Some(val.into()));
         }
 
-        flavor_builder.ram(&args.ram);
+        flavor_builder.ram(args.ram.clone());
 
-        flavor_builder.vcpus(&args.vcpus);
+        flavor_builder.vcpus(args.vcpus.clone());
 
-        flavor_builder.disk(&args.disk);
+        flavor_builder.disk(args.disk.clone());
 
         if let Some(val) = &args.os_flv_ext_data_ephemeral {
-            flavor_builder.os_flv_ext_data_ephemeral(val);
+            flavor_builder.os_flv_ext_data_ephemeral(val.clone());
         }
 
         if let Some(val) = &args.swap {
-            flavor_builder.swap(val);
+            flavor_builder.swap(val.clone());
         }
 
         if let Some(val) = &args.rxtx_factor {
-            flavor_builder.rxtx_factor(val);
+            flavor_builder.rxtx_factor(val.clone());
         }
 
         if let Some(val) = &args.os_flavor_access_is_public {

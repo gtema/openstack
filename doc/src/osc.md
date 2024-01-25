@@ -34,7 +34,23 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server show`↴](#osc-compute-server-show)
 * [`osc compute server pause`↴](#osc-compute-server-pause)
 * [`osc compute flavor`↴](#osc-compute-flavor)
+* [`osc compute flavor access`↴](#osc-compute-flavor-access)
+* [`osc compute flavor access add`↴](#osc-compute-flavor-access-add)
+* [`osc compute flavor access list`↴](#osc-compute-flavor-access-list)
+* [`osc compute flavor access remove`↴](#osc-compute-flavor-access-remove)
+* [`osc compute flavor create`↴](#osc-compute-flavor-create)
+* [`osc compute flavor create255`↴](#osc-compute-flavor-create255)
+* [`osc compute flavor create21`↴](#osc-compute-flavor-create21)
+* [`osc compute flavor create20`↴](#osc-compute-flavor-create20)
+* [`osc compute flavor delete`↴](#osc-compute-flavor-delete)
+* [`osc compute flavor extraspecs`↴](#osc-compute-flavor-extraspecs)
+* [`osc compute flavor extraspecs create`↴](#osc-compute-flavor-extraspecs-create)
+* [`osc compute flavor extraspecs delete`↴](#osc-compute-flavor-extraspecs-delete)
+* [`osc compute flavor extraspecs list`↴](#osc-compute-flavor-extraspecs-list)
+* [`osc compute flavor extraspecs show`↴](#osc-compute-flavor-extraspecs-show)
+* [`osc compute flavor extraspecs set`↴](#osc-compute-flavor-extraspecs-set)
 * [`osc compute flavor list`↴](#osc-compute-flavor-list)
+* [`osc compute flavor set`↴](#osc-compute-flavor-set)
 * [`osc compute flavor show`↴](#osc-compute-flavor-show)
 * [`osc compute keypair`↴](#osc-compute-keypair)
 * [`osc compute keypair list`↴](#osc-compute-keypair-list)
@@ -824,18 +840,293 @@ Pause Server
 
 Flavor commands
 
+Flavors are a way to describe the basic dimensions of a server to be created including how much cpu, ram, and disk space are allocated to a server built with this flavor.
+
 **Usage:** `osc compute flavor <COMMAND>`
 
 ###### **Subcommands:**
 
-* `list` — List Servers
-* `show` — Show single Server
+* `access` — Flavor access commands
+* `create` — Create Flavor (with highest possible microversion)
+* `create255` — Create Flavor (microversion = 2.55)
+* `create21` — Create Flavor (microversion = 2.1)
+* `create20` — Create Flavor (microversion = 2.0)
+* `delete` — Delete Flavor
+* `extraspecs` — Flavor extra-specs
+* `list` — List Flavors
+* `set` — Update Flavor Description
+* `show` — Show Flavor Details
+
+
+
+## `osc compute flavor access`
+
+Flavor access commands
+
+**Usage:** `osc compute flavor access <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Add Flavor Access To Tenant (addTenantAccess Action)
+* `list` — List Flavor Access Information For Given Flavor
+* `remove` — Remove Flavor Access From Tenant (removeTenantAccess Action)
+
+
+
+## `osc compute flavor access add`
+
+Add Flavor Access To Tenant (addTenantAccess Action)
+
+**Usage:** `osc compute flavor access add --tenant <TENANT> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+
+###### **Options:**
+
+* `--tenant <TENANT>` — The UUID of the tenant in a multi-tenancy cloud
+
+
+
+## `osc compute flavor access list`
+
+List Flavor Access Information For Given Flavor
+
+**Usage:** `osc compute flavor access list <FLAVOR_ID>`
+
+###### **Arguments:**
+
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+
+
+
+## `osc compute flavor access remove`
+
+Remove Flavor Access From Tenant (removeTenantAccess Action)
+
+**Usage:** `osc compute flavor access remove --tenant <TENANT> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+
+###### **Options:**
+
+* `--tenant <TENANT>` — The UUID of the tenant in a multi-tenancy cloud
+
+
+
+## `osc compute flavor create`
+
+**Creates a flavor.**
+
+Creating a flavor is typically only available to administrators of a cloud because this has implications for scheduling efficiently in the cloud.
+
+**Note**
+
+Flavors with special characters in the flavor ID, except the hyphen ‘-‘, underscore ‘_’, spaces and dots ‘.’, are not permitted.
+
+Flavor IDs are meant to be UUIDs. Serialized strings separated/grouped by “-” represent the default flavor ID or UUID. eg: 01cc74d8-4816-4bef-835b-e36ff188c406.
+
+Only for backward compatibility, an integer as a flavor ID is permitted.
+
+**Usage:** `osc compute flavor create [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+
+###### **Options:**
+
+* `--name <NAME>` — The display name of a flavor
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
+* `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the flavor. Limited to 65535 characters in length. Only printable characters are allowed
+
+
+
+## `osc compute flavor create255`
+
+Create Flavor (microversion = 2.55)
+
+**Usage:** `osc compute flavor create255 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+
+###### **Options:**
+
+* `--name <NAME>` — The display name of a flavor
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
+* `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the flavor. Limited to 65535 characters in length. Only printable characters are allowed
+
+
+
+## `osc compute flavor create21`
+
+Create Flavor (microversion = 2.1)
+
+**Usage:** `osc compute flavor create21 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+
+###### **Options:**
+
+* `--name <NAME>` — The display name of a flavor
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
+* `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc compute flavor create20`
+
+Create Flavor (microversion = 2.0)
+
+**Usage:** `osc compute flavor create20 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+
+###### **Options:**
+
+* `--name <NAME>` — The display name of a flavor
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
+* `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc compute flavor delete`
+
+Deletes a flavor.
+
+This is typically an admin only action. Deleting a flavor that is in use by existing servers is not recommended as it can cause incorrect data to be returned to the user under some operations.
+
+**Usage:** `osc compute flavor delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+
+
+
+## `osc compute flavor extraspecs`
+
+Flavor extra-specs
+
+**Usage:** `osc compute flavor extraspecs <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Extra Specs For A Flavor
+* `delete` — Delete An Extra Spec For A Flavor
+* `list` — List Extra Specs For A Flavor
+* `show` — Show An Extra Spec For A Flavor
+* `set` — Update An Extra Spec For A Flavor
+
+
+
+
+## `osc compute flavor extraspecs create`
+
+Create Extra Specs For A Flavor
+
+**Usage:** `osc compute flavor extraspecs create [OPTIONS] <FLAVOR_ID>`
+
+###### **Arguments:**
+
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+
+###### **Options:**
+
+* `--extra-specs <key=value>`
+
+
+
+## `osc compute flavor extraspecs delete`
+
+Delete An Extra Spec For A Flavor
+
+**Usage:** `osc compute flavor extraspecs delete <FLAVOR_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<ID>` — id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
+
+
+
+## `osc compute flavor extraspecs list`
+
+List Extra Specs For A Flavor
+
+**Usage:** `osc compute flavor extraspecs list <FLAVOR_ID>`
+
+###### **Arguments:**
+
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+
+
+
+## `osc compute flavor extraspecs show`
+
+Show An Extra Spec For A Flavor
+
+**Usage:** `osc compute flavor extraspecs show <FLAVOR_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<ID>` — id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
+
+
+
+## `osc compute flavor extraspecs set`
+
+Update An Extra Spec For A Flavor
+
+
+**Usage:** `osc compute flavor extraspecs set [OPTIONS] <FLAVOR_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<ID>` — id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
+
+###### **Options:**
+
+* `--property <key=value>`
 
 
 
 ## `osc compute flavor list`
 
-List Servers
+List Flavors
 
 **Usage:** `osc compute flavor list [OPTIONS]`
 
@@ -854,9 +1145,27 @@ List Servers
 
 
 
+## `osc compute flavor set`
+
+Updates a flavor description. This API is available starting with microversion 2.55.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the policy.json file.
+
+**Usage:** `osc compute flavor set --description <DESCRIPTION> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — A free form description of the flavor. Limited to 65535 characters in length. Only printable characters are allowed
+
+
+
 ## `osc compute flavor show`
 
-Show single Server
+Show Flavor Details
 
 **Usage:** `osc compute flavor show <ID>`
 
@@ -1676,7 +1985,7 @@ You can use a comparison operator along with the created_at or updated_at fields
   Possible values: `true`, `false`
 
 * `--status <STATUS>` — Filters the response by an image status
-* `--tag <TAG>` — Filters the response by the specified tag value. May be repeated, but keep in mind that you’re making a conjunctive query, so only images containing all the tags specified will appear in the response
+* `--tag <TAG>` — Filters the response by the specified tag value. May be repeated, but keep in mind that you're making a conjunctive query, so only images containing all the tags specified will appear in the response
 * `--visibility <VISIBILITY>` — Filters the response by an image visibility value. A valid value is public, private, community, shared, or all. (Note that if you filter on shared, the images included in the response will only be those where your member status is accepted unless you explicitly include a member_status filter in the request.) If you omit this parameter, the response shows public, private, and those shared images with a member status of accepted
 * `--os-hidden <OS_HIDDEN>` — When true, filters the response to display only "hidden" images. By default, "hidden" images are not included in the image-list response. (Since Image API v2.7)
 
