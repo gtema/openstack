@@ -26,6 +26,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc catalog`↴](#osc-catalog)
 * [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
+* [`osc compute availability-zone`↴](#osc-compute-availability-zone)
+* [`osc compute availability-zone list`↴](#osc-compute-availability-zone-list)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
 * [`osc compute extension show`↴](#osc-compute-extension-show)
@@ -698,10 +700,33 @@ Compute service (Nova) commands
 
 ###### **Subcommands:**
 
+* `availability-zone` — Availability zones
 * `extension` — Extension commands
 * `server` — Server (VM) commands
 * `flavor` — Flavor commands
 * `keypair` — Keypair commands
+
+
+
+## `osc compute availability-zone`
+
+Lists and gets detailed availability zone information.
+
+An availability zone is created or updated by setting the availability_zone parameter in the create, update, or create or update methods of the Host Aggregates API. See Host Aggregates for more details.
+
+**Usage:** `osc compute availability-zone <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get Detailed Availability Zone Information
+
+
+
+## `osc compute availability-zone list`
+
+Get Detailed Availability Zone Information
+
+**Usage:** `osc compute availability-zone list`
 
 
 

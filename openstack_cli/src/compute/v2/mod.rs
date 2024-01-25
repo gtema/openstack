@@ -1,5 +1,6 @@
 pub mod extension;
 pub mod flavor;
+pub mod os_availability_zone;
 pub mod os_keypair;
 pub mod server;
 
@@ -9,6 +10,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::compute::v2::extension::{ExtensionArgs, ExtensionCommand};
 use crate::compute::v2::flavor::{FlavorArgs, FlavorCommand};
+use crate::compute::v2::os_availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
 use crate::compute::v2::os_keypair::{KeypairArgs, KeypairCommand};
 use crate::compute::v2::server::{ServerArgs, ServerCommand};
 use crate::{Command, ResourceCommands, ServiceCommands};
@@ -28,6 +30,14 @@ pub struct ComputeSrvArgs {
 /// Compute resources commands
 #[derive(Clone, Subcommand)]
 pub enum ComputeSrvCommands {
+    /// Lists and gets detailed availability zone information.
+    ///
+    /// An availability zone is created or updated by setting the
+    /// availability_zone parameter in the create, update, or
+    /// create or update methods of the Host Aggregates API. See
+    /// Host Aggregates for more details.
+    #[command(about = "Availability zones")]
+    AvailabilityZone(Box<AvailabilityZoneArgs>),
     /// Extension commands
     Extension(Box<ExtensionArgs>),
     /// Server (VM) commands
@@ -49,6 +59,10 @@ pub struct ComputeSrvCommand {
 impl ServiceCommands for ComputeSrvCommand {
     fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
+            ComputeSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
+                args: *args.clone(),
+            }
+            .get_command(session),
             ComputeSrvCommands::Extension(args) => ExtensionCommand {
                 args: *args.clone(),
             }
