@@ -83,7 +83,7 @@ impl Command for OsKeypairCmd {
         ep_builder.id(&self.args.path.id);
         // Set query parameters
         if let Some(val) = &self.args.query.user_id {
-            ep_builder.user_id(val);
+            ep_builder.user_id(val.clone());
         }
         // Set body parameters
 

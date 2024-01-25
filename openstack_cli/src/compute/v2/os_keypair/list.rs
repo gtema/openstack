@@ -110,13 +110,13 @@ impl Command for OsKeypairsCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.user_id {
-            ep_builder.user_id(val);
+            ep_builder.user_id(val.clone());
         }
         if let Some(val) = &self.args.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.args.query.marker {
-            ep_builder.marker(val);
+            ep_builder.marker(val.clone());
         }
         // Set body parameters
 

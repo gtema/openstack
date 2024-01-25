@@ -33,6 +33,10 @@ pub enum ComputeSrvCommands {
     /// Server (VM) commands
     Server(Box<ServerArgs>),
     /// Flavor commands
+    ///
+    /// Flavors are a way to describe the basic dimensions of a server to be
+    /// created including how much cpu, ram, and disk space are allocated to a
+    /// server built with this flavor.
     Flavor(Box<FlavorArgs>),
     /// Keypair commands
     Keypair(Box<KeypairArgs>),

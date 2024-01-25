@@ -193,7 +193,7 @@ impl Command for OsKeypairCmd {
         let args = &self.args.keypair;
         let mut keypair_builder = create_292::KeypairBuilder::default();
 
-        keypair_builder.name(&args.name);
+        keypair_builder.name(args.name.clone());
 
         if let Some(val) = &args._type {
             let tmp = match val {
@@ -203,10 +203,10 @@ impl Command for OsKeypairCmd {
             keypair_builder._type(tmp);
         }
 
-        keypair_builder.public_key(&args.public_key);
+        keypair_builder.public_key(args.public_key.clone());
 
         if let Some(val) = &args.user_id {
-            keypair_builder.user_id(val);
+            keypair_builder.user_id(val.clone());
         }
 
         ep_builder.keypair(keypair_builder.build().unwrap());
