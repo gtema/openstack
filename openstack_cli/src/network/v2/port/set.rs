@@ -292,20 +292,20 @@ pub struct ResponseData {
 
     /// The ID of the attached network.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     network_id: Option<String>,
 
     /// The administrative state of the resource, which is
     /// up (`true`) or down (`false`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
     /// The MAC address of the port. If the port uses the `direct-physical`
     /// `vnic\_type` then the value of this field is overwritten with the MAC
     /// address provided in the active binding:profile if any.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     mac_address: Option<String>,
 
     /// The IP addresses for the port. If the port has multiple IP addresses,
@@ -313,31 +313,31 @@ pub struct ResponseData {
     /// (`ip\_address`) and the subnet ID from which the IP address
     /// is assigned (`subnet\_id`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     fixed_ips: Option<VecResponseFixedIps>,
 
     /// The ID of the device that uses this port.
     /// For example, a server instance or a logical router.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     device_id: Option<String>,
 
     /// The entity type that uses this port.
     /// For example, `compute:nova` (server instance), `network:dhcp`
     /// (DHCP agent) or `network:router\_interface` (router interface).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     device_owner: Option<String>,
 
     /// The ID of the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tenant_id: Option<String>,
 
     /// The port status. Values are `ACTIVE`, `DOWN`,
     /// `BUILD` and `ERROR`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// A set of zero or more allowed address pair objects each where address
@@ -350,28 +350,28 @@ pub struct ResponseData {
     /// which
     /// matches one of the specified allowed address pairs.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     allowed_address_pairs: Option<VecResponseAllowedAddressPairs>,
 
     /// Status of the underlying data plane of a port.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     data_plane_status: Option<String>,
 
     /// A set of zero or more extra DHCP option pairs. An
     /// option pair consists of an option value and name.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     extra_dhcp_opts: Option<VecHashMapStringValue>,
 
     /// Indicates when ports use either `deferred`, `immediate` or no IP
     /// allocation (`none`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ip_allocation: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     device_profile: Option<String>,
 
     /// Admin-only. The following values control Open vSwitch’s Userspace Tx
@@ -380,13 +380,13 @@ pub struct ResponseData {
     ///
     /// * `{"openvswitch": {"other\_config": {"tx-steering": "hash|thread"}}}`
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     hints: Option<HashMapStringValue>,
 
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     numa_affinity_policy: Option<String>,
 
     /// Expose Placement resources (i.e.: `minimum-bandwidth`) and
@@ -406,7 +406,7 @@ pub struct ResponseData {
     /// `same\_subtree` key contains a list of `id` values from every resource
     /// group.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     resource_request: Option<String>,
 
     /// The type of which mechanism is used for the port.
@@ -422,7 +422,7 @@ pub struct ResponseData {
     /// not bound to a networking back-end. `binding\_failed` means an error
     /// that the port failed to be bound to a networking back-end.
     #[serde(rename = "binding:vif_type")]
-    #[structable(optional, title = "binding:vif_type", wide)]
+    #[structable(optional, title = "binding:vif_type")]
     binding_vif_type: Option<String>,
 
     /// A dictionary which contains additional information on the port.
@@ -434,7 +434,7 @@ pub struct ResponseData {
     /// `ovs\_hybrid\_plug` is a boolean used to inform an API consumer
     /// like nova that the hybrid plugging strategy for OVS should be used.
     #[serde(rename = "binding:vif_details")]
-    #[structable(optional, title = "binding:vif_details", wide)]
+    #[structable(optional, title = "binding:vif_details")]
     binding_vif_details: Option<String>,
 
     /// The type of vNIC which this port should be attached to. This is used to
@@ -444,12 +444,12 @@ pub struct ResponseData {
     /// and `remote-managed`.
     /// What type of vNIC is actually available depends on deployments.
     #[serde(rename = "binding:vnic_type")]
-    #[structable(optional, title = "binding:vnic_type", wide)]
+    #[structable(optional, title = "binding:vnic_type")]
     binding_vnic_type: Option<String>,
 
     /// The ID of the host where the port resides.
     #[serde(rename = "binding:host_id")]
-    #[structable(optional, title = "binding:host_id", wide)]
+    #[structable(optional, title = "binding:host_id")]
     binding_host_id: Option<String>,
 
     /// A dictionary that enables the application running on the specific host
@@ -459,7 +459,7 @@ pub struct ResponseData {
     /// The networking API does not define a specific format of this field.
     /// If the update request is null this response field will be {}.
     #[serde(rename = "binding:profile")]
-    #[structable(optional, title = "binding:profile", wide)]
+    #[structable(optional, title = "binding:profile")]
     binding_profile: Option<HashMapStringValue>,
 
     /// The port security status. A valid value is
@@ -468,27 +468,27 @@ pub struct ResponseData {
     /// security group rules and anti-spoofing rules are applied to
     /// the traffic on the port. If disabled, no such rules are applied.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port_security_enabled: Option<BoolString>,
 
     /// The ID of the QoS policy associated with the port.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     qos_policy_id: Option<String>,
 
     /// The ID of the QoS policy of the network where this port is plugged.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     qos_network_policy_id: Option<String>,
 
     /// The revision number of the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The list of tags on the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
@@ -504,33 +504,33 @@ pub struct ResponseData {
     /// The uplink status propagation of the port. Valid values are
     /// enabled (`true`) and disabled (`false`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     propagate_uplink_status: Option<BoolString>,
 
     /// A valid DNS name.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_name: Option<String>,
 
     /// Data assigned to a port by the Networking internal DNS including the
     /// `hostname`, `ip\_address` and `fqdn`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_assignment: Option<String>,
 
     /// A valid DNS domain.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_domain: Option<String>,
 
     /// A human-readable description for the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// The IDs of security groups applied to the port.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     security_groups: Option<VecString>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -697,7 +697,7 @@ impl Command for PortCmd {
         let args = &self.args.port;
         let mut port_builder = set::PortBuilder::default();
         if let Some(val) = &args.name {
-            port_builder.name(val);
+            port_builder.name(val.clone());
         }
 
         if let Some(val) = &args.admin_state_up {
@@ -705,7 +705,7 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.mac_address {
-            port_builder.mac_address(val);
+            port_builder.mac_address(val.clone());
         }
 
         if let Some(val) = &args.fixed_ips {
@@ -717,11 +717,11 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.device_id {
-            port_builder.device_id(val);
+            port_builder.device_id(val.clone());
         }
 
         if let Some(val) = &args.device_owner {
-            port_builder.device_owner(val);
+            port_builder.device_owner(val.clone());
         }
 
         if let Some(val) = &args.allowed_address_pairs {
@@ -788,7 +788,7 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.binding_host_id {
-            port_builder.binding_host_id(val);
+            port_builder.binding_host_id(val.clone());
         }
 
         if let Some(val) = &args.binding_profile {
@@ -804,15 +804,15 @@ impl Command for PortCmd {
         }
 
         if let Some(val) = &args.dns_name {
-            port_builder.dns_name(val);
+            port_builder.dns_name(val.clone());
         }
 
         if let Some(val) = &args.dns_domain {
-            port_builder.dns_domain(val);
+            port_builder.dns_domain(val.clone());
         }
 
         if let Some(val) = &args.description {
-            port_builder.description(val);
+            port_builder.description(val.clone());
         }
 
         if let Some(val) = &args.security_groups {

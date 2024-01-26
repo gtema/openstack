@@ -42,7 +42,7 @@ use crate::common::parse_key_val;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::deactivate;
 use openstack_sdk::api::image::v2::image::find;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -56,6 +56,9 @@ pub struct ImageArgs {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -74,9 +77,22 @@ pub struct PathParameters {
 pub struct ImageCmd {
     pub args: ImageArgs,
 }
-/// Image response representation
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct ResponseData {}
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct ResponseData(HashMap<String, serde_json::Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 #[async_trait]
 impl Command for ImageCmd {
@@ -97,15 +113,16 @@ impl Command for ImageCmd {
         ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
+        if let Some(properties) = &self.args.properties {
+            ep_builder.properties(properties.iter().cloned());
+        }
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

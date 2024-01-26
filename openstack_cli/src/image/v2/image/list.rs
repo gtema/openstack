@@ -280,7 +280,7 @@ pub struct ResponseData {
 
     /// Status of the image
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// Scope of image accessibility
@@ -509,55 +509,55 @@ impl Command for ImagesCmd {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.args.query.marker {
-            ep_builder.marker(val);
+            ep_builder.marker(val.clone());
         }
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.id {
-            ep_builder.id(val);
+            ep_builder.id(val.clone());
         }
         if let Some(val) = &self.args.query.owner {
-            ep_builder.owner(val);
+            ep_builder.owner(val.clone());
         }
         if let Some(val) = &self.args.query.protected {
             ep_builder.protected(*val);
         }
         if let Some(val) = &self.args.query.status {
-            ep_builder.status(val);
+            ep_builder.status(val.clone());
         }
         if let Some(val) = &self.args.query.tag {
-            ep_builder.tag(val.iter());
+            ep_builder.tag(val.into_iter());
         }
         if let Some(val) = &self.args.query.visibility {
-            ep_builder.visibility(val);
+            ep_builder.visibility(val.clone());
         }
         if let Some(val) = &self.args.query.os_hidden {
             ep_builder.os_hidden(*val);
         }
         if let Some(val) = &self.args.query.member_status {
-            ep_builder.member_status(val);
+            ep_builder.member_status(val.clone());
         }
         if let Some(val) = &self.args.query.size_max {
-            ep_builder.size_max(val);
+            ep_builder.size_max(val.clone());
         }
         if let Some(val) = &self.args.query.size_min {
-            ep_builder.size_min(val);
+            ep_builder.size_min(val.clone());
         }
         if let Some(val) = &self.args.query.created_at {
-            ep_builder.created_at(val);
+            ep_builder.created_at(val.clone());
         }
         if let Some(val) = &self.args.query.updated_at {
-            ep_builder.updated_at(val);
+            ep_builder.updated_at(val.clone());
         }
         if let Some(val) = &self.args.query.sort_dir {
-            ep_builder.sort_dir(val);
+            ep_builder.sort_dir(val.clone());
         }
         if let Some(val) = &self.args.query.sort_key {
-            ep_builder.sort_key(val);
+            ep_builder.sort_key(val.clone());
         }
         if let Some(val) = &self.args.query.sort {
-            ep_builder.sort(val);
+            ep_builder.sort(val.clone());
         }
         // Set body parameters
 

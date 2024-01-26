@@ -71,7 +71,7 @@ pub struct ResponseData {
     /// use of a token or chain of tokens across multiple requests and
     /// endpoints without exposing the token ID to non-privileged users.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     audit_ids: Option<VecString>,
 
     /// A `catalog` object.

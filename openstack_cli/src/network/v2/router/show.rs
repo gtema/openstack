@@ -80,17 +80,17 @@ pub struct ResponseData {
     /// The administrative state of the resource, which is
     /// up (`true`) or down (`false`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
     /// The router status.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tenant_id: Option<String>,
 
     /// The external gateway information of the router.
@@ -100,13 +100,13 @@ pub struct ResponseData {
     /// `enable\_default\_route\_bfd`.
     /// Otherwise, this would be `null`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     external_gateway_info: Option<ResponseExternalGatewayInfo>,
 
     /// `true` indicates a highly-available router.
     /// It is available when `l3-ha` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ha: Option<BoolString>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
@@ -119,34 +119,34 @@ pub struct ResponseData {
     /// not be published to external by `ndp\_proxy`. It is available when
     /// `router-extend-ndp-proxy` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     enable_ndp_proxy: Option<BoolString>,
 
     /// The ID of the flavor associated with the router.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     flavor_id: Option<String>,
 
     /// The revision number of the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The availability zone(s) for the router.
     /// It is available when `router\_availability\_zone` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availability_zones: Option<VecString>,
 
     /// The availability zone candidates for the router.
     /// It is available when `router\_availability\_zone` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availability_zone_hints: Option<VecString>,
 
     /// The list of tags on the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
@@ -162,7 +162,7 @@ pub struct ResponseData {
     /// `true` indicates a distributed router.
     /// It is available when `dvr` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     distributed: Option<BoolString>,
 
     /// The associated conntrack helper resources for the roter. If the
@@ -171,19 +171,19 @@ pub struct ResponseData {
     /// (`helper`), the network protocol (`protocol`), the network port
     /// (`port`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     conntrack_helpers: Option<String>,
 
     /// The extra routes configuration for L3 router.
     /// A list of dictionaries with `destination` and `nexthop` parameters.
     /// It is available when `extraroute` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     routes: Option<VecResponseRoutes>,
 
     /// A human-readable description for the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -242,6 +242,7 @@ impl fmt::Display for ResponseExternalGatewayInfo {
             format!(
                 "enable_snat={}",
                 self.enable_snat
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),

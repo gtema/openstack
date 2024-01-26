@@ -208,7 +208,7 @@ pub struct ResponseData {
     /// The port status. Values are `ACTIVE`, `DOWN`,
     /// `BUILD` and `ERROR`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// A set of zero or more allowed address pair objects each where address
@@ -552,61 +552,61 @@ impl Command for PortsCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.id {
-            ep_builder.id(val);
+            ep_builder.id(val.clone());
         }
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.network_id {
-            ep_builder.network_id(val);
+            ep_builder.network_id(val.clone());
         }
         if let Some(val) = &self.args.query.admin_state_up {
             ep_builder.admin_state_up(*val);
         }
         if let Some(val) = &self.args.query.mac_address {
-            ep_builder.mac_address(val);
+            ep_builder.mac_address(val.clone());
         }
         if let Some(val) = &self.args.query.fixed_ips {
-            ep_builder.fixed_ips(val.iter());
+            ep_builder.fixed_ips(val.into_iter());
         }
         if let Some(val) = &self.args.query.device_id {
-            ep_builder.device_id(val);
+            ep_builder.device_id(val.clone());
         }
         if let Some(val) = &self.args.query.device_owner {
-            ep_builder.device_owner(val);
+            ep_builder.device_owner(val.clone());
         }
         if let Some(val) = &self.args.query.tenant_id {
-            ep_builder.tenant_id(val);
+            ep_builder.tenant_id(val.clone());
         }
         if let Some(val) = &self.args.query.status {
-            ep_builder.status(val);
+            ep_builder.status(val.clone());
         }
         if let Some(val) = &self.args.query.ip_allocation {
-            ep_builder.ip_allocation(val);
+            ep_builder.ip_allocation(val.clone());
         }
         if let Some(val) = &self.args.query.binding_host_id {
-            ep_builder.binding_host_id(val);
+            ep_builder.binding_host_id(val.clone());
         }
         if let Some(val) = &self.args.query.revision_number {
-            ep_builder.revision_number(val);
+            ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.iter());
+            ep_builder.tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.iter());
+            ep_builder.tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.iter());
+            ep_builder.not_tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
+            ep_builder.not_tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.description {
-            ep_builder.description(val);
+            ep_builder.description(val.clone());
         }
         if let Some(val) = &self.args.query.security_groups {
-            ep_builder.security_groups(val.iter());
+            ep_builder.security_groups(val.into_iter());
         }
         // Set body parameters
 

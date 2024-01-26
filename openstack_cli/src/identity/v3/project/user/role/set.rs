@@ -39,6 +39,9 @@ pub struct RoleArgs {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -93,6 +96,9 @@ impl Command for RoleCmd {
         ep_builder.id(&self.args.path.id);
         // Set query parameters
         // Set body parameters
+        if let Some(properties) = &self.args.properties {
+            ep_builder.properties(properties.iter().cloned());
+        }
 
         let ep = ep_builder
             .build()

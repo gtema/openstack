@@ -65,13 +65,13 @@ pub struct KeypairCmd {
 pub struct ResponseData {
     /// The user\_id for a keypair.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     user_id: Option<String>,
 
     /// A boolean indicates whether this keypair is deleted or not.
     /// The value is always `false` (not deleted).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     deleted: Option<bool>,
 
     /// The date and time when the resource was created. The date and time
@@ -94,7 +94,7 @@ pub struct ResponseData {
 
     /// It is always `null`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     deleted_at: Option<String>,
 
     /// It is always `null`.
@@ -114,12 +114,12 @@ pub struct ResponseData {
 
     /// The keypair public key.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     public_key: Option<String>,
 
     /// The fingerprint for the keypair.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     fingerprint: Option<String>,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
@@ -127,7 +127,7 @@ pub struct ResponseData {
     ///
     /// **New in version 2.2**
     #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
+    #[structable(optional, title = "type")]
     _type: Option<String>,
 }
 

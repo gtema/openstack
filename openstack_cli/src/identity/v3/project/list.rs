@@ -155,6 +155,7 @@ impl fmt::Display for ResponseOptions {
         let data = Vec::from([format!(
             "immutable={}",
             self.immutable
+                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);
@@ -180,7 +181,7 @@ impl Command for ProjectsCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.domain_id {
-            ep_builder.domain_id(val);
+            ep_builder.domain_id(val.clone());
         }
         if let Some(val) = &self.args.query.enabled {
             ep_builder.enabled(*val);
@@ -189,10 +190,10 @@ impl Command for ProjectsCmd {
             ep_builder.is_domain(*val);
         }
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.parent_id {
-            ep_builder.parent_id(val);
+            ep_builder.parent_id(val.clone());
         }
         // Set body parameters
 

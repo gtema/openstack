@@ -27,8 +27,9 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::identity::v3::auth::system::list;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use std::collections::HashMap;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -54,9 +55,22 @@ pub struct PathParameters {}
 pub struct SystemsCmd {
     pub args: SystemsArgs,
 }
-/// Systems response representation
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct ResponseData {}
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct ResponseData(HashMap<String, serde_json::Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 #[async_trait]
 impl Command for SystemsCmd {
@@ -81,10 +95,8 @@ impl Command for SystemsCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

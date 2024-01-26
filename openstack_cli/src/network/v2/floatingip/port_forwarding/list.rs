@@ -176,19 +176,19 @@ impl Command for PortForwardingsCmd {
         ep_builder.floatingip_id(&self.args.path.floatingip_id);
         // Set query parameters
         if let Some(val) = &self.args.query.id {
-            ep_builder.id(val);
+            ep_builder.id(val.clone());
         }
         if let Some(val) = &self.args.query.external_port {
             ep_builder.external_port(*val);
         }
         if let Some(val) = &self.args.query.protocol {
-            ep_builder.protocol(val);
+            ep_builder.protocol(val.clone());
         }
         if let Some(val) = &self.args.query.internal_port_id {
-            ep_builder.internal_port_id(val);
+            ep_builder.internal_port_id(val.clone());
         }
         if let Some(val) = &self.args.query.description {
-            ep_builder.description(val);
+            ep_builder.description(val.clone());
         }
         if let Some(val) = &self.args.query.external_port_range {
             ep_builder.external_port_range(*val);

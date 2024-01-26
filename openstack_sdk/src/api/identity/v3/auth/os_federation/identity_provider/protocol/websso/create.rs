@@ -147,10 +147,10 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
                 .path(format!(
-                    "/v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso",
-                idp_id = "idp_id",
-                protocol_id = "protocol_id",
-                 ))
+      "/v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso",
+          idp_id = "idp_id",
+          protocol_id = "protocol_id",
+      ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

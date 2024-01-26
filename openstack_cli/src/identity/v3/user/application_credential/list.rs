@@ -219,7 +219,7 @@ impl Command for ApplicationCredentialsCmd {
         ep_builder.user_id(&self.args.path.user_id);
         // Set query parameters
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         // Set body parameters
 

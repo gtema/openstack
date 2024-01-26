@@ -142,14 +142,13 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::HEAD)
                 .path(format!(
-                    "/v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso",
-                idp_id = "idp_id",
-                protocol_id = "protocol_id",
-                 ))
+      "/v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso",
+          idp_id = "idp_id",
+          protocol_id = "protocol_id",
+      ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
-            then.status(200)
-                .header("content-type", "application/json");
+            then.status(200).header("content-type", "application/json");
         });
 
         let endpoint = Request::builder()

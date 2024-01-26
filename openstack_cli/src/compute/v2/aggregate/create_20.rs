@@ -78,7 +78,7 @@ pub struct AggregateCmd {
 pub struct ResponseData {
     /// The availability zone of the host aggregate.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availability_zone: Option<String>,
 
     /// The date and time when the resource was created. The date and time
@@ -102,7 +102,7 @@ pub struct ResponseData {
     /// A boolean indicates whether this aggregate is deleted or not, if it has
     /// not been deleted, `false` will appear.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     deleted: Option<bool>,
 
     /// The date and time when the resource was deleted. If the resource has
@@ -121,7 +121,7 @@ pub struct ResponseData {
     /// value, if included, is the time zone as an offset from UTC. In
     /// the previous example, the offset value is `-05:00`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     deleted_at: Option<String>,
 
     /// The ID of the host aggregate.
@@ -131,12 +131,12 @@ pub struct ResponseData {
 
     /// Metadata key and value pairs associated with the aggregate.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     metadata: Option<HashMapStringString>,
 
     /// An array of host information.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     hosts: Option<VecString>,
 
     /// The date and time when the resource was updated, if the resource has
@@ -163,7 +163,7 @@ pub struct ResponseData {
     ///
     /// **New in version 2.41**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     uuid: Option<String>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]

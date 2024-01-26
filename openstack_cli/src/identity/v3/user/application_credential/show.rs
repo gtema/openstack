@@ -75,7 +75,7 @@ pub struct ResponseData {
     /// that authentication requests using this application credential will be
     /// scoped to.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     project_id: Option<String>,
 
     #[serde()]
@@ -83,23 +83,23 @@ pub struct ResponseData {
     name: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     expires_at: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     roles: Option<VecResponseRoles>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     unrestricted: Option<bool>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     access_rules: Option<VecResponseAccessRules>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]

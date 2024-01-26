@@ -139,84 +139,84 @@ pub struct ResponseData {
 
     /// The IP protocol version. Value is `4` or `6`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ip_version: Option<i32>,
 
     /// The ID of the network to which the subnet belongs.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     network_id: Option<String>,
 
     /// The ID of the subnet pool associated with the subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     subnetpool_id: Option<String>,
 
     /// The CIDR of the subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     cidr: Option<String>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     gateway_ip: Option<String>,
 
     /// Allocation pools with `start` and `end` IP addresses
     /// for this subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     allocation_pools: Option<VecResponseAllocationPools>,
 
     /// List of dns name servers associated with the subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_nameservers: Option<VecString>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     host_routes: Option<VecResponseHostRoutes>,
 
     /// The ID of the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tenant_id: Option<String>,
 
     /// Indicates whether dhcp is enabled or disabled
     /// for the subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     enable_dhcp: Option<BoolString>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ipv6_ra_mode: Option<String>,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ipv6_address_mode: Option<String>,
 
     /// The revision number of the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The service types associated with the subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     service_types: Option<VecString>,
 
     /// The list of tags on the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
@@ -231,18 +231,18 @@ pub struct ResponseData {
 
     /// Whether to publish DNS records for IPs from this subnet.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_publish_fixed_ip: Option<BoolString>,
 
     /// A human-readable description for the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// The ID of a network segment the subnet is associated with.
     /// It is available when `segment` extension is enabled.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     segment_id: Option<String>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -379,11 +379,11 @@ impl Command for SubnetCmd {
         let args = &self.args.subnet;
         let mut subnet_builder = set::SubnetBuilder::default();
         if let Some(val) = &args.name {
-            subnet_builder.name(val);
+            subnet_builder.name(val.clone());
         }
 
         if let Some(val) = &args.gateway_ip {
-            subnet_builder.gateway_ip(val);
+            subnet_builder.gateway_ip(val.clone());
         }
 
         if let Some(val) = &args.allocation_pools {
@@ -419,7 +419,7 @@ impl Command for SubnetCmd {
         }
 
         if let Some(val) = &args.description {
-            subnet_builder.description(val);
+            subnet_builder.description(val.clone());
         }
 
         if let Some(val) = &args.segment_id {

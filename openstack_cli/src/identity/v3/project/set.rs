@@ -126,24 +126,24 @@ pub struct ResponseData {
 
     /// The description of the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// The ID of the domain for the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`.
     /// If the user is disabled, this value is `false`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     enabled: Option<bool>,
 
     /// If the user is enabled, this value is `true`.
     /// If the user is disabled, this value is `false`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     is_domain: Option<bool>,
 
     /// The ID of the parent for the project.
@@ -151,7 +151,7 @@ pub struct ResponseData {
     ///
     /// **New in version 3.4**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     parent_id: Option<String>,
 
     /// The name of the project.
@@ -161,13 +161,13 @@ pub struct ResponseData {
 
     /// A list of simple strings assigned to a project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     options: Option<ResponseOptions>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -195,6 +195,7 @@ impl fmt::Display for ResponseOptions {
         let data = Vec::from([format!(
             "immutable={}",
             self.immutable
+                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);
@@ -256,7 +257,7 @@ impl Command for ProjectCmd {
         }
 
         if let Some(val) = &args.name {
-            project_builder.name(val);
+            project_builder.name(val.clone());
         }
 
         if let Some(val) = &args.tags {

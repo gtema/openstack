@@ -154,49 +154,49 @@ pub struct ResponseData {
     /// The ID of the network associated with the
     /// floating IP.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     floating_network_id: Option<String>,
 
     /// The ID of the router for the floating IP.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     router_id: Option<String>,
 
     /// The ID of a port associated with the floating IP.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port_id: Option<String>,
 
     /// The fixed IP address that is associated with the
     /// floating IP address.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     fixed_ip_address: Option<String>,
 
     /// The ID of the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tenant_id: Option<String>,
 
     /// The status of the floating IP. Values are
     /// `ACTIVE`, `DOWN` and `ERROR`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The list of tags on the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
@@ -211,12 +211,12 @@ pub struct ResponseData {
 
     /// A valid DNS name.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_name: Option<String>,
 
     /// A valid DNS domain.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_domain: Option<String>,
 
     /// The information of the port that this floating IP associates with.
@@ -226,7 +226,7 @@ pub struct ResponseData {
     /// `device\_id` and `device\_owner`. If the floating IP is not associated
     /// with a port, this field is `null`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port_details: Option<String>,
 
     /// The associated port forwarding resources for the floating IP. If the
@@ -238,12 +238,12 @@ pub struct ResponseData {
     /// and the TCP or UDP port or port range used by floating IP
     /// (`external\_port`) or (`external\_port\_range`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port_forwardings: Option<String>,
 
     /// A human-readable description for the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -284,25 +284,25 @@ impl Command for FloatingipCmd {
         let args = &self.args.floatingip;
         let mut floatingip_builder = create::FloatingipBuilder::default();
         if let Some(val) = &args.floating_ip_address {
-            floatingip_builder.floating_ip_address(val);
+            floatingip_builder.floating_ip_address(val.clone());
         }
 
         if let Some(val) = &args.subnet_id {
             floatingip_builder.subnet_id(Some(val.into()));
         }
 
-        floatingip_builder.floating_network_id(&args.floating_network_id);
+        floatingip_builder.floating_network_id(args.floating_network_id.clone());
 
         if let Some(val) = &args.port_id {
             floatingip_builder.port_id(Some(val.into()));
         }
 
         if let Some(val) = &args.fixed_ip_address {
-            floatingip_builder.fixed_ip_address(val);
+            floatingip_builder.fixed_ip_address(val.clone());
         }
 
         if let Some(val) = &args.tenant_id {
-            floatingip_builder.tenant_id(val);
+            floatingip_builder.tenant_id(val.clone());
         }
 
         if let Some(val) = &args.qos_policy_id {
@@ -310,15 +310,15 @@ impl Command for FloatingipCmd {
         }
 
         if let Some(val) = &args.dns_name {
-            floatingip_builder.dns_name(val);
+            floatingip_builder.dns_name(val.clone());
         }
 
         if let Some(val) = &args.dns_domain {
-            floatingip_builder.dns_domain(val);
+            floatingip_builder.dns_domain(val.clone());
         }
 
         if let Some(val) = &args.description {
-            floatingip_builder.description(val);
+            floatingip_builder.description(val.clone());
         }
 
         ep_builder.floatingip(floatingip_builder.build().unwrap());

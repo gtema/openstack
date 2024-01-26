@@ -183,23 +183,23 @@ impl Command for ImportCmd {
         if let Some(args) = &self.args.method {
             let mut method_builder = create::MethodBuilder::default();
             if let Some(val) = &args.name {
-                method_builder.name(val);
+                method_builder.name(val.clone());
             }
 
             if let Some(val) = &args.uri {
-                method_builder.uri(val);
+                method_builder.uri(val.clone());
             }
 
             if let Some(val) = &args.glance_image_id {
-                method_builder.glance_image_id(val);
+                method_builder.glance_image_id(val.clone());
             }
 
             if let Some(val) = &args.glance_region {
-                method_builder.glance_region(val);
+                method_builder.glance_region(val.clone());
             }
 
             if let Some(val) = &args.glance_service_interface {
-                method_builder.glance_service_interface(val);
+                method_builder.glance_service_interface(val.clone());
             }
 
             ep_builder.method(method_builder.build().unwrap());

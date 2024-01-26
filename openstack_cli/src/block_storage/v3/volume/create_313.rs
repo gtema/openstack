@@ -146,63 +146,63 @@ pub struct ResponseData {
 
     /// The volume description.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// The associated volume type name for the volume.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     volume_type: Option<String>,
 
     /// A `metadata` object. Contains one or more
     /// metadata key and value pairs that are associated with the volume.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     metadata: Option<HashMapStringString>,
 
     /// To create a volume from an existing snapshot,
     /// specify the UUID of the volume snapshot. The volume is created in
     /// same availability zone and with same size as the snapshot.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     snapshot_id: Option<String>,
 
     /// The UUID of the source volume. The API creates a new volume with the
     /// same
     /// size as the source volume unless a larger size is requested.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     source_volid: Option<String>,
 
     /// The UUID of the consistency group.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     consistencygroup_id: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     size: Option<i64>,
 
     /// The name of the availability zone.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availability_zone: Option<String>,
 
     /// If true, this volume can attach to more than one
     /// instance.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     multiattach: Option<bool>,
 
     /// The volume status.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The volume migration status. Admin only.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     migration_status: Option<String>,
 
     /// Instance attachment information. If this volume
@@ -228,17 +228,17 @@ pub struct ResponseData {
     ///
     /// ```
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     attachments: Option<VecResponseAttachments>,
 
     /// The volume links.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     links: Option<Value>,
 
     /// If true, this volume is encrypted.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     encrypted: Option<bool>,
 
     /// The date and time when the resource was created.
@@ -293,7 +293,7 @@ pub struct ResponseData {
 
     /// The volume replication status.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     replication_status: Option<String>,
 
     /// The UUID of the volume.
@@ -303,30 +303,30 @@ pub struct ResponseData {
 
     /// The UUID of the user.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     user_id: Option<String>,
 
     /// The associated volume type ID for the volume.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     volume_type_id: Option<String>,
 
     /// The ID of the group.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     group_id: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
     /// driver or null if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     provider_id: Option<String>,
 
     /// A unique identifier that’s used to indicate what node the volume-
     /// service for a particular volume is being serviced by.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     service_uuid: Option<String>,
 
     /// An indicator whether the host connecting the volume should lock for the
@@ -335,19 +335,19 @@ pub struct ResponseData {
     /// locks, and null means to always use locks. Look at os-brick’s
     /// guard_connection context manager. Default=True.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     shared_targets: Option<bool>,
 
     /// The cluster name of volume backend.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     cluster_name: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     consumes_quota: Option<bool>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]

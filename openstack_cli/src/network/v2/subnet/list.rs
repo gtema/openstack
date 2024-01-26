@@ -380,61 +380,61 @@ impl Command for SubnetsCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.id {
-            ep_builder.id(val);
+            ep_builder.id(val.clone());
         }
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.ip_version {
-            ep_builder.ip_version(val);
+            ep_builder.ip_version(val.clone());
         }
         if let Some(val) = &self.args.query.network_id {
-            ep_builder.network_id(val);
+            ep_builder.network_id(val.clone());
         }
         if let Some(val) = &self.args.query.subnetpool_id {
-            ep_builder.subnetpool_id(val);
+            ep_builder.subnetpool_id(val.clone());
         }
         if let Some(val) = &self.args.query.cidr {
-            ep_builder.cidr(val);
+            ep_builder.cidr(val.clone());
         }
         if let Some(val) = &self.args.query.gateway_ip {
-            ep_builder.gateway_ip(val);
+            ep_builder.gateway_ip(val.clone());
         }
         if let Some(val) = &self.args.query.tenant_id {
-            ep_builder.tenant_id(val);
+            ep_builder.tenant_id(val.clone());
         }
         if let Some(val) = &self.args.query.enable_dhcp {
             ep_builder.enable_dhcp(*val);
         }
         if let Some(val) = &self.args.query.ipv6_ra_mode {
-            ep_builder.ipv6_ra_mode(val);
+            ep_builder.ipv6_ra_mode(val.clone());
         }
         if let Some(val) = &self.args.query.ipv6_address_mode {
-            ep_builder.ipv6_address_mode(val);
+            ep_builder.ipv6_address_mode(val.clone());
         }
         if let Some(val) = &self.args.query.shared {
             ep_builder.shared(*val);
         }
         if let Some(val) = &self.args.query.revision_number {
-            ep_builder.revision_number(val);
+            ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.iter());
+            ep_builder.tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.iter());
+            ep_builder.tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.iter());
+            ep_builder.not_tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
+            ep_builder.not_tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.description {
-            ep_builder.description(val);
+            ep_builder.description(val.clone());
         }
         if let Some(val) = &self.args.query.segment_id {
-            ep_builder.segment_id(val);
+            ep_builder.segment_id(val.clone());
         }
         // Set body parameters
 
