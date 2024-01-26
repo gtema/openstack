@@ -1,17 +1,17 @@
+pub mod availability_zone;
 pub mod extension;
 pub mod flavor;
-pub mod os_availability_zone;
-pub mod os_keypair;
+pub mod keypair;
 pub mod server;
 
 use clap::{Args, Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
+use crate::compute::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
 use crate::compute::v2::extension::{ExtensionArgs, ExtensionCommand};
 use crate::compute::v2::flavor::{FlavorArgs, FlavorCommand};
-use crate::compute::v2::os_availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
-use crate::compute::v2::os_keypair::{KeypairArgs, KeypairCommand};
+use crate::compute::v2::keypair::{KeypairArgs, KeypairCommand};
 use crate::compute::v2::server::{ServerArgs, ServerCommand};
 use crate::{Command, ResourceCommands, ServiceCommands};
 
@@ -39,17 +39,45 @@ pub enum ComputeSrvCommands {
     #[command(about = "Availability zones")]
     AvailabilityZone(Box<AvailabilityZoneArgs>),
     /// Extension commands
+    #[command(about = "Extensions")]
     Extension(Box<ExtensionArgs>),
-    /// Server (VM) commands
-    Server(Box<ServerArgs>),
     /// Flavor commands
     ///
     /// Flavors are a way to describe the basic dimensions of a server to be
     /// created including how much cpu, ram, and disk space are allocated to a
     /// server built with this flavor.
+    #[command(about = "Flavors")]
     Flavor(Box<FlavorArgs>),
-    /// Keypair commands
+    /// Generates, imports, and deletes SSH keys.
+    #[command(about = "Keypairs")]
     Keypair(Box<KeypairArgs>),
+    /// **Servers (servers)**
+    ///
+    /// Lists, creates, shows details for, updates, and deletes servers.
+    ///
+    /// **Passwords**
+    ///
+    /// When you create a server, you can specify a password through the
+    /// optional adminPass attribute. The password must meet the complexity
+    /// requirements set by your OpenStack Compute provider. The server might
+    /// enter an ERROR state if the complexity requirements are not met. In
+    /// this case, a client might issue a change password action to reset the
+    /// server password.
+    ///
+    /// If you do not specify a password, the API generates and assigns a
+    /// random password that it returns in the response object. This password
+    /// meets the security requirements set by the compute provider. For
+    /// security reasons, subsequent GET calls do not require this password.
+    ///
+    /// **Server metadata**
+    ///
+    /// You can specify custom server metadata at server launch time. The
+    /// maximum size for each metadata key-value pair is 255 bytes. The compute
+    /// provider determines the maximum number of key-value pairs for each
+    /// server. You can query this value through the maxServerMeta absolute
+    /// limit.
+    #[command(about = "Servers")]
+    Server(Box<ServerArgs>),
 }
 
 pub struct ComputeSrvCommand {
@@ -67,15 +95,15 @@ impl ServiceCommands for ComputeSrvCommand {
                 args: *args.clone(),
             }
             .get_command(session),
-            ComputeSrvCommands::Server(args) => ServerCommand {
-                args: *args.clone(),
-            }
-            .get_command(session),
             ComputeSrvCommands::Flavor(args) => FlavorCommand {
                 args: *args.clone(),
             }
             .get_command(session),
             ComputeSrvCommands::Keypair(args) => KeypairCommand {
+                args: *args.clone(),
+            }
+            .get_command(session),
+            ComputeSrvCommands::Server(args) => ServerCommand {
                 args: *args.clone(),
             }
             .get_command(session),
