@@ -90,6 +90,7 @@ impl fmt::Display for ResponseZoneState {
         let data = Vec::from([format!(
             "available={}",
             self.available
+                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);

@@ -1,6 +1,8 @@
+pub mod aggregate;
 pub mod availability_zone;
 pub mod extension;
 pub mod flavor;
+pub mod hypervisor;
 pub mod keypair;
 pub mod server;
 
@@ -8,9 +10,11 @@ use clap::{Args, Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
+use crate::compute::v2::aggregate::{AggregateArgs, AggregateCommand};
 use crate::compute::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
 use crate::compute::v2::extension::{ExtensionArgs, ExtensionCommand};
 use crate::compute::v2::flavor::{FlavorArgs, FlavorCommand};
+use crate::compute::v2::hypervisor::{HypervisorArgs, HypervisorCommand};
 use crate::compute::v2::keypair::{KeypairArgs, KeypairCommand};
 use crate::compute::v2::server::{ServerArgs, ServerCommand};
 use crate::{Command, ResourceCommands, ServiceCommands};
@@ -38,6 +42,14 @@ pub enum ComputeSrvCommands {
     /// Host Aggregates for more details.
     #[command(about = "Availability zones")]
     AvailabilityZone(Box<AvailabilityZoneArgs>),
+    /// Creates and manages host aggregates. An aggregate assigns metadata to
+    /// groups of compute nodes.
+    ///
+    /// Policy defaults enable only users with the administrative role to
+    /// perform operations with aggregates. Cloud providers can change these
+    /// permissions through policy file configuration.
+    #[command(about = "Host Aggregates")]
+    Aggregate(Box<AggregateArgs>),
     /// Extension commands
     #[command(about = "Extensions")]
     Extension(Box<ExtensionArgs>),
@@ -48,6 +60,13 @@ pub enum ComputeSrvCommands {
     /// server built with this flavor.
     #[command(about = "Flavors")]
     Flavor(Box<FlavorArgs>),
+    /// Lists all hypervisors, shows summary statistics for all hypervisors
+    /// over all compute nodes, shows details for a hypervisor, shows the
+    /// uptime for a hypervisor, lists all servers on hypervisors that match
+    /// the given hypervisor_hostname_pattern or searches for hypervisors by
+    /// the given hypervisor_hostname_pattern.
+    #[command(about = "Hypervisors")]
+    Hypervisor(Box<HypervisorArgs>),
     /// Generates, imports, and deletes SSH keys.
     #[command(about = "Keypairs")]
     Keypair(Box<KeypairArgs>),
@@ -87,6 +106,10 @@ pub struct ComputeSrvCommand {
 impl ServiceCommands for ComputeSrvCommand {
     fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
+            ComputeSrvCommands::Aggregate(args) => AggregateCommand {
+                args: *args.clone(),
+            }
+            .get_command(session),
             ComputeSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
                 args: *args.clone(),
             }
@@ -96,6 +119,10 @@ impl ServiceCommands for ComputeSrvCommand {
             }
             .get_command(session),
             ComputeSrvCommands::Flavor(args) => FlavorCommand {
+                args: *args.clone(),
+            }
+            .get_command(session),
+            ComputeSrvCommands::Hypervisor(args) => HypervisorCommand {
                 args: *args.clone(),
             }
             .get_command(session),

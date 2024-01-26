@@ -314,6 +314,26 @@ where
     Ok((s[..pos].parse()?, s[pos + 1..].parse()?))
 }
 
+/// Parse a single key-value pair where value can be null
+pub(crate) fn parse_key_val_opt<T, U>(
+    s: &str,
+) -> Result<(T, Option<U>), Box<dyn Error + Send + Sync + 'static>>
+where
+    T: std::str::FromStr,
+    T::Err: Error + Send + Sync + 'static,
+    U: std::str::FromStr,
+    U::Err: Error + Send + Sync + 'static,
+{
+    let pos = s
+        .find('=')
+        .ok_or_else(|| format!("invalid KEY=value: no `=` found in `{s}`"))?;
+    if pos < s.len() - 1 {
+        Ok((s[..pos].parse()?, Some(s[pos + 1..].parse()?)))
+    } else {
+        Ok((s[..pos].parse()?, None))
+    }
+}
+
 pub(crate) fn parse_json(s: &str) -> Result<Value, Box<dyn Error + Send + Sync + 'static>>
 where
 {
@@ -421,5 +441,30 @@ impl TryFrom<String> for ServiceApiVersion {
     fn try_from(ver: String) -> Result<Self, Self::Error> {
         let parts: Vec<i8> = ver.split('.').flat_map(|v| v.parse::<i8>()).collect();
         Ok(ServiceApiVersion(parts[0], parts[1]))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_parse_key_val() {
+        assert_eq!(
+            ("foo".to_string(), "bar".to_string()),
+            parse_key_val::<String, String>("foo=bar").unwrap()
+        );
+    }
+
+    #[test]
+    fn test_parse_key_val_opt() {
+        assert_eq!(
+            ("foo".to_string(), Some("bar".to_string())),
+            parse_key_val_opt::<String, String>("foo=bar").unwrap()
+        );
+        assert_eq!(
+            ("foo".to_string(), None),
+            parse_key_val_opt::<String, String>("foo=").unwrap()
+        );
     }
 }
