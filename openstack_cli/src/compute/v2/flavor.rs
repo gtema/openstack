@@ -12,9 +12,9 @@ mod create_20;
 mod create_21;
 mod create_255;
 mod delete;
+mod extra_spec;
+mod flavor_access;
 mod list;
-mod os_extra_spec;
-mod os_flavor_access;
 mod remove_tenant_access;
 mod set;
 mod show;
@@ -33,7 +33,7 @@ pub enum FlavorCommands {
     /// private flavor has is_public set to false while a public flavor has
     /// is_public set to true.
     #[command(about = "Flavor access commands")]
-    Access(Box<os_flavor_access::FlavorAccessArgs>),
+    Access(Box<flavor_access::FlavorAccessArgs>),
     /// **Creates a flavor.**
     ///
     /// Creating a flavor is typically only available to administrators of a
@@ -73,7 +73,7 @@ pub enum FlavorCommands {
     /// Lists, creates, deletes, and updates the extra-specs or keys for a
     /// flavor.
     #[command(about = "Flavor extra-specs")]
-    Extraspecs(Box<os_extra_spec::ExtraSpecsArgs>),
+    Extraspecs(Box<extra_spec::ExtraSpecsArgs>),
     /// Lists all flavors accessible to your project.
     #[command(about = "List Flavors")]
     List(Box<list::FlavorsArgs>),
@@ -134,7 +134,7 @@ pub struct FlavorCommand {
 impl ResourceCommands for FlavorCommand {
     fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
         match &self.args.command {
-            FlavorCommands::Access(args) => os_flavor_access::FlavorAccessCommand {
+            FlavorCommands::Access(args) => flavor_access::FlavorAccessCommand {
                 args: *args.clone(),
             }
             .get_command(session),
@@ -174,7 +174,7 @@ impl ResourceCommands for FlavorCommand {
             FlavorCommands::Delete(args) => Box::new(delete::FlavorCmd {
                 args: *args.clone(),
             }),
-            FlavorCommands::Extraspecs(args) => os_extra_spec::ExtraSpecsCommand {
+            FlavorCommands::Extraspecs(args) => extra_spec::ExtraSpecsCommand {
                 args: *args.clone(),
             }
             .get_command(session),

@@ -26,13 +26,21 @@ This document contains the help content for the `osc` command-line program.
 * [`osc catalog`↴](#osc-catalog)
 * [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
+* [`osc compute availability-zone`↴](#osc-compute-availability-zone)
+* [`osc compute availability-zone list`↴](#osc-compute-availability-zone-list)
+* [`osc compute aggregate`↴](#osc-compute-aggregate)
+* [`osc compute aggregate add-host`↴](#osc-compute-aggregate-add-host)
+* [`osc compute aggregate create`↴](#osc-compute-aggregate-create)
+* [`osc compute aggregate cache-image`↴](#osc-compute-aggregate-cache-image)
+* [`osc compute aggregate delete`↴](#osc-compute-aggregate-delete)
+* [`osc compute aggregate list`↴](#osc-compute-aggregate-list)
+* [`osc compute aggregate remove-host`↴](#osc-compute-aggregate-remove-host)
+* [`osc compute aggregate show`↴](#osc-compute-aggregate-show)
+* [`osc compute aggregate set`↴](#osc-compute-aggregate-set)
+* [`osc compute aggregate set-metadata`↴](#osc-compute-aggregate-set-metadata)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
 * [`osc compute extension show`↴](#osc-compute-extension-show)
-* [`osc compute server`↴](#osc-compute-server)
-* [`osc compute server list`↴](#osc-compute-server-list)
-* [`osc compute server show`↴](#osc-compute-server-show)
-* [`osc compute server pause`↴](#osc-compute-server-pause)
 * [`osc compute flavor`↴](#osc-compute-flavor)
 * [`osc compute flavor access`↴](#osc-compute-flavor-access)
 * [`osc compute flavor access add`↴](#osc-compute-flavor-access-add)
@@ -52,6 +60,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute flavor list`↴](#osc-compute-flavor-list)
 * [`osc compute flavor set`↴](#osc-compute-flavor-set)
 * [`osc compute flavor show`↴](#osc-compute-flavor-show)
+* [`osc compute hypervisor`↴](#osc-compute-hypervisor)
+* [`osc compute hypervisor list`↴](#osc-compute-hypervisor-list)
+* [`osc compute hypervisor show`↴](#osc-compute-hypervisor-show)
 * [`osc compute keypair`↴](#osc-compute-keypair)
 * [`osc compute keypair list`↴](#osc-compute-keypair-list)
 * [`osc compute keypair show`↴](#osc-compute-keypair-show)
@@ -62,6 +73,10 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair create21`↴](#osc-compute-keypair-create21)
 * [`osc compute keypair create20`↴](#osc-compute-keypair-create20)
 * [`osc compute keypair delete`↴](#osc-compute-keypair-delete)
+* [`osc compute server`↴](#osc-compute-server)
+* [`osc compute server list`↴](#osc-compute-server-list)
+* [`osc compute server show`↴](#osc-compute-server-show)
+* [`osc compute server pause`↴](#osc-compute-server-pause)
 * [`osc identity`↴](#osc-identity)
 * [`osc identity application-credential`↴](#osc-identity-application-credential)
 * [`osc identity application-credential create`↴](#osc-identity-application-credential-create)
@@ -698,16 +713,189 @@ Compute service (Nova) commands
 
 ###### **Subcommands:**
 
-* `extension` — Extension commands
-* `server` — Server (VM) commands
-* `flavor` — Flavor commands
-* `keypair` — Keypair commands
+* `availability-zone` — Availability zones
+* `aggregate` — Host Aggregates
+* `extension` — Extensions
+* `flavor` — Flavors
+* `hypervisor` — Hypervisors
+* `keypair` — Keypairs
+* `server` — Servers
+
+
+
+## `osc compute availability-zone`
+
+Lists and gets detailed availability zone information.
+
+An availability zone is created or updated by setting the availability_zone parameter in the create, update, or create or update methods of the Host Aggregates API. See Host Aggregates for more details.
+
+**Usage:** `osc compute availability-zone <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get Detailed Availability Zone Information
+
+
+
+## `osc compute availability-zone list`
+
+Get Detailed Availability Zone Information
+
+**Usage:** `osc compute availability-zone list`
+
+
+
+## `osc compute aggregate`
+
+Creates and manages host aggregates. An aggregate assigns metadata to groups of compute nodes.
+
+Policy defaults enable only users with the administrative role to perform operations with aggregates. Cloud providers can change these permissions through policy file configuration.
+
+**Usage:** `osc compute aggregate <COMMAND>`
+
+###### **Subcommands:**
+
+* `add-host` — Add Host
+* `create` — Create Aggregate
+* `cache-image` — Request Image Pre-caching for Aggregate
+* `delete` — Delete Aggregate
+* `list` — List Aggregates
+* `remove-host` — Remove Host
+* `show` — Show Aggregate Details
+* `set` — Update Aggregate
+* `set-metadata` — Create Or Update Aggregate Metadata
+
+
+
+## `osc compute aggregate add-host`
+
+Add Host
+
+**Usage:** `osc compute aggregate add-host --host <HOST> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+###### **Options:**
+
+* `--host <HOST>` — The name of the host
+
+
+
+## `osc compute aggregate create`
+
+Create Aggregate
+
+**Usage:** `osc compute aggregate create [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the host aggregate
+* `--availability-zone <AVAILABILITY_ZONE>` — The availability zone of the host aggregate. You should use a custom availability zone rather than the default returned by the os-availability-zone API. The availability zone must not include ‘:’ in its name
+
+
+
+## `osc compute aggregate cache-image`
+
+Request Image Pre-caching for Aggregate
+
+**Usage:** `osc compute aggregate cache-image [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+###### **Options:**
+
+* `--cache <CACHE>`
+
+
+
+## `osc compute aggregate delete`
+
+Delete Aggregate
+
+**Usage:** `osc compute aggregate delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+
+
+## `osc compute aggregate list`
+
+List Aggregates
+
+**Usage:** `osc compute aggregate list`
+
+
+
+## `osc compute aggregate remove-host`
+
+Remove Host
+
+**Usage:** `osc compute aggregate remove-host --host <HOST> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+###### **Options:**
+
+* `--host <HOST>` — The name of the host
+
+
+
+## `osc compute aggregate show`
+
+Show Aggregate Details
+
+**Usage:** `osc compute aggregate show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+
+
+## `osc compute aggregate set`
+
+Update Aggregate
+
+**Usage:** `osc compute aggregate set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the host aggregate
+* `--availability-zone <AVAILABILITY_ZONE>` — The availability zone of the host aggregate. You should use a custom availability zone rather than the default returned by the os-availability-zone API. The availability zone must not include ‘:’ in its name
+
+
+
+## `osc compute aggregate set-metadata`
+
+Create Or Update Aggregate Metadata
+
+**Usage:** `osc compute aggregate set-metadata [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+
+###### **Options:**
+
+* `--metadata <key=value>` — Metadata key and value pairs associated with the aggregate. The maximum size for each metadata key and value pair is 255 bytes
 
 
 
 ## `osc compute extension`
 
-Extension commands
+Extensions
 
 **Usage:** `osc compute extension <COMMAND>`
 
@@ -735,104 +923,6 @@ Show single extension
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/extensions/{id} API
-
-
-
-## `osc compute server`
-
-Server (VM) commands
-
-**Usage:** `osc compute server
-       server <COMMAND>`
-
-###### **Subcommands:**
-
-* `list` — List Servers
-* `show` — Show single Server
-* `pause` — Pause Server
-
-
-
-## `osc compute server list`
-
-List Servers
-
-**Usage:** `osc compute server list [OPTIONS]`
-
-###### **Options:**
-
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
-* `--auto-disk-config <AUTO_DISK_CONFIG>` — auto_disk_config filter parameter
-* `--availability-zone <AVAILABILITY_ZONE>` — availability_zone filter parameter
-* `--created-at <CREATED_AT>` — created_at filter parameter
-* `--description <DESCRIPTION>` — description filter parameter
-* `--flavor <FLAVOR>` — flavor filter parameter
-* `--hostname <HOSTNAME>` — hostname filter parameter
-* `--image <IMAGE>` — image filter parameter
-* `--kernel-id <KERNEL_ID>` — kernel_id filter parameter
-* `--key-name <KEY_NAME>` — key_name filter parameter
-* `--launch-index <LAUNCH_INDEX>` — launch_index filter parameter
-* `--launched-at <LAUNCHED_AT>` — launched_at filter parameter
-* `--locked-by <LOCKED_BY>` — locked_by filter parameter
-* `--name <NAME>` — name filter parameter
-* `--node <NODE>` — node filter parameter
-* `--power-state <POWER_STATE>` — power_state filter parameter
-* `--progress <PROGRESS>` — progress filter parameter
-* `--project-id <PROJECT_ID>` — project_id filter parameter
-* `--ramdisk-id <RAMDISK_ID>` — ramdisk_id filter parameter
-* `--reservation-id <RESERVATION_ID>` — reservation_id filter parameter
-* `--root-device-name <ROOT_DEVICE_NAME>` — root_device_name filter parameter
-* `--status <STATUS>` — status filter parameter
-* `--task-state <TASK_STATE>` — task_state filter parameter
-* `--terminated-at <TERMINATED_AT>` — terminated_at filter parameter
-* `--user-id <USER_ID>` — user_id filter parameter
-* `--vm-state <VM_STATE>` — vm_state filter parameter
-* `--sort-key <SORT_KEY>` — sort_key filter parameter
-* `--sort-dir <SORT_DIR>` — sort_dir filter parameter
-* `--access-ipv4 <ACCESS_IPV4>` — access_ipv4 filter parameter
-* `--access-ipv6 <ACCESS_IPV6>` — access_ipv6 filter parameter
-* `--has-config-drive <HAS_CONFIG_DRIVE>` — has_config_drive filter parameter
-* `--deleted-only <DELETED_ONLY>` — deleted_only filter parameter
-* `--compute-host <COMPUTE_HOST>` — compute_host filter parameter
-* `--is-soft-deleted <IS_SOFT_DELETED>` — is_soft_deleted filter parameter
-* `--ipv4-address <IPV4_ADDRESS>` — ipv4_address filter parameter
-* `--ipv6-address <IPV6_ADDRESS>` — ipv6_address filter parameter
-* `--changes-since <CHANGES_SINCE>` — changes_since filter parameter
-* `--changes-before <CHANGES_BEFORE>` — changes_before filter parameter
-* `--id <ID>` — id filter parameter
-* `--all-projects <ALL_PROJECTS>` — all_projects filter parameter
-* `--tags <TAGS>` — tags filter parameter
-* `--any-tags <ANY_TAGS>` — any_tags filter parameter
-* `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
-* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
-
-  Default value: `10000`
-
-
-
-## `osc compute server show`
-
-Show single Server
-
-**Usage:** `osc compute server show <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — Server ID
-
-
-
-## `osc compute server pause`
-
-Pause Server
-
-**Usage:** `osc compute server pause <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — Server ID
 
 
 
@@ -1175,9 +1265,70 @@ Show Flavor Details
 
 
 
+## `osc compute hypervisor`
+
+Hypervisors
+
+**Usage:** `osc compute hypervisor <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Hypervisors Details
+* `show` — Show Hypervisor Details
+
+
+
+## `osc compute hypervisor list`
+
+Lists hypervisors details.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the policy.json file.
+
+**Usage:** `osc compute hypervisor list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>`
+* `--marker <MARKER>`
+* `--hypervisor-hostname-pattern <HYPERVISOR_HOSTNAME_PATTERN>`
+* `--with-servers <WITH_SERVERS>`
+
+  Possible values: `true`, `false`
+
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc compute hypervisor show`
+
+Shows details for a given hypervisor.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the policy.json file.
+
+**Note**
+
+As noted, some of the parameters in the response representing totals do not take allocation ratios into account. This can result in a disparity between the totals and the usages. A more accurate representation of state can be obtained using placement.
+
+**Usage:** `osc compute hypervisor show [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/os-hypervisors/{id}/uptime API
+
+###### **Options:**
+
+* `--with-servers <WITH_SERVERS>`
+
+  Possible values: `true`, `false`
+
+
+
+
 ## `osc compute keypair`
 
-Keypair commands
+Keypairs
 
 **Usage:** `osc compute keypair <COMMAND>`
 
@@ -1340,6 +1491,116 @@ Delete keypair
 ###### **Options:**
 
 * `--user-id <USER_ID>`
+
+
+
+## `osc compute server`
+
+**Servers (servers)**
+
+Lists, creates, shows details for, updates, and deletes servers.
+
+**Passwords**
+
+When you create a server, you can specify a password through the optional adminPass attribute. The password must meet the complexity requirements set by your OpenStack Compute provider. The server might enter an ERROR state if the complexity requirements are not met. In this case, a client might issue a change password action to reset the server password.
+
+If you do not specify a password, the API generates and assigns a random password that it returns in the response object. This password meets the security requirements set by the compute provider. For security reasons, subsequent GET calls do not require this password.
+
+**Server metadata**
+
+You can specify custom server metadata at server launch time. The maximum size for each metadata key-value pair is 255 bytes. The compute provider determines the maximum number of key-value pairs for each server. You can query this value through the maxServerMeta absolute limit.
+
+**Usage:** `osc compute server
+       server <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Servers
+* `show` — Show single Server
+* `pause` — Pause Server
+
+
+
+## `osc compute server list`
+
+List Servers
+
+**Usage:** `osc compute server list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — limit filter parameter
+* `--marker <MARKER>` — marker filter parameter
+* `--auto-disk-config <AUTO_DISK_CONFIG>` — auto_disk_config filter parameter
+* `--availability-zone <AVAILABILITY_ZONE>` — availability_zone filter parameter
+* `--created-at <CREATED_AT>` — created_at filter parameter
+* `--description <DESCRIPTION>` — description filter parameter
+* `--flavor <FLAVOR>` — flavor filter parameter
+* `--hostname <HOSTNAME>` — hostname filter parameter
+* `--image <IMAGE>` — image filter parameter
+* `--kernel-id <KERNEL_ID>` — kernel_id filter parameter
+* `--key-name <KEY_NAME>` — key_name filter parameter
+* `--launch-index <LAUNCH_INDEX>` — launch_index filter parameter
+* `--launched-at <LAUNCHED_AT>` — launched_at filter parameter
+* `--locked-by <LOCKED_BY>` — locked_by filter parameter
+* `--name <NAME>` — name filter parameter
+* `--node <NODE>` — node filter parameter
+* `--power-state <POWER_STATE>` — power_state filter parameter
+* `--progress <PROGRESS>` — progress filter parameter
+* `--project-id <PROJECT_ID>` — project_id filter parameter
+* `--ramdisk-id <RAMDISK_ID>` — ramdisk_id filter parameter
+* `--reservation-id <RESERVATION_ID>` — reservation_id filter parameter
+* `--root-device-name <ROOT_DEVICE_NAME>` — root_device_name filter parameter
+* `--status <STATUS>` — status filter parameter
+* `--task-state <TASK_STATE>` — task_state filter parameter
+* `--terminated-at <TERMINATED_AT>` — terminated_at filter parameter
+* `--user-id <USER_ID>` — user_id filter parameter
+* `--vm-state <VM_STATE>` — vm_state filter parameter
+* `--sort-key <SORT_KEY>` — sort_key filter parameter
+* `--sort-dir <SORT_DIR>` — sort_dir filter parameter
+* `--access-ipv4 <ACCESS_IPV4>` — access_ipv4 filter parameter
+* `--access-ipv6 <ACCESS_IPV6>` — access_ipv6 filter parameter
+* `--has-config-drive <HAS_CONFIG_DRIVE>` — has_config_drive filter parameter
+* `--deleted-only <DELETED_ONLY>` — deleted_only filter parameter
+* `--compute-host <COMPUTE_HOST>` — compute_host filter parameter
+* `--is-soft-deleted <IS_SOFT_DELETED>` — is_soft_deleted filter parameter
+* `--ipv4-address <IPV4_ADDRESS>` — ipv4_address filter parameter
+* `--ipv6-address <IPV6_ADDRESS>` — ipv6_address filter parameter
+* `--changes-since <CHANGES_SINCE>` — changes_since filter parameter
+* `--changes-before <CHANGES_BEFORE>` — changes_before filter parameter
+* `--id <ID>` — id filter parameter
+* `--all-projects <ALL_PROJECTS>` — all_projects filter parameter
+* `--tags <TAGS>` — tags filter parameter
+* `--any-tags <ANY_TAGS>` — any_tags filter parameter
+* `--not-tags <NOT_TAGS>` — not_tags filter parameter
+* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc compute server show`
+
+Show single Server
+
+**Usage:** `osc compute server show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Server ID
+
+
+
+## `osc compute server pause`
+
+Pause Server
+
+**Usage:** `osc compute server pause <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — Server ID
 
 
 
