@@ -263,30 +263,35 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "ignore_change_password_upon_first_use={}",
                 self.ignore_change_password_upon_first_use
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_password_expiry={}",
                 self.ignore_password_expiry
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_lockout_failure_attempts={}",
                 self.ignore_lockout_failure_attempts
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "lock_password={}",
                 self.lock_password
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_user_inactivity={}",
                 self.ignore_user_inactivity
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -300,6 +305,7 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "multi_factor_auth_enabled={}",
                 self.multi_factor_auth_enabled
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -326,25 +332,25 @@ impl Command for UsersCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.domain_id {
-            ep_builder.domain_id(val);
+            ep_builder.domain_id(val.clone());
         }
         if let Some(val) = &self.args.query.enabled {
             ep_builder.enabled(*val);
         }
         if let Some(val) = &self.args.query.idp_id {
-            ep_builder.idp_id(val);
+            ep_builder.idp_id(val.clone());
         }
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.password_expires_at {
-            ep_builder.password_expires_at(val);
+            ep_builder.password_expires_at(val.clone());
         }
         if let Some(val) = &self.args.query.protocol_id {
-            ep_builder.protocol_id(val);
+            ep_builder.protocol_id(val.clone());
         }
         if let Some(val) = &self.args.query.unique_id {
-            ep_builder.unique_id(val);
+            ep_builder.unique_id(val.clone());
         }
         // Set body parameters
 

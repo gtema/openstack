@@ -66,15 +66,15 @@ pub struct AccessRuleCmd {
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct ResponseData {
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     path: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     method: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     service: Option<String>,
 
     #[serde()]

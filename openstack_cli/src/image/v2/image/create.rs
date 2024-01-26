@@ -185,17 +185,17 @@ pub struct ResponseData {
 
     /// The image status.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// Image visibility, that is, the access permission for the image.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     visibility: Option<String>,
 
     /// A boolean value that must be `false` or the image cannot be deleted.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     protected: Option<bool>,
 
     /// This field controls whether an image is displayed in the default
@@ -206,7 +206,7 @@ pub struct ResponseData {
     /// it’s easier for end users to find and use a more up-to-date version of
     /// this image. *(Since Image API v2.7)*
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     os_hidden: Option<bool>,
 
     /// An MD5 hash over the image data. The value might be `null` (JSON null
@@ -218,7 +218,7 @@ pub struct ResponseData {
     /// images. To validate image data, instead use the secure multihash fields
     /// `os\_hash\_algo` and `os\_hash\_value`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     checksum: Option<String>,
 
     /// The algorithm used to compute a secure hash of the image data for this
@@ -227,7 +227,7 @@ pub struct ResponseData {
     /// data type). The algorithm used is chosen by the cloud operator; it
     /// may not be configured by end users. *(Since Image API v2.7)*
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     os_hash_algo: Option<String>,
 
     /// The hexdigest of the secure hash of the image data computed using the
@@ -237,26 +237,26 @@ pub struct ResponseData {
     /// a version of the Image Service API prior to version 2.7.
     /// *(Since Image API v2.7)*
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     os_hash_value: Option<String>,
 
     /// An identifier for the owner of the image, usually the project (also
     /// called the “tenant”) ID.
     /// The value might be `null` (JSON null data type).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     owner: Option<String>,
 
     /// The size of the image data, in bytes. The value
     /// might be `null` (JSON null data type).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     size: Option<i32>,
 
     /// The virtual size of the image. The value might
     /// be `null` (JSON null data type).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     virtual_size: Option<i32>,
 
     /// Format of the image container.
@@ -273,7 +273,7 @@ pub struct ResponseData {
     ///
     /// The value might be `null` (JSON null data type).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     container_format: Option<String>,
 
     /// The format of the disk.
@@ -298,7 +298,7 @@ pub struct ResponseData {
     /// **Ocata changes**: The `ploop` disk format is a supported
     /// value.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     disk_format: Option<String>,
 
     /// The date and time when the resource was created.
@@ -353,7 +353,7 @@ pub struct ResponseData {
 
     /// List of tags for this image, possibly an empty list.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// The URL to access the image file kept in external store. *It is present
@@ -363,41 +363,41 @@ pub struct ResponseData {
     /// this
     /// option is disabled by default.**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     direct_url: Option<String>,
 
     /// Amount of RAM in MB that is required to boot the image.
     /// The value might be `null` (JSON null data type).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     min_ram: Option<i32>,
 
     /// Amount of disk space in GB that is required to boot the image.
     /// The value might be `null` (JSON null data type).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     min_disk: Option<i32>,
 
     /// The URL for the virtual machine image.
     #[serde(rename = "self")]
-    #[structable(optional, title = "self", wide)]
+    #[structable(optional, title = "self")]
     _self: Option<String>,
 
     /// The URL for the virtual machine image file.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     file: Option<String>,
 
     /// Store in which image data resides.  Only present when the operator has
     /// enabled multiple stores.  May be a comma-separated list of store
     /// identifiers.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     stores: Option<String>,
 
     /// The URL for the schema describing a virtual machine image.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     schema: Option<String>,
 
     /// A list of objects, each of which describes an image location. Each
@@ -411,7 +411,7 @@ pub struct ResponseData {
     /// **Because it presents a security risk, this option is disabled by
     /// default.**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     locations: Option<VecResponseLocations>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -526,7 +526,7 @@ impl Command for ImageCmd {
         // Set body parameters
         // Set Request.id data
         if let Some(args) = &self.args.id {
-            ep_builder.id(args);
+            ep_builder.id(args.clone());
         }
 
         // Set Request.name data

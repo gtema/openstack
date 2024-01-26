@@ -22,7 +22,7 @@ use clap::ValueEnum;
 use openstack_sdk::api::block_storage::v3::volume::find;
 use openstack_sdk::api::block_storage::v3::volume::os_volume_upload_image_31;
 use openstack_sdk::api::find;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -98,9 +98,22 @@ struct OsVolumeUploadImage {
 pub struct VolumeCmd {
     pub args: VolumeArgs,
 }
-/// Volume response representation
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct ResponseData {}
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct ResponseData(HashMap<String, serde_json::Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 #[async_trait]
 impl Command for VolumeCmd {
@@ -127,7 +140,7 @@ impl Command for VolumeCmd {
         let mut os_volume_upload_image_builder =
             os_volume_upload_image_31::OsVolumeUploadImageBuilder::default();
 
-        os_volume_upload_image_builder.image_name(&args.image_name);
+        os_volume_upload_image_builder.image_name(args.image_name.clone());
 
         if let Some(val) = &args.force {
             os_volume_upload_image_builder.force(*val);
@@ -170,10 +183,8 @@ impl Command for VolumeCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

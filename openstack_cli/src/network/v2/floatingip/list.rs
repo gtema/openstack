@@ -158,7 +158,7 @@ pub struct ResponseData {
     /// The status of the floating IP. Values are
     /// `ACTIVE`, `DOWN` and `ERROR`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
@@ -257,43 +257,43 @@ impl Command for FloatingipsCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.floating_ip_address {
-            ep_builder.floating_ip_address(val);
+            ep_builder.floating_ip_address(val.clone());
         }
         if let Some(val) = &self.args.query.floating_network_id {
-            ep_builder.floating_network_id(val);
+            ep_builder.floating_network_id(val.clone());
         }
         if let Some(val) = &self.args.query.router_id {
-            ep_builder.router_id(val);
+            ep_builder.router_id(val.clone());
         }
         if let Some(val) = &self.args.query.port_id {
-            ep_builder.port_id(val);
+            ep_builder.port_id(val.clone());
         }
         if let Some(val) = &self.args.query.fixed_ip_address {
-            ep_builder.fixed_ip_address(val);
+            ep_builder.fixed_ip_address(val.clone());
         }
         if let Some(val) = &self.args.query.tenant_id {
-            ep_builder.tenant_id(val);
+            ep_builder.tenant_id(val.clone());
         }
         if let Some(val) = &self.args.query.status {
-            ep_builder.status(val);
+            ep_builder.status(val.clone());
         }
         if let Some(val) = &self.args.query.revision_number {
-            ep_builder.revision_number(val);
+            ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.iter());
+            ep_builder.tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.iter());
+            ep_builder.tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.iter());
+            ep_builder.not_tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
+            ep_builder.not_tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.description {
-            ep_builder.description(val);
+            ep_builder.description(val.clone());
         }
         // Set body parameters
 

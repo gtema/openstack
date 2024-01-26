@@ -98,17 +98,17 @@ pub struct ResponseData {
 
     /// The network protocol for the netfilter conntrack target rule.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port: Option<f32>,
 
     /// The netfilter conntrack helper module.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     helper: Option<String>,
 }
 
@@ -135,7 +135,7 @@ impl Command for ConntrackHelperCmd {
         let args = &self.args.conntrack_helper;
         let mut conntrack_helper_builder = create::ConntrackHelperBuilder::default();
         if let Some(val) = &args.project_id {
-            conntrack_helper_builder.project_id(val);
+            conntrack_helper_builder.project_id(val.clone());
         }
 
         if let Some(val) = &args.protocol {
@@ -155,7 +155,7 @@ impl Command for ConntrackHelperCmd {
         }
 
         if let Some(val) = &args.helper {
-            conntrack_helper_builder.helper(val);
+            conntrack_helper_builder.helper(val.clone());
         }
 
         ep_builder.conntrack_helper(conntrack_helper_builder.build().unwrap());

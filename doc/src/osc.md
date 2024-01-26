@@ -2483,11 +2483,15 @@ Deactivates an image. (Since Image API v2.3)
 
 By default, this operation is restricted to administrators only.
 
-**Usage:** `osc image image deactivate <ID>`
+**Usage:** `osc image image deactivate [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
 
 
 
@@ -2497,11 +2501,15 @@ Reactivates an image. (Since Image API v2.3)
 
 By default, this operation is restricted to administrators only
 
-**Usage:** `osc image image reactivate <ID>`
+**Usage:** `osc image image reactivate [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
 
 
 

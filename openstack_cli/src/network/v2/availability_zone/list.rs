@@ -104,13 +104,13 @@ impl Command for AvailabilityZonesCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.resource {
-            ep_builder.resource(val);
+            ep_builder.resource(val.clone());
         }
         if let Some(val) = &self.args.query.state {
-            ep_builder.state(val);
+            ep_builder.state(val.clone());
         }
         // Set body parameters
 

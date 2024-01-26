@@ -76,17 +76,17 @@ pub struct ResponseData {
 
     /// The network protocol for the netfilter conntrack target rule.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port: Option<f32>,
 
     /// The netfilter conntrack helper module.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     helper: Option<String>,
 }
 

@@ -67,23 +67,23 @@ pub struct ResponseData {
 
     /// The ID of the default project for the user.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     default_project_id: Option<String>,
 
     /// The new description of the group.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 
     /// The ID of the domain.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`.
     /// If the user is disabled, this value is `false`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
@@ -106,7 +106,7 @@ pub struct ResponseData {
     ///
     /// ```
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     federated: Option<VecResponseFederated>,
 
     /// The user name. Must be unique within the owning domain.
@@ -116,7 +116,7 @@ pub struct ResponseData {
 
     /// The new password for the user.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     password: Option<String>,
 
     /// The resource options for the user. Available resource options are
@@ -126,7 +126,7 @@ pub struct ResponseData {
     /// `multi\_factor\_auth\_enabled`, and `multi\_factor\_auth\_rules`
     /// `ignore\_user\_inactivity`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     options: Option<ResponseOptions>,
 }
 #[derive(Deserialize, Debug, Default, Clone, Serialize)]
@@ -236,30 +236,35 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "ignore_change_password_upon_first_use={}",
                 self.ignore_change_password_upon_first_use
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_password_expiry={}",
                 self.ignore_password_expiry
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_lockout_failure_attempts={}",
                 self.ignore_lockout_failure_attempts
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "lock_password={}",
                 self.lock_password
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_user_inactivity={}",
                 self.ignore_user_inactivity
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -273,6 +278,7 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "multi_factor_auth_enabled={}",
                 self.multi_factor_auth_enabled
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),

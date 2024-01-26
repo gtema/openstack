@@ -252,12 +252,12 @@ pub struct ResponseData {
 
     /// The state of the hypervisor. One of `up` or `down`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     state: Option<String>,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// A list of `server` objects.

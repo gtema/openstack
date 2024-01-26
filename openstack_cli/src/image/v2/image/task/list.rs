@@ -79,7 +79,7 @@ pub struct ResponseData {
 
     /// The current status of this task
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The parameters required by task, JSON blob

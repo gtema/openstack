@@ -69,7 +69,7 @@ impl StructTable for Vec<ResponseData> {
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Values".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
+            .into_iter()
             .map(|v| v.0.to_string())
             .collect::<Vec<_>>()
             .join(", ")])]);

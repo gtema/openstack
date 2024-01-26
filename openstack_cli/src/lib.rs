@@ -151,7 +151,8 @@ pub enum OutputFormat {
     Json,
     /// YAML output
     Yaml,
-    /// Wide (Human readable table with extra attributes)
+    /// Wide (Human readable table with extra attributes. Note: this has
+    /// effect only in list operations)
     Wide,
 }
 

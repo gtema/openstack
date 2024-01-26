@@ -95,12 +95,12 @@ pub struct ResponseData {
 
     /// The amount of RAM a flavor has, in MiB.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ram: Option<IntString>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     vcpus: Option<IntString>,
 
     /// The size of the root disk that will be created in GiB. If 0 the
@@ -113,7 +113,7 @@ pub struct ResponseData {
     /// `os\_compute\_api:servers:create:zero\_disk\_flavor`
     /// policy rule.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     disk: Option<IntString>,
 
     /// The size of the ephemeral disk that will be created, in
@@ -121,7 +121,7 @@ pub struct ResponseData {
     /// changes. So should only be used as a scratch space for
     /// applications that are aware of its limitations. Defaults to 0.
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
-    #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral", wide)]
+    #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral")]
     os_flv_ext_data_ephemeral: Option<IntString>,
 
     /// The size of a dedicated swap disk that will be allocated, in
@@ -130,20 +130,20 @@ pub struct ResponseData {
     /// As of microversion 2.75 default return value of swap is 0
     /// instead of empty string.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     swap: Option<IntString>,
 
     /// The receive / transmit factor (as a float) that will be set on
     /// ports if the network backend supports the QOS extension.
     /// Otherwise it will be ignored. It defaults to 1.0.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     rxtx_factor: Option<NumString>,
 
     /// Whether the flavor is public (available to all projects) or scoped
     /// to a set of projects. Default is True if not specified.
     #[serde(rename = "os-flavor-access:is_public")]
-    #[structable(optional, title = "os-flavor-access:is_public", wide)]
+    #[structable(optional, title = "os-flavor-access:is_public")]
     os_flavor_access_is_public: Option<bool>,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
@@ -153,7 +153,7 @@ pub struct ResponseData {
     ///
     /// **New in version 2.61**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     extra_specs: Option<HashMapStringNumString>,
 
     /// Links to the resources in question. See [API Guide / Links and
@@ -161,7 +161,7 @@ pub struct ResponseData {
     /// guide/compute/links_and_references.html)
     /// for more info.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     links: Option<Value>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]

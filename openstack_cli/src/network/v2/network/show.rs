@@ -80,40 +80,40 @@ pub struct ResponseData {
 
     /// The associated subnets.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     subnets: Option<VecString>,
 
     /// The administrative state of the network, which is
     /// up (`true`) or down (`false`).
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the project.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tenant_id: Option<String>,
 
     /// Indicates whether this network is shared across all tenants. By
     /// default,
     /// only administrative users can change this value.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     shared: Option<BoolString>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ipv4_address_scope: Option<String>,
 
     /// The ID of the IPv6 address scope that the network is associated with.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     ipv6_address_scope: Option<String>,
 
     /// Defines whether the network may be used for creation of floating IPs.
@@ -126,35 +126,35 @@ pub struct ResponseData {
     /// the unused floating IPs of this network are automatically deleted when
     /// extension `floatingip-autodelete-internal` is present.
     #[serde(rename = "router:external")]
-    #[structable(optional, title = "router:external", wide)]
+    #[structable(optional, title = "router:external")]
     router_external: Option<BoolString>,
 
     /// Indicates whether L2 connectivity is available throughout
     /// the `network`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     l2_adjacency: Option<String>,
 
     /// A list of provider `segment` objects.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     segments: Option<VecResponseSegments>,
 
     /// The maximum transmission unit (MTU) value to
     /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
     /// IPv6.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     mtu: Option<i32>,
 
     /// The availability zone for the network.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availability_zones: Option<VecString>,
 
     /// The availability zone candidate for the network.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     availability_zone_hints: Option<VecString>,
 
     /// The port security status of the network. Valid values are
@@ -162,34 +162,34 @@ pub struct ResponseData {
     /// This value is used as the default value of `port\_security\_enabled`
     /// field of a newly created port.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     port_security_enabled: Option<BoolString>,
 
     #[serde(rename = "provider:network_type")]
-    #[structable(optional, title = "provider:network_type", wide)]
+    #[structable(optional, title = "provider:network_type")]
     provider_network_type: Option<String>,
 
     #[serde(rename = "provider:physical_network")]
-    #[structable(optional, title = "provider:physical_network", wide)]
+    #[structable(optional, title = "provider:physical_network")]
     provider_physical_network: Option<String>,
 
     #[serde(rename = "provider:segmentation_id")]
-    #[structable(optional, title = "provider:segmentation_id", wide)]
+    #[structable(optional, title = "provider:segmentation_id")]
     provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The list of tags on the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
@@ -204,17 +204,17 @@ pub struct ResponseData {
 
     /// The network is default pool or not.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     is_default: Option<BoolString>,
 
     /// A valid DNS domain.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     dns_domain: Option<String>,
 
     /// A human-readable description for the resource.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     description: Option<String>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
@@ -245,6 +245,7 @@ impl fmt::Display for ResponseSegments {
             format!(
                 "provider_segmentation_id={}",
                 self.provider_segmentation_id
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),

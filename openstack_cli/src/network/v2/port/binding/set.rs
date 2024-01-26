@@ -161,7 +161,7 @@ impl Command for BindingCmd {
         let args = &self.args.binding;
         let mut binding_builder = set::BindingBuilder::default();
         if let Some(val) = &args.host {
-            binding_builder.host(val);
+            binding_builder.host(val.clone());
         }
 
         if let Some(val) = &args.vnic_type {

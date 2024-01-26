@@ -26,7 +26,7 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::user::create;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -142,9 +142,22 @@ struct User {
 pub struct UserCmd {
     pub args: UserArgs,
 }
-/// User response representation
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct ResponseData {}
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct ResponseData(HashMap<String, serde_json::Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 #[async_trait]
 impl Command for UserCmd {
@@ -176,7 +189,7 @@ impl Command for UserCmd {
         }
 
         if let Some(val) = &args.domain_id {
-            user_builder.domain_id(val);
+            user_builder.domain_id(val.clone());
         }
 
         if let Some(val) = &args.enabled {
@@ -191,7 +204,7 @@ impl Command for UserCmd {
             user_builder.federated(federated_builder);
         }
 
-        user_builder.name(&args.name);
+        user_builder.name(args.name.clone());
 
         if let Some(val) = &args.password {
             user_builder.password(Some(val.into()));
@@ -218,7 +231,7 @@ impl Command for UserCmd {
                 options_builder.multi_factor_auth_rules(
                     val.iter()
                         .cloned()
-                        .map(|x| Vec::from([x.split(',').collect()]))
+                        .map(|x| Vec::from([x.split(",").collect()]))
                         .collect::<Vec<_>>(),
                 );
             }
@@ -234,10 +247,8 @@ impl Command for UserCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

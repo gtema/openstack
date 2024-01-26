@@ -67,7 +67,7 @@ impl StructTable for Vec<ResponseData> {
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Values".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
+            .into_iter()
             .map(|v| v.0.to_string())
             .collect::<Vec<_>>()
             .join(", ")])]);
@@ -99,9 +99,6 @@ impl Command for TagsCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

@@ -31,7 +31,7 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::identity::v3::auth::catalog::list;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
 /// Command arguments
@@ -60,7 +60,87 @@ pub struct CatalogsCmd {
 }
 /// Catalogs response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct ResponseData {}
+pub struct ResponseData {
+    /// A list of `endpoint` objects.
+    #[serde()]
+    #[structable(optional, wide)]
+    endpoints: Option<VecResponseEndpoints>,
+
+    /// The UUID of the service to which the endpoint belongs.
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The service type, which describes the API
+    /// implemented by the service. Value is `compute`, `ec2`,
+    /// `identity`, `image`, `network`, or `volume`.
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type", wide)]
+    _type: Option<String>,
+
+    /// The service name.
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseEndpoints {
+    id: Option<String>,
+    interface: Option<String>,
+    region: Option<String>,
+    url: Option<String>,
+}
+
+impl fmt::Display for ResponseEndpoints {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "interface={}",
+                self.interface
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "region={}",
+                self.region
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "url={}",
+                self.url
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseEndpoints(Vec<ResponseEndpoints>);
+impl fmt::Display for VecResponseEndpoints {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        )
+    }
+}
 
 #[async_trait]
 impl Command for CatalogsCmd {
@@ -85,10 +165,9 @@ impl Command for CatalogsCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

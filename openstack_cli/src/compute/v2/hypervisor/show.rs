@@ -87,7 +87,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     cpu_info: Option<HashMapStringValue>,
 
     /// The current\_workload is the number of tasks the hypervisor is
@@ -100,7 +100,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     current_workload: Option<i32>,
 
     /// The actual free disk on this hypervisor(in GiB). If allocation ratios
@@ -112,12 +112,12 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     disk_available_least: Option<i32>,
 
     /// The IP address of the hypervisor’s host.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     host_ip: Option<String>,
 
     /// The free disk remaining on this hypervisor(in GiB). This does not take
@@ -127,7 +127,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     free_disk_gb: Option<i32>,
 
     /// The free RAM in this hypervisor(in MiB). This does not take allocation
@@ -136,24 +136,24 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     free_ram_mb: Option<i32>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic
     /// driver, it is the Ironic node uuid.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     hypervisor_hostname: Option<String>,
 
     /// The hypervisor type.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     hypervisor_type: Option<String>,
 
     /// The hypervisor version.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     hypervisor_version: Option<i32>,
 
     /// The disk in this hypervisor (in GiB). This does not take allocation
@@ -164,7 +164,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     local_gb: Option<i32>,
 
     /// The disk used in this hypervisor (in GiB).
@@ -172,7 +172,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     local_gb_used: Option<i32>,
 
     /// The memory of this hypervisor (in MiB). This does not take allocation
@@ -183,7 +183,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     memory_mb: Option<i32>,
 
     /// The memory used in this hypervisor (in MiB).
@@ -191,7 +191,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     memory_mb_used: Option<i32>,
 
     /// The number of running VMs on this hypervisor.
@@ -199,12 +199,12 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     running_vms: Option<i32>,
 
     /// The hypervisor service object.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     service: Option<ResponseService>,
 
     /// The total uptime of the hypervisor and information about average load.
@@ -214,7 +214,7 @@ pub struct ResponseData {
     ///
     /// **New in version 2.88**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     uptime: Option<String>,
 
     /// The number of vCPU in this hypervisor. This does not take allocation
@@ -225,7 +225,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     vcpus: Option<i32>,
 
     /// The number of vCPU used in this hypervisor.
@@ -233,7 +233,7 @@ pub struct ResponseData {
     ///
     /// **Available until version 2.87**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     vcpus_used: Option<i32>,
 
     /// The id of the hypervisor. From version 2.53 it is a string as UUID
@@ -243,12 +243,12 @@ pub struct ResponseData {
 
     /// The state of the hypervisor. One of `up` or `down`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     state: Option<String>,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// A list of `server` objects.
@@ -259,7 +259,7 @@ pub struct ResponseData {
     ///
     /// **New in version 2.53**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     servers: Option<VecResponseServers>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]

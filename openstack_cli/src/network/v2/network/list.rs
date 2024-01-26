@@ -169,7 +169,7 @@ pub struct ResponseData {
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the project.
@@ -323,6 +323,7 @@ impl fmt::Display for ResponseSegments {
             format!(
                 "provider_segmentation_id={}",
                 self.provider_segmentation_id
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -378,19 +379,19 @@ impl Command for NetworksCmd {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.args.query.id {
-            ep_builder.id(val);
+            ep_builder.id(val.clone());
         }
         if let Some(val) = &self.args.query.name {
-            ep_builder.name(val);
+            ep_builder.name(val.clone());
         }
         if let Some(val) = &self.args.query.admin_state_up {
             ep_builder.admin_state_up(*val);
         }
         if let Some(val) = &self.args.query.status {
-            ep_builder.status(val);
+            ep_builder.status(val.clone());
         }
         if let Some(val) = &self.args.query.tenant_id {
-            ep_builder.tenant_id(val);
+            ep_builder.tenant_id(val.clone());
         }
         if let Some(val) = &self.args.query.shared {
             ep_builder.shared(*val);
@@ -402,34 +403,34 @@ impl Command for NetworksCmd {
             ep_builder.mtu(*val);
         }
         if let Some(val) = &self.args.query.provider_network_type {
-            ep_builder.provider_network_type(val);
+            ep_builder.provider_network_type(val.clone());
         }
         if let Some(val) = &self.args.query.provider_physical_network {
-            ep_builder.provider_physical_network(val);
+            ep_builder.provider_physical_network(val.clone());
         }
         if let Some(val) = &self.args.query.provider_segmentation_id {
             ep_builder.provider_segmentation_id(*val);
         }
         if let Some(val) = &self.args.query.revision_number {
-            ep_builder.revision_number(val);
+            ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.iter());
+            ep_builder.tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.iter());
+            ep_builder.tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.iter());
+            ep_builder.not_tags(val.into_iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.iter());
+            ep_builder.not_tags_any(val.into_iter());
         }
         if let Some(val) = &self.args.query.is_default {
             ep_builder.is_default(*val);
         }
         if let Some(val) = &self.args.query.description {
-            ep_builder.description(val);
+            ep_builder.description(val.clone());
         }
         // Set body parameters
 

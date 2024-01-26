@@ -144,7 +144,7 @@ pub struct ResponseData {
     ///
     /// **New in version 2.41**
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     uuid: Option<String>,
 }
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]

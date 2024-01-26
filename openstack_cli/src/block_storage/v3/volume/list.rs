@@ -180,7 +180,7 @@ pub struct ResponseData {
 
     /// The volume status.
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional)]
     status: Option<String>,
 
     /// The volume migration status. Admin only.
@@ -482,13 +482,13 @@ impl Command for VolumesCmd {
             ep_builder.all_tenans(*val);
         }
         if let Some(val) = &self.args.query.sort {
-            ep_builder.sort(val);
+            ep_builder.sort(val.clone());
         }
         if let Some(val) = &self.args.query.sort_key {
-            ep_builder.sort_key(val);
+            ep_builder.sort_key(val.clone());
         }
         if let Some(val) = &self.args.query.sort_dir {
-            ep_builder.sort_dir(val);
+            ep_builder.sort_dir(val.clone());
         }
         if let Some(val) = &self.args.query.limit {
             ep_builder.limit(*val);
@@ -497,16 +497,16 @@ impl Command for VolumesCmd {
             ep_builder.offset(*val);
         }
         if let Some(val) = &self.args.query.marker {
-            ep_builder.marker(val);
+            ep_builder.marker(val.clone());
         }
         if let Some(val) = &self.args.query.with_count {
             ep_builder.with_count(*val);
         }
         if let Some(val) = &self.args.query.created_at {
-            ep_builder.created_at(val);
+            ep_builder.created_at(val.clone());
         }
         if let Some(val) = &self.args.query.updated_at {
-            ep_builder.updated_at(val);
+            ep_builder.updated_at(val.clone());
         }
         if let Some(val) = &self.args.query.consumes_quota {
             ep_builder.consumes_quota(*val);
