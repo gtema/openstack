@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -32,20 +32,23 @@ pub struct SchemaCommand {
     pub args: SchemaArgs,
 }
 
-impl ResourceCommands for SchemaCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for SchemaCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             SchemaCommands::Image(args) => {
-                image::ImageCommand { args: args.clone() }.get_command(session)
+                image::ImageCommand { args: args.clone() }.get_subcommand(session)
             }
             SchemaCommands::Images(args) => {
-                images::ImagesCommand { args: args.clone() }.get_command(session)
+                images::ImagesCommand { args: args.clone() }.get_subcommand(session)
             }
             SchemaCommands::Member(args) => {
-                member::MemberCommand { args: args.clone() }.get_command(session)
+                member::MemberCommand { args: args.clone() }.get_subcommand(session)
             }
             SchemaCommands::Members(args) => {
-                members::MembersCommand { args: args.clone() }.get_command(session)
+                members::MembersCommand { args: args.clone() }.get_subcommand(session)
             }
         }
     }

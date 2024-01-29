@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -23,10 +23,13 @@ pub struct ImagesCommand {
     pub args: ImagesArgs,
 }
 
-impl ResourceCommands for ImagesCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ImagesCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            ImagesCommands::Show(args) => Box::new(get::ImagesCmd { args: args.clone() }),
+            ImagesCommands::Show(args) => Ok(Box::new(get::ImagesCmd { args: args.clone() })),
         }
     }
 }

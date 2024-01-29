@@ -17,7 +17,7 @@ use crate::network::v2::network::{NetworkArgs, NetworkCommand};
 use crate::network::v2::port::{PortArgs, PortCommand};
 use crate::network::v2::router::{RouterArgs, RouterCommand};
 use crate::network::v2::subnet::{SubnetArgs, SubnetCommand};
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -49,37 +49,40 @@ pub struct NetworkSrvCommand {
     pub args: NetworkSrvArgs,
 }
 
-impl ServiceCommands for NetworkSrvCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for NetworkSrvCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             NetworkSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             NetworkSrvCommands::Extension(args) => ExtensionCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             NetworkSrvCommands::FloatingIP(args) => FloatingIPCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             NetworkSrvCommands::Network(args) => NetworkCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             NetworkSrvCommands::Port(args) => PortCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             NetworkSrvCommands::Router(args) => RouterCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             NetworkSrvCommands::Subnet(args) => SubnetCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
         }
     }
 }

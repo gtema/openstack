@@ -15,7 +15,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -78,7 +78,7 @@ impl StructTable for ResponseData {
 }
 
 #[async_trait]
-impl Command for AccessTokenCmd {
+impl OSCCommand for AccessTokenCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

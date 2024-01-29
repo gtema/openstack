@@ -1,9 +1,9 @@
 //! Compute Flavor commands
 use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
+use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 
 use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -119,10 +119,10 @@ impl FromArgMatches for Create {
 }
 
 impl Args for Create {
-    fn augment_args(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args(cmd: Command) -> Command {
         create_255::FlavorArgs::augment_args(cmd)
     }
-    fn augment_args_for_update(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args_for_update(cmd: Command) -> Command {
         create_255::FlavorArgs::augment_args(cmd)
     }
 }
@@ -131,62 +131,65 @@ pub struct FlavorCommand {
     pub args: FlavorArgs,
 }
 
-impl ResourceCommands for FlavorCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for FlavorCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             FlavorCommands::Access(args) => flavor_access::FlavorAccessCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
-            FlavorCommands::Create20(args) => Box::new(create_20::FlavorCmd {
+            .get_subcommand(session),
+            FlavorCommands::Create20(args) => Ok(Box::new(create_20::FlavorCmd {
                 args: *args.clone(),
-            }),
-            FlavorCommands::Create21(args) => Box::new(create_21::FlavorCmd {
+            })),
+            FlavorCommands::Create21(args) => Ok(Box::new(create_21::FlavorCmd {
                 args: *args.clone(),
-            }),
-            FlavorCommands::Create255(args) => Box::new(create_255::FlavorCmd {
+            })),
+            FlavorCommands::Create255(args) => Ok(Box::new(create_255::FlavorCmd {
                 args: *args.clone(),
-            }),
+            })),
             FlavorCommands::Create(args) => {
                 if let Some(ep_ver) = session.get_service_endpoint_version(&ServiceType::Compute) {
                     if let Some(vers) = ep_ver.version {
                         if let Ok(ver) = ServiceApiVersion::try_from(vers) {
                             if ver >= ServiceApiVersion(2, 55) {
-                                return Box::new(create_255::FlavorCmd {
+                                return Ok(Box::new(create_255::FlavorCmd {
                                     args: args.create_255.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(2, 1) {
-                                return Box::new(create_21::FlavorCmd {
+                                return Ok(Box::new(create_21::FlavorCmd {
                                     args: args.create_21.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(2, 0) {
-                                return Box::new(create_20::FlavorCmd {
+                                return Ok(Box::new(create_20::FlavorCmd {
                                     args: args.create_20.clone().expect("All arguments present"),
-                                });
+                                }));
                             }
                         }
                     }
                 }
-                Box::new(create_255::FlavorCmd {
+                Ok(Box::new(create_255::FlavorCmd {
                     args: args.create_255.clone().expect("All arguments present"),
-                })
+                }))
             }
-            FlavorCommands::Delete(args) => Box::new(delete::FlavorCmd {
+            FlavorCommands::Delete(args) => Ok(Box::new(delete::FlavorCmd {
                 args: *args.clone(),
-            }),
+            })),
             FlavorCommands::Extraspecs(args) => extra_spec::ExtraSpecsCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
-            FlavorCommands::List(args) => Box::new(list::FlavorsCmd {
+            .get_subcommand(session),
+            FlavorCommands::List(args) => Ok(Box::new(list::FlavorsCmd {
                 args: *args.clone(),
-            }),
-            FlavorCommands::Set(args) => Box::new(set::FlavorCmd {
+            })),
+            FlavorCommands::Set(args) => Ok(Box::new(set::FlavorCmd {
                 args: *args.clone(),
-            }),
-            FlavorCommands::Show(args) => Box::new(show::FlavorCmd {
+            })),
+            FlavorCommands::Show(args) => Ok(Box::new(show::FlavorCmd {
                 args: *args.clone(),
-            }),
+            })),
         }
     }
 }

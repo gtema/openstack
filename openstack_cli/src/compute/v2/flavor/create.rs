@@ -250,7 +250,7 @@ impl fmt::Display for Links {
 }
 
 #[async_trait]
-impl Command for FlavorCmd {
+impl OSCCommand for FlavorCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

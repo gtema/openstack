@@ -9,7 +9,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::object_store::v1::account::{AccountArgs, AccountCommand};
 use crate::object_store::v1::container::{ContainerArgs, ContainerCommand};
 use crate::object_store::v1::object::{ObjectArgs, ObjectCommand};
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -33,17 +33,20 @@ pub struct ObjectStoreSrvCommand {
     pub args: ObjectStoreSrvArgs,
 }
 
-impl ServiceCommands for ObjectStoreSrvCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ObjectStoreSrvCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ObjectStoreSrvCommands::Account(args) => {
-                AccountCommand { args: args.clone() }.get_command(session)
+                AccountCommand { args: args.clone() }.get_subcommand(session)
             }
             ObjectStoreSrvCommands::Container(args) => {
-                ContainerCommand { args: args.clone() }.get_command(session)
+                ContainerCommand { args: args.clone() }.get_subcommand(session)
             }
             ObjectStoreSrvCommands::Object(args) => {
-                ObjectCommand { args: args.clone() }.get_command(session)
+                ObjectCommand { args: args.clone() }.get_subcommand(session)
             }
         }
     }

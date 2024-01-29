@@ -1,10 +1,10 @@
 //! Identity Project commands
 //!
 use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
+use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 
 use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -45,14 +45,21 @@ pub struct ProjectCommand {
     pub args: ProjectArgs,
 }
 
-impl ResourceCommands for ProjectCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ProjectCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            ProjectCommands::Create(args) => Box::new(create::ProjectCmd { args: args.clone() }),
-            ProjectCommands::Delete(args) => Box::new(delete::ProjectCmd { args: args.clone() }),
-            ProjectCommands::List(args) => Box::new(list::ProjectsCmd { args: args.clone() }),
-            ProjectCommands::Set(args) => Box::new(set::ProjectCmd { args: args.clone() }),
-            ProjectCommands::Show(args) => Box::new(show::ProjectCmd { args: args.clone() }),
+            ProjectCommands::Create(args) => {
+                Ok(Box::new(create::ProjectCmd { args: args.clone() }))
+            }
+            ProjectCommands::Delete(args) => {
+                Ok(Box::new(delete::ProjectCmd { args: args.clone() }))
+            }
+            ProjectCommands::List(args) => Ok(Box::new(list::ProjectsCmd { args: args.clone() })),
+            ProjectCommands::Set(args) => Ok(Box::new(set::ProjectCmd { args: args.clone() })),
+            ProjectCommands::Show(args) => Ok(Box::new(show::ProjectCmd { args: args.clone() })),
         }
     }
 }

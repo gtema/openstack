@@ -25,7 +25,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -69,7 +69,7 @@ pub struct ImageCmd {
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for ImageCmd {
+impl OSCCommand for ImageCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

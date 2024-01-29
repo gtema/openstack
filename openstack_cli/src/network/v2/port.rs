@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -32,19 +32,22 @@ pub struct PortCommand {
     pub args: PortArgs,
 }
 
-impl ResourceCommands for PortCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for PortCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            PortCommands::List(args) => Box::new(list::PortsCmd {
+            PortCommands::List(args) => Ok(Box::new(list::PortsCmd {
                 args: *args.clone(),
-            }),
-            PortCommands::Show(args) => Box::new(show::PortCmd {
+            })),
+            PortCommands::Show(args) => Ok(Box::new(show::PortCmd {
                 args: *args.clone(),
-            }),
-            PortCommands::Create(args) => Box::new(create::PortCmd {
+            })),
+            PortCommands::Create(args) => Ok(Box::new(create::PortCmd {
                 args: *args.clone(),
-            }),
-            PortCommands::Delete(args) => Box::new(delete::PortCmd { args: args.clone() }),
+            })),
+            PortCommands::Delete(args) => Ok(Box::new(delete::PortCmd { args: args.clone() })),
         }
     }
 }

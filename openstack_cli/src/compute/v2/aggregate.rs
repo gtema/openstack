@@ -1,8 +1,7 @@
 use clap::{Args, Subcommand};
 
 use crate::common::ServiceApiVersion;
-use crate::OpenStackCliError;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -66,29 +65,38 @@ pub struct AggregateCommand {
     pub args: AggregateArgs,
 }
 
-impl ResourceCommands for AggregateCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for AggregateCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AggregateCommands::AddHost(args) => {
-                Box::new(add_host::AggregateCmd { args: args.clone() })
+                Ok(Box::new(add_host::AggregateCmd { args: args.clone() }))
             }
             AggregateCommands::CacheImage(args) => {
-                Box::new(image::cache_281::ImageCmd { args: args.clone() })
+                Ok(Box::new(image::cache_281::ImageCmd { args: args.clone() }))
             }
             AggregateCommands::Create(args) => {
-                Box::new(create_21::AggregateCmd { args: args.clone() })
+                Ok(Box::new(create_21::AggregateCmd { args: args.clone() }))
             }
             AggregateCommands::Delete(args) => {
-                Box::new(delete::AggregateCmd { args: args.clone() })
+                Ok(Box::new(delete::AggregateCmd { args: args.clone() }))
             }
-            AggregateCommands::List(args) => Box::new(list::AggregatesCmd { args: args.clone() }),
+            AggregateCommands::List(args) => {
+                Ok(Box::new(list::AggregatesCmd { args: args.clone() }))
+            }
             AggregateCommands::RemoveHost(args) => {
-                Box::new(remove_host::AggregateCmd { args: args.clone() })
+                Ok(Box::new(remove_host::AggregateCmd { args: args.clone() }))
             }
-            AggregateCommands::Show(args) => Box::new(show::AggregateCmd { args: args.clone() }),
-            AggregateCommands::Set(args) => Box::new(set_21::AggregateCmd { args: args.clone() }),
+            AggregateCommands::Show(args) => {
+                Ok(Box::new(show::AggregateCmd { args: args.clone() }))
+            }
+            AggregateCommands::Set(args) => {
+                Ok(Box::new(set_21::AggregateCmd { args: args.clone() }))
+            }
             AggregateCommands::SetMetadata(args) => {
-                Box::new(set_metadata::AggregateCmd { args: args.clone() })
+                Ok(Box::new(set_metadata::AggregateCmd { args: args.clone() }))
             }
         }
     }

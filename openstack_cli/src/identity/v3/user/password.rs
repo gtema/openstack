@@ -4,7 +4,7 @@ use clap::error::{Error, ErrorKind};
 use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
 
 use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -29,10 +29,13 @@ pub struct PasswordCommand {
     pub args: PasswordArgs,
 }
 
-impl ResourceCommands for PasswordCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for PasswordCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            PasswordCommands::Set(args) => Box::new(set::PasswordCmd { args: args.clone() }),
+            PasswordCommands::Set(args) => Ok(Box::new(set::PasswordCmd { args: args.clone() })),
         }
     }
 }

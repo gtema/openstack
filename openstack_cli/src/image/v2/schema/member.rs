@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -23,10 +23,13 @@ pub struct MemberCommand {
     pub args: MemberArgs,
 }
 
-impl ResourceCommands for MemberCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for MemberCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            MemberCommands::Show(args) => Box::new(get::MemberCmd { args: args.clone() }),
+            MemberCommands::Show(args) => Ok(Box::new(get::MemberCmd { args: args.clone() })),
         }
     }
 }

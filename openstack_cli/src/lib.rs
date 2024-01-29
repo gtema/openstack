@@ -156,24 +156,32 @@ pub enum OutputFormat {
     Wide,
 }
 
-/// Command trait for individual resource command implementation
+/// Command trait for individual command implementation
 #[async_trait]
-pub trait Command {
+pub trait OSCCommand {
+    /// Get subcommand
+    fn get_subcommand(
+        &self,
+        client: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
+        Err(OpenStackCliError::NoSubcommands)
+    }
+    ///// Get subcommand
+    //fn get_subcommand(
+    //    &self,
+    //    client: &mut AsyncOpenStack,
+    //) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
+    //    Err(OpenStackCliError::NoSubcommands)
+    //}
+
+    /// Perform the command
     async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
-    ) -> Result<(), OpenStackCliError>;
-}
-
-/// Service trait as service resources wrapper
-pub trait ServiceCommands {
-    fn get_command(&self, client: &mut AsyncOpenStack) -> Box<dyn Command>;
-}
-
-/// Individual resource trait
-pub trait ResourceCommands {
-    fn get_command(&self, client: &mut AsyncOpenStack) -> Box<dyn Command>;
+    ) -> Result<(), OpenStackCliError> {
+        unimplemented!("The command is not implemented");
+    }
 }
 
 /// Entry point for the CLI wrapper
@@ -219,13 +227,14 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         session = AsyncOpenStack::new(&profile).await?;
     }
     let cmd = match &cli.command {
-        TopLevelCommands::Api(args) => Box::new(api::ApiCommand {
+        TopLevelCommands::Api(args) => api::ApiCommand {
             args: *args.clone(),
-        }),
+        }
+        .get_subcommand(&mut session),
         TopLevelCommands::Auth(args) => auth::AuthCommand {
             args: *args.clone(),
         }
-        .get_command(&mut session),
+        .get_subcommand(&mut session),
         TopLevelCommands::BlockStorage(args) => {
             session
                 .discover_service_endpoint(&ServiceType::BlockStorage)
@@ -234,12 +243,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             BlockStorageSrvCommand {
                 args: *args.clone(),
             }
-            .get_command(&mut session)
+            .get_subcommand(&mut session)
         }
         TopLevelCommands::Catalog(args) => catalog::CatalogCommand {
             args: *args.clone(),
         }
-        .get_command(&mut session),
+        .get_subcommand(&mut session),
         TopLevelCommands::Compute(args) => {
             session
                 .discover_service_endpoint(&ServiceType::Compute)
@@ -247,7 +256,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             ComputeSrvCommand {
                 args: *args.clone(),
             }
-            .get_command(&mut session)
+            .get_subcommand(&mut session)
         }
         TopLevelCommands::Identity(args) => {
             session
@@ -256,7 +265,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             IdentitySrvCommand {
                 args: *args.clone(),
             }
-            .get_command(&mut session)
+            .get_subcommand(&mut session)
         }
         TopLevelCommands::Image(args) => {
             session
@@ -265,7 +274,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             ImageSrvCommand {
                 args: *args.clone(),
             }
-            .get_command(&mut session)
+            .get_subcommand(&mut session)
         }
         TopLevelCommands::Network(args) => {
             session
@@ -274,13 +283,13 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             NetworkSrvCommand {
                 args: *args.clone(),
             }
-            .get_command(&mut session)
+            .get_subcommand(&mut session)
         }
         TopLevelCommands::ObjectStore(args) => ObjectStoreSrvCommand {
             args: *args.clone(),
         }
-        .get_command(&mut session),
-    };
+        .get_subcommand(&mut session),
+    }?;
     cmd.take_action(&cli, &mut session).await?;
     Ok(())
 }

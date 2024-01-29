@@ -33,7 +33,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 pub fn url_to_http_uri(url: Url) -> Uri {
@@ -100,7 +100,16 @@ pub struct ApiCommand {
 }
 
 #[async_trait]
-impl Command for ApiCommand {
+impl OSCCommand for ApiCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
+        Ok(Box::new(Self {
+            args: self.args.clone(),
+        }))
+    }
+
     async fn take_action(
         &self,
         parsed_args: &Cli,

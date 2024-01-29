@@ -7,7 +7,7 @@ use crate::output::{self, OutputProcessor};
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::types::identity::v3::AuthResponse;
@@ -60,7 +60,7 @@ impl StructTable for AuthResponse {
 }
 
 #[async_trait]
-impl Command for AuthCmd {
+impl OSCCommand for AuthCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

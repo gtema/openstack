@@ -1,10 +1,10 @@
 //! Identity User commands
 //!
 use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
+use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 
 use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -65,21 +65,26 @@ pub struct UserCommand {
     pub args: UserArgs,
 }
 
-impl ResourceCommands for UserCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for UserCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            UserCommands::Create(args) => Box::new(create::UserCmd { args: args.clone() }),
-            UserCommands::Delete(args) => Box::new(delete::UserCmd { args: args.clone() }),
-            UserCommands::List(args) => Box::new(list::UsersCmd { args: args.clone() }),
-            UserCommands::Set(args) => Box::new(set::UserCmd { args: args.clone() }),
-            UserCommands::Show(args) => Box::new(show::UserCmd { args: args.clone() }),
+            UserCommands::Create(args) => Ok(Box::new(create::UserCmd { args: args.clone() })),
+            UserCommands::Delete(args) => Ok(Box::new(delete::UserCmd { args: args.clone() })),
+            UserCommands::List(args) => Ok(Box::new(list::UsersCmd { args: args.clone() })),
+            UserCommands::Set(args) => Ok(Box::new(set::UserCmd { args: args.clone() })),
+            UserCommands::Show(args) => Ok(Box::new(show::UserCmd { args: args.clone() })),
             UserCommands::Password(args) => {
-                password::PasswordCommand { args: args.clone() }.get_command(session)
+                password::PasswordCommand { args: args.clone() }.get_subcommand(session)
             }
             UserCommands::Projects(args) => {
-                Box::new(project::list::ProjectsCmd { args: args.clone() })
+                Ok(Box::new(project::list::ProjectsCmd { args: args.clone() }))
             }
-            UserCommands::Groups(args) => Box::new(group::list::GroupsCmd { args: args.clone() }),
+            UserCommands::Groups(args) => {
+                Ok(Box::new(group::list::GroupsCmd { args: args.clone() }))
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -53,15 +53,18 @@ pub struct TagCommand {
     pub args: TagArgs,
 }
 
-impl ResourceCommands for TagCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for TagCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            TagCommands::Add(args) => Box::new(set::TagCmd { args: args.clone() }),
-            TagCommands::Check(args) => Box::new(show::TagCmd { args: args.clone() }),
-            TagCommands::Delete(args) => Box::new(delete::TagCmd { args: args.clone() }),
-            TagCommands::List(args) => Box::new(list::TagsCmd { args: args.clone() }),
-            TagCommands::Purge(args) => Box::new(delete_all::TagCmd { args: args.clone() }),
-            TagCommands::Replace(args) => Box::new(replace::TagCmd { args: args.clone() }),
+            TagCommands::Add(args) => Ok(Box::new(set::TagCmd { args: args.clone() })),
+            TagCommands::Check(args) => Ok(Box::new(show::TagCmd { args: args.clone() })),
+            TagCommands::Delete(args) => Ok(Box::new(delete::TagCmd { args: args.clone() })),
+            TagCommands::List(args) => Ok(Box::new(list::TagsCmd { args: args.clone() })),
+            TagCommands::Purge(args) => Ok(Box::new(delete_all::TagCmd { args: args.clone() })),
+            TagCommands::Replace(args) => Ok(Box::new(replace::TagCmd { args: args.clone() })),
         }
     }
 }

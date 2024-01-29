@@ -3,11 +3,11 @@
 //! Generates, imports, and deletes SSH keys.
 //!
 use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
+use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 use tracing::{debug, info};
 
 use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -86,10 +86,10 @@ impl FromArgMatches for Create {
 }
 
 impl Args for Create {
-    fn augment_args(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args(cmd: Command) -> Command {
         create_292::KeypairArgs::augment_args(cmd)
     }
-    fn augment_args_for_update(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args_for_update(cmd: Command) -> Command {
         create_292::KeypairArgs::augment_args(cmd)
     }
 }
@@ -98,59 +98,64 @@ pub struct KeypairCommand {
     pub args: KeypairArgs,
 }
 
-impl ResourceCommands for KeypairCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for KeypairCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            KeypairCommands::List(args) => Box::new(list::KeypairsCmd { args: args.clone() }),
-            KeypairCommands::Show(args) => Box::new(show::KeypairCmd { args: args.clone() }),
+            KeypairCommands::List(args) => Ok(Box::new(list::KeypairsCmd { args: args.clone() })),
+            KeypairCommands::Show(args) => Ok(Box::new(show::KeypairCmd { args: args.clone() })),
             KeypairCommands::Create292(args) => {
-                Box::new(create_292::KeypairCmd { args: args.clone() })
+                Ok(Box::new(create_292::KeypairCmd { args: args.clone() }))
             }
             KeypairCommands::Create210(args) => {
-                Box::new(create_210::KeypairCmd { args: args.clone() })
+                Ok(Box::new(create_210::KeypairCmd { args: args.clone() }))
             }
             KeypairCommands::Create22(args) => {
-                Box::new(create_22::KeypairCmd { args: args.clone() })
+                Ok(Box::new(create_22::KeypairCmd { args: args.clone() }))
             }
             KeypairCommands::Create21(args) => {
-                Box::new(create_21::KeypairCmd { args: args.clone() })
+                Ok(Box::new(create_21::KeypairCmd { args: args.clone() }))
             }
             KeypairCommands::Create20(args) => {
-                Box::new(create_20::KeypairCmd { args: args.clone() })
+                Ok(Box::new(create_20::KeypairCmd { args: args.clone() }))
             }
             KeypairCommands::Create(args) => {
                 if let Some(ep_ver) = session.get_service_endpoint_version(&ServiceType::Compute) {
                     if let Some(vers) = ep_ver.version {
                         if let Ok(ver) = ServiceApiVersion::try_from(vers) {
                             if ver >= ServiceApiVersion(2, 92) {
-                                return Box::new(create_292::KeypairCmd {
+                                return Ok(Box::new(create_292::KeypairCmd {
                                     args: args.create_292.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(2, 10) {
-                                return Box::new(create_210::KeypairCmd {
+                                return Ok(Box::new(create_210::KeypairCmd {
                                     args: args.create_210.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(2, 2) {
-                                return Box::new(create_22::KeypairCmd {
+                                return Ok(Box::new(create_22::KeypairCmd {
                                     args: args.create_22.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(2, 1) {
-                                return Box::new(create_21::KeypairCmd {
+                                return Ok(Box::new(create_21::KeypairCmd {
                                     args: args.create_21.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(2, 0) {
-                                return Box::new(create_20::KeypairCmd {
+                                return Ok(Box::new(create_20::KeypairCmd {
                                     args: args.create_20.clone().expect("All arguments present"),
-                                });
+                                }));
                             }
                         }
                     }
                 }
-                Box::new(create_292::KeypairCmd {
+                Ok(Box::new(create_292::KeypairCmd {
                     args: args.create_292.clone().expect("All arguments present"),
-                })
+                }))
             }
-            KeypairCommands::Delete(args) => Box::new(delete::KeypairCmd { args: args.clone() }),
+            KeypairCommands::Delete(args) => {
+                Ok(Box::new(delete::KeypairCmd { args: args.clone() }))
+            }
         }
     }
 }

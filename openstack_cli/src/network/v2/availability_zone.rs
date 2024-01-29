@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -23,11 +23,14 @@ pub struct AvailabilityZoneCommand {
     pub args: AvailabilityZoneArgs,
 }
 
-impl ResourceCommands for AvailabilityZoneCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for AvailabilityZoneCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AvailabilityZoneCommands::List(args) => {
-                Box::new(list::AvailabilityZonesCmd { args: args.clone() })
+                Ok(Box::new(list::AvailabilityZonesCmd { args: args.clone() }))
             }
         }
     }

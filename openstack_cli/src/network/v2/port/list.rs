@@ -35,7 +35,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -535,7 +535,7 @@ impl fmt::Display for VecString {
 }
 
 #[async_trait]
-impl Command for PortsCmd {
+impl OSCCommand for PortsCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

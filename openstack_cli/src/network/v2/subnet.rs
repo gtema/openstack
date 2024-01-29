@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -32,19 +32,22 @@ pub struct SubnetCommand {
     pub args: SubnetArgs,
 }
 
-impl ResourceCommands for SubnetCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for SubnetCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            SubnetCommands::List(args) => Box::new(list::SubnetsCmd {
+            SubnetCommands::List(args) => Ok(Box::new(list::SubnetsCmd {
                 args: *args.clone(),
-            }),
-            SubnetCommands::Show(args) => Box::new(show::SubnetCmd {
+            })),
+            SubnetCommands::Show(args) => Ok(Box::new(show::SubnetCmd {
                 args: *args.clone(),
-            }),
-            SubnetCommands::Create(args) => Box::new(create::SubnetCmd {
+            })),
+            SubnetCommands::Create(args) => Ok(Box::new(create::SubnetCmd {
                 args: *args.clone(),
-            }),
-            SubnetCommands::Delete(args) => Box::new(delete::SubnetCmd { args: args.clone() }),
+            })),
+            SubnetCommands::Delete(args) => Ok(Box::new(delete::SubnetCmd { args: args.clone() })),
         }
     }
 }

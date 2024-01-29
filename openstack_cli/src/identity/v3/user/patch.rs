@@ -285,7 +285,7 @@ impl fmt::Display for ResponseOptions {
 }
 
 #[async_trait]
-impl Command for UserCmd {
+impl OSCCommand for UserCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

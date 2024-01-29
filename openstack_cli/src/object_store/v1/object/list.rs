@@ -17,7 +17,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -128,7 +128,7 @@ pub struct Objects {
 }
 
 #[async_trait]
-impl Command for ObjectsCmd {
+impl OSCCommand for ObjectsCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

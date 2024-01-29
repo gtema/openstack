@@ -7,7 +7,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::image::v2::image::{ImageArgs, ImageCommand};
 use crate::image::v2::schema::{SchemaArgs, SchemaCommand};
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -29,14 +29,17 @@ pub struct ImageSrvCommand {
     pub args: ImageSrvArgs,
 }
 
-impl ServiceCommands for ImageSrvCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ImageSrvCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ImageSrvCommands::Image(args) => {
-                ImageCommand { args: args.clone() }.get_command(session)
+                ImageCommand { args: args.clone() }.get_subcommand(session)
             }
             ImageSrvCommands::Schema(args) => {
-                SchemaCommand { args: args.clone() }.get_command(session)
+                SchemaCommand { args: args.clone() }.get_subcommand(session)
             }
         }
     }

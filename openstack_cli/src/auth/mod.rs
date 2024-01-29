@@ -7,7 +7,7 @@ use clap::{Args, Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -43,11 +43,14 @@ pub struct AuthCommand {
     pub args: AuthArgs,
 }
 
-impl ServiceCommands for AuthCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for AuthCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            AuthCommands::Login(args) => Box::new(login::AuthCmd { args: args.clone() }),
-            AuthCommands::Show(args) => Box::new(show::AuthCmd { args: args.clone() }),
+            AuthCommands::Login(args) => Ok(Box::new(login::AuthCmd { args: args.clone() })),
+            AuthCommands::Show(args) => Ok(Box::new(show::AuthCmd { args: args.clone() })),
         }
     }
 }

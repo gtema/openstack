@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -30,17 +30,24 @@ pub struct ContainerCommand {
     pub args: ContainerArgs,
 }
 
-impl ResourceCommands for ContainerCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ContainerCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            ContainerCommands::List(args) => Box::new(list::ContainersCmd { args: args.clone() }),
-            ContainerCommands::Set(args) => Box::new(set::ContainerCmd { args: args.clone() }),
-            ContainerCommands::Show(args) => Box::new(show::ContainerCmd { args: args.clone() }),
+            ContainerCommands::List(args) => {
+                Ok(Box::new(list::ContainersCmd { args: args.clone() }))
+            }
+            ContainerCommands::Set(args) => Ok(Box::new(set::ContainerCmd { args: args.clone() })),
+            ContainerCommands::Show(args) => {
+                Ok(Box::new(show::ContainerCmd { args: args.clone() }))
+            }
             ContainerCommands::Create(args) => {
-                Box::new(create::ContainerCmd { args: args.clone() })
+                Ok(Box::new(create::ContainerCmd { args: args.clone() }))
             }
             ContainerCommands::Delete(args) => {
-                Box::new(delete::ContainerCmd { args: args.clone() })
+                Ok(Box::new(delete::ContainerCmd { args: args.clone() }))
             }
         }
     }

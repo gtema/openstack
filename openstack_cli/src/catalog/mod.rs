@@ -20,12 +20,11 @@ use openstack_sdk::{
 };
 
 use crate::common::parse_key_val;
-use crate::error::OpenStackCliError;
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::types::identity::v3::ServiceEndpoints;
@@ -57,10 +56,13 @@ pub struct CatalogCommand {
     pub args: CatalogArgs,
 }
 
-impl ResourceCommands for CatalogCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for CatalogCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            CatalogCommands::List(args) => Box::new(ListCmd { args: args.clone() }),
+            CatalogCommands::List(args) => Ok(Box::new(ListCmd { args: args.clone() })),
         }
     }
 }
@@ -120,7 +122,7 @@ impl fmt::Display for VecCatalogEndpoints {
 }
 
 #[async_trait]
-impl Command for ListCmd {
+impl OSCCommand for ListCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
