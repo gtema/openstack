@@ -30,6 +30,7 @@ fn print_help() {
         "Tasks:
 
 dist            builds application and man pages
+doc             builds man pages and doc
 "
     )
 }
