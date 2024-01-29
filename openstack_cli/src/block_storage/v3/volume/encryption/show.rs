@@ -1,9 +1,6 @@
 //! Return a single encryption item.
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -13,11 +10,10 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::block_storage::v3::volume::encryption::get;
 use openstack_sdk::api::QueryAsync;

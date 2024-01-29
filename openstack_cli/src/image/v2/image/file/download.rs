@@ -19,9 +19,7 @@
 //! Error response codes: 400, 403, 404, 416
 //!
 use async_trait::async_trait;
-
 use clap::Args;
-
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -31,13 +29,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::common::download_file;
+
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::file::download;
 use openstack_sdk::api::image::v2::image::find;

@@ -6,9 +6,7 @@
 //! Normal response codes: 200
 //!
 use async_trait::async_trait;
-
 use clap::Args;
-
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -18,8 +16,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::AsyncOpenStack;
@@ -31,6 +28,7 @@ use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]

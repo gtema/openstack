@@ -5,10 +5,7 @@
 //! Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -18,14 +15,14 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::AsyncOpenStack;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::compute::v2::keypair::delete;
-
 use openstack_sdk::api::RawQueryAsync;
 
 /// Command arguments

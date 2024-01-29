@@ -7,10 +7,7 @@
 //! identity/3/rel/auth\_system`
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -20,15 +17,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::identity::v3::auth::system::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 use std::collections::HashMap;
 
 /// Command arguments

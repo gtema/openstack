@@ -4,10 +4,7 @@
 //! identity/3/rel/projects`
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -17,15 +14,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::identity::v3::project::tag::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -61,7 +56,7 @@ pub struct TagsCmd {
 pub struct ResponseData(String);
 
 impl StructTable for ResponseData {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Value".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
         (headers, res)
@@ -69,7 +64,7 @@ impl StructTable for ResponseData {
 }
 
 impl StructTable for Vec<ResponseData> {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Values".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self
             .into_iter()

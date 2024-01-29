@@ -3,10 +3,7 @@
 //! GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/
 //!          {access_token_id}/roles
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -16,15 +13,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::role::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use std::collections::HashMap;
 

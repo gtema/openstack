@@ -1,7 +1,5 @@
 use async_trait::async_trait;
-
 use clap::Args;
-
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -11,12 +9,11 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, OSCCommand};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::block_storage::v3::volume::os_extend;
-
 use openstack_sdk::api::QueryAsync;
 
 use std::collections::HashMap;
@@ -62,7 +59,7 @@ pub struct VolumeCmd {
 pub struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
         rows.extend(self.0.iter().map(|(k, v)| {
