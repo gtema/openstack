@@ -1,8 +1,7 @@
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -13,14 +12,10 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
-use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::network::v2::floatingip::tag::list;
-use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -56,7 +51,7 @@ pub struct TagsCmd {
 pub struct ResponseData(String);
 
 impl StructTable for ResponseData {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Value".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
         (headers, res)
@@ -64,10 +59,10 @@ impl StructTable for ResponseData {
 }
 
 impl StructTable for Vec<ResponseData> {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Values".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .into_iter()
+            .iter()
             .map(|v| v.0.to_string())
             .collect::<Vec<_>>()
             .join(", ")])]);
@@ -80,7 +75,7 @@ impl OSCCommand for TagsCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
-        client: &mut AsyncOpenStack,
+        _client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("List Tags with {:?}", self.args);
 
@@ -95,7 +90,7 @@ impl OSCCommand for TagsCmd {
         // Set query parameters
         // Set body parameters
 
-        let ep = ep_builder
+        let _ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 

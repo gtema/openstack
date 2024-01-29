@@ -1,9 +1,8 @@
 use clap::{Args, Subcommand};
 
-use crate::common::ServiceApiVersion;
 use crate::{OSCCommand, OpenStackCliError};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 pub mod add_host;
 pub mod create_21;
@@ -68,7 +67,7 @@ pub struct AggregateCommand {
 impl OSCCommand for AggregateCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AggregateCommands::AddHost(args) => {

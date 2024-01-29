@@ -26,7 +26,7 @@ pub struct AvailabilityZoneCommand {
 impl OSCCommand for AvailabilityZoneCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AvailabilityZoneCommands::List(args) => {

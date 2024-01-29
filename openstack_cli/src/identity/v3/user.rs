@@ -1,12 +1,11 @@
 //! Identity User commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 
-use crate::common::ServiceApiVersion;
+use clap::{Args, Subcommand};
+
 use crate::{OSCCommand, OpenStackCliError};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 pub mod access_rule;
 pub mod application_credential;

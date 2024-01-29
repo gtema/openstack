@@ -1,7 +1,7 @@
 pub mod project;
 pub mod user;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 

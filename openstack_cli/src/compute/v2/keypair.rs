@@ -2,9 +2,8 @@
 //!
 //! Generates, imports, and deletes SSH keys.
 //!
-use clap::error::{Error, ErrorKind};
+use clap::error::Error;
 use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
-use tracing::{debug, info};
 
 use crate::common::ServiceApiVersion;
 use crate::{OSCCommand, OpenStackCliError};

@@ -29,7 +29,7 @@ pub struct ExtensionCommand {
 impl OSCCommand for ExtensionCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ExtensionCommands::List(args) => {

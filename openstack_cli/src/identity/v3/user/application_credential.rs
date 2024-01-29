@@ -1,12 +1,11 @@
 //! Identity User Access Credentials commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
 
-use crate::common::ServiceApiVersion;
+use clap::{Args, Subcommand};
+
 use crate::{OSCCommand, OpenStackCliError};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 mod create;
 mod delete;
@@ -45,7 +44,7 @@ pub struct ApplicationCredentialCommand {
 impl OSCCommand for ApplicationCredentialCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ApplicationCredentialCommands::Create(args) => {

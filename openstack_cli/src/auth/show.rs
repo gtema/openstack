@@ -8,7 +8,6 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{OSCCommand, OpenStackCliError};
-use structable_derive::StructTable;
 
 use openstack_sdk::types::identity::v3::AuthResponse;
 use openstack_sdk::AsyncOpenStack;
@@ -23,7 +22,7 @@ pub struct AuthCmd {
 }
 
 impl StructTable for AuthResponse {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Field".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
         if let Some(issued_at) = self.token.issued_at {

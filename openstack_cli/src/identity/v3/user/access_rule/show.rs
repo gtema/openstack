@@ -4,10 +4,9 @@
 //! identity/3/rel/access\_rules`
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -18,14 +17,14 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
+
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::access_rule::find;
-use openstack_sdk::api::identity::v3::user::access_rule::get;
+
 use openstack_sdk::api::QueryAsync;
 
 /// Command arguments

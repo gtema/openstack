@@ -1,6 +1,6 @@
 pub mod volume;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 

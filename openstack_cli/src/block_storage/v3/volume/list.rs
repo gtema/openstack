@@ -1,9 +1,8 @@
 //! Returns a detailed list of volumes.
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -17,15 +16,14 @@ use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
-use openstack_sdk::api::block_storage::v3::volume::find;
 use openstack_sdk::api::block_storage::v3::volume::list_detailed;
-use openstack_sdk::api::find;
+
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::collections::BTreeMap;
+
 use std::collections::HashMap;
 
 /// Command arguments

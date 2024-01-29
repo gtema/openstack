@@ -21,7 +21,6 @@
 //!
 //! More description to come
 // #![deny(missing_docs)]
-#![allow(dead_code, unused_imports, unused_variables, unused_mut)]
 use std::io::{self, IsTerminal, Write};
 
 use clap::builder::{
@@ -34,7 +33,6 @@ use async_trait::async_trait;
 use std::collections::BTreeSet;
 
 // use thiserror::Error;
-use anyhow::Context;
 
 use tracing::Level;
 
@@ -57,10 +55,10 @@ mod output;
 
 use crate::error::OpenStackCliError;
 
-use crate::api::{ApiArgs, ApiCommand};
-use crate::auth::{AuthArgs, AuthCommand};
+use crate::api::ApiArgs;
+use crate::auth::AuthArgs;
 use crate::block_storage::v3::{BlockStorageSrvArgs, BlockStorageSrvCommand};
-use crate::catalog::{CatalogArgs, CatalogCommand};
+use crate::catalog::CatalogArgs;
 use crate::compute::v2::{ComputeSrvArgs, ComputeSrvCommand};
 use crate::identity::v3::{IdentitySrvArgs, IdentitySrvCommand};
 use crate::image::v2::{ImageSrvArgs, ImageSrvCommand};
@@ -162,23 +160,16 @@ pub trait OSCCommand {
     /// Get subcommand
     fn get_subcommand(
         &self,
-        client: &mut AsyncOpenStack,
+        _client: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         Err(OpenStackCliError::NoSubcommands)
     }
-    ///// Get subcommand
-    //fn get_subcommand(
-    //    &self,
-    //    client: &mut AsyncOpenStack,
-    //) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-    //    Err(OpenStackCliError::NoSubcommands)
-    //}
 
     /// Perform the command
     async fn take_action(
         &self,
-        parsed_args: &Cli,
-        client: &mut AsyncOpenStack,
+        _parsed_args: &Cli,
+        _client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         unimplemented!("The command is not implemented");
     }

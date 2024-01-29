@@ -8,7 +8,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -60,7 +60,7 @@ impl OSCCommand for AccountCmd {
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = head::Account::builder();
+        let ep_builder = head::Account::builder();
         // Set path parameters
         // Set query parameters
         // Set body parameters
@@ -74,7 +74,7 @@ impl OSCCommand for AccountCmd {
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 
-        let mut regexes: Vec<Regex> = vec![
+        let regexes: Vec<Regex> = vec![
             Regex::new(r"(?i)X-Account-Meta-\.*").unwrap(),
             Regex::new(r"(?i)X-Account-Storage-Policy\.*Bytes-Used").unwrap(),
             Regex::new(r"(?i)X-Account-Storage-Policy\.*Container-Count").unwrap(),

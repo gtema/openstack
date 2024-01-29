@@ -1,12 +1,11 @@
 //! Identity User Access Rules commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
 
-use crate::common::ServiceApiVersion;
+use clap::{Args, Subcommand};
+
 use crate::{OSCCommand, OpenStackCliError};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 mod delete;
 mod list;
@@ -41,7 +40,7 @@ pub struct AccessRuleCommand {
 impl OSCCommand for AccessRuleCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AccessRuleCommands::Delete(args) => {

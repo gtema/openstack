@@ -14,10 +14,10 @@
 
 use async_trait::async_trait;
 use clap::{Args, ValueEnum};
-use http::{Response, Uri};
+use http::Uri;
 use serde_json::Value;
-use std::collections::HashMap;
-use tracing::{debug, info};
+
+use tracing::info;
 
 use anyhow::Result;
 use url::Url;
@@ -31,10 +31,8 @@ use openstack_sdk::{
 use crate::common::parse_key_val;
 use crate::output::OutputProcessor;
 use crate::Cli;
-use crate::OutputConfig;
-use crate::StructTable;
+
 use crate::{OSCCommand, OpenStackCliError};
-use structable_derive::StructTable;
 
 pub fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()

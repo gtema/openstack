@@ -76,7 +76,7 @@ impl OSCCommand for ContainerCmd {
         client
             .discover_service_endpoint(&ServiceType::ObjectStore)
             .await?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data = Container {};
         // Maybe output some headers metadata
         op.output_human::<Container>(&data)?;

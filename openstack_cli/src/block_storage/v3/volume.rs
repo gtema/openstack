@@ -1,6 +1,6 @@
 //! Block storage Volume commands
 //!
-use clap::error::{Error, ErrorKind};
+use clap::error::Error;
 use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 
 use crate::common::ServiceApiVersion;

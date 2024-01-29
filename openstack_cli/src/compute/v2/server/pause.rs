@@ -7,7 +7,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -23,8 +23,7 @@ use structable_derive::StructTable;
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use openstack_sdk::api::compute::v2::server::action::pause;
-use openstack_sdk::api::compute::v2::server::find;
-use openstack_sdk::api::find;
+
 use openstack_sdk::api::RawQueryAsync;
 
 /// Pauses a server. Changes its status to PAUSED.
@@ -69,7 +68,7 @@ impl OSCCommand for ServerCmd {
         client
             .discover_service_endpoint(&ServiceType::Compute)
             .await?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data = Server {};
         // Maybe output some headers metadata
         op.output_human::<Server>(&data)?;

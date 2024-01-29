@@ -5,10 +5,9 @@
 //! identity/3/rel/application\_credentials`
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -22,10 +21,10 @@ use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::parse_json;
-use crate::common::parse_key_val;
+
 use openstack_sdk::api::identity::v3::user::application_credential::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;

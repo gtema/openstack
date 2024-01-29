@@ -1,7 +1,7 @@
 //! List detailed Servers
 use async_trait::async_trait;
 use clap::Args;
-use http::Response;
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -16,7 +16,6 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_json;
 use crate::common::HashMapStringString;
 use crate::common::VecString;
 use crate::common::VecValue;

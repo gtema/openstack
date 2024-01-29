@@ -4,30 +4,23 @@
 
 use async_trait::async_trait;
 use clap::{Args, Subcommand};
-use http::{Response, Uri};
+
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::HashMap;
+
 use std::fmt;
-use tracing::{debug, info};
+use tracing::info;
 
 use anyhow::Result;
-use url::Url;
 
-use openstack_sdk::{
-    api::{AsyncClient, RestClient},
-    AsyncOpenStack,
-};
+use openstack_sdk::AsyncOpenStack;
 
-use crate::common::parse_key_val;
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
-
-use openstack_sdk::types::identity::v3::ServiceEndpoints;
 
 /// List catalog command arguments
 #[derive(Args, Clone, Debug)]

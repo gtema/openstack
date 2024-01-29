@@ -18,10 +18,9 @@
 //! Error response codes: 400, 403, 404
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -32,16 +31,13 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{error::OpenStackCliError, OSCCommand};
-use std::fmt;
-use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
-use openstack_sdk::api::find;
+
 use openstack_sdk::api::image::v2::image::deactivate;
-use openstack_sdk::api::image::v2::image::find;
+
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -81,7 +77,7 @@ pub struct ImageCmd {
 pub struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
         rows.extend(self.0.iter().map(|(k, v)| {

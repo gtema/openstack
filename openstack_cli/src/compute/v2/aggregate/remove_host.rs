@@ -1,8 +1,7 @@
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -16,11 +15,10 @@ use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
-use openstack_sdk::api::compute::v2::aggregate::find;
 use openstack_sdk::api::compute::v2::aggregate::remove_host;
-use openstack_sdk::api::find;
+
 use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
 

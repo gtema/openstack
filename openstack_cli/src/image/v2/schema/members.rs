@@ -26,7 +26,7 @@ pub struct MembersCommand {
 impl OSCCommand for MembersCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             MembersCommands::Show(args) => Ok(Box::new(get::MembersCmd { args: args.clone() })),

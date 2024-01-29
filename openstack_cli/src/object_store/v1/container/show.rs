@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -77,7 +77,7 @@ impl OSCCommand for ContainerCmd {
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 
-        let mut regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Container-Meta-\.*").unwrap()];
+        let regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Container-Meta-\.*").unwrap()];
 
         for (hdr, val) in headers.iter() {
             if [

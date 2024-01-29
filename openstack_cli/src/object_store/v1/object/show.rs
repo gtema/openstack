@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -129,7 +129,7 @@ impl OSCCommand for ObjectCmd {
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 
-        let mut regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Object-Meta-\.*").unwrap()];
+        let regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Object-Meta-\.*").unwrap()];
 
         for (hdr, val) in headers.iter() {
             if [

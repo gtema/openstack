@@ -1,7 +1,7 @@
 //! Get single Server
 use async_trait::async_trait;
 use clap::Args;
-use http::Response;
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -16,12 +16,11 @@ use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
-use crate::common::parse_json;
 use crate::common::HashMapStringString;
 use crate::common::VecString;
 use crate::common::VecValue;
 use openstack_sdk::api::compute::v2::server::find;
-use openstack_sdk::api::compute::v2::server::get;
+
 use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;

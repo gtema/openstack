@@ -18,7 +18,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 

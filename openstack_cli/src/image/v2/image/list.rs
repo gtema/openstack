@@ -109,10 +109,9 @@
 //! Error response codes: 400, 401, 403
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -126,13 +125,13 @@ use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::collections::BTreeMap;
+
 use std::collections::HashMap;
 
 /// Command arguments
@@ -527,7 +526,7 @@ impl OSCCommand for ImagesCmd {
             ep_builder.status(val.clone());
         }
         if let Some(val) = &self.args.query.tag {
-            ep_builder.tag(val.into_iter());
+            ep_builder.tag(val.iter());
         }
         if let Some(val) = &self.args.query.visibility {
             ep_builder.visibility(val.clone());

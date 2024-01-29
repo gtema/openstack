@@ -5,7 +5,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -69,7 +69,7 @@ impl OSCCommand for ContainerCmd {
         client
             .discover_service_endpoint(&ServiceType::ObjectStore)
             .await?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         Ok(())
     }
 }

@@ -3,7 +3,7 @@
 //!
 pub mod login;
 pub mod show;
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -46,7 +46,7 @@ pub struct AuthCommand {
 impl OSCCommand for AuthCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AuthCommands::Login(args) => Ok(Box::new(login::AuthCmd { args: args.clone() })),

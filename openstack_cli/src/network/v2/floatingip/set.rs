@@ -16,10 +16,9 @@
 //! Error response codes: 400, 401, 404, 409, 412
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -33,7 +32,7 @@ use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::floatingip::find;

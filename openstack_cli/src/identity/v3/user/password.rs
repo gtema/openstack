@@ -1,12 +1,11 @@
 //! Identity Password password commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
 
-use crate::common::ServiceApiVersion;
+use clap::{Args, Subcommand};
+
 use crate::{OSCCommand, OpenStackCliError};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 mod set;
 
@@ -32,7 +31,7 @@ pub struct PasswordCommand {
 impl OSCCommand for PasswordCommand {
     fn get_subcommand(
         &self,
-        session: &mut AsyncOpenStack,
+        _: &mut AsyncOpenStack,
     ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             PasswordCommands::Set(args) => Ok(Box::new(set::PasswordCmd { args: args.clone() })),

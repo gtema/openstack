@@ -17,10 +17,9 @@
 //! Error response codes: 401
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -34,12 +33,11 @@ use crate::{error::OpenStackCliError, OSCCommand};
 use std::fmt;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::BoolString;
 use openstack_sdk::api::network::v2::subnet::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -419,16 +417,16 @@ impl OSCCommand for SubnetsCmd {
             ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.into_iter());
+            ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.into_iter());
+            ep_builder.tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.into_iter());
+            ep_builder.not_tags(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.into_iter());
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val.clone());

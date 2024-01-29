@@ -2,10 +2,9 @@
 //! This operation returns the object metadata in the response headers and the
 //! object content in the response body.
 use async_trait::async_trait;
-use bytes::Bytes;
+
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 

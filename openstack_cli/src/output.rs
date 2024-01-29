@@ -9,7 +9,6 @@ pub(crate) struct OutputProcessor {
     config: OutputConfig,
     /// Whether output is for human or for machine
     pub(crate) target: OutputFor,
-    format: Option<OutputFormat>,
 }
 
 /// Output target (human or machine) enum
@@ -32,7 +31,6 @@ impl OutputProcessor {
                 wide: matches!(args.global_opts.output, Some(OutputFormat::Wide)),
             },
             target,
-            format: args.global_opts.output,
         }
     }
 
