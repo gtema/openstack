@@ -5,14 +5,9 @@ use clap::Args;
 use std::io::{self, Write};
 use tracing::info;
 
-use crate::output::{self, OutputProcessor};
 use crate::Cli;
-use crate::OutputConfig;
-use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use structable_derive::StructTable;
+use crate::{error::OpenStackCliError, OSCCommand};
 
-use openstack_sdk::types::identity::v3::AuthResponse;
 use openstack_sdk::AsyncOpenStack;
 
 /// Command arguments
@@ -29,15 +24,13 @@ pub struct AuthCmd {
 }
 
 #[async_trait]
-impl Command for AuthCmd {
+impl OSCCommand for AuthCmd {
     async fn take_action(
         &self,
-        parsed_args: &Cli,
+        _parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         info!("Show auth info");
-
-        let op = OutputProcessor::from_args(parsed_args);
 
         // TODO(gtema): here would be the Webbrowser based login
         // implementation

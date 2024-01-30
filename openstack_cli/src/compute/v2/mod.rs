@@ -6,7 +6,7 @@ pub mod hypervisor;
 pub mod keypair;
 pub mod server;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -17,7 +17,7 @@ use crate::compute::v2::flavor::{FlavorArgs, FlavorCommand};
 use crate::compute::v2::hypervisor::{HypervisorArgs, HypervisorCommand};
 use crate::compute::v2::keypair::{KeypairArgs, KeypairCommand};
 use crate::compute::v2::server::{ServerArgs, ServerCommand};
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 /// Compute service (Nova) arguments
 #[derive(Args, Clone)]
@@ -103,37 +103,40 @@ pub struct ComputeSrvCommand {
     pub args: ComputeSrvArgs,
 }
 
-impl ServiceCommands for ComputeSrvCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ComputeSrvCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ComputeSrvCommands::Aggregate(args) => AggregateCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             ComputeSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             ComputeSrvCommands::Extension(args) => ExtensionCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             ComputeSrvCommands::Flavor(args) => FlavorCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             ComputeSrvCommands::Hypervisor(args) => HypervisorCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             ComputeSrvCommands::Keypair(args) => KeypairCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
             ComputeSrvCommands::Server(args) => ServerCommand {
                 args: *args.clone(),
             }
-            .get_command(session),
+            .get_subcommand(session),
         }
     }
 }

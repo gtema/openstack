@@ -1,10 +1,10 @@
 //! Block storage Volume commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
+use clap::error::Error;
+use clap::{ArgMatches, Args, Command, FromArgMatches, Subcommand};
 
 use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
@@ -205,10 +205,10 @@ impl FromArgMatches for Create {
 }
 
 impl Args for Create {
-    fn augment_args(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args(cmd: Command) -> Command {
         create_353::VolumeArgs::augment_args(cmd)
     }
-    fn augment_args_for_update(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args_for_update(cmd: Command) -> Command {
         create_353::VolumeArgs::augment_args(cmd)
     }
 }
@@ -238,10 +238,10 @@ impl FromArgMatches for Set {
 }
 
 impl Args for Set {
-    fn augment_args(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args(cmd: Command) -> Command {
         set_353::VolumeArgs::augment_args(cmd)
     }
-    fn augment_args_for_update(cmd: ClapCommand) -> ClapCommand {
+    fn augment_args_for_update(cmd: Command) -> Command {
         set_353::VolumeArgs::augment_args(cmd)
     }
 }
@@ -250,18 +250,23 @@ pub struct VolumeCommand {
     pub args: VolumeArgs,
 }
 
-impl ResourceCommands for VolumeCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for VolumeCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            VolumeCommands::Create30(args) => Box::new(create_30::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Create30(args) => {
+                Ok(Box::new(create_30::VolumeCmd { args: args.clone() }))
+            }
             VolumeCommands::Create313(args) => {
-                Box::new(create_313::VolumeCmd { args: args.clone() })
+                Ok(Box::new(create_313::VolumeCmd { args: args.clone() }))
             }
             VolumeCommands::Create347(args) => {
-                Box::new(create_347::VolumeCmd { args: args.clone() })
+                Ok(Box::new(create_347::VolumeCmd { args: args.clone() }))
             }
             VolumeCommands::Create353(args) => {
-                Box::new(create_353::VolumeCmd { args: args.clone() })
+                Ok(Box::new(create_353::VolumeCmd { args: args.clone() }))
             }
             VolumeCommands::Create(args) => {
                 if let Some(ep_ver) =
@@ -270,34 +275,36 @@ impl ResourceCommands for VolumeCommand {
                     if let Some(vers) = ep_ver.version {
                         if let Ok(ver) = ServiceApiVersion::try_from(vers) {
                             if ver >= ServiceApiVersion(3, 53) {
-                                return Box::new(create_353::VolumeCmd {
+                                return Ok(Box::new(create_353::VolumeCmd {
                                     args: args.create_353.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(3, 47) {
-                                return Box::new(create_347::VolumeCmd {
+                                return Ok(Box::new(create_347::VolumeCmd {
                                     args: args.create_347.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(3, 13) {
-                                return Box::new(create_313::VolumeCmd {
+                                return Ok(Box::new(create_313::VolumeCmd {
                                     args: args.create_313.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(3, 0) {
-                                return Box::new(create_30::VolumeCmd {
+                                return Ok(Box::new(create_30::VolumeCmd {
                                     args: args.create_30.clone().expect("All arguments present"),
-                                });
+                                }));
                             }
                         }
                     }
                 }
-                Box::new(create_353::VolumeCmd {
+                Ok(Box::new(create_353::VolumeCmd {
                     args: args.create_353.clone().expect("All arguments present"),
-                })
+                }))
             }
-            VolumeCommands::Delete(args) => Box::new(delete::VolumeCmd { args: args.clone() }),
-            VolumeCommands::Extend(args) => Box::new(os_extend::VolumeCmd { args: args.clone() }),
-            VolumeCommands::List(args) => Box::new(list::VolumesCmd { args: args.clone() }),
-            VolumeCommands::Set30(args) => Box::new(set_30::VolumeCmd { args: args.clone() }),
-            VolumeCommands::Set353(args) => Box::new(set_353::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Delete(args) => Ok(Box::new(delete::VolumeCmd { args: args.clone() })),
+            VolumeCommands::Extend(args) => {
+                Ok(Box::new(os_extend::VolumeCmd { args: args.clone() }))
+            }
+            VolumeCommands::List(args) => Ok(Box::new(list::VolumesCmd { args: args.clone() })),
+            VolumeCommands::Set30(args) => Ok(Box::new(set_30::VolumeCmd { args: args.clone() })),
+            VolumeCommands::Set353(args) => Ok(Box::new(set_353::VolumeCmd { args: args.clone() })),
             VolumeCommands::Set(args) => {
                 if let Some(ep_ver) =
                     session.get_service_endpoint_version(&ServiceType::BlockStorage)
@@ -305,22 +312,22 @@ impl ResourceCommands for VolumeCommand {
                     if let Some(vers) = ep_ver.version {
                         if let Ok(ver) = ServiceApiVersion::try_from(vers) {
                             if ver >= ServiceApiVersion(3, 53) {
-                                return Box::new(set_353::VolumeCmd {
+                                return Ok(Box::new(set_353::VolumeCmd {
                                     args: args.set_353.clone().expect("All arguments present"),
-                                });
+                                }));
                             } else if ver >= ServiceApiVersion(3, 0) {
-                                return Box::new(set_30::VolumeCmd {
+                                return Ok(Box::new(set_30::VolumeCmd {
                                     args: args.set_30.clone().expect("All arguments present"),
-                                });
+                                }));
                             }
                         }
                     }
                 }
-                Box::new(set_353::VolumeCmd {
+                Ok(Box::new(set_353::VolumeCmd {
                     args: args.set_353.clone().expect("All arguments present"),
-                })
+                }))
             }
-            VolumeCommands::Show(args) => Box::new(show::VolumeCmd { args: args.clone() }),
+            VolumeCommands::Show(args) => Ok(Box::new(show::VolumeCmd { args: args.clone() })),
         }
     }
 }

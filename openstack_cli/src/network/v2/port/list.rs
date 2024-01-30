@@ -22,10 +22,7 @@
 //! Error response codes: 401
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -35,18 +32,17 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::BoolString;
 use openstack_sdk::api::network::v2::port::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use std::collections::HashMap;
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -535,7 +531,7 @@ impl fmt::Display for VecString {
 }
 
 #[async_trait]
-impl Command for PortsCmd {
+impl OSCCommand for PortsCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -567,7 +563,7 @@ impl Command for PortsCmd {
             ep_builder.mac_address(val.clone());
         }
         if let Some(val) = &self.args.query.fixed_ips {
-            ep_builder.fixed_ips(val.into_iter());
+            ep_builder.fixed_ips(val.iter());
         }
         if let Some(val) = &self.args.query.device_id {
             ep_builder.device_id(val.clone());
@@ -591,22 +587,22 @@ impl Command for PortsCmd {
             ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.into_iter());
+            ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.into_iter());
+            ep_builder.tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.into_iter());
+            ep_builder.not_tags(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.into_iter());
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.description {
             ep_builder.description(val.clone());
         }
         if let Some(val) = &self.args.query.security_groups {
-            ep_builder.security_groups(val.into_iter());
+            ep_builder.security_groups(val.iter());
         }
         // Set body parameters
 

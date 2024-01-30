@@ -36,6 +36,9 @@ pub enum OpenStackCliError {
         source: openstack_sdk::config::ConfigError,
     },
 
+    #[error("Command has no subcommands")]
+    NoSubcommands,
+
     #[error("resource not found")]
     ResourceNotFound,
 

@@ -1,8 +1,7 @@
 //! Compute Flavor Access commands
 use clap::{Args, Subcommand};
 
-use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -34,18 +33,21 @@ pub struct FlavorAccessCommand {
     pub args: FlavorAccessArgs,
 }
 
-impl ResourceCommands for FlavorAccessCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for FlavorAccessCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            FlavorAccessCommands::Add(args) => {
-                Box::new(add_tenant_access::FlavorCmd { args: args.clone() })
-            }
+            FlavorAccessCommands::Add(args) => Ok(Box::new(add_tenant_access::FlavorCmd {
+                args: args.clone(),
+            })),
             FlavorAccessCommands::List(args) => {
-                Box::new(list::FlavorAccesesCmd { args: args.clone() })
+                Ok(Box::new(list::FlavorAccesesCmd { args: args.clone() }))
             }
-            FlavorAccessCommands::Remove(args) => {
-                Box::new(remove_tenant_access::FlavorCmd { args: args.clone() })
-            }
+            FlavorAccessCommands::Remove(args) => Ok(Box::new(remove_tenant_access::FlavorCmd {
+                args: args.clone(),
+            })),
         }
     }
 }

@@ -9,10 +9,7 @@
 //! itemNotFound(404)
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -22,12 +19,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::compute::v2::aggregate::image::cache_281;
 use openstack_sdk::api::RawQueryAsync;
 
@@ -67,7 +65,7 @@ pub struct ImageCmd {
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for ImageCmd {
+impl OSCCommand for ImageCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -99,7 +97,7 @@ impl Command for ImageCmd {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data = ResponseData {};
         // Maybe output some headers metadata
         op.output_human::<ResponseData>(&data)?;

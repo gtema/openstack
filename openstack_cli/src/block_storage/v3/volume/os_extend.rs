@@ -1,8 +1,5 @@
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -12,17 +9,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
-use structable_derive::StructTable;
+use crate::{OSCCommand, OpenStackCliError};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
-use openstack_sdk::api::block_storage::v3::volume::find;
 use openstack_sdk::api::block_storage::v3::volume::os_extend;
-use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+
 use std::collections::HashMap;
 
 /// Command arguments
@@ -66,7 +59,7 @@ pub struct VolumeCmd {
 pub struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
         rows.extend(self.0.iter().map(|(k, v)| {
@@ -80,7 +73,7 @@ impl StructTable for ResponseData {
 }
 
 #[async_trait]
-impl Command for VolumeCmd {
+impl OSCCommand for VolumeCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

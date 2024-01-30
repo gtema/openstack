@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -30,14 +30,19 @@ pub struct ObjectCommand {
     pub args: ObjectArgs,
 }
 
-impl ResourceCommands for ObjectCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ObjectCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            ObjectCommands::List(args) => Box::new(list::ObjectsCmd { args: args.clone() }),
-            ObjectCommands::Download(args) => Box::new(download::ObjectCmd { args: args.clone() }),
-            ObjectCommands::Upload(args) => Box::new(upload::ObjectCmd { args: args.clone() }),
-            ObjectCommands::Show(args) => Box::new(show::ObjectCmd { args: args.clone() }),
-            ObjectCommands::Delete(args) => Box::new(delete::ObjectCmd { args: args.clone() }),
+            ObjectCommands::List(args) => Ok(Box::new(list::ObjectsCmd { args: args.clone() })),
+            ObjectCommands::Download(args) => {
+                Ok(Box::new(download::ObjectCmd { args: args.clone() }))
+            }
+            ObjectCommands::Upload(args) => Ok(Box::new(upload::ObjectCmd { args: args.clone() })),
+            ObjectCommands::Show(args) => Ok(Box::new(show::ObjectCmd { args: args.clone() })),
+            ObjectCommands::Delete(args) => Ok(Box::new(delete::ObjectCmd { args: args.clone() })),
         }
     }
 }

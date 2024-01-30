@@ -1,8 +1,7 @@
 //! Compute Flavor Extra Specs commands
 use clap::{Args, Subcommand};
 
-use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -42,18 +41,25 @@ pub struct ExtraSpecsCommand {
     pub args: ExtraSpecsArgs,
 }
 
-impl ResourceCommands for ExtraSpecsCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ExtraSpecsCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ExtraSpecsCommands::Create(args) => {
-                Box::new(create::ExtraSpecCmd { args: args.clone() })
+                Ok(Box::new(create::ExtraSpecCmd { args: args.clone() }))
             }
             ExtraSpecsCommands::Delete(args) => {
-                Box::new(delete::ExtraSpecCmd { args: args.clone() })
+                Ok(Box::new(delete::ExtraSpecCmd { args: args.clone() }))
             }
-            ExtraSpecsCommands::List(args) => Box::new(list::ExtraSpecsCmd { args: args.clone() }),
-            ExtraSpecsCommands::Show(args) => Box::new(show::ExtraSpecCmd { args: args.clone() }),
-            ExtraSpecsCommands::Set(args) => Box::new(set::ExtraSpecCmd { args: args.clone() }),
+            ExtraSpecsCommands::List(args) => {
+                Ok(Box::new(list::ExtraSpecsCmd { args: args.clone() }))
+            }
+            ExtraSpecsCommands::Show(args) => {
+                Ok(Box::new(show::ExtraSpecCmd { args: args.clone() }))
+            }
+            ExtraSpecsCommands::Set(args) => Ok(Box::new(set::ExtraSpecCmd { args: args.clone() })),
         }
     }
 }

@@ -109,10 +109,7 @@
 //! Error response codes: 400, 401, 403
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -122,18 +119,18 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::collections::BTreeMap;
+
 use std::collections::HashMap;
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -489,7 +486,7 @@ impl fmt::Display for VecResponseLocations {
 }
 
 #[async_trait]
-impl Command for ImagesCmd {
+impl OSCCommand for ImagesCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -527,7 +524,7 @@ impl Command for ImagesCmd {
             ep_builder.status(val.clone());
         }
         if let Some(val) = &self.args.query.tag {
-            ep_builder.tag(val.into_iter());
+            ep_builder.tag(val.iter());
         }
         if let Some(val) = &self.args.query.visibility {
             ep_builder.visibility(val.clone());

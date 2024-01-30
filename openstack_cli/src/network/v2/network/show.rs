@@ -11,10 +11,7 @@
 //! Error response codes: 401, 404
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -24,18 +21,18 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::BoolString;
 use crate::common::IntString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network::find;
-use openstack_sdk::api::network::v2::network::get;
+
 use openstack_sdk::api::QueryAsync;
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -245,7 +242,6 @@ impl fmt::Display for ResponseSegments {
             format!(
                 "provider_segmentation_id={}",
                 self.provider_segmentation_id
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -284,7 +280,7 @@ impl fmt::Display for VecResponseSegments {
 }
 
 #[async_trait]
-impl Command for NetworkCmd {
+impl OSCCommand for NetworkCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

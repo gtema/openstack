@@ -1,12 +1,11 @@
 //! Identity User Access Rules commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
 
-use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use clap::{Args, Subcommand};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use crate::{OSCCommand, OpenStackCliError};
+
+use openstack_sdk::AsyncOpenStack;
 
 mod delete;
 mod list;
@@ -38,14 +37,21 @@ pub struct AccessRuleCommand {
     pub args: AccessRuleArgs,
 }
 
-impl ResourceCommands for AccessRuleCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for AccessRuleCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             AccessRuleCommands::Delete(args) => {
-                Box::new(delete::AccessRuleCmd { args: args.clone() })
+                Ok(Box::new(delete::AccessRuleCmd { args: args.clone() }))
             }
-            AccessRuleCommands::List(args) => Box::new(list::AccessRulesCmd { args: args.clone() }),
-            AccessRuleCommands::Show(args) => Box::new(show::AccessRuleCmd { args: args.clone() }),
+            AccessRuleCommands::List(args) => {
+                Ok(Box::new(list::AccessRulesCmd { args: args.clone() }))
+            }
+            AccessRuleCommands::Show(args) => {
+                Ok(Box::new(show::AccessRuleCmd { args: args.clone() }))
+            }
         }
     }
 }

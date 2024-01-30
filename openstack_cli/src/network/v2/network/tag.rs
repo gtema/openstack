@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 mod delete;
 mod list;
@@ -26,8 +26,8 @@ pub struct TagCommand {
     pub args: TagArgs,
 }
 
-impl ResourceCommands for TagCommand {
-    fn get_command(&self) -> Box<dyn Command> {
+impl OSCCommand for TagCommand {
+    fn get_subcommand(&self) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             TagCommands::Delete(args) => Box::new(delete::TagCmd { args: args.clone() }),
             TagCommands::List(args) => Box::new(list::TagsCmd { args: args.clone() }),

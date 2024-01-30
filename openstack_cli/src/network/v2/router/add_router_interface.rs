@@ -32,10 +32,7 @@
 //! Error response codes: 400, 401, 404, 409
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -45,17 +42,14 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
-use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::router::add_router_interface;
-use openstack_sdk::api::network::v2::router::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -109,7 +103,7 @@ impl StructTable for ResponseData {
 }
 
 #[async_trait]
-impl Command for RouterCmd {
+impl OSCCommand for RouterCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

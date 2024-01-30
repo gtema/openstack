@@ -26,7 +26,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -65,7 +65,7 @@ pub struct AccountCmd {
 pub struct Account {}
 
 #[async_trait]
-impl Command for AccountCmd {
+impl OSCCommand for AccountCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -91,7 +91,7 @@ impl Command for AccountCmd {
         client
             .discover_service_endpoint(&ServiceType::ObjectStore)
             .await?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let data = Account {};
         // Maybe output some headers metadata
         op.output_human::<Account>(&data)?;

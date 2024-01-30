@@ -34,7 +34,7 @@ pub struct ImageCmd {
 pub struct Image {}
 
 #[async_trait]
-impl Command for ImageCmd {
+impl OSCCommand for ImageCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -241,25 +241,30 @@ pub struct ImageCommand {
     pub args: ImageArgs,
 }
 
-impl ResourceCommands for ImageCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ImageCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            ImageCommands::List(args) => Box::new(list::ImagesCmd {
+            ImageCommands::List(args) => Ok(Box::new(list::ImagesCmd {
                 args: *args.clone(),
-            }),
-            ImageCommands::Show(args) => Box::new(show::ImageCmd { args: args.clone() }),
-            ImageCommands::Set(args) => Box::new(patch::ImageCmd { args: args.clone() }),
-            ImageCommands::Download(args) => Box::new(file::download::FileCmd {
+            })),
+            ImageCommands::Show(args) => Ok(Box::new(show::ImageCmd { args: args.clone() })),
+            ImageCommands::Set(args) => Ok(Box::new(patch::ImageCmd { args: args.clone() })),
+            ImageCommands::Download(args) => Ok(Box::new(file::download::FileCmd {
                 args: *args.clone(),
-            }),
-            ImageCommands::Upload(args) => Box::new(file::upload::FileCmd { args: args.clone() }),
-            ImageCommands::Create(args) => Box::new(create::ImageCmd { args: args.clone() }),
-            ImageCommands::Delete(args) => Box::new(delete::ImageCmd { args: args.clone() }),
+            })),
+            ImageCommands::Upload(args) => {
+                Ok(Box::new(file::upload::FileCmd { args: args.clone() }))
+            }
+            ImageCommands::Create(args) => Ok(Box::new(create::ImageCmd { args: args.clone() })),
+            ImageCommands::Delete(args) => Ok(Box::new(delete::ImageCmd { args: args.clone() })),
             ImageCommands::Deactivate(args) => {
-                Box::new(deactivate::ImageCmd { args: args.clone() })
+                Ok(Box::new(deactivate::ImageCmd { args: args.clone() }))
             }
             ImageCommands::Reactivate(args) => {
-                Box::new(reactivate::ImageCmd { args: args.clone() })
+                Ok(Box::new(reactivate::ImageCmd { args: args.clone() }))
             }
         }
     }

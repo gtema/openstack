@@ -2,10 +2,7 @@
 //!
 //! POST /v3/auth/OS-FEDERATION/saml2
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -15,14 +12,15 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
+use bytes::Bytes;
 use clap::ValueEnum;
 use dialoguer::Password;
+use http::Response;
 use openstack_sdk::api::identity::v3::auth::os_federation::saml2::create;
 use openstack_sdk::api::RawQueryAsync;
 
@@ -322,7 +320,7 @@ pub struct Saml2Cmd {
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for Saml2Cmd {
+impl OSCCommand for Saml2Cmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

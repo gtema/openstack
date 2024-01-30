@@ -1,11 +1,11 @@
 pub mod volume;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::block_storage::v3::volume::{VolumeArgs, VolumeCommand};
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -28,11 +28,14 @@ pub struct BlockStorageSrvCommand {
     pub args: BlockStorageSrvArgs,
 }
 
-impl ServiceCommands for BlockStorageSrvCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for BlockStorageSrvCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             BlockStorageSrvCommands::Volume(args) => {
-                VolumeCommand { args: args.clone() }.get_command(session)
+                VolumeCommand { args: args.clone() }.get_subcommand(session)
             }
         }
     }

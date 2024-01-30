@@ -1,9 +1,6 @@
 //! Deletes an existing metadata.
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -13,12 +10,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::volume::metadata::delete;
 use openstack_sdk::api::RawQueryAsync;
 
@@ -59,7 +57,7 @@ pub struct MetadataCmd {
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for MetadataCmd {
+impl OSCCommand for MetadataCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

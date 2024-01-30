@@ -22,10 +22,7 @@
 //! Error response codes: 401
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -35,17 +32,16 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::BoolString;
 use crate::common::IntString;
 use openstack_sdk::api::network::v2::network::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -323,7 +319,6 @@ impl fmt::Display for ResponseSegments {
             format!(
                 "provider_segmentation_id={}",
                 self.provider_segmentation_id
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -362,7 +357,7 @@ impl fmt::Display for VecResponseSegments {
 }
 
 #[async_trait]
-impl Command for NetworksCmd {
+impl OSCCommand for NetworksCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -415,16 +410,16 @@ impl Command for NetworksCmd {
             ep_builder.revision_number(val.clone());
         }
         if let Some(val) = &self.args.query.tags {
-            ep_builder.tags(val.into_iter());
+            ep_builder.tags(val.iter());
         }
         if let Some(val) = &self.args.query.tags_any {
-            ep_builder.tags_any(val.into_iter());
+            ep_builder.tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags {
-            ep_builder.not_tags(val.into_iter());
+            ep_builder.not_tags(val.iter());
         }
         if let Some(val) = &self.args.query.not_tags_any {
-            ep_builder.not_tags_any(val.into_iter());
+            ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.args.query.is_default {
             ep_builder.is_default(*val);

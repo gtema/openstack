@@ -1,7 +1,7 @@
 //! Common helpers
 use crate::error::OpenStackCliError;
 
-use serde::{de::Visitor, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt;
@@ -58,12 +58,6 @@ impl From<&Vec<Value>> for VecValue {
 /// Newtype for the `HashMap<String, String>`
 #[derive(Deserialize, Default, Debug, Clone, Serialize)]
 pub struct HashMapStringString(HashMap<String, String>);
-
-impl HashMapStringString {
-    pub fn new() -> Self {
-        HashMapStringString(HashMap::new())
-    }
-}
 
 impl From<HashMap<String, String>> for HashMapStringString {
     fn from(data: HashMap<String, String>) -> Self {
@@ -290,15 +284,15 @@ impl<'de> Deserialize<'de> for BoolString {
     }
 }
 
-/// Try to deserialize data and return `Default` if that fails
-pub fn deser_ok_or_default<'a, T, D>(deserializer: D) -> Result<T, D::Error>
-where
-    T: Deserialize<'a> + Default,
-    D: Deserializer<'a>,
-{
-    let v: Value = Deserialize::deserialize(deserializer)?;
-    Ok(T::deserialize(v).unwrap_or_default())
-}
+// /// Try to deserialize data and return `Default` if that fails
+// pub fn deser_ok_or_default<'a, T, D>(deserializer: D) -> Result<T, D::Error>
+// where
+//     T: Deserialize<'a> + Default,
+//     D: Deserializer<'a>,
+// {
+//     let v: Value = Deserialize::deserialize(deserializer)?;
+//     Ok(T::deserialize(v).unwrap_or_default())
+// }
 
 /// Parse a single key-value pair
 pub(crate) fn parse_key_val<T, U>(s: &str) -> Result<(T, U), Box<dyn Error + Send + Sync + 'static>>

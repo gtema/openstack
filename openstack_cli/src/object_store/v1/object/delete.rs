@@ -12,7 +12,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -22,7 +22,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -69,7 +69,7 @@ pub struct ObjectCmd {
 pub struct Object {}
 
 #[async_trait]
-impl Command for ObjectCmd {
+impl OSCCommand for ObjectCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -94,7 +94,7 @@ impl Command for ObjectCmd {
         client
             .discover_service_endpoint(&ServiceType::ObjectStore)
             .await?;
-        let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         Ok(())
     }
 }

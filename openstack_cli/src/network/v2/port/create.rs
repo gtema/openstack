@@ -8,10 +8,7 @@
 //! Error response codes: 400, 401, 403, 404, 409
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -21,11 +18,10 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
@@ -35,6 +31,7 @@ use openstack_sdk::api::network::v2::port::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -648,7 +645,7 @@ impl fmt::Display for VecString {
 }
 
 #[async_trait]
-impl Command for PortCmd {
+impl OSCCommand for PortCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -720,7 +717,7 @@ impl Command for PortCmd {
                         v.as_object()
                             .expect("Is a valid Json object")
                             .iter()
-                            .map(|(k, v)| (k.clone().into(), v.clone().into()))
+                            .map(|(k, v)| (k.clone().into(), v.clone()))
                             .collect::<BTreeMap<_, Value>>()
                     })
                     .collect::<Vec<_>>(),

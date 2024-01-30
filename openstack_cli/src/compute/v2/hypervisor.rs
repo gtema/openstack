@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -43,11 +43,18 @@ pub struct HypervisorCommand {
     pub args: HypervisorArgs,
 }
 
-impl ResourceCommands for HypervisorCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for HypervisorCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            HypervisorCommands::List(args) => Box::new(list::HypervisorsCmd { args: args.clone() }),
-            HypervisorCommands::Show(args) => Box::new(show::HypervisorCmd { args: args.clone() }),
+            HypervisorCommands::List(args) => {
+                Ok(Box::new(list::HypervisorsCmd { args: args.clone() }))
+            }
+            HypervisorCommands::Show(args) => {
+                Ok(Box::new(show::HypervisorCmd { args: args.clone() }))
+            }
         }
     }
 }

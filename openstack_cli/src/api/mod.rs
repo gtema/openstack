@@ -14,10 +14,10 @@
 
 use async_trait::async_trait;
 use clap::{Args, ValueEnum};
-use http::{Response, Uri};
+use http::Uri;
 use serde_json::Value;
-use std::collections::HashMap;
-use tracing::{debug, info};
+
+use tracing::info;
 
 use anyhow::Result;
 use url::Url;
@@ -31,10 +31,8 @@ use openstack_sdk::{
 use crate::common::parse_key_val;
 use crate::output::OutputProcessor;
 use crate::Cli;
-use crate::OutputConfig;
-use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use structable_derive::StructTable;
+
+use crate::{OSCCommand, OpenStackCliError};
 
 pub fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()
@@ -100,7 +98,16 @@ pub struct ApiCommand {
 }
 
 #[async_trait]
-impl Command for ApiCommand {
+impl OSCCommand for ApiCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
+        Ok(Box::new(Self {
+            args: self.args.clone(),
+        }))
+    }
+
     async fn take_action(
         &self,
         parsed_args: &Cli,

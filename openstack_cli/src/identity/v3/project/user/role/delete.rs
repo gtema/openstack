@@ -4,10 +4,7 @@
 //! identity/3/rel/project\_user\_role`
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -17,12 +14,13 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::identity::v3::project::user::role::delete;
 use openstack_sdk::api::RawQueryAsync;
 
@@ -70,7 +68,7 @@ pub struct RoleCmd {
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for RoleCmd {
+impl OSCCommand for RoleCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

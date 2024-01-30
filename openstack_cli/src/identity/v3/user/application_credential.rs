@@ -1,12 +1,11 @@
 //! Identity User Access Credentials commands
 //!
-use clap::error::{Error, ErrorKind};
-use clap::{ArgMatches, Args, Command as ClapCommand, FromArgMatches, Subcommand};
 
-use crate::common::ServiceApiVersion;
-use crate::{Command, ResourceCommands};
+use clap::{Args, Subcommand};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use crate::{OSCCommand, OpenStackCliError};
+
+use openstack_sdk::AsyncOpenStack;
 
 mod create;
 mod delete;
@@ -42,20 +41,31 @@ pub struct ApplicationCredentialCommand {
     pub args: ApplicationCredentialArgs,
 }
 
-impl ResourceCommands for ApplicationCredentialCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for ApplicationCredentialCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             ApplicationCredentialCommands::Create(args) => {
-                Box::new(create::ApplicationCredentialCmd { args: args.clone() })
+                Ok(Box::new(create::ApplicationCredentialCmd {
+                    args: args.clone(),
+                }))
             }
             ApplicationCredentialCommands::Delete(args) => {
-                Box::new(delete::ApplicationCredentialCmd { args: args.clone() })
+                Ok(Box::new(delete::ApplicationCredentialCmd {
+                    args: args.clone(),
+                }))
             }
             ApplicationCredentialCommands::List(args) => {
-                Box::new(list::ApplicationCredentialsCmd { args: args.clone() })
+                Ok(Box::new(list::ApplicationCredentialsCmd {
+                    args: args.clone(),
+                }))
             }
             ApplicationCredentialCommands::Show(args) => {
-                Box::new(show::ApplicationCredentialCmd { args: args.clone() })
+                Ok(Box::new(show::ApplicationCredentialCmd {
+                    args: args.clone(),
+                }))
             }
         }
     }

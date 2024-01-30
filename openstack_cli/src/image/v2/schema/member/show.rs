@@ -34,7 +34,7 @@ pub struct MemberCmd {
 pub struct Member {}
 
 #[async_trait]
-impl Command for MemberCmd {
+impl OSCCommand for MemberCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -32,13 +32,16 @@ pub struct RouterCommand {
     pub args: RouterArgs,
 }
 
-impl ResourceCommands for RouterCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for RouterCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            RouterCommands::List(args) => Box::new(list::RoutersCmd { args: args.clone() }),
-            RouterCommands::Show(args) => Box::new(show::RouterCmd { args: args.clone() }),
-            RouterCommands::Create(args) => Box::new(create::RouterCmd { args: args.clone() }),
-            RouterCommands::Delete(args) => Box::new(delete::RouterCmd { args: args.clone() }),
+            RouterCommands::List(args) => Ok(Box::new(list::RoutersCmd { args: args.clone() })),
+            RouterCommands::Show(args) => Ok(Box::new(show::RouterCmd { args: args.clone() })),
+            RouterCommands::Create(args) => Ok(Box::new(create::RouterCmd { args: args.clone() })),
+            RouterCommands::Delete(args) => Ok(Box::new(delete::RouterCmd { args: args.clone() })),
         }
     }
 }

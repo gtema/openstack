@@ -1,7 +1,7 @@
 pub mod project;
 pub mod user;
 
-use clap::{Args, Parser, Subcommand};
+use clap::{Args, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -11,7 +11,7 @@ use crate::identity::v3::user::application_credential::{
     ApplicationCredentialArgs, ApplicationCredentialCommand,
 };
 use crate::identity::v3::user::{UserArgs, UserCommand};
-use crate::{Command, ResourceCommands, ServiceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
@@ -145,8 +145,6 @@ pub enum IdentitySrvCommands {
     /// by providing its ID to another application credential, for example:
     ///
     /// ```json { "access_rules": [ { "id": "abcdef" } ] } ```
-    ///
-    ///
     AccessRule(AccessRuleArgs),
     /// Project commands
     Project(ProjectArgs),
@@ -168,20 +166,23 @@ pub struct IdentitySrvCommand {
     pub args: IdentitySrvArgs,
 }
 
-impl ServiceCommands for IdentitySrvCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for IdentitySrvCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             IdentitySrvCommands::AccessRule(args) => {
-                AccessRuleCommand { args: args.clone() }.get_command(session)
+                AccessRuleCommand { args: args.clone() }.get_subcommand(session)
             }
             IdentitySrvCommands::ApplicationCredential(args) => {
-                ApplicationCredentialCommand { args: args.clone() }.get_command(session)
+                ApplicationCredentialCommand { args: args.clone() }.get_subcommand(session)
             }
             IdentitySrvCommands::Project(args) => {
-                ProjectCommand { args: args.clone() }.get_command(session)
+                ProjectCommand { args: args.clone() }.get_subcommand(session)
             }
             IdentitySrvCommands::User(args) => {
-                UserCommand { args: args.clone() }.get_command(session)
+                UserCommand { args: args.clone() }.get_subcommand(session)
             }
         }
     }

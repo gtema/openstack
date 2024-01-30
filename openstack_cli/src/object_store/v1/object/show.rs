@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
-use http::{HeaderName, HeaderValue};
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -13,7 +13,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -88,7 +88,7 @@ pub struct Object {
 }
 
 #[async_trait]
-impl Command for ObjectCmd {
+impl OSCCommand for ObjectCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,
@@ -129,7 +129,7 @@ impl Command for ObjectCmd {
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();
 
-        let mut regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Object-Meta-\.*").unwrap()];
+        let regexes: Vec<Regex> = vec![Regex::new(r"(?i)X-Object-Meta-\.*").unwrap()];
 
         for (hdr, val) in headers.iter() {
             if [

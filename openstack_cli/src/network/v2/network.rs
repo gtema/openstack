@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -32,19 +32,24 @@ pub struct NetworkCommand {
     pub args: NetworkArgs,
 }
 
-impl ResourceCommands for NetworkCommand {
-    fn get_command(&self, _: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for NetworkCommand {
+    fn get_subcommand(
+        &self,
+        _: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
-            NetworkCommands::List(args) => Box::new(list::NetworksCmd {
+            NetworkCommands::List(args) => Ok(Box::new(list::NetworksCmd {
                 args: *args.clone(),
-            }),
-            NetworkCommands::Show(args) => Box::new(show::NetworkCmd {
+            })),
+            NetworkCommands::Show(args) => Ok(Box::new(show::NetworkCmd {
                 args: *args.clone(),
-            }),
-            NetworkCommands::Create(args) => Box::new(create::NetworkCmd {
+            })),
+            NetworkCommands::Create(args) => Ok(Box::new(create::NetworkCmd {
                 args: *args.clone(),
-            }),
-            NetworkCommands::Delete(args) => Box::new(delete::NetworkCmd { args: args.clone() }),
+            })),
+            NetworkCommands::Delete(args) => {
+                Ok(Box::new(delete::NetworkCmd { args: args.clone() }))
+            }
         }
     }
 }

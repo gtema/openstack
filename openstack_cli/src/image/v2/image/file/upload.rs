@@ -29,10 +29,7 @@
 //! Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -42,13 +39,14 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::common::build_upload_asyncread;
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::image::v2::image::file::upload;
 use openstack_sdk::api::RawQueryAsync;
 
@@ -89,7 +87,7 @@ pub struct FileCmd {
 pub struct ResponseData {}
 
 #[async_trait]
-impl Command for FileCmd {
+impl OSCCommand for FileCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

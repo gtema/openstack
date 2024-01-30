@@ -4,10 +4,7 @@
 //! identity/3/rel/user`
 //!
 use async_trait::async_trait;
-use bytes::Bytes;
 use clap::Args;
-use http::Response;
-use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -17,16 +14,16 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
-use std::fmt;
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::find;
-use openstack_sdk::api::identity::v3::user::get;
+
 use openstack_sdk::api::QueryAsync;
+use std::fmt;
 
 /// Command arguments
 #[derive(Args, Clone, Debug)]
@@ -236,35 +233,30 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "ignore_change_password_upon_first_use={}",
                 self.ignore_change_password_upon_first_use
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_password_expiry={}",
                 self.ignore_password_expiry
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_lockout_failure_attempts={}",
                 self.ignore_lockout_failure_attempts
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "lock_password={}",
                 self.lock_password
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "ignore_user_inactivity={}",
                 self.ignore_user_inactivity
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -278,7 +270,6 @@ impl fmt::Display for ResponseOptions {
             format!(
                 "multi_factor_auth_enabled={}",
                 self.multi_factor_auth_enabled
-                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -288,7 +279,7 @@ impl fmt::Display for ResponseOptions {
 }
 
 #[async_trait]
-impl Command for UserCmd {
+impl OSCCommand for UserCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

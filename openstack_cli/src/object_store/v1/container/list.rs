@@ -2,7 +2,7 @@
 //! account.
 use async_trait::async_trait;
 use clap::Args;
-use http::Response;
+
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -12,7 +12,7 @@ use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{error::OpenStackCliError, Command};
+use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -98,7 +98,7 @@ pub struct Containers {
 }
 
 #[async_trait]
-impl Command for ContainersCmd {
+impl OSCCommand for ContainersCmd {
     async fn take_action(
         &self,
         parsed_args: &Cli,

@@ -1,6 +1,6 @@
 use clap::{Args, Subcommand};
 
-use crate::{Command, ResourceCommands};
+use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -42,20 +42,29 @@ pub struct FloatingIPCommand {
     pub args: FloatingIPArgs,
 }
 
-impl ResourceCommands for FloatingIPCommand {
-    fn get_command(&self, session: &mut AsyncOpenStack) -> Box<dyn Command> {
+impl OSCCommand for FloatingIPCommand {
+    fn get_subcommand(
+        &self,
+        session: &mut AsyncOpenStack,
+    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
         match &self.args.command {
             FloatingIPCommands::Create(args) => {
-                Box::new(create::FloatingipCmd { args: args.clone() })
+                Ok(Box::new(create::FloatingipCmd { args: args.clone() }))
             }
             FloatingIPCommands::Delete(args) => {
-                Box::new(delete::FloatingipCmd { args: args.clone() })
+                Ok(Box::new(delete::FloatingipCmd { args: args.clone() }))
             }
-            FloatingIPCommands::List(args) => Box::new(list::FloatingipsCmd { args: args.clone() }),
-            FloatingIPCommands::Set(args) => Box::new(set::FloatingipCmd { args: args.clone() }),
-            FloatingIPCommands::Show(args) => Box::new(show::FloatingipCmd { args: args.clone() }),
+            FloatingIPCommands::List(args) => {
+                Ok(Box::new(list::FloatingipsCmd { args: args.clone() }))
+            }
+            FloatingIPCommands::Set(args) => {
+                Ok(Box::new(set::FloatingipCmd { args: args.clone() }))
+            }
+            FloatingIPCommands::Show(args) => {
+                Ok(Box::new(show::FloatingipCmd { args: args.clone() }))
+            }
             FloatingIPCommands::Tag(args) => {
-                tag::TagCommand { args: args.clone() }.get_command(session)
+                tag::TagCommand { args: args.clone() }.get_subcommand(session)
             }
         }
     }
