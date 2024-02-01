@@ -55,6 +55,11 @@ pub enum OpenStackCliError {
         #[from]
         source: reqwest::Error,
     },
+    #[error("Argument parsing error: {}", source)]
+    Clap {
+        #[from]
+        source: clap::error::Error,
+    },
     #[error("Indicativ error: {}", source)]
     Idinticatif {
         #[from]

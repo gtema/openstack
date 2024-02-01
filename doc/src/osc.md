@@ -74,9 +74,124 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair create20`↴](#osc-compute-keypair-create20)
 * [`osc compute keypair delete`↴](#osc-compute-keypair-delete)
 * [`osc compute server`↴](#osc-compute-server)
+* [`osc compute server add-fixed-ip`↴](#osc-compute-server-add-fixed-ip)
+* [`osc compute server add-floating-ip`↴](#osc-compute-server-add-floating-ip)
+* [`osc compute server add-security-group`↴](#osc-compute-server-add-security-group)
+* [`osc compute server change-password`↴](#osc-compute-server-change-password)
+* [`osc compute server confirm-resize`↴](#osc-compute-server-confirm-resize)
+* [`osc compute server create294`↴](#osc-compute-server-create294)
+* [`osc compute server create290`↴](#osc-compute-server-create290)
+* [`osc compute server create274`↴](#osc-compute-server-create274)
+* [`osc compute server create267`↴](#osc-compute-server-create267)
+* [`osc compute server create263`↴](#osc-compute-server-create263)
+* [`osc compute server create257`↴](#osc-compute-server-create257)
+* [`osc compute server create252`↴](#osc-compute-server-create252)
+* [`osc compute server create242`↴](#osc-compute-server-create242)
+* [`osc compute server create237`↴](#osc-compute-server-create237)
+* [`osc compute server create233`↴](#osc-compute-server-create233)
+* [`osc compute server create232`↴](#osc-compute-server-create232)
+* [`osc compute server create219`↴](#osc-compute-server-create219)
+* [`osc compute server create21`↴](#osc-compute-server-create21)
+* [`osc compute server create-backup`↴](#osc-compute-server-create-backup)
+* [`osc compute server create-image`↴](#osc-compute-server-create-image)
+* [`osc compute server delete`↴](#osc-compute-server-delete)
+* [`osc compute server diagnostic`↴](#osc-compute-server-diagnostic)
+* [`osc compute server evacuate214`↴](#osc-compute-server-evacuate214)
+* [`osc compute server evacuate229`↴](#osc-compute-server-evacuate229)
+* [`osc compute server evacuate268`↴](#osc-compute-server-evacuate268)
+* [`osc compute server evacuate295`↴](#osc-compute-server-evacuate295)
+* [`osc compute server force-delete`↴](#osc-compute-server-force-delete)
+* [`osc compute server get-console-output`↴](#osc-compute-server-get-console-output)
+* [`osc compute server instance-action`↴](#osc-compute-server-instance-action)
+* [`osc compute server instance-action list`↴](#osc-compute-server-instance-action-list)
+* [`osc compute server instance-action show`↴](#osc-compute-server-instance-action-show)
+* [`osc compute server interface`↴](#osc-compute-server-interface)
+* [`osc compute server interface create`↴](#osc-compute-server-interface-create)
+* [`osc compute server interface delete`↴](#osc-compute-server-interface-delete)
+* [`osc compute server interface list`↴](#osc-compute-server-interface-list)
+* [`osc compute server interface show`↴](#osc-compute-server-interface-show)
+* [`osc compute server inject-network-info`↴](#osc-compute-server-inject-network-info)
+* [`osc compute server ip`↴](#osc-compute-server-ip)
+* [`osc compute server ip list`↴](#osc-compute-server-ip-list)
+* [`osc compute server ip show`↴](#osc-compute-server-ip-show)
 * [`osc compute server list`↴](#osc-compute-server-list)
-* [`osc compute server show`↴](#osc-compute-server-show)
+* [`osc compute server live-migrate20`↴](#osc-compute-server-live-migrate20)
+* [`osc compute server live-migrate225`↴](#osc-compute-server-live-migrate225)
+* [`osc compute server live-migrate230`↴](#osc-compute-server-live-migrate230)
+* [`osc compute server live-migrate268`↴](#osc-compute-server-live-migrate268)
+* [`osc compute server lock`↴](#osc-compute-server-lock)
+* [`osc compute server metadata`↴](#osc-compute-server-metadata)
+* [`osc compute server metadata create`↴](#osc-compute-server-metadata-create)
+* [`osc compute server metadata delete`↴](#osc-compute-server-metadata-delete)
+* [`osc compute server metadata list`↴](#osc-compute-server-metadata-list)
+* [`osc compute server metadata replace`↴](#osc-compute-server-metadata-replace)
+* [`osc compute server metadata set`↴](#osc-compute-server-metadata-set)
+* [`osc compute server metadata show`↴](#osc-compute-server-metadata-show)
+* [`osc compute server migrate`↴](#osc-compute-server-migrate)
+* [`osc compute server migration`↴](#osc-compute-server-migration)
+* [`osc compute server migration delete`↴](#osc-compute-server-migration-delete)
+* [`osc compute server migration force-complete`↴](#osc-compute-server-migration-force-complete)
+* [`osc compute server migration list`↴](#osc-compute-server-migration-list)
+* [`osc compute server migration show`↴](#osc-compute-server-migration-show)
+* [`osc compute server password`↴](#osc-compute-server-password)
+* [`osc compute server password delete`↴](#osc-compute-server-password-delete)
+* [`osc compute server password show`↴](#osc-compute-server-password-show)
 * [`osc compute server pause`↴](#osc-compute-server-pause)
+* [`osc compute server reset-state`↴](#osc-compute-server-reset-state)
+* [`osc compute server reboot`↴](#osc-compute-server-reboot)
+* [`osc compute server rebuild21`↴](#osc-compute-server-rebuild21)
+* [`osc compute server rebuild219`↴](#osc-compute-server-rebuild219)
+* [`osc compute server rebuild254`↴](#osc-compute-server-rebuild254)
+* [`osc compute server rebuild257`↴](#osc-compute-server-rebuild257)
+* [`osc compute server rebuild263`↴](#osc-compute-server-rebuild263)
+* [`osc compute server rebuild290`↴](#osc-compute-server-rebuild290)
+* [`osc compute server rebuild294`↴](#osc-compute-server-rebuild294)
+* [`osc compute server remote-console`↴](#osc-compute-server-remote-console)
+* [`osc compute server remote-console create26`↴](#osc-compute-server-remote-console-create26)
+* [`osc compute server remote-console create28`↴](#osc-compute-server-remote-console-create28)
+* [`osc compute server remove-fixed-ip`↴](#osc-compute-server-remove-fixed-ip)
+* [`osc compute server remove-floating-ip`↴](#osc-compute-server-remove-floating-ip)
+* [`osc compute server remove-security-group`↴](#osc-compute-server-remove-security-group)
+* [`osc compute server rescue`↴](#osc-compute-server-rescue)
+* [`osc compute server reset-network`↴](#osc-compute-server-reset-network)
+* [`osc compute server resize`↴](#osc-compute-server-resize)
+* [`osc compute server restore`↴](#osc-compute-server-restore)
+* [`osc compute server resume`↴](#osc-compute-server-resume)
+* [`osc compute server revert-resize`↴](#osc-compute-server-revert-resize)
+* [`osc compute server security-groups`↴](#osc-compute-server-security-groups)
+* [`osc compute server set21`↴](#osc-compute-server-set21)
+* [`osc compute server set219`↴](#osc-compute-server-set219)
+* [`osc compute server set290`↴](#osc-compute-server-set290)
+* [`osc compute server set294`↴](#osc-compute-server-set294)
+* [`osc compute server shelve`↴](#osc-compute-server-shelve)
+* [`osc compute server shelve-offload`↴](#osc-compute-server-shelve-offload)
+* [`osc compute server show`↴](#osc-compute-server-show)
+* [`osc compute server start`↴](#osc-compute-server-start)
+* [`osc compute server stop`↴](#osc-compute-server-stop)
+* [`osc compute server suspend`↴](#osc-compute-server-suspend)
+* [`osc compute server tag`↴](#osc-compute-server-tag)
+* [`osc compute server tag add`↴](#osc-compute-server-tag-add)
+* [`osc compute server tag check`↴](#osc-compute-server-tag-check)
+* [`osc compute server tag delete`↴](#osc-compute-server-tag-delete)
+* [`osc compute server tag list`↴](#osc-compute-server-tag-list)
+* [`osc compute server tag purge`↴](#osc-compute-server-tag-purge)
+* [`osc compute server tag replace`↴](#osc-compute-server-tag-replace)
+* [`osc compute server topology`↴](#osc-compute-server-topology)
+* [`osc compute server trigger-crash-dump`↴](#osc-compute-server-trigger-crash-dump)
+* [`osc compute server unlock`↴](#osc-compute-server-unlock)
+* [`osc compute server unpause`↴](#osc-compute-server-unpause)
+* [`osc compute server unrescue`↴](#osc-compute-server-unrescue)
+* [`osc compute server unshelve277`↴](#osc-compute-server-unshelve277)
+* [`osc compute server unshelve291`↴](#osc-compute-server-unshelve291)
+* [`osc compute server volume-attachment`↴](#osc-compute-server-volume-attachment)
+* [`osc compute server volume-attachment create20`↴](#osc-compute-server-volume-attachment-create20)
+* [`osc compute server volume-attachment create249`↴](#osc-compute-server-volume-attachment-create249)
+* [`osc compute server volume-attachment create279`↴](#osc-compute-server-volume-attachment-create279)
+* [`osc compute server volume-attachment delete`↴](#osc-compute-server-volume-attachment-delete)
+* [`osc compute server volume-attachment list`↴](#osc-compute-server-volume-attachment-list)
+* [`osc compute server volume-attachment set20`↴](#osc-compute-server-volume-attachment-set20)
+* [`osc compute server volume-attachment set285`↴](#osc-compute-server-volume-attachment-set285)
+* [`osc compute server volume-attachment show`↴](#osc-compute-server-volume-attachment-show)
 * [`osc identity`↴](#osc-identity)
 * [`osc identity application-credential`↴](#osc-identity-application-credential)
 * [`osc identity application-credential create`↴](#osc-identity-application-credential-create)
@@ -208,7 +323,7 @@ OpenStack client rewritten in Rust
   - `yaml`:
     YAML output
   - `wide`:
-    Wide (Human readable table with extra attributes)
+    Wide (Human readable table with extra attributes. Note: this has effect only in list operations)
 
 * `-f`, `--fields <FIELDS>` — Fields to return in the output (only in normal and wide mode)
 * `-v`, `--verbose` — Verbosity level. Repeat to increase level
@@ -779,7 +894,7 @@ Add Host
 
 ###### **Options:**
 
-* `--host <HOST>` — The name of the host
+* `--host <HOST>`
 
 
 
@@ -844,7 +959,7 @@ Remove Host
 
 ###### **Options:**
 
-* `--host <HOST>` — The name of the host
+* `--host <HOST>`
 
 
 
@@ -889,7 +1004,7 @@ Create Or Update Aggregate Metadata
 
 ###### **Options:**
 
-* `--metadata <key=value>` — Metadata key and value pairs associated with the aggregate. The maximum size for each metadata key and value pair is 255 bytes
+* `--metadata <key=value>`
 
 
 
@@ -1515,92 +1630,3604 @@ You can specify custom server metadata at server launch time. The maximum size f
 
 ###### **Subcommands:**
 
-* `list` — List Servers
-* `show` — Show single Server
-* `pause` — Pause Server
+* `add-fixed-ip` — Add (Associate) Fixed Ip (addFixedIp Action) (DEPRECATED) (microversion = 2.1)
+* `add-floating-ip` — Add (Associate) Floating Ip (addFloatingIp Action) (DEPRECATED) (microversion = 2.1)
+* `add-security-group` — Add Security Group To A Server (addSecurityGroup Action)
+* `change-password` — Change Administrative Password (changePassword Action)
+* `confirm-resize` — Confirm Resized Server (confirmResize Action)
+* `create294` — Create Server (microversion = 2.94)
+* `create290` — Create Server (microversion = 2.90)
+* `create274` — Create Server (microversion = 2.74)
+* `create267` — Create Server (microversion = 2.67)
+* `create263` — Create Server (microversion = 2.63)
+* `create257` — Create Server (microversion = 2.57)
+* `create252` — Create Server (microversion = 2.52)
+* `create242` — Create Server (microversion = 2.42)
+* `create237` — Create Server (microversion = 2.37)
+* `create233` — Create Server (microversion = 2.33)
+* `create232` — Create Server (microversion = 2.32)
+* `create219` — Create Server (microversion = 2.19)
+* `create21` — Create Server (microversion = 2.1)
+* `create-backup` — Create Server Back Up (createBackup Action) (microversion = 2.1)
+* `create-image` — Create Image (createImage Action) (microversion = 2.1)
+* `delete` — Delete Server
+* `diagnostic` — Show Server Diagnostics
+* `evacuate214` — Evacuate Server (evacuate Action) (microversion = 2.14)
+* `evacuate229` — Evacuate Server (evacuate Action) (microversion = 2.29)
+* `evacuate268` — Evacuate Server (evacuate Action) (microversion = 2.68)
+* `evacuate295` — Evacuate Server (evacuate Action) (microversion = 2.95)
+* `force-delete` — Force-Delete Server (forceDelete Action)
+* `get-console-output` — Show Console Output (os-getConsoleOutput Action)
+* `instance-action` — Servers actions
+* `interface` — Port interfaces (servers, os-interface)
+* `inject-network-info` — Inject Network Information (injectNetworkInfo Action)
+* `ip` — Servers IPs (servers, ips)
+* `list` — List Servers Detailed
+* `live-migrate20` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.0)
+* `live-migrate225` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.25)
+* `live-migrate230` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.30)
+* `live-migrate268` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.68)
+* `lock` — Lock Server (lock Action) (microversion = 2.73)
+* `metadata` — Server metadata
+* `migrate` — Migrate Server (migrate Action) (microversion = 2.56)
+* `migration` — Server migrations (servers, migrations)
+* `password` — Servers password
+* `pause` — Pause Server (pause Action)
+* `reset-state` — Reset Server State (os-resetState Action)
+* `reboot` — Reboot Server (reboot Action)
+* `rebuild21` — Rebuild Server (rebuild Action) (microversion = 2.1)
+* `rebuild219` — Rebuild Server (rebuild Action) (microversion = 2.19)
+* `rebuild254` — Rebuild Server (rebuild Action) (microversion = 2.54)
+* `rebuild257` — Rebuild Server (rebuild Action) (microversion = 2.57)
+* `rebuild263` — Rebuild Server (rebuild Action) (microversion = 2.63)
+* `rebuild290` — Rebuild Server (rebuild Action) (microversion = 2.90)
+* `rebuild294` — Rebuild Server (rebuild Action) (microversion = 2.94)
+* `remote-console` — Server Consoles
+* `remove-fixed-ip` — Remove (Disassociate) Fixed Ip (removeFixedIp Action) (DEPRECATED) (microversion = 2.1)
+* `remove-floating-ip` — Remove (Disassociate) Floating Ip (removeFloatingIp Action) (DEPRECATED) (microversion = 2.1)
+* `remove-security-group` — Remove Security Group From A Server (removeSecurityGroup Action)
+* `rescue` — Rescue Server (rescue Action)
+* `reset-network` — Reset Networking On A Server (resetNetwork Action) (DEPRECATED)
+* `resize` — Resize Server (resize Action)
+* `restore` — Restore Soft-Deleted Instance (restore Action)
+* `resume` — Resume Suspended Server (resume Action)
+* `revert-resize` — Revert Resized Server (revertResize Action)
+* `security-groups` — List Security Groups By Server
+* `set21` — Update Server (microversion = 2.1)
+* `set219` — Update Server (microversion = 2.19)
+* `set290` — Update Server (microversion = 2.90)
+* `set294` — Update Server (microversion = 2.94)
+* `shelve` — Shelve Server (shelve Action)
+* `shelve-offload` — Shelf-Offload (Remove) Server (shelveOffload Action)
+* `show` — Show Server Details
+* `start` — Start Server (os-start Action)
+* `stop` — Stop Server (os-stop Action)
+* `suspend` — Suspend Server (suspend Action)
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a server, checks the existence of a tag for a server
+* `topology` — Show Server Topology
+* `trigger-crash-dump` — Path parameters
+* `unlock` — Unlock Server (unlock Action)
+* `unpause` — Unpause Server (unpause Action)
+* `unrescue` — Unrescue Server (unrescue Action)
+* `unshelve277` — Unshelve (Restore) Shelved Server (unshelve Action) (microversion = 2.77)
+* `unshelve291` — Unshelve (Restore) Shelved Server (unshelve Action) (microversion = 2.91)
+* `volume-attachment` — Servers with volume attachments
 
 
 
-## `osc compute server list`
+## `osc compute server add-fixed-ip`
 
-List Servers
+Adds a fixed IP address to a server instance, which associates that address with the server. The fixed IP address is retrieved from the network that you specify in the request.
 
-**Usage:** `osc compute server list [OPTIONS]`
+Specify the `addFixedIp` action and the network ID in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server add-fixed-ip --network-id <NETWORK_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
 
 ###### **Options:**
 
-* `--limit <LIMIT>` — limit filter parameter
-* `--marker <MARKER>` — marker filter parameter
-* `--auto-disk-config <AUTO_DISK_CONFIG>` — auto_disk_config filter parameter
-* `--availability-zone <AVAILABILITY_ZONE>` — availability_zone filter parameter
-* `--created-at <CREATED_AT>` — created_at filter parameter
-* `--description <DESCRIPTION>` — description filter parameter
-* `--flavor <FLAVOR>` — flavor filter parameter
-* `--hostname <HOSTNAME>` — hostname filter parameter
-* `--image <IMAGE>` — image filter parameter
-* `--kernel-id <KERNEL_ID>` — kernel_id filter parameter
-* `--key-name <KEY_NAME>` — key_name filter parameter
-* `--launch-index <LAUNCH_INDEX>` — launch_index filter parameter
-* `--launched-at <LAUNCHED_AT>` — launched_at filter parameter
-* `--locked-by <LOCKED_BY>` — locked_by filter parameter
-* `--name <NAME>` — name filter parameter
-* `--node <NODE>` — node filter parameter
-* `--power-state <POWER_STATE>` — power_state filter parameter
-* `--progress <PROGRESS>` — progress filter parameter
-* `--project-id <PROJECT_ID>` — project_id filter parameter
-* `--ramdisk-id <RAMDISK_ID>` — ramdisk_id filter parameter
-* `--reservation-id <RESERVATION_ID>` — reservation_id filter parameter
-* `--root-device-name <ROOT_DEVICE_NAME>` — root_device_name filter parameter
-* `--status <STATUS>` — status filter parameter
-* `--task-state <TASK_STATE>` — task_state filter parameter
-* `--terminated-at <TERMINATED_AT>` — terminated_at filter parameter
-* `--user-id <USER_ID>` — user_id filter parameter
-* `--vm-state <VM_STATE>` — vm_state filter parameter
-* `--sort-key <SORT_KEY>` — sort_key filter parameter
-* `--sort-dir <SORT_DIR>` — sort_dir filter parameter
-* `--access-ipv4 <ACCESS_IPV4>` — access_ipv4 filter parameter
-* `--access-ipv6 <ACCESS_IPV6>` — access_ipv6 filter parameter
-* `--has-config-drive <HAS_CONFIG_DRIVE>` — has_config_drive filter parameter
-* `--deleted-only <DELETED_ONLY>` — deleted_only filter parameter
-* `--compute-host <COMPUTE_HOST>` — compute_host filter parameter
-* `--is-soft-deleted <IS_SOFT_DELETED>` — is_soft_deleted filter parameter
-* `--ipv4-address <IPV4_ADDRESS>` — ipv4_address filter parameter
-* `--ipv6-address <IPV6_ADDRESS>` — ipv6_address filter parameter
-* `--changes-since <CHANGES_SINCE>` — changes_since filter parameter
-* `--changes-before <CHANGES_BEFORE>` — changes_before filter parameter
-* `--id <ID>` — id filter parameter
-* `--all-projects <ALL_PROJECTS>` — all_projects filter parameter
-* `--tags <TAGS>` — tags filter parameter
-* `--any-tags <ANY_TAGS>` — any_tags filter parameter
-* `--not-tags <NOT_TAGS>` — not_tags filter parameter
-* `--not-any-tags <NOT_ANY_TAGS>` — not_any_tags filter parameter
+* `--network-id <NETWORK_ID>` — The network ID
+
+
+
+## `osc compute server add-floating-ip`
+
+Adds a floating IP address to a server, which associates that address with the server.
+
+A pool of floating IP addresses, configured by the cloud administrator, is available in OpenStack Compute. The project quota defines the maximum number of floating IP addresses that you can allocate to the project. After you [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate- floating-ip-address) for a project, you can associate that address with the server. Specify the `addFloatingIp` action in the request body.
+
+If an instance is connected to multiple networks, you can associate a floating IP address with a specific fixed IP address by using the optional `fixed\_address` parameter.
+
+**Preconditions**
+
+The server must exist.
+
+You can only add a floating IP address to the server when its status is `ACTIVE` or `STOPPED`
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server add-floating-ip [OPTIONS] --address <ADDRESS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--address <ADDRESS>` — The fixed IP address with which you want to associate the floating IP address
+* `--fixed-address <FIXED_ADDRESS>` — The fixed IP address with which you want to associate the floating IP address
+
+
+
+## `osc compute server add-security-group`
+
+Adds a security group to a server.
+
+Specify the `addSecurityGroup` action in the request body.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server add-security-group <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server change-password`
+
+Changes the administrative password for a server.
+
+Specify the `changePassword` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
+
+**Usage:** `osc compute server change-password --admin-pass <ADMIN_PASS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--admin-pass <ADMIN_PASS>` — The administrative password for the server
+
+
+
+## `osc compute server confirm-resize`
+
+Confirms a pending resize action for a server.
+
+Specify the `confirmResize` action in the request body.
+
+After you make this request, you typically must keep polling the server status to determine whether the request succeeded. A successfully confirming resize operation shows a status of `ACTIVE` or `SHUTOFF` and a migration status of `confirmed`. You can also see the resized server in the compute node that OpenStack Compute manages.
+
+**Preconditions**
+
+You can only confirm the resized server where the status is `VERIFY\_RESIZE`.
+
+If the server is locked, you must have administrator privileges to confirm the server.
+
+**Troubleshooting**
+
+If the server status remains `VERIFY\_RESIZE`, the request failed. Ensure you meet the preconditions and run the request again. If the request fails again, the server status should be `ERROR` and a migration status of `error`. Investigate the compute back end or ask your cloud provider. There are some options for trying to correct the server status:
+
+Note that the cloud provider may still need to cleanup any orphaned resources on the source hypervisor.
+
+Normal response codes: 204
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server confirm-resize <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server create294`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
+* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create290`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
+* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create274`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
+* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create267`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create263`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create257`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create252`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create242`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create237`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>`
+* `--none-networks`
+
+  Possible values: `true`, `false`
+
+* `--auto-networks`
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create233`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create233 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create232`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create232 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create219`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create219 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create21`
+
+Creates a server.
+
+The progress of this operation depends on the location of the requested image, network I/O, host load, selected flavor, and other factors.
+
+To check the progress of the request, make a `GET /servers/{id}` request. This call returns a progress attribute, which is a percentage value from 0 to 100.
+
+The `Location` header returns the full URL to the newly created server and is available as a `self` and `bookmark` link in the server representation.
+
+When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
+
+Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server create21 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+
+###### **Options:**
+
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--min-count <MIN_COUNT>`
+* `--max-count <MAX_COUNT>`
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+
+
+
+## `osc compute server create-backup`
+
+Create Server Back Up (createBackup Action) (microversion = 2.1)
+
+**Usage:** `osc compute server create-backup [OPTIONS] --name <NAME> --backup-type <BACKUP_TYPE> --rotation <ROTATION> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the image to be backed up
+* `--backup-type <BACKUP_TYPE>` — The type of the backup, for example, `daily`
+* `--rotation <ROTATION>` — The rotation of the back up image, the oldest image will be removed when image count exceed the rotation count
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+
+
+
+## `osc compute server create-image`
+
+Create Image (createImage Action) (microversion = 2.1)
+
+**Usage:** `osc compute server create-image [OPTIONS] --name <NAME> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The display name of an Image
+* `--metadata <key=value>` — Metadata key and value pairs for the image. The maximum size for each metadata key and value pair is 255 bytes
+
+
+
+## `osc compute server delete`
+
+Deletes a server.
+
+By default, the instance is going to be (hard) deleted immediately from the system, but you can set `reclaim\_instance\_interval` > 0 to make the API soft delete the instance, so that the instance won’t be deleted until the `reclaim\_instance\_interval` has expired since the instance was soft deleted. The instance marked as `SOFT\_DELETED` can be recovered via `restore` action before it’s really deleted from the system.
+
+**Preconditions**
+
+**Asynchronous postconditions**
+
+**Troubleshooting**
+
+Normal response codes: 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server diagnostic`
+
+Shows basic usage data for a server.
+
+Policy defaults enable only users with the administrative role. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), notfound(404), conflict(409), notimplemented(501)
+
+**Usage:** `osc compute server diagnostic <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server evacuate214`
+
+Evacuate Server (evacuate Action) (microversion = 2.14)
+
+**Usage:** `osc compute server evacuate214 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
+* `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+
+
+
+## `osc compute server evacuate229`
+
+Evacuate Server (evacuate Action) (microversion = 2.29)
+
+**Usage:** `osc compute server evacuate229 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
+* `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+* `--force <FORCE>` — Force an evacuation by not verifying the provided destination host by the scheduler
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc compute server evacuate268`
+
+Evacuate Server (evacuate Action) (microversion = 2.68)
+
+**Usage:** `osc compute server evacuate268 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
+* `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+
+
+
+## `osc compute server evacuate295`
+
+Evacuate Server (evacuate Action) (microversion = 2.95)
+
+**Usage:** `osc compute server evacuate295 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
+* `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+
+
+
+## `osc compute server force-delete`
+
+Force-deletes a server before deferred cleanup.
+
+Specify the `forceDelete` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server force-delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server get-console-output`
+
+Shows console output for a server.
+
+This API returns the text of the console since boot. The content returned may be large. Limit the lines of console text, beginning at the tail of the content, by setting the optional `length` parameter in the request body.
+
+The server to get console log from should set `export LC\_ALL=en\_US.UTF-8` in order to avoid incorrect unicode error.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), notFound(404), conflict(409), methodNotImplemented(501)
+
+**Usage:** `osc compute server get-console-output [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--length <LENGTH>` — The number of lines to fetch from the end of console log. All lines will be returned if this is not specified
+
+
+
+## `osc compute server instance-action`
+
+Servers actions
+
+List actions and action details for a server.
+
+**Usage:** `osc compute server instance-action
+       instance-action <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Actions For Server
+* `show` — Show Server Action Details
+
+
+
+## `osc compute server instance-action list`
+
+Lists actions for a server.
+
+Action information of deleted instances can be returned for requests starting with microversion 2.21.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server instance-action list [OPTIONS] <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--limit <LIMIT>`
+* `--marker <MARKER>`
+* `--changes-since <CHANGES_SINCE>`
+* `--changes-before <CHANGES_BEFORE>`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
 
 
 
-## `osc compute server show`
+## `osc compute server instance-action show`
 
-Show single Server
+Shows details for a server action.
 
-**Usage:** `osc compute server show <ID>`
+Action details of deleted instances can be returned for requests later than microversion 2.21.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server instance-action show <SERVER_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Server ID
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
+
+
+
+## `osc compute server interface`
+
+Port interfaces (servers, os-interface)
+
+List port interfaces, show port interface details of the given server. Create a port interface and uses it to attach a port to the given server, detach a port interface from the given server.
+
+**Usage:** `osc compute server interface
+       interface <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Interface (microversion = 2.49)
+* `delete` — Detach Interface
+* `list` — List Port Interfaces
+* `show` — Show Port Interface Details
+
+
+
+## `osc compute server interface create`
+
+Creates a port interface and uses it to attach a port to a server.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), computeFault(500), NotImplemented(501)
+
+**Usage:** `osc compute server interface create [OPTIONS] <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--net-id <NET_ID>` — The ID of the network for which you want to create a port interface. The `net\_id` and `port\_id` parameters are mutually exclusive. If you do not specify the `net\_id` parameter, the OpenStack Networking API v2.0 uses the network information cache that is associated with the instance
+* `--port-id <PORT_ID>` — The ID of the port for which you want to create an interface. The `net\_id` and `port\_id` parameters are mutually exclusive. If you do not specify the `port\_id` parameter, the OpenStack Networking API v2.0 allocates a port and creates an interface for it on the network
+* `--fixed-ips <FIXED_IPS>` — Fixed IP addresses. If you request a specific fixed IP address without a `net\_id`, the request returns a `Bad Request (400)` response code
+* `--tag <TAG>` — A device role tag that can be applied to a network interface when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
+
+
+
+## `osc compute server interface delete`
+
+Detaches a port interface from a server.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), NotImplemented(501)
+
+**Usage:** `osc compute server interface delete <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
+
+
+
+## `osc compute server interface list`
+
+Lists port interfaces that are attached to a server.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), NotImplemented(501)
+
+**Usage:** `osc compute server interface list <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server interface show`
+
+Shows details for a port interface that is attached to a server.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server interface show <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
+
+
+
+## `osc compute server inject-network-info`
+
+Injects network information into a server.
+
+Specify the `injectNetworkInfo` action in the request body.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server inject-network-info <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server ip`
+
+Servers IPs (servers, ips)
+
+Lists the IP addresses for an instance and shows details for an IP address.
+
+**Usage:** `osc compute server ip
+       ip <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List Ips
+* `show` — Show Ip Details
+
+
+
+## `osc compute server ip list`
+
+Lists IP addresses that are assigned to an instance.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server ip list <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server ip show`
+
+Shows IP addresses details for a network label of a server instance.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server ip show <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/ips/{id} API
+
+
+
+## `osc compute server list`
+
+For each server, shows server details including config drive, extended status, and server usage information.
+
+The extended status information appears in the OS-EXT-STS:vm\_state, OS-EXT-STS:power\_state, and OS-EXT-STS:task\_state attributes.
+
+The server usage information appears in the OS-SRV-USG:launched\_at and OS-SRV-USG:terminated\_at attributes.
+
+HostId is unique per account and is not globally unique.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403)
+
+**Usage:** `osc compute server list [OPTIONS]`
+
+###### **Options:**
+
+* `--user-id <USER_ID>`
+* `--project-id <PROJECT_ID>`
+* `--tenant-id <TENANT_ID>`
+* `--launch-index <LAUNCH_INDEX>`
+* `--image-ref <IMAGE_REF>`
+* `--image <IMAGE>`
+* `--kernel-id <KERNEL_ID>`
+* `--ramdisk-id <RAMDISK_ID>`
+* `--hostname <HOSTNAME>`
+* `--key-name <KEY_NAME>`
+* `--power-state <POWER_STATE>`
+* `--vm-state <VM_STATE>`
+* `--task-state <TASK_STATE>`
+* `--host <HOST>`
+* `--node <NODE>`
+* `--flavor <FLAVOR>`
+* `--reservation-id <RESERVATION_ID>`
+* `--launched-at <LAUNCHED_AT>`
+* `--terminated-at <TERMINATED_AT>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--name <NAME>`
+* `--display-name <DISPLAY_NAME>`
+* `--description <DESCRIPTION>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--locked-by <LOCKED_BY>`
+* `--uuid <UUID>`
+* `--root-device-name <ROOT_DEVICE_NAME>`
+* `--config-drive <CONFIG_DRIVE>`
+* `--access-ip-v4 <ACCESS_IP_V4>`
+* `--access-ip-v6 <ACCESS_IP_V6>`
+* `--auto-disk-config <AUTO_DISK_CONFIG>`
+* `--progress <PROGRESS>`
+* `--sort-key <SORT_KEY>`
+* `--sort-dir <SORT_DIR>`
+* `--all-tenants <ALL_TENANTS>`
+* `--soft-deleted <SOFT_DELETED>`
+* `--deleted <DELETED>`
+* `--status <STATUS>`
+* `--changes-since <CHANGES_SINCE>`
+* `--ip <IP>`
+* `--ip6 <IP6>`
+* `--created-at <CREATED_AT>`
+* `--block-device-mapping <BLOCK_DEVICE_MAPPING>`
+* `--services <SERVICES>`
+* `--metadata <METADATA>`
+* `--system-metadata <SYSTEM_METADATA>`
+* `--info-cache <INFO_CACHE>`
+* `--security-groups <SECURITY_GROUPS>`
+* `--pci-devices <PCI_DEVICES>`
+* `--limit <LIMIT>`
+* `--marker <MARKER>`
+* `--tags <TAGS>`
+* `--tags-any <TAGS_ANY>`
+* `--not-tags <NOT_TAGS>`
+* `--not-tags-any <NOT_TAGS_ANY>`
+* `--changes-before <CHANGES_BEFORE>`
+* `--locked <LOCKED>`
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc compute server live-migrate20`
+
+Live-Migrate Server (os-migrateLive Action) (microversion = 2.0)
+
+**Usage:** `osc compute server live-migrate20 --block-migration <BLOCK_MIGRATION> --disk-over-commit <DISK_OVER_COMMIT> --host <HOST> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--block-migration <BLOCK_MIGRATION>` — Set to `True` to enable over commit when the destination host is checked for available disk space. Set to `False` to disable over commit. This setting affects only the libvirt virt driver
+
+  Possible values: `true`, `false`
+
+* `--disk-over-commit <DISK_OVER_COMMIT>` — Set to `True` to enable over commit when the destination host is checked for available disk space. Set to `False` to disable over commit. This setting affects only the libvirt virt driver
+
+  Possible values: `true`, `false`
+
+* `--host <HOST>` — The host to which to migrate the server. If this parameter is `None`, the scheduler chooses a host
+
+
+
+## `osc compute server live-migrate225`
+
+Live-Migrate Server (os-migrateLive Action) (microversion = 2.25)
+
+**Usage:** `osc compute server live-migrate225 --block-migration <BLOCK_MIGRATION> --host <HOST> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--block-migration <BLOCK_MIGRATION>` — Migrates local disks by using block migration. Set to `auto` which means nova will detect whether source and destination hosts on shared storage. if they are on shared storage, the live-migration won’t be block migration. Otherwise the block migration will be executed. Set to `True`, means the request will fail when the source or destination host uses shared storage. Set to `False` means the request will fail when the source and destination hosts are not on the shared storage
+
+  Possible values: `true`, `false`
+
+* `--host <HOST>` — The host to which to migrate the server. If this parameter is `None`, the scheduler chooses a host
+
+
+
+## `osc compute server live-migrate230`
+
+Live-Migrate Server (os-migrateLive Action) (microversion = 2.30)
+
+**Usage:** `osc compute server live-migrate230 [OPTIONS] --block-migration <BLOCK_MIGRATION> --host <HOST> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--block-migration <BLOCK_MIGRATION>` — Migrates local disks by using block migration. Set to `auto` which means nova will detect whether source and destination hosts on shared storage. if they are on shared storage, the live-migration won’t be block migration. Otherwise the block migration will be executed. Set to `True`, means the request will fail when the source or destination host uses shared storage. Set to `False` means the request will fail when the source and destination hosts are not on the shared storage
+
+  Possible values: `true`, `false`
+
+* `--host <HOST>` — The host to which to migrate the server. If this parameter is `None`, the scheduler chooses a host
+* `--force <FORCE>` — Force a live-migration by not verifying the provided destination host by the scheduler
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc compute server live-migrate268`
+
+Live-Migrate Server (os-migrateLive Action) (microversion = 2.68)
+
+**Usage:** `osc compute server live-migrate268 --block-migration <BLOCK_MIGRATION> --host <HOST> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--block-migration <BLOCK_MIGRATION>` — Migrates local disks by using block migration. Set to `auto` which means nova will detect whether source and destination hosts on shared storage. if they are on shared storage, the live-migration won’t be block migration. Otherwise the block migration will be executed. Set to `True`, means the request will fail when the source or destination host uses shared storage. Set to `False` means the request will fail when the source and destination hosts are not on the shared storage
+
+  Possible values: `true`, `false`
+
+* `--host <HOST>` — The host to which to migrate the server. If this parameter is `None`, the scheduler chooses a host
+
+
+
+## `osc compute server lock`
+
+Locks a server.
+
+Specify the `lock` action in the request body.
+
+Most actions by non-admin users are not allowed to the server after this operation is successful and the server is locked. See the “Lock, Unlock” item in [Server actions](https://docs.openstack.org/api- guide/compute/server_concepts.html#server-actions) for the restricted actions. But administrators can perform actions on the server even though the server is locked. Note that from microversion 2.73 it is possible to specify a reason when locking the server.
+
+The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock- server-unlock-action) will unlock a server in locked state so additional actions can be performed on the server by non-admin users.
+
+You can know whether a server is locked or not and the `locked\_reason` (if specified, from the 2.73 microversion) by the [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed) or the [Show Server Details API](https://docs.openstack.org/api- ref/compute/#show-server-details).
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file. Administrators can overwrite owner’s lock.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server lock [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--locked-reason <LOCKED_REASON>`
+
+
+
+## `osc compute server metadata`
+
+Lists metadata, creates or replaces one or more metadata items, and updates one or more metadata items for a server.
+
+Shows details for, creates or replaces, and updates a metadata item, by key, for a server.
+
+**Usage:** `osc compute server metadata
+       metadata <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create or Update Metadata Items
+* `delete` — Delete Metadata Item
+* `list` — List All Metadata
+* `replace` — Replace Metadata Items
+* `set` — Create Or Update Metadata Item
+* `show` — Show Metadata Item Details
+
+
+
+## `osc compute server metadata create`
+
+Create or update one or more metadata items for a server.
+
+Creates any metadata items that do not already exist in the server, replaces exists metadata items that match keys. Does not modify items that are not in the request.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server metadata create [OPTIONS] <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--metadata <key=value>`
+
+
+
+## `osc compute server metadata delete`
+
+Deletes a metadata item, by key, from a server.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server metadata delete <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/metadata/{id} API
+
+
+
+## `osc compute server metadata list`
+
+Lists all metadata for a server.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server metadata list <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server metadata replace`
+
+Replaces one or more metadata items for a server.
+
+Creates any metadata items that do not already exist in the server. Removes and completely replaces any metadata items that already exist in the server with the metadata items in the request.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server metadata replace [OPTIONS] <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--metadata <key=value>`
+
+
+
+## `osc compute server metadata set`
+
+Creates or replaces a metadata item, by key, for a server.
+
+Creates a metadata item that does not already exist in the server. Replaces existing metadata items that match keys with the metadata item in the request.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server metadata set [OPTIONS] <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/metadata/{id} API
+
+###### **Options:**
+
+* `--meta <key=value>`
+
+
+
+## `osc compute server metadata show`
+
+Shows details for a metadata item, by key, for a server.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server metadata show <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/metadata/{id} API
+
+
+
+## `osc compute server migrate`
+
+Migrates a server to a host.
+
+Specify the `migrate` action in the request body.
+
+Up to microversion 2.55, the scheduler chooses the host. Starting from microversion 2.56, the `host` parameter is available to specify the destination host. If you specify `null` or don’t specify this parameter, the scheduler chooses a host.
+
+**Asynchronous Postconditions**
+
+A successfully migrated server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize\_confirm\_window] (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r esize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the migrate operation after the configured interval.
+
+There are two different policies for this action, depending on whether the host parameter is set. Both defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403) itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server migrate [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--host <HOST>`
+
+
+
+## `osc compute server migration`
+
+Server migrations (servers, migrations)
+
+List, show, perform actions on and delete server migrations.
+
+**Usage:** `osc compute server migration
+       migration <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Delete (Abort) Migration
+* `force-complete` — Force Migration Complete Action (force_complete Action) (microversion = 2.22)
+* `list` — List Migrations
+* `show` — Show Migration Details
+
+
+
+## `osc compute server migration delete`
+
+Abort an in-progress live migration.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+**Preconditions**
+
+The server OS-EXT-STS:task\_state value must be `migrating`.
+
+If the server is locked, you must have administrator privileges to force the completion of the server migration.
+
+For microversions from 2.24 to 2.64 the migration status must be `running`, for microversion 2.65 and greater, the migration status can also be `queued` and `preparing`.
+
+**Asynchronous Postconditions**
+
+After you make this request, you typically must keep polling the server status to determine whether the request succeeded. You may also monitor the migration using:
+
+**Troubleshooting**
+
+If the server status remains `MIGRATING` for an inordinate amount of time, the request may have failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server migration delete <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+
+
+
+## `osc compute server migration force-complete`
+
+Force an in-progress live migration for a given server to complete.
+
+Specify the `force\_complete` action in the request body.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+**Preconditions**
+
+The server OS-EXT-STS:vm\_state value must be `active` and the server OS-EXT-STS:task\_state value must be `migrating`.
+
+If the server is locked, you must have administrator privileges to force the completion of the server migration.
+
+The migration status must be `running`.
+
+**Asynchronous Postconditions**
+
+After you make this request, you typically must keep polling the server status to determine whether the request succeeded.
+
+**Troubleshooting**
+
+If the server status remains `MIGRATING` for an inordinate amount of time, the request may have failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end. More details can be found in the [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration- usage.html#what-to-do-when-the-migration-times-out).
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server migration force-complete <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+
+
+
+## `osc compute server migration list`
+
+Lists in-progress live migrations for a given server.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server migration list <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server migration show`
+
+Show details for an in-progress live migration for a given server.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server migration show <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+
+
+
+## `osc compute server password`
+
+Servers password
+
+Shows the encrypted administrative password. Also, clears the encrypted administrative password for a server, which removes it from the metadata server.
+
+**Usage:** `osc compute server password
+       password <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Clear Admin Password
+* `show` — Show Server Password
+
+
+
+## `osc compute server password delete`
+
+Clears the encrypted administrative password for a server, which removes it from the database.
+
+This action does not actually change the instance server password.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server password delete <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server password show`
+
+Shows the administrative password for a server.
+
+This operation calls the metadata service to query metadata information and does not read password information from the server itself.
+
+The password saved in the metadata service is typically encrypted using the public SSH key injected into this server, so the SSH private key is needed to read the password.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server password show <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
 
 
 
 ## `osc compute server pause`
 
-Pause Server
+Pauses a server. Changes its status to `PAUSED`.
+
+Specify the `pause` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
 
 **Usage:** `osc compute server pause <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — Server ID
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server reset-state`
+
+Resets the state of a server.
+
+Specify the `os-resetState` action and the `state` in the request body.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server reset-state --state <STATE> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--state <STATE>` — The state of the server to be set, `active` or `error` are valid
+
+  Possible values: `active`, `error`
+
+
+
+
+## `osc compute server reboot`
+
+Reboots a server.
+
+Specify the `reboot` action in the request body.
+
+**Preconditions**
+
+The preconditions for rebooting a server depend on the type of reboot.
+
+You can only *SOFT* reboot a server when its status is `ACTIVE`.
+
+You can only *HARD* reboot a server when its status is one of:
+
+If the server is locked, you must have administrator privileges to reboot the server.
+
+**Asynchronous Postconditions**
+
+After you successfully reboot a server, its status changes to `ACTIVE`.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server reboot --type <TYPE> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--type <TYPE>` — The type of the reboot action. The valid values are `HARD` and `SOFT`. A `SOFT` reboot attempts a graceful shutdown and restart of the server. A `HARD` reboot attempts a forced shutdown and restart of the server. The `HARD` reboot corresponds to the power cycles of the server
+
+  Possible values: `hard`, `soft`
+
+
+
+
+## `osc compute server rebuild21`
+
+Rebuild Server (rebuild Action) (microversion = 2.1)
+
+**Usage:** `osc compute server rebuild21 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+
+
+
+## `osc compute server rebuild219`
+
+Rebuild Server (rebuild Action) (microversion = 2.19)
+
+**Usage:** `osc compute server rebuild219 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+
+
+
+## `osc compute server rebuild254`
+
+Rebuild Server (rebuild Action) (microversion = 2.54)
+
+**Usage:** `osc compute server rebuild254 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+
+
+
+## `osc compute server rebuild257`
+
+Rebuild Server (rebuild Action) (microversion = 2.57)
+
+**Usage:** `osc compute server rebuild257 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+
+
+
+## `osc compute server rebuild263`
+
+Rebuild Server (rebuild Action) (microversion = 2.63)
+
+**Usage:** `osc compute server rebuild263 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
+
+
+
+## `osc compute server rebuild290`
+
+Rebuild Server (rebuild Action) (microversion = 2.90)
+
+**Usage:** `osc compute server rebuild290 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+
+
+
+## `osc compute server rebuild294`
+
+Rebuild Server (rebuild Action) (microversion = 2.94)
+
+**Usage:** `osc compute server rebuild294 [OPTIONS] --image-ref <IMAGE_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+
+
+
+## `osc compute server remote-console`
+
+Server Consoles
+
+Manage server consoles.
+
+**Usage:** `osc compute server remote-console
+       remote-console <COMMAND>`
+
+###### **Subcommands:**
+
+* `create26` — Create Console (microversion = 2.6)
+* `create28` — Create Console (microversion = 2.8)
+
+
+
+## `osc compute server remote-console create26`
+
+The API provides a unified request for creating a remote console. The user can get a URL to connect the console from this API. The URL includes the token which is used to get permission to access the console. Servers may support different console protocols. To return a remote console using a specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
+
+**Usage:** `osc compute server remote-console create26 --protocol <PROTOCOL> --type <TYPE> <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--protocol <PROTOCOL>` — The protocol of remote console. The valid values are `vnc`, `spice`, `rdp`, `serial` and `mks`. The protocol `mks` is added since Microversion `2.8`
+
+  Possible values: `rdp`, `serial`, `spice`, `vnc`
+
+* `--type <TYPE>` — The type of remote console. The valid values are `novnc`, `rdp-html5`, `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since Microversion `2.8`
+
+  Possible values: `novnc`, `rdp-html5`, `serial`, `spice-html5`, `xvpvnc`
+
+
+
+
+## `osc compute server remote-console create28`
+
+The API provides a unified request for creating a remote console. The user can get a URL to connect the console from this API. The URL includes the token which is used to get permission to access the console. Servers may support different console protocols. To return a remote console using a specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
+
+**Usage:** `osc compute server remote-console create28 --protocol <PROTOCOL> --type <TYPE> <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--protocol <PROTOCOL>` — The protocol of remote console. The valid values are `vnc`, `spice`, `rdp`, `serial` and `mks`. The protocol `mks` is added since Microversion `2.8`
+
+  Possible values: `mks`, `rdp`, `serial`, `spice`, `vnc`
+
+* `--type <TYPE>` — The type of remote console. The valid values are `novnc`, `rdp-html5`, `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since Microversion `2.8`
+
+  Possible values: `novnc`, `rdp-html5`, `serial`, `spice-html5`, `webmks`, `xvpvnc`
+
+
+
+
+## `osc compute server remove-fixed-ip`
+
+Removes, or disassociates, a fixed IP address from a server.
+
+Specify the `removeFixedIp` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server remove-fixed-ip --address <ADDRESS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--address <ADDRESS>` — The IP address
+
+
+
+## `osc compute server remove-floating-ip`
+
+Removes, or disassociates, a floating IP address from a server.
+
+The IP address is returned to the pool of IP addresses that is available for all projects. When you remove a floating IP address and that IP address is still associated with a running instance, it is automatically disassociated from that instance.
+
+Specify the `removeFloatingIp` action in the request body.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server remove-floating-ip --address <ADDRESS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--address <ADDRESS>` — The floating IP address
+
+
+
+## `osc compute server remove-security-group`
+
+Removes a security group from a server.
+
+Specify the `removeSecurityGroup` action in the request body.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server remove-security-group <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server rescue`
+
+Puts a server in rescue mode and changes its status to `RESCUE`.
+
+Specify the `rescue` action in the request body.
+
+If you specify the `rescue\_image\_ref` extended attribute, the image is used to rescue the instance. If you omit an image reference, the base image reference is used by default.
+
+**Asynchronous Postconditions**
+
+After you successfully rescue a server and make a `GET /servers/​{server\_id}​` request, its status changes to `RESCUE`.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
+
+**Usage:** `osc compute server rescue [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--admin-pass <ADMIN_PASS>`
+* `--rescue-image-ref <RESCUE_IMAGE_REF>`
+
+
+
+## `osc compute server reset-network`
+
+Resets networking on a server.
+
+Specify the `resetNetwork` action in the request body.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), gone(410)
+
+**Usage:** `osc compute server reset-network <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server resize`
+
+Resizes a server.
+
+Specify the `resize` action in the request body.
+
+**Preconditions**
+
+You can only resize a server when its status is `ACTIVE` or `SHUTOFF`.
+
+If the server is locked, you must have administrator privileges to resize the server.
+
+**Asynchronous Postconditions**
+
+A successfully resized server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize\_confirm\_window] (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r esize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the resize operation after the configured interval.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server resize [OPTIONS] --flavor-ref <FLAVOR_REF> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--flavor-ref <FLAVOR_REF>` — The flavor ID for resizing the server. The size of the disk in the flavor being resized to must be greater than or equal to the size of the disk in the current flavor
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+
+
+
+## `osc compute server restore`
+
+Restores a previously soft-deleted server instance. You cannot use this method to restore deleted instances.
+
+Specify the `restore` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server restore <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server resume`
+
+Resumes a suspended server and changes its status to `ACTIVE`.
+
+Specify the `resume` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server resume <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server revert-resize`
+
+Cancels and reverts a pending resize action for a server.
+
+Specify the `revertResize` action in the request body.
+
+**Preconditions**
+
+You can only revert the resized server where the status is `VERIFY\_RESIZE` and the OS-EXT-STS:vm\_state is `resized`.
+
+If the server is locked, you must have administrator privileges to revert the resizing.
+
+**Asynchronous Postconditions**
+
+After you make this request, you typically must keep polling the server status to determine whether the request succeeded. A reverting resize operation shows a status of `REVERT\_RESIZE` and a task\_state of `resize\_reverting`. If successful, the status will return to `ACTIVE` or `SHUTOFF`. You can also see the reverted server in the compute node that OpenStack Compute manages.
+
+**Troubleshooting**
+
+If the server status remains `VERIFY\_RESIZE`, the request failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end.
+
+The server is not reverted in the compute node that OpenStack Compute manages.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server revert-resize <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server security-groups`
+
+Lists security groups for a server.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server security-groups <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server set21`
+
+Updates the editable attributes of an existing server.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server set21 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+
+
+
+## `osc compute server set219`
+
+Updates the editable attributes of an existing server.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server set219 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+
+
+
+## `osc compute server set290`
+
+Updates the editable attributes of an existing server.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server set290 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+
+
+
+## `osc compute server set294`
+
+Updates the editable attributes of an existing server.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server set294 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The server name
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+
+
+
+## `osc compute server shelve`
+
+Shelves a server.
+
+Specify the `shelve` action in the request body.
+
+All associated data and resources are kept but anything still in memory is not retained. To restore a shelved instance, use the `unshelve` action. To remove a shelved instance, use the `shelveOffload` action.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+**Preconditions**
+
+The server status must be `ACTIVE`, `SHUTOFF`, `PAUSED`, or `SUSPENDED`.
+
+If the server is locked, you must have administrator privileges to shelve the server.
+
+**Asynchronous Postconditions**
+
+After you successfully shelve a server, its status changes to `SHELVED` and the image status is `ACTIVE`. The server instance data appears on the compute node that the Compute service manages.
+
+If you boot the server from volumes or set the `shelved\_offload\_time` option to 0, the Compute service automatically deletes the instance on compute nodes and changes the server status to `SHELVED\_OFFLOADED`.
+
+**Troubleshooting**
+
+If the server status does not change to `SHELVED` or `SHELVED\_OFFLOADED`, the shelve operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server shelve <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server shelve-offload`
+
+Shelf-offloads, or removes, a shelved server.
+
+Specify the `shelveOffload` action in the request body.
+
+Data and resource associations are deleted. If an instance is no longer needed, you can remove that instance from the hypervisor to minimize resource usage.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+**Preconditions**
+
+The server status must be `SHELVED`.
+
+If the server is locked, you must have administrator privileges to shelve- offload the server.
+
+**Asynchronous Postconditions**
+
+After you successfully shelve-offload a server, its status changes to `SHELVED\_OFFLOADED`. The server instance data appears on the compute node.
+
+**Troubleshooting**
+
+If the server status does not change to `SHELVED\_OFFLOADED`, the shelve- offload operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server shelve-offload <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server show`
+
+Shows details for a server.
+
+Includes server details including configuration drive, extended status, and server usage information.
+
+The extended status information appears in the `OS-EXT-STS:vm\_state`, `OS- EXT-STS:power\_state`, and `OS-EXT-STS:task\_state` attributes.
+
+The server usage information appears in the `OS-SRV-USG:launched\_at` and `OS-SRV-USG:terminated\_at` attributes.
+
+HostId is unique per account and is not globally unique.
+
+**Preconditions**
+
+The server must exist.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server start`
+
+Starts a stopped server and changes its status to `ACTIVE`.
+
+Specify the `os-start` action in the request body.
+
+**Preconditions**
+
+The server status must be `SHUTOFF`.
+
+If the server is locked, you must have administrator privileges to start the server.
+
+**Asynchronous Postconditions**
+
+After you successfully start a server, its status changes to `ACTIVE`.
+
+**Troubleshooting**
+
+If the server status does not change to `ACTIVE`, the start operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server start <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server stop`
+
+Stops a running server and changes its status to `SHUTOFF`.
+
+Specify the `os-stop` action in the request body.
+
+**Preconditions**
+
+The server status must be `ACTIVE` or `ERROR`.
+
+If the server is locked, you must have administrator privileges to stop the server.
+
+**Asynchronous Postconditions**
+
+After you successfully stop a server, its status changes to `SHUTOFF`. This API operation does not delete the server instance data and the data will be available again after `os-start` action.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server stop <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server suspend`
+
+Suspends a server and changes its status to `SUSPENDED`.
+
+Specify the `suspend` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server suspend <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server tag`
+
+Lists tags, creates, replaces or deletes one or more tags for a server, checks the existence of a tag for a server.
+
+Available since version 2.26
+
+Tags have the following restrictions:
+
+- Tag is a Unicode bytestring no longer than 60 characters.
+
+- Tag is a non-empty string.
+
+- ‘/’ is not allowed to be in a tag name
+
+- Comma is not allowed to be in a tag name in order to simplify requests that specify lists of tags
+
+- All other characters are allowed to be in a tag name
+
+- Each server can have up to 50 tags.
+
+**Usage:** `osc compute server tag
+       tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Add a Single Tag
+* `check` — Check Tag Existence
+* `delete` — Delete a Single Tag
+* `list` — List Tags
+* `purge` — Delete All Tags
+* `replace` — Replace Tags (microversion = 2.26)
+
+
+
+## `osc compute server tag add`
+
+Adds a single tag to the server if server has no specified tag. Response code in this case is 201.
+
+If the server has specified tag just returns 204.
+
+Normal response codes: 201, 204
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server tag add <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/tags/{id} API
+
+
+
+## `osc compute server tag check`
+
+Checks tag existence on the server. If tag exists response with 204 status code will be returned. Otherwise returns 404.
+
+Normal response codes: 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server tag check <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/tags/{id} API
+
+
+
+## `osc compute server tag delete`
+
+Deletes a single tag from the specified server.
+
+Normal response codes: 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server tag delete <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/tags/{id} API
+
+
+
+## `osc compute server tag list`
+
+Lists all tags for a server.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server tag list <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server tag purge`
+
+Deletes all tags from the specified server.
+
+Normal response codes: 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server tag purge <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server tag replace`
+
+Replaces all tags on specified server with the new set of tags.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server tag replace [OPTIONS] <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--tags <TAGS>`
+
+
+
+## `osc compute server topology`
+
+Shows NUMA topology information for a server.
+
+Policy defaults enable only users with the administrative role or the owners of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), notfound(404), forbidden(403)
+
+**Usage:** `osc compute server topology <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+
+
+## `osc compute server trigger-crash-dump`
+
+Path parameters
+
+**Usage:** `osc compute server trigger-crash-dump <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server unlock`
+
+Unlocks a locked server.
+
+Specify the `unlock` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server unlock <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server unpause`
+
+Unpauses a paused server and changes its status to `ACTIVE`.
+
+Specify the `unpause` action in the request body.
+
+Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
+
+**Usage:** `osc compute server unpause <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server unrescue`
+
+Unrescues a server. Changes status to `ACTIVE`.
+
+Specify the `unrescue` action in the request body.
+
+**Preconditions**
+
+The server must exist.
+
+You can only unrescue a server when its status is `RESCUE`.
+
+**Asynchronous Postconditions**
+
+After you successfully unrescue a server and make a `GET /servers/​{server\_id}​` request, its status changes to `ACTIVE`.
+
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
+
+**Usage:** `osc compute server unrescue <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+
+
+## `osc compute server unshelve277`
+
+Unshelve (Restore) Shelved Server (unshelve Action) (microversion = 2.77)
+
+**Usage:** `osc compute server unshelve277 --availability-zone <AVAILABILITY_ZONE> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--availability-zone <AVAILABILITY_ZONE>`
+
+
+
+## `osc compute server unshelve291`
+
+Unshelve (Restore) Shelved Server (unshelve Action) (microversion = 2.91)
+
+**Usage:** `osc compute server unshelve291 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--host <HOST>`
+
+
+
+## `osc compute server volume-attachment`
+
+Servers with volume attachments
+
+Attaches volumes that are created through the volume API to server instances. Also, lists volume attachments for a server, shows details for a volume attachment, and detaches a volume.
+
+**Usage:** `osc compute server volume-attachment
+       volume-attachment <COMMAND>`
+
+###### **Subcommands:**
+
+* `create20` — Attach a volume to an instance (microversion = 2.0)
+* `create249` — Attach a volume to an instance (microversion = 2.49)
+* `create279` — Attach a volume to an instance (microversion = 2.79)
+* `delete` — Detach a volume from an instance
+* `list` — List volume attachments for an instance
+* `set20` — Update a volume attachment (microversion = 2.0)
+* `set285` — Update a volume attachment (microversion = 2.85)
+* `show` — Show a detail of a volume attachment
+
+
+
+## `osc compute server volume-attachment create20`
+
+Attach a volume to an instance.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server volume-attachment create20 [OPTIONS] --volume-id <VOLUME_ID> <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
+* `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
+
+
+
+## `osc compute server volume-attachment create249`
+
+Attach a volume to an instance.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server volume-attachment create249 [OPTIONS] --volume-id <VOLUME_ID> <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
+* `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
+* `--tag <TAG>` — A device role tag that can be applied to a volume when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
+
+
+
+## `osc compute server volume-attachment create279`
+
+Attach a volume to an instance.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server volume-attachment create279 [OPTIONS] --volume-id <VOLUME_ID> <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
+* `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
+* `--tag <TAG>` — A device role tag that can be applied to a volume when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
+* `--delete-on-termination <DELETE_ON_TERMINATION>` — To delete the attached volume when the server is destroyed, specify `true`. Otherwise, specify `false`. Default: `false`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc compute server volume-attachment delete`
+
+Detach a volume from an instance.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server volume-attachment delete <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
+
+
+
+## `osc compute server volume-attachment list`
+
+List volume attachments for an instance.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server volume-attachment list [OPTIONS] <SERVER_ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+
+###### **Options:**
+
+* `--limit <LIMIT>`
+* `--offset <OFFSET>`
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc compute server volume-attachment set20`
+
+Update a volume attachment.
+
+Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is [system, project], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Updating, or what is commonly referred to as “swapping”, volume attachments with volumes that have more than one read/write attachment, is not supported.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server volume-attachment set20 --volume-id <VOLUME_ID> <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
+
+###### **Options:**
+
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach instead of the attached volume
+
+
+
+## `osc compute server volume-attachment set285`
+
+Update a volume attachment.
+
+Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is [system, project], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Updating, or what is commonly referred to as “swapping”, volume attachments with volumes that have more than one read/write attachment, is not supported.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
+
+**Usage:** `osc compute server volume-attachment set285 [OPTIONS] --volume-id <VOLUME_ID> <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
+
+###### **Options:**
+
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach instead of the attached volume
+* `--device <DEVICE>` — Name of the device in the attachment object, such as, `/dev/vdb`
+* `--tag <TAG>` — The device tag applied to the volume block device or `null`
+* `--delete-on-termination <DELETE_ON_TERMINATION>` — A flag indicating if the attached volume will be deleted when the server is deleted
+
+  Possible values: `true`, `false`
+
+* `--server-id <SERVER_ID>` — The UUID of the server
+* `--id <ID>` — The UUID of the attachment
+
+
+
+## `osc compute server volume-attachment show`
+
+Show a detail of a volume attachment.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
+**Usage:** `osc compute server volume-attachment show <SERVER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 
 

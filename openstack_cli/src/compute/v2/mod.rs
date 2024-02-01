@@ -70,32 +70,6 @@ pub enum ComputeSrvCommands {
     /// Generates, imports, and deletes SSH keys.
     #[command(about = "Keypairs")]
     Keypair(Box<KeypairArgs>),
-    /// **Servers (servers)**
-    ///
-    /// Lists, creates, shows details for, updates, and deletes servers.
-    ///
-    /// **Passwords**
-    ///
-    /// When you create a server, you can specify a password through the
-    /// optional adminPass attribute. The password must meet the complexity
-    /// requirements set by your OpenStack Compute provider. The server might
-    /// enter an ERROR state if the complexity requirements are not met. In
-    /// this case, a client might issue a change password action to reset the
-    /// server password.
-    ///
-    /// If you do not specify a password, the API generates and assigns a
-    /// random password that it returns in the response object. This password
-    /// meets the security requirements set by the compute provider. For
-    /// security reasons, subsequent GET calls do not require this password.
-    ///
-    /// **Server metadata**
-    ///
-    /// You can specify custom server metadata at server launch time. The
-    /// maximum size for each metadata key-value pair is 255 bytes. The compute
-    /// provider determines the maximum number of key-value pairs for each
-    /// server. You can query this value through the maxServerMeta absolute
-    /// limit.
-    #[command(about = "Servers")]
     Server(Box<ServerArgs>),
 }
 

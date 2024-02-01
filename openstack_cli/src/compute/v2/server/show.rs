@@ -1,7 +1,5 @@
-//! Get single Server
 use async_trait::async_trait;
 use clap::Args;
-
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
@@ -12,306 +10,838 @@ use crate::Cli;
 use crate::OutputConfig;
 use crate::StructTable;
 use crate::{OSCCommand, OpenStackCliError};
-use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::AsyncOpenStack;
 
-use crate::common::HashMapStringString;
-use crate::common::VecString;
-use crate::common::VecValue;
 use openstack_sdk::api::compute::v2::server::find;
-
 use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
+use std::collections::HashMap;
+use std::fmt;
+use structable_derive::StructTable;
 
-/// Get single Server
+/// Shows details for a server.
+///
+/// Includes server details including configuration drive, extended status, and
+/// server usage information.
+///
+/// The extended status information appears in the `OS-EXT-STS:vm\_state`, `OS-
+/// EXT-STS:power\_state`, and `OS-EXT-STS:task\_state` attributes.
+///
+/// The server usage information appears in the `OS-SRV-USG:launched\_at` and
+/// `OS-SRV-USG:terminated\_at` attributes.
+///
+/// HostId is unique per account and is not globally unique.
+///
+/// **Preconditions**
+///
+/// The server must exist.
+///
+/// Normal response codes: 200
+///
+/// Error response codes: unauthorized(401), forbidden(403),
+/// itemNotFound(404)
 #[derive(Args, Clone, Debug)]
+#[command(about = "Show Server Details")]
 pub struct ServerArgs {
-    /// Server ID
-    #[arg()]
+    /// Request Query parameters
+    #[command(flatten)]
+    query: QueryParameters,
+
+    /// Path parameters
+    #[command(flatten)]
+    path: PathParameters,
+}
+
+/// Query parameters
+#[derive(Args, Clone, Debug)]
+pub struct QueryParameters {}
+
+/// Path parameters
+#[derive(Args, Clone, Debug)]
+pub struct PathParameters {
+    /// id parameter for /v2.1/servers/{id}/action API
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
+/// Server show command
 pub struct ServerCmd {
     pub args: ServerArgs,
 }
-
-/// Server
+/// Server response representation
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
-pub struct Server {
-    /// The disk configuration. Either AUTO or MANUAL.
-    #[serde(rename = "OS-DCF:diskConfig")]
-    #[structable(optional)]
-    disk_config: Option<String>,
-
-    /// The name of the availability zone this server is a part of.
-    #[serde(rename = "OS-EXT-AZ:availability_zone")]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The name of the compute host on which this instance is running. Appears
-    /// in the response for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:host")]
-    #[structable(optional)]
-    compute_host: Option<String>,
-
-    /// The hostname set on the instance when it is booted. By default, it
-    /// appears in the response for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:hostname")]
-    #[structable(optional)]
-    hostname: Option<String>,
-
-    /// The hypervisor host name. Appears in the response for administrative
-    /// users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
-    #[structable(optional)]
-    hypervisor_hostname: Option<String>,
-
-    /// The instance name. The Compute API generates the instance name from the
-    /// instance name template. Appears in the response for administrative
-    /// users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:instance_name")]
-    #[structable(optional)]
-    instance_name: Option<String>,
-
-    /// The UUID of the kernel image when using an AMI. Will be null if not. By
-    /// default, it appears in the response for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:kernel_id")]
-    #[structable(optional)]
-    kernel_id: Option<String>,
-
-    /// When servers are launched via multiple create, this is the sequence in
-    /// which the servers were launched. By default, it appears in the response
-    /// for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:launch_index")]
-    #[structable(optional)]
-    launch_index: Option<u32>,
-
-    /// The UUID of the ramdisk image when using an AMI. Will be null if not.
-    /// By default, it appears in the response for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:ramdisk_id")]
-    #[structable(optional)]
-    ramdisk_id: Option<String>,
-
-    /// The reservation id for the server. This is an id that can be useful in
-    /// tracking groups of servers created with multiple create, that will all
-    /// have the same reservation_id. By default, it appears in the response
-    /// for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:reservation_id")]
-    #[structable(optional)]
-    reservation_id: Option<String>,
-
-    /// The root device name for the instance By default, it appears in the
-    /// response for administrative users only.
-    #[serde(rename = "OS-EXT-SRV-ATTR:root_device_name")]
-    #[structable(optional)]
-    root_device_name: Option<String>,
-
-    /// Configuration information or scripts to use upon launch. Must be Base64
-    /// encoded.
-    #[serde(rename = "OS-EXT-SRV-ATTR:user_data")]
-    #[structable(optional)]
-    user_data: Option<String>,
-
-    /// The power state of this server.
-    #[serde(rename = "OS-EXT-STS:power_state")]
-    #[structable(optional)]
-    power_state: Option<u32>,
-
-    /// The task state of this server.
-    #[serde(rename = "OS-EXT-STS:task_state")]
-    #[structable(optional)]
-    task_state: Option<String>,
-
-    /// The VM state of this server.
-    #[serde(rename = "OS-EXT-STS:vm_state")]
-    #[structable(optional)]
-    vm_state: Option<String>,
-
-    /// The dictionary of data to send to the scheduler.
-    #[serde(rename = "OS-SCH-HNT:scheduler_hints")]
-    #[structable(optional)]
-    scheduler_hints: Option<Value>,
-
-    /// The timestamp when the server was launched.
-    #[serde(rename = "OS-SRV-USG:launched_at")]
-    #[structable(optional)]
-    launched_at: Option<String>,
-
-    /// The timestamp when the server was terminated (if it has been).
-    #[serde(rename = "OS-SRV-USG:terminated_at")]
-    #[structable(optional)]
-    terminated_at: Option<u32>,
-
-    /// None
+pub struct ResponseData {
+    /// IPv4 address that should be used to access this server. May be
+    /// automatically set by the provider.
     #[serde(rename = "accessIPv4")]
-    #[structable(optional)]
+    #[structable(optional, title = "accessIPv4")]
     access_ipv4: Option<String>,
 
-    /// None
+    /// IPv6 address that should be used to access this server. May be
+    /// automatically set by the provider.
     #[serde(rename = "accessIPv6")]
-    #[structable(optional)]
+    #[structable(optional, title = "accessIPv6")]
     access_ipv6: Option<String>,
 
-    /// A dictionary of addresses this server can be accessed through. The
-    /// dictionary contains keys such as ``private`` and ``public``, each
-    /// containing a list of dictionaries for addresses of that type. The
-    /// addresses are contained in a dictionary with keys ``addr`` and
-    /// ``version``, which is either 4 or 6 depending on the protocol of the IP
-    /// address.
+    /// The addresses for the server. Servers with status `BUILD` hide their
+    /// addresses information.
+    #[serde()]
     #[structable(optional)]
-    addresses: Option<Value>,
+    addresses: Option<HashMapStringVecResponseAddresses>,
 
-    /// When a server is first created, it provides the administrator password.
-    #[serde(rename = "adminPass")]
+    /// The attached volumes, if any.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "os-extended-volumes:volumes_attached")]
+    #[structable(optional, title = "os-extended-volumes:volumes_attached")]
+    os_extended_volumes_volumes_attached: Option<VecHashMapStringValue>,
+
+    /// The availability zone name.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-AZ:availability_zone")]
+    #[structable(optional, title = "OS-EXT-AZ:availability_zone")]
+    os_ext_az_availability_zone: Option<String>,
+
+    /// The name of the compute host on which this instance is running.
+    /// Appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:host")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:host")]
+    os_ext_srv_attr_host: Option<String>,
+
+    /// Indicates whether or not a config drive was used for this server.
+    /// The value is `True` or an empty string. An empty string stands for
+    /// `False`.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde()]
     #[structable(optional)]
-    admin_password: Option<u32>,
+    config_drive: Option<String>,
 
-    /// Enables fine grained control of the block device mapping for an
-    /// instance. This is typically used for booting servers from volumes.
-    #[serde(rename = "block_device_mapping_v2")]
+    /// The date and time when the resource was created. The date and time
+    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    ///
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+    /// value, if included, is the time zone as an offset from UTC. In
+    /// the previous example, the offset value is `-05:00`.
+    #[serde()]
     #[structable(optional)]
-    block_device_mapping: Option<String>,
+    created: Option<String>,
 
-    /// Indicates whether a configuration drive enables metadata injection. Not
-    /// all cloud providers enable this feature.
-    #[serde(rename = "config_drive")]
-    #[structable(optional)]
-    has_config_drive: Option<String>,
-
-    /// Timestamp of when the server was created.
-    #[serde(rename = "created")]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The description of the server. Before microversion 2.19 this was set to
-    /// the server name.
+    /// The description of the server.
+    /// Before microversion 2.19 this was set to the server name.
+    ///
+    ///
+    /// **New in version 2.19**
+    #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// A fault object. Only available when the server status is ERROR or
-    /// DELETED and a fault occurred.
-    #[structable(optional)]
-    fault: Option<String>,
+    /// Disk configuration. The value is either:
+    ///
+    ///
+    /// * `AUTO`. The API builds the server with a single partition the size of
+    /// the target flavor disk. The API automatically adjusts the file system
+    /// to
+    /// fit the entire partition.
+    /// * `MANUAL`. The API builds the server by using the partition scheme and
+    /// file system that is in the source image. If the target flavor disk is
+    /// larger, The API does not partition the remaining disk space.
+    #[serde(rename = "OS-DCF:diskConfig")]
+    #[structable(optional, title = "OS-DCF:diskConfig")]
+    os_dcf_disk_config: Option<String>,
 
-    /// The flavor property as returned from server.
+    /// A fault object. Only displayed when the server status is `ERROR` or
+    /// `DELETED` and a fault occurred.
+    #[serde()]
     #[structable(optional)]
-    flavor: Option<Value>,
+    fault: Option<ResponseFault>,
 
-    /// The flavor reference, as a ID or full URL, for the flavor to use for
-    /// this server.
-    #[serde(rename = "flavorRef")]
+    /// Before microversion 2.47 this contains the ID and links for the flavor
+    /// used to boot the server instance. This can be an empty object in case
+    /// flavor information is no longer present in the system.
+    ///
+    ///
+    /// As of microversion 2.47 this contains a subset of the actual flavor
+    /// information used to create the server instance, represented as a nested
+    /// dictionary.
+    #[serde()]
     #[structable(optional)]
-    flavor_id: Option<String>,
+    flavor: Option<ResponseFlavor>,
 
-    /// An ID representing the host of this server.
+    /// An ID string representing the host. This is a hashed value so will not
+    /// actually look like
+    /// a hostname, and is hashed with data from the project\_id, so the same
+    /// physical host as seen
+    /// by two different project\_ids, will be different. It is useful when
+    /// within the same project you
+    /// need to determine if two instances are on the same or different
+    /// physical hosts for the
+    /// purposes of availability or performance.
     #[serde(rename = "hostId")]
-    #[structable(optional)]
+    #[structable(optional, title = "hostId")]
     host_id: Option<String>,
 
-    /// The host status.
+    /// The host status. Values where next value in list can override the
+    /// previous:
+    ///
+    ///
+    /// * `UP` if nova-compute up.
+    /// * `UNKNOWN` if nova-compute not reported by servicegroup driver.
+    /// * `DOWN` if nova-compute forced down.
+    /// * `MAINTENANCE` if nova-compute is disabled.
+    /// * Empty string indicates there is no host for server.
+    ///
+    ///
+    /// This attribute appears in the response only if the policy permits.
+    /// By default, only administrators can get this parameter.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde()]
     #[structable(optional)]
     host_status: Option<String>,
 
-    /// Id of the resource
+    /// The hostname of the instance reported in the metadata service.
+    /// This parameter only appears in responses for administrators until
+    /// microversion 2.90, after which it is shown for all users.
+    ///
+    ///
+    ///
+    /// Note
+    ///
+    ///
+    /// This information is published via the metadata service and requires
+    /// application such as `cloud-init` to propogate it through to the
+    /// instance.
+    ///
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:hostname")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:hostname")]
+    os_ext_srv_attr_hostname: Option<String>,
+
+    /// The hypervisor host name provided by the Nova virt driver. For the
+    /// Ironic driver,
+    /// it is the Ironic node uuid. Appears in the response for administrative
+    /// users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
+    os_ext_srv_attr_hypervisor_hostname: Option<String>,
+
+    /// Id of the server
+    #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The image property as returned from server.
+    /// The UUID and links for the image for your server instance. The `image`
+    /// object
+    /// will be an empty string when you boot the server from a volume.
+    #[serde()]
     #[structable(optional)]
-    image: Option<Value>,
+    image: Option<ResponseImage>,
 
-    /// The image reference, as a ID or full URL, for the image to use for this
-    /// server.
-    #[serde(rename = "imageRef")]
+    /// The instance name. The Compute API generates the instance name from the
+    /// instance
+    /// name template. Appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:instance_name")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:instance_name")]
+    os_ext_srv_attr_instance_name: Option<String>,
+
+    /// True if the instance is locked otherwise False.
+    ///
+    ///
+    /// **New in version 2.9**
+    #[serde()]
     #[structable(optional)]
-    image_id: Option<String>,
+    locked: Option<bool>,
 
-    /// The name of an associated keypair
+    /// The UUID of the kernel image when using an AMI. Will be null if not.
+    /// By default, it appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:kernel_id")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:kernel_id")]
+    os_ext_srv_attr_kernel_id: Option<String>,
+
+    /// The name of associated key pair, if any.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde()]
     #[structable(optional)]
     key_name: Option<String>,
 
-    /// True if the instance is locked otherwise False.
-    /// New in version 2.9
-    #[serde(rename = "locked")]
-    #[structable(optional)]
-    is_locked: Option<bool>,
+    /// When servers are launched via multiple create, this is the
+    /// sequence in which the servers were launched.
+    /// By default, it appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:launch_index")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:launch_index")]
+    os_ext_srv_attr_launch_index: Option<i32>,
 
-    /// The maximum number of servers to create.
+    /// The date and time when the server was launched.
+    ///
+    ///
+    /// The date and time stamp format is [ISO
+    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    ///
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    ///
+    /// The `hh±:mm` value, if included, is the time zone as an offset from
+    /// UTC.
+    /// If the `deleted\_at` date and time stamp is not set, its value is
+    /// `null`.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-SRV-USG:launched_at")]
+    #[structable(optional, title = "OS-SRV-USG:launched_at")]
+    os_srv_usg_launched_at: Option<String>,
+
+    /// Links to the resources in question. See [API Guide / Links and
+    /// References](https://docs.openstack.org/api-
+    /// guide/compute/links_and_references.html) for more info.
+    #[serde()]
     #[structable(optional)]
-    max_count: Option<u32>,
+    links: Option<Value>,
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
-    /// backward compatibility.
+    /// backward
+    /// compatibility.
+    #[serde()]
     #[structable(optional)]
     metadata: Option<HashMapStringString>,
 
-    /// The minimum number of servers to create.
-    #[structable(optional)]
-    min_count: Option<u32>,
-
-    /// Name
+    /// The server name.
+    #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// A networks object. Required parameter when there are multiple networks
-    /// defined for the tenant. When you do not specify the networks parameter,
-    /// the server attaches to the only network created for the current tenant.
-    #[structable(optional)]
-    networks: Option<String>,
+    /// The power state of the instance. This is an enum value that is mapped
+    /// as:
+    ///
+    ///
+    ///
+    /// ```text
+    /// 0: NOSTATE
+    /// 1: RUNNING
+    /// 3: PAUSED
+    /// 4: SHUTDOWN
+    /// 6: CRASHED
+    /// 7: SUSPENDED
+    ///
+    /// ```
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-STS:power_state")]
+    #[structable(optional, title = "OS-EXT-STS:power_state")]
+    os_ext_sts_power_state: Option<i32>,
 
-    /// A list of an attached volumes. Each item in the list contains at least
-    /// an "id" key to identify the specific volumes.
-    #[serde(rename = "os-extended-volumes:volumes_attached")]
+    /// A percentage value of the operation progress.
+    /// This parameter only appears when the server status is `ACTIVE`,
+    /// `BUILD`, `REBUILD`, `RESIZE`, `VERIFY\_RESIZE` or `MIGRATING`.
+    #[serde()]
     #[structable(optional)]
-    attached_volumes: Option<VecValue>,
+    progress: Option<i32>,
 
-    /// While the server is building, this value represents the percentage of
-    /// completion. Once it is completed, it will be 100.
+    /// The UUID of the tenant in a multi-tenancy cloud.
+    #[serde()]
     #[structable(optional)]
-    progress: Option<u32>,
+    tenant_id: Option<String>,
 
-    /// A list of applicable security groups. Each group contains keys for
-    /// description, name, id, and rules.
+    /// The UUID of the ramdisk image when using an AMI. Will be null if not.
+    /// By default, it appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:ramdisk_id")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:ramdisk_id")]
+    os_ext_srv_attr_ramdisk_id: Option<String>,
+
+    /// The reservation id for the server. This is an id that can
+    /// be useful in tracking groups of servers created with multiple
+    /// create, that will all have the same reservation\_id.
+    /// By default, it appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:reservation_id")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:reservation_id")]
+    os_ext_srv_attr_reservation_id: Option<String>,
+
+    /// The root device name for the instance
+    /// By default, it appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:root_device_name")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:root_device_name")]
+    os_ext_srv_attr_root_device_name: Option<String>,
+
+    /// One or more security groups objects.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde()]
     #[structable(optional)]
-    security_groups: Option<VecValue>,
+    security_groups: Option<VecResponseSecurityGroups>,
 
     /// The UUIDs of the server groups to which the server belongs. Currently
     /// this can contain at most one entry.
+    ///
+    ///
+    /// **New in version 2.71**
+    #[serde()]
     #[structable(optional)]
     server_groups: Option<VecString>,
 
-    /// The state this server is in. Valid values include ``ACTIVE``,
-    /// ``BUILDING``, ``DELETED``, ``ERROR``, ``HARD_REBOOT``, ``PASSWORD``,
-    /// ``PAUSED``, ``REBOOT``, ``REBUILD``, ``RESCUED``, ``RESIZED``,
-    /// ``REVERT_RESIZE``, ``SHUTOFF``, ``SOFT_DELETED``, ``STOPPED``,
-    /// ``SUSPENDED``, ``UNKNOWN``, or ``VERIFY_RESIZE``.
+    /// The server status.
+    #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
-    /// Server Tags.
+    /// A list of tags. The maximum count of tags in this list is 50.
+    ///
+    ///
+    /// **New in version 2.26**
+    #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
-    /// The ID of the project this server is associated with.
-    #[serde(rename = "tenant_id")]
-    #[structable(optional)]
-    project_id: Option<String>,
+    /// The task state of the instance.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-STS:task_state")]
+    #[structable(optional, title = "OS-EXT-STS:task_state")]
+    os_ext_sts_task_state: Option<String>,
+
+    /// The date and time when the server was deleted.
+    ///
+    ///
+    /// The date and time stamp format is [ISO
+    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    ///
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC.
+    /// If the `deleted\_at` date and time stamp is not set, its value is
+    /// `null`.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-SRV-USG:terminated_at")]
+    #[structable(optional, title = "OS-SRV-USG:terminated_at")]
+    os_srv_usg_terminated_at: Option<String>,
 
     /// A list of trusted certificate IDs, that were used during image
-    /// signature verification to verify the signing certificate.
+    /// signature
+    /// verification to verify the signing certificate. The list is restricted
+    /// to a maximum of 50 IDs. The value is `null` if trusted certificate IDs
+    /// are not set.
+    ///
+    ///
+    /// **New in version 2.63**
+    #[serde()]
     #[structable(optional)]
     trusted_image_certificates: Option<VecString>,
 
-    /// Timestamp of when this server was last updated.
-    #[serde(rename = "updated")]
+    /// The date and time when the resource was updated. The date and time
+    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    ///
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
+    /// value, if included, is the time zone as an offset from UTC. In
+    /// the previous example, the offset value is `-05:00`.
+    #[serde()]
     #[structable(optional)]
-    updated_at: Option<String>,
+    updated: Option<String>,
 
-    /// The ID of the owners of this server.
+    /// The user\_data the instance was created with.
+    /// By default, it appears in the response for administrative users only.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-SRV-ATTR:user_data")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:user_data")]
+    os_ext_srv_attr_user_data: Option<String>,
+
+    /// The user ID of the user who owns the server.
+    #[serde()]
     #[structable(optional)]
     user_id: Option<String>,
+
+    /// The VM state.
+    ///
+    ///
+    /// **New in version 2.75**
+    #[serde(rename = "OS-EXT-STS:vm_state")]
+    #[structable(optional, title = "OS-EXT-STS:vm_state")]
+    os_ext_sts_vm_state: Option<String>,
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseAddresses {
+    addr: Option<String>,
+    version: Option<i32>,
+}
+
+impl fmt::Display for ResponseAddresses {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "addr={}",
+                self.addr
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "version={}",
+                self.version
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseAddresses(Vec<ResponseAddresses>);
+impl fmt::Display for VecResponseAddresses {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        )
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct HashMapStringVecResponseAddresses(HashMap<String, VecResponseAddresses>);
+impl fmt::Display for HashMapStringVecResponseAddresses {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{{{}}}",
+            self.0
+                .iter()
+                .map(|v| format!("{}={}", v.0, v.1))
+                .collect::<Vec<String>>()
+                .join("\n")
+        )
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct HashMapStringValue(HashMap<String, Value>);
+impl fmt::Display for HashMapStringValue {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{{{}}}",
+            self.0
+                .iter()
+                .map(|v| format!("{}={}", v.0, v.1))
+                .collect::<Vec<String>>()
+                .join("\n")
+        )
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
+impl fmt::Display for VecHashMapStringValue {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        )
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseFault {
+    code: Option<i32>,
+    created: Option<String>,
+    message: Option<String>,
+    details: Option<String>,
+}
+
+impl fmt::Display for ResponseFault {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "code={}",
+                self.code.map(|v| v.to_string()).unwrap_or("".to_string())
+            ),
+            format!(
+                "created={}",
+                self.created
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "message={}",
+                self.message
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "details={}",
+                self.details
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseLinksStructResponseStructResponse {
+    href: Option<String>,
+    rel: Option<String>,
+}
+
+impl fmt::Display for ResponseLinksStructResponseStructResponse {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "href={}",
+                self.href
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "rel={}",
+                self.rel
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct HashMapStringString(HashMap<String, String>);
+impl fmt::Display for HashMapStringString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{{{}}}",
+            self.0
+                .iter()
+                .map(|v| format!("{}={}", v.0, v.1))
+                .collect::<Vec<String>>()
+                .join("\n")
+        )
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseFlavor {
+    id: Option<String>,
+    links: Option<Value>,
+    vcpus: Option<i32>,
+    ram: Option<i32>,
+    disk: Option<i32>,
+    ephemeral: Option<i32>,
+    swap: Option<i32>,
+    original_name: Option<String>,
+    extra_specs: Option<HashMapStringString>,
+}
+
+impl fmt::Display for ResponseFlavor {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "links={}",
+                self.links
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "vcpus={}",
+                self.vcpus.map(|v| v.to_string()).unwrap_or("".to_string())
+            ),
+            format!(
+                "ram={}",
+                self.ram.map(|v| v.to_string()).unwrap_or("".to_string())
+            ),
+            format!(
+                "disk={}",
+                self.disk.map(|v| v.to_string()).unwrap_or("".to_string())
+            ),
+            format!(
+                "ephemeral={}",
+                self.ephemeral
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "swap={}",
+                self.swap.map(|v| v.to_string()).unwrap_or("".to_string())
+            ),
+            format!(
+                "original_name={}",
+                self.original_name
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "extra_specs={}",
+                self.extra_specs
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseImage {
+    id: Option<String>,
+    links: Option<Value>,
+}
+
+impl fmt::Display for ResponseImage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "links={}",
+                self.links
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Debug, Default, Clone, Serialize)]
+struct ResponseSecurityGroups {
+    name: Option<String>,
+}
+
+impl fmt::Display for ResponseSecurityGroups {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([format!(
+            "name={}",
+            self.name
+                .clone()
+                .map(|v| v.to_string())
+                .unwrap_or("".to_string())
+        )]);
+        write!(f, "{}", data.join(";"))
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecResponseSecurityGroups(Vec<ResponseSecurityGroups>);
+impl fmt::Display for VecResponseSecurityGroups {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        )
+    }
+}
+#[derive(Deserialize, Default, Debug, Clone, Serialize)]
+pub struct VecString(Vec<String>);
+impl fmt::Display for VecString {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "[{}]",
+            self.0
+                .iter()
+                .map(|v| v.to_string())
+                .collect::<Vec<String>>()
+                .join(",")
+        )
+    }
 }
 
 #[async_trait]
@@ -321,23 +851,21 @@ impl OSCCommand for ServerCmd {
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Server with {:?}", self.args);
+        info!("Show Server with {:?}", self.args);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = find::Server::builder();
-        // Set path parameters
-        ep_builder.id(&self.args.id);
-        // Set query parameters
-        // Set body parameters
-        let ep = ep_builder
+        info!("Parsed args: {:?}", self.args);
+
+        let mut find_builder = find::Request::builder();
+
+        find_builder.id(&self.args.path.id);
+        let find_ep = find_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::Compute)
-            .await?;
-        let data = find(ep).query_async(client).await?;
-        op.output_single::<Server>(data)?;
+        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
+        op.output_single::<ResponseData>(find_data)?;
         Ok(())
     }
 }

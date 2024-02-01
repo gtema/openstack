@@ -6,4 +6,3 @@ pub mod flavor;
 pub mod hypervisor;
 pub mod keypair;
 pub mod server;
-pub mod servers;
