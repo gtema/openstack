@@ -66,12 +66,13 @@ pub struct PathParameters {
 
     /// id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// PortForwarding delete command
 pub struct PortForwardingCmd {
+    /// Command arguments
     pub args: PortForwardingArgs,
 }
 /// PortForwarding response representation

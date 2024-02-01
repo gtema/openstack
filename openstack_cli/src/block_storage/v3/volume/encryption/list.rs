@@ -54,12 +54,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
-    #[arg(value_name = "VOLUME_ID", id = "path_param_volume_id")]
+    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
     volume_id: String,
 }
 
 /// Encryptions list command
 pub struct EncryptionsCmd {
+    /// Command arguments
     pub args: EncryptionsArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

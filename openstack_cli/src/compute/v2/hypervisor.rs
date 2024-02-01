@@ -21,7 +21,14 @@ use openstack_sdk::AsyncOpenStack;
 pub mod list;
 pub mod show;
 
+/// Lists all hypervisors, shows summary statistics for all
+/// hypervisors over all compute nodes, shows details for a
+/// hypervisor, shows the uptime for a hypervisor, lists all
+/// servers on hypervisors that match the given
+/// hypervisor_hostname_pattern or searches for hypervisors by the
+/// given hypervisor_hostname_pattern.
 #[derive(Args, Clone, Debug)]
+#[command(about = "Hypervisors")]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct HypervisorArgs {
     #[command(subcommand)]
@@ -30,30 +37,12 @@ pub struct HypervisorArgs {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum HypervisorCommands {
-    /// Lists hypervisors details.
-    ///
-    /// Policy defaults enable only users with the administrative role to
-    /// perform this operation. Cloud providers can change these permissions
-    /// through the policy.json file.
-    #[command(about = "List Hypervisors Details")]
     List(list::HypervisorsArgs),
-    /// Shows details for a given hypervisor.
-    ///
-    /// Policy defaults enable only users with the administrative role to
-    /// perform this operation. Cloud providers can change these permissions
-    /// through the policy.json file.
-    ///
-    /// **Note**
-    ///
-    /// As noted, some of the parameters in the response representing totals do
-    /// not take allocation ratios into account. This can result in a disparity
-    /// between the totals and the usages. A more accurate representation of
-    /// state can be obtained using placement.
-    #[command(about = "Show Hypervisor Details")]
     Show(show::HypervisorArgs),
 }
 
 pub struct HypervisorCommand {
+    /// Command arguments
     pub args: HypervisorArgs,
 }
 

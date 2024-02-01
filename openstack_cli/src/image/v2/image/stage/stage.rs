@@ -66,6 +66,7 @@ pub struct PathParameters {
 
 /// Stage action command
 pub struct StageCmd {
+    /// Command arguments
     pub args: StageArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

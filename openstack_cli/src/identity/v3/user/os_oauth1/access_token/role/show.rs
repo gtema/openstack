@@ -74,6 +74,7 @@ pub struct PathParameters {
 
 /// Role show command
 pub struct RoleCmd {
+    /// Command arguments
     pub args: RoleArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

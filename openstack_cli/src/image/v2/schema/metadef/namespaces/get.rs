@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Namespaces json command
 pub struct NamespacesCmd {
+    /// Command arguments
     pub args: NamespacesArgs,
 }
 /// Namespaces response representation

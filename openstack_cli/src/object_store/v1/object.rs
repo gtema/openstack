@@ -24,6 +24,7 @@ mod list;
 mod show;
 mod upload;
 
+/// Object commands
 #[derive(Args, Clone, Debug)]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct ObjectArgs {

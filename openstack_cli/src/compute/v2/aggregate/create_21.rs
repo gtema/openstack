@@ -83,6 +83,7 @@ struct Aggregate {
 
 /// Aggregate create command
 pub struct AggregateCmd {
+    /// Command arguments
     pub args: AggregateArgs,
 }
 /// Aggregate response representation

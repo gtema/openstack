@@ -67,12 +67,13 @@ pub struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Migration show command
 pub struct MigrationCmd {
+    /// Command arguments
     pub args: MigrationArgs,
 }
 /// Migration response representation

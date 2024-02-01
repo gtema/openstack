@@ -67,6 +67,7 @@ pub struct PathParameters {}
 
 /// Catalogs list command
 pub struct CatalogsCmd {
+    /// Command arguments
     pub args: CatalogsArgs,
 }
 /// Catalogs response representation

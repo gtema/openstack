@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// ResourceType json command
 pub struct ResourceTypeCmd {
+    /// Command arguments
     pub args: ResourceTypeArgs,
 }
 /// ResourceType response representation

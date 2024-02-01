@@ -66,6 +66,7 @@ pub struct PathParameters {}
 
 /// Token delete command
 pub struct TokenCmd {
+    /// Command arguments
     pub args: TokenArgs,
 }
 /// Token response representation

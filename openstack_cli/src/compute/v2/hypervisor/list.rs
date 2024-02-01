@@ -84,6 +84,7 @@ pub struct PathParameters {}
 
 /// Hypervisors list command
 pub struct HypervisorsCmd {
+    /// Command arguments
     pub args: HypervisorsArgs,
 }
 /// Hypervisors response representation

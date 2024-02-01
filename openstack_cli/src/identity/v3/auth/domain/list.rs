@@ -66,6 +66,7 @@ pub struct PathParameters {}
 
 /// Domains list command
 pub struct DomainsCmd {
+    /// Command arguments
     pub args: DomainsArgs,
 }
 /// Domains response representation

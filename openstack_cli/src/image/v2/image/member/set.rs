@@ -91,6 +91,7 @@ pub struct PathParameters {
 
 /// Member set command
 pub struct MemberCmd {
+    /// Command arguments
     pub args: MemberArgs,
 }
 /// Member response representation

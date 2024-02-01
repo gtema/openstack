@@ -67,12 +67,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/images API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Image action command
 pub struct ImageCmd {
+    /// Command arguments
     pub args: ImageArgs,
 }
 /// Image response representation

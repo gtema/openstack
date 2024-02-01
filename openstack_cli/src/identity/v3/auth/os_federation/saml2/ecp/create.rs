@@ -323,6 +323,7 @@ struct Auth {
 
 /// Ecp create command
 pub struct EcpCmd {
+    /// Command arguments
     pub args: EcpArgs,
 }
 /// Ecp response representation

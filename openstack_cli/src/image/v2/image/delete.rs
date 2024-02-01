@@ -73,6 +73,7 @@ pub struct PathParameters {
 
 /// Image delete command
 pub struct ImageCmd {
+    /// Command arguments
     pub args: ImageArgs,
 }
 /// Image response representation

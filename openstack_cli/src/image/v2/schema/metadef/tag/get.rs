@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Tag json command
 pub struct TagCmd {
+    /// Command arguments
     pub args: TagArgs,
 }
 /// Tag response representation

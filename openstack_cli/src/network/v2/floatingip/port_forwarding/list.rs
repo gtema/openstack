@@ -106,6 +106,7 @@ pub struct PathParameters {
 
 /// PortForwardings list command
 pub struct PortForwardingsCmd {
+    /// Command arguments
     pub args: PortForwardingsArgs,
 }
 /// PortForwardings response representation

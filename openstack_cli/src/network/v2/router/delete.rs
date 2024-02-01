@@ -64,12 +64,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Router delete command
 pub struct RouterCmd {
+    /// Command arguments
     pub args: RouterArgs,
 }
 /// Router response representation

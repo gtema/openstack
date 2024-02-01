@@ -32,13 +32,9 @@ pub struct SchemaArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum SchemaCommands {
-    /// Show Image Schema
     Image(image::ImageArgs),
-    /// Show Images Schema
     Images(images::ImagesArgs),
-    /// Show Member Schema
     Member(member::MemberArgs),
-    /// Show Members Schema
     Members(members::MembersArgs),
 }
 

@@ -21,6 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 mod set;
 mod show;
 
+/// Account commands
 #[derive(Args, Clone, Debug)]
 pub struct AccountArgs {
     #[command(subcommand)]

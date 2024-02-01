@@ -249,6 +249,7 @@ pub struct PathParameters {}
 
 /// Servers list command
 pub struct ServersCmd {
+    /// Command arguments
     pub args: ServersArgs,
 }
 /// Servers response representation

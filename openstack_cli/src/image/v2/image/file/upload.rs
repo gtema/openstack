@@ -95,6 +95,7 @@ pub struct PathParameters {
 
 /// File upload command
 pub struct FileCmd {
+    /// Command arguments
     pub args: FileArgs,
 }
 /// File response representation

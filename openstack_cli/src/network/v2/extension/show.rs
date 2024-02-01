@@ -60,12 +60,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.0/extensions/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Extension show command
 pub struct ExtensionCmd {
+    /// Command arguments
     pub args: ExtensionArgs,
 }
 /// Extension response representation

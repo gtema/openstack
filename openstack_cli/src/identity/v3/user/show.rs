@@ -66,6 +66,7 @@ pub struct PathParameters {
 
 /// User show command
 pub struct UserCmd {
+    /// Command arguments
     pub args: UserArgs,
 }
 /// User response representation

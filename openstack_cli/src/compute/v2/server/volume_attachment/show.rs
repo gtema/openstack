@@ -64,12 +64,13 @@ pub struct PathParameters {
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// VolumeAttachment show command
 pub struct VolumeAttachmentCmd {
+    /// Command arguments
     pub args: VolumeAttachmentArgs,
 }
 /// VolumeAttachment response representation

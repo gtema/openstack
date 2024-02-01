@@ -93,7 +93,7 @@ pub struct QueryParameters {}
 pub struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
@@ -286,6 +286,7 @@ struct Port {
 
 /// Port set command
 pub struct PortCmd {
+    /// Command arguments
     pub args: PortArgs,
 }
 /// Port response representation

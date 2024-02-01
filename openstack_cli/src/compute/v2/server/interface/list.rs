@@ -67,6 +67,7 @@ pub struct PathParameters {
 
 /// Interfaces list command
 pub struct InterfacesCmd {
+    /// Command arguments
     pub args: InterfacesArgs,
 }
 /// Interfaces response representation

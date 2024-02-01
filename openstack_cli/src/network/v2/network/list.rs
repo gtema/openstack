@@ -150,6 +150,7 @@ pub struct PathParameters {}
 
 /// Networks list command
 pub struct NetworksCmd {
+    /// Command arguments
     pub args: NetworksArgs,
 }
 /// Networks response representation

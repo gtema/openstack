@@ -64,6 +64,7 @@ pub struct PathParameters {
 
 /// DhcpAgent create command
 pub struct DhcpAgentCmd {
+    /// Command arguments
     pub args: DhcpAgentArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

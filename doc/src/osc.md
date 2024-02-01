@@ -11,7 +11,6 @@ This document contains the help content for the `osc` command-line program.
 * [`osc auth show`↴](#osc-auth-show)
 * [`osc block-storage`↴](#osc-block-storage)
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
-* [`osc block-storage volume create`↴](#osc-block-storage-volume-create)
 * [`osc block-storage volume create30`↴](#osc-block-storage-volume-create30)
 * [`osc block-storage volume create313`↴](#osc-block-storage-volume-create313)
 * [`osc block-storage volume create347`↴](#osc-block-storage-volume-create347)
@@ -19,15 +18,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume delete`↴](#osc-block-storage-volume-delete)
 * [`osc block-storage volume extend`↴](#osc-block-storage-volume-extend)
 * [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
-* [`osc block-storage volume set`↴](#osc-block-storage-volume-set)
 * [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
 * [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc catalog`↴](#osc-catalog)
 * [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
-* [`osc compute availability-zone`↴](#osc-compute-availability-zone)
-* [`osc compute availability-zone list`↴](#osc-compute-availability-zone-list)
 * [`osc compute aggregate`↴](#osc-compute-aggregate)
 * [`osc compute aggregate add-host`↴](#osc-compute-aggregate-add-host)
 * [`osc compute aggregate create`↴](#osc-compute-aggregate-create)
@@ -38,6 +34,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute aggregate show`↴](#osc-compute-aggregate-show)
 * [`osc compute aggregate set`↴](#osc-compute-aggregate-set)
 * [`osc compute aggregate set-metadata`↴](#osc-compute-aggregate-set-metadata)
+* [`osc compute availability-zone`↴](#osc-compute-availability-zone)
+* [`osc compute availability-zone list`↴](#osc-compute-availability-zone-list)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
 * [`osc compute extension show`↴](#osc-compute-extension-show)
@@ -46,7 +44,6 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute flavor access add`↴](#osc-compute-flavor-access-add)
 * [`osc compute flavor access list`↴](#osc-compute-flavor-access-list)
 * [`osc compute flavor access remove`↴](#osc-compute-flavor-access-remove)
-* [`osc compute flavor create`↴](#osc-compute-flavor-create)
 * [`osc compute flavor create255`↴](#osc-compute-flavor-create255)
 * [`osc compute flavor create21`↴](#osc-compute-flavor-create21)
 * [`osc compute flavor create20`↴](#osc-compute-flavor-create20)
@@ -66,7 +63,6 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair`↴](#osc-compute-keypair)
 * [`osc compute keypair list`↴](#osc-compute-keypair-list)
 * [`osc compute keypair show`↴](#osc-compute-keypair-show)
-* [`osc compute keypair create`↴](#osc-compute-keypair-create)
 * [`osc compute keypair create292`↴](#osc-compute-keypair-create292)
 * [`osc compute keypair create210`↴](#osc-compute-keypair-create210)
 * [`osc compute keypair create22`↴](#osc-compute-keypair-create22)
@@ -193,15 +189,15 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server volume-attachment set285`↴](#osc-compute-server-volume-attachment-set285)
 * [`osc compute server volume-attachment show`↴](#osc-compute-server-volume-attachment-show)
 * [`osc identity`↴](#osc-identity)
+* [`osc identity access-rule`↴](#osc-identity-access-rule)
+* [`osc identity access-rule delete`↴](#osc-identity-access-rule-delete)
+* [`osc identity access-rule list`↴](#osc-identity-access-rule-list)
+* [`osc identity access-rule show`↴](#osc-identity-access-rule-show)
 * [`osc identity application-credential`↴](#osc-identity-application-credential)
 * [`osc identity application-credential create`↴](#osc-identity-application-credential-create)
 * [`osc identity application-credential delete`↴](#osc-identity-application-credential-delete)
 * [`osc identity application-credential list`↴](#osc-identity-application-credential-list)
 * [`osc identity application-credential show`↴](#osc-identity-application-credential-show)
-* [`osc identity access-rule`↴](#osc-identity-access-rule)
-* [`osc identity access-rule delete`↴](#osc-identity-access-rule-delete)
-* [`osc identity access-rule list`↴](#osc-identity-access-rule-list)
-* [`osc identity access-rule show`↴](#osc-identity-access-rule-show)
 * [`osc identity project`↴](#osc-identity-project)
 * [`osc identity project create`↴](#osc-identity-project-create)
 * [`osc identity project delete`↴](#osc-identity-project-delete)
@@ -305,10 +301,10 @@ OpenStack client rewritten in Rust
 * `api` — Perform direct REST API requests with authorization
 * `auth` — Cloud Authentication operations
 * `block-storage` — Block Storage (Volume) service (Cinder) commands
-* `catalog` — Shows current catalog information
-* `compute` — Compute service (Nova) commands
+* `catalog` — Catalog commands args
+* `compute` — Compute service (Nova) arguments
 * `identity` — Identity (Keystone) commands
-* `image` — Image (Glance) commands
+* `image` —
 * `network` — Network (Neutron) commands
 * `object-store` — Object Store service (Swift) commands
 
@@ -333,6 +329,10 @@ OpenStack client rewritten in Rust
 ## `osc api`
 
 Perform direct REST API requests with authorization
+
+This command enables direct REST API call with the authorization and version discovery handled transparently. This may be used when required operation is not implemented by the `osc` or some of the parameters require special handling.
+
+Example: ```console osc --os-cloud devstack api compute flavors/detail | jq ```
 
 **Usage:** `osc api [OPTIONS] <SERVICE> <URL>`
 
@@ -368,13 +368,15 @@ Perform direct REST API requests with authorization
 
 Cloud Authentication operations
 
+This command provides various authorization operations (login, show, status, etc)
+
 **Usage:** `osc auth
        auth <COMMAND>`
 
 ###### **Subcommands:**
 
 * `login` — Login to the cloud and get a valid authorization token
-* `show` — Show current auth information
+* `show` — Show current authorization information for the cloud
 
 
 
@@ -411,98 +413,41 @@ This command returns authentication and authorization information for the curren
 
 Block Storage (Volume) service (Cinder) commands
 
-**Usage:** `osc block-storage [OPTIONS]
+**Usage:** `osc block-storage
        block-storage <COMMAND>`
 
 ###### **Subcommands:**
 
-* `volume` — Volume commands
-
-###### **Options:**
-
-* `--os-volume-api-version <OS_VOLUME_API_VERSION>` — BlockStorage API microversion
+* `volume` — Block Storage Volume commands
 
 
 
 ## `osc block-storage volume`
 
-Volume commands
+Block Storage Volume commands
 
 **Usage:** `osc block-storage volume <COMMAND>`
 
 ###### **Subcommands:**
 
-* `create` — Create new volume (with highest possible microversion)
-* `create30` — Create new volume (microversion = 3.0)
-* `create313` — Create new volume (microversion = 3.13)
-* `create347` — Create new volume (microversion = 3.47)
-* `create353` — Create new volume (microversion = 3.53)
-* `delete` — Delete volume
-* `extend` — Extend volume
-* `list` — List Volumes
-* `set` — Updates a volume (highest possible microversion).
-* `set353` — Updates a volume (microversion = 3.53).
-* `set30` — Updates a volume (microversion = 3.0).
-* `show` — Show single volume details
-
-
-
-## `osc block-storage volume create`
-
-Create volume (with highest possible microversion)
-
-To create a bootable volume, include the UUID of the image from which you want to create the volume in the imageRef attribute in the request body.
-
-Since the Train release, every volume must have a volume type. It is optional to specify a volume type as part of your Create a volume request. If you do not specify one, a default volume type will be supplied for you. This type may vary according to what project you are in and how the operator has configured the Block Storage service. Use the Show default volume type request to determine your effective default volume type.
-
-**Preconditions**
-
-- You must have enough volume storage quota remaining to create a volume of size requested.
-
-**Asynchronous Postconditions**
-
-- With correct permissions, you can see the volume status as available through API calls.
-
-- With correct access, you can see the created volume in the storage system that OpenStack Block Storage manages.
-
-**Troubleshooting**
-
--  If volume status remains creating or shows another error status, the request failed. Ensure you meet the preconditions then investigate the storage back end.
-
-- Volume is not created in the storage system that OpenStack Block Storage manages.
-
-- The storage node needs enough free storage space to match the size of the volume creation request.
-
-**Usage:** `osc block-storage volume create [OPTIONS]`
-
-###### **Options:**
-
-* `--name <NAME>` — The volume name
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
-* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
-* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
-* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
-* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
-* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
-
-  Possible values: `true`, `false`
-
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
-* `--group-id <GROUP_ID>`
-* `--backup-id <BACKUP_ID>` — The UUID of the backup
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `create30` — Creates a new volume
+* `create313` — Creates a new volume
+* `create347` — Creates a new volume
+* `create353` — Creates a new volume
+* `delete` — Delete a volume
+* `extend` — OsExtend Body data
+* `list` — Returns a detailed list of volumes
+* `set353` — Update a volume
+* `set30` — Update a volume
+* `show` — Return data about the given volume
 
 
 
 ## `osc block-storage volume create30`
 
-Create new volume (microversion = 3.0)
+Creates a new volume.
+
+:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
 
 **Usage:** `osc block-storage volume create30 [OPTIONS]`
 
@@ -531,7 +476,9 @@ Create new volume (microversion = 3.0)
 
 ## `osc block-storage volume create313`
 
-Create new volume (microversion = 3.13)
+Creates a new volume.
+
+:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
 
 **Usage:** `osc block-storage volume create313 [OPTIONS]`
 
@@ -561,7 +508,9 @@ Create new volume (microversion = 3.13)
 
 ## `osc block-storage volume create347`
 
-Create new volume (microversion = 3.47)
+Creates a new volume.
+
+:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
 
 **Usage:** `osc block-storage volume create347 [OPTIONS]`
 
@@ -592,7 +541,9 @@ Create new volume (microversion = 3.47)
 
 ## `osc block-storage volume create353`
 
-Create new volume (microversion = 3.53)
+Creates a new volume.
+
+:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
 
 **Usage:** `osc block-storage volume create353 [OPTIONS]`
 
@@ -623,27 +574,7 @@ Create new volume (microversion = 3.53)
 
 ## `osc block-storage volume delete`
 
-Deletes a volume.
-
-**Preconditions**
-
-- Volume status must be available, in-use, error, error_restoring, error_extending, error_managing, and must not be migrating, attached, awaiting-transfer, belong to a group, have snapshots or be disassociated from snapshots after volume transfer.
-
-- The cascade option can be passed in the request if you want all snapshots of this volume to be deleted automatically, which should allow the volume deletion to succeed.
-
-- You cannot delete a volume that is in a migration.
-
-**Asynchronous Postconditions**
-
-- The volume is deleted in volume index.
-
-- The volume managed by OpenStack Block Storage is deleted in storage node.
-
-**Troubleshooting**
-
-- If volume status remains in deleting or becomes error_deleting the request failed. Ensure you meet the preconditions then investigate the storage back end.
-
-- The volume managed by OpenStack Block Storage is not deleted from the storage system.
+Delete a volume
 
 **Usage:** `osc block-storage volume delete <ID>`
 
@@ -655,27 +586,7 @@ Deletes a volume.
 
 ## `osc block-storage volume extend`
 
-Extends the size of a volume to a requested size, in gibibytes (GiB). Specify the os-extend action in the request body.
-
-**Preconditions**
-
-- Prior to microversion 3.42 the volume status must be available. Starting with microversion 3.42, attached volumes with status in-use may be able to be extended depending on policy and backend volume and compute driver constraints in the cloud. Note that reserved is not a valid state for extend.
-
-- Sufficient amount of storage must exist to extend the volume.
-
-- The user quota must have sufficient volume storage.
-
-**Postconditions**
-
-- If the request is processed successfully, the volume status will change to extending while the volume size is being extended.
-
-- Upon successful completion of the extend operation, the volume status will go back to its original value.
-
-- Starting with microversion 3.42, when extending the size of an attached volume, the Block Storage service will notify the Compute service that an attached volume has been extended. The Compute service will asynchronously process the volume size change for the related server instance. This can be monitored using the GET /servers/{server_id}/os-instance-actions API in the Compute service.
-
-**Troubleshooting**
-
-- An error_extending volume status indicates that the request failed. Ensure that you meet the preconditions and retry the request. If the request fails again, investigate the storage back end.
+OsExtend Body data
 
 **Usage:** `osc block-storage volume extend --new-size <NEW_SIZE> <ID>`
 
@@ -691,7 +602,7 @@ Extends the size of a volume to a requested size, in gibibytes (GiB). Specify th
 
 ## `osc block-storage volume list`
 
-List Volumes
+Returns a detailed list of volumes
 
 **Usage:** `osc block-storage volume list [OPTIONS]`
 
@@ -723,29 +634,9 @@ List Volumes
 
 
 
-## `osc block-storage volume set`
-
-Updates a volume (highest possible microversion).
-
-**Usage:** `osc block-storage volume set [OPTIONS] <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/volumes/{id} API
-
-###### **Options:**
-
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--metadata <key=value>`
-
-
-
 ## `osc block-storage volume set353`
 
-Updates a volume (microversion = 3.53).
+Update a volume
 
 **Usage:** `osc block-storage volume set353 [OPTIONS] <ID>`
 
@@ -765,7 +656,7 @@ Updates a volume (microversion = 3.53).
 
 ## `osc block-storage volume set30`
 
-Updates a volume (microversion = 3.0).
+Update a volume
 
 **Usage:** `osc block-storage volume set30 [OPTIONS] <ID>`
 
@@ -785,11 +676,7 @@ Updates a volume (microversion = 3.0).
 
 ## `osc block-storage volume show`
 
-Shows details for a volume.
-
-**Preconditions**
-
-- The volume must exist.
+Return data about the given volume
 
 **Usage:** `osc block-storage volume show <ID>`
 
@@ -801,19 +688,19 @@ Shows details for a volume.
 
 ## `osc catalog`
 
-Shows current catalog information
+Catalog commands args
 
 **Usage:** `osc catalog <COMMAND>`
 
 ###### **Subcommands:**
 
-* `list` — List catalog command arguments
+* `list` — Shows current catalog information
 
 
 
 ## `osc catalog list`
 
-List catalog command arguments
+Shows current catalog information
 
 **Usage:** `osc catalog list`
 
@@ -821,42 +708,20 @@ List catalog command arguments
 
 ## `osc compute`
 
-Compute service (Nova) commands
+Compute service (Nova) arguments
 
 **Usage:** `osc compute
        compute <COMMAND>`
 
 ###### **Subcommands:**
 
-* `availability-zone` — Availability zones
 * `aggregate` — Host Aggregates
-* `extension` — Extensions
-* `flavor` — Flavors
+* `availability-zone` — Availability zones
+* `extension` — Extension commands
+* `flavor` — Flavor commands
 * `hypervisor` — Hypervisors
-* `keypair` — Keypairs
+* `keypair` — Keypairs commands
 * `server` — Servers
-
-
-
-## `osc compute availability-zone`
-
-Lists and gets detailed availability zone information.
-
-An availability zone is created or updated by setting the availability_zone parameter in the create, update, or create or update methods of the Host Aggregates API. See Host Aggregates for more details.
-
-**Usage:** `osc compute availability-zone <COMMAND>`
-
-###### **Subcommands:**
-
-* `list` — Get Detailed Availability Zone Information
-
-
-
-## `osc compute availability-zone list`
-
-Get Detailed Availability Zone Information
-
-**Usage:** `osc compute availability-zone list`
 
 
 
@@ -871,13 +736,13 @@ Policy defaults enable only users with the administrative role to perform operat
 ###### **Subcommands:**
 
 * `add-host` — Add Host
-* `create` — Create Aggregate
-* `cache-image` — Request Image Pre-caching for Aggregate
+* `create` — Create Aggregate (microversion = 2.1)
+* `cache-image` — Request Image Pre-caching for Aggregate (microversion = 2.81)
 * `delete` — Delete Aggregate
 * `list` — List Aggregates
 * `remove-host` — Remove Host
 * `show` — Show Aggregate Details
-* `set` — Update Aggregate
+* `set` — Update Aggregate (microversion = 2.1)
 * `set-metadata` — Create Or Update Aggregate Metadata
 
 
@@ -900,7 +765,11 @@ Add Host
 
 ## `osc compute aggregate create`
 
-Create Aggregate
+Creates an aggregate. If specifying an option availability\_zone, the aggregate is created as an availability zone and the availability zone is visible to normal users.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute aggregate create [OPTIONS] --name <NAME>`
 
@@ -913,7 +782,13 @@ Create Aggregate
 
 ## `osc compute aggregate cache-image`
 
-Request Image Pre-caching for Aggregate
+Requests that a set of images be pre-cached on compute nodes within the referenced aggregate.
+
+This API is available starting with microversion 2.81.
+
+Normal response codes: 202
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute aggregate cache-image [OPTIONS] <ID>`
 
@@ -929,7 +804,11 @@ Request Image Pre-caching for Aggregate
 
 ## `osc compute aggregate delete`
 
-Delete Aggregate
+Deletes an aggregate.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute aggregate delete <ID>`
 
@@ -941,7 +820,11 @@ Delete Aggregate
 
 ## `osc compute aggregate list`
 
-List Aggregates
+Lists all aggregates. Includes the ID, name, and availability zone for each aggregate.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403)
 
 **Usage:** `osc compute aggregate list`
 
@@ -965,7 +848,11 @@ Remove Host
 
 ## `osc compute aggregate show`
 
-Show Aggregate Details
+Shows details for an aggregate. Details include hosts and metadata.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute aggregate show <ID>`
 
@@ -977,7 +864,11 @@ Show Aggregate Details
 
 ## `osc compute aggregate set`
 
-Update Aggregate
+Updates either or both the name and availability zone for an aggregate. If the aggregate to be updated has host that already in the given availability zone, the request will fail with 400 error.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
 **Usage:** `osc compute aggregate set [OPTIONS] <ID>`
 
@@ -1008,22 +899,48 @@ Create Or Update Aggregate Metadata
 
 
 
+## `osc compute availability-zone`
+
+Lists and gets detailed availability zone information.
+
+An availability zone is created or updated by setting the availability_zone parameter in the create, update, or create or update methods of the Host Aggregates API. See Host Aggregates for more details.
+
+**Usage:** `osc compute availability-zone <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get Detailed Availability Zone Information
+
+
+
+## `osc compute availability-zone list`
+
+Get Detailed Availability Zone Information
+
+**Usage:** `osc compute availability-zone list`
+
+
+
 ## `osc compute extension`
 
-Extensions
+Extension commands
 
 **Usage:** `osc compute extension <COMMAND>`
 
 ###### **Subcommands:**
 
 * `list` — List Extensions
-* `show` — Show single extension
+* `show` — Show Extension Details
 
 
 
 ## `osc compute extension list`
 
-List Extensions
+Lists all extensions to the API.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401)
 
 **Usage:** `osc compute extension list`
 
@@ -1031,7 +948,11 @@ List Extensions
 
 ## `osc compute extension show`
 
-Show single extension
+Shows details for an extension, by alias.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), itemNotFound(404)
 
 **Usage:** `osc compute extension show <ID>`
 
@@ -1051,22 +972,19 @@ Flavors are a way to describe the basic dimensions of a server to be created inc
 
 ###### **Subcommands:**
 
-* `access` — Flavor access commands
-* `create` — Create Flavor (with highest possible microversion)
+* `access` —
 * `create255` — Create Flavor (microversion = 2.55)
 * `create21` — Create Flavor (microversion = 2.1)
 * `create20` — Create Flavor (microversion = 2.0)
 * `delete` — Delete Flavor
-* `extraspecs` — Flavor extra-specs
-* `list` — List Flavors
+* `extraspecs` —
+* `list` — List Flavors With Details
 * `set` — Update Flavor Description
 * `show` — Show Flavor Details
 
 
 
 ## `osc compute flavor access`
-
-Flavor access commands
 
 **Usage:** `osc compute flavor access <COMMAND>`
 
@@ -1122,43 +1040,15 @@ Remove Flavor Access From Tenant (removeTenantAccess Action)
 
 
 
-## `osc compute flavor create`
+## `osc compute flavor create255`
 
-**Creates a flavor.**
+Creates a flavor.
 
 Creating a flavor is typically only available to administrators of a cloud because this has implications for scheduling efficiently in the cloud.
 
-**Note**
+Normal response codes: 200
 
-Flavors with special characters in the flavor ID, except the hyphen ‘-‘, underscore ‘_’, spaces and dots ‘.’, are not permitted.
-
-Flavor IDs are meant to be UUIDs. Serialized strings separated/grouped by “-” represent the default flavor ID or UUID. eg: 01cc74d8-4816-4bef-835b-e36ff188c406.
-
-Only for backward compatibility, an integer as a flavor ID is permitted.
-
-**Usage:** `osc compute flavor create [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
-
-###### **Options:**
-
-* `--name <NAME>` — The display name of a flavor
-* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
-* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
-* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
-* `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
-* `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
-
-  Possible values: `true`, `false`
-
-* `--description <DESCRIPTION>` — A free form description of the flavor. Limited to 65535 characters in length. Only printable characters are allowed
-
-
-
-## `osc compute flavor create255`
-
-Create Flavor (microversion = 2.55)
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute flavor create255 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
 
@@ -1182,7 +1072,13 @@ Create Flavor (microversion = 2.55)
 
 ## `osc compute flavor create21`
 
-Create Flavor (microversion = 2.1)
+Creates a flavor.
+
+Creating a flavor is typically only available to administrators of a cloud because this has implications for scheduling efficiently in the cloud.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute flavor create21 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
 
@@ -1205,7 +1101,13 @@ Create Flavor (microversion = 2.1)
 
 ## `osc compute flavor create20`
 
-Create Flavor (microversion = 2.0)
+Creates a flavor.
+
+Creating a flavor is typically only available to administrators of a cloud because this has implications for scheduling efficiently in the cloud.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute flavor create20 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
 
@@ -1232,6 +1134,10 @@ Deletes a flavor.
 
 This is typically an admin only action. Deleting a flavor that is in use by existing servers is not recommended as it can cause incorrect data to be returned to the user under some operations.
 
+Normal response codes: 202
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+
 **Usage:** `osc compute flavor delete <ID>`
 
 ###### **Arguments:**
@@ -1241,8 +1147,6 @@ This is typically an admin only action. Deleting a flavor that is in use by exis
 
 
 ## `osc compute flavor extraspecs`
-
-Flavor extra-specs
 
 **Usage:** `osc compute flavor extraspecs <COMMAND>`
 
@@ -1331,7 +1235,11 @@ Update An Extra Spec For A Flavor
 
 ## `osc compute flavor list`
 
-List Flavors
+Lists flavors with details.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
 **Usage:** `osc compute flavor list [OPTIONS]`
 
@@ -1352,9 +1260,15 @@ List Flavors
 
 ## `osc compute flavor set`
 
-Updates a flavor description. This API is available starting with microversion 2.55.
+Updates a flavor description.
 
-Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the policy.json file.
+This API is available starting with microversion 2.55.
+
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute flavor set --description <DESCRIPTION> <ID>`
 
@@ -1370,7 +1284,11 @@ Policy defaults enable only users with the administrative role to perform this o
 
 ## `osc compute flavor show`
 
-Show Flavor Details
+Shows details for a flavor.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute flavor show <ID>`
 
@@ -1397,7 +1315,11 @@ Hypervisors
 
 Lists hypervisors details.
 
-Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the policy.json file.
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
+
+Normal response codes: 200
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
 **Usage:** `osc compute hypervisor list [OPTIONS]`
 
@@ -1420,11 +1342,11 @@ Policy defaults enable only users with the administrative role to perform this o
 
 Shows details for a given hypervisor.
 
-Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the policy.json file.
+Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
 
-**Note**
+Normal response codes: 200
 
-As noted, some of the parameters in the response representing totals do not take allocation ratios into account. This can result in a disparity between the totals and the usages. A more accurate representation of state can be obtained using placement.
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute hypervisor show [OPTIONS] <ID>`
 
@@ -1443,27 +1365,32 @@ As noted, some of the parameters in the response representing totals do not take
 
 ## `osc compute keypair`
 
-Keypairs
+Keypairs commands
+
+Generates, imports, and deletes SSH keys.
 
 **Usage:** `osc compute keypair <COMMAND>`
 
 ###### **Subcommands:**
 
-* `list` — List keypairs
-* `show` — Show single keypair details
-* `create` — Imports (or generates) Keypair (with highest possible microversion)
-* `create292` — Import keypair (microversion >= 2.92)
-* `create210` — Import (or generate) keypair (2.10 <= microversion < 2.92)
-* `create22` — Import (or generate) keypair (2.2 <= microversion < 2.10)
-* `create21` — Import (or generate) keypair (2.1 <= microversion < 2.2)
-* `create20` — Import (or generate) keypair (microversion == 2.0)
-* `delete` — Delete keypair
+* `list` — List Keypairs
+* `show` — Show Keypair Details
+* `create292` — Import (or create) Keypair (microversion = 2.92)
+* `create210` — Import (or create) Keypair (microversion = 2.10)
+* `create22` — Import (or create) Keypair (microversion = 2.2)
+* `create21` — Import (or create) Keypair (microversion = 2.1)
+* `create20` — Import (or create) Keypair (microversion = 2.0)
+* `delete` — Delete Keypair
 
 
 
 ## `osc compute keypair list`
 
-List keypairs
+Lists keypairs that are associated with the account.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403)
 
 **Usage:** `osc compute keypair list [OPTIONS]`
 
@@ -1480,9 +1407,11 @@ List keypairs
 
 ## `osc compute keypair show`
 
-Show single keypair details
-
 Shows details for a keypair that is associated with the account.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute keypair show [OPTIONS] <ID>`
 
@@ -1496,27 +1425,13 @@ Shows details for a keypair that is associated with the account.
 
 
 
-## `osc compute keypair create`
-
-Imports (or generates) Keypair (with highest possible microversion)
-
-**Usage:** `osc compute keypair create [OPTIONS] --name <NAME> --public-key <PUBLIC_KEY>`
-
-###### **Options:**
-
-* `--name <NAME>` — A name for the keypair which will be used to reference it later
-* `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
-
-  Possible values: `ssh`, `x509`
-
-* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
-* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
-
-
-
 ## `osc compute keypair create292`
 
-Import keypair (microversion >= 2.92)
+Imports (or generates) a keypair.
+
+Normal response codes: 200, 201
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute keypair create292 [OPTIONS] --name <NAME> --public-key <PUBLIC_KEY>`
 
@@ -1534,7 +1449,11 @@ Import keypair (microversion >= 2.92)
 
 ## `osc compute keypair create210`
 
-Import (or generate) keypair (2.10 <= microversion < 2.92)
+Imports (or generates) a keypair.
+
+Normal response codes: 200, 201
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute keypair create210 [OPTIONS] --name <NAME>`
 
@@ -1552,7 +1471,11 @@ Import (or generate) keypair (2.10 <= microversion < 2.92)
 
 ## `osc compute keypair create22`
 
-Import (or generate) keypair (2.2 <= microversion < 2.10)
+Imports (or generates) a keypair.
+
+Normal response codes: 200, 201
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute keypair create22 [OPTIONS] --name <NAME>`
 
@@ -1569,7 +1492,11 @@ Import (or generate) keypair (2.2 <= microversion < 2.10)
 
 ## `osc compute keypair create21`
 
-Import (or generate) keypair (2.1 <= microversion < 2.2)
+Imports (or generates) a keypair.
+
+Normal response codes: 200, 201
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute keypair create21 [OPTIONS] --name <NAME>`
 
@@ -1582,7 +1509,11 @@ Import (or generate) keypair (2.1 <= microversion < 2.2)
 
 ## `osc compute keypair create20`
 
-Import (or generate) keypair (microversion == 2.0)
+Imports (or generates) a keypair.
+
+Normal response codes: 200, 201
+
+Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
 **Usage:** `osc compute keypair create20 [OPTIONS] --name <NAME>`
 
@@ -1595,7 +1526,11 @@ Import (or generate) keypair (microversion == 2.0)
 
 ## `osc compute keypair delete`
 
-Delete keypair
+Deletes a keypair.
+
+Normal response codes: 202, 204
+
+Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 **Usage:** `osc compute keypair delete [OPTIONS] <ID>`
 
@@ -1870,7 +1805,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -1880,11 +1815,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -1953,7 +1888,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -1963,11 +1898,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2036,7 +1971,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2046,11 +1981,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2118,7 +2053,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2128,11 +2063,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2198,7 +2133,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2208,11 +2143,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2278,7 +2213,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2288,11 +2223,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2357,7 +2292,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2367,11 +2302,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2437,7 +2372,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2447,11 +2382,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2516,7 +2451,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2526,11 +2461,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -5240,10 +5175,90 @@ Identity (Keystone) commands
 
 ###### **Subcommands:**
 
-* `application-credential` — **Application Credentials**
 * `access-rule` — **Application Credentials - Access Rules**
-* `project` — Project commands
+* `application-credential` — **Application Credentials**
+* `project` — Identity Project commands
 * `user` — User commands
+
+
+
+## `osc identity access-rule`
+
+**Application Credentials - Access Rules**
+
+Users also have the option of delegating more fine-grained access control to their application credentials by using access rules. For example, to create an application credential that is constricted to creating servers in nova, the user can add the following access rules:
+
+```json { "access_rules": [{ "path": "/v2.1/servers", "method": "POST", "service": "compute" }] } ```
+
+The "path" attribute of application credential access rules uses a wildcard syntax to make it more flexible. For example, to create an application credential that is constricted to listing server IP addresses, you could use either of the following access rules:
+
+```json { "access_rules": [ { "path": "/v2.1/servers/*/ips", "method": "GET", "service": "compute" } ] } ```
+
+or equivalently:
+
+```json { "access_rules": [ { "path": "/v2.1/servers/{server_id}/ips", "method": "GET", "service": "compute" } ] } ```
+
+In both cases, a request path containing any server ID will match the access rule. For even more flexibility, the recursive wildcard ** indicates that request paths containing any number of / will be matched. For example:
+
+```json { "access_rules": [ { "path": "/v2.1/**", "method": "GET", "service": "compute" } ] } ```
+
+will match any nova API for version 2.1.
+
+An access rule created for one application credential can be re-used by providing its ID to another application credential, for example:
+
+```json { "access_rules": [ { "id": "abcdef" } ] } ```
+
+**Usage:** `osc identity access-rule <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Delete access rule
+* `list` — List access rules
+* `show` — Show access rule details
+
+
+
+## `osc identity access-rule delete`
+
+Delete an access rule. An access rule that is still in use by an application credential cannot be deleted.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+
+**Usage:** `osc identity access-rule delete <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity access-rule list`
+
+List all access rules for a user.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+
+**Usage:** `osc identity access-rule list <USER_ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+
+
+## `osc identity access-rule show`
+
+Show details of an access rule.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+
+**Usage:** `osc identity access-rule show <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 
 
 
@@ -5296,7 +5311,9 @@ An access rule created for one application credential can be re-used by providin
 
 ## `osc identity application-credential create`
 
-Create application credential
+Creates an application credential for a user on the project to which the current token is scoped.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential create [OPTIONS] --name <NAME> <USER_ID>`
 
@@ -5321,7 +5338,9 @@ Create application credential
 
 ## `osc identity application-credential delete`
 
-Delete application credential
+Delete an application credential.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential delete <USER_ID> <ID>`
 
@@ -5334,7 +5353,9 @@ Delete application credential
 
 ## `osc identity application-credential list`
 
-List application credentials
+List all application credentials for a user.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential list [OPTIONS] <USER_ID>`
 
@@ -5350,7 +5371,9 @@ List application credentials
 
 ## `osc identity application-credential show`
 
-Show application credential details
+Show details of an application credential.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential show <USER_ID> <ID>`
 
@@ -5361,83 +5384,9 @@ Show application credential details
 
 
 
-## `osc identity access-rule`
-
-**Application Credentials - Access Rules**
-
-Users also have the option of delegating more fine-grained access control to their application credentials by using access rules. For example, to create an application credential that is constricted to creating servers in nova, the user can add the following access rules:
-
-```json { "access_rules": [{ "path": "/v2.1/servers", "method": "POST", "service": "compute" }] } ```
-
-The "path" attribute of application credential access rules uses a wildcard syntax to make it more flexible. For example, to create an application credential that is constricted to listing server IP addresses, you could use either of the following access rules:
-
-```json { "access_rules": [ { "path": "/v2.1/servers/*/ips", "method": "GET", "service": "compute" } ] } ```
-
-or equivalently:
-
-```json { "access_rules": [ { "path": "/v2.1/servers/{server_id}/ips", "method": "GET", "service": "compute" } ] } ```
-
-In both cases, a request path containing any server ID will match the access rule. For even more flexibility, the recursive wildcard ** indicates that request paths containing any number of / will be matched. For example:
-
-```json { "access_rules": [ { "path": "/v2.1/**", "method": "GET", "service": "compute" } ] } ```
-
-will match any nova API for version 2.1.
-
-An access rule created for one application credential can be re-used by providing its ID to another application credential, for example:
-
-```json { "access_rules": [ { "id": "abcdef" } ] } ```
-
-**Usage:** `osc identity access-rule <COMMAND>`
-
-###### **Subcommands:**
-
-* `delete` — Delete access rule
-* `list` — List access rules
-* `show` — Show access rule details
-
-
-
-## `osc identity access-rule delete`
-
-Delete access rule
-
-**Usage:** `osc identity access-rule delete <USER_ID> <ID>`
-
-###### **Arguments:**
-
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
-* `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
-
-
-
-## `osc identity access-rule list`
-
-List access rules
-
-**Usage:** `osc identity access-rule list <USER_ID>`
-
-###### **Arguments:**
-
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
-
-
-
-## `osc identity access-rule show`
-
-Show access rule details
-
-**Usage:** `osc identity access-rule show <USER_ID> <ID>`
-
-###### **Arguments:**
-
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
-* `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
-
-
-
 ## `osc identity project`
 
-Project commands
+Identity Project commands
 
 **Usage:** `osc identity project <COMMAND>`
 
@@ -5445,15 +5394,17 @@ Project commands
 
 * `create` — Create project
 * `delete` — Delete project
-* `list` — List Projects
-* `set` — Update project details
+* `list` — List projects
+* `set` — Update project
 * `show` — Show project details
 
 
 
 ## `osc identity project create`
 
-Create project
+Creates a project, where the project may act as a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects`
 
 **Usage:** `osc identity project create [OPTIONS] --name <NAME>`
 
@@ -5481,7 +5432,9 @@ Create project
 
 ## `osc identity project delete`
 
-Delete project
+Deletes a project.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 **Usage:** `osc identity project delete <ID>`
 
@@ -5493,7 +5446,9 @@ Delete project
 
 ## `osc identity project list`
 
-List Projects
+Lists projects.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects`
 
 **Usage:** `osc identity project list [OPTIONS]`
 
@@ -5515,7 +5470,9 @@ List Projects
 
 ## `osc identity project set`
 
-Update project details
+Updates a project.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 **Usage:** `osc identity project set [OPTIONS] <ID>`
 
@@ -5547,7 +5504,9 @@ Update project details
 
 ## `osc identity project show`
 
-Show project details
+Shows details for a project.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 **Usage:** `osc identity project show <ID>`
 
@@ -5573,10 +5532,10 @@ You can also list groups, projects, and role assignments for a specified user.
 
 * `create` — Create user
 * `delete` — Delete user
-* `list` — List Users
-* `set` — Update user details
+* `list` — List users
+* `set` — Update user
 * `show` — Show user details
-* `password` — User password operations
+* `password` — User password commands
 * `projects` — List projects for user
 * `groups` — List groups to which a user belongs
 
@@ -5584,7 +5543,9 @@ You can also list groups, projects, and role assignments for a specified user.
 
 ## `osc identity user create`
 
-Create user
+Creates a user.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
 **Usage:** `osc identity user create [OPTIONS] --name <NAME>`
 
@@ -5630,7 +5591,9 @@ Create user
 
 ## `osc identity user delete`
 
-Delete user
+Deletes a user.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 **Usage:** `osc identity user delete <ID>`
 
@@ -5642,7 +5605,9 @@ Delete user
 
 ## `osc identity user list`
 
-List Users
+Lists users.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
 **Usage:** `osc identity user list [OPTIONS]`
 
@@ -5663,7 +5628,11 @@ List Users
 
 ## `osc identity user set`
 
-Update user details
+Updates a user.
+
+If the back-end driver does not support this functionality, this call might return the HTTP `Not Implemented (501)` response code.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 **Usage:** `osc identity user set [OPTIONS] <ID>`
 
@@ -5713,7 +5682,9 @@ Update user details
 
 ## `osc identity user show`
 
-Show user details
+Shows details for a user.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 **Usage:** `osc identity user show <ID>`
 
@@ -5733,13 +5704,15 @@ This subcommand allows user to change the password
 
 ###### **Subcommands:**
 
-* `set` — Update user password
+* `set` — Change password for user
 
 
 
 ## `osc identity user password set`
 
-Update user password
+Changes the password for a user.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_change\_password`
 
 **Usage:** `osc identity user password set [OPTIONS] <USER_ID>`
 
@@ -5756,7 +5729,9 @@ Update user password
 
 ## `osc identity user projects`
 
-List projects for user
+List projects to which the user has authorization to access.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_projects`
 
 **Usage:** `osc identity user projects <USER_ID>`
 
@@ -5768,7 +5743,9 @@ List projects for user
 
 ## `osc identity user groups`
 
-List groups to which a user belongs
+Lists groups to which a user belongs.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_groups`
 
 **Usage:** `osc identity user groups <USER_ID>`
 
@@ -5779,8 +5756,6 @@ List groups to which a user belongs
 
 
 ## `osc image`
-
-Image (Glance) commands
 
 **Usage:** `osc image
        image <COMMAND>`
@@ -5801,13 +5776,13 @@ Image commands
 
 ###### **Subcommands:**
 
-* `list` — List Images
-* `show` — Show single image
+* `list` — List images
+* `show` — Show image
 * `create` — Create image
 * `set` — Update image
-* `download` — Download image data
-* `upload` — Upload image data
-* `delete` — Download image data
+* `download` — Download binary image data
+* `upload` — Upload binary image data
+* `delete` — Delete image
 * `deactivate` — Deactivate image
 * `reactivate` — Reactivate image
 
@@ -5815,49 +5790,69 @@ Image commands
 
 ## `osc image image list`
 
-Lists public virtual machine (VM) images.
+Lists public virtual machine (VM) images. *(Since Image API v2.0)*
 
-*Pagination*
+**Pagination**
 
-Returns a subset of the larger collection of images and a link that you can use to get the next set of images. You should always check for the presence of a next link and use it as the URI in a subsequent HTTP GET request. You should follow this pattern until a next link is no longer provided.
+Returns a subset of the larger collection of images and a link that you can use to get the next set of images. You should always check for the presence of a `next` link and use it as the URI in a subsequent HTTP GET request. You should follow this pattern until a `next` link is no longer provided.
 
-The next link preserves any query parameters that you send in your initial request. You can use the first link to jump back to the first page of the collection. If you prefer to paginate through images manually, use the limit and marker parameters.
+The `next` link preserves any query parameters that you send in your initial request. You can use the `first` link to jump back to the first page of the collection. If you prefer to paginate through images manually, use the `limit` and `marker` parameters.
 
-*Query Filters*
+**Query Filters**
 
 The list operation accepts query parameters to filter the response.
 
-A client can provide direct comparison filters by using most image attributes, such as name=Ubuntu, visibility=public, and so on.
+A client can provide direct comparison filters by using most image attributes, such as `name=Ubuntu`, `visibility=public`, and so on.
 
-To filter using image tags, use the filter tag (note the singular). To filter on multiple tags, include each tag separately in the query. For example, to find images with the tag ready, include tag=ready in your query string. To find images tagged with ready and approved, include tag=ready&tag=approved in your query string. (Note that only images containing both tags will be included in the response.)
+To filter using image tags, use the filter `tag` (note the singular). To filter on multiple tags, include each tag separately in the query. For example, to find images with the tag **ready**, include `tag=ready` in your query string. To find images tagged with **ready** and **approved**, include `tag=ready&tag=approved` in your query string. (Note that only images containing *both* tags will be included in the response.)
 
-A client cannot use any link in the json-schema, such as self, file, or schema, to filter the response.
+A client cannot use any `link` in the json-schema, such as self, file, or schema, to filter the response.
 
-You can list VM images that have a status of active, queued, or saving.
+You can list VM images that have a status of `active`, `queued`, or `saving`.
 
-*The `in` Operator*
+**The** `in` **Operator**
 
-As a convenience, you may specify several values for any of the following fields by using the in operator: [container_format, disk_format, id, name, status]
+As a convenience, you may specify several values for any of the following fields by using the `in` operator:
 
-For most of these, usage is straight forward. For example, to list images in queued or saving status, use: `--status "in:saving,queued"`
+For most of these, usage is straight forward. For example, to list images in queued or saving status, use:
 
-To find images in a particular list of image IDs, use: `--id "in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-44b5-baf2-2eb4babae53d"
+`GET /v2/images?status=in:saving,queued`
 
-Using the in operator with the name property of images can be a bit trickier, depending upon how creatively you have named your images. The general rule is that if an image name contains a comma (,), you must enclose the entire name in quotation marks ("). As usual, you must URL encode any characters that require it.
+To find images in a particular list of image IDs, use:
 
-For example, to find images named glass, darkly or share me, you would use the following filter specification: `--name: 'in:"glass,%20darkly",share%20me'`
+`GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f- 44b5-baf2-2eb4babae53d`
 
-As with regular filtering by name, you must specify the complete name you are looking for. Thus, for example, the query `--name "in:glass,share"` will only match images with the exact name glass or the exact name share. It will not find an image named glass, darkly or an image named share me.
+Using the `in` operator with the `name` property of images can be a bit trickier, depending upon how creatively you have named your images. The general rule is that if an image name contains a comma (`,`), you must enclose the entire name in quotation marks (`"`). As usual, you must URL encode any characters that require it.
 
-*Size Comparison Filters*
+For example, to find images named `glass, darkly` or `share me`, you would use the following filter specification:
 
-You can use the size_min and size_max query parameters to filter images that are greater than or less than the image size. The size, in bytes, is the size of an image on disk.
+`GET v2/images?name=in:"glass,%20darkly",share%20me`
 
-For example, to filter the container to include only images that are from 1 to 4 MB, set the size_min query parameter to 1048576 and the size_max query parameter to 4194304.
+As with regular filtering by name, you must specify the complete name you are looking for. Thus, for example, the query string `name=in:glass,share` will only match images with the exact name `glass` or the exact name `share`. It will not find an image named `glass, darkly` or an image named `share me`.
 
-*Time Comparison Filters*
+**Size Comparison Filters**
 
-You can use a comparison operator along with the created_at or updated_at fields to filter your results. Specify the operator first, a colon (:) as a separator, and then the time in ISO 8601 Format. Available comparison operators are: [gt, gte, eq, neq, lt, lte]
+You can use the `size\_min` and `size\_max` query parameters to filter images that are greater than or less than the image size. The size, in bytes, is the size of an image on disk.
+
+For example, to filter the container to include only images that are from 1 to 4 MB, set the `size\_min` query parameter to `1048576` and the `size\_max` query parameter to `4194304`.
+
+**Time Comparison Filters**
+
+You can use a *comparison operator* along with the `created\_at` or `updated\_at` fields to filter your results. Specify the operator first, a colon (`:`) as a separator, and then the time in [ISO 8601 Format](https://en.wikipedia.org/wiki/ISO_8601). Available comparison operators are:
+
+For example:
+
+**Sorting**
+
+You can use query parameters to sort the results of this operation.
+
+To sort the response, use the `sort\_key` and `sort\_dir` query parameters:
+
+Alternatively, specify the `sort` query parameter:
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403
 
 **Usage:** `osc image image list [OPTIONS]`
 
@@ -5895,7 +5890,15 @@ You can use a comparison operator along with the created_at or updated_at fields
 
 ## `osc image image show`
 
-Show single image
+Shows details for an image. *(Since Image API v2.0)*
+
+The response body contains a single image entity.
+
+Preconditions
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
 
 **Usage:** `osc image image show <ID>`
 
@@ -5907,17 +5910,19 @@ Show single image
 
 ## `osc image image create`
 
-Creates a catalog record for an operating system disk image. (Since Image API v2.0)
+Creates a catalog record for an operating system disk image. *(Since Image API v2.0)*
 
-The Location response header contains the URI for the image.
+The `Location` response header contains the URI for the image.
 
-A multiple store backend support is introduced in the Rocky release as a part of the EXPERIMENTAL Image API v2.8. Since Image API v2.8 a new header OpenStack-image-store-ids which contains the list of available stores will be included in response. This header is only included if multiple backend stores are supported.
+A multiple store backend support is introduced in the Rocky release as a part of the EXPERIMENTAL Image API v2.8. Since Image API v2.8 a new header `OpenStack-image-store-ids` which contains the list of available stores will be included in response. This header is only included if multiple backend stores are supported.
 
 The response body contains the new image entity.
 
-*Synchronous Postconditions*
+Synchronous Postconditions
 
-With correct permissions, you can see the image status as queued through API calls.
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 409, 413, 415
 
 **Usage:** `osc image image create [OPTIONS]`
 
@@ -5956,7 +5961,23 @@ With correct permissions, you can see the image status as queued through API cal
 
 ## `osc image image set`
 
-Update image
+Updates an image. *(Since Image API v2.0)*
+
+Conceptually, you update an image record by patching the JSON representation of the image, passing a request body conforming to one of the following media types:
+
+Attempting to make a PATCH call using some other media type will provoke a response code of 415 (Unsupported media type).
+
+The `application/openstack-images-v2.1-json-patch` media type provides a useful and compatible subset of the functionality defined in JavaScript Object Notation (JSON) Patch [RFC6902](http://tools.ietf.org/html/rfc6902), which defines the `application/json-patch+json` media type.
+
+For information about the PATCH method and the available media types, see [Image API v2 HTTP PATCH media types](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/http- patch-image-api-v2.html).
+
+Attempting to modify some image properties will cause the entire request to fail with a 403 (Forbidden) response code:
+
+Attempting to add a location path to an image that is not in `queued` or `active` state will result in a 409 (Conflict) response code *(since Image API v2.4)*.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 409, 413, 415
 
 **Usage:** `osc image image set [OPTIONS] <ID>`
 
@@ -5998,27 +6019,19 @@ Update image
 
 ## `osc image image download`
 
-Downloads binary image data. (Since Image API v2.0)
+Downloads binary image data. *(Since Image API v2.0)*
 
-The response body contains the raw binary data that represents the actual virtual disk. The Content-Type header contains the application/octet-stream value. The Content-MD5 header contains an MD5 checksum of the image data. Use this checksum to verify the integrity of the image data.
+Example call: `curl -i -X GET -H "X-Auth-Token: $token" $image\_url/v2/images/{image\_id}/file`
 
-*Preconditions*
+The response body contains the raw binary data that represents the actual virtual disk. The `Content-Type` header contains the `application/octet-stream` value. The `Content-MD5` header contains an MD5 checksum of the image data. Use this checksum to verify the integrity of the image data.
 
-- The image must exist.
+**Preconditions**
 
-*Synchronous Postconditions*
+**Synchronous Postconditions**
 
-- You can download the binary image data in your machine if the image has image data.
+Normal response codes: 200, 204, 206
 
-- If image data exists, the call returns the HTTP 200 response code for a full image download request.
-
-- If image data exists, the call returns the HTTP 206 response code for a partial download request.
-
-- If no image data exists, the call returns the HTTP 204 (No Content) response code.
-
-- If no image record exists, the call returns the HTTP 404 response code for an attempted full image download request.
-
-- For an unsatisfiable partial download request, the call returns the HTTP 416 response code.
+Error response codes: 400, 403, 404, 416
 
 **Usage:** `osc image image download [OPTIONS] <IMAGE_ID>`
 
@@ -6034,33 +6047,27 @@ The response body contains the raw binary data that represents the actual virtua
 
 ## `osc image image upload`
 
-Uploads binary image data.
+Uploads binary image data. *(Since Image API v2.0)*
 
-These operation may be restricted to administrators. Consult your cloud operator’s documentation for details.
+Set the `Content-Type` request header to `application/octet-stream`.
 
-*Preconditions* Before you can store binary image data, you must meet the following preconditions:
+A multiple store backend support is introduced in the Rocky release as a part of the EXPERIMENTAL Image API v2.8.
 
-- The image must exist.
+Beginning with API version 2.8, an optional `X-Image-Meta-Store` header may be added to the request. When present, the image data will be placed into the backing store whose identifier is the value of this header. If the store identifier specified is not recognized, a 400 (Bad Request) response is returned. When the header is not present, the image data is placed into the default backing store.
 
-- You must set the disk and container formats in the image.
+Example call:
 
-- The image status must be queued.
+**Preconditions**
 
-- Your image storage quota must be sufficient.
+Before you can store binary image data, you must meet the following preconditions:
 
-- The size of the data that you want to store must not exceed the size that the OpenStack Image service allows.
+**Synchronous Postconditions**
 
-*Synchronous Postconditions*
+**Troubleshooting**
 
-- With correct permissions, you can see the image status as active through API calls.
+Normal response codes: 204
 
-- With correct access, you can see the stored data in the storage system that the OpenStack Image Service manages.
-
-*Troubleshooting*
-
-- If you cannot store the data, either your request lacks required information or you exceeded your allotted quota. Ensure that you meet the preconditions and run the request again. If the request fails again, review your API request.
-
-- The storage back ends for storing the data must have enough free storage space to accommodate the size of the data.
+Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
 
 **Usage:** `osc image image upload [OPTIONS] <IMAGE_ID>`
 
@@ -6076,25 +6083,17 @@ These operation may be restricted to administrators. Consult your cloud operator
 
 ## `osc image image delete`
 
-Deletes an image.
+(Since Image API v2.0) Deletes an image.
 
-You cannot delete images with the protected attribute set to true (boolean).
+You cannot delete images with the `protected` attribute set to `true` (boolean).
 
-*Preconditions*
+Preconditions
 
-- You can delete an image in any status except deleted.
+Synchronous Postconditions
 
-- The protected attribute of the image cannot be true.
+Normal response codes: 204
 
-- You have permission to perform image deletion under the configured image deletion policy.
-
-*Synchronous Postconditions*
-
-- The response is empty and returns the HTTP 204 response code.
-
-- The API deletes the image from the images index.
-
--  If the image has associated binary image data in the storage backend, the OpenStack Image service deletes the data.
+Error response codes: 400, 401, 403, 404, 409
 
 **Usage:** `osc image image delete <ID>`
 
@@ -6268,13 +6267,17 @@ Availability Zones commands
 
 ###### **Subcommands:**
 
-* `list` — List AvailabilityZones
+* `list` — List all availability zones
 
 
 
 ## `osc network availability-zone list`
 
-List AvailabilityZones
+Lists all availability zones.
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network availability-zone list [OPTIONS]`
 
@@ -6295,14 +6298,20 @@ Extensions commands
 
 ###### **Subcommands:**
 
-* `list` — List Extensions
-* `show` — show Extensions
+* `list` — List extensions
+* `show` — Show extension details
 
 
 
 ## `osc network extension list`
 
-List Extensions
+Lists available extensions.
+
+Lists available Networking API v2.0 extensions and shows details for an extension.
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network extension list`
 
@@ -6310,7 +6319,11 @@ List Extensions
 
 ## `osc network extension show`
 
-show Extensions
+Shows details for an extension, by alias. The response shows the extension name and its alias. To show details for an extension, you specify the alias.
+
+Normal response codes: 200
+
+Error response codes: 401, 404
 
 **Usage:** `osc network extension show <ID>`
 
@@ -6329,18 +6342,38 @@ Floating IP commands
 
 ###### **Subcommands:**
 
-* `create` — Create single FloatingIP
-* `delete` — Delete single FloatingIP
-* `list` — List FloatingIPs
-* `set` — Update FloatingIP attributes
-* `show` — Show single FloatingIP
-* `tag` — FloatingIP Tags management
+* `create` — Create floating IP
+* `delete` — Delete floating IP
+* `list` — List floating IPs
+* `set` — Update floating IP
+* `show` — Show floating IP details
+* `tag` — Resource tag operations
 
 
 
 ## `osc network floating-ip create`
 
-Create single FloatingIP
+Creates a floating IP, and, if you specify port information, associates the floating IP with an internal port.
+
+To associate the floating IP with an internal port, specify the port ID attribute in the request body. If you do not specify a port ID in the request, you can issue a PUT request instead of a POST request.
+
+Default policy settings enable only administrative users to set floating IP addresses and some non-administrative users might require a floating IP address. If you do not specify a floating IP address in the request, the operation automatically allocates one.
+
+By default, this operation associates the floating IP address with a single fixed IP address that is configured on an OpenStack Networking port. If a port has multiple IP addresses, you must specify the `fixed\_ip\_address` attribute in the request body to associate a fixed IP address with the floating IP address.
+
+You can create floating IPs on only external networks. When you create a floating IP, you must specify the ID of the network on which you want to create the floating IP. Alternatively, you can create a floating IP on a subnet in the external network, based on the costs and quality of that subnet.
+
+You must configure an IP address with the internal OpenStack Networking port that is associated with the floating IP address.
+
+The operation returns the `Bad Request (400)` response code for one of reasons:
+
+If the port ID is not valid, this operation returns `404` response code.
+
+The operation returns the `Conflict (409)` response code for one of reasons:
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 404, 409
 
 **Usage:** `osc network floating-ip create [OPTIONS] --floating-network-id <FLOATING_NETWORK_ID>`
 
@@ -6361,7 +6394,13 @@ Create single FloatingIP
 
 ## `osc network floating-ip delete`
 
-Delete single FloatingIP
+Deletes a floating IP and, if present, its associated port.
+
+This example deletes a floating IP:
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 412
 
 **Usage:** `osc network floating-ip delete <ID>`
 
@@ -6373,7 +6412,17 @@ Delete single FloatingIP
 
 ## `osc network floating-ip list`
 
-List FloatingIPs
+Lists floating IPs visible to the user.
+
+Default policy settings return only the floating IPs owned by the user’s project, unless the user has admin role.
+
+This example request lists floating IPs in JSON format:
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network floating-ip list [OPTIONS]`
 
@@ -6397,7 +6446,19 @@ List FloatingIPs
 
 ## `osc network floating-ip set`
 
-Update FloatingIP attributes
+Updates a floating IP and its association with an internal port.
+
+The association process is the same as the process for the create floating IP operation.
+
+To disassociate a floating IP from a port, set the `port\_id` attribute to null or omit it from the request body.
+
+This example updates a floating IP:
+
+Depending on the request body that you submit, this request associates a port with or disassociates a port from a floating IP.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 404, 409, 412
 
 **Usage:** `osc network floating-ip set [OPTIONS] <ID>`
 
@@ -6416,7 +6477,15 @@ Update FloatingIP attributes
 
 ## `osc network floating-ip show`
 
-Show single FloatingIP
+Shows details for a floating IP.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+
+This example request shows details for a floating IP in JSON format. This example also filters the result by the `fixed\_ip\_address` and `floating\_ip\_address` fields.
+
+Normal response codes: 200
+
+Error response codes: 401, 403, 404
 
 **Usage:** `osc network floating-ip show <ID>`
 
@@ -6428,29 +6497,25 @@ Show single FloatingIP
 
 ## `osc network floating-ip tag`
 
-FloatingIP Tags management
-
-Shows details for, updates, and deletes tags. The maximum number of characters allowed in a tag is 60.
+Resource tag operations
 
 **Usage:** `osc network floating-ip tag
        tag <COMMAND>`
 
 ###### **Subcommands:**
 
-* `add` — Add a tag
-* `check` — Confirm tag presence
-* `delete` — Remove a single tag
-* `list` — List all tags
-* `purge` — Remove all tags
-* `replace` — Replace all tags
+* `add` — Path parameters
+* `check` — Path parameters
+* `delete` — Path parameters
+* `list` — Path parameters
+* `purge` — Path parameters
+* `replace` — Path parameters
 
 
 
 ## `osc network floating-ip tag add`
 
-Add a tag
-
-Adds a tag on the resource.
+Path parameters
 
 **Usage:** `osc network floating-ip tag add <FLOATINGIP_ID> <ID>`
 
@@ -6463,9 +6528,7 @@ Adds a tag on the resource.
 
 ## `osc network floating-ip tag check`
 
-Confirm tag presence
-
-Confirms a given tag is set on the resource. This method does not return any reasonable response, but fails with "not found" when tag is not present.
+Path parameters
 
 **Usage:** `osc network floating-ip tag check <FLOATINGIP_ID> <ID>`
 
@@ -6478,9 +6541,7 @@ Confirms a given tag is set on the resource. This method does not return any rea
 
 ## `osc network floating-ip tag delete`
 
-Remove a single tag
-
-Removes a tag on the resource.
+Path parameters
 
 **Usage:** `osc network floating-ip tag delete <FLOATINGIP_ID> <ID>`
 
@@ -6493,9 +6554,7 @@ Removes a tag on the resource.
 
 ## `osc network floating-ip tag list`
 
-List all tags
-
-Obtains the tags for a resource.
+Path parameters
 
 **Usage:** `osc network floating-ip tag list <FLOATINGIP_ID>`
 
@@ -6507,9 +6566,7 @@ Obtains the tags for a resource.
 
 ## `osc network floating-ip tag purge`
 
-Remove all tags
-
-Removes all tags on the resource.
+Path parameters
 
 **Usage:** `osc network floating-ip tag purge <FLOATINGIP_ID>`
 
@@ -6521,9 +6578,7 @@ Removes all tags on the resource.
 
 ## `osc network floating-ip tag replace`
 
-Replace all tags
-
-Replaces all tags on the resource.
+Path parameters
 
 **Usage:** `osc network floating-ip tag replace [OPTIONS] <FLOATINGIP_ID>`
 
@@ -6546,16 +6601,26 @@ Network commands
 
 ###### **Subcommands:**
 
-* `list` — List Networks
-* `show` — Show single Network
-* `create` — Create single Network
-* `delete` — Delete single Network
+* `list` — List networks
+* `show` — Show network details
+* `create` — Create network
+* `delete` — Delete network
 
 
 
 ## `osc network network list`
 
-List Networks
+Lists networks to which the project has access.
+
+Default policy settings return only networks that the project who submits the request owns, unless an administrative user submits the request. In addition, networks shared with the project who submits the request are also returned.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+
+You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query parameter to filter the response with tags. For information, see [REST API Impact](http://specs.openstack.org/openstack/neutron- specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network network list [OPTIONS]`
 
@@ -6596,7 +6661,13 @@ List Networks
 
 ## `osc network network show`
 
-Show single Network
+Shows details for a network.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+
+Normal response codes: 200
+
+Error response codes: 401, 404
 
 **Usage:** `osc network network show <ID>`
 
@@ -6608,7 +6679,13 @@ Show single Network
 
 ## `osc network network create`
 
-Create single Network
+Creates a network.
+
+A request body is optional. An administrative user can specify another project ID, which is the project that owns the network, in the request body.
+
+Normal response codes: 201
+
+Error response codes: 400, 401
 
 **Usage:** `osc network network create [OPTIONS]`
 
@@ -6654,7 +6731,11 @@ Create single Network
 
 ## `osc network network delete`
 
-Delete single Network
+Deletes a network and its associated resources.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 409, 412
 
 **Usage:** `osc network network delete <ID>`
 
@@ -6673,16 +6754,26 @@ Port commands
 
 ###### **Subcommands:**
 
-* `list` — List Ports
-* `show` — Show single Port
-* `create` — Create single Port
-* `delete` — Delete single Port
+* `list` — List ports
+* `show` — Show port details
+* `create` — Create port
+* `delete` — Delete port
 
 
 
 ## `osc network port list`
 
-List Ports
+Lists ports to which the user has access.
+
+Default policy settings return only those ports that are owned by the project of the user who submits the request, unless the request is submitted by a user with administrative rights.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+
+If the `ip-substring-filtering` extension is enabled, the Neutron API supports IP address substring filtering on the `fixed\_ips` attribute. If you specify an IP address substring (`ip\_address\_substr`) in an entry of the `fixed\_ips` attribute, the Neutron API will list all ports that have an IP address matching the substring.
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network port list [OPTIONS]`
 
@@ -6715,7 +6806,13 @@ List Ports
 
 ## `osc network port show`
 
-Show single Port
+Shows details for a port.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+
+Normal response codes: 200
+
+Error response codes: 401, 404
 
 **Usage:** `osc network port show <ID>`
 
@@ -6727,7 +6824,13 @@ Show single Port
 
 ## `osc network port create`
 
-Create single Port
+Creates a port on a network.
+
+To define the network in which to create the port, specify the `network\_id` attribute in the request body.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404
 
 **Usage:** `osc network port create [OPTIONS]`
 
@@ -6777,7 +6880,13 @@ Create single Port
 
 ## `osc network port delete`
 
-Delete single Port
+Deletes a port.
+
+Any IP addresses that are associated with the port are returned to the respective subnets allocation pools.
+
+Normal response codes: 204
+
+Error response codes: 401, 403, 404, 412
 
 **Usage:** `osc network port delete <ID>`
 
@@ -6796,16 +6905,24 @@ Router commands
 
 ###### **Subcommands:**
 
-* `list` — List Routers
-* `show` — Show single Router
-* `create` — Create single Router
-* `delete` — Delete single Router
+* `list` — List routers
+* `show` — Show router details
+* `create` — Create router
+* `delete` — Delete router
 
 
 
 ## `osc network router list`
 
-List Routers
+Lists logical routers that the project who submits the request can access.
+
+Default policy settings return only those routers that the project who submits the request owns, unless an administrative user submits the request.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network router list [OPTIONS]`
 
@@ -6832,7 +6949,13 @@ List Routers
 
 ## `osc network router show`
 
-Show single Router
+Shows details for a router.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+
+Normal response codes: 200
+
+Error response codes: 401, 403, 404
 
 **Usage:** `osc network router show <ID>`
 
@@ -6844,7 +6967,13 @@ Show single Router
 
 ## `osc network router create`
 
-Create single Router
+Creates a logical router.
+
+This operation creates a logical router. The logical router does not have any internal interface and it is not associated with any subnet. You can optionally specify an external gateway for a router at create time. The external gateway for the router must be plugged into an external network. An external network has its `router:external` extended field set to `true`. To specify an external gateway, the ID of the external network must be passed in the `network\_id` parameter of the `external\_gateway\_info` attribute in the request body.
+
+Normal response codes: 201
+
+Error response codes: 400, 401
 
 **Usage:** `osc network router create [OPTIONS]`
 
@@ -6882,7 +7011,13 @@ Create single Router
 
 ## `osc network router delete`
 
-Delete single Router
+Deletes a logical router and, if present, its external gateway interface.
+
+This operation fails if the router has attached interfaces. Use the remove router interface operation to remove all router interfaces before you delete the router.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 409, 412
 
 **Usage:** `osc network router delete <ID>`
 
@@ -6901,16 +7036,24 @@ Subnet commands
 
 ###### **Subcommands:**
 
-* `list` — List Subnets
-* `show` — Show single Subnet
-* `create` — Create single Subnet
-* `delete` — Delete single Subnet
+* `list` — List subnets
+* `show` — Show subnet details
+* `create` — Create subnet
+* `delete` — Delete subnet
 
 
 
 ## `osc network subnet list`
 
-List Subnets
+Lists subnets that the project has access to.
+
+Default policy settings return only subnets owned by the project of the user submitting the request, unless the user has administrative role. You can control which attributes are returned by using the fields query parameter. You can filter results by using query string parameters.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401
 
 **Usage:** `osc network subnet list [OPTIONS]`
 
@@ -6946,7 +7089,13 @@ List Subnets
 
 ## `osc network subnet show`
 
-Show single Subnet
+Shows details for a subnet.
+
+Use the fields query parameter to filter the results.
+
+Normal response codes: 200
+
+Error response codes: 401, 404
 
 **Usage:** `osc network subnet show <ID>`
 
@@ -6958,7 +7107,23 @@ Show single Subnet
 
 ## `osc network subnet create`
 
-Create single Subnet
+Creates a subnet on a network.
+
+OpenStack Networking does not try to derive the correct IP version from the CIDR. If you do not specify the `gateway\_ip` attribute, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet.
+
+To specify a subnet without a gateway, set the `gateway\_ip` attribute to `null` in the request body. If you do not specify the `allocation\_pools` attribute, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway. Otherwise, you can explicitly specify allocation pools as shown in the following example.
+
+When you specify both the `allocation\_pools` and `gateway\_ip` attributes, you must ensure that the gateway IP does not overlap with the allocation pools; otherwise, the call returns the `Conflict (409)` response code.
+
+A subnet can have one or more name servers and host routes. Hosts in this subnet use the name servers. Devices with IP addresses from this subnet, not including the local subnet route, use the host routes.
+
+Specify the `ipv6\_ra\_mode` and `ipv6\_address\_mode` attributes to create subnets that support IPv6 configurations, such as stateless address autoconfiguration (SLAAC), DHCPv6 stateful, and DHCPv6 stateless configurations.
+
+A subnet can optionally be associated with a network segment when it is created by specifying the `segment\_id` of a valid segment on the specified network. A network with subnets associated in this way is called a routed network. On any given network, all of the subnets must be associated with segments or none of them can be. Neutron enforces this invariant. Currently, routed networks are only supported for provider networks.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404, 409
 
 **Usage:** `osc network subnet create [OPTIONS] --ip-version <IP_VERSION> --network-id <NETWORK_ID>`
 
@@ -7003,7 +7168,13 @@ Create single Subnet
 
 ## `osc network subnet delete`
 
-Delete single Subnet
+Deletes a subnet.
+
+The operation fails if subnet IP addresses are still allocated.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 412
 
 **Usage:** `osc network subnet delete <ID>`
 

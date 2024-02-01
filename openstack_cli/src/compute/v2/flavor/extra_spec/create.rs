@@ -63,12 +63,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    #[arg(value_name = "FLAVOR_ID", id = "path_param_flavor_id")]
+    #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
     flavor_id: String,
 }
 
 /// ExtraSpec create command
 pub struct ExtraSpecCmd {
+    /// Command arguments
     pub args: ExtraSpecArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

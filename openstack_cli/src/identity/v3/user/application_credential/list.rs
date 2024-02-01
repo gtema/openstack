@@ -69,6 +69,7 @@ pub struct PathParameters {
 
 /// ApplicationCredentials list command
 pub struct ApplicationCredentialsCmd {
+    /// Command arguments
     pub args: ApplicationCredentialsArgs,
 }
 /// ApplicationCredentials response representation

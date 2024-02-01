@@ -77,6 +77,7 @@ pub struct PathParameters {
 
 /// Member delete command
 pub struct MemberCmd {
+    /// Command arguments
     pub args: MemberArgs,
 }
 /// Member response representation

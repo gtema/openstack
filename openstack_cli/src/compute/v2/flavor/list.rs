@@ -89,6 +89,7 @@ pub struct PathParameters {}
 
 /// Flavors list command
 pub struct FlavorsCmd {
+    /// Command arguments
     pub args: FlavorsArgs,
 }
 /// Flavors response representation

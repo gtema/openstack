@@ -33,6 +33,7 @@ use crate::network::v2::router::{RouterArgs, RouterCommand};
 use crate::network::v2::subnet::{SubnetArgs, SubnetCommand};
 use crate::{OSCCommand, OpenStackCliError};
 
+/// Network (Neutron) commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct NetworkSrvArgs {
@@ -43,19 +44,12 @@ pub struct NetworkSrvArgs {
 
 #[derive(Clone, Subcommand)]
 pub enum NetworkSrvCommands {
-    /// Availability Zones commands
     AvailabilityZone(Box<AvailabilityZoneArgs>),
-    /// Extensions commands
     Extension(Box<ExtensionArgs>),
-    /// Floating IP commands
     FloatingIP(Box<FloatingIPArgs>),
-    /// Network commands
     Network(Box<NetworkArgs>),
-    /// Port commands
     Port(Box<PortArgs>),
-    /// Router commands
     Router(Box<RouterArgs>),
-    /// Subnet commands
     Subnet(Box<SubnetArgs>),
 }
 

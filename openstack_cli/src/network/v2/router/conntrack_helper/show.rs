@@ -68,12 +68,13 @@ pub struct PathParameters {
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// ConntrackHelper show command
 pub struct ConntrackHelperCmd {
+    /// Command arguments
     pub args: ConntrackHelperArgs,
 }
 /// ConntrackHelper response representation

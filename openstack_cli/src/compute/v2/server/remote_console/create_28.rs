@@ -110,6 +110,7 @@ struct RemoteConsole {
 
 /// RemoteConsole create command
 pub struct RemoteConsoleCmd {
+    /// Command arguments
     pub args: RemoteConsoleArgs,
 }
 /// RemoteConsole response representation

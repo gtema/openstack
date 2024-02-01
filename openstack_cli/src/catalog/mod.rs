@@ -36,7 +36,7 @@ use crate::StructTable;
 use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-/// List catalog command arguments
+/// Shows current catalog information
 #[derive(Args, Clone, Debug)]
 pub struct ListArgs {}
 
@@ -60,6 +60,7 @@ pub enum CatalogCommands {
 
 /// Catalog command
 pub struct CatalogCommand {
+    /// Command arguments
     pub args: CatalogArgs,
 }
 

@@ -323,6 +323,7 @@ struct Auth {
 
 /// Saml2 create command
 pub struct Saml2Cmd {
+    /// Command arguments
     pub args: Saml2Args,
 }
 /// Saml2 response representation

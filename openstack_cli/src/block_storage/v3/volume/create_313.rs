@@ -145,6 +145,7 @@ struct Volume {
 
 /// Volume create command
 pub struct VolumeCmd {
+    /// Command arguments
     pub args: VolumeArgs,
 }
 /// Volume response representation

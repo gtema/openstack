@@ -56,7 +56,7 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Evacuate Body data
@@ -108,6 +108,7 @@ struct Evacuate {
 
 /// Server action command
 pub struct ServerCmd {
+    /// Command arguments
     pub args: ServerArgs,
 }
 /// Server response representation

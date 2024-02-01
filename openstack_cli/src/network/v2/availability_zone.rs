@@ -20,6 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 mod list;
 
+/// Availability Zones commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct AvailabilityZoneArgs {
@@ -29,11 +30,11 @@ pub struct AvailabilityZoneArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum AvailabilityZoneCommands {
-    /// List AvailabilityZones
     List(list::AvailabilityZonesArgs),
 }
 
 pub struct AvailabilityZoneCommand {
+    /// Command arguments
     pub args: AvailabilityZoneArgs,
 }
 

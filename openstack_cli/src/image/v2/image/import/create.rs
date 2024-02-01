@@ -167,6 +167,7 @@ struct Method {
 
 /// Import create command
 pub struct ImportCmd {
+    /// Command arguments
     pub args: ImportArgs,
 }
 /// Import response representation

@@ -70,6 +70,7 @@ pub struct PathParameters {
 
 /// Ips list command
 pub struct IpsCmd {
+    /// Command arguments
     pub args: IpsArgs,
 }
 /// Ips response representation

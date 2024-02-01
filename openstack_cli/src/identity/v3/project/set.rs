@@ -123,6 +123,7 @@ struct Project {
 
 /// Project set command
 pub struct ProjectCmd {
+    /// Command arguments
     pub args: ProjectArgs,
 }
 /// Project response representation

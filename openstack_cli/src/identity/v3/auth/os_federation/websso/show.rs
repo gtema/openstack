@@ -63,6 +63,7 @@ pub struct PathParameters {
 
 /// Websso show command
 pub struct WebssoCmd {
+    /// Command arguments
     pub args: WebssoArgs,
 }
 /// Websso response representation

@@ -20,6 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 mod get;
 
+/// Show Image Schema
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct ImageArgs {
@@ -34,6 +35,7 @@ pub enum ImageCommands {
 }
 
 pub struct ImageCommand {
+    /// Command arguments
     pub args: ImageArgs,
 }
 

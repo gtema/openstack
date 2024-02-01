@@ -127,6 +127,7 @@ struct Flavor {
 
 /// Flavor create command
 pub struct FlavorCmd {
+    /// Command arguments
     pub args: FlavorArgs,
 }
 /// Flavor response representation

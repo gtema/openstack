@@ -464,6 +464,7 @@ struct OsSchedulerHints {
 
 /// Server create command
 pub struct ServerCmd {
+    /// Command arguments
     pub args: ServerArgs,
 }
 /// Server response representation

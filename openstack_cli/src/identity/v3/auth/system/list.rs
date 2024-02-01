@@ -62,6 +62,7 @@ pub struct PathParameters {}
 
 /// Systems list command
 pub struct SystemsCmd {
+    /// Command arguments
     pub args: SystemsArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

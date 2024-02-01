@@ -128,6 +128,7 @@ struct PortForwarding {
 
 /// PortForwarding create command
 pub struct PortForwardingCmd {
+    /// Command arguments
     pub args: PortForwardingArgs,
 }
 /// PortForwarding response representation

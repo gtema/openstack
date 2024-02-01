@@ -37,20 +37,10 @@ pub struct ProjectArgs {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum ProjectCommands {
-    /// Creates a project, where the project may act as a domain.
-    #[command(about = "Create project")]
     Create(create::ProjectArgs),
-    /// Deletes a project.
-    #[command(about = "Delete project")]
     Delete(delete::ProjectArgs),
-    /// Lists projects.
-    #[command(about = "List Projects")]
     List(list::ProjectsArgs),
-    /// Updates a project.
-    #[command(about = "Update project details")]
     Set(set::ProjectArgs),
-    /// Shows details for a project.
-    #[command(about = "Show project details")]
     Show(show::ProjectArgs),
 }
 

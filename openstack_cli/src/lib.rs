@@ -102,23 +102,14 @@ pub struct Cli {
 /// Supported Top Level commands (services)
 #[derive(Subcommand)]
 pub enum TopLevelCommands {
-    /// Perform direct REST API requests with authorization
     Api(Box<ApiArgs>),
-    /// Cloud Authentication operations
     Auth(Box<AuthArgs>),
-    /// Block Storage (Volume) service (Cinder) commands
     BlockStorage(Box<BlockStorageSrvArgs>),
-    /// Shows current catalog information
     Catalog(Box<CatalogArgs>),
-    /// Compute service (Nova) commands
     Compute(Box<ComputeSrvArgs>),
-    /// Identity (Keystone) commands
     Identity(Box<IdentitySrvArgs>),
-    /// Image (Glance) commands
     Image(Box<ImageSrvArgs>),
-    /// Network (Neutron) commands
     Network(Box<NetworkSrvArgs>),
-    /// Object Store service (Swift) commands
     ObjectStore(Box<ObjectStoreSrvArgs>),
 }
 

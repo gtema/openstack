@@ -66,6 +66,7 @@ pub struct PathParameters {}
 
 /// Statistic get command
 pub struct StatisticCmd {
+    /// Command arguments
     pub args: StatisticArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

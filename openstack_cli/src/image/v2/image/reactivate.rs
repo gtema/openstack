@@ -65,6 +65,7 @@ pub struct PathParameters {
 
 /// Image action command
 pub struct ImageCmd {
+    /// Command arguments
     pub args: ImageArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

@@ -66,7 +66,7 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Network Body data
@@ -138,6 +138,7 @@ struct Network {
 
 /// Network set command
 pub struct NetworkCmd {
+    /// Command arguments
     pub args: NetworkArgs,
 }
 /// Network response representation

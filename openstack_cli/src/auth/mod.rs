@@ -23,6 +23,10 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{OSCCommand, OpenStackCliError};
 
+/// Cloud Authentication operations
+///
+/// This command provides various authorization operations (login, show,
+/// status, etc)
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct AuthArgs {
@@ -33,23 +37,7 @@ pub struct AuthArgs {
 
 #[derive(Clone, Subcommand)]
 pub enum AuthCommands {
-    /// Fetch a new valid authorization token for the cloud.
-    ///
-    /// This command writes token to the stdout
-    #[command(about = "Login to the cloud and get a valid authorization token")]
     Login(login::AuthArgs),
-    /// Show current authorization information for the cloud
-    ///
-    /// This command returns authentication and authorization information for
-    /// the currently active connection. It includes issue and expiration
-    /// information, user data, list of granted roles and project/domain
-    /// information.
-    ///
-    /// **NOTE**: The command does not support selecting individual fields in
-    /// the output, but it supports `-o json` command and returns full
-    /// available information in json format what allows further processing
-    /// with `jq`
-    #[command(about = "Show current auth information")]
     Show(show::AuthArgs),
 }
 

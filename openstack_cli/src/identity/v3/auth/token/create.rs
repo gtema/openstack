@@ -331,6 +331,7 @@ struct Auth {
 
 /// Token create command
 pub struct TokenCmd {
+    /// Command arguments
     pub args: TokenArgs,
 }
 /// Token response representation

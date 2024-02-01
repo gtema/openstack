@@ -20,6 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 mod get;
 
+/// Show Member Schema
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct MemberArgs {
@@ -34,6 +35,7 @@ pub enum MemberCommands {
 }
 
 pub struct MemberCommand {
+    /// Command arguments
     pub args: MemberArgs,
 }
 

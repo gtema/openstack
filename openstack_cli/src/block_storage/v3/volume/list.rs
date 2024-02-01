@@ -127,6 +127,7 @@ pub struct PathParameters {}
 
 /// Volumes list command
 pub struct VolumesCmd {
+    /// Command arguments
     pub args: VolumesArgs,
 }
 /// Volumes response representation

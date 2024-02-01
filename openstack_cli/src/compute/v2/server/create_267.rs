@@ -114,10 +114,10 @@ struct NetworksEnumGroupStruct {
     networks: Option<Vec<Value>>,
 
     #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
-    none_networks: bool,
+    auto_networks: bool,
 
     #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
-    auto_networks: bool,
+    none_networks: bool,
 }
 
 #[derive(Copy, Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -491,6 +491,7 @@ struct OsSchedulerHints {
 
 /// Server create command
 pub struct ServerCmd {
+    /// Command arguments
     pub args: ServerArgs,
 }
 /// Server response representation
@@ -645,14 +646,14 @@ impl OSCCommand for ServerCmd {
                 .collect();
             server_builder.networks(create_267::NetworksEnum::F1(networks_builder));
         }
-        if args.networks.none_networks {
-            server_builder.networks(create_267::NetworksEnum::F2(
-                create_267::NetworksStringEnum::None,
-            ));
-        }
         if args.networks.auto_networks {
             server_builder.networks(create_267::NetworksEnum::F2(
                 create_267::NetworksStringEnum::Auto,
+            ));
+        }
+        if args.networks.none_networks {
+            server_builder.networks(create_267::NetworksEnum::F2(
+                create_267::NetworksStringEnum::None,
             ));
         }
 

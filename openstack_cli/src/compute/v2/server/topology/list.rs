@@ -71,6 +71,7 @@ pub struct PathParameters {
 
 /// Topologies list command
 pub struct TopologiesCmd {
+    /// Command arguments
     pub args: TopologiesArgs,
 }
 /// Topologies response representation

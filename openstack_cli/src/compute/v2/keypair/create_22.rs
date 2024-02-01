@@ -102,6 +102,7 @@ struct Keypair {
 
 /// Keypair create command
 pub struct KeypairCmd {
+    /// Command arguments
     pub args: KeypairArgs,
 }
 /// Keypair response representation

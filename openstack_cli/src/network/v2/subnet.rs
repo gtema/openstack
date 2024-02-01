@@ -23,6 +23,7 @@ mod delete;
 mod list;
 mod show;
 
+/// Subnet commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct SubnetArgs {
@@ -32,13 +33,9 @@ pub struct SubnetArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum SubnetCommands {
-    /// List Subnets
     List(Box<list::SubnetsArgs>),
-    /// Show single Subnet
     Show(Box<show::SubnetArgs>),
-    /// Create single Subnet
     Create(Box<create::SubnetArgs>),
-    /// Delete single Subnet
     Delete(delete::SubnetArgs),
 }
 

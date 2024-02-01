@@ -61,6 +61,7 @@ pub struct PathParameters {}
 
 /// Revoked get command
 pub struct RevokedCmd {
+    /// Command arguments
     pub args: RevokedArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

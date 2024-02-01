@@ -62,12 +62,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Flavor show command
 pub struct FlavorCmd {
+    /// Command arguments
     pub args: FlavorArgs,
 }
 /// Flavor response representation

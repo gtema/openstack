@@ -73,6 +73,7 @@ pub struct PathParameters {
 
 /// ServerPassword delete command
 pub struct ServerPasswordCmd {
+    /// Command arguments
     pub args: ServerPasswordArgs,
 }
 /// ServerPassword response representation

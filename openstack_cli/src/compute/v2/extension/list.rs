@@ -62,6 +62,7 @@ pub struct PathParameters {}
 
 /// Extensions list command
 pub struct ExtensionsCmd {
+    /// Command arguments
     pub args: ExtensionsArgs,
 }
 /// Extensions response representation

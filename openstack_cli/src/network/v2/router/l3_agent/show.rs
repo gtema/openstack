@@ -57,12 +57,13 @@ pub struct PathParameters {
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// L3Agent show command
 pub struct L3AgentCmd {
+    /// Command arguments
     pub args: L3AgentArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

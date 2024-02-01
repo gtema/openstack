@@ -24,8 +24,11 @@ use crate::{error::OpenStackCliError, OSCCommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-/// Command arguments
+/// Fetch a new valid authorization token for the cloud.
+///
+/// This command writes token to the stdout
 #[derive(Args, Clone, Debug)]
+#[command(about = "Login to the cloud and get a valid authorization token")]
 pub struct AuthArgs {
     /// Require token renewal
     #[arg(long, action=clap::ArgAction::SetTrue)]
@@ -34,6 +37,7 @@ pub struct AuthArgs {
 
 /// login command
 pub struct AuthCmd {
+    /// Command arguments
     pub args: AuthArgs,
 }
 

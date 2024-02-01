@@ -66,7 +66,7 @@ pub struct QueryParameters {}
 pub struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
+    #[arg(value_name = "PROJECT_ID", id = "path_param_project_id")]
     project_id: String,
 
     /// user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles
@@ -82,6 +82,7 @@ pub struct PathParameters {
 
 /// Role set command
 pub struct RoleCmd {
+    /// Command arguments
     pub args: RoleArgs,
 }
 /// Role response representation

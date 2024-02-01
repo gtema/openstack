@@ -109,6 +109,7 @@ struct VolumeAttachment {
 
 /// VolumeAttachment create command
 pub struct VolumeAttachmentCmd {
+    /// Command arguments
     pub args: VolumeAttachmentArgs,
 }
 /// VolumeAttachment response representation

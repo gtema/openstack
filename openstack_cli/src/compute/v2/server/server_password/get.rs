@@ -75,6 +75,7 @@ pub struct PathParameters {
 
 /// ServerPassword get command
 pub struct ServerPasswordCmd {
+    /// Command arguments
     pub args: ServerPasswordArgs,
 }
 /// ServerPassword response representation

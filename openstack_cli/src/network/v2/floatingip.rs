@@ -25,6 +25,7 @@ mod set;
 mod show;
 mod tag;
 
+/// Floating IP commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct FloatingIPArgs {
@@ -34,21 +35,11 @@ pub struct FloatingIPArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum FloatingIPCommands {
-    /// Create single FloatingIP
     Create(create::FloatingipArgs),
-    /// Delete single FloatingIP
     Delete(delete::FloatingipArgs),
-    /// List FloatingIPs
     List(list::FloatingipsArgs),
-    /// Update FloatingIP attributes
     Set(set::FloatingipArgs),
-    /// Show single FloatingIP
     Show(show::FloatingipArgs),
-    /// FloatingIP Tags management
-    ///
-    /// Shows details for, updates, and deletes tags.
-    /// The maximum number of characters allowed in a tag
-    /// is 60.
     Tag(tag::TagArgs),
 }
 

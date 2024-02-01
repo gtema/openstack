@@ -97,6 +97,7 @@ struct InterfaceAttachment {
 
 /// Interface create command
 pub struct InterfaceCmd {
+    /// Command arguments
     pub args: InterfaceArgs,
 }
 /// Interface response representation

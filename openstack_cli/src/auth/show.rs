@@ -26,7 +26,17 @@ use crate::{OSCCommand, OpenStackCliError};
 use openstack_sdk::types::identity::v3::AuthResponse;
 use openstack_sdk::AsyncOpenStack;
 
-/// Command arguments
+/// Show current authorization information for the cloud
+///
+/// This command returns authentication and authorization
+/// information for the currently active connection. It includes
+/// issue and expiration information, user data, list of granted
+/// roles and project/domain information.
+///
+/// **NOTE**: The command does not support selecting individual
+/// fields in the output, but it supports `-o json` command and
+/// returns full available information in json format what allows
+/// further processing with `jq`
 #[derive(Args, Clone, Debug)]
 pub struct AuthArgs {}
 

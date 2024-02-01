@@ -64,6 +64,7 @@ pub struct PathParameters {
 
 /// L3Agent create command
 pub struct L3AgentCmd {
+    /// Command arguments
     pub args: L3AgentArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

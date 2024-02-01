@@ -219,6 +219,7 @@ struct Subnet {
 
 /// Subnet create command
 pub struct SubnetCmd {
+    /// Command arguments
     pub args: SubnetArgs,
 }
 /// Subnet response representation

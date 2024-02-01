@@ -92,6 +92,7 @@ pub struct PathParameters {
 
 /// InstanceActions list command
 pub struct InstanceActionsCmd {
+    /// Command arguments
     pub args: InstanceActionsArgs,
 }
 /// InstanceActions response representation

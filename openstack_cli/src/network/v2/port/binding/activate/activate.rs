@@ -61,16 +61,17 @@ pub struct QueryParameters {}
 pub struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
-    #[arg(value_name = "PORT_ID", id = "path_param_port_id")]
+    #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
     port_id: String,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Activate action command
 pub struct ActivateCmd {
+    /// Command arguments
     pub args: ActivateArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

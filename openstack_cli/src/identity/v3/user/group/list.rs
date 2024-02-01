@@ -64,6 +64,7 @@ pub struct PathParameters {
 
 /// Groups list command
 pub struct GroupsCmd {
+    /// Command arguments
     pub args: GroupsArgs,
 }
 /// Groups response representation

@@ -60,6 +60,7 @@ pub struct PathParameters {
 
 /// Volume action command
 pub struct VolumeCmd {
+    /// Command arguments
     pub args: VolumeArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

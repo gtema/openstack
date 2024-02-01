@@ -67,6 +67,7 @@ pub struct PathParameters {
 
 /// SecurityGroups list command
 pub struct SecurityGroupsCmd {
+    /// Command arguments
     pub args: SecurityGroupsArgs,
 }
 /// SecurityGroups response representation

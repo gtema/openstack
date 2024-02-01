@@ -36,7 +36,17 @@ mod group {
     pub(super) mod list;
 }
 
-/// Identity User commands
+/// User commands
+///
+/// A user is an individual API consumer that is owned by a domain. A role
+/// explicitly associates a user with projects or domains. A user with no
+/// assigned roles has no access to OpenStack resources.
+///
+/// You can list, create, show details for, update, delete, and change the
+/// password for users.
+///
+/// You can also list groups, projects, and role assignments for a specified
+/// user.
 #[derive(Args, Clone, Debug)]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct UserArgs {
@@ -46,31 +56,13 @@ pub struct UserArgs {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum UserCommands {
-    /// Creates a user.
-    #[command(about = "Create user")]
     Create(create::UserArgs),
-    /// Deletes a user.
-    #[command(about = "Delete user")]
     Delete(delete::UserArgs),
-    /// Lists users.
-    #[command(about = "List Users")]
     List(list::UsersArgs),
-    /// Updates a user.
-    #[command(about = "Update user details")]
     Set(set::UserArgs),
-    /// Shows details for a user.
-    #[command(about = "Show user details")]
     Show(show::UserArgs),
-    /// User password commands
-    ///
-    /// This subcommand allows user to change the password
-    #[command(about = "User password operations")]
     Password(password::PasswordArgs),
-    /// List projects to which the user has authorization to access.
-    #[command(about = "List projects for user")]
     Projects(project::list::ProjectsArgs),
-    /// List groups to which a user belongs
-    #[command(about = "List groups to which a user belongs")]
     Groups(group::list::GroupsArgs),
 }
 

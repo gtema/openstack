@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Saml2 get command
 pub struct Saml2Cmd {
+    /// Command arguments
     pub args: Saml2Args,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

@@ -62,6 +62,7 @@ pub struct PathParameters {}
 
 /// AvailabilityZone get command
 pub struct AvailabilityZoneCmd {
+    /// Command arguments
     pub args: AvailabilityZoneArgs,
 }
 /// AvailabilityZone response representation

@@ -63,6 +63,7 @@ pub struct PathParameters {}
 
 /// Aggregates list command
 pub struct AggregatesCmd {
+    /// Command arguments
     pub args: AggregatesArgs,
 }
 /// Aggregates response representation

@@ -97,6 +97,7 @@ struct ConntrackHelper {
 
 /// ConntrackHelper create command
 pub struct ConntrackHelperCmd {
+    /// Command arguments
     pub args: ConntrackHelperArgs,
 }
 /// ConntrackHelper response representation

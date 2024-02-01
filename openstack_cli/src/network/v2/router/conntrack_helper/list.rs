@@ -89,6 +89,7 @@ pub struct PathParameters {
 
 /// ConntrackHelpers list command
 pub struct ConntrackHelpersCmd {
+    /// Command arguments
     pub args: ConntrackHelpersArgs,
 }
 /// ConntrackHelpers response representation

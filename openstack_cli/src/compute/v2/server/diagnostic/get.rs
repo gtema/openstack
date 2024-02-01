@@ -72,6 +72,7 @@ pub struct PathParameters {
 
 /// Diagnostic get command
 pub struct DiagnosticCmd {
+    /// Command arguments
     pub args: DiagnosticArgs,
 }
 /// Diagnostic response representation

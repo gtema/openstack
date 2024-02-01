@@ -70,7 +70,7 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Subnet Body data
@@ -133,6 +133,7 @@ struct Subnet {
 
 /// Subnet set command
 pub struct SubnetCmd {
+    /// Command arguments
     pub args: SubnetArgs,
 }
 /// Subnet response representation

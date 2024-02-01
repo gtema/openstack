@@ -68,12 +68,13 @@ pub struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/ips/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Ip show command
 pub struct IpCmd {
+    /// Command arguments
     pub args: IpArgs,
 }
 /// Ip response representation

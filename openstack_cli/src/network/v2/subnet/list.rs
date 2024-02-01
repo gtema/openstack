@@ -149,6 +149,7 @@ pub struct PathParameters {}
 
 /// Subnets list command
 pub struct SubnetsCmd {
+    /// Command arguments
     pub args: SubnetsArgs,
 }
 /// Subnets response representation

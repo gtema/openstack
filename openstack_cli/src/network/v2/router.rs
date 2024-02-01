@@ -23,6 +23,7 @@ mod delete;
 mod list;
 mod show;
 
+/// Router commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct RouterArgs {
@@ -32,17 +33,14 @@ pub struct RouterArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum RouterCommands {
-    /// List Routers
     List(list::RoutersArgs),
-    /// Show single Router
     Show(show::RouterArgs),
-    /// Create single Router
     Create(create::RouterArgs),
-    /// Delete single Router
     Delete(delete::RouterArgs),
 }
 
 pub struct RouterCommand {
+    /// Commad arguments
     pub args: RouterArgs,
 }
 

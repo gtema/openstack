@@ -24,6 +24,7 @@ mod list;
 mod set;
 mod show;
 
+/// Container commands
 #[derive(Args, Clone, Debug)]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct ContainerArgs {

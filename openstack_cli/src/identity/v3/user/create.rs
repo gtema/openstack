@@ -150,6 +150,7 @@ struct User {
 
 /// User create command
 pub struct UserCmd {
+    /// Command arguments
     pub args: UserArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

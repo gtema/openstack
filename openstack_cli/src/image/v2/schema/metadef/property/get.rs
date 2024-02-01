@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Property json command
 pub struct PropertyCmd {
+    /// Command arguments
     pub args: PropertyArgs,
 }
 /// Property response representation

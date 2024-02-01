@@ -75,6 +75,7 @@ pub struct PathParameters {
 
 /// VolumeAttachments list command
 pub struct VolumeAttachmentsCmd {
+    /// Command arguments
     pub args: VolumeAttachmentsArgs,
 }
 /// VolumeAttachments response representation

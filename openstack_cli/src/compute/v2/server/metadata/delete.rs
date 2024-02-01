@@ -69,12 +69,13 @@ pub struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/metadata/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Metadata delete command
 pub struct MetadataCmd {
+    /// Command arguments
     pub args: MetadataArgs,
 }
 /// Metadata response representation

@@ -68,6 +68,7 @@ pub struct PathParameters {
 
 /// Migrations list command
 pub struct MigrationsCmd {
+    /// Command arguments
     pub args: MigrationsArgs,
 }
 /// Migrations response representation

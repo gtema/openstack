@@ -73,6 +73,7 @@ pub struct PathParameters {
 
 /// Tasks list command
 pub struct TasksCmd {
+    /// Command arguments
     pub args: TasksArgs,
 }
 /// Tasks response representation

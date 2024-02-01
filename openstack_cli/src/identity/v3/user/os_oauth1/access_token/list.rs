@@ -63,6 +63,7 @@ pub struct PathParameters {
 
 /// AccessTokens list command
 pub struct AccessTokensCmd {
+    /// Command arguments
     pub args: AccessTokensArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

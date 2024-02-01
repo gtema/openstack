@@ -67,6 +67,7 @@ pub struct PathParameters {}
 
 /// Member json command
 pub struct MemberCmd {
+    /// Command arguments
     pub args: MemberArgs,
 }
 /// Member response representation

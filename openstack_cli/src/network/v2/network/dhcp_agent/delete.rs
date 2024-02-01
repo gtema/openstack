@@ -58,12 +58,13 @@ pub struct PathParameters {
     network_id: String,
 
     /// id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// DhcpAgent delete command
 pub struct DhcpAgentCmd {
+    /// Command arguments
     pub args: DhcpAgentArgs,
 }
 /// DhcpAgent response representation

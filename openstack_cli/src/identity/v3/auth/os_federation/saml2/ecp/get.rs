@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Ecp get command
 pub struct EcpCmd {
+    /// Command arguments
     pub args: EcpArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

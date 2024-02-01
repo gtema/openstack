@@ -75,7 +75,7 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.0/floatingips/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Floatingip Body data
@@ -106,6 +106,7 @@ struct Floatingip {
 
 /// Floatingip set command
 pub struct FloatingipCmd {
+    /// Command arguments
     pub args: FloatingipArgs,
 }
 /// Floatingip response representation

@@ -67,6 +67,7 @@ pub struct PathParameters {
 
 /// Project show command
 pub struct ProjectCmd {
+    /// Command arguments
     pub args: ProjectArgs,
 }
 /// Project response representation

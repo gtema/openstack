@@ -150,6 +150,7 @@ struct Network {
 
 /// Network create command
 pub struct NetworkCmd {
+    /// Command arguments
     pub args: NetworkArgs,
 }
 /// Network response representation

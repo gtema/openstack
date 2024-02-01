@@ -66,6 +66,7 @@ pub struct PathParameters {
 
 /// Project delete command
 pub struct ProjectCmd {
+    /// Command arguments
     pub args: ProjectArgs,
 }
 /// Project response representation

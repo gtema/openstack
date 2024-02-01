@@ -68,6 +68,7 @@ pub struct PathParameters {
 
 /// Metadatas list command
 pub struct MetadatasCmd {
+    /// Command arguments
     pub args: MetadatasArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

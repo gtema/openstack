@@ -25,6 +25,7 @@ use crate::object_store::v1::container::{ContainerArgs, ContainerCommand};
 use crate::object_store::v1::object::{ObjectArgs, ObjectCommand};
 use crate::{OSCCommand, OpenStackCliError};
 
+/// Object Store service (Swift) commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct ObjectStoreSrvArgs {
@@ -35,11 +36,8 @@ pub struct ObjectStoreSrvArgs {
 
 #[derive(Clone, Subcommand)]
 pub enum ObjectStoreSrvCommands {
-    /// Account commands
     Account(AccountArgs),
-    /// Container commands
     Container(ContainerArgs),
-    /// Object commands
     Object(ObjectArgs),
 }
 

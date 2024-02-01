@@ -62,7 +62,7 @@ pub struct QueryParameters {}
 pub struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
-    #[arg(value_name = "PORT_ID", id = "path_param_port_id")]
+    #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
     port_id: String,
 }
 
@@ -99,6 +99,7 @@ struct Binding {
 
 /// Binding create command
 pub struct BindingCmd {
+    /// Command arguments
     pub args: BindingArgs,
 }
 /// Binding response representation

@@ -48,6 +48,8 @@ pub struct ComputeSrvArgs {
 /// Compute resources commands
 #[derive(Clone, Subcommand)]
 pub enum ComputeSrvCommands {
+    #[command(about = "Host Aggregates")]
+    Aggregate(Box<AggregateArgs>),
     /// Lists and gets detailed availability zone information.
     ///
     /// An availability zone is created or updated by setting the
@@ -56,33 +58,9 @@ pub enum ComputeSrvCommands {
     /// Host Aggregates for more details.
     #[command(about = "Availability zones")]
     AvailabilityZone(Box<AvailabilityZoneArgs>),
-    /// Creates and manages host aggregates. An aggregate assigns metadata to
-    /// groups of compute nodes.
-    ///
-    /// Policy defaults enable only users with the administrative role to
-    /// perform operations with aggregates. Cloud providers can change these
-    /// permissions through policy file configuration.
-    #[command(about = "Host Aggregates")]
-    Aggregate(Box<AggregateArgs>),
-    /// Extension commands
-    #[command(about = "Extensions")]
     Extension(Box<ExtensionArgs>),
-    /// Flavor commands
-    ///
-    /// Flavors are a way to describe the basic dimensions of a server to be
-    /// created including how much cpu, ram, and disk space are allocated to a
-    /// server built with this flavor.
-    #[command(about = "Flavors")]
     Flavor(Box<FlavorArgs>),
-    /// Lists all hypervisors, shows summary statistics for all hypervisors
-    /// over all compute nodes, shows details for a hypervisor, shows the
-    /// uptime for a hypervisor, lists all servers on hypervisors that match
-    /// the given hypervisor_hostname_pattern or searches for hypervisors by
-    /// the given hypervisor_hostname_pattern.
-    #[command(about = "Hypervisors")]
     Hypervisor(Box<HypervisorArgs>),
-    /// Generates, imports, and deletes SSH keys.
-    #[command(about = "Keypairs")]
     Keypair(Box<KeypairArgs>),
     Server(Box<ServerArgs>),
 }

@@ -93,6 +93,7 @@ pub struct PathParameters {}
 
 /// Users list command
 pub struct UsersCmd {
+    /// Command arguments
     pub args: UsersArgs,
 }
 /// Users response representation

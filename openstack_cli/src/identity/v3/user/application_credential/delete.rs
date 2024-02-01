@@ -72,6 +72,7 @@ pub struct PathParameters {
 
 /// ApplicationCredential delete command
 pub struct ApplicationCredentialCmd {
+    /// Command arguments
     pub args: ApplicationCredentialArgs,
 }
 /// ApplicationCredential response representation

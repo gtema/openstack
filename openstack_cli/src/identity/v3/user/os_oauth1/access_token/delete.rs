@@ -69,6 +69,7 @@ pub struct PathParameters {
 
 /// AccessToken delete command
 pub struct AccessTokenCmd {
+    /// Command arguments
     pub args: AccessTokenArgs,
 }
 /// AccessToken response representation

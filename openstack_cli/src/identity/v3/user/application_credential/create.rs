@@ -111,6 +111,7 @@ struct ApplicationCredential {
 
 /// ApplicationCredential create command
 pub struct ApplicationCredentialCmd {
+    /// Command arguments
     pub args: ApplicationCredentialArgs,
 }
 /// ApplicationCredential response representation

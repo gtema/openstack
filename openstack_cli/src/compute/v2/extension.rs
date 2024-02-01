@@ -21,6 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 mod list;
 mod show;
 
+/// Extension commands
 #[derive(Args, Clone, Debug)]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct ExtensionArgs {
@@ -30,9 +31,7 @@ pub struct ExtensionArgs {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum ExtensionCommands {
-    /// List Extensions
     List(list::ExtensionsArgs),
-    /// Show single extension
     Show(show::ExtensionArgs),
 }
 

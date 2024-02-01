@@ -81,6 +81,7 @@ struct User {
 
 /// Password set command
 pub struct PasswordCmd {
+    /// Command arguments
     pub args: PasswordArgs,
 }
 /// Password response representation

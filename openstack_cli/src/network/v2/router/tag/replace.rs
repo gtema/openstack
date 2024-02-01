@@ -60,6 +60,7 @@ pub struct PathParameters {
 
 /// Tag set command
 pub struct TagCmd {
+    /// Command arguments
     pub args: TagArgs,
 }
 /// Tag response representation

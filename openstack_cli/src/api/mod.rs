@@ -12,19 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Perform direct REST API
-//!
-//! This command enables direct REST API call with
-//! the authorization and version discovery
-//! handled transparently. This may be used when
-//! required operation is not implemented by the
-//! `osc` or some of the parameters require
-//! special handling.
-//!
-//! Example:
-//! ```console
-//! osc --os-cloud devstack api compute flavors/detail | jq
-//! ```
+//! Direct API command implementation
 
 use async_trait::async_trait;
 use clap::{Args, ValueEnum};
@@ -81,6 +69,14 @@ impl From<Method> for http::Method {
 }
 
 /// Perform direct REST API requests with authorization
+///
+/// This command enables direct REST API call with the authorization and
+/// version discovery handled transparently. This may be used when required
+/// operation is not implemented by the `osc` or some of the parameters require
+/// special handling.
+///
+/// Example: ```console osc --os-cloud devstack api compute flavors/detail | jq
+/// ```
 #[derive(Args, Clone, Debug)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct ApiArgs {

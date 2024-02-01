@@ -70,6 +70,7 @@ pub struct PathParameters {
 
 /// AccessRule show command
 pub struct AccessRuleCmd {
+    /// Command arguments
     pub args: AccessRuleArgs,
 }
 /// AccessRule response representation

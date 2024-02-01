@@ -23,6 +23,7 @@ mod delete;
 mod list;
 mod show;
 
+/// Port commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct PortArgs {
@@ -32,17 +33,14 @@ pub struct PortArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum PortCommands {
-    /// List Ports
     List(Box<list::PortsArgs>),
-    /// Show single Port
     Show(Box<show::PortArgs>),
-    /// Create single Port
     Create(Box<create::PortArgs>),
-    /// Delete single Port
     Delete(delete::PortArgs),
 }
 
 pub struct PortCommand {
+    /// Command arguments
     pub args: PortArgs,
 }
 

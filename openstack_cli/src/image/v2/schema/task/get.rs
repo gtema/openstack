@@ -67,6 +67,7 @@ pub struct PathParameters {}
 
 /// Task json command
 pub struct TaskCmd {
+    /// Command arguments
     pub args: TaskArgs,
 }
 /// Task response representation

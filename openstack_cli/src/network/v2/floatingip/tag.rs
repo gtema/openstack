@@ -27,6 +27,7 @@ mod replace;
 mod set;
 mod show;
 
+/// Resource tag operations
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct TagArgs {
@@ -36,32 +37,11 @@ pub struct TagArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum TagCommands {
-    /// Add a tag
-    ///
-    /// Adds a tag on the resource.
     Add(set::TagArgs),
-    /// Confirm tag presence
-    ///
-    /// Confirms a given tag is set on the resource.
-    /// This method does not return any reasonable
-    /// response, but fails with "not found" when tag is
-    /// not present.
     Check(show::TagArgs),
-    /// Remove a single tag
-    ///
-    /// Removes a tag on the resource.
     Delete(delete::TagArgs),
-    /// List all tags
-    ///
-    /// Obtains the tags for a resource.
     List(list::TagsArgs),
-    /// Remove all tags
-    ///
-    /// Removes all tags on the resource.
     Purge(delete_all::TagArgs),
-    /// Replace all tags
-    ///
-    /// Replaces all tags on the resource.
     Replace(replace::TagArgs),
 }
 

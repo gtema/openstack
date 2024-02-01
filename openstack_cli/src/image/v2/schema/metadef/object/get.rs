@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Object json command
 pub struct ObjectCmd {
+    /// Command arguments
     pub args: ObjectArgs,
 }
 /// Object response representation

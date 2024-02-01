@@ -56,6 +56,7 @@ pub struct PathParameters {}
 
 /// Summary get command
 pub struct SummaryCmd {
+    /// Command arguments
     pub args: SummaryArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

@@ -23,6 +23,7 @@ mod delete;
 mod list;
 mod show;
 
+/// Network commands
 #[derive(Args, Clone)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct NetworkArgs {
@@ -32,17 +33,14 @@ pub struct NetworkArgs {
 
 #[derive(Subcommand, Clone)]
 pub enum NetworkCommands {
-    /// List Networks
     List(Box<list::NetworksArgs>),
-    /// Show single Network
     Show(Box<show::NetworkArgs>),
-    /// Create single Network
     Create(Box<create::NetworkArgs>),
-    /// Delete single Network
     Delete(delete::NetworkArgs),
 }
 
 pub struct NetworkCommand {
+    /// Command arguments
     pub args: NetworkArgs,
 }
 

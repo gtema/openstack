@@ -156,6 +156,7 @@ pub struct PathParameters {}
 
 /// Ports list command
 pub struct PortsCmd {
+    /// Command arguments
     pub args: PortsArgs,
 }
 /// Ports response representation

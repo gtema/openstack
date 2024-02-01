@@ -149,6 +149,7 @@ struct Project {
 
 /// Project create command
 pub struct ProjectCmd {
+    /// Command arguments
     pub args: ProjectArgs,
 }
 /// Project response representation

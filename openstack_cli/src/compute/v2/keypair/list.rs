@@ -74,6 +74,7 @@ pub struct PathParameters {}
 
 /// Keypairs list command
 pub struct KeypairsCmd {
+    /// Command arguments
     pub args: KeypairsArgs,
 }
 /// Keypairs response representation

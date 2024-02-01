@@ -64,6 +64,7 @@ pub struct PathParameters {
 
 /// Tag delete command
 pub struct TagCmd {
+    /// Command arguments
     pub args: TagArgs,
 }
 /// Tag response representation

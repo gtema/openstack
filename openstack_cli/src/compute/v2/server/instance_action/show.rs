@@ -72,12 +72,13 @@ pub struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// InstanceAction show command
 pub struct InstanceActionCmd {
+    /// Command arguments
     pub args: InstanceActionArgs,
 }
 /// InstanceAction response representation

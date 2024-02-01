@@ -87,6 +87,7 @@ pub struct PathParameters {
 
 /// File download command
 pub struct FileCmd {
+    /// Command arguments
     pub args: FileArgs,
 }
 /// File response representation

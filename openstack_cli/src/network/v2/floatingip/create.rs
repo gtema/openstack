@@ -148,6 +148,7 @@ struct Floatingip {
 
 /// Floatingip create command
 pub struct FloatingipCmd {
+    /// Command arguments
     pub args: FloatingipArgs,
 }
 /// Floatingip response representation

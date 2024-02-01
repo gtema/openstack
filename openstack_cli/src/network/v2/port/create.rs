@@ -270,6 +270,7 @@ struct Port {
 
 /// Port create command
 pub struct PortCmd {
+    /// Command arguments
     pub args: PortArgs,
 }
 /// Port response representation

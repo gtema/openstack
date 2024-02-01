@@ -64,12 +64,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Uptime get command
 pub struct UptimeCmd {
+    /// Command arguments
     pub args: UptimeArgs,
 }
 #[derive(Deserialize, Debug, Clone, Serialize)]

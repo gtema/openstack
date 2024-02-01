@@ -64,6 +64,7 @@ pub struct PathParameters {
 
 /// Volume show command
 pub struct VolumeCmd {
+    /// Command arguments
     pub args: VolumeArgs,
 }
 /// Volume response representation

@@ -151,6 +151,7 @@ struct Router {
 
 /// Router create command
 pub struct RouterCmd {
+    /// Command arguments
     pub args: RouterArgs,
 }
 /// Router response representation

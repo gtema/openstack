@@ -54,12 +54,13 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    #[arg(value_name = "SUBNET_ID", id = "path_param_subnet_id")]
+    #[arg(id = "path_param_subnet_id", value_name = "SUBNET_ID")]
     subnet_id: String,
 }
 
 /// Tag set command
 pub struct TagCmd {
+    /// Command arguments
     pub args: TagArgs,
 }
 /// Tag response representation

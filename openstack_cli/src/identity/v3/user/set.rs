@@ -161,6 +161,7 @@ struct User {
 
 /// User set command
 pub struct UserCmd {
+    /// Command arguments
     pub args: UserArgs,
 }
 /// User response representation

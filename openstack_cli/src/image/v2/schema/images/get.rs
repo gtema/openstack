@@ -69,6 +69,7 @@ pub struct PathParameters {}
 
 /// Images json command
 pub struct ImagesCmd {
+    /// Command arguments
     pub args: ImagesArgs,
 }
 /// Images response representation

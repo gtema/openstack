@@ -55,7 +55,7 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
-    #[arg(value_name = "VOLUME_ID", id = "path_param_volume_id")]
+    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
@@ -65,6 +65,7 @@ pub struct PathParameters {
 
 /// Metadata delete command
 pub struct MetadataCmd {
+    /// Command arguments
     pub args: MetadataArgs,
 }
 /// Metadata response representation

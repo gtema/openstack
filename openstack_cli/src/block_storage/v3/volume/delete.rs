@@ -61,6 +61,7 @@ pub struct PathParameters {
 
 /// Volume delete command
 pub struct VolumeCmd {
+    /// Command arguments
     pub args: VolumeArgs,
 }
 /// Volume response representation

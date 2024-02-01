@@ -23,7 +23,9 @@ use openstack_sdk::AsyncOpenStack;
 
 mod set;
 
-/// Identity Password password commands
+/// User password commands
+///
+/// This subcommand allows user to change the password
 #[derive(Args, Clone, Debug)]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct PasswordArgs {
@@ -33,8 +35,6 @@ pub struct PasswordArgs {
 
 #[derive(Subcommand, Clone, Debug)]
 pub enum PasswordCommands {
-    /// Updates a user password
-    #[command(about = "Update user password")]
     Set(set::PasswordArgs),
 }
 

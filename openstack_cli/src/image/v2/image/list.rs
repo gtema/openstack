@@ -275,6 +275,7 @@ pub struct PathParameters {}
 
 /// Images list command
 pub struct ImagesCmd {
+    /// Command arguments
     pub args: ImagesArgs,
 }
 /// Images response representation

@@ -63,12 +63,13 @@ pub struct PathParameters {
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
 /// Interface show command
 pub struct InterfaceCmd {
+    /// Command arguments
     pub args: InterfaceArgs,
 }
 /// Interface response representation

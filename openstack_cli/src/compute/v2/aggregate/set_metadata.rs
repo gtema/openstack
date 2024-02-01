@@ -58,7 +58,7 @@ pub struct QueryParameters {}
 #[derive(Args, Clone, Debug)]
 pub struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/images API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// SetMetadata Body data
@@ -70,6 +70,7 @@ struct SetMetadata {
 
 /// Aggregate action command
 pub struct AggregateCmd {
+    /// Command arguments
     pub args: AggregateArgs,
 }
 /// Aggregate response representation

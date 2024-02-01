@@ -68,6 +68,7 @@ pub struct PathParameters {}
 
 /// Token get command
 pub struct TokenCmd {
+    /// Command arguments
     pub args: TokenArgs,
 }
 /// Token response representation

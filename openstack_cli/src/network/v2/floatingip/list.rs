@@ -124,6 +124,7 @@ pub struct PathParameters {}
 
 /// Floatingips list command
 pub struct FloatingipsCmd {
+    /// Command arguments
     pub args: FloatingipsArgs,
 }
 /// Floatingips response representation

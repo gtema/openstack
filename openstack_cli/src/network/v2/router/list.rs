@@ -111,6 +111,7 @@ pub struct PathParameters {}
 
 /// Routers list command
 pub struct RoutersCmd {
+    /// Command arguments
     pub args: RoutersArgs,
 }
 /// Routers response representation
