@@ -1,17 +1,28 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 use http::Uri;
-use tracing::{span, trace, Level};
+
 use url::Url;
 
 use async_trait::async_trait;
 use bytes::Bytes;
 //use futures::io::AsyncRead;
-use tokio::io::AsyncRead;
 
-use crate::api::{ApiError, AsyncClient, Client, RestClient};
+use crate::api::{ApiError, AsyncClient, Client};
 use crate::types::BoxedAsyncRead;
 use http::{HeaderMap, Response};
-use serde::de::DeserializeOwned;
-use serde_json::Value;
 
 pub fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()

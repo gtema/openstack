@@ -1,8 +1,16 @@
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
 
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -11,15 +19,14 @@ use bytes::Bytes;
 //use tokio::io::AsyncRead;
 use std::borrow::Cow;
 use std::collections::HashMap;
-use std::error::Error;
-use std::time::SystemTime;
-use tracing::{debug, info, span, trace, Level};
+
+use tracing::{span, trace, Level};
 use url::Url;
 
 use http::{self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response};
 use serde::de::DeserializeOwned;
 //use serde_bytes::ByteBuf;
-use reqwest::Body;
+
 use serde_json::json;
 
 use crate::api::{
@@ -131,7 +138,7 @@ where
     C: RestClient,
 {
     let status = rsp.status();
-    let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+    let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
         v
     } else {
         return Err(ApiError::server_error(status, rsp.body()));
@@ -176,7 +183,7 @@ where
             }
         }
         match serde_json::from_value::<T>(v) {
-            Ok(mut r) => Ok(r),
+            Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
     }
@@ -216,7 +223,7 @@ where
             }
         }
         match serde_json::from_value::<T>(v) {
-            Ok(mut r) => Ok(r),
+            Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
     }
@@ -271,7 +278,7 @@ where
 
         let status = rsp.status();
         if inspect_error.unwrap_or(true) && !status.is_success() {
-            let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+            let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
                 return Err(ApiError::server_error(status, rsp.body()));
@@ -312,7 +319,7 @@ where
 
         let status = rsp.status();
         if !status.is_success() {
-            let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+            let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
                 return Err(ApiError::server_error(status, rsp.body()));
@@ -346,14 +353,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use http::HeaderMap;
+
     use http::StatusCode;
     use serde::Deserialize;
     use serde_json::json;
 
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{ApiError, Query};
-    use crate::test::client::{MockAsyncServerClient, MockServerClient};
+    use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
 
     struct Dummy;
@@ -459,7 +466,7 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStack { status, msg } = err {
+        if let ApiError::OpenStack { status: _, msg } = err {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);
@@ -479,7 +486,7 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStackUnrecognized { status, obj } = err {
+        if let ApiError::OpenStackUnrecognized { status: _, obj } = err {
             assert_eq!(obj, err_obj);
         } else {
             panic!("unexpected error: {}", err);

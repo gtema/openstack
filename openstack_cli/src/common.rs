@@ -1,3 +1,17 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! Common helpers
 use crate::error::OpenStackCliError;
 
@@ -428,12 +442,12 @@ pub(crate) async fn build_upload_asyncread(
 }
 
 #[derive(Debug, PartialEq, PartialOrd)]
-pub(crate) struct ServiceApiVersion(pub i8, pub i8);
+pub(crate) struct ServiceApiVersion(pub u8, pub u8);
 
 impl TryFrom<String> for ServiceApiVersion {
     type Error = ();
     fn try_from(ver: String) -> Result<Self, Self::Error> {
-        let parts: Vec<i8> = ver.split('.').flat_map(|v| v.parse::<i8>()).collect();
+        let parts: Vec<u8> = ver.split('.').flat_map(|v| v.parse::<u8>()).collect();
         Ok(ServiceApiVersion(parts[0], parts[1]))
     }
 }

@@ -1,12 +1,20 @@
-// Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
-// http://www.apache.org/licenses/LICENSE-2.0> or the MIT license
-// <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
-// option. This file may not be copied, modified, or distributed
-// except according to those terms.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
 
 use std::borrow::Cow;
 use std::cmp;
-use std::collections::HashMap;
+
 use std::ops::Range;
 
 use async_trait::async_trait;
@@ -166,7 +174,7 @@ impl<T> RestClient for PagedTestClient<T> {
 
     fn rest_endpoint(
         &self,
-        service_type: &ServiceType,
+        _service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!("{}/{}", CLIENT_STUB, endpoint))?)
@@ -174,7 +182,7 @@ impl<T> RestClient for PagedTestClient<T> {
 
     fn get_service_endpoint(
         &self,
-        service_type: &ServiceType,
+        _service_type: &ServiceType,
     ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
         Ok(ServiceEndpoint {
             url: Url::parse(CLIENT_STUB)?,
@@ -220,10 +228,10 @@ where
             assert_eq!(content_type.count(), 0);
         }
 
-        let mut pagination = true;
+        let pagination = true;
         let mut keyset: Option<usize> = None;
 
-        let mut page: Option<usize> = None;
+        let page: Option<usize> = None;
         let mut per_page = DEFAULT_PAGE_SIZE;
 
         for (ref key, ref value) in url.query_pairs() {
@@ -304,16 +312,16 @@ where
 
     async fn rest_read_body_async(
         &self,
-        request: RequestBuilder,
-        body: BoxedAsyncRead,
+        _request: RequestBuilder,
+        _body: BoxedAsyncRead,
     ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
         todo!();
     }
 
     async fn download_async(
         &self,
-        request: RequestBuilder,
-        body: Vec<u8>,
+        _request: RequestBuilder,
+        _body: Vec<u8>,
     ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>> {
         todo!();
     }
@@ -338,7 +346,7 @@ impl RestClient for MockServerClient {
 
     fn rest_endpoint(
         &self,
-        service_type: &ServiceType,
+        _service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!(
@@ -350,7 +358,7 @@ impl RestClient for MockServerClient {
 
     fn get_service_endpoint(
         &self,
-        service_type: &ServiceType,
+        _service_type: &ServiceType,
     ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
         Ok(ServiceEndpoint {
             url: Url::parse(&self.server.base_url().to_string())?,
@@ -368,7 +376,7 @@ impl RestClient for MockServerClient {
 impl Client for MockServerClient {
     fn rest(
         &self,
-        mut request: RequestBuilder,
+        request: RequestBuilder,
         body: Vec<u8>,
     ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
         let call = || -> Result<_, Self::Error> {
@@ -410,7 +418,7 @@ impl RestClient for MockAsyncServerClient {
 
     fn rest_endpoint(
         &self,
-        service_type: &ServiceType,
+        _service_type: &ServiceType,
         endpoint: &str,
     ) -> Result<Url, ApiError<Self::Error>> {
         Ok(Url::parse(&format!(
@@ -422,7 +430,7 @@ impl RestClient for MockAsyncServerClient {
 
     fn get_service_endpoint(
         &self,
-        service_type: &ServiceType,
+        _service_type: &ServiceType,
     ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
         Ok(ServiceEndpoint {
             url: Url::parse(&self.server.base_url().to_string())?,
@@ -465,16 +473,16 @@ impl AsyncClient for MockAsyncServerClient {
 
     async fn rest_read_body_async(
         &self,
-        request: RequestBuilder,
-        body: BoxedAsyncRead,
+        _request: RequestBuilder,
+        _body: BoxedAsyncRead,
     ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
         todo!();
     }
 
     async fn download_async(
         &self,
-        request: RequestBuilder,
-        body: Vec<u8>,
+        _request: RequestBuilder,
+        _body: Vec<u8>,
     ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>> {
         todo!();
     }

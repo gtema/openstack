@@ -1,12 +1,25 @@
-use http::{HeaderMap, HeaderName, HeaderValue, Response};
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
+use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
-use std::collections::hash_map::DefaultHasher;
+
 use std::convert::TryFrom;
 use std::fmt::{self, Debug};
 use tracing::{error, trace};
 
 use thiserror::Error;
-use url::Url;
 
 use dialoguer::{Input, Password};
 
@@ -218,7 +231,7 @@ pub fn fill_identity_using_password(
 pub fn fill_identity_using_token(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
-    interactive: bool,
+    _interactive: bool,
 ) -> Result<(), AuthError> {
     identity_builder.methods(Vec::from([token_v3::Methods::Token]));
     let token = token_v3::TokenBuilder::default()
@@ -331,7 +344,7 @@ pub fn build_identity_data_from_config<'a>(
                     "v3totp" | "totp" => {
                         methods.push(token_v3::Methods::Totp);
                     }
-                    other => {}
+                    _other => {}
                 };
             }
 
@@ -670,15 +683,13 @@ impl From<&AuthResponse> for AuthorizationScope {
 
 #[cfg(test)]
 mod tests {
-    use chrono::prelude::*;
-    use serde::Serialize;
+
     use serde_json::json;
-    use std::collections::HashMap;
 
     use super::*;
-    use crate::api::identity::v3::auth::token::create as token_v3;
+
     use crate::config;
-    use crate::types::identity::v3::{self as types_v3, AuthResponse, AuthToken};
+    use crate::types::identity::v3::{AuthResponse, AuthToken};
 
     #[test]
     fn test_config_into_auth_password() -> Result<(), &'static str> {

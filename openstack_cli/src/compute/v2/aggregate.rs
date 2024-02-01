@@ -1,3 +1,17 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 use clap::{Args, Subcommand};
 
 use crate::{OSCCommand, OpenStackCliError};
@@ -16,6 +30,12 @@ pub mod set_21;
 pub mod set_metadata;
 pub mod show;
 
+/// Creates and manages host aggregates. An aggregate assigns
+/// metadata to groups of compute nodes.
+///
+/// Policy defaults enable only users with the administrative role
+/// to perform operations with aggregates. Cloud providers can
+/// change these permissions through policy file configuration.
 #[derive(Args, Clone, Debug)]
 // #[command(args_conflicts_with_subcommands = true)]
 pub struct AggregateArgs {
@@ -28,32 +48,14 @@ pub enum AggregateCommands {
     /// Adds a host to an aggregate.
     #[command(about = "Add Host")]
     AddHost(add_host::AggregateArgs),
-    /// Creates an aggregate. If specifying an option availability_zone, the
-    /// aggregate is created as an availability zone and the availability zone
-    /// is visible to normal users.
-    #[command(about = "Create Aggregate")]
     Create(create_21::AggregateArgs),
-    /// Requests that a set of images be pre-cached on compute nodes within the
-    /// referenced aggregate.
-    #[command(about = "Request Image Pre-caching for Aggregate")]
     CacheImage(image::cache_281::ImageArgs),
-    /// Deletes an aggregate.
-    #[command(about = "Delete Aggregate")]
     Delete(delete::AggregateArgs),
-    /// Lists all aggregates. Includes the ID, name, and availability zone for
-    /// each aggregate.
-    #[command(about = "List Aggregates")]
     List(list::AggregatesArgs),
     /// Removes a host from an aggregate.
     #[command(about = "Remove Host")]
     RemoveHost(remove_host::AggregateArgs),
-    /// Shows details for an aggregate. Details include hosts and metadata.
-    #[command(about = "Show Aggregate Details")]
     Show(show::AggregateArgs),
-    /// Updates either or both the name and availability zone for an aggregate.
-    /// If the aggregate to be updated has host that already in the given
-    /// availability zone, the request will fail with 400 error.
-    #[command(about = "Update Aggregate")]
     Set(set_21::AggregateArgs),
     /// Creates or replaces metadata for an aggregate.
     #[command(about = "Create Or Update Aggregate Metadata")]

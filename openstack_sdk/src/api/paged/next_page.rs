@@ -1,23 +1,35 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! Module to detect next page URL from the response
-use anyhow::Context;
+
 use serde_json::Value;
 use std::borrow::Cow;
-use thiserror::Error;
-use tracing::debug;
+
 use url::Url;
 
 use http::HeaderMap;
 
 use crate::api::PaginationError;
 
-///
-/// LinkHeader struct
-#[derive(Debug)]
-struct LinkHeader<'a> {
-    url: &'a str,
-    params: Vec<(&'a str, &'a str)>,
-}
-pub(crate) fn next_page_from_headers(headers: &HeaderMap) -> Result<Option<Url>, PaginationError> {
+// /// LinkHeader struct
+// #[derive(Debug)]
+// struct LinkHeader<'a> {
+//     url: &'a str,
+//     params: Vec<(&'a str, &'a str)>,
+// }
+pub(crate) fn next_page_from_headers(_headers: &HeaderMap) -> Result<Option<Url>, PaginationError> {
     Err(PaginationError::Body {
         msg: "error".into(),
     })
@@ -29,10 +41,10 @@ pub(crate) fn next_page_from_body(
     response_key: &Option<Cow<'_, str>>,
     base_endpoint: Url,
 ) -> Result<Option<Url>, PaginationError> {
-    let mut next_url: Option<&str>;
+    let mut _next_url: Option<&str>;
     if content.is_object() {
         let mut next: Option<&Value> = None;
-        let mut pagination_key = "links";
+        let pagination_key = "links";
         // First try to get "links" element
         let mut links = content.get(pagination_key);
         if links.is_none() {
@@ -41,7 +53,7 @@ pub(crate) fn next_page_from_body(
                 links = content.get(format!("{}_links", rk));
             }
         }
-        if let Some(mut v) = links {
+        if let Some(v) = links {
             // Sometimes "links" is just a dict
             // {
             //   next: next_link,
@@ -110,12 +122,11 @@ pub(crate) fn next_page_from_body(
 
 #[cfg(test)]
 mod tests {
-    use serde_json::{json, Value};
+    use serde_json::json;
     use std::borrow::Cow;
     use url::Url;
 
     use crate::api::paged::next_page::next_page_from_body;
-    use crate::api::PaginationError;
 
     #[test]
     fn test_body_links() {

@@ -1,3 +1,17 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! OpenStackCLI - a.k.a. `osc` rewritten in Rust.
 //!
 //! This is a new OpenStackCLI written in Rust.
@@ -88,23 +102,14 @@ pub struct Cli {
 /// Supported Top Level commands (services)
 #[derive(Subcommand)]
 pub enum TopLevelCommands {
-    /// Perform direct REST API requests with authorization
     Api(Box<ApiArgs>),
-    /// Cloud Authentication operations
     Auth(Box<AuthArgs>),
-    /// Block Storage (Volume) service (Cinder) commands
     BlockStorage(Box<BlockStorageSrvArgs>),
-    /// Shows current catalog information
     Catalog(Box<CatalogArgs>),
-    /// Compute service (Nova) commands
     Compute(Box<ComputeSrvArgs>),
-    /// Identity (Keystone) commands
     Identity(Box<IdentitySrvArgs>),
-    /// Image (Glance) commands
     Image(Box<ImageSrvArgs>),
-    /// Network (Neutron) commands
     Network(Box<NetworkSrvArgs>),
-    /// Object Store service (Swift) commands
     ObjectStore(Box<ObjectStoreSrvArgs>),
 }
 

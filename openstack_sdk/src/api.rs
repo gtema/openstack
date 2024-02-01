@@ -1,3 +1,17 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
+
 //! OpenStack API bindings
 //!
 //! This module provides implementation for the individual APIs as well as the necessary logic
@@ -7,22 +21,20 @@ mod common;
 mod error;
 mod find;
 mod ignore;
+#[allow(dead_code)]
 mod paged;
 mod params;
 pub(crate) mod query;
 mod rest_endpoint;
 
-#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod block_storage;
-#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod compute;
-#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
+#[allow(dead_code)]
 pub mod identity;
-#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
+#[allow(dead_code)]
+#[allow(clippy::module_inception)]
 pub mod image;
-#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod network;
-#[allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod object_store;
 
 pub use self::error::ApiError;

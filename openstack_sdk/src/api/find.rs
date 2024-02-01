@@ -1,13 +1,22 @@
-use tracing::{debug, info, trace};
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
 
 use async_trait::async_trait;
 
-use http::{header, HeaderMap, Request};
 use serde::de::DeserializeOwned;
 
-use crate::api::{
-    query, ApiError, AsyncClient, Client, Query, QueryAsync, RestClient, RestEndpoint,
-};
+use crate::api::{ApiError, AsyncClient, Client, Query, QueryAsync, RestClient, RestEndpoint};
 
 /// Trait for findable resources that combines GET and LIST endpoint
 pub trait Findable {
@@ -73,7 +82,7 @@ where
         };
 
         match serde_json::from_value::<T>(res) {
-            Ok(mut r) => Ok(r),
+            Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
     }
@@ -105,7 +114,7 @@ where
         };
 
         match serde_json::from_value::<T>(res) {
-            Ok(mut r) => Ok(r),
+            Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
     }
@@ -113,14 +122,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use http::StatusCode;
+
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
     use crate::api::find::Findable;
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError, Query, QueryAsync};
-    use crate::test::client::{ExpectedUrl, MockAsyncServerClient, MockServerClient};
+    use crate::test::client::{MockAsyncServerClient, MockServerClient};
     use derive_builder::Builder;
 
     #[derive(Debug, Builder, Clone)]
@@ -266,7 +275,7 @@ mod tests {
         let res: Result<DummyResult, _> = api::find(ep).query(&client);
         get_mock.assert();
         list_mock.assert();
-        let err = res.unwrap();
+        let _err = res.unwrap();
     }
 
     #[tokio::test]
@@ -288,7 +297,7 @@ mod tests {
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         get_mock.assert();
         list_mock.assert();
-        let err = res.unwrap();
+        let _err = res.unwrap();
     }
 
     #[test]
