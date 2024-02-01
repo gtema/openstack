@@ -17,7 +17,6 @@ use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 
 use crate::types::IdAndName;
-use crate::utils::deser_ok_or_default;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct AuthResponse {

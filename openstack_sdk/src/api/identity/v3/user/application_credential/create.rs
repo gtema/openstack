@@ -28,9 +28,8 @@ use crate::api::rest_endpoint_prelude::*;
 use serde::Serialize;
 
 use serde::Deserialize;
-use serde_json::Value;
+
 use std::borrow::Cow;
-use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -205,12 +204,11 @@ impl<'a> RestEndpoint for Request<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::api::{self, Query, RawQuery};
+    use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-    use serde::Deserialize;
-    use serde::Serialize;
+
     use serde_json::json;
 
     #[test]

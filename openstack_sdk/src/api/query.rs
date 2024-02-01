@@ -13,19 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use http::Uri;
-use tracing::{span, trace, Level};
+
 use url::Url;
 
 use async_trait::async_trait;
 use bytes::Bytes;
 //use futures::io::AsyncRead;
-use tokio::io::AsyncRead;
 
-use crate::api::{ApiError, AsyncClient, Client, RestClient};
+use crate::api::{ApiError, AsyncClient, Client};
 use crate::types::BoxedAsyncRead;
 use http::{HeaderMap, Response};
-use serde::de::DeserializeOwned;
-use serde_json::Value;
 
 pub fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()

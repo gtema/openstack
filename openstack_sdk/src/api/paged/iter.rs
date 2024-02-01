@@ -15,14 +15,14 @@
 //! Paged endpoint iterator implements an iterator interface to lazily fetch
 //! pages when required. This is similar to the python generator.
 //!
-use std::borrow::Cow;
+
 use std::sync::RwLock;
 
 use async_trait::async_trait;
 use bytes::Bytes;
 use futures_util::Stream;
 use http::request::Builder as RequestBuilder;
-use http::{header, HeaderMap, HeaderValue, Request, Response};
+use http::{header, HeaderValue, Request, Response};
 use serde::de::DeserializeOwned;
 use url::Url;
 
@@ -270,7 +270,7 @@ where
         }
 
         // List of items and every item is in additional container
-        if let (Some(item_key), Some(mut array)) = (
+        if let (Some(item_key), Some(array)) = (
             self.paged.endpoint.response_list_item_key(),
             v.as_array_mut(),
         ) {

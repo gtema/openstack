@@ -67,7 +67,6 @@
 //! fields not yet supported by the SDK itself.
 //!
 //! - sync/async interface
-#![allow(dead_code, unused_imports, unused_variables, unused_mut)]
 pub mod api;
 mod auth;
 mod catalog;
@@ -82,4 +81,5 @@ pub use crate::auth::AuthError;
 pub use crate::openstack::{AsyncOpenStack, OpenStack, OpenStackError, RestError};
 
 #[cfg(test)]
+#[allow(dead_code)]
 mod test;

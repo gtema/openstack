@@ -18,7 +18,6 @@
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use crate::api::common::CommaSeparatedList;
 use crate::api::rest_endpoint_prelude::*;
 
 /// Query for container.delete operation.
@@ -101,11 +100,11 @@ impl<'a> RestEndpoint for Container<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::api::{self, Query, RawQuery};
+    use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-    use serde::Deserialize;
+
     use serde_json::json;
 
     #[test]

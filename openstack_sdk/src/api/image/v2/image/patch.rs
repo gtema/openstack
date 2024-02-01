@@ -52,7 +52,6 @@ use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
-use serde::Serialize;
 
 use std::borrow::Cow;
 
@@ -140,13 +139,12 @@ impl<'a> RestEndpoint for Request<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::api::{self, Query, RawQuery};
+    use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
     use json_patch::Patch;
-    use serde::Deserialize;
-    use serde::Serialize;
+
     use serde_json::from_value;
     use serde_json::json;
 

@@ -19,10 +19,9 @@
 // except according to those terms.
 
 use async_trait::async_trait;
-use http::{header, HeaderMap, Request};
 
 use crate::api::rest_endpoint::prepare_request;
-use crate::api::{query, ApiError, AsyncClient, Client, Query, QueryAsync, RestEndpoint};
+use crate::api::{ApiError, AsyncClient, Client, Query, QueryAsync, RestEndpoint};
 
 /// A query modifier that ignores the data returned from an endpoint. For
 /// error responses it tries to extract error information from body. It can
@@ -98,7 +97,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use http::HeaderMap;
+
     use http::StatusCode;
     use serde_json::json;
 
@@ -180,7 +179,7 @@ mod tests {
         });
 
         let err = api::ignore(Dummy).query(&client).unwrap_err();
-        if let ApiError::OpenStack { status, msg } = err {
+        if let ApiError::OpenStack { status: _, msg } = err {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);
@@ -199,7 +198,7 @@ mod tests {
         });
 
         let err = api::ignore(Dummy).query(&client).unwrap_err();
-        if let ApiError::OpenStackUnrecognized { status, obj } = err {
+        if let ApiError::OpenStackUnrecognized { status: _, obj } = err {
             assert_eq!(obj, err_obj);
         } else {
             panic!("unexpected error: {}", err);

@@ -21,10 +21,9 @@
 //!     .expect("Cloud devstack not found");
 //! ```
 
-use anyhow::Context;
 use std::fmt;
-use std::path::{Path, PathBuf};
-use tracing::{debug, error, warn};
+use std::path::PathBuf;
+use tracing::{error, warn};
 
 use serde::Deserialize;
 use std::collections::hash_map::DefaultHasher;
@@ -35,7 +34,6 @@ use std::hash::{Hash, Hasher};
 
 use thiserror::Error;
 
-use config::Environment;
 use config::File;
 
 /// Errors which may occur when dealing with OpenStack connection

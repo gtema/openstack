@@ -19,15 +19,14 @@ use bytes::Bytes;
 //use tokio::io::AsyncRead;
 use std::borrow::Cow;
 use std::collections::HashMap;
-use std::error::Error;
-use std::time::SystemTime;
-use tracing::{debug, info, span, trace, Level};
+
+use tracing::{span, trace, Level};
 use url::Url;
 
 use http::{self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response};
 use serde::de::DeserializeOwned;
 //use serde_bytes::ByteBuf;
-use reqwest::Body;
+
 use serde_json::json;
 
 use crate::api::{
@@ -139,7 +138,7 @@ where
     C: RestClient,
 {
     let status = rsp.status();
-    let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+    let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
         v
     } else {
         return Err(ApiError::server_error(status, rsp.body()));
@@ -184,7 +183,7 @@ where
             }
         }
         match serde_json::from_value::<T>(v) {
-            Ok(mut r) => Ok(r),
+            Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
     }
@@ -224,7 +223,7 @@ where
             }
         }
         match serde_json::from_value::<T>(v) {
-            Ok(mut r) => Ok(r),
+            Ok(r) => Ok(r),
             Err(e) => Err(ApiError::data_type::<T>(e)),
         }
     }
@@ -279,7 +278,7 @@ where
 
         let status = rsp.status();
         if inspect_error.unwrap_or(true) && !status.is_success() {
-            let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+            let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
                 return Err(ApiError::server_error(status, rsp.body()));
@@ -320,7 +319,7 @@ where
 
         let status = rsp.status();
         if !status.is_success() {
-            let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+            let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
                 return Err(ApiError::server_error(status, rsp.body()));
@@ -354,14 +353,14 @@ where
 
 #[cfg(test)]
 mod tests {
-    use http::HeaderMap;
+
     use http::StatusCode;
     use serde::Deserialize;
     use serde_json::json;
 
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{ApiError, Query};
-    use crate::test::client::{MockAsyncServerClient, MockServerClient};
+    use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
 
     struct Dummy;
@@ -467,7 +466,7 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStack { status, msg } = err {
+        if let ApiError::OpenStack { status: _, msg } = err {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);
@@ -487,7 +486,7 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStackUnrecognized { status, obj } = err {
+        if let ApiError::OpenStackUnrecognized { status: _, obj } = err {
             assert_eq!(obj, err_obj);
         } else {
             panic!("unexpected error: {}", err);

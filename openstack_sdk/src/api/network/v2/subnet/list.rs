@@ -37,12 +37,10 @@ use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
-use serde::Serialize;
 
 use crate::api::common::CommaSeparatedList;
 use std::borrow::Cow;
 
-use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -260,12 +258,11 @@ impl<'a> RestEndpoint for Request<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::api::{self, Query, RawQuery};
+    use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-    use serde::Deserialize;
-    use serde::Serialize;
+
     use serde_json::json;
 
     #[test]

@@ -252,12 +252,11 @@ impl<'a> RestEndpoint for Request<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::api::{self, Query, RawQuery};
+    use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-    use serde::Deserialize;
-    use serde::Serialize;
+
     use serde_json::json;
 
     #[test]

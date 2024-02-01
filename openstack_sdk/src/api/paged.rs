@@ -16,9 +16,8 @@ mod iter;
 mod next_page;
 mod pagination;
 
-use http::{header, HeaderMap, HeaderName, HeaderValue, Request};
-use tracing::{debug, info, trace};
-use url::Url;
+use http::{header, HeaderValue, Request};
+use tracing::{debug, trace};
 
 use async_trait::async_trait;
 use std::sync::{Arc, Mutex};
@@ -104,7 +103,7 @@ where
             let page_url = if let Some(url) = next_url.take() {
                 url
             } else {
-                let page_str = page_num.to_string();
+                let _page_str = page_num.to_string();
                 let mut page_url = url.clone();
 
                 {
@@ -191,7 +190,7 @@ where
                 }
             }
 
-            if let (Some(item_key), Some(mut array)) =
+            if let (Some(item_key), Some(array)) =
                 (self.endpoint.response_list_item_key(), v.as_array_mut())
             {
                 for elem in array {
@@ -239,7 +238,7 @@ mod tests {
         ExpectedUrl, MockAsyncServerClient, MockServerClient, PagedTestClient,
     };
 
-    #[derive(Debug)]
+    // #[derive(Debug)]
     struct Dummy {
         with_keyset: bool,
 
@@ -338,7 +337,7 @@ mod tests {
 
         let res: Result<Vec<DummyResult>, _> = api::paged(endpoint, Pagination::All).query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStack { status, msg } = err {
+        if let ApiError::OpenStack { status: _, msg } = err {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);
@@ -432,6 +431,7 @@ mod tests {
         }
     }
 
+    #[test]
     fn test_keyset_pagination_limit() {
         let endpoint = ExpectedUrl::builder()
             .endpoint("paged_dummy")
@@ -479,7 +479,7 @@ mod tests {
     fn test_pagination_headers() {
         let client = MockServerClient::new();
         let mock_data: Vec<DummyResult> = (0..=255).map(|value| DummyResult { value }).collect();
-        let mock = client.server.mock(|when, then| {
+        let _mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/paged_dummy")
                 .header("foo", "bar");
@@ -502,7 +502,7 @@ mod tests {
     async fn test_pagination_headers_async() {
         let client = MockAsyncServerClient::new().await;
         let mock_data: Vec<DummyResult> = (0..=255).map(|value| DummyResult { value }).collect();
-        let mock = client.server.mock(|when, then| {
+        let _mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/paged_dummy")
                 .header("foo", "bar");

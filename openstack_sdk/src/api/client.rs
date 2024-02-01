@@ -13,18 +13,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use std::error::Error;
-use std::pin::Pin;
 
 use async_trait::async_trait;
 use bytes::Bytes;
 //use futures_util::stream::Stream;
-use futures::io::AsyncRead;
+
 //use tokio::io::AsyncRead;
 //use futures::Stream;
 use http::request::Builder as RequestBuilder;
 use http::{HeaderMap, Response};
-use reqwest::Body;
-use tokio_util::io::StreamReader;
+
 use url::Url;
 
 use crate::api::ApiError;

@@ -95,7 +95,7 @@ where
 #[cfg(test)]
 mod tests {
     use std::borrow::Cow;
-    use std::cmp;
+
     use std::iter;
 
     use crate::api::common::CommaSeparatedList;

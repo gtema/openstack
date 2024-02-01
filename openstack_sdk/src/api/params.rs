@@ -20,7 +20,6 @@ use std::borrow::Cow;
 use chrono::{DateTime, NaiveDate, Utc};
 use url::Url;
 
-use serde::Serialize;
 use serde_json::{json, Value};
 
 use crate::api::BodyError;
