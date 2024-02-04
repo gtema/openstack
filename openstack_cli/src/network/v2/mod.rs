@@ -12,85 +12,58 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod availability_zone;
-pub mod extension;
-pub mod floatingip;
-pub mod network;
-pub mod port;
-pub mod router;
-pub mod subnet;
+//! Networking v2 commands
 
-use clap::{Args, Subcommand};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::network::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
-use crate::network::v2::extension::{ExtensionArgs, ExtensionCommand};
-use crate::network::v2::floatingip::{FloatingIPArgs, FloatingIPCommand};
-use crate::network::v2::network::{NetworkArgs, NetworkCommand};
-use crate::network::v2::port::{PortArgs, PortCommand};
-use crate::network::v2::router::{RouterArgs, RouterCommand};
-use crate::network::v2::subnet::{SubnetArgs, SubnetCommand};
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
+
+mod availability_zone;
+mod extension;
+mod floatingip;
+mod network;
+mod port;
+mod router;
+mod subnet;
 
 /// Network (Neutron) commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct NetworkSrvArgs {
+#[derive(Parser)]
+pub struct NetworkCommand {
     /// Network service resource
     #[command(subcommand)]
-    command: NetworkSrvCommands,
+    command: NetworkCommands,
 }
 
-#[derive(Clone, Subcommand)]
-pub enum NetworkSrvCommands {
-    AvailabilityZone(Box<AvailabilityZoneArgs>),
-    Extension(Box<ExtensionArgs>),
-    FloatingIP(Box<FloatingIPArgs>),
-    Network(Box<NetworkArgs>),
-    Port(Box<PortArgs>),
-    Router(Box<RouterArgs>),
-    Subnet(Box<SubnetArgs>),
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum NetworkCommands {
+    AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
+    Extension(Box<extension::ExtensionCommand>),
+    FloatingIP(Box<floatingip::FloatingIPCommand>),
+    Network(Box<network::NetworkCommand>),
+    Port(Box<port::PortCommand>),
+    Router(Box<router::RouterCommand>),
+    Subnet(Box<subnet::SubnetCommand>),
 }
 
-pub struct NetworkSrvCommand {
-    pub args: NetworkSrvArgs,
-}
-
-impl OSCCommand for NetworkSrvCommand {
-    fn get_subcommand(
+impl NetworkCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            NetworkSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            NetworkSrvCommands::Extension(args) => ExtensionCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            NetworkSrvCommands::FloatingIP(args) => FloatingIPCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            NetworkSrvCommands::Network(args) => NetworkCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            NetworkSrvCommands::Port(args) => PortCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            NetworkSrvCommands::Router(args) => RouterCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            NetworkSrvCommands::Subnet(args) => SubnetCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            NetworkCommands::AvailabilityZone(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::FloatingIP(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Network(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Port(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Router(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Subnet(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

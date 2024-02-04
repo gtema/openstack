@@ -15,9 +15,9 @@
 //! Block storage Volume commands
 //!
 
-use clap::{Args, Subcommand};
+use clap::{Parser, Subcommand};
 
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -33,59 +33,49 @@ mod set_353;
 mod show;
 
 /// Block Storage Volume commands
-#[derive(Args, Clone, Debug)]
-pub struct VolumeArgs {
+#[derive(Parser)]
+pub struct VolumeCommand {
+    /// sumcommnd
     #[command(subcommand)]
     command: VolumeCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum VolumeCommands {
-    Create30(create_30::VolumeArgs),
-    Create313(create_313::VolumeArgs),
-    Create347(create_347::VolumeArgs),
     #[command(visible_alias = "create")]
-    Create353(create_353::VolumeArgs),
-    Delete(delete::VolumeArgs),
-    Extend(os_extend::VolumeArgs),
-    List(list::VolumesArgs),
+    Create353(create_353::VolumeCommand),
+    Create347(create_347::VolumeCommand),
+    Create313(create_313::VolumeCommand),
+    Create30(create_30::VolumeCommand),
+    Delete(delete::VolumeCommand),
+    Extend(os_extend::VolumeCommand),
+    List(list::VolumesCommand),
     #[command(visible_alias = "set")]
-    Set353(set_353::VolumeArgs),
-    Set30(set_30::VolumeArgs),
-    Show(show::VolumeArgs),
+    Set353(set_353::VolumeCommand),
+    Set30(set_30::VolumeCommand),
+    Show(show::VolumeCommand),
 }
 
-pub struct VolumeCommand {
-    /// Command arguments
-    pub args: VolumeArgs,
-}
-
-impl OSCCommand for VolumeCommand {
-    fn get_subcommand(
+impl VolumeCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            VolumeCommands::Create30(args) => {
-                Ok(Box::new(create_30::VolumeCmd { args: args.clone() }))
-            }
-            VolumeCommands::Create313(args) => {
-                Ok(Box::new(create_313::VolumeCmd { args: args.clone() }))
-            }
-            VolumeCommands::Create347(args) => {
-                Ok(Box::new(create_347::VolumeCmd { args: args.clone() }))
-            }
-            VolumeCommands::Create353(args) => {
-                Ok(Box::new(create_353::VolumeCmd { args: args.clone() }))
-            }
-            VolumeCommands::Delete(args) => Ok(Box::new(delete::VolumeCmd { args: args.clone() })),
-            VolumeCommands::Extend(args) => {
-                Ok(Box::new(os_extend::VolumeCmd { args: args.clone() }))
-            }
-            VolumeCommands::List(args) => Ok(Box::new(list::VolumesCmd { args: args.clone() })),
-            VolumeCommands::Set30(args) => Ok(Box::new(set_30::VolumeCmd { args: args.clone() })),
-            VolumeCommands::Set353(args) => Ok(Box::new(set_353::VolumeCmd { args: args.clone() })),
-            VolumeCommands::Show(args) => Ok(Box::new(show::VolumeCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            VolumeCommands::Create353(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Create347(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Create313(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Create30(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Extend(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Set353(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Set30(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

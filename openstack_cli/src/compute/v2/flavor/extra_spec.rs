@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,11 +13,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Compute Flavor Extra Specs commands
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -27,55 +25,49 @@ mod list;
 mod set;
 mod show;
 
-#[derive(Args, Clone, Debug)]
-pub struct ExtraSpecsArgs {
+/// Flavor extra specs
+#[derive(Parser)]
+pub struct ExtraSpecsCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ExtraSpecsCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ExtraSpecsCommands {
     /// Creates extra specs for a flavor, by ID.
     #[command(about = "Create Extra Specs For A Flavor")]
-    Create(create::ExtraSpecArgs),
+    Create(create::ExtraSpecCommand),
     /// Deletes an extra spec, by key, for a flavor, by ID.
     #[command(about = "Delete An Extra Spec For A Flavor")]
-    Delete(delete::ExtraSpecArgs),
+    Delete(delete::ExtraSpecCommand),
     /// Lists all extra specs for a flavor, by ID.
     #[command(about = "List Extra Specs For A Flavor")]
-    List(list::ExtraSpecsArgs),
+    List(list::ExtraSpecsCommand),
     /// Shows an extra spec, by key, for a flavor, by ID.
     #[command(about = "Show An Extra Spec For A Flavor")]
-    Show(show::ExtraSpecArgs),
+    Show(show::ExtraSpecCommand),
     /// Updates an extra spec, by key, for a flavor, by ID.
     #[command(about = "Update An Extra Spec For A Flavor
 ")]
-    Set(set::ExtraSpecArgs),
+    Set(set::ExtraSpecCommand),
 }
 
-pub struct ExtraSpecsCommand {
-    pub args: ExtraSpecsArgs,
-}
-
-impl OSCCommand for ExtraSpecsCommand {
-    fn get_subcommand(
+impl ExtraSpecsCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ExtraSpecsCommands::Create(args) => {
-                Ok(Box::new(create::ExtraSpecCmd { args: args.clone() }))
-            }
-            ExtraSpecsCommands::Delete(args) => {
-                Ok(Box::new(delete::ExtraSpecCmd { args: args.clone() }))
-            }
-            ExtraSpecsCommands::List(args) => {
-                Ok(Box::new(list::ExtraSpecsCmd { args: args.clone() }))
-            }
-            ExtraSpecsCommands::Show(args) => {
-                Ok(Box::new(show::ExtraSpecCmd { args: args.clone() }))
-            }
-            ExtraSpecsCommands::Set(args) => Ok(Box::new(set::ExtraSpecCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ExtraSpecsCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

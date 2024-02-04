@@ -12,45 +12,39 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod volume;
-
-use clap::{Args, Subcommand};
+//! Block storage v3 commands
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::block_storage::v3::volume::{VolumeArgs, VolumeCommand};
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
+
+mod volume;
 
 /// Block Storage (Volume) service (Cinder) commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct BlockStorageSrvArgs {
-    /// BlockStorage API microversion
-    // #[arg(long, env = "OS_VOLUME_API_VERSION")]
-    // os_volume_api_version: Option<String>,
-    /// BlockStorage service resource
+#[derive(Parser)]
+pub struct BlockStorageCommand {
+    /// subcommand
     #[command(subcommand)]
-    command: BlockStorageSrvCommands,
+    command: BlockStorageCommands,
 }
 
-#[derive(Clone, Subcommand)]
-pub enum BlockStorageSrvCommands {
-    Volume(VolumeArgs),
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum BlockStorageCommands {
+    Volume(volume::VolumeCommand),
 }
 
-pub struct BlockStorageSrvCommand {
-    pub args: BlockStorageSrvArgs,
-}
-
-impl OSCCommand for BlockStorageSrvCommand {
-    fn get_subcommand(
+impl BlockStorageCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            BlockStorageSrvCommands::Volume(args) => {
-                VolumeCommand { args: args.clone() }.get_subcommand(session)
-            }
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

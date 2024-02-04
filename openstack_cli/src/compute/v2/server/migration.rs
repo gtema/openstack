@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,59 +12,51 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Server migrations
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod delete;
-pub mod force_complete_222;
-pub mod list;
-pub mod show;
+use crate::{Cli, OpenStackCliError};
+
+mod delete;
+mod force_complete_222;
+mod list;
+mod show;
 
 /// Server migrations (servers, migrations)
 ///
 /// List, show, perform actions on and delete server migrations.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct MigrationArgs {
+#[derive(Parser)]
+pub struct MigrationCommand {
+    /// subcommand
     #[command(subcommand)]
     command: MigrationCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum MigrationCommands {
-    Delete(delete::MigrationArgs),
-    ForceComplete(force_complete_222::MigrationArgs),
-    List(list::MigrationsArgs),
-    Show(show::MigrationArgs),
+    Delete(delete::MigrationCommand),
+    ForceComplete(force_complete_222::MigrationCommand),
+    List(list::MigrationsCommand),
+    Show(show::MigrationCommand),
 }
 
-pub struct MigrationCommand {
-    pub args: MigrationArgs,
-}
-
-impl OSCCommand for MigrationCommand {
-    fn get_subcommand(
+impl MigrationCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            MigrationCommands::Delete(args) => {
-                Ok(Box::new(delete::MigrationCmd { args: args.clone() }))
-            }
-            MigrationCommands::ForceComplete(args) => {
-                Ok(Box::new(force_complete_222::MigrationCmd {
-                    args: args.clone(),
-                }))
-            }
-            MigrationCommands::List(args) => {
-                Ok(Box::new(list::MigrationsCmd { args: args.clone() }))
-            }
-            MigrationCommands::Show(args) => {
-                Ok(Box::new(show::MigrationCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            MigrationCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::ForceComplete(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

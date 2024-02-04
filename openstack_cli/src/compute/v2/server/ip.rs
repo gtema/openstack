@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,43 +12,44 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+//! Server IP commands
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
-pub mod show;
+use crate::{Cli, OpenStackCliError};
+
+mod list;
+mod show;
 
 /// Servers IPs (servers, ips)
 ///
 /// Lists the IP addresses for an instance and shows details for an IP address.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct IpArgs {
+#[derive(Parser)]
+pub struct IpCommand {
+    /// subcommand
     #[command(subcommand)]
     command: IpCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum IpCommands {
-    List(list::IpsArgs),
-    Show(show::IpArgs),
+    List(list::IpsCommand),
+    Show(show::IpCommand),
 }
 
-pub struct IpCommand {
-    pub args: IpArgs,
-}
-
-impl OSCCommand for IpCommand {
-    fn get_subcommand(
+impl IpCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            IpCommands::List(args) => Ok(Box::new(list::IpsCmd { args: args.clone() })),
-            IpCommands::Show(args) => Ok(Box::new(show::IpCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            IpCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            IpCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

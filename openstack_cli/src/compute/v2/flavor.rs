@@ -14,11 +14,11 @@
 
 //! Compute Flavor commands
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod add_tenant_access;
 mod create_20;
@@ -37,66 +37,46 @@ mod show;
 /// Flavors are a way to describe the basic dimensions of a server
 /// to be created including how much cpu, ram, and disk space are
 /// allocated to a server built with this flavor.
-#[derive(Args, Clone, Debug)]
-pub struct FlavorArgs {
+#[derive(Parser)]
+pub struct FlavorCommand {
+    /// subcommand
     #[command(subcommand)]
     command: FlavorCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum FlavorCommands {
-    Access(Box<flavor_access::FlavorAccessArgs>),
+    Access(Box<flavor_access::FlavorAccessCommand>),
     #[command(visible_alias = "create")]
-    Create255(Box<create_255::FlavorArgs>),
-    Create21(Box<create_21::FlavorArgs>),
-    Create20(Box<create_20::FlavorArgs>),
-    Delete(Box<delete::FlavorArgs>),
-    Extraspecs(Box<extra_spec::ExtraSpecsArgs>),
-    List(Box<list::FlavorsArgs>),
-    Set(Box<set::FlavorArgs>),
-    Show(Box<show::FlavorArgs>),
+    Create255(Box<create_255::FlavorCommand>),
+    Create21(Box<create_21::FlavorCommand>),
+    Create20(Box<create_20::FlavorCommand>),
+    Delete(Box<delete::FlavorCommand>),
+    Extraspecs(Box<extra_spec::ExtraSpecsCommand>),
+    List(Box<list::FlavorsCommand>),
+    Set(Box<set::FlavorCommand>),
+    Show(Box<show::FlavorCommand>),
 }
 
-pub struct FlavorCommand {
-    /// Command arguments
-    pub args: FlavorArgs,
-}
-
-impl OSCCommand for FlavorCommand {
-    fn get_subcommand(
+impl FlavorCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            FlavorCommands::Access(args) => flavor_access::FlavorAccessCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            FlavorCommands::Create20(args) => Ok(Box::new(create_20::FlavorCmd {
-                args: *args.clone(),
-            })),
-            FlavorCommands::Create21(args) => Ok(Box::new(create_21::FlavorCmd {
-                args: *args.clone(),
-            })),
-            FlavorCommands::Create255(args) => Ok(Box::new(create_255::FlavorCmd {
-                args: *args.clone(),
-            })),
-            FlavorCommands::Delete(args) => Ok(Box::new(delete::FlavorCmd {
-                args: *args.clone(),
-            })),
-            FlavorCommands::Extraspecs(args) => extra_spec::ExtraSpecsCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            FlavorCommands::List(args) => Ok(Box::new(list::FlavorsCmd {
-                args: *args.clone(),
-            })),
-            FlavorCommands::Set(args) => Ok(Box::new(set::FlavorCmd {
-                args: *args.clone(),
-            })),
-            FlavorCommands::Show(args) => Ok(Box::new(show::FlavorCmd {
-                args: *args.clone(),
-            })),
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            FlavorCommands::Access(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Create255(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Create21(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Create20(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Extraspecs(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

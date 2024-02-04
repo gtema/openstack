@@ -14,36 +14,28 @@
 
 //! Perform cloud login
 use anyhow::anyhow;
-use async_trait::async_trait;
-use clap::Args;
+use clap::Parser;
 use std::io::{self, Write};
 use tracing::info;
 
-use crate::Cli;
-use crate::{error::OpenStackCliError, OSCCommand};
+use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
 /// Fetch a new valid authorization token for the cloud.
 ///
 /// This command writes token to the stdout
-#[derive(Args, Clone, Debug)]
+#[derive(Parser)]
 #[command(about = "Login to the cloud and get a valid authorization token")]
-pub struct AuthArgs {
+pub struct LoginCommand {
     /// Require token renewal
     #[arg(long, action=clap::ArgAction::SetTrue)]
     pub renew: bool,
 }
 
-/// login command
-pub struct AuthCmd {
-    /// Command arguments
-    pub args: AuthArgs,
-}
-
-#[async_trait]
-impl OSCCommand for AuthCmd {
-    async fn take_action(
+impl LoginCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
         _parsed_args: &Cli,
         client: &mut AsyncOpenStack,

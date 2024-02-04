@@ -12,12 +12,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Show catalog
-//!
-//!
+//! Catalog command
 
-use async_trait::async_trait;
-use clap::{Args, Subcommand};
+use clap::{Parser, Subcommand};
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -31,54 +28,49 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
-/// Shows current catalog information
-#[derive(Args, Clone, Debug)]
-pub struct ListArgs {}
-
-/// List Command
-pub struct ListCmd {
-    pub args: ListArgs,
-}
-
 /// Catalog commands args
-#[derive(Args, Clone, Debug)]
-pub struct CatalogArgs {
+#[derive(Parser)]
+pub struct CatalogCommand {
+    /// subcommand
     #[command(subcommand)]
     command: CatalogCommands,
 }
 
 /// Catalog command types
-#[derive(Subcommand, Clone, Debug)]
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum CatalogCommands {
-    List(ListArgs),
+    List(ListCommand),
 }
 
-/// Catalog command
-pub struct CatalogCommand {
-    /// Command arguments
-    pub args: CatalogArgs,
-}
-
-impl OSCCommand for CatalogCommand {
-    fn get_subcommand(
+impl CatalogCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            CatalogCommands::List(args) => Ok(Box::new(ListCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
+/// Shows current catalog information
+#[derive(Parser)]
+pub struct ListCommand {}
+
+/// Catalog entries
+#[derive(Deserialize, Serialize)]
 pub struct VecCatalogEndpoints(pub Vec<CatalogEndpoint>);
+
 /// Catalog
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+#[derive(Deserialize, Serialize, StructTable)]
 pub struct Catalog {
     /// Service type
     #[structable(title = "service_type")]
@@ -93,7 +85,8 @@ pub struct Catalog {
     endpoints: VecCatalogEndpoints,
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
+/// Catalog entry representation
+#[derive(Deserialize, Serialize, StructTable)]
 pub struct CatalogEndpoint {
     /// id
     id: String,
@@ -129,9 +122,9 @@ impl fmt::Display for VecCatalogEndpoints {
     }
 }
 
-#[async_trait]
-impl OSCCommand for ListCmd {
-    async fn take_action(
+impl ListCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,

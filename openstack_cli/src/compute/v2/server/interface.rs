@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,59 +12,53 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Server intefaces
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod create_249;
-pub mod delete;
-pub mod list;
-pub mod show;
+use crate::{Cli, OpenStackCliError};
+
+mod create_249;
+mod delete;
+mod list;
+mod show;
 
 /// Port interfaces (servers, os-interface)
 ///
 /// List port interfaces, show port interface details of the given server.
 /// Create a port interface and uses it to attach a port to the given server,
 /// detach a port interface from the given server.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct InterfaceArgs {
+#[derive(Parser)]
+pub struct InterfaceCommand {
+    /// subcommand
     #[command(subcommand)]
     command: InterfaceCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum InterfaceCommands {
-    Create(create_249::InterfaceArgs),
-    Delete(delete::InterfaceArgs),
-    List(list::InterfacesArgs),
-    Show(show::InterfaceArgs),
+    Create(create_249::InterfaceCommand),
+    Delete(delete::InterfaceCommand),
+    List(list::InterfacesCommand),
+    Show(show::InterfaceCommand),
 }
 
-pub struct InterfaceCommand {
-    pub args: InterfaceArgs,
-}
-
-impl OSCCommand for InterfaceCommand {
-    fn get_subcommand(
+impl InterfaceCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            InterfaceCommands::Create(args) => {
-                Ok(Box::new(create_249::InterfaceCmd { args: args.clone() }))
-            }
-            InterfaceCommands::Delete(args) => {
-                Ok(Box::new(delete::InterfaceCmd { args: args.clone() }))
-            }
-            InterfaceCommands::List(args) => {
-                Ok(Box::new(list::InterfacesCmd { args: args.clone() }))
-            }
-            InterfaceCommands::Show(args) => {
-                Ok(Box::new(show::InterfaceCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            InterfaceCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            InterfaceCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            InterfaceCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            InterfaceCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

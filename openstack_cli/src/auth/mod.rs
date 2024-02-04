@@ -13,46 +13,44 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Authorization operations
-//!
-//!
-pub mod login;
-pub mod show;
-use clap::{Args, Subcommand};
+
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
+
+mod login;
+mod show;
 
 /// Cloud Authentication operations
 ///
-/// This command provides various authorization operations (login, show,
-/// status, etc)
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct AuthArgs {
+/// This command provides various authorization
+/// operations (login, show, status, etc)
+#[derive(Parser)]
+pub struct AuthCommand {
     /// Authentication commands
     #[command(subcommand)]
     pub(crate) command: AuthCommands,
 }
 
-#[derive(Clone, Subcommand)]
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum AuthCommands {
-    Login(login::AuthArgs),
-    Show(show::AuthArgs),
+    Login(login::LoginCommand),
+    Show(show::ShowCommand),
 }
 
-pub struct AuthCommand {
-    pub args: AuthArgs,
-}
-
-impl OSCCommand for AuthCommand {
-    fn get_subcommand(
+impl AuthCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            AuthCommands::Login(args) => Ok(Box::new(login::AuthCmd { args: args.clone() })),
-            AuthCommands::Show(args) => Ok(Box::new(show::AuthCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        client: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            AuthCommands::Show(cmd) => cmd.take_action(parsed_args, client).await,
+            AuthCommands::Login(cmd) => cmd.take_action(parsed_args, client).await,
         }
     }
 }

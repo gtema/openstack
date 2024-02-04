@@ -150,7 +150,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
+                .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -161,7 +161,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
+            .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
             .build()
             .unwrap()
             .response_key()
@@ -182,7 +182,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
+            .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -204,7 +204,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
+            .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

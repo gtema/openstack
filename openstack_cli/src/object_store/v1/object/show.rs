@@ -13,7 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Shows object metadata.
-use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
@@ -25,9 +24,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -40,7 +39,7 @@ use std::collections::HashMap;
 
 /// Shows object metadata.
 #[derive(Args, Clone, Debug)]
-pub struct ObjectArgs {
+pub struct ObjectCommand {
     /// The unique name for the account. An account is also known as the
     /// project or tenant.
     #[arg()]
@@ -90,10 +89,6 @@ pub struct ObjectArgs {
     symlink: Option<String>,
 }
 
-pub struct ObjectCmd {
-    pub args: ObjectArgs,
-}
-
 /// Object
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct Object {
@@ -101,35 +96,34 @@ pub struct Object {
     metadata: HashMapStringString,
 }
 
-#[async_trait]
-impl OSCCommand for ObjectCmd {
-    async fn take_action(
+impl ObjectCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Head Object with {:?}", self.args);
+        info!("Head Object with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         let mut ep_builder = head::Object::builder();
         // Set path parameters
-        ep_builder.container(&self.args.container);
-        ep_builder.object(&self.args.object);
+        ep_builder.container(&self.container);
+        ep_builder.object(&self.object);
         // Set query parameters
-        if let Some(val) = &self.args.multipart_manifest {
+        if let Some(val) = &self.multipart_manifest {
             ep_builder.multipart_manifest(val);
         }
-        if let Some(val) = &self.args.temp_url_sig {
+        if let Some(val) = &self.temp_url_sig {
             ep_builder.temp_url_sig(val);
         }
-        if let Some(val) = &self.args.temp_url_expires {
+        if let Some(val) = &self.temp_url_expires {
             ep_builder.temp_url_expires(*val);
         }
-        if let Some(val) = &self.args.filename {
+        if let Some(val) = &self.filename {
             ep_builder.filename(val);
         }
-        if let Some(val) = &self.args.symlink {
+        if let Some(val) = &self.symlink {
             ep_builder.symlink(val);
         }
         // Set body parameters

@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,55 +13,51 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Compute Flavor Access commands
-use clap::{Args, Subcommand};
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 use crate::compute::v2::flavor::add_tenant_access;
 use crate::compute::v2::flavor::remove_tenant_access;
 
 mod list;
 
-#[derive(Args, Clone, Debug)]
-pub struct FlavorAccessArgs {
+/// Flavor access command
+#[derive(Parser)]
+pub struct FlavorAccessCommand {
     #[command(subcommand)]
     command: FlavorAccessCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum FlavorAccessCommands {
     /// Adds flavor access to a tenant and flavor.
     #[command(about = "Add Flavor Access To Tenant (addTenantAccess Action)")]
-    Add(add_tenant_access::FlavorArgs),
+    Add(add_tenant_access::FlavorCommand),
     /// Lists flavor access information.
     #[command(about = "List Flavor Access Information For Given Flavor")]
-    List(list::FlavorAccesesArgs),
+    List(list::FlavorAccesesCommand),
     /// Removes flavor access from a tenant and flavor.
     #[command(about = "Remove Flavor Access From Tenant (removeTenantAccess Action)")]
-    Remove(remove_tenant_access::FlavorArgs),
+    Remove(remove_tenant_access::FlavorCommand),
 }
 
-pub struct FlavorAccessCommand {
-    pub args: FlavorAccessArgs,
-}
-
-impl OSCCommand for FlavorAccessCommand {
-    fn get_subcommand(
+impl FlavorAccessCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            FlavorAccessCommands::Add(args) => Ok(Box::new(add_tenant_access::FlavorCmd {
-                args: args.clone(),
-            })),
-            FlavorAccessCommands::List(args) => {
-                Ok(Box::new(list::FlavorAccesesCmd { args: args.clone() }))
-            }
-            FlavorAccessCommands::Remove(args) => Ok(Box::new(remove_tenant_access::FlavorCmd {
-                args: args.clone(),
-            })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            FlavorAccessCommands::Add(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorAccessCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorAccessCommands::Remove(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -11,12 +11,13 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+//! Object Store `object` command with subcommands
+//!
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod delete;
 mod download;
@@ -25,39 +26,37 @@ mod show;
 mod upload;
 
 /// Object commands
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct ObjectArgs {
+#[derive(Parser)]
+pub struct ObjectCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ObjectCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ObjectCommands {
-    List(list::ObjectsArgs),
-    Download(download::ObjectArgs),
-    Upload(upload::ObjectArgs),
-    Show(show::ObjectArgs),
-    Delete(delete::ObjectArgs),
+    Delete(delete::ObjectCommand),
+    Download(download::ObjectCommand),
+    List(list::ObjectsCommand),
+    Show(show::ObjectCommand),
+    Upload(upload::ObjectCommand),
 }
 
-pub struct ObjectCommand {
-    pub args: ObjectArgs,
-}
-
-impl OSCCommand for ObjectCommand {
-    fn get_subcommand(
+impl ObjectCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ObjectCommands::List(args) => Ok(Box::new(list::ObjectsCmd { args: args.clone() })),
-            ObjectCommands::Download(args) => {
-                Ok(Box::new(download::ObjectCmd { args: args.clone() }))
-            }
-            ObjectCommands::Upload(args) => Ok(Box::new(upload::ObjectCmd { args: args.clone() })),
-            ObjectCommands::Show(args) => Ok(Box::new(show::ObjectCmd { args: args.clone() })),
-            ObjectCommands::Delete(args) => Ok(Box::new(delete::ObjectCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ObjectCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ObjectCommands::Download(cmd) => cmd.take_action(parsed_args, session).await,
+            ObjectCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ObjectCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ObjectCommands::Upload(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

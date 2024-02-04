@@ -12,44 +12,46 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Availability zone management
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
+use crate::{Cli, OpenStackCliError};
+
 mod list;
 
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct AvailabilityZoneArgs {
+/// Availability zones
+///
+/// Lists and gets detailed availability zone information.
+///
+/// An availability zone is created or updated by setting the
+/// availability_zone parameter in the create, update, or create or update
+/// methods of the Host Aggregates API. See Host Aggregates for more details.
+#[derive(Parser)]
+pub struct AvailabilityZoneCommand {
+    /// subcommand
     #[command(subcommand)]
     command: AvailabilityZoneCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum AvailabilityZoneCommands {
-    /// Gets detailed availability zone information. Policy defaults enable
-    /// only users with the administrative role to perform this operation.
-    /// Cloud providers can change these permissions through the policy.json
-    /// file.
-    #[command(about = "Get Detailed Availability Zone Information")]
-    List(list::AvailabilityZonesArgs),
+    List(list::AvailabilityZonesCommand),
 }
 
-pub struct AvailabilityZoneCommand {
-    pub args: AvailabilityZoneArgs,
-}
-
-impl OSCCommand for AvailabilityZoneCommand {
-    fn get_subcommand(
+impl AvailabilityZoneCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            AvailabilityZoneCommands::List(args) => {
-                Ok(Box::new(list::AvailabilityZonesCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            AvailabilityZoneCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

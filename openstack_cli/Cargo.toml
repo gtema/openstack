@@ -14,7 +14,6 @@ path = "src/bin/osc.rs"
 
 [dependencies]
 anyhow = {workspace = true}
-async-trait = {workspace = true}
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 cli-table = "~0.4"

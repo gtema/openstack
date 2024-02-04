@@ -12,41 +12,40 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Network availability zone commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod list;
 
 /// Availability Zones commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct AvailabilityZoneArgs {
+#[derive(Parser)]
+pub struct AvailabilityZoneCommand {
+    /// subcommand
     #[command(subcommand)]
     command: AvailabilityZoneCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum AvailabilityZoneCommands {
-    List(list::AvailabilityZonesArgs),
+    List(list::AvailabilityZonesCommand),
 }
 
-pub struct AvailabilityZoneCommand {
-    /// Command arguments
-    pub args: AvailabilityZoneArgs,
-}
-
-impl OSCCommand for AvailabilityZoneCommand {
-    fn get_subcommand(
+impl AvailabilityZoneCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            AvailabilityZoneCommands::List(args) => {
-                Ok(Box::new(list::AvailabilityZonesCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            AvailabilityZoneCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

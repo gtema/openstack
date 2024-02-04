@@ -12,49 +12,45 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod image;
-pub mod schema;
+//! Image v2 commands
 
-use clap::{Args, Subcommand};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::image::v2::image::{ImageArgs, ImageCommand};
-use crate::image::v2::schema::{SchemaArgs, SchemaCommand};
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
 
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct ImageSrvArgs {
-    /// Image service resource
+mod image;
+mod schema;
+
+/// Image service operations
+#[derive(Parser)]
+pub struct ImageCommand {
+    /// subcommand
     #[command(subcommand)]
-    command: ImageSrvCommands,
+    command: ImageCommands,
 }
 
-#[derive(Clone, Subcommand)]
-pub enum ImageSrvCommands {
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum ImageCommands {
     /// Image commands
-    Image(ImageArgs),
+    Image(image::ImageCommand),
     /// Schema commands
-    Schema(SchemaArgs),
+    Schema(schema::SchemaCommand),
 }
 
-pub struct ImageSrvCommand {
-    pub args: ImageSrvArgs,
-}
-
-impl OSCCommand for ImageSrvCommand {
-    fn get_subcommand(
+impl ImageCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ImageSrvCommands::Image(args) => {
-                ImageCommand { args: args.clone() }.get_subcommand(session)
-            }
-            ImageSrvCommands::Schema(args) => {
-                SchemaCommand { args: args.clone() }.get_subcommand(session)
-            }
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ImageCommands::Image(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Schema(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

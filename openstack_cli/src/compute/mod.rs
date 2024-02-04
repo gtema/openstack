@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod v2;
+//! Compute service commands
+pub(super) mod v2;

@@ -12,52 +12,48 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Hypervisor commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod list;
-pub mod show;
+use crate::{Cli, OpenStackCliError};
 
-/// Lists all hypervisors, shows summary statistics for all
-/// hypervisors over all compute nodes, shows details for a
-/// hypervisor, shows the uptime for a hypervisor, lists all
-/// servers on hypervisors that match the given
-/// hypervisor_hostname_pattern or searches for hypervisors by the
-/// given hypervisor_hostname_pattern.
-#[derive(Args, Clone, Debug)]
+mod list;
+mod show;
+
+/// Lists all hypervisors, shows summary statistics for all hypervisors over
+/// all compute nodes, shows details for a hypervisor, shows the uptime for a
+/// hypervisor, lists all servers on hypervisors that match the given
+/// hypervisor_hostname_pattern or searches for hypervisors by the given
+/// hypervisor_hostname_pattern.
+#[derive(Parser)]
 #[command(about = "Hypervisors")]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct HypervisorArgs {
+pub struct HypervisorCommand {
+    /// subcommand
     #[command(subcommand)]
     command: HypervisorCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum HypervisorCommands {
-    List(list::HypervisorsArgs),
-    Show(show::HypervisorArgs),
+    List(list::HypervisorsCommand),
+    Show(show::HypervisorCommand),
 }
 
-pub struct HypervisorCommand {
-    /// Command arguments
-    pub args: HypervisorArgs,
-}
-
-impl OSCCommand for HypervisorCommand {
-    fn get_subcommand(
+impl HypervisorCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            HypervisorCommands::List(args) => {
-                Ok(Box::new(list::HypervisorsCmd { args: args.clone() }))
-            }
-            HypervisorCommands::Show(args) => {
-                Ok(Box::new(show::HypervisorCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            HypervisorCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            HypervisorCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

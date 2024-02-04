@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,49 +12,47 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Server password command
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod delete;
-pub mod get;
+use crate::{Cli, OpenStackCliError};
+
+mod delete;
+mod get;
 
 /// Servers password
 ///
 /// Shows the encrypted administrative password. Also, clears the encrypted
 /// administrative password for a server, which removes it from the metadata
 /// server.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct PasswordArgs {
+#[derive(Parser)]
+pub struct PasswordCommand {
+    /// command
     #[command(subcommand)]
     command: PasswordCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum PasswordCommands {
-    Delete(delete::ServerPasswordArgs),
-    Show(get::ServerPasswordArgs),
+    Delete(delete::ServerPasswordCommand),
+    Show(get::ServerPasswordCommand),
 }
 
-pub struct PasswordCommand {
-    pub args: PasswordArgs,
-}
-
-impl OSCCommand for PasswordCommand {
-    fn get_subcommand(
+impl PasswordCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            PasswordCommands::Delete(args) => {
-                Ok(Box::new(delete::ServerPasswordCmd { args: args.clone() }))
-            }
-            PasswordCommands::Show(args) => {
-                Ok(Box::new(get::ServerPasswordCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            PasswordCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            PasswordCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

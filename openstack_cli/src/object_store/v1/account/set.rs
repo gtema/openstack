@@ -26,7 +26,6 @@
 //! headers, send the X-Remove-Account- Meta-{name} header with an arbitrary
 //! value. For example, X-Remove-Account-Meta-Book: x. The operation ignores
 //! the arbitrary value.
-use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
@@ -38,9 +37,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -64,28 +63,23 @@ use openstack_sdk::api::RawQueryAsync;
 /// value. For example, X-Remove-Account-Meta-Book: x. The operation ignores
 /// the arbitrary value.
 #[derive(Args, Clone, Debug)]
-pub struct AccountArgs {
+pub struct AccountCommand {
     /// Property to be set
     #[arg(long, value_name="key=value", value_parser = parse_key_val::<String, String>)]
     property: Vec<(String, String)>,
-}
-
-pub struct AccountCmd {
-    pub args: AccountArgs,
 }
 
 /// Account
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct Account {}
 
-#[async_trait]
-impl OSCCommand for AccountCmd {
-    async fn take_action(
+impl AccountCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Post Account with {:?}", self.args);
+        info!("Post Account with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
@@ -93,7 +87,7 @@ impl OSCCommand for AccountCmd {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        ep_builder.headers(self.args.property.iter().map(|(k, v)| {
+        ep_builder.headers(self.property.iter().map(|(k, v)| {
             (
                 Some(HeaderName::from_bytes(k.as_bytes()).expect("HeaderName is a string")),
                 HeaderValue::from_str(v.as_str()).expect("Header Value is a string"),

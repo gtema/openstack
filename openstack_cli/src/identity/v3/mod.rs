@@ -12,61 +12,48 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod project;
-pub mod user;
-
-use clap::{Args, Subcommand};
+//! Identity v3 API commands
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::identity::v3::project::{ProjectArgs, ProjectCommand};
-use crate::identity::v3::user::access_rule::{AccessRuleArgs, AccessRuleCommand};
-use crate::identity::v3::user::application_credential::{
-    ApplicationCredentialArgs, ApplicationCredentialCommand,
-};
-use crate::identity::v3::user::{UserArgs, UserCommand};
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
+
+mod project;
+mod user;
 
 /// Identity (Keystone) commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct IdentitySrvArgs {
-    /// Identity service resource
+#[derive(Parser)]
+pub struct IdentityCommand {
+    /// subcommand
     #[command(subcommand)]
-    command: IdentitySrvCommands,
+    command: IdentityCommands,
 }
 
-#[derive(Clone, Subcommand)]
-pub enum IdentitySrvCommands {
-    AccessRule(AccessRuleArgs),
-    ApplicationCredential(ApplicationCredentialArgs),
-    Project(ProjectArgs),
-    User(UserArgs),
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum IdentityCommands {
+    AccessRule(user::access_rule::AccessRuleCommand),
+    ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
+    Project(project::ProjectCommand),
+    User(user::UserCommand),
 }
 
-pub struct IdentitySrvCommand {
-    /// Command arguments
-    pub args: IdentitySrvArgs,
-}
-
-impl OSCCommand for IdentitySrvCommand {
-    fn get_subcommand(
+impl IdentityCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            IdentitySrvCommands::AccessRule(args) => {
-                AccessRuleCommand { args: args.clone() }.get_subcommand(session)
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            IdentityCommands::AccessRule(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::ApplicationCredential(cmd) => {
+                cmd.take_action(parsed_args, session).await
             }
-            IdentitySrvCommands::ApplicationCredential(args) => {
-                ApplicationCredentialCommand { args: args.clone() }.get_subcommand(session)
-            }
-            IdentitySrvCommands::Project(args) => {
-                ProjectCommand { args: args.clone() }.get_subcommand(session)
-            }
-            IdentitySrvCommands::User(args) => {
-                UserCommand { args: args.clone() }.get_subcommand(session)
-            }
+            IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -13,13 +13,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Identity User Access Rules commands
-//!
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod delete;
 mod list;
@@ -69,39 +68,33 @@ mod show;
 /// application credential, for example:
 ///
 /// ```json { "access_rules": [ { "id": "abcdef" } ] } ```
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct AccessRuleArgs {
+#[derive(Parser)]
+pub struct AccessRuleCommand {
+    /// subcommand
     #[command(subcommand)]
     command: AccessRuleCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum AccessRuleCommands {
-    Delete(delete::AccessRuleArgs),
-    List(list::AccessRulesArgs),
-    Show(show::AccessRuleArgs),
+    Delete(delete::AccessRuleCommand),
+    List(list::AccessRulesCommand),
+    Show(show::AccessRuleCommand),
 }
 
-pub struct AccessRuleCommand {
-    pub args: AccessRuleArgs,
-}
-
-impl OSCCommand for AccessRuleCommand {
-    fn get_subcommand(
+impl AccessRuleCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            AccessRuleCommands::Delete(args) => {
-                Ok(Box::new(delete::AccessRuleCmd { args: args.clone() }))
-            }
-            AccessRuleCommands::List(args) => {
-                Ok(Box::new(list::AccessRulesCmd { args: args.clone() }))
-            }
-            AccessRuleCommands::Show(args) => {
-                Ok(Box::new(show::AccessRuleCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            AccessRuleCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            AccessRuleCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AccessRuleCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

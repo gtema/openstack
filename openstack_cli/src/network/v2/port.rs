@@ -12,11 +12,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Port commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -24,42 +26,35 @@ mod list;
 mod show;
 
 /// Port commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct PortArgs {
+#[derive(Parser)]
+pub struct PortCommand {
+    /// subcommand
     #[command(subcommand)]
     command: PortCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum PortCommands {
-    List(Box<list::PortsArgs>),
-    Show(Box<show::PortArgs>),
-    Create(Box<create::PortArgs>),
-    Delete(delete::PortArgs),
+    Create(Box<create::PortCommand>),
+    Delete(delete::PortCommand),
+    List(Box<list::PortsCommand>),
+    Show(Box<show::PortCommand>),
 }
 
-pub struct PortCommand {
-    /// Command arguments
-    pub args: PortArgs,
-}
-
-impl OSCCommand for PortCommand {
-    fn get_subcommand(
+impl PortCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            PortCommands::List(args) => Ok(Box::new(list::PortsCmd {
-                args: *args.clone(),
-            })),
-            PortCommands::Show(args) => Ok(Box::new(show::PortCmd {
-                args: *args.clone(),
-            })),
-            PortCommands::Create(args) => Ok(Box::new(create::PortCmd {
-                args: *args.clone(),
-            })),
-            PortCommands::Delete(args) => Ok(Box::new(delete::PortCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            PortCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            PortCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            PortCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            PortCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

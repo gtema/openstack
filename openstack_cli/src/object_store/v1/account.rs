@@ -12,40 +12,41 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+//! Object Store `account` command with subcommands
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod set;
 mod show;
 
 /// Account commands
-#[derive(Args, Clone, Debug)]
-pub struct AccountArgs {
+#[derive(Parser)]
+pub struct AccountCommand {
     #[command(subcommand)]
     command: AccountCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum AccountCommands {
-    Show(show::AccountArgs),
-    Set(set::AccountArgs),
+    Show(show::AccountCommand),
+    Set(set::AccountCommand),
 }
 
-pub struct AccountCommand {
-    pub args: AccountArgs,
-}
-
-impl OSCCommand for AccountCommand {
-    fn get_subcommand(
+impl AccountCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            AccountCommands::Show(args) => Ok(Box::new(show::AccountCmd { args: args.clone() })),
-            AccountCommands::Set(args) => Ok(Box::new(set::AccountCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            AccountCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            AccountCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

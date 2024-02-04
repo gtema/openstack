@@ -34,25 +34,15 @@
 //! re-evaluated
 //!
 //! More description to come
-// #![deny(missing_docs)]
-use std::io::{self, IsTerminal, Write};
+#![deny(missing_docs)]
+// #![allow(unused_variables, dead_code, unused_imports)]
+use std::io::{self, IsTerminal};
 
-use clap::builder::{
-    styling::{AnsiColor, Effects},
-    Styles,
-};
-use clap::{Args, Parser, Subcommand, ValueEnum};
-
-use async_trait::async_trait;
-use std::collections::BTreeSet;
-
-// use thiserror::Error;
+use clap::Parser;
 
 use tracing::Level;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
-
-use cli_table::{print_stdout, Table};
+use openstack_sdk::AsyncOpenStack;
 
 mod api;
 mod auth;
@@ -60,125 +50,22 @@ mod block_storage;
 mod catalog;
 mod common;
 mod compute;
-pub mod error;
 mod identity;
 mod image;
 mod network;
 mod object_store;
-mod output;
+
+pub mod cli;
+pub mod error;
+pub mod output;
 
 use crate::error::OpenStackCliError;
 
-use crate::api::ApiArgs;
-use crate::auth::AuthArgs;
-use crate::block_storage::v3::{BlockStorageSrvArgs, BlockStorageSrvCommand};
-use crate::catalog::CatalogArgs;
-use crate::compute::v2::{ComputeSrvArgs, ComputeSrvCommand};
-use crate::identity::v3::{IdentitySrvArgs, IdentitySrvCommand};
-use crate::image::v2::{ImageSrvArgs, ImageSrvCommand};
-use crate::network::v2::{NetworkSrvArgs, NetworkSrvCommand};
-use crate::object_store::v1::{ObjectStoreSrvArgs, ObjectStoreSrvCommand};
+pub use cli::Cli;
+use cli::TopLevelCommands;
 
-fn styles() -> Styles {
-    Styles::styled()
-        .header(AnsiColor::Green.on_default() | Effects::BOLD)
-        .usage(AnsiColor::Green.on_default() | Effects::BOLD)
-        .literal(AnsiColor::White.on_default() | Effects::BOLD)
-        .placeholder(AnsiColor::Cyan.on_default())
-}
-
-/// Main CLI parser
-#[derive(Parser)]
-#[command(name="osc", author, version, about, long_about = None, styles = styles())]
-#[command(propagate_version = true)]
-pub struct Cli {
-    #[command(flatten)]
-    pub global_opts: GlobalOpts,
-
-    #[command(subcommand)]
-    pub command: TopLevelCommands,
-}
-
-/// Supported Top Level commands (services)
-#[derive(Subcommand)]
-pub enum TopLevelCommands {
-    Api(Box<ApiArgs>),
-    Auth(Box<AuthArgs>),
-    BlockStorage(Box<BlockStorageSrvArgs>),
-    Catalog(Box<CatalogArgs>),
-    Compute(Box<ComputeSrvArgs>),
-    Identity(Box<IdentitySrvArgs>),
-    Image(Box<ImageSrvArgs>),
-    Network(Box<NetworkSrvArgs>),
-    ObjectStore(Box<ObjectStoreSrvArgs>),
-}
-
-/// Global CLI options
-#[derive(Debug, Args, Clone)]
-pub struct GlobalOpts {
-    /// Name reference to the clouds.yaml entry for the cloud configuration
-    #[arg(long, env = "OS_CLOUD", global = true)]
-    pub os_cloud: Option<String>,
-
-    /// Output format
-    #[arg(short, long, global = true, value_enum)]
-    pub output: Option<OutputFormat>,
-
-    /// Fields to return in the output (only in normal and wide mode)
-    #[arg(short, long, global=true, action=clap::ArgAction::Append)]
-    pub fields: Vec<String>,
-
-    /// Verbosity level. Repeat to increase level.
-    #[arg(short, long, global=true, action = clap::ArgAction::Count)]
-    verbose: u8,
-}
-
-/// Output configuration data structure
-#[derive(Clone, Debug, Default)]
-pub(crate) struct OutputConfig {
-    /// Set of fields to be included in the response
-    fields: BTreeSet<String>,
-    /// Flag whether to include additional attributes in the output
-    wide: bool,
-}
-
-/// Trait for structures that should be represented as a table in the human output mode
-pub(crate) trait StructTable {
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
-}
-
-/// Output format
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-pub enum OutputFormat {
-    /// Json output
-    Json,
-    /// YAML output
-    Yaml,
-    /// Wide (Human readable table with extra attributes. Note: this has
-    /// effect only in list operations)
-    Wide,
-}
-
-/// Command trait for individual command implementation
-#[async_trait]
-pub trait OSCCommand {
-    /// Get subcommand
-    fn get_subcommand(
-        &self,
-        _client: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        Err(OpenStackCliError::NoSubcommands)
-    }
-
-    /// Perform the command
-    async fn take_action(
-        &self,
-        _parsed_args: &Cli,
-        _client: &mut AsyncOpenStack,
-    ) -> Result<(), OpenStackCliError> {
-        unimplemented!("The command is not implemented");
-    }
-}
+pub(crate) use output::OutputConfig;
+pub(crate) use output::StructTable;
 
 /// Entry point for the CLI wrapper
 pub async fn entry_point() -> Result<(), OpenStackCliError> {
@@ -222,70 +109,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     } else {
         session = AsyncOpenStack::new(&profile).await?;
     }
-    let cmd = match &cli.command {
-        TopLevelCommands::Api(args) => api::ApiCommand {
-            args: *args.clone(),
-        }
-        .get_subcommand(&mut session),
-        TopLevelCommands::Auth(args) => auth::AuthCommand {
-            args: *args.clone(),
-        }
-        .get_subcommand(&mut session),
-        TopLevelCommands::BlockStorage(args) => {
-            session
-                .discover_service_endpoint(&ServiceType::BlockStorage)
-                .await?;
 
-            BlockStorageSrvCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(&mut session)
-        }
-        TopLevelCommands::Catalog(args) => catalog::CatalogCommand {
-            args: *args.clone(),
-        }
-        .get_subcommand(&mut session),
-        TopLevelCommands::Compute(args) => {
-            session
-                .discover_service_endpoint(&ServiceType::Compute)
-                .await?;
-            ComputeSrvCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(&mut session)
-        }
-        TopLevelCommands::Identity(args) => {
-            session
-                .discover_service_endpoint(&ServiceType::Identity)
-                .await?;
-            IdentitySrvCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(&mut session)
-        }
-        TopLevelCommands::Image(args) => {
-            session
-                .discover_service_endpoint(&ServiceType::Image)
-                .await?;
-            ImageSrvCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(&mut session)
-        }
-        TopLevelCommands::Network(args) => {
-            session
-                .discover_service_endpoint(&ServiceType::Network)
-                .await?;
-            NetworkSrvCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(&mut session)
-        }
-        TopLevelCommands::ObjectStore(args) => ObjectStoreSrvCommand {
-            args: *args.clone(),
-        }
-        .get_subcommand(&mut session),
-    }?;
-    cmd.take_action(&cli, &mut session).await?;
-    Ok(())
+    // Invoke the command
+    cli.take_action(&mut session).await
 }

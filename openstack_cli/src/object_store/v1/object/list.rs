@@ -19,7 +19,6 @@
 //! are stored in the container, up to 10,000 names. The 10,000 maximum value
 //! is configurable. To view the value for the cluster, issue a GET /info
 //! request.
-use async_trait::async_trait;
 use clap::Args;
 
 use serde::{Deserialize, Serialize};
@@ -29,9 +28,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -48,7 +47,7 @@ use openstack_sdk::api::{paged, Pagination};
 /// is configurable. To view the value for the cluster, issue a GET /info
 /// request.
 #[derive(Args, Clone, Debug)]
-pub struct ObjectsArgs {
+pub struct ObjectsCommand {
     /// The unique (within an account) name for the container. The container
     /// name must be from 1 to 256 characters long and can start with any
     /// character and contain any pattern. Character set must be UTF-8. The
@@ -106,10 +105,6 @@ pub struct ObjectsArgs {
     max_items: usize,
 }
 
-pub struct ObjectsCmd {
-    pub args: ObjectsArgs,
-}
-
 /// Objects
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct Objects {
@@ -141,40 +136,39 @@ pub struct Objects {
     symlink_path: Option<String>,
 }
 
-#[async_trait]
-impl OSCCommand for ObjectsCmd {
-    async fn take_action(
+impl ObjectsCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Get Objects with {:?}", self.args);
+        info!("Get Objects with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         let mut ep_builder = get::Container::builder();
         // Set path parameters
-        ep_builder.container(&self.args.container);
+        ep_builder.container(&self.container);
         // Set query parameters
-        if let Some(val) = &self.args.limit {
+        if let Some(val) = &self.limit {
             ep_builder.limit(*val);
         }
-        if let Some(val) = &self.args.marker {
+        if let Some(val) = &self.marker {
             ep_builder.marker(val);
         }
-        if let Some(val) = &self.args.end_marker {
+        if let Some(val) = &self.end_marker {
             ep_builder.end_marker(val);
         }
-        if let Some(val) = &self.args.format {
+        if let Some(val) = &self.format {
             ep_builder.format(val);
         }
-        if let Some(val) = &self.args.prefix {
+        if let Some(val) = &self.prefix {
             ep_builder.prefix(val);
         }
-        if let Some(val) = &self.args.delimiter {
+        if let Some(val) = &self.delimiter {
             ep_builder.delimiter(val);
         }
-        if let Some(val) = &self.args.reverse {
+        if let Some(val) = &self.reverse {
             ep_builder.reverse(*val);
         }
         // Set body parameters
@@ -184,7 +178,7 @@ impl OSCCommand for ObjectsCmd {
         client
             .discover_service_endpoint(&ServiceType::ObjectStore)
             .await?;
-        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.args.max_items))
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;
 

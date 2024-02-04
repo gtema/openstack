@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,11 +12,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Floating IP Tag commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod delete;
 mod delete_all;
@@ -28,39 +28,39 @@ mod set;
 mod show;
 
 /// Resource tag operations
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct TagArgs {
+#[derive(Parser)]
+pub struct TagCommand {
+    /// subcommand
     #[command(subcommand)]
     command: TagCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum TagCommands {
-    Add(set::TagArgs),
-    Check(show::TagArgs),
-    Delete(delete::TagArgs),
-    List(list::TagsArgs),
-    Purge(delete_all::TagArgs),
-    Replace(replace::TagArgs),
+    Add(set::TagCommand),
+    Check(show::TagCommand),
+    Delete(delete::TagCommand),
+    List(list::TagsCommand),
+    Purge(delete_all::TagCommand),
+    Replace(replace::TagCommand),
 }
 
-pub struct TagCommand {
-    pub args: TagArgs,
-}
-
-impl OSCCommand for TagCommand {
-    fn get_subcommand(
+impl TagCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            TagCommands::Add(args) => Ok(Box::new(set::TagCmd { args: args.clone() })),
-            TagCommands::Check(args) => Ok(Box::new(show::TagCmd { args: args.clone() })),
-            TagCommands::Delete(args) => Ok(Box::new(delete::TagCmd { args: args.clone() })),
-            TagCommands::List(args) => Ok(Box::new(list::TagsCmd { args: args.clone() })),
-            TagCommands::Purge(args) => Ok(Box::new(delete_all::TagCmd { args: args.clone() })),
-            TagCommands::Replace(args) => Ok(Box::new(replace::TagCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            TagCommands::Add(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Check(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
