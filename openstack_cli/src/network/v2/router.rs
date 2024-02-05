@@ -12,11 +12,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Router commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -24,36 +26,35 @@ mod list;
 mod show;
 
 /// Router commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct RouterArgs {
+#[derive(Parser)]
+pub struct RouterCommand {
+    /// subcommand
     #[command(subcommand)]
     command: RouterCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum RouterCommands {
-    List(list::RoutersArgs),
-    Show(show::RouterArgs),
-    Create(create::RouterArgs),
-    Delete(delete::RouterArgs),
+    Create(create::RouterCommand),
+    Delete(delete::RouterCommand),
+    List(list::RoutersCommand),
+    Show(show::RouterCommand),
 }
 
-pub struct RouterCommand {
-    /// Commad arguments
-    pub args: RouterArgs,
-}
-
-impl OSCCommand for RouterCommand {
-    fn get_subcommand(
+impl RouterCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            RouterCommands::List(args) => Ok(Box::new(list::RoutersCmd { args: args.clone() })),
-            RouterCommands::Show(args) => Ok(Box::new(show::RouterCmd { args: args.clone() })),
-            RouterCommands::Create(args) => Ok(Box::new(create::RouterCmd { args: args.clone() })),
-            RouterCommands::Delete(args) => Ok(Box::new(delete::RouterCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            RouterCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,12 +13,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Compute Server metadata commands
-#![deny(missing_docs)]
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -34,52 +31,40 @@ mod show;
 ///
 /// Shows details for, creates or replaces, and updates a metadata item, by
 /// key, for a server.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
+#[derive(Parser)]
 #[command(about = "Server metadata")]
-pub struct MetadataArgs {
+pub struct MetadataCommand {
+    /// subcommand
     #[command(subcommand)]
     command: MetadataCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum MetadataCommands {
-    Create(Box<create::MetadataArgs>),
-    Delete(Box<delete::MetadataArgs>),
-    List(Box<list::MetadatasArgs>),
-    Replace(Box<replace::MetadataArgs>),
-    Set(Box<set::MetadataArgs>),
-    Show(Box<show::MetadataArgs>),
+    Create(Box<create::MetadataCommand>),
+    Delete(Box<delete::MetadataCommand>),
+    List(Box<list::MetadatasCommand>),
+    Replace(Box<replace::MetadataCommand>),
+    Set(Box<set::MetadataCommand>),
+    Show(Box<show::MetadataCommand>),
 }
 
-pub struct MetadataCommand {
-    pub args: MetadataArgs,
-}
-
-impl OSCCommand for MetadataCommand {
-    fn get_subcommand(
+impl MetadataCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            MetadataCommands::Create(args) => Ok(Box::new(create::MetadataCmd {
-                args: *args.clone(),
-            })),
-            MetadataCommands::Delete(args) => Ok(Box::new(delete::MetadataCmd {
-                args: *args.clone(),
-            })),
-            MetadataCommands::List(args) => Ok(Box::new(list::MetadatasCmd {
-                args: *args.clone(),
-            })),
-            MetadataCommands::Replace(args) => Ok(Box::new(replace::MetadataCmd {
-                args: *args.clone(),
-            })),
-            MetadataCommands::Set(args) => Ok(Box::new(set::MetadataCmd {
-                args: *args.clone(),
-            })),
-            MetadataCommands::Show(args) => Ok(Box::new(show::MetadataCmd {
-                args: *args.clone(),
-            })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            MetadataCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

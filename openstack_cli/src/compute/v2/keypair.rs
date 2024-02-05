@@ -15,13 +15,12 @@
 //! Keypairs (keypairs)
 //!
 //! Generates, imports, and deletes SSH keys.
-//!
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create_20;
 mod create_21;
@@ -35,57 +34,44 @@ mod show;
 /// Keypairs commands
 ///
 /// Generates, imports, and deletes SSH keys.
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct KeypairArgs {
+#[derive(Parser)]
+pub struct KeypairCommand {
+    /// subcommand
     #[command(subcommand)]
     command: KeypairCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum KeypairCommands {
-    List(list::KeypairsArgs),
-    Show(show::KeypairArgs),
     #[command(visible_alias = "create")]
-    Create292(create_292::KeypairArgs),
-    Create210(create_210::KeypairArgs),
-    Create22(create_22::KeypairArgs),
-    Create21(create_21::KeypairArgs),
-    Create20(create_20::KeypairArgs),
-    Delete(delete::KeypairArgs),
+    Create292(create_292::KeypairCommand),
+    Create210(create_210::KeypairCommand),
+    Create22(create_22::KeypairCommand),
+    Create21(create_21::KeypairCommand),
+    Create20(create_20::KeypairCommand),
+    Delete(delete::KeypairCommand),
+    List(list::KeypairsCommand),
+    Show(show::KeypairCommand),
 }
 
-pub struct KeypairCommand {
-    /// Command arguments
-    pub args: KeypairArgs,
-}
-
-impl OSCCommand for KeypairCommand {
-    fn get_subcommand(
+impl KeypairCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            KeypairCommands::List(args) => Ok(Box::new(list::KeypairsCmd { args: args.clone() })),
-            KeypairCommands::Show(args) => Ok(Box::new(show::KeypairCmd { args: args.clone() })),
-            KeypairCommands::Create292(args) => {
-                Ok(Box::new(create_292::KeypairCmd { args: args.clone() }))
-            }
-            KeypairCommands::Create210(args) => {
-                Ok(Box::new(create_210::KeypairCmd { args: args.clone() }))
-            }
-            KeypairCommands::Create22(args) => {
-                Ok(Box::new(create_22::KeypairCmd { args: args.clone() }))
-            }
-            KeypairCommands::Create21(args) => {
-                Ok(Box::new(create_21::KeypairCmd { args: args.clone() }))
-            }
-            KeypairCommands::Create20(args) => {
-                Ok(Box::new(create_20::KeypairCmd { args: args.clone() }))
-            }
-            KeypairCommands::Delete(args) => {
-                Ok(Box::new(delete::KeypairCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            KeypairCommands::Create292(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Create210(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Create22(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Create21(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Create20(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            KeypairCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

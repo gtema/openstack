@@ -13,42 +13,41 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Identity Password password commands
-//!
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod set;
 
 /// User password commands
 ///
 /// This subcommand allows user to change the password
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct PasswordArgs {
+#[derive(Parser)]
+pub struct PasswordCommand {
+    /// subcommand
     #[command(subcommand)]
     command: PasswordCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum PasswordCommands {
-    Set(set::PasswordArgs),
+    Set(set::PasswordCommand),
 }
 
-pub struct PasswordCommand {
-    pub args: PasswordArgs,
-}
-
-impl OSCCommand for PasswordCommand {
-    fn get_subcommand(
+impl PasswordCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            PasswordCommands::Set(args) => Ok(Box::new(set::PasswordCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            PasswordCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

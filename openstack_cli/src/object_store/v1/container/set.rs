@@ -13,7 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Creates, updates, or deletes custom metadata for a container.
-use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
@@ -25,9 +24,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -38,7 +37,7 @@ use openstack_sdk::api::RawQueryAsync;
 
 /// Creates, updates, or deletes custom metadata for a container.
 #[derive(Args, Clone, Debug)]
-pub struct ContainerArgs {
+pub struct ContainerCommand {
     /// The unique (within an account) name for the container. The container
     /// name must be from 1 to 256 characters long and can start with any
     /// character and contain any pattern. Character set must be UTF-8. The
@@ -54,31 +53,26 @@ pub struct ContainerArgs {
     property: Vec<(String, String)>,
 }
 
-pub struct ContainerCmd {
-    pub args: ContainerArgs,
-}
-
 /// Container
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct Container {}
 
-#[async_trait]
-impl OSCCommand for ContainerCmd {
-    async fn take_action(
+impl ContainerCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Post Container with {:?}", self.args);
+        info!("Post Container with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         let mut ep_builder = post::Container::builder();
         // Set path parameters
-        ep_builder.container(&self.args.container);
+        ep_builder.container(&self.container);
         // Set query parameters
         // Set body parameters
-        ep_builder.headers(self.args.property.iter().map(|(k, v)| {
+        ep_builder.headers(self.property.iter().map(|(k, v)| {
             (
                 Some(HeaderName::from_bytes(k.as_bytes()).expect("HeaderName is a string")),
                 HeaderValue::from_str(v.as_str()).expect("Header Value is a string"),

@@ -12,93 +12,77 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+//! Host Aggregates management
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod add_host;
-pub mod create_21;
-pub mod delete;
-pub mod list;
-pub mod image {
-    pub mod cache_281;
-}
-pub mod remove_host;
-pub mod set_21;
-pub mod set_metadata;
-pub mod show;
+use crate::{Cli, OpenStackCliError};
 
-/// Creates and manages host aggregates. An aggregate assigns
-/// metadata to groups of compute nodes.
+mod add_host;
+mod create_21;
+mod delete;
+mod list;
+/// Aggregate image
+mod image {
+    pub(super) mod cache_281;
+}
+mod remove_host;
+mod set_21;
+mod set_metadata;
+mod show;
+
+/// Creates and manages host aggregates. An aggregate assigns metadata to
+/// groups of compute nodes.
 ///
-/// Policy defaults enable only users with the administrative role
-/// to perform operations with aggregates. Cloud providers can
-/// change these permissions through policy file configuration.
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct AggregateArgs {
+/// Policy defaults enable only users with the administrative role to perform
+/// operations with aggregates. Cloud providers can change these permissions
+/// through policy file configuration.
+#[derive(Parser)]
+pub struct AggregateCommand {
+    /// subcommand
     #[command(subcommand)]
     command: AggregateCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum AggregateCommands {
     /// Adds a host to an aggregate.
     #[command(about = "Add Host")]
-    AddHost(add_host::AggregateArgs),
-    Create(create_21::AggregateArgs),
-    CacheImage(image::cache_281::ImageArgs),
-    Delete(delete::AggregateArgs),
-    List(list::AggregatesArgs),
+    AddHost(add_host::AggregateCommand),
+    Create(create_21::AggregateCommand),
+    CacheImage(image::cache_281::ImageCommand),
+    Delete(delete::AggregateCommand),
+    List(list::AggregatesCommand),
     /// Removes a host from an aggregate.
     #[command(about = "Remove Host")]
-    RemoveHost(remove_host::AggregateArgs),
-    Show(show::AggregateArgs),
-    Set(set_21::AggregateArgs),
+    RemoveHost(remove_host::AggregateCommand),
+    Show(show::AggregateCommand),
+    Set(set_21::AggregateCommand),
     /// Creates or replaces metadata for an aggregate.
     #[command(about = "Create Or Update Aggregate Metadata")]
-    SetMetadata(set_metadata::AggregateArgs),
+    SetMetadata(set_metadata::AggregateCommand),
 }
 
-pub struct AggregateCommand {
-    pub args: AggregateArgs,
-}
-
-impl OSCCommand for AggregateCommand {
-    fn get_subcommand(
+impl AggregateCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            AggregateCommands::AddHost(args) => {
-                Ok(Box::new(add_host::AggregateCmd { args: args.clone() }))
-            }
-            AggregateCommands::CacheImage(args) => {
-                Ok(Box::new(image::cache_281::ImageCmd { args: args.clone() }))
-            }
-            AggregateCommands::Create(args) => {
-                Ok(Box::new(create_21::AggregateCmd { args: args.clone() }))
-            }
-            AggregateCommands::Delete(args) => {
-                Ok(Box::new(delete::AggregateCmd { args: args.clone() }))
-            }
-            AggregateCommands::List(args) => {
-                Ok(Box::new(list::AggregatesCmd { args: args.clone() }))
-            }
-            AggregateCommands::RemoveHost(args) => {
-                Ok(Box::new(remove_host::AggregateCmd { args: args.clone() }))
-            }
-            AggregateCommands::Show(args) => {
-                Ok(Box::new(show::AggregateCmd { args: args.clone() }))
-            }
-            AggregateCommands::Set(args) => {
-                Ok(Box::new(set_21::AggregateCmd { args: args.clone() }))
-            }
-            AggregateCommands::SetMetadata(args) => {
-                Ok(Box::new(set_metadata::AggregateCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            AggregateCommands::AddHost(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::CacheImage(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::RemoveHost(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::SetMetadata(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

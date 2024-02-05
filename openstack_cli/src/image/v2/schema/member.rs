@@ -12,40 +12,40 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Image member schema
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod get;
 
 /// Show Member Schema
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct MemberArgs {
+#[derive(Parser)]
+pub struct MemberCommand {
     #[command(subcommand)]
     command: MemberCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum MemberCommands {
     /// Show Member Schema
-    Show(get::MemberArgs),
+    Show(get::MemberCommand),
 }
 
-pub struct MemberCommand {
-    /// Command arguments
-    pub args: MemberArgs,
-}
-
-impl OSCCommand for MemberCommand {
-    fn get_subcommand(
+impl MemberCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            MemberCommands::Show(args) => Ok(Box::new(get::MemberCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            MemberCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

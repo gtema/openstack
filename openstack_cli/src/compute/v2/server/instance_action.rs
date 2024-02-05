@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,12 +13,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Compute Server metadata commands
-#![deny(missing_docs)]
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod list;
 mod show;
@@ -28,35 +25,31 @@ mod show;
 /// Servers actions
 ///
 /// List actions and action details for a server.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct InstanceActionArgs {
+#[derive(Parser)]
+pub struct InstanceActionCommand {
+    /// subcommand
     #[command(subcommand)]
     command: InstanceActionCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Compute resources commands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum InstanceActionCommands {
-    List(Box<list::InstanceActionsArgs>),
-    Show(Box<show::InstanceActionArgs>),
+    List(Box<list::InstanceActionsCommand>),
+    Show(Box<show::InstanceActionCommand>),
 }
 
-pub struct InstanceActionCommand {
-    pub args: InstanceActionArgs,
-}
-
-impl OSCCommand for InstanceActionCommand {
-    fn get_subcommand(
+impl InstanceActionCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            InstanceActionCommands::List(args) => Ok(Box::new(list::InstanceActionsCmd {
-                args: *args.clone(),
-            })),
-            InstanceActionCommands::Show(args) => Ok(Box::new(show::InstanceActionCmd {
-                args: *args.clone(),
-            })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            InstanceActionCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            InstanceActionCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,87 +12,67 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Server volume attachment commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod create_20;
-pub mod create_249;
-pub mod create_279;
-pub mod delete;
-pub mod list;
-pub mod set_20;
-pub mod set_285;
-pub mod show;
+use crate::{Cli, OpenStackCliError};
+
+mod create_20;
+mod create_249;
+mod create_279;
+mod delete;
+mod list;
+mod set_20;
+mod set_285;
+mod show;
 
 /// Servers with volume attachments
 ///
 /// Attaches volumes that are created through the volume API to server
 /// instances. Also, lists volume attachments for a server, shows details for a
 /// volume attachment, and detaches a volume.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct VolumeAttachmentArgs {
+#[derive(Parser)]
+pub struct VolumeAttachmentCommand {
+    /// subcommand
     #[command(subcommand)]
     command: VolumeAttachmentCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum VolumeAttachmentCommands {
-    Create20(create_20::VolumeAttachmentArgs),
-    Create249(create_249::VolumeAttachmentArgs),
+    Create20(create_20::VolumeAttachmentCommand),
+    Create249(create_249::VolumeAttachmentCommand),
     #[command(visible_alias = "create")]
-    Create279(create_279::VolumeAttachmentArgs),
-    Delete(delete::VolumeAttachmentArgs),
-    List(list::VolumeAttachmentsArgs),
-    Set20(set_20::VolumeAttachmentArgs),
+    Create279(create_279::VolumeAttachmentCommand),
+    Delete(delete::VolumeAttachmentCommand),
+    List(list::VolumeAttachmentsCommand),
+    Set20(set_20::VolumeAttachmentCommand),
     #[command(visible_alias = "set")]
-    Set285(set_285::VolumeAttachmentArgs),
-    Show(show::VolumeAttachmentArgs),
+    Set285(set_285::VolumeAttachmentCommand),
+    Show(show::VolumeAttachmentCommand),
 }
 
-pub struct VolumeAttachmentCommand {
-    pub args: VolumeAttachmentArgs,
-}
-
-impl OSCCommand for VolumeAttachmentCommand {
-    fn get_subcommand(
+impl VolumeAttachmentCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            VolumeAttachmentCommands::Create20(args) => {
-                Ok(Box::new(create_20::VolumeAttachmentCmd {
-                    args: args.clone(),
-                }))
-            }
-            VolumeAttachmentCommands::Create249(args) => {
-                Ok(Box::new(create_249::VolumeAttachmentCmd {
-                    args: args.clone(),
-                }))
-            }
-            VolumeAttachmentCommands::Create279(args) => {
-                Ok(Box::new(create_279::VolumeAttachmentCmd {
-                    args: args.clone(),
-                }))
-            }
-            VolumeAttachmentCommands::Delete(args) => {
-                Ok(Box::new(delete::VolumeAttachmentCmd { args: args.clone() }))
-            }
-            VolumeAttachmentCommands::List(args) => {
-                Ok(Box::new(list::VolumeAttachmentsCmd { args: args.clone() }))
-            }
-            VolumeAttachmentCommands::Set20(args) => {
-                Ok(Box::new(set_20::VolumeAttachmentCmd { args: args.clone() }))
-            }
-            VolumeAttachmentCommands::Set285(args) => Ok(Box::new(set_285::VolumeAttachmentCmd {
-                args: args.clone(),
-            })),
-            VolumeAttachmentCommands::Show(args) => {
-                Ok(Box::new(show::VolumeAttachmentCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            VolumeAttachmentCommands::Create20(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Create249(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Create279(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Set20(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Set285(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeAttachmentCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -14,7 +14,6 @@
 
 //! Shows container metadata, including the number of objects and the total
 //! bytes of all objects stored in the container.
-use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
@@ -26,9 +25,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -42,7 +41,7 @@ use std::collections::HashMap;
 /// Shows container metadata, including the number of objects and the total
 /// bytes of all objects stored in the container.
 #[derive(Args, Clone, Debug)]
-pub struct ContainerArgs {
+pub struct ContainerCommand {
     /// The unique (within an account) name for the container. The container
     /// name must be from 1 to 256 characters long and can start with any
     /// character and contain any pattern. Character set must be UTF-8. The
@@ -54,10 +53,6 @@ pub struct ContainerArgs {
     container: String,
 }
 
-pub struct ContainerCmd {
-    pub args: ContainerArgs,
-}
-
 /// Container
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct Container {
@@ -65,20 +60,19 @@ pub struct Container {
     metadata: HashMapStringString,
 }
 
-#[async_trait]
-impl OSCCommand for ContainerCmd {
-    async fn take_action(
+impl ContainerCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Head Container with {:?}", self.args);
+        info!("Head Container with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         let mut ep_builder = head::Container::builder();
         // Set path parameters
-        ep_builder.container(&self.args.container);
+        ep_builder.container(&self.container);
         // Set query parameters
         // Set body parameters
         let ep = ep_builder

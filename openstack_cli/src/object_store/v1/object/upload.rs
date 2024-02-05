@@ -28,7 +28,6 @@
 //! must be URL quoted UTF-8.
 //! To create custom metadata, use the X-Object-Meta-name header, where name is
 //! the name of the metadata item.
-use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
@@ -40,9 +39,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -68,7 +67,7 @@ use openstack_sdk::api::RawQueryAsync;
 /// To create custom metadata, use the X-Object-Meta-name header, where name is
 /// the name of the metadata item.
 #[derive(Args, Clone, Debug)]
-pub struct ObjectArgs {
+pub struct ObjectCommand {
     /// The unique name for the account. An account is also known as the
     /// project or tenant.
     #[arg()]
@@ -122,43 +121,38 @@ pub struct ObjectArgs {
     file: Option<String>,
 }
 
-pub struct ObjectCmd {
-    pub args: ObjectArgs,
-}
-
 /// Object
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
 pub struct Object {}
 
-#[async_trait]
-impl OSCCommand for ObjectCmd {
-    async fn take_action(
+impl ObjectCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Put Object with {:?}", self.args);
+        info!("Put Object with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
         let mut ep_builder = put::Object::builder();
         // Set path parameters
-        ep_builder.container(&self.args.container);
-        ep_builder.object(&self.args.object);
+        ep_builder.container(&self.container);
+        ep_builder.object(&self.object);
         // Set query parameters
-        if let Some(val) = &self.args.multipart_manifest {
+        if let Some(val) = &self.multipart_manifest {
             ep_builder.multipart_manifest(val);
         }
-        if let Some(val) = &self.args.temp_url_sig {
+        if let Some(val) = &self.temp_url_sig {
             ep_builder.temp_url_sig(val);
         }
-        if let Some(val) = &self.args.temp_url_expires {
+        if let Some(val) = &self.temp_url_expires {
             ep_builder.temp_url_expires(*val);
         }
-        if let Some(val) = &self.args.filename {
+        if let Some(val) = &self.filename {
             ep_builder.filename(val);
         }
-        if let Some(val) = &self.args.symlink {
+        if let Some(val) = &self.symlink {
             ep_builder.symlink(val);
         }
         // Set body parameters
@@ -170,7 +164,7 @@ impl OSCCommand for ObjectCmd {
         client
             .discover_service_endpoint(&ServiceType::ObjectStore)
             .await?;
-        let dst = self.args.file.clone();
+        let dst = self.file.clone();
         let data = build_upload_asyncread(dst).await?;
 
         let _rsp: Response<Bytes> = ep.raw_query_read_body_async(client, data).await?;

@@ -1,5 +1,3 @@
-// Copyright 2024
-//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,48 +12,45 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Server remote consoles
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-pub mod create_26;
-pub mod create_28;
+use crate::{Cli, OpenStackCliError};
+
+mod create_26;
+mod create_28;
 
 /// Server Consoles
 ///
 /// Manage server consoles.
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct RemoteConsoleArgs {
+#[derive(Parser)]
+pub struct RemoteConsoleCommand {
     #[command(subcommand)]
     command: RemoteConsoleCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum RemoteConsoleCommands {
-    Create26(create_26::RemoteConsoleArgs),
+    Create26(create_26::RemoteConsoleCommand),
     #[command(visible_alias = "create")]
-    Create28(create_28::RemoteConsoleArgs),
+    Create28(create_28::RemoteConsoleCommand),
 }
 
-pub struct RemoteConsoleCommand {
-    pub args: RemoteConsoleArgs,
-}
-
-impl OSCCommand for RemoteConsoleCommand {
-    fn get_subcommand(
+impl RemoteConsoleCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            RemoteConsoleCommands::Create26(args) => {
-                Ok(Box::new(create_26::RemoteConsoleCmd { args: args.clone() }))
-            }
-            RemoteConsoleCommands::Create28(args) => {
-                Ok(Box::new(create_28::RemoteConsoleCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            RemoteConsoleCommands::Create26(cmd) => cmd.take_action(parsed_args, session).await,
+            RemoteConsoleCommands::Create28(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

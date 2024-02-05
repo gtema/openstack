@@ -12,15 +12,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Glance `Image` resource commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod deactivate;
 mod delete;
+/// Image data operations
 mod file {
     pub(super) mod download;
     pub(super) mod upload;
@@ -31,63 +34,53 @@ mod reactivate;
 mod show;
 
 /// Image (Glance) commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct ImageArgs {
+#[derive(Parser)]
+pub struct ImageCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ImageCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ImageCommands {
-    List(Box<list::ImagesArgs>),
-    Show(show::ImageArgs),
-    Create(create::ImageArgs),
-    Set(patch::ImageArgs),
-    Download(Box<file::download::FileArgs>),
-    Upload(file::upload::FileArgs),
-    Delete(delete::ImageArgs),
+    Create(create::ImageCommand),
     /// Deactivates an image. (Since Image API v2.3)
     ///
     /// By default, this operation is restricted to administrators only.
     #[command(about = "Deactivate image")]
-    Deactivate(deactivate::ImageArgs),
+    Deactivate(deactivate::ImageCommand),
+    Delete(delete::ImageCommand),
+    Download(Box<file::download::FileCommand>),
+    List(Box<list::ImagesCommand>),
     /// Reactivates an image. (Since Image API v2.3)
     ///
     /// By default, this operation is restricted to administrators only
     #[command(about = "Reactivate image")]
-    Reactivate(reactivate::ImageArgs),
+    Reactivate(reactivate::ImageCommand),
+    Set(patch::ImageCommand),
+    Show(show::ImageCommand),
+    Upload(file::upload::FileCommand),
 }
 
-pub struct ImageCommand {
-    pub args: ImageArgs,
-}
-
-impl OSCCommand for ImageCommand {
-    fn get_subcommand(
+impl ImageCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ImageCommands::List(args) => Ok(Box::new(list::ImagesCmd {
-                args: *args.clone(),
-            })),
-            ImageCommands::Show(args) => Ok(Box::new(show::ImageCmd { args: args.clone() })),
-            ImageCommands::Set(args) => Ok(Box::new(patch::ImageCmd { args: args.clone() })),
-            ImageCommands::Download(args) => Ok(Box::new(file::download::FileCmd {
-                args: *args.clone(),
-            })),
-            ImageCommands::Upload(args) => {
-                Ok(Box::new(file::upload::FileCmd { args: args.clone() }))
-            }
-            ImageCommands::Create(args) => Ok(Box::new(create::ImageCmd { args: args.clone() })),
-            ImageCommands::Delete(args) => Ok(Box::new(delete::ImageCmd { args: args.clone() })),
-            ImageCommands::Deactivate(args) => {
-                Ok(Box::new(deactivate::ImageCmd { args: args.clone() }))
-            }
-            ImageCommands::Reactivate(args) => {
-                Ok(Box::new(reactivate::ImageCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ImageCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Deactivate(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Download(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Reactivate(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ImageCommands::Upload(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

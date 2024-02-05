@@ -12,11 +12,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+//! Object Store `container` command with subcommands
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -25,45 +26,35 @@ mod set;
 mod show;
 
 /// Container commands
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct ContainerArgs {
+#[derive(Parser)]
+pub struct ContainerCommand {
     #[command(subcommand)]
     command: ContainerCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ContainerCommands {
-    List(list::ContainersArgs),
-    Show(show::ContainerArgs),
-    Set(set::ContainerArgs),
-    Create(create::ContainerArgs),
-    Delete(delete::ContainerArgs),
+    Create(create::ContainerCommand),
+    Delete(delete::ContainerCommand),
+    List(list::ContainersCommand),
+    Set(set::ContainerCommand),
+    Show(show::ContainerCommand),
 }
 
-pub struct ContainerCommand {
-    pub args: ContainerArgs,
-}
-
-impl OSCCommand for ContainerCommand {
-    fn get_subcommand(
+impl ContainerCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ContainerCommands::List(args) => {
-                Ok(Box::new(list::ContainersCmd { args: args.clone() }))
-            }
-            ContainerCommands::Set(args) => Ok(Box::new(set::ContainerCmd { args: args.clone() })),
-            ContainerCommands::Show(args) => {
-                Ok(Box::new(show::ContainerCmd { args: args.clone() }))
-            }
-            ContainerCommands::Create(args) => {
-                Ok(Box::new(create::ContainerCmd { args: args.clone() }))
-            }
-            ContainerCommands::Delete(args) => {
-                Ok(Box::new(delete::ContainerCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ContainerCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ContainerCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ContainerCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ContainerCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            ContainerCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

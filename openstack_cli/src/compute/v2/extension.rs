@@ -12,45 +12,43 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Compute extensions
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod list;
 mod show;
 
 /// Extension commands
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct ExtensionArgs {
+#[derive(Parser)]
+pub struct ExtensionCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ExtensionCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ExtensionCommands {
-    List(list::ExtensionsArgs),
-    Show(show::ExtensionArgs),
+    List(list::ExtensionsCommand),
+    Show(show::ExtensionCommand),
 }
 
-pub struct ExtensionCommand {
-    pub args: ExtensionArgs,
-}
-
-impl OSCCommand for ExtensionCommand {
-    fn get_subcommand(
+impl ExtensionCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ExtensionCommands::List(args) => {
-                Ok(Box::new(list::ExtensionsCmd { args: args.clone() }))
-            }
-            ExtensionCommands::Show(args) => {
-                Ok(Box::new(show::ExtensionCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ExtensionCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtensionCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

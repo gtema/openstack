@@ -12,11 +12,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Network resource commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -24,44 +26,35 @@ mod list;
 mod show;
 
 /// Network commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct NetworkArgs {
+#[derive(Parser)]
+pub struct NetworkCommand {
+    /// subcommand
     #[command(subcommand)]
     command: NetworkCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum NetworkCommands {
-    List(Box<list::NetworksArgs>),
-    Show(Box<show::NetworkArgs>),
-    Create(Box<create::NetworkArgs>),
-    Delete(delete::NetworkArgs),
+    Create(Box<create::NetworkCommand>),
+    Delete(Box<delete::NetworkCommand>),
+    List(Box<list::NetworksCommand>),
+    Show(Box<show::NetworkCommand>),
 }
 
-pub struct NetworkCommand {
-    /// Command arguments
-    pub args: NetworkArgs,
-}
-
-impl OSCCommand for NetworkCommand {
-    fn get_subcommand(
+impl NetworkCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            NetworkCommands::List(args) => Ok(Box::new(list::NetworksCmd {
-                args: *args.clone(),
-            })),
-            NetworkCommands::Show(args) => Ok(Box::new(show::NetworkCmd {
-                args: *args.clone(),
-            })),
-            NetworkCommands::Create(args) => Ok(Box::new(create::NetworkCmd {
-                args: *args.clone(),
-            })),
-            NetworkCommands::Delete(args) => {
-                Ok(Box::new(delete::NetworkCmd { args: args.clone() }))
-            }
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            NetworkCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

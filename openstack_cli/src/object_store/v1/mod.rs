@@ -12,54 +12,46 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod account;
-pub mod container;
-pub mod object;
+//! Object Store v1 commands
 
-use clap::{Args, Subcommand};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::object_store::v1::account::{AccountArgs, AccountCommand};
-use crate::object_store::v1::container::{ContainerArgs, ContainerCommand};
-use crate::object_store::v1::object::{ObjectArgs, ObjectCommand};
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
+
+mod account;
+mod container;
+mod object;
 
 /// Object Store service (Swift) commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct ObjectStoreSrvArgs {
+#[derive(Parser)]
+pub struct ObjectStoreCommand {
     /// Object store service resource
     #[command(subcommand)]
-    command: ObjectStoreSrvCommands,
+    command: ObjectStoreCommands,
 }
 
-#[derive(Clone, Subcommand)]
-pub enum ObjectStoreSrvCommands {
-    Account(AccountArgs),
-    Container(ContainerArgs),
-    Object(ObjectArgs),
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum ObjectStoreCommands {
+    Account(account::AccountCommand),
+    Container(container::ContainerCommand),
+    Object(object::ObjectCommand),
 }
 
-pub struct ObjectStoreSrvCommand {
-    pub args: ObjectStoreSrvArgs,
-}
-
-impl OSCCommand for ObjectStoreSrvCommand {
-    fn get_subcommand(
+impl ObjectStoreCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ObjectStoreSrvCommands::Account(args) => {
-                AccountCommand { args: args.clone() }.get_subcommand(session)
-            }
-            ObjectStoreSrvCommands::Container(args) => {
-                ContainerCommand { args: args.clone() }.get_subcommand(session)
-            }
-            ObjectStoreSrvCommands::Object(args) => {
-                ObjectCommand { args: args.clone() }.get_subcommand(session)
-            }
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ObjectStoreCommands::Account(cmd) => cmd.take_action(parsed_args, session).await,
+            ObjectStoreCommands::Container(cmd) => cmd.take_action(parsed_args, session).await,
+            ObjectStoreCommands::Object(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

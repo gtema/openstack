@@ -12,44 +12,36 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod aggregate;
-pub mod availability_zone;
-pub mod extension;
-pub mod flavor;
-pub mod hypervisor;
-pub mod keypair;
-pub mod server;
+//! Compute API v2 command
 
-use clap::{Args, Subcommand};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::compute::v2::aggregate::{AggregateArgs, AggregateCommand};
-use crate::compute::v2::availability_zone::{AvailabilityZoneArgs, AvailabilityZoneCommand};
-use crate::compute::v2::extension::{ExtensionArgs, ExtensionCommand};
-use crate::compute::v2::flavor::{FlavorArgs, FlavorCommand};
-use crate::compute::v2::hypervisor::{HypervisorArgs, HypervisorCommand};
-use crate::compute::v2::keypair::{KeypairArgs, KeypairCommand};
-use crate::compute::v2::server::{ServerArgs, ServerCommand};
-use crate::{OSCCommand, OpenStackCliError};
+use crate::{Cli, OpenStackCliError};
+
+mod aggregate;
+mod availability_zone;
+mod extension;
+mod flavor;
+mod hypervisor;
+mod keypair;
+mod server;
 
 /// Compute service (Nova) arguments
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct ComputeSrvArgs {
-    // /// Compute API microversion
-    // #[arg(long, env = "OS_COMPUTE_API_VERSION")]
-    // os_compute_api_version: Option<String>,
+#[derive(Parser)]
+pub struct ComputeCommand {
     /// Compute service resource
     #[command(subcommand)]
-    command: ComputeSrvCommands,
+    command: ComputeCommands,
 }
 
 /// Compute resources commands
-#[derive(Clone, Subcommand)]
-pub enum ComputeSrvCommands {
+#[allow(missing_docs)]
+#[derive(Subcommand)]
+pub enum ComputeCommands {
     #[command(about = "Host Aggregates")]
-    Aggregate(Box<AggregateArgs>),
+    Aggregate(Box<aggregate::AggregateCommand>),
     /// Lists and gets detailed availability zone information.
     ///
     /// An availability zone is created or updated by setting the
@@ -57,52 +49,29 @@ pub enum ComputeSrvCommands {
     /// create or update methods of the Host Aggregates API. See
     /// Host Aggregates for more details.
     #[command(about = "Availability zones")]
-    AvailabilityZone(Box<AvailabilityZoneArgs>),
-    Extension(Box<ExtensionArgs>),
-    Flavor(Box<FlavorArgs>),
-    Hypervisor(Box<HypervisorArgs>),
-    Keypair(Box<KeypairArgs>),
-    Server(Box<ServerArgs>),
+    AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
+    Extension(Box<extension::ExtensionCommand>),
+    Flavor(Box<flavor::FlavorCommand>),
+    Hypervisor(Box<hypervisor::HypervisorCommand>),
+    Keypair(Box<keypair::KeypairCommand>),
+    Server(Box<server::ServerCommand>),
 }
 
-pub struct ComputeSrvCommand {
-    pub args: ComputeSrvArgs,
-}
-
-impl OSCCommand for ComputeSrvCommand {
-    fn get_subcommand(
+impl ComputeCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ComputeSrvCommands::Aggregate(args) => AggregateCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            ComputeSrvCommands::AvailabilityZone(args) => AvailabilityZoneCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            ComputeSrvCommands::Extension(args) => ExtensionCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            ComputeSrvCommands::Flavor(args) => FlavorCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            ComputeSrvCommands::Hypervisor(args) => HypervisorCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            ComputeSrvCommands::Keypair(args) => KeypairCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
-            ComputeSrvCommands::Server(args) => ServerCommand {
-                args: *args.clone(),
-            }
-            .get_subcommand(session),
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ComputeCommands::Aggregate(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::AvailabilityZone(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Hypervisor(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Flavor(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Keypair(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Server(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

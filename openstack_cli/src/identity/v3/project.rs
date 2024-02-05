@@ -13,13 +13,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Identity Project commands
-//!
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -28,41 +27,37 @@ mod set;
 mod show;
 
 /// Identity Project commands
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct ProjectArgs {
+#[derive(Parser)]
+pub struct ProjectCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ProjectCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ProjectCommands {
-    Create(create::ProjectArgs),
-    Delete(delete::ProjectArgs),
-    List(list::ProjectsArgs),
-    Set(set::ProjectArgs),
-    Show(show::ProjectArgs),
+    Create(create::ProjectCommand),
+    Delete(delete::ProjectCommand),
+    List(list::ProjectsCommand),
+    Set(set::ProjectCommand),
+    Show(show::ProjectCommand),
 }
 
-pub struct ProjectCommand {
-    pub args: ProjectArgs,
-}
-
-impl OSCCommand for ProjectCommand {
-    fn get_subcommand(
+impl ProjectCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ProjectCommands::Create(args) => {
-                Ok(Box::new(create::ProjectCmd { args: args.clone() }))
-            }
-            ProjectCommands::Delete(args) => {
-                Ok(Box::new(delete::ProjectCmd { args: args.clone() }))
-            }
-            ProjectCommands::List(args) => Ok(Box::new(list::ProjectsCmd { args: args.clone() })),
-            ProjectCommands::Set(args) => Ok(Box::new(set::ProjectCmd { args: args.clone() })),
-            ProjectCommands::Show(args) => Ok(Box::new(show::ProjectCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ProjectCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ProjectCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ProjectCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ProjectCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            ProjectCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -12,54 +12,49 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Glance Schemas
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod image;
 mod images;
 mod member;
 mod members;
 
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct SchemaArgs {
+/// Schemas
+#[derive(Parser)]
+pub struct SchemaCommand {
+    /// subcommand
     #[command(subcommand)]
     command: SchemaCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum SchemaCommands {
-    Image(image::ImageArgs),
-    Images(images::ImagesArgs),
-    Member(member::MemberArgs),
-    Members(members::MembersArgs),
+    Image(image::ImageCommand),
+    Images(images::ImagesCommand),
+    Member(member::MemberCommand),
+    Members(members::MembersCommand),
 }
 
-pub struct SchemaCommand {
-    pub args: SchemaArgs,
-}
-
-impl OSCCommand for SchemaCommand {
-    fn get_subcommand(
+impl SchemaCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            SchemaCommands::Image(args) => {
-                image::ImageCommand { args: args.clone() }.get_subcommand(session)
-            }
-            SchemaCommands::Images(args) => {
-                images::ImagesCommand { args: args.clone() }.get_subcommand(session)
-            }
-            SchemaCommands::Member(args) => {
-                member::MemberCommand { args: args.clone() }.get_subcommand(session)
-            }
-            SchemaCommands::Members(args) => {
-                members::MembersCommand { args: args.clone() }.get_subcommand(session)
-            }
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            SchemaCommands::Image(cmd) => cmd.take_action(parsed_args, session).await,
+            SchemaCommands::Images(cmd) => cmd.take_action(parsed_args, session).await,
+            SchemaCommands::Member(cmd) => cmd.take_action(parsed_args, session).await,
+            SchemaCommands::Members(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -13,13 +13,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Identity User Access Credentials commands
-//!
 
-use clap::{Args, Subcommand};
-
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -90,51 +89,39 @@ mod show;
 /// providing its ID to another application credential, for example:
 ///
 /// "access_rules": [ { "id": "abcdef" } ]
-#[derive(Args, Clone, Debug)]
-// #[command(args_conflicts_with_subcommands = true)]
-pub struct ApplicationCredentialArgs {
+#[derive(Parser)]
+pub struct ApplicationCredentialCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ApplicationCredentialCommands,
 }
 
-#[derive(Subcommand, Clone, Debug)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ApplicationCredentialCommands {
-    Create(create::ApplicationCredentialArgs),
-    Delete(delete::ApplicationCredentialArgs),
-    List(list::ApplicationCredentialsArgs),
-    Show(show::ApplicationCredentialArgs),
+    Create(create::ApplicationCredentialCommand),
+    Delete(delete::ApplicationCredentialCommand),
+    List(list::ApplicationCredentialsCommand),
+    Show(show::ApplicationCredentialCommand),
 }
 
-pub struct ApplicationCredentialCommand {
-    pub args: ApplicationCredentialArgs,
-}
-
-impl OSCCommand for ApplicationCredentialCommand {
-    fn get_subcommand(
+impl ApplicationCredentialCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ApplicationCredentialCommands::Create(args) => {
-                Ok(Box::new(create::ApplicationCredentialCmd {
-                    args: args.clone(),
-                }))
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ApplicationCredentialCommands::Create(cmd) => {
+                cmd.take_action(parsed_args, session).await
             }
-            ApplicationCredentialCommands::Delete(args) => {
-                Ok(Box::new(delete::ApplicationCredentialCmd {
-                    args: args.clone(),
-                }))
+            ApplicationCredentialCommands::Delete(cmd) => {
+                cmd.take_action(parsed_args, session).await
             }
-            ApplicationCredentialCommands::List(args) => {
-                Ok(Box::new(list::ApplicationCredentialsCmd {
-                    args: args.clone(),
-                }))
-            }
-            ApplicationCredentialCommands::Show(args) => {
-                Ok(Box::new(show::ApplicationCredentialCmd {
-                    args: args.clone(),
-                }))
-            }
+            ApplicationCredentialCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ApplicationCredentialCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

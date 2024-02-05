@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod v3;
+//! Block Storage commands
+pub(super) mod v3;

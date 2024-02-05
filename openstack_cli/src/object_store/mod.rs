@@ -12,4 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-pub mod v1;
+//! Object store service
+
+pub(super) mod v1;

@@ -13,15 +13,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Show current auth information
-use async_trait::async_trait;
-use clap::Args;
+use clap::Parser;
 use tracing::info;
 
 use crate::output::{self, OutputProcessor};
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 
 use openstack_sdk::types::identity::v3::AuthResponse;
 use openstack_sdk::AsyncOpenStack;
@@ -37,13 +36,8 @@ use openstack_sdk::AsyncOpenStack;
 /// fields in the output, but it supports `-o json` command and
 /// returns full available information in json format what allows
 /// further processing with `jq`
-#[derive(Args, Clone, Debug)]
-pub struct AuthArgs {}
-
-/// show command
-pub struct AuthCmd {
-    pub args: AuthArgs,
-}
+#[derive(Debug, Parser)]
+pub struct ShowCommand {}
 
 impl StructTable for AuthResponse {
     fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
@@ -82,9 +76,9 @@ impl StructTable for AuthResponse {
     }
 }
 
-#[async_trait]
-impl OSCCommand for AuthCmd {
-    async fn take_action(
+impl ShowCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,

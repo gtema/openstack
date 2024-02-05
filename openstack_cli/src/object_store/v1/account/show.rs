@@ -18,7 +18,6 @@
 //! convert it to a 64-bit unsigned integer if your platform supports that
 //! primitive type.
 //! Do not include metadata headers in this request.
-use async_trait::async_trait;
 use bytes::Bytes;
 use clap::Args;
 use http::Response;
@@ -30,9 +29,9 @@ use anyhow::Result;
 
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
-use crate::{OSCCommand, OpenStackCliError};
 use structable_derive::StructTable;
 
 use openstack_sdk::{types::ServiceType, AsyncOpenStack};
@@ -50,11 +49,7 @@ use std::collections::HashMap;
 /// primitive type.
 /// Do not include metadata headers in this request.
 #[derive(Args, Clone, Debug)]
-pub struct AccountArgs {}
-
-pub struct AccountCmd {
-    pub args: AccountArgs,
-}
+pub struct AccountCommand {}
 
 /// Account
 #[derive(Deserialize, Debug, Clone, Serialize, StructTable)]
@@ -63,14 +58,13 @@ pub struct Account {
     metadata: HashMapStringString,
 }
 
-#[async_trait]
-impl OSCCommand for AccountCmd {
-    async fn take_action(
+impl AccountCommand {
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Head Account with {:?}", self.args);
+        info!("Head Account with {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;

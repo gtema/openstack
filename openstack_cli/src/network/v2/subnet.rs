@@ -12,11 +12,13 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Subnet commands
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod create;
 mod delete;
@@ -24,41 +26,35 @@ mod list;
 mod show;
 
 /// Subnet commands
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct SubnetArgs {
+#[derive(Parser)]
+pub struct SubnetCommand {
+    /// subcommand
     #[command(subcommand)]
     command: SubnetCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum SubnetCommands {
-    List(Box<list::SubnetsArgs>),
-    Show(Box<show::SubnetArgs>),
-    Create(Box<create::SubnetArgs>),
-    Delete(delete::SubnetArgs),
+    Create(Box<create::SubnetCommand>),
+    Delete(delete::SubnetCommand),
+    List(Box<list::SubnetsCommand>),
+    Show(Box<show::SubnetCommand>),
 }
 
-pub struct SubnetCommand {
-    pub args: SubnetArgs,
-}
-
-impl OSCCommand for SubnetCommand {
-    fn get_subcommand(
+impl SubnetCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            SubnetCommands::List(args) => Ok(Box::new(list::SubnetsCmd {
-                args: *args.clone(),
-            })),
-            SubnetCommands::Show(args) => Ok(Box::new(show::SubnetCmd {
-                args: *args.clone(),
-            })),
-            SubnetCommands::Create(args) => Ok(Box::new(create::SubnetCmd {
-                args: *args.clone(),
-            })),
-            SubnetCommands::Delete(args) => Ok(Box::new(delete::SubnetCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            SubnetCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            SubnetCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            SubnetCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            SubnetCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

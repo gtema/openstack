@@ -12,40 +12,41 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use clap::{Args, Subcommand};
+//! Image schema
 
-use crate::{OSCCommand, OpenStackCliError};
+use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
+
+use crate::{Cli, OpenStackCliError};
 
 mod get;
 
 /// Show Image Schema
-#[derive(Args, Clone)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct ImageArgs {
+#[derive(Parser)]
+pub struct ImageCommand {
+    /// subcommand
     #[command(subcommand)]
     command: ImageCommands,
 }
 
-#[derive(Subcommand, Clone)]
+/// Supported subcommands
+#[allow(missing_docs)]
+#[derive(Subcommand)]
 pub enum ImageCommands {
     /// Show Image Schema
-    Show(get::ImageArgs),
+    Show(get::ImageCommand),
 }
 
-pub struct ImageCommand {
-    /// Command arguments
-    pub args: ImageArgs,
-}
-
-impl OSCCommand for ImageCommand {
-    fn get_subcommand(
+impl ImageCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        match &self.args.command {
-            ImageCommands::Show(args) => Ok(Box::new(get::ImageCmd { args: args.clone() })),
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
+    ) -> Result<(), OpenStackCliError> {
+        match &self.command {
+            ImageCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

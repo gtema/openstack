@@ -186,8 +186,8 @@ mod tests {
             Request::builder()
                 .remote_console(
                     RemoteConsoleBuilder::default()
-                        .protocol(Protocol::Spice)
-                        ._type(Type::Xvpvnc)
+                        .protocol(Protocol::Serial)
+                        ._type(Type::SpiceHtml5)
                         .build()
                         .unwrap()
                 )
@@ -204,8 +204,8 @@ mod tests {
             Request::builder()
                 .remote_console(
                     RemoteConsoleBuilder::default()
-                        .protocol(Protocol::Spice)
-                        ._type(Type::Xvpvnc)
+                        .protocol(Protocol::Serial)
+                        ._type(Type::SpiceHtml5)
                         .build()
                         .unwrap()
                 )
@@ -235,8 +235,8 @@ mod tests {
             .server_id("server_id")
             .remote_console(
                 RemoteConsoleBuilder::default()
-                    .protocol(Protocol::Spice)
-                    ._type(Type::Xvpvnc)
+                    .protocol(Protocol::Serial)
+                    ._type(Type::SpiceHtml5)
                     .build()
                     .unwrap(),
             )
@@ -266,8 +266,8 @@ mod tests {
             .server_id("server_id")
             .remote_console(
                 RemoteConsoleBuilder::default()
-                    .protocol(Protocol::Spice)
-                    ._type(Type::Xvpvnc)
+                    .protocol(Protocol::Serial)
+                    ._type(Type::SpiceHtml5)
                     .build()
                     .unwrap(),
             )

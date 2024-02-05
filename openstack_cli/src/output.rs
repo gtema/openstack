@@ -12,15 +12,38 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::*;
+//! Output processing module
+
 use anyhow::Context;
+use std::collections::BTreeSet;
+use std::io::{self, Write};
 
 use serde::de::DeserializeOwned;
+
+use cli_table::{print_stdout, Table};
+
+use crate::cli::{Cli, OutputFormat};
+use crate::OpenStackCliError;
+
+/// Output configuration data structure
+#[derive(Clone, Debug, Default)]
+pub struct OutputConfig {
+    /// Set of fields to be included in the response
+    pub fields: BTreeSet<String>,
+    /// Flag whether to include additional attributes in the output
+    pub wide: bool,
+}
+
+/// Trait for structures that should be represented as a table in the human output mode
+pub trait StructTable {
+    /// Build a vector of headers and rows from the data
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+}
 
 /// Output Processor
 pub(crate) struct OutputProcessor {
     /// Output configuration
-    config: OutputConfig,
+    pub(crate) config: OutputConfig,
     /// Whether output is for human or for machine
     pub(crate) target: OutputFor,
 }

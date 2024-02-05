@@ -14,8 +14,7 @@
 
 //! Direct API command implementation
 
-use async_trait::async_trait;
-use clap::{Args, ValueEnum};
+use clap::{Parser, ValueEnum};
 use http::Uri;
 use serde_json::Value;
 
@@ -33,15 +32,15 @@ use openstack_sdk::{
 use crate::common::parse_key_val;
 use crate::output::OutputProcessor;
 use crate::Cli;
+use crate::OpenStackCliError;
 
-use crate::{OSCCommand, OpenStackCliError};
-
-pub fn url_to_http_uri(url: Url) -> Uri {
+fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()
         .parse::<Uri>()
         .expect("failed to parse a url::Url as an http::Uri")
 }
 
+/// Supported http methods
 #[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, ValueEnum)]
 enum Method {
     /// HEAD
@@ -72,20 +71,23 @@ impl From<Method> for http::Method {
 ///
 /// This command enables direct REST API call with the authorization and
 /// version discovery handled transparently. This may be used when required
-/// operation is not implemented by the `osc` or some of the parameters require
-/// special handling.
+/// operation is not implemented by the `osc` or some of the parameters
+/// require special handling.
 ///
-/// Example: ```console osc --os-cloud devstack api compute flavors/detail | jq
+/// Example:
+///
+/// ```console
+/// osc --os-cloud devstack api compute flavors/detail | jq
 /// ```
-#[derive(Args, Clone, Debug)]
-#[command(args_conflicts_with_subcommands = true)]
-pub struct ApiArgs {
+#[derive(Debug, Parser)]
+pub struct ApiCommand {
     /// Service name
     #[arg()]
     service: String,
 
-    /// Rest URL (relative to the endpoint
-    /// information from the service catalog). Do not start URL with the "/" to respect endpoint version information.
+    /// Rest URL (relative to the endpoint information
+    /// from the service catalog). Do not start URL with
+    /// the "/" to respect endpoint version information.
     #[arg()]
     url: String,
 
@@ -102,40 +104,26 @@ pub struct ApiArgs {
     body: Option<String>,
 }
 
-#[derive(Debug)]
-pub struct ApiCommand {
-    pub args: ApiArgs,
-}
-
-#[async_trait]
-impl OSCCommand for ApiCommand {
-    fn get_subcommand(
-        &self,
-        _: &mut AsyncOpenStack,
-    ) -> Result<Box<dyn OSCCommand + Send + Sync>, OpenStackCliError> {
-        Ok(Box::new(Self {
-            args: self.args.clone(),
-        }))
-    }
-
-    async fn take_action(
+impl ApiCommand {
+    /// Perform command action
+    pub async fn take_action(
         &self,
         parsed_args: &Cli,
         client: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        info!("Perform REST API call {:?}", self.args);
+        info!("Perform REST API call {:?}", self);
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let service = ServiceType::from(self.args.service.as_str());
+        let service = ServiceType::from(self.service.as_str());
 
         client.discover_service_endpoint(&service).await?;
 
-        let endpoint = client.rest_endpoint(&service, &self.args.url)?;
+        let endpoint = client.rest_endpoint(&service, &self.url)?;
 
         let req = http::Request::builder()
-            .method::<http::Method>(self.args.method.clone().into())
+            .method::<http::Method>(self.method.clone().into())
             .uri(url_to_http_uri(endpoint))
             .header(
                 http::header::ACCEPT,
@@ -147,11 +135,7 @@ impl OSCCommand for ApiCommand {
         let rsp = client
             .rest_async(
                 req,
-                self.args
-                    .body
-                    .clone()
-                    .unwrap_or("".to_string())
-                    .into_bytes(),
+                self.body.clone().unwrap_or("".to_string()).into_bytes(),
             )
             .await?;
 
