@@ -12,37 +12,43 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity v3 API commands
+//! Identity Federation Mapping commands
+
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod os_federation;
-mod project;
-mod user;
+mod create;
+mod delete;
+mod list;
+mod set;
+mod show;
 
-/// Identity (Keystone) commands
+/// Mappings
+///
+/// A mapping is a set of rules to map federation protocol attributes to
+/// Identity API objects. An Identity Provider can have a single mapping
+/// specified per protocol. A mapping is simply a list of rules.
 #[derive(Parser)]
-pub struct IdentityCommand {
-    /// subcommand
+pub struct MappingCommand {
     #[command(subcommand)]
-    command: IdentityCommands,
+    command: MappingCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum IdentityCommands {
-    AccessRule(user::access_rule::AccessRuleCommand),
-    ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
-    Federation(os_federation::FederationCommand),
-    Project(project::ProjectCommand),
-    User(user::UserCommand),
+pub enum MappingCommands {
+    Create(create::MappingCommand),
+    Delete(delete::MappingCommand),
+    List(list::MappingsCommand),
+    Set(set::MappingCommand),
+    Show(show::MappingCommand),
 }
 
-impl IdentityCommand {
+impl MappingCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,13 +56,11 @@ impl IdentityCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            IdentityCommands::AccessRule(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::ApplicationCredential(cmd) => {
-                cmd.take_action(parsed_args, session).await
-            }
-            IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            MappingCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

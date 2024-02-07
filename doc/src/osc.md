@@ -198,6 +198,33 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity application-credential delete`↴](#osc-identity-application-credential-delete)
 * [`osc identity application-credential list`↴](#osc-identity-application-credential-list)
 * [`osc identity application-credential show`↴](#osc-identity-application-credential-show)
+* [`osc identity federation`↴](#osc-identity-federation)
+* [`osc identity federation identity-provider`↴](#osc-identity-federation-identity-provider)
+* [`osc identity federation identity-provider create`↴](#osc-identity-federation-identity-provider-create)
+* [`osc identity federation identity-provider delete`↴](#osc-identity-federation-identity-provider-delete)
+* [`osc identity federation identity-provider list`↴](#osc-identity-federation-identity-provider-list)
+* [`osc identity federation identity-provider protocol`↴](#osc-identity-federation-identity-provider-protocol)
+* [`osc identity federation identity-provider protocol create`↴](#osc-identity-federation-identity-provider-protocol-create)
+* [`osc identity federation identity-provider protocol delete`↴](#osc-identity-federation-identity-provider-protocol-delete)
+* [`osc identity federation identity-provider protocol list`↴](#osc-identity-federation-identity-provider-protocol-list)
+* [`osc identity federation identity-provider protocol set`↴](#osc-identity-federation-identity-provider-protocol-set)
+* [`osc identity federation identity-provider protocol show`↴](#osc-identity-federation-identity-provider-protocol-show)
+* [`osc identity federation identity-provider set`↴](#osc-identity-federation-identity-provider-set)
+* [`osc identity federation identity-provider show`↴](#osc-identity-federation-identity-provider-show)
+* [`osc identity federation mapping`↴](#osc-identity-federation-mapping)
+* [`osc identity federation mapping create`↴](#osc-identity-federation-mapping-create)
+* [`osc identity federation mapping delete`↴](#osc-identity-federation-mapping-delete)
+* [`osc identity federation mapping list`↴](#osc-identity-federation-mapping-list)
+* [`osc identity federation mapping set`↴](#osc-identity-federation-mapping-set)
+* [`osc identity federation mapping show`↴](#osc-identity-federation-mapping-show)
+* [`osc identity federation service-provider`↴](#osc-identity-federation-service-provider)
+* [`osc identity federation service-provider create`↴](#osc-identity-federation-service-provider-create)
+* [`osc identity federation service-provider delete`↴](#osc-identity-federation-service-provider-delete)
+* [`osc identity federation service-provider list`↴](#osc-identity-federation-service-provider-list)
+* [`osc identity federation service-provider set`↴](#osc-identity-federation-service-provider-set)
+* [`osc identity federation service-provider show`↴](#osc-identity-federation-service-provider-show)
+* [`osc identity federation saml2-metadata`↴](#osc-identity-federation-saml2-metadata)
+* [`osc identity federation saml2-metadata show`↴](#osc-identity-federation-saml2-metadata-show)
 * [`osc identity project`↴](#osc-identity-project)
 * [`osc identity project create`↴](#osc-identity-project-create)
 * [`osc identity project delete`↴](#osc-identity-project-delete)
@@ -5173,6 +5200,7 @@ Identity (Keystone) commands
 
 * `access-rule` — **Application Credentials - Access Rules**
 * `application-credential` — **Application Credentials**
+* `federation` — OS-Federation
 * `project` — Identity Project commands
 * `user` — User commands
 
@@ -5377,6 +5405,453 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 * `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+
+
+## `osc identity federation`
+
+OS-Federation
+
+Provide the ability for users to manage Identity Providers (IdPs) and establish a set of rules to map federation protocol attributes to Identity API attributes.
+
+**Usage:** `osc identity federation <COMMAND>`
+
+###### **Subcommands:**
+
+* `identity-provider` — Identity Providers
+* `mapping` — Mappings
+* `service-provider` — Service Providers
+* `saml2-metadata` — A user may retrieve Metadata about an Identity Service acting as an Identity Provider
+
+
+
+## `osc identity federation identity-provider`
+
+Identity Providers
+
+An Identity Provider (IdP) is a third party service that is trusted by the Identity API to authenticate identities.
+
+**Usage:** `osc identity federation identity-provider <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create an idp resource for federated authentication
+* `delete` — DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+* `list` — GET operation on /v3/OS-FEDERATION/identity_providers
+* `protocol` — Identity provider protocols
+* `set` — PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+* `show` — GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+
+
+
+## `osc identity federation identity-provider create`
+
+Create an idp resource for federated authentication.
+
+PUT /OS-FEDERATION/identity_providers/{idp_id}
+
+**Usage:** `osc identity federation identity-provider create [OPTIONS] <IDP_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+
+###### **Options:**
+
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>`
+* `--domain-id <DOMAIN_ID>`
+* `--authorization-ttl <AUTHORIZATION_TTL>`
+* `--remote-ids <REMOTE_IDS>`
+
+
+
+## `osc identity federation identity-provider delete`
+
+DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+
+**Usage:** `osc identity federation identity-provider delete <IDP_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+
+
+
+## `osc identity federation identity-provider list`
+
+GET operation on /v3/OS-FEDERATION/identity_providers
+
+**Usage:** `osc identity federation identity-provider list [OPTIONS]`
+
+###### **Options:**
+
+* `--id <ID>` — Filter for Identity Providers’ ID attribute
+* `--enabled <ENABLED>` — Filter for Identity Providers’ enabled attribute
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity federation identity-provider protocol`
+
+Identity provider protocols
+
+A protocol entry contains information that dictates which mapping rules to use for a given incoming request. An IdP may have multiple supported protocols.
+
+Required attributes:
+
+- mapping_id (string): Indicates which mapping should be used to process federated authentication requests.
+
+Optional attributes:
+
+- remote_id_attribute (string): Key to obtain the entity ID of the Identity Provider from the HTTPD environment. For mod_shib, this would be Shib-Identity-Provider. For mod_auth_openidc, this could be HTTP_OIDC_ISS. For mod_auth_mellon, this could be MELLON_IDP. This overrides the default value provided in keystone.conf.
+
+**Usage:** `osc identity federation identity-provider protocol <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create protocol for an IDP
+* `delete` — Delete a protocol from an IDP
+* `list` — List protocols for an IDP
+* `set` — Update protocol for an IDP
+* `show` — Get protocols for an IDP
+
+
+
+## `osc identity federation identity-provider protocol create`
+
+Create protocol for an IDP.
+
+PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
+
+**Usage:** `osc identity federation identity-provider protocol create [OPTIONS] --mapping-id <MAPPING_ID> <IDP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+
+###### **Options:**
+
+* `--mapping-id <MAPPING_ID>`
+* `--remote-id-attribute <REMOTE_ID_ATTRIBUTE>`
+
+
+
+## `osc identity federation identity-provider protocol delete`
+
+Delete a protocol from an IDP.
+
+DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
+
+**Usage:** `osc identity federation identity-provider protocol delete <IDP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+
+
+
+## `osc identity federation identity-provider protocol list`
+
+List protocols for an IDP.
+
+HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
+
+**Usage:** `osc identity federation identity-provider protocol list <IDP_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+
+
+
+## `osc identity federation identity-provider protocol set`
+
+Update protocol for an IDP.
+
+PATCH /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
+
+**Usage:** `osc identity federation identity-provider protocol set [OPTIONS] <IDP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+
+###### **Options:**
+
+* `--mapping-id <MAPPING_ID>`
+* `--remote-id-attribute <REMOTE_ID_ATTRIBUTE>`
+
+
+
+## `osc identity federation identity-provider protocol show`
+
+Get protocols for an IDP.
+
+HEAD/GET /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
+
+**Usage:** `osc identity federation identity-provider protocol show <IDP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+
+
+
+## `osc identity federation identity-provider set`
+
+PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+
+**Usage:** `osc identity federation identity-provider set [OPTIONS] <IDP_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+
+###### **Options:**
+
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>`
+* `--authorization-ttl <AUTHORIZATION_TTL>`
+* `--remote-ids <REMOTE_IDS>`
+
+
+
+## `osc identity federation identity-provider show`
+
+GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+
+**Usage:** `osc identity federation identity-provider show <IDP_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+
+
+
+## `osc identity federation mapping`
+
+Mappings
+
+A mapping is a set of rules to map federation protocol attributes to Identity API objects. An Identity Provider can have a single mapping specified per protocol. A mapping is simply a list of rules.
+
+**Usage:** `osc identity federation mapping <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create a mapping
+* `delete` — Delete a mapping
+* `list` — GET operation on /v3/OS-FEDERATION/mappings
+* `set` — Update a mapping
+* `show` — GET operation on /v3/OS-FEDERATION/mappings/{mapping_id}
+
+
+
+## `osc identity federation mapping create`
+
+Create a mapping.
+
+PUT /OS-FEDERATION/mappings/{mapping_id}
+
+**Usage:** `osc identity federation mapping create [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+
+###### **Options:**
+
+* `--rules <JSON>`
+
+
+
+## `osc identity federation mapping delete`
+
+Delete a mapping.
+
+DELETE /OS-FEDERATION/mappings/{mapping_id}
+
+**Usage:** `osc identity federation mapping delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+
+
+
+## `osc identity federation mapping list`
+
+GET operation on /v3/OS-FEDERATION/mappings
+
+**Usage:** `osc identity federation mapping list`
+
+
+
+## `osc identity federation mapping set`
+
+Update a mapping.
+
+PATCH /OS-FEDERATION/mappings/{mapping_id}
+
+**Usage:** `osc identity federation mapping set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+
+###### **Options:**
+
+* `--rules <JSON>`
+
+
+
+## `osc identity federation mapping show`
+
+GET operation on /v3/OS-FEDERATION/mappings/{mapping_id}
+
+**Usage:** `osc identity federation mapping show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+
+
+
+## `osc identity federation service-provider`
+
+Service Providers
+
+A service provider is a third party service that is trusted by the Identity Service.
+
+**Usage:** `osc identity federation service-provider <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create a service provider
+* `delete` — Delete a service provider
+* `list` — GET operation on /v3/OS-FEDERATION/service_providers
+* `set` — Update a service provider
+* `show` — GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
+
+
+
+## `osc identity federation service-provider create`
+
+Create a service provider.
+
+PUT /OS-FEDERATION/service_providers/{sp_id}
+
+**Usage:** `osc identity federation service-provider create [OPTIONS] --auth-url <AUTH_URL> --sp-url <SP_URL> <SP_ID>`
+
+###### **Arguments:**
+
+* `<SP_ID>` — sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+
+###### **Options:**
+
+* `--auth-url <AUTH_URL>`
+* `--sp-url <SP_URL>`
+* `--description <DESCRIPTION>`
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--relay-state-prefix <RELAY_STATE_PREFIX>`
+
+
+
+## `osc identity federation service-provider delete`
+
+Delete a service provider.
+
+DELETE /OS-FEDERATION/service_providers/{sp_id}
+
+**Usage:** `osc identity federation service-provider delete <SP_ID>`
+
+###### **Arguments:**
+
+* `<SP_ID>` — sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+
+
+
+## `osc identity federation service-provider list`
+
+GET operation on /v3/OS-FEDERATION/service_providers
+
+**Usage:** `osc identity federation service-provider list`
+
+
+
+## `osc identity federation service-provider set`
+
+Update a service provider.
+
+PATCH /OS-FEDERATION/service_providers/{sp_id}
+
+**Usage:** `osc identity federation service-provider set [OPTIONS] <SP_ID>`
+
+###### **Arguments:**
+
+* `<SP_ID>` — sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+
+###### **Options:**
+
+* `--auth-url <AUTH_URL>`
+* `--sp-url <SP_URL>`
+* `--description <DESCRIPTION>`
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+
+  Possible values: `true`, `false`
+
+* `--relay-state-prefix <RELAY_STATE_PREFIX>`
+
+
+
+## `osc identity federation service-provider show`
+
+GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
+
+**Usage:** `osc identity federation service-provider show <SP_ID>`
+
+###### **Arguments:**
+
+* `<SP_ID>` — sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+
+
+
+## `osc identity federation saml2-metadata`
+
+A user may retrieve Metadata about an Identity Service acting as an Identity Provider.
+
+The response will be a full document with Metadata properties. Note that for readability, this example certificate has been truncated.
+
+**Usage:** `osc identity federation saml2-metadata <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Get SAML2 metadata
+
+
+
+## `osc identity federation saml2-metadata show`
+
+Get SAML2 metadata.
+
+GET/HEAD /OS-FEDERATION/saml2/metadata
+
+**Usage:** `osc identity federation saml2-metadata show`
 
 
 
@@ -5628,7 +6103,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
   Possible values: `true`, `false`
 
-* `--idp-id <IDP_ID>` — Filters the response by a domain ID
+* `--id <ID>` — Filter for Identity Providers’ ID attribute
 * `--name <NAME>` — Filters the response by a resource name
 * `--password-expires-at <PASSWORD_EXPIRES_AT>` — Filter results based on which user passwords have expired. The query should include an operator and a timestamp with a colon (:) separating the two, for example: `password_expires_at={operator}:{timestamp}`. Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ
 * `--protocol-id <PROTOCOL_ID>` — Filters the response by a protocol ID
