@@ -58,14 +58,14 @@ pub struct AvailabilityZoneCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// AvailabilityZone response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The availability zone name.
     #[serde(rename = "zoneName")]
     #[structable(optional, title = "zoneName")]

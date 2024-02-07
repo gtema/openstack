@@ -46,7 +46,7 @@ started being used (again unless user explicitly requested microversion with
 `--XXX-api-version Y.Z`). One common thing both approaches use is to give user
 control over the version what is crucial to guarantee stability. The
 disadvantage of both approaches is that they come with certain opinions that
-does not necessarily match what user expects and make expectaion on what will
+does not necessarily match what user expects and make expectation on what will
 happen hard. For the end user reading help page of the command is pretty
 complex and error prone when certain parameters appear, disappear and re-appear
 with different types between microversion. Implementing (and using) the command
@@ -59,6 +59,6 @@ user explicitly use latest microversion, what, however, does not guarantee it
 can be invoked with requested parameters. This approach allows user to be very
 explicit in the requirement and have a guarantee of the expected parameters.
 When a newer microversion is required user should explicitly to do "migration"
-step adapting the invokation to a newer set of parameters. Microversion (or
+step adapting the invocation to a newer set of parameters. Microversion (or
 functionality) deprecation is also much simplier this way and is handled by
 marking the whole command deprecated and/or drop it completely.

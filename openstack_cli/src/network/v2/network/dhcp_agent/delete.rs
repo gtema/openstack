@@ -53,22 +53,22 @@ pub struct DhcpAgentCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[arg(value_name = "NETWORK_ID", id = "path_param_network_id")]
+    #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
     network_id: String,
 
     /// id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// DhcpAgent response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl DhcpAgentCommand {
     /// Perform command action

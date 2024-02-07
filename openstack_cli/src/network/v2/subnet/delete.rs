@@ -60,18 +60,18 @@ pub struct SubnetCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Subnet response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl SubnetCommand {
     /// Perform command action

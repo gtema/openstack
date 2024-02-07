@@ -56,7 +56,7 @@ pub struct AvailabilityZonesCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     /// name query parameter for /v2.0/availability_zones API
     #[arg(long)]
     name: Option<String>,
@@ -72,10 +72,10 @@ pub struct QueryParameters {
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// AvailabilityZones response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// Human-readable name of the resource.
     #[serde()]
     #[structable(optional)]

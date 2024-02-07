@@ -45,7 +45,6 @@ use serde_json::json;
 
 use serde_json::Value;
 
-use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -121,13 +120,13 @@ pub struct ImageCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 
@@ -166,23 +165,9 @@ enum DiskFormat {
     Vmdk,
 }
 
-/// ValidationData Body data
-#[derive(Args)]
-#[group(required = false, multiple = true)]
-struct ValidationData {
-    #[arg(long)]
-    checksum: Option<String>,
-
-    #[arg(long, required = false)]
-    os_hash_algo: String,
-
-    #[arg(long, required = false)]
-    os_hash_value: String,
-}
-
 /// Image response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A unique, user-defined image UUID, in the format:
     ///
     ///
@@ -444,92 +429,12 @@ pub struct ResponseData {
     /// default.**
     #[serde()]
     #[structable(optional)]
-    locations: Option<VecResponseLocations>,
+    locations: Option<Value>,
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// HashMap of Value response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseValidationData {
-    checksum: Option<String>,
-    os_hash_algo: String,
-    os_hash_value: String,
-}
-
-impl fmt::Display for ResponseValidationData {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "checksum={}",
-                self.checksum
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!("os_hash_algo={}", self.os_hash_algo),
-            format!("os_hash_value={}", self.os_hash_value),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLocations {
-    url: String,
-    metadata: HashMapStringValue,
-    validation_data: Option<ResponseValidationData>,
-}
-
-impl fmt::Display for ResponseLocations {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!("url={}", self.url),
-            format!("metadata={}", self.metadata),
-            format!(
-                "validation_data={}",
-                self.validation_data
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseLocations response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseLocations(Vec<ResponseLocations>);
-impl fmt::Display for VecResponseLocations {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

@@ -55,13 +55,13 @@ pub struct VolumeCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// OsUnsetImageMetadata Body data
@@ -73,7 +73,7 @@ struct OsUnsetImageMetadata {
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

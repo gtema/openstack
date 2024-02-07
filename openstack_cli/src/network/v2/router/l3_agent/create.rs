@@ -57,18 +57,18 @@ pub struct L3AgentCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     #[arg(value_name = "ROUTER_ID", id = "path_param_router_id")]
     router_id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

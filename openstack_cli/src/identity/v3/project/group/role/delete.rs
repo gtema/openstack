@@ -57,14 +57,14 @@ pub struct RoleCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    #[arg(value_name = "PROJECT_ID", id = "path_param_project_id")]
+    #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// group_id parameter for
@@ -79,7 +79,7 @@ pub struct PathParameters {
 }
 /// Role response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl RoleCommand {
     /// Perform command action

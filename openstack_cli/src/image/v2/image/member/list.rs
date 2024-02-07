@@ -68,18 +68,18 @@ pub struct MembersCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
+    #[arg(value_name = "IMAGE_ID", id = "path_param_image_id")]
     image_id: String,
 }
 /// Members response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// An identifier for the image member (tenantId)
     #[serde()]
     #[structable(optional)]

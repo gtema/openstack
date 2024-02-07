@@ -53,14 +53,14 @@ pub struct ObjectsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Objects response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl ObjectsCommand {
     /// Perform command action

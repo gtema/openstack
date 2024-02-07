@@ -62,18 +62,18 @@ pub struct UptimeCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

@@ -33,8 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use openstack_sdk::api::find;
-use openstack_sdk::api::network::v2::router::conntrack_helper::find;
+use openstack_sdk::api::network::v2::router::conntrack_helper::get;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
@@ -62,22 +61,22 @@ pub struct ConntrackHelperCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     #[arg(value_name = "ROUTER_ID", id = "path_param_router_id")]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// ConntrackHelper response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the conntrack helper.
     #[serde()]
     #[structable(optional)]
@@ -111,16 +110,20 @@ impl ConntrackHelperCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut find_builder = find::Request::builder();
+        let mut ep_builder = get::Request::builder();
 
-        find_builder.router_id(&self.path.router_id);
-        find_builder.id(&self.path.id);
-        let find_ep = find_builder
+        // Set path parameters
+        ep_builder.router_id(&self.path.router_id);
+        ep_builder.id(&self.path.id);
+        // Set query parameters
+        // Set body parameters
+
+        let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

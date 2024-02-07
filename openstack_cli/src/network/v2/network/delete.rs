@@ -58,18 +58,18 @@ pub struct NetworkCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Network response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl NetworkCommand {
     /// Perform command action

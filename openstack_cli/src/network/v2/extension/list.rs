@@ -59,14 +59,14 @@ pub struct ExtensionsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Extensions response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The alias for the extension. For example “quotas” or
     /// “security-group”.
     #[serde()]

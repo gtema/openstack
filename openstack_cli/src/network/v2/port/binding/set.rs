@@ -60,18 +60,18 @@ pub struct BindingCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
     #[arg(value_name = "PORT_ID", id = "path_param_port_id")]
     port_id: String,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
@@ -105,7 +105,7 @@ struct Binding {
 
 /// Binding response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     #[serde()]
     #[structable(optional)]
     host: Option<String>,
@@ -136,7 +136,7 @@ pub struct ResponseData {
 }
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

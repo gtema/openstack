@@ -60,11 +60,11 @@ pub struct KeypairCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Keypair Body data
 #[derive(Args)]
 struct Keypair {
@@ -91,7 +91,7 @@ struct Keypair {
 
 /// Keypair response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The user\_id for a keypair.
     #[serde()]
     #[structable(optional)]

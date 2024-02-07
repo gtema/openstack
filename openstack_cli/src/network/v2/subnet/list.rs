@@ -33,8 +33,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::BoolString;
 use openstack_sdk::api::network::v2::subnet::list;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -69,7 +71,7 @@ pub struct SubnetsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     /// id query parameter for /v2.0/subnets API
     #[arg(long)]
     id: Option<String>,
@@ -149,10 +151,10 @@ pub struct QueryParameters {
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Subnets response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the subnet.
     #[serde()]
     #[structable(optional)]
@@ -193,7 +195,7 @@ pub struct ResponseData {
     /// for this subnet.
     #[serde()]
     #[structable(optional, wide)]
-    allocation_pools: Option<VecResponseAllocationPools>,
+    allocation_pools: Option<Value>,
 
     /// List of dns name servers associated with the subnet.
     #[serde()]
@@ -204,7 +206,7 @@ pub struct ResponseData {
     /// `destination` and `nexthop` parameters.
     #[serde()]
     #[structable(optional, wide)]
-    host_routes: Option<VecResponseHostRoutes>,
+    host_routes: Option<Value>,
 
     /// The ID of the project.
     #[serde()]
@@ -215,7 +217,7 @@ pub struct ResponseData {
     /// for the subnet.
     #[serde()]
     #[structable(optional, wide)]
-    enable_dhcp: Option<bool>,
+    enable_dhcp: Option<BoolString>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
@@ -258,7 +260,7 @@ pub struct ResponseData {
     /// Whether to publish DNS records for IPs from this subnet.
     #[serde()]
     #[structable(optional, wide)]
-    dns_publish_fixed_ip: Option<bool>,
+    dns_publish_fixed_ip: Option<BoolString>,
 
     /// A human-readable description for the resource.
     #[serde()]
@@ -271,98 +273,10 @@ pub struct ResponseData {
     #[structable(optional, wide)]
     segment_id: Option<String>,
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAllocationPools {
-    start: Option<String>,
-    end: Option<String>,
-}
-
-impl fmt::Display for ResponseAllocationPools {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "start={}",
-                self.start
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "end={}",
-                self.end
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseAllocationPools response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseAllocationPools(Vec<ResponseAllocationPools>);
-impl fmt::Display for VecResponseAllocationPools {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseHostRoutes {
-    destination: Option<String>,
-    nexthop: Option<String>,
-}
-
-impl fmt::Display for ResponseHostRoutes {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "destination={}",
-                self.destination
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "nexthop={}",
-                self.nexthop
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseHostRoutes response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseHostRoutes(Vec<ResponseHostRoutes>);
-impl fmt::Display for VecResponseHostRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

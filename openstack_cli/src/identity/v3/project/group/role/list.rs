@@ -58,14 +58,14 @@ pub struct RolesCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    #[arg(value_name = "PROJECT_ID", id = "path_param_project_id")]
+    #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// group_id parameter for
@@ -75,7 +75,7 @@ pub struct PathParameters {
 }
 /// Roles response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The role ID.
     #[serde()]
     #[structable(optional)]
@@ -104,7 +104,7 @@ pub struct ResponseData {
 }
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

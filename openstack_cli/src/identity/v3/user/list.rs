@@ -35,6 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::user::list;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -56,7 +57,7 @@ pub struct UsersCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     /// Filters the response by a domain ID.
     #[arg(long)]
     domain_id: Option<String>,
@@ -66,9 +67,9 @@ pub struct QueryParameters {
     #[arg(long)]
     enabled: Option<bool>,
 
-    /// Filters the response by a domain ID.
+    /// Filter for Identity Providers’ ID attribute
     #[arg(long)]
-    idp_id: Option<String>,
+    id: Option<String>,
 
     /// Filters the response by a resource name.
     #[arg(long)]
@@ -93,10 +94,10 @@ pub struct QueryParameters {
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Users response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The user ID.
     #[serde()]
     #[structable(optional)]
@@ -144,7 +145,7 @@ pub struct ResponseData {
     /// ```
     #[serde()]
     #[structable(optional, wide)]
-    federated: Option<VecResponseFederated>,
+    federated: Option<Value>,
 
     /// The user name. Must be unique within the owning domain.
     #[serde()]
@@ -166,73 +167,9 @@ pub struct ResponseData {
     #[structable(optional, wide)]
     options: Option<ResponseOptions>,
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseProtocols {
-    protocol_id: String,
-    unique_id: String,
-}
-
-impl fmt::Display for ResponseProtocols {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!("protocol_id={}", self.protocol_id),
-            format!("unique_id={}", self.unique_id),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseProtocols response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseProtocols(Vec<ResponseProtocols>);
-impl fmt::Display for VecResponseProtocols {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseFederated {
-    idp_id: String,
-    protocols: VecResponseProtocols,
-}
-
-impl fmt::Display for ResponseFederated {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!("idp_id={}", self.idp_id),
-            format!("protocols={}", self.protocols),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseFederated response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseFederated(Vec<ResponseFederated>);
-impl fmt::Display for VecResponseFederated {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -248,7 +185,7 @@ impl fmt::Display for VecString {
 }
 /// Vector of VecString response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecVecString(Vec<VecString>);
+struct VecVecString(Vec<VecString>);
 impl fmt::Display for VecVecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -347,8 +284,8 @@ impl UsersCommand {
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
         }
-        if let Some(val) = &self.query.idp_id {
-            ep_builder.idp_id(val.clone());
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val.clone());
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val.clone());

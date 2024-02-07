@@ -33,6 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::BoolString;
 use openstack_sdk::api::network::v2::port::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -76,7 +77,7 @@ pub struct PortsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     /// id query parameter for /v2.0/ports API
     #[arg(long)]
     id: Option<String>,
@@ -156,10 +157,10 @@ pub struct QueryParameters {
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Ports response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the resource.
     #[serde()]
     #[structable(optional)]
@@ -179,7 +180,7 @@ pub struct ResponseData {
     /// up (`true`) or down (`false`).
     #[serde()]
     #[structable(optional, wide)]
-    admin_state_up: Option<bool>,
+    admin_state_up: Option<BoolString>,
 
     /// The MAC address of the port. If the port uses the `direct-physical`
     /// `vnic\_type` then the value of this field is overwritten with the MAC
@@ -194,7 +195,7 @@ pub struct ResponseData {
     /// is assigned (`subnet\_id`).
     #[serde()]
     #[structable(optional, wide)]
-    fixed_ips: Option<VecResponseFixedIps>,
+    fixed_ips: Option<Value>,
 
     /// The ID of the device that uses this port.
     /// For example, a server instance or a logical router.
@@ -231,7 +232,7 @@ pub struct ResponseData {
     /// matches one of the specified allowed address pairs.
     #[serde()]
     #[structable(optional, wide)]
-    allowed_address_pairs: Option<VecResponseAllowedAddressPairs>,
+    allowed_address_pairs: Option<Value>,
 
     /// Status of the underlying data plane of a port.
     #[serde()]
@@ -349,7 +350,7 @@ pub struct ResponseData {
     /// the traffic on the port. If disabled, no such rules are applied.
     #[serde()]
     #[structable(optional, wide)]
-    port_security_enabled: Option<bool>,
+    port_security_enabled: Option<BoolString>,
 
     /// The ID of the QoS policy associated with the port.
     #[serde()]
@@ -385,7 +386,7 @@ pub struct ResponseData {
     /// enabled (`true`) and disabled (`false`).
     #[serde()]
     #[structable(optional, wide)]
-    propagate_uplink_status: Option<bool>,
+    propagate_uplink_status: Option<BoolString>,
 
     /// A valid DNS name.
     #[serde()]
@@ -413,97 +414,9 @@ pub struct ResponseData {
     #[structable(optional, wide)]
     security_groups: Option<VecString>,
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseFixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
-}
-
-impl fmt::Display for ResponseFixedIps {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "ip_address={}",
-                self.ip_address
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "subnet_id={}",
-                self.subnet_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseFixedIps response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseFixedIps(Vec<ResponseFixedIps>);
-impl fmt::Display for VecResponseFixedIps {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAllowedAddressPairs {
-    ip_address: Option<String>,
-    max_address: Option<String>,
-}
-
-impl fmt::Display for ResponseAllowedAddressPairs {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "ip_address={}",
-                self.ip_address
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "max_address={}",
-                self.max_address
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseAllowedAddressPairs response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseAllowedAddressPairs(Vec<ResponseAllowedAddressPairs>);
-impl fmt::Display for VecResponseAllowedAddressPairs {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -519,7 +432,7 @@ impl fmt::Display for HashMapStringValue {
 }
 /// Vector of HashMapStringValue response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
+struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -535,7 +448,7 @@ impl fmt::Display for VecHashMapStringValue {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

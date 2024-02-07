@@ -60,11 +60,11 @@ pub struct ConntrackHelperCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     #[arg(value_name = "ROUTER_ID", id = "path_param_router_id")]
     router_id: String,
@@ -101,7 +101,7 @@ struct ConntrackHelper {
 
 /// ConntrackHelper response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the conntrack helper.
     #[serde()]
     #[structable(optional)]

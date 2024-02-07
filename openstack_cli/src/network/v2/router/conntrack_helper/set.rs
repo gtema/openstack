@@ -34,8 +34,6 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use clap::ValueEnum;
-use openstack_sdk::api::find;
-use openstack_sdk::api::network::v2::router::conntrack_helper::find;
 use openstack_sdk::api::network::v2::router::conntrack_helper::set;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
@@ -62,17 +60,17 @@ pub struct ConntrackHelperCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     #[arg(value_name = "ROUTER_ID", id = "path_param_router_id")]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 
@@ -104,7 +102,7 @@ struct ConntrackHelper {
 
 /// ConntrackHelper response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the conntrack helper.
     #[serde()]
     #[structable(optional)]
@@ -138,27 +136,11 @@ impl ConntrackHelperCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut find_builder = find::Request::builder();
-
-        find_builder.router_id(&self.path.router_id);
-        find_builder.id(&self.path.id);
-        let find_ep = find_builder
-            .build()
-            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        let resource_id = find_data["id"]
-            .as_str()
-            .expect("Resource ID is a string")
-            .to_string();
-        ep_builder.router_id(resource_id.clone());
-        let resource_id = find_data["id"]
-            .as_str()
-            .expect("Resource ID is a string")
-            .to_string();
-        ep_builder.id(resource_id.clone());
+        ep_builder.router_id(&self.path.router_id);
+        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
         // Set Request.conntrack_helper data

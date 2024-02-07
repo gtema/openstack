@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::flavor::add_tenant_access;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Adds flavor access to a tenant and flavor.
@@ -63,13 +63,13 @@ pub struct FlavorCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// AddTenantAccess Body data
@@ -82,55 +82,11 @@ struct AddTenantAccess {
 
 /// Flavor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A list of objects, each with the keys `flavor\_id` and `tenant\_id`.
     #[serde()]
     #[structable()]
-    flavor_access: VecResponseFlavorAccess,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseFlavorAccess {
-    flavor_id: Option<String>,
-    tenant_id: Option<String>,
-}
-
-impl fmt::Display for ResponseFlavorAccess {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "flavor_id={}",
-                self.flavor_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "tenant_id={}",
-                self.tenant_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseFlavorAccess response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseFlavorAccess(Vec<ResponseFlavorAccess>);
-impl fmt::Display for VecResponseFlavorAccess {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    flavor_access: Value,
 }
 
 impl FlavorCommand {

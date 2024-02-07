@@ -33,8 +33,8 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use openstack_sdk::api::compute::v2::hypervisor::find;
-use openstack_sdk::api::find;
+use crate::common::IntString;
+use openstack_sdk::api::compute::v2::hypervisor::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
@@ -65,21 +65,21 @@ pub struct HypervisorCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     #[arg(long)]
     with_servers: Option<bool>,
 }
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Hypervisor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A dictionary that contains cpu information like `arch`, `model`,
     /// `vendor`, `features` and `topology`. The content of this field is
     /// hypervisor specific.
@@ -269,11 +269,11 @@ pub struct ResponseData {
     /// **New in version 2.53**
     #[serde()]
     #[structable(optional)]
-    servers: Option<VecResponseServers>,
+    servers: Option<Value>,
 }
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -291,7 +291,7 @@ impl fmt::Display for HashMapStringValue {
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseService {
     host: Option<String>,
-    id: Option<String>,
+    id: Option<IntString>,
     disabled_reason: Option<String>,
 }
 
@@ -323,50 +323,6 @@ impl fmt::Display for ResponseService {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseServers {
-    uuid: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseServers {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "uuid={}",
-                self.uuid
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseServers response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseServers(Vec<ResponseServers>);
-impl fmt::Display for VecResponseServers {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
 
 impl HypervisorCommand {
     /// Perform command action
@@ -380,15 +336,22 @@ impl HypervisorCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut find_builder = find::Request::builder();
+        let mut ep_builder = get::Request::builder();
 
-        find_builder.id(&self.path.id);
-        let find_ep = find_builder
+        // Set path parameters
+        ep_builder.id(&self.path.id);
+        // Set query parameters
+        if let Some(val) = &self.query.with_servers {
+            ep_builder.with_servers(*val);
+        }
+        // Set body parameters
+
+        let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

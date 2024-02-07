@@ -61,11 +61,11 @@ pub struct UserCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Options Body data
 #[derive(Args)]
 #[group(required = false, multiple = true)]
@@ -154,7 +154,7 @@ struct User {
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
@@ -241,7 +241,7 @@ impl UserCommand {
                 options_builder.multi_factor_auth_rules(
                     val.iter()
                         .cloned()
-                        .map(|x| Vec::from([x.split(",").collect()]))
+                        .map(|x| Vec::from([x.split(',').collect()]))
                         .collect::<Vec<_>>(),
                 );
             }

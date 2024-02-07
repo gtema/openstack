@@ -59,14 +59,14 @@ pub struct AggregatesCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Aggregates response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The availability zone of the host aggregate.
     #[serde()]
     #[structable(optional, wide)]
@@ -159,7 +159,7 @@ pub struct ResponseData {
 }
 /// HashMap of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringString(HashMap<String, String>);
+struct HashMapStringString(HashMap<String, String>);
 impl fmt::Display for HashMapStringString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -175,7 +175,7 @@ impl fmt::Display for HashMapStringString {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

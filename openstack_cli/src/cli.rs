@@ -106,15 +106,15 @@ impl Cli {
     /// Perform command action
     pub async fn take_action(&self, client: &mut AsyncOpenStack) -> Result<(), OpenStackCliError> {
         match &self.command {
-            TopLevelCommands::Api(args) => args.take_action(&self, client).await,
-            TopLevelCommands::Auth(args) => args.take_action(&self, client).await,
-            TopLevelCommands::BlockStorage(args) => args.take_action(&self, client).await,
-            TopLevelCommands::Catalog(args) => args.take_action(&self, client).await,
-            TopLevelCommands::Compute(args) => args.take_action(&self, client).await,
-            TopLevelCommands::Identity(args) => args.take_action(&self, client).await,
-            TopLevelCommands::Image(args) => args.take_action(&self, client).await,
-            TopLevelCommands::Network(args) => args.take_action(&self, client).await,
-            TopLevelCommands::ObjectStore(args) => args.take_action(&self, client).await,
+            TopLevelCommands::Api(args) => args.take_action(self, client).await,
+            TopLevelCommands::Auth(args) => args.take_action(self, client).await,
+            TopLevelCommands::BlockStorage(args) => args.take_action(self, client).await,
+            TopLevelCommands::Catalog(args) => args.take_action(self, client).await,
+            TopLevelCommands::Compute(args) => args.take_action(self, client).await,
+            TopLevelCommands::Identity(args) => args.take_action(self, client).await,
+            TopLevelCommands::Image(args) => args.take_action(self, client).await,
+            TopLevelCommands::Network(args) => args.take_action(self, client).await,
+            TopLevelCommands::ObjectStore(args) => args.take_action(self, client).await,
         }
     }
 }

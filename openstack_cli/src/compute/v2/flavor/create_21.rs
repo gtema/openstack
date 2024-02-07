@@ -33,6 +33,8 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
+use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::create_21;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -67,11 +69,11 @@ pub struct FlavorCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Flavor Body data
 #[derive(Args)]
 struct Flavor {
@@ -123,7 +125,7 @@ struct Flavor {
 
 /// Flavor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The display name of a flavor.
     #[serde()]
     #[structable(optional)]
@@ -138,12 +140,12 @@ pub struct ResponseData {
     /// The amount of RAM a flavor has, in MiB.
     #[serde()]
     #[structable(optional)]
-    ram: Option<String>,
+    ram: Option<IntString>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     #[serde()]
     #[structable(optional)]
-    vcpus: Option<String>,
+    vcpus: Option<IntString>,
 
     /// The size of the root disk that will be created in GiB. If 0 the
     /// root disk will be set to exactly the size of the image used to
@@ -156,7 +158,7 @@ pub struct ResponseData {
     /// policy rule.
     #[serde()]
     #[structable(optional)]
-    disk: Option<String>,
+    disk: Option<IntString>,
 
     /// The size of the ephemeral disk that will be created, in
     /// GiB. Ephemeral disks may be written over on server state
@@ -164,7 +166,7 @@ pub struct ResponseData {
     /// applications that are aware of its limitations. Defaults to 0.
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
     #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral")]
-    os_flv_ext_data_ephemeral: Option<String>,
+    os_flv_ext_data_ephemeral: Option<IntString>,
 
     /// The size of a dedicated swap disk that will be allocated, in
     /// MiB. If 0 (the default), no dedicated swap disk will be created.
@@ -173,14 +175,14 @@ pub struct ResponseData {
     /// instead of empty string.
     #[serde()]
     #[structable(optional)]
-    swap: Option<String>,
+    swap: Option<IntString>,
 
     /// The receive / transmit factor (as a float) that will be set on
     /// ports if the network backend supports the QOS extension.
     /// Otherwise it will be ignored. It defaults to 1.0.
     #[serde()]
     #[structable(optional)]
-    rxtx_factor: Option<String>,
+    rxtx_factor: Option<NumString>,
 
     /// Whether the flavor is public (available to all projects) or scoped
     /// to a set of projects. Default is True if not specified.
@@ -196,7 +198,7 @@ pub struct ResponseData {
     /// **New in version 2.61**
     #[serde()]
     #[structable(optional)]
-    extra_specs: Option<HashMapStringString>,
+    extra_specs: Option<HashMapStringNumString>,
 
     /// Links to the resources in question. See [API Guide / Links and
     /// References](https://docs.openstack.org/api-
@@ -206,10 +208,10 @@ pub struct ResponseData {
     #[structable(optional)]
     links: Option<Value>,
 }
-/// HashMap of String response type
+/// HashMap of NumString response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringString(HashMap<String, String>);
-impl fmt::Display for HashMapStringString {
+struct HashMapStringNumString(HashMap<String, NumString>);
+impl fmt::Display for HashMapStringNumString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -220,34 +222,6 @@ impl fmt::Display for HashMapStringString {
                 .collect::<Vec<String>>()
                 .join("\n")
         )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    href: Option<String>,
-    rel: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "href={}",
-                self.href
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rel={}",
-                self.rel
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
     }
 }
 

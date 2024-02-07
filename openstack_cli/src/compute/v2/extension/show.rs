@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::compute::v2::extension::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Shows details for an extension, by alias.
@@ -58,18 +57,18 @@ pub struct ExtensionCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/extensions/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Extension response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A short name by which this extension is also known.
     #[serde()]
     #[structable(optional)]
@@ -114,34 +113,6 @@ pub struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated: Option<String>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    href: Option<String>,
-    rel: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "href={}",
-                self.href
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rel={}",
-                self.rel
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl ExtensionCommand {

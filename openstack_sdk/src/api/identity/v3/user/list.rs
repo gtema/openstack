@@ -39,9 +39,9 @@ pub struct Request<'a> {
     #[builder(default)]
     enabled: Option<bool>,
 
-    /// Filters the response by a domain ID.
+    /// Filter for Identity Providers’ ID attribute
     #[builder(default, setter(into))]
-    idp_id: Option<Cow<'a, str>>,
+    id: Option<Cow<'a, str>>,
 
     /// Filters the response by a resource name.
     #[builder(default, setter(into))]
@@ -111,7 +111,7 @@ impl<'a> RestEndpoint for Request<'a> {
         let mut params = QueryParams::default();
         params.push_opt("domain_id", self.domain_id.as_ref());
         params.push_opt("enabled", self.enabled);
-        params.push_opt("idp_id", self.idp_id.as_ref());
+        params.push_opt("id", self.id.as_ref());
         params.push_opt("name", self.name.as_ref());
         params.push_opt("password_expires_at", self.password_expires_at.as_ref());
         params.push_opt("protocol_id", self.protocol_id.as_ref());

@@ -36,7 +36,7 @@ use crate::StructTable;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::application_credential::find;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Show details of an application credential.
@@ -57,14 +57,14 @@ pub struct ApplicationCredentialCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
+    #[arg(value_name = "USER_ID", id = "path_param_user_id")]
     user_id: String,
 
     /// application_credential_id parameter for
@@ -75,7 +75,7 @@ pub struct PathParameters {
 }
 /// ApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the application credential.
     #[serde()]
     #[structable(optional)]
@@ -102,7 +102,7 @@ pub struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    roles: Option<VecResponseRoles>,
+    roles: Option<Value>,
 
     #[serde()]
     #[structable(optional)]
@@ -110,111 +110,7 @@ pub struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    access_rules: Option<VecResponseAccessRules>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseRoles {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseRoles {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseRoles response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseRoles(Vec<ResponseRoles>);
-impl fmt::Display for VecResponseRoles {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAccessRules {
-    path: Option<String>,
-    method: Option<String>,
-    service: Option<String>,
-    id: Option<String>,
-}
-
-impl fmt::Display for ResponseAccessRules {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "path={}",
-                self.path
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "method={}",
-                self.method
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "service={}",
-                self.service
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseAccessRules response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseAccessRules(Vec<ResponseAccessRules>);
-impl fmt::Display for VecResponseAccessRules {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    access_rules: Option<Value>,
 }
 
 impl ApplicationCredentialCommand {

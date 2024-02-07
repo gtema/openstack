@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::auth::catalog::list;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// New in version 3.3
@@ -63,18 +63,18 @@ pub struct CatalogsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Catalogs response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A list of `endpoint` objects.
     #[serde()]
     #[structable(optional, wide)]
-    endpoints: Option<VecResponseEndpoints>,
+    endpoints: Option<Value>,
 
     /// The UUID of the service to which the endpoint belongs.
     #[serde()]
@@ -92,66 +92,6 @@ pub struct ResponseData {
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseEndpoints {
-    id: Option<String>,
-    interface: Option<String>,
-    region: Option<String>,
-    url: Option<String>,
-}
-
-impl fmt::Display for ResponseEndpoints {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "interface={}",
-                self.interface
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "region={}",
-                self.region
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "url={}",
-                self.url
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseEndpoints response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseEndpoints(Vec<ResponseEndpoints>);
-impl fmt::Display for VecResponseEndpoints {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl CatalogsCommand {

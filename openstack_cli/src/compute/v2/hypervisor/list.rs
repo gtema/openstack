@@ -33,6 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use openstack_sdk::api::compute::v2::hypervisor::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
@@ -68,7 +69,7 @@ pub struct HypervisorsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     #[arg(long)]
     limit: Option<i32>,
 
@@ -84,10 +85,10 @@ pub struct QueryParameters {
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Hypervisors response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A dictionary that contains cpu information like `arch`, `model`,
     /// `vendor`, `features` and `topology`. The content of this field is
     /// hypervisor specific.
@@ -277,11 +278,11 @@ pub struct ResponseData {
     /// **New in version 2.53**
     #[serde()]
     #[structable(optional, wide)]
-    servers: Option<VecResponseServers>,
+    servers: Option<Value>,
 }
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -299,7 +300,7 @@ impl fmt::Display for HashMapStringValue {
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseService {
     host: Option<String>,
-    id: Option<String>,
+    id: Option<IntString>,
     disabled_reason: Option<String>,
 }
 
@@ -329,50 +330,6 @@ impl fmt::Display for ResponseService {
             ),
         ]);
         write!(f, "{}", data.join(";"))
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseServers {
-    uuid: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseServers {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "uuid={}",
-                self.uuid
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseServers response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseServers(Vec<ResponseServers>);
-impl fmt::Display for VecResponseServers {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
     }
 }
 

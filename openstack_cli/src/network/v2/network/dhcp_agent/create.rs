@@ -57,18 +57,18 @@ pub struct DhcpAgentCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[arg(value_name = "NETWORK_ID", id = "path_param_network_id")]
+    #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
     network_id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

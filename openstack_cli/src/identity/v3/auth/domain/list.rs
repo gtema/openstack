@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::auth::domain::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// New in version 3.3
@@ -62,14 +61,14 @@ pub struct DomainsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Domains response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the domain.
     #[serde()]
     #[structable(optional)]
@@ -95,34 +94,6 @@ pub struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    href: Option<String>,
-    rel: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "href={}",
-                self.href
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rel={}",
-                self.rel
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl DomainsCommand {

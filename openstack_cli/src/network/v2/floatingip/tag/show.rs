@@ -53,23 +53,23 @@ pub struct TagCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
-    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
+    #[arg(value_name = "FLOATINGIP_ID", id = "path_param_floatingip_id")]
     floatingip_id: String,
 
     /// id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Tag response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl TagCommand {
     /// Perform command action
