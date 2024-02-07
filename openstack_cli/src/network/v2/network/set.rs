@@ -34,6 +34,8 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
+use crate::common::BoolString;
+use crate::common::IntString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network::find;
 use openstack_sdk::api::network::v2::network::set;
@@ -64,13 +66,13 @@ pub struct NetworkCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Network Body data
@@ -142,7 +144,7 @@ struct Network {
 
 /// Network response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the network.
     #[serde()]
     #[structable(optional)]
@@ -162,7 +164,7 @@ pub struct ResponseData {
     /// up (`true`) or down (`false`).
     #[serde()]
     #[structable(optional)]
-    admin_state_up: Option<bool>,
+    admin_state_up: Option<BoolString>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
     #[serde()]
@@ -179,7 +181,7 @@ pub struct ResponseData {
     /// only administrative users can change this value.
     #[serde()]
     #[structable(optional)]
-    shared: Option<bool>,
+    shared: Option<BoolString>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
     #[serde()]
@@ -202,7 +204,7 @@ pub struct ResponseData {
     /// extension `floatingip-autodelete-internal` is present.
     #[serde(rename = "router:external")]
     #[structable(optional, title = "router:external")]
-    router_external: Option<bool>,
+    router_external: Option<BoolString>,
 
     /// Indicates whether L2 connectivity is available throughout
     /// the `network`.
@@ -213,7 +215,7 @@ pub struct ResponseData {
     /// A list of provider `segment` objects.
     #[serde()]
     #[structable(optional)]
-    segments: Option<VecResponseSegments>,
+    segments: Option<Value>,
 
     /// The maximum transmission unit (MTU) value to
     /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
@@ -238,7 +240,7 @@ pub struct ResponseData {
     /// field of a newly created port.
     #[serde()]
     #[structable(optional)]
-    port_security_enabled: Option<bool>,
+    port_security_enabled: Option<BoolString>,
 
     #[serde(rename = "provider:network_type")]
     #[structable(optional, title = "provider:network_type")]
@@ -250,7 +252,7 @@ pub struct ResponseData {
 
     #[serde(rename = "provider:segmentation_id")]
     #[structable(optional, title = "provider:segmentation_id")]
-    provider_segmentation_id: Option<String>,
+    provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
     #[serde()]
@@ -280,7 +282,7 @@ pub struct ResponseData {
     /// The network is default pool or not.
     #[serde()]
     #[structable(optional)]
-    is_default: Option<bool>,
+    is_default: Option<BoolString>,
 
     /// A valid DNS domain.
     #[serde()]
@@ -294,59 +296,8 @@ pub struct ResponseData {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseSegments {
-    provider_segmentation_id: Option<i32>,
-    provider_physical_network: Option<String>,
-    provider_network_type: Option<String>,
-}
-
-impl fmt::Display for ResponseSegments {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "provider_segmentation_id={}",
-                self.provider_segmentation_id
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "provider_physical_network={}",
-                self.provider_physical_network
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "provider_network_type={}",
-                self.provider_network_type
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseSegments response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseSegments(Vec<ResponseSegments>);
-impl fmt::Display for VecResponseSegments {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

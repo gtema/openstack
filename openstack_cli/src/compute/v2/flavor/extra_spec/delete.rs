@@ -58,22 +58,22 @@ pub struct ExtraSpecCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
     #[arg(value_name = "FLAVOR_ID", id = "path_param_flavor_id")]
     flavor_id: String,
 
     /// id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// ExtraSpec response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl ExtraSpecCommand {
     /// Perform command action

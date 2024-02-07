@@ -56,22 +56,22 @@ pub struct MetadataCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
-    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
+    #[arg(value_name = "VOLUME_ID", id = "path_param_volume_id")]
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

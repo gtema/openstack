@@ -66,11 +66,11 @@ pub struct VolumeCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Volume Body data
 #[derive(Args)]
 struct Volume {
@@ -156,7 +156,7 @@ struct Volume {
 
 /// Volume response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The volume name.
     #[serde()]
     #[structable(optional)]
@@ -247,7 +247,7 @@ pub struct ResponseData {
     /// ```
     #[serde()]
     #[structable(optional)]
-    attachments: Option<VecResponseAttachments>,
+    attachments: Option<Value>,
 
     /// The volume links.
     #[serde()]
@@ -370,7 +370,7 @@ pub struct ResponseData {
 }
 /// HashMap of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringString(HashMap<String, String>);
+struct HashMapStringString(HashMap<String, String>);
 impl fmt::Display for HashMapStringString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -382,118 +382,6 @@ impl fmt::Display for HashMapStringString {
                 .collect::<Vec<String>>()
                 .join("\n")
         )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAttachments {
-    server_id: Option<String>,
-    attachment_id: Option<String>,
-    attached_at: Option<String>,
-    host_name: Option<String>,
-    volume_id: Option<String>,
-    device: Option<String>,
-    id: Option<String>,
-}
-
-impl fmt::Display for ResponseAttachments {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "server_id={}",
-                self.server_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "attachment_id={}",
-                self.attachment_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "attached_at={}",
-                self.attached_at
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "host_name={}",
-                self.host_name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "volume_id={}",
-                self.volume_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "device={}",
-                self.device
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseAttachments response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseAttachments(Vec<ResponseAttachments>);
-impl fmt::Display for VecResponseAttachments {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    href: Option<String>,
-    rel: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "href={}",
-                self.href
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rel={}",
-                self.rel
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
     }
 }
 

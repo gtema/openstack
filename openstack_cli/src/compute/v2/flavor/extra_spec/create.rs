@@ -34,6 +34,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
+
 use openstack_sdk::api::compute::v2::flavor::extra_spec::create;
 use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
@@ -61,18 +62,18 @@ pub struct ExtraSpecCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
     #[arg(value_name = "FLAVOR_ID", id = "path_param_flavor_id")]
     flavor_id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

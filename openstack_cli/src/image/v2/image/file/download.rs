@@ -79,18 +79,18 @@ pub struct FileCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
+    #[arg(value_name = "IMAGE_ID", id = "path_param_image_id")]
     image_id: String,
 }
 /// File response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl FileCommand {
     /// Perform command action

@@ -65,22 +65,22 @@ pub struct MemberCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
+    #[arg(value_name = "IMAGE_ID", id = "path_param_image_id")]
     image_id: String,
 
     /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Member response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl MemberCommand {
     /// Perform command action

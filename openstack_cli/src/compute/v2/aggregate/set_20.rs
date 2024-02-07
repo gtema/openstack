@@ -33,9 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use openstack_sdk::api::compute::v2::aggregate::find;
 use openstack_sdk::api::compute::v2::aggregate::set_20;
-use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
 use std::fmt;
@@ -66,13 +64,13 @@ pub struct AggregateCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/images API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Aggregate Body data
@@ -102,7 +100,7 @@ struct Aggregate {
 
 /// Aggregate response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The availability zone of the host aggregate.
     #[serde()]
     #[structable(optional)]
@@ -195,7 +193,7 @@ pub struct ResponseData {
 }
 /// HashMap of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringString(HashMap<String, String>);
+struct HashMapStringString(HashMap<String, String>);
 impl fmt::Display for HashMapStringString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -211,7 +209,7 @@ impl fmt::Display for HashMapStringString {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -238,23 +236,11 @@ impl AggregateCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut find_builder = find::Request::builder();
-
-        find_builder.id(&self.path.id);
-        find_builder.header("OpenStack-API-Version", "compute 2.0");
-        let find_ep = find_builder
-            .build()
-            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
         let mut ep_builder = set_20::Request::builder();
         ep_builder.header("OpenStack-API-Version", "compute 2.0");
 
         // Set path parameters
-        let resource_id = find_data["id"]
-            .as_str()
-            .expect("Resource ID is a string")
-            .to_string();
-        ep_builder.id(resource_id.clone());
+        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
         // Set Request.aggregate data

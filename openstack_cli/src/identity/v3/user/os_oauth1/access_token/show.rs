@@ -54,14 +54,14 @@ pub struct AccessTokenCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
+    #[arg(value_name = "USER_ID", id = "path_param_user_id")]
     user_id: String,
 
     /// access_token_id parameter for /v3/users/{user_id}/OS-
@@ -71,7 +71,7 @@ pub struct PathParameters {
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, serde_json::Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

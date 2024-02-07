@@ -53,19 +53,19 @@ pub struct TagCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
-    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
+    #[arg(value_name = "FLOATINGIP_ID", id = "path_param_floatingip_id")]
     floatingip_id: String,
 }
 /// Tag response representation
 #[derive(Deserialize, Serialize, Clone)]
-pub struct ResponseData(String);
+struct ResponseData(String);
 
 impl StructTable for ResponseData {
     fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
@@ -79,7 +79,7 @@ impl StructTable for Vec<ResponseData> {
     fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Values".to_string()]);
         let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .into_iter()
+            .iter()
             .map(|v| v.0.to_string())
             .collect::<Vec<_>>()
             .join(", ")])]);

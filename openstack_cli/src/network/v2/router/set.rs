@@ -34,6 +34,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
+use crate::common::BoolString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::router::find;
 use openstack_sdk::api::network::v2::router::set;
@@ -68,13 +69,13 @@ pub struct RouterCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// ExternalGatewayInfo Body data
@@ -144,7 +145,7 @@ struct Router {
 
 /// Router response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the router.
     #[serde()]
     #[structable(optional)]
@@ -159,7 +160,7 @@ pub struct ResponseData {
     /// up (`true`) or down (`false`).
     #[serde()]
     #[structable(optional)]
-    admin_state_up: Option<bool>,
+    admin_state_up: Option<BoolString>,
 
     /// The router status.
     #[serde()]
@@ -185,7 +186,7 @@ pub struct ResponseData {
     /// It is available when `l3-ha` extension is enabled.
     #[serde()]
     #[structable(optional)]
-    ha: Option<bool>,
+    ha: Option<BoolString>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
     /// router, the IPv6 address of internal subnets attached to the router can
@@ -198,7 +199,7 @@ pub struct ResponseData {
     /// `router-extend-ndp-proxy` extension is enabled.
     #[serde()]
     #[structable(optional)]
-    enable_ndp_proxy: Option<bool>,
+    enable_ndp_proxy: Option<BoolString>,
 
     /// The ID of the flavor associated with the router.
     #[serde()]
@@ -241,7 +242,7 @@ pub struct ResponseData {
     /// It is available when `dvr` extension is enabled.
     #[serde()]
     #[structable(optional)]
-    distributed: Option<bool>,
+    distributed: Option<BoolString>,
 
     /// The associated conntrack helper resources for the roter. If the
     /// router has multiple conntrack helper resources, this field has
@@ -257,7 +258,7 @@ pub struct ResponseData {
     /// It is available when `extraroute` extension is enabled.
     #[serde()]
     #[structable(optional)]
-    routes: Option<VecResponseRoutes>,
+    routes: Option<Value>,
 
     /// A human-readable description for the resource.
     #[serde()]
@@ -266,54 +267,10 @@ pub struct ResponseData {
 }
 /// struct response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseExternalFixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
-}
-
-impl fmt::Display for ResponseExternalFixedIps {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "ip_address={}",
-                self.ip_address
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "subnet_id={}",
-                self.subnet_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseExternalFixedIps response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseExternalFixedIps(Vec<ResponseExternalFixedIps>);
-impl fmt::Display for VecResponseExternalFixedIps {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseExternalGatewayInfo {
     network_id: String,
     enable_snat: Option<bool>,
-    external_fixed_ips: Option<VecResponseExternalFixedIps>,
+    external_fixed_ips: Option<Value>,
 }
 
 impl fmt::Display for ResponseExternalGatewayInfo {
@@ -339,52 +296,8 @@ impl fmt::Display for ResponseExternalGatewayInfo {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseRoutes {
-    destination: Option<String>,
-    nexthop: Option<String>,
-}
-
-impl fmt::Display for ResponseRoutes {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "destination={}",
-                self.destination
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "nexthop={}",
-                self.nexthop
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseRoutes response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseRoutes(Vec<ResponseRoutes>);
-impl fmt::Display for VecResponseRoutes {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

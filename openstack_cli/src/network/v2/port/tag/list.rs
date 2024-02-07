@@ -50,11 +50,11 @@ pub struct TagsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
     #[arg(value_name = "PORT_ID", id = "path_param_port_id")]
@@ -62,7 +62,7 @@ pub struct PathParameters {
 }
 /// Tags response representation
 #[derive(Deserialize, Serialize, Clone)]
-pub struct ResponseData(String);
+struct ResponseData(String);
 
 impl StructTable for ResponseData {
     fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

@@ -57,11 +57,11 @@ pub struct ProjectCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
     #[arg(value_name = "ID", id = "path_param_id")]
@@ -69,7 +69,7 @@ pub struct PathParameters {
 }
 /// Project response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl ProjectCommand {
     /// Perform command action

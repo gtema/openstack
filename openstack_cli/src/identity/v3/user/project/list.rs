@@ -55,19 +55,19 @@ pub struct ProjectsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
+    #[arg(value_name = "USER_ID", id = "path_param_user_id")]
     user_id: String,
 }
 /// Projects response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The description of the project.
     #[serde()]
     #[structable(optional, wide)]

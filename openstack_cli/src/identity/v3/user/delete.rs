@@ -57,11 +57,11 @@ pub struct UserCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
     #[arg(value_name = "ID", id = "path_param_id")]
@@ -69,7 +69,7 @@ pub struct PathParameters {
 }
 /// User response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl UserCommand {
     /// Perform command action

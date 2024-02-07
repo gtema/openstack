@@ -55,26 +55,26 @@ pub struct WebssoCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// idp_id parameter for /v3/auth/OS-
     /// FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
     /// API
-    #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
+    #[arg(value_name = "IDP_ID", id = "path_param_idp_id")]
     idp_id: String,
 
     /// protocol_id parameter for /v3/auth/OS-
     /// FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
     /// API
-    #[arg(value_name = "PROTOCOL_ID", id = "path_param_protocol_id")]
+    #[arg(id = "path_param_protocol_id", value_name = "PROTOCOL_ID")]
     protocol_id: String,
 }
 /// Websso response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// A list of one or two audit IDs. An audit ID is a unique, randomly
     /// generated, URL-safe string that you can use to track a token. The first
     /// audit ID is the current audit ID for the token. The second audit ID is
@@ -91,7 +91,7 @@ pub struct ResponseData {
     /// A catalog object.
     #[serde()]
     #[structable(optional)]
-    catalog: Option<VecResponseCatalog>,
+    catalog: Option<Value>,
 
     /// The date and time when the token expires.
     #[serde()]
@@ -124,128 +124,8 @@ pub struct ResponseData {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseEndpoints {
-    id: Option<String>,
-    interface: Option<String>,
-    region: Option<String>,
-    url: Option<String>,
-}
-
-impl fmt::Display for ResponseEndpoints {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "interface={}",
-                self.interface
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "region={}",
-                self.region
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "url={}",
-                self.url
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseEndpoints response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseEndpoints(Vec<ResponseEndpoints>);
-impl fmt::Display for VecResponseEndpoints {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseCatalog {
-    endpoints: Option<VecResponseEndpoints>,
-    id: Option<String>,
-    _type: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseCatalog {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "endpoints={}",
-                self.endpoints
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "_type={}",
-                self._type
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseCatalog response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseCatalog(Vec<ResponseCatalog>);
-impl fmt::Display for VecResponseCatalog {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -288,7 +168,7 @@ impl fmt::Display for ResponseDomain {
 }
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

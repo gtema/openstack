@@ -131,7 +131,7 @@ impl<'a> RestEndpoint for Request<'a> {
         let mut params = JsonBodyParams::default();
 
         for (key, val) in &self._properties {
-            params.push(key.clone(), serde_json::Value::from(val.clone()));
+            params.push(key.clone(), val.clone());
         }
 
         params.into_body()

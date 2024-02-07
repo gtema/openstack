@@ -60,11 +60,11 @@ pub struct ProjectCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Options Body data
 #[derive(Args)]
 #[group(required = false, multiple = true)]
@@ -153,7 +153,7 @@ struct Project {
 
 /// Project response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID for the project.
     #[serde()]
     #[structable(optional)]
@@ -207,7 +207,7 @@ pub struct ResponseData {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

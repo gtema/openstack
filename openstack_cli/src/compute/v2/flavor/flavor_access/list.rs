@@ -56,18 +56,18 @@ pub struct FlavorAccesesCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
     #[arg(value_name = "FLAVOR_ID", id = "path_param_flavor_id")]
     flavor_id: String,
 }
 /// FlavorAcceses response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the flavor. While people often make this look like
     /// an int, this is really a string.
     #[serde()]

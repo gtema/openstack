@@ -68,7 +68,7 @@ pub struct FloatingipsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {
+struct QueryParameters {
     /// floating_ip_address query parameter for /v2.0/floatingips API
     #[arg(long)]
     floating_ip_address: Option<String>,
@@ -124,10 +124,10 @@ pub struct QueryParameters {
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 /// Floatingips response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the floating IP address.
     #[serde()]
     #[structable(optional)]
@@ -235,7 +235,7 @@ pub struct ResponseData {
 }
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
