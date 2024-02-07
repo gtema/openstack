@@ -12,37 +12,33 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity v3 API commands
+//! Identity Federation SAML2 Metadata commands
+
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod os_federation;
-mod project;
-mod user;
+mod get;
 
-/// Identity (Keystone) commands
+/// A user may retrieve Metadata about an Identity Service acting as an Identity Provider.
+///
+/// The response will be a full document with Metadata properties. Note that for readability, this example certificate has been truncated.
 #[derive(Parser)]
-pub struct IdentityCommand {
-    /// subcommand
+pub struct MetadataCommand {
     #[command(subcommand)]
-    command: IdentityCommands,
+    command: MetadataCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum IdentityCommands {
-    AccessRule(user::access_rule::AccessRuleCommand),
-    ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
-    Federation(os_federation::FederationCommand),
-    Project(project::ProjectCommand),
-    User(user::UserCommand),
+pub enum MetadataCommands {
+    Show(get::MetadataCommand),
 }
 
-impl IdentityCommand {
+impl MetadataCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,13 +46,7 @@ impl IdentityCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            IdentityCommands::AccessRule(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::ApplicationCredential(cmd) => {
-                cmd.take_action(parsed_args, session).await
-            }
-            IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
+            MetadataCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

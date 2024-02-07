@@ -12,37 +12,43 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity v3 API commands
+//! Identity Federation commands
+
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod os_federation;
-mod project;
-mod user;
+mod identity_provider;
+mod mapping;
+mod service_provider;
+mod saml2 {
+    pub(super) mod metadata;
+}
 
-/// Identity (Keystone) commands
+/// OS-Federation
+///
+/// Provide the ability for users to manage Identity Providers (IdPs) and
+/// establish a set of rules to map federation protocol attributes to Identity
+/// API attributes.
 #[derive(Parser)]
-pub struct IdentityCommand {
-    /// subcommand
+pub struct FederationCommand {
     #[command(subcommand)]
-    command: IdentityCommands,
+    command: FederationCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum IdentityCommands {
-    AccessRule(user::access_rule::AccessRuleCommand),
-    ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
-    Federation(os_federation::FederationCommand),
-    Project(project::ProjectCommand),
-    User(user::UserCommand),
+pub enum FederationCommands {
+    IdentityProvider(identity_provider::IdentityProviderCommand),
+    Mapping(mapping::MappingCommand),
+    ServiceProvider(service_provider::ServiceProviderCommand),
+    Saml2Metadata(saml2::metadata::MetadataCommand),
 }
 
-impl IdentityCommand {
+impl FederationCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,13 +56,12 @@ impl IdentityCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            IdentityCommands::AccessRule(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::ApplicationCredential(cmd) => {
+            FederationCommands::IdentityProvider(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
-            IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
-            IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
+            FederationCommands::Mapping(cmd) => cmd.take_action(parsed_args, session).await,
+            FederationCommands::Saml2Metadata(cmd) => cmd.take_action(parsed_args, session).await,
+            FederationCommands::ServiceProvider(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
