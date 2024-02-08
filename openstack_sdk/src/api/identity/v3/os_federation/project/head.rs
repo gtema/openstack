@@ -91,6 +91,7 @@ impl RestEndpoint for Request {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::RawQuery;
     use crate::test::client::MockServerClient;

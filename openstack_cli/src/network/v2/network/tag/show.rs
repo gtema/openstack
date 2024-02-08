@@ -63,7 +63,7 @@ struct PathParameters {
     network_id: String,
 
     /// id parameter for /v2.0/networks/{network_id}/tags/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Tag response representation

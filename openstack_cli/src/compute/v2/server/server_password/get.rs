@@ -35,6 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::server_password::get;
 use openstack_sdk::api::QueryAsync;
+use structable_derive::StructTable;
 
 /// Shows the administrative password for a server.
 ///
@@ -67,37 +68,22 @@ pub struct ServerPasswordCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// ServerPassword response representation
-#[derive(Deserialize, Serialize, Clone)]
-pub struct ResponseData(String);
-
-impl StructTable for ResponseData {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Value".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self.0.to_string()])]);
-        (headers, res)
-    }
-}
-
-impl StructTable for Vec<ResponseData> {
-    fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Values".to_string()]);
-        let res: Vec<Vec<String>> = Vec::from([Vec::from([self
-            .iter()
-            .map(|v| v.0.to_string())
-            .collect::<Vec<_>>()
-            .join(", ")])]);
-        (headers, res)
-    }
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The password returned from metadata server.
+    #[serde()]
+    #[structable()]
+    password: String,
 }
 
 impl ServerPasswordCommand {

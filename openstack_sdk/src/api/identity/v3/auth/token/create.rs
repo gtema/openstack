@@ -29,9 +29,9 @@ use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
-use serde::Serialize;
 
 use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -421,12 +421,12 @@ impl<'a> RestEndpoint for Request<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-
     use serde_json::json;
 
     #[test]
@@ -437,7 +437,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::Totp]))
+                                .methods(Vec::from([Methods::ApplicationCredential]))
                                 .build()
                                 .unwrap()
                         )
@@ -459,7 +459,7 @@ mod tests {
                     AuthBuilder::default()
                         .identity(
                             IdentityBuilder::default()
-                                .methods(Vec::from([Methods::Totp]))
+                                .methods(Vec::from([Methods::ApplicationCredential]))
                                 .build()
                                 .unwrap()
                         )
@@ -491,7 +491,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::Totp]))
+                            .methods(Vec::from([Methods::ApplicationCredential]))
                             .build()
                             .unwrap(),
                     )
@@ -522,7 +522,7 @@ mod tests {
                 AuthBuilder::default()
                     .identity(
                         IdentityBuilder::default()
-                            .methods(Vec::from([Methods::Totp]))
+                            .methods(Vec::from([Methods::ApplicationCredential]))
                             .build()
                             .unwrap(),
                     )

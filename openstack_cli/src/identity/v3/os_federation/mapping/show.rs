@@ -58,7 +58,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Mapping response representation

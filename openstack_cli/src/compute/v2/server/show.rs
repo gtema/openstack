@@ -76,18 +76,18 @@ pub struct ServerCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// IPv4 address that should be used to access this server. May be
     /// automatically set by the provider.
     #[serde(rename = "accessIPv4")]
@@ -104,7 +104,7 @@ pub struct ResponseData {
     /// addresses information.
     #[serde()]
     #[structable(optional)]
-    addresses: Option<HashMapStringVecResponseAddresses>,
+    addresses: Option<HashMapStringValue>,
 
     /// The attached volumes, if any.
     ///
@@ -436,7 +436,7 @@ pub struct ResponseData {
     /// **New in version 2.75**
     #[serde()]
     #[structable(optional)]
-    security_groups: Option<VecResponseSecurityGroups>,
+    security_groups: Option<Value>,
 
     /// The UUIDs of the server groups to which the server belongs. Currently
     /// this can contain at most one entry.
@@ -546,68 +546,9 @@ pub struct ResponseData {
     #[structable(optional, title = "OS-EXT-STS:vm_state")]
     os_ext_sts_vm_state: Option<String>,
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAddresses {
-    addr: Option<String>,
-    version: Option<i32>,
-}
-
-impl fmt::Display for ResponseAddresses {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "addr={}",
-                self.addr
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "version={}",
-                self.version
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseAddresses response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseAddresses(Vec<ResponseAddresses>);
-impl fmt::Display for VecResponseAddresses {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// HashMap of VecResponseAddresses response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringVecResponseAddresses(HashMap<String, VecResponseAddresses>);
-impl fmt::Display for HashMapStringVecResponseAddresses {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -623,7 +564,7 @@ impl fmt::Display for HashMapStringValue {
 }
 /// Vector of HashMapStringValue response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
+struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -678,37 +619,9 @@ impl fmt::Display for ResponseFault {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinksStructResponseStructResponse {
-    href: Option<String>,
-    rel: Option<String>,
-}
-
-impl fmt::Display for ResponseLinksStructResponseStructResponse {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "href={}",
-                self.href
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rel={}",
-                self.rel
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
 /// HashMap of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringString(HashMap<String, String>);
+struct HashMapStringString(HashMap<String, String>);
 impl fmt::Display for HashMapStringString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -821,43 +734,9 @@ impl fmt::Display for ResponseImage {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseSecurityGroups {
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseSecurityGroups {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "name={}",
-            self.name
-                .clone()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseSecurityGroups response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseSecurityGroups(Vec<ResponseSecurityGroups>);
-impl fmt::Display for VecResponseSecurityGroups {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
 /// Vector of String response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecString(Vec<String>);
+struct VecString(Vec<String>);
 impl fmt::Display for VecString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

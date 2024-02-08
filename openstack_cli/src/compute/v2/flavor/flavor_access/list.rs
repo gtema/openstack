@@ -62,7 +62,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    #[arg(value_name = "FLAVOR_ID", id = "path_param_flavor_id")]
+    #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
     flavor_id: String,
 }
 /// FlavorAcceses response representation

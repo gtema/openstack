@@ -64,18 +64,18 @@ pub struct DiagnosticCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// Diagnostic response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The list of dictionaries with detailed information about VM CPUs.
     /// Following fields are presented in each dictionary:
     ///
@@ -191,7 +191,7 @@ pub struct ResponseData {
     /// **New in version 2.48**
     #[serde()]
     #[structable(optional)]
-    nic_details: Option<VecResponseNicDetails>,
+    nic_details: Option<Value>,
 
     /// The number of vCPUs.
     ///
@@ -244,7 +244,7 @@ pub struct ResponseData {
 }
 /// HashMap of Value response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
+struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -260,114 +260,8 @@ impl fmt::Display for HashMapStringValue {
 }
 /// Vector of HashMapStringValue response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecHashMapStringValue(Vec<HashMapStringValue>);
+struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseNicDetails {
-    mac_address: Option<String>,
-    rx_octets: Option<i32>,
-    rx_errors: Option<i32>,
-    rx_drop: Option<i32>,
-    rx_packets: Option<i32>,
-    rx_rate: Option<i32>,
-    tx_octets: Option<i32>,
-    tx_errors: Option<i32>,
-    tx_drop: Option<i32>,
-    tx_packets: Option<i32>,
-    tx_rate: Option<i32>,
-}
-
-impl fmt::Display for ResponseNicDetails {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "mac_address={}",
-                self.mac_address
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rx_octets={}",
-                self.rx_octets
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rx_errors={}",
-                self.rx_errors
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rx_drop={}",
-                self.rx_drop
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rx_packets={}",
-                self.rx_packets
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rx_rate={}",
-                self.rx_rate
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "tx_octets={}",
-                self.tx_octets
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "tx_errors={}",
-                self.tx_errors
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "tx_drop={}",
-                self.tx_drop
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "tx_packets={}",
-                self.tx_packets
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "tx_rate={}",
-                self.tx_rate
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseNicDetails response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseNicDetails(Vec<ResponseNicDetails>);
-impl fmt::Display for VecResponseNicDetails {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

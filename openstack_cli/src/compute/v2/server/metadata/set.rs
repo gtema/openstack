@@ -36,7 +36,7 @@ use crate::StructTable;
 use crate::common::parse_key_val;
 use openstack_sdk::api::compute::v2::server::metadata::set;
 use openstack_sdk::api::QueryAsync;
-
+use serde_json::Value;
 use std::collections::HashMap;
 
 /// Creates or replaces a metadata item, by key, for a server.
@@ -70,22 +70,22 @@ pub struct MetadataCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/metadata/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

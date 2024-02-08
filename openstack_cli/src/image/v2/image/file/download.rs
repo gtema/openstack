@@ -34,7 +34,6 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::download_file;
-
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::file::download;
 use openstack_sdk::api::image::v2::image::find;
@@ -85,7 +84,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    #[arg(value_name = "IMAGE_ID", id = "path_param_image_id")]
+    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }
 /// File response representation

@@ -64,7 +64,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Network response representation

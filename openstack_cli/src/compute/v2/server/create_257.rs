@@ -39,7 +39,6 @@ use clap::ValueEnum;
 use openstack_sdk::api::compute::v2::server::create_257;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Creates a server.
@@ -98,11 +97,11 @@ pub struct ServerCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {}
+struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum NetworksStringEnum {
@@ -118,30 +117,16 @@ struct NetworksEnumGroupStruct {
     networks: Option<Vec<Value>>,
 
     #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
-    none_networks: bool,
+    auto_networks: bool,
 
     #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
-    auto_networks: bool,
+    none_networks: bool,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum OsDcfDiskConfig {
     Auto,
     Manual,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum SourceType {
-    Blank,
-    Image,
-    Snapshot,
-    Volume,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum DestinationType {
-    Local,
-    Volume,
 }
 
 /// Server Body data
@@ -484,7 +469,7 @@ struct OsSchedulerHints {
 
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// Disk configuration. The value is either:
     ///
     ///
@@ -515,7 +500,7 @@ pub struct ResponseData {
     /// One or more security groups objects.
     #[serde()]
     #[structable(optional)]
-    security_groups: Option<VecResponseSecurityGroups>,
+    security_groups: Option<Value>,
 
     /// Links pertaining to usage. See [API Guide / Links and
     /// References](https://docs.openstack.org/api-
@@ -527,68 +512,6 @@ pub struct ResponseData {
     #[serde()]
     #[structable(optional)]
     links: Option<Value>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseSecurityGroups {
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseSecurityGroups {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "name={}",
-            self.name
-                .clone()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseSecurityGroups response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseSecurityGroups(Vec<ResponseSecurityGroups>);
-impl fmt::Display for VecResponseSecurityGroups {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    href: Option<String>,
-    rel: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "href={}",
-                self.href
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "rel={}",
-                self.rel
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl ServerCommand {
@@ -636,14 +559,14 @@ impl ServerCommand {
                 .collect();
             server_builder.networks(create_257::NetworksEnum::F1(networks_builder));
         }
-        if args.networks.none_networks {
-            server_builder.networks(create_257::NetworksEnum::F2(
-                create_257::NetworksStringEnum::None,
-            ));
-        }
         if args.networks.auto_networks {
             server_builder.networks(create_257::NetworksEnum::F2(
                 create_257::NetworksStringEnum::Auto,
+            ));
+        }
+        if args.networks.none_networks {
+            server_builder.networks(create_257::NetworksEnum::F2(
+                create_257::NetworksStringEnum::None,
             ));
         }
 

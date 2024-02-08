@@ -62,12 +62,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    #[arg(value_name = "USER_ID", id = "path_param_user_id")]
+    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
     /// access_token_id parameter for /v3/users/{user_id}/OS-
     /// OAUTH1/access_tokens/{access_token_id}/roles/{role_id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// AccessToken response representation

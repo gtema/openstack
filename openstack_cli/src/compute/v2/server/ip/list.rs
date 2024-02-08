@@ -35,7 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::ip::list;
 use openstack_sdk::api::QueryAsync;
-
 use structable_derive::StructTable;
 
 /// Lists IP addresses that are assigned to an instance.
@@ -62,18 +61,18 @@ pub struct IpsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// Ips response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The IP address.
     #[serde()]
     #[structable(optional)]

@@ -36,8 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::compute::v2::server::security_group::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists security groups for a server.
@@ -59,18 +57,18 @@ pub struct SecurityGroupsCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// SecurityGroups response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The ID of the security group.
     #[serde()]
     #[structable(optional)]
@@ -94,123 +92,7 @@ pub struct ResponseData {
     /// The list of security group rules.
     #[serde()]
     #[structable(optional, wide)]
-    rules: Option<VecResponseRules>,
-}
-/// HashMap of Value response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseGroup {
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseGroup {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "name={}",
-            self.name
-                .clone()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseRules {
-    id: Option<String>,
-    from_port: Option<i32>,
-    to_port: Option<i32>,
-    ip_protocol: Option<String>,
-    ip_range: Option<HashMapStringValue>,
-    group: Option<ResponseGroup>,
-    parent_group_id: Option<String>,
-}
-
-impl fmt::Display for ResponseRules {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "from_port={}",
-                self.from_port
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "to_port={}",
-                self.to_port
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "ip_protocol={}",
-                self.ip_protocol
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "ip_range={}",
-                self.ip_range
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "group={}",
-                self.group
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "parent_group_id={}",
-                self.parent_group_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseRules response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseRules(Vec<ResponseRules>);
-impl fmt::Display for VecResponseRules {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    rules: Option<Value>,
 }
 
 impl SecurityGroupsCommand {

@@ -33,9 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use openstack_sdk::api::compute::v2::server::volume_attachment::find;
 use openstack_sdk::api::compute::v2::server::volume_attachment::set_20;
-use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
@@ -73,18 +71,18 @@ pub struct VolumeAttachmentCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// VolumeAttachment Body data
@@ -97,7 +95,7 @@ struct VolumeAttachment {
 
 /// VolumeAttachment response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     #[serde()]
     #[structable(optional)]
@@ -168,29 +166,12 @@ impl VolumeAttachmentCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut find_builder = find::Request::builder();
-
-        find_builder.server_id(&self.path.server_id);
-        find_builder.id(&self.path.id);
-        find_builder.header("OpenStack-API-Version", "compute 2.0");
-        let find_ep = find_builder
-            .build()
-            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
         let mut ep_builder = set_20::Request::builder();
         ep_builder.header("OpenStack-API-Version", "compute 2.0");
 
         // Set path parameters
-        let resource_id = find_data["id"]
-            .as_str()
-            .expect("Resource ID is a string")
-            .to_string();
-        ep_builder.server_id(resource_id.clone());
-        let resource_id = find_data["id"]
-            .as_str()
-            .expect("Resource ID is a string")
-            .to_string();
-        ep_builder.id(resource_id.clone());
+        ep_builder.server_id(&self.path.server_id);
+        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
         // Set Request.volume_attachment data

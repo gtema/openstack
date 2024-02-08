@@ -35,10 +35,12 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::network::v2::router::l3_agent::create;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
 #[derive(Args)]
@@ -63,26 +65,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
-    #[arg(value_name = "ROUTER_ID", id = "path_param_router_id")]
+    #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, serde_json::Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
-}
+/// L3Agent response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {}
 
 impl L3AgentCommand {
     /// Perform command action
@@ -110,8 +98,10 @@ impl L3AgentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

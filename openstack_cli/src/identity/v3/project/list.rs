@@ -35,7 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::project::list;
 use openstack_sdk::api::QueryAsync;
-
 use std::fmt;
 use structable_derive::StructTable;
 

@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::instance_action::get;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Shows details for a server action.
@@ -66,22 +66,22 @@ pub struct InstanceActionCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// InstanceAction response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The name of the action.
     #[serde()]
     #[structable(optional)]
@@ -101,7 +101,7 @@ pub struct ResponseData {
     /// **New in version 2.51**
     #[serde()]
     #[structable(optional)]
-    events: Option<VecResponseEvents>,
+    events: Option<Value>,
 
     /// The related error message for when an action fails.
     #[serde()]
@@ -149,98 +149,6 @@ pub struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseEvents {
-    event: Option<String>,
-    start_time: Option<String>,
-    finish_time: Option<String>,
-    result: Option<String>,
-    traceback: Option<String>,
-    host_id: Option<String>,
-    host: Option<String>,
-    details: Option<String>,
-}
-
-impl fmt::Display for ResponseEvents {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "event={}",
-                self.event
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "start_time={}",
-                self.start_time
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "finish_time={}",
-                self.finish_time
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "result={}",
-                self.result
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "traceback={}",
-                self.traceback
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "host_id={}",
-                self.host_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "host={}",
-                self.host
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "details={}",
-                self.details
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseEvents response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseEvents(Vec<ResponseEvents>);
-impl fmt::Display for VecResponseEvents {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl InstanceActionCommand {

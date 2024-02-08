@@ -61,12 +61,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
-    #[arg(value_name = "USER_ID", id = "path_param_user_id")]
+    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

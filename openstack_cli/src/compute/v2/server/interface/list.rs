@@ -33,10 +33,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::compute::v2::server::interface::list;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Lists port interfaces that are attached to a server.
@@ -59,18 +58,23 @@ pub struct InterfacesCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// Interfaces response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {
+    /// List of the interface attachments.
+    #[serde(rename = "interfaceAttachments")]
+    #[structable(title = "interfaceAttachments", wide)]
+    interface_attachments: Value,
+}
 
 impl InterfacesCommand {
     /// Perform command action
@@ -95,10 +99,9 @@ impl InterfacesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

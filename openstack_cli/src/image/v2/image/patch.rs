@@ -44,7 +44,6 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::json;
 
 use serde_json::Value;
-
 use std::fmt;
 use structable_derive::StructTable;
 

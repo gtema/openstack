@@ -57,9 +57,9 @@ use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
-use serde::Serialize;
 
 use serde::Deserialize;
+use serde::Serialize;
 use serde_json::Value;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
@@ -659,6 +659,23 @@ pub struct OsSchedulerHints<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) cidr: Option<Cow<'a, str>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> OsSchedulerHintsBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -740,6 +757,23 @@ pub struct OsSchHntSchedulerHints<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) cidr: Option<Cow<'a, str>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> OsSchHntSchedulerHintsBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -862,12 +896,12 @@ impl<'a> RestEndpoint for Request<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-
     use serde_json::json;
 
     #[test]

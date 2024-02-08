@@ -65,12 +65,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
-    #[arg(value_name = "FLOATINGIP_ID", id = "path_param_floatingip_id")]
+    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
     floatingip_id: String,
 
     /// id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// PortForwarding response representation
