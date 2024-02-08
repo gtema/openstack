@@ -27,6 +27,7 @@ mod create_347;
 mod create_353;
 mod delete;
 mod list;
+mod metadata;
 mod os_extend;
 mod set_30;
 mod set_353;
@@ -52,6 +53,7 @@ pub enum VolumeCommands {
     Delete(delete::VolumeCommand),
     Extend(os_extend::VolumeCommand),
     List(list::VolumesCommand),
+    Metadata(metadata::MetadataCommand),
     #[command(visible_alias = "set")]
     Set353(set_353::VolumeCommand),
     Set30(set_30::VolumeCommand),
@@ -73,6 +75,7 @@ impl VolumeCommand {
             VolumeCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeCommands::Extend(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeCommands::Metadata(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeCommands::Set353(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeCommands::Set30(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
