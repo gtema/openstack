@@ -68,7 +68,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Subnet response representation

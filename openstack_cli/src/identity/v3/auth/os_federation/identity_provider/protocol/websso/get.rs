@@ -63,7 +63,7 @@ struct PathParameters {
     /// idp_id parameter for /v3/auth/OS-
     /// FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
     /// API
-    #[arg(value_name = "IDP_ID", id = "path_param_idp_id")]
+    #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
     idp_id: String,
 
     /// protocol_id parameter for /v3/auth/OS-

@@ -74,13 +74,6 @@ struct PathParameters {
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
-/// Cache Body data
-#[derive(Args)]
-struct Cache {
-    #[arg(long)]
-    id: String,
-}
-
 /// Image response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {}

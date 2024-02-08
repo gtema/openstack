@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::project::find;
 use openstack_sdk::api::QueryAsync;
-
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -65,7 +64,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Project response representation

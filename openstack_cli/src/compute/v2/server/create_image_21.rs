@@ -56,13 +56,13 @@ pub struct ServerCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// CreateImage Body data
@@ -80,7 +80,7 @@ struct CreateImage {
 
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The UUID for the resulting image snapshot.
     #[serde()]
     #[structable()]

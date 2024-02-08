@@ -63,18 +63,18 @@ pub struct TopologiesCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// Topologies response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// The mapping of server cores to host physical CPU
     #[serde()]
     #[structable(optional)]
@@ -108,7 +108,7 @@ pub struct ResponseData {
 }
 /// HashMap of i32 response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct HashMapStringi32(HashMap<String, i32>);
+struct HashMapStringi32(HashMap<String, i32>);
 impl fmt::Display for HashMapStringi32 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
@@ -124,7 +124,7 @@ impl fmt::Display for HashMapStringi32 {
 }
 /// Vector of i32 response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-pub struct Veci32(Vec<i32>);
+struct Veci32(Vec<i32>);
 impl fmt::Display for Veci32 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

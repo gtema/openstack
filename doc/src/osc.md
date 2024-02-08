@@ -18,6 +18,13 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume delete`↴](#osc-block-storage-volume-delete)
 * [`osc block-storage volume extend`↴](#osc-block-storage-volume-extend)
 * [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
+* [`osc block-storage volume metadata`↴](#osc-block-storage-volume-metadata)
+* [`osc block-storage volume metadata create`↴](#osc-block-storage-volume-metadata-create)
+* [`osc block-storage volume metadata delete`↴](#osc-block-storage-volume-metadata-delete)
+* [`osc block-storage volume metadata list`↴](#osc-block-storage-volume-metadata-list)
+* [`osc block-storage volume metadata replace`↴](#osc-block-storage-volume-metadata-replace)
+* [`osc block-storage volume metadata set`↴](#osc-block-storage-volume-metadata-set)
+* [`osc block-storage volume metadata show`↴](#osc-block-storage-volume-metadata-show)
 * [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
 * [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
@@ -464,6 +471,7 @@ Block Storage Volume commands
 * `delete` — Delete a volume
 * `extend` — Command without description in OpenAPI
 * `list` — Returns a detailed list of volumes
+* `metadata` — Volume metadata
 * `set353` — Update a volume
 * `set30` — Update a volume
 * `show` — Return data about the given volume
@@ -658,6 +666,112 @@ Returns a detailed list of volumes
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
+
+
+
+## `osc block-storage volume metadata`
+
+Volume metadata
+
+Lists metadata, creates or replaces one or more metadata items, and updates one or more metadata items for a volume.
+
+**Usage:** `osc block-storage volume metadata <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Command without description in OpenAPI
+* `delete` — Deletes an existing metadata
+* `list` — Returns the list of metadata for a given volume
+* `replace` — Command without description in OpenAPI
+* `set` — Command without description in OpenAPI
+* `show` — Return a single metadata item
+
+
+
+## `osc block-storage volume metadata create`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage volume metadata create [OPTIONS] <VOLUME_ID>`
+
+###### **Arguments:**
+
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+
+###### **Options:**
+
+* `--metadata <key=value>`
+
+
+
+## `osc block-storage volume metadata delete`
+
+Deletes an existing metadata
+
+**Usage:** `osc block-storage volume metadata delete <VOLUME_ID> <ID>`
+
+###### **Arguments:**
+
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/volumes/{volume_id}/metadata/{id} API
+
+
+
+## `osc block-storage volume metadata list`
+
+Returns the list of metadata for a given volume
+
+**Usage:** `osc block-storage volume metadata list <VOLUME_ID>`
+
+###### **Arguments:**
+
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+
+
+
+## `osc block-storage volume metadata replace`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage volume metadata replace [OPTIONS] <VOLUME_ID>`
+
+###### **Arguments:**
+
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+
+###### **Options:**
+
+* `--metadata <key=value>`
+
+
+
+## `osc block-storage volume metadata set`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage volume metadata set [OPTIONS] <VOLUME_ID> <ID>`
+
+###### **Arguments:**
+
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/volumes/{volume_id}/metadata/{id} API
+
+###### **Options:**
+
+* `--meta <key=value>`
+
+
+
+## `osc block-storage volume metadata show`
+
+Return a single metadata item
+
+**Usage:** `osc block-storage volume metadata show <VOLUME_ID> <ID>`
+
+###### **Arguments:**
+
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/volumes/{volume_id}/metadata/{id} API
 
 
 
@@ -1838,7 +1952,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -1848,11 +1962,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -1921,7 +2035,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -1931,11 +2045,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2004,7 +2118,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2014,11 +2128,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2086,7 +2200,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2096,11 +2210,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2166,7 +2280,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2176,11 +2290,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2246,7 +2360,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2256,11 +2370,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2325,7 +2439,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2335,11 +2449,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2405,7 +2519,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2415,11 +2529,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 
@@ -2484,7 +2598,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--none-networks|--auto-networks>`
+**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
 
 ###### **Options:**
 
@@ -2494,11 +2608,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
 * `--networks <JSON>`
-* `--none-networks`
+* `--auto-networks`
 
   Possible values: `true`, `false`
 
-* `--auto-networks`
+* `--none-networks`
 
   Possible values: `true`, `false`
 

@@ -36,7 +36,6 @@ use crate::StructTable;
 use clap::ValueEnum;
 use openstack_sdk::api::compute::v2::server::os_get_vncconsole_21;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Gets a VNC console for a server.
@@ -65,13 +64,13 @@ pub struct ServerCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 
@@ -91,39 +90,16 @@ struct OsGetVncconsole {
 
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
-    /// The remote console object.
-    #[serde()]
-    #[structable()]
-    console: ResponseConsole,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseConsole {
+struct ResponseData {
+    /// The type of VNC console. The only valid value is `novnc`.
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     _type: Option<String>,
-    url: Option<String>,
-}
 
-impl fmt::Display for ResponseConsole {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "_type={}",
-                self._type
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "url={}",
-                self.url
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
+    /// The URL used to connect to the VNC console.
+    #[serde()]
+    #[structable(optional)]
+    url: Option<String>,
 }
 
 impl ServerCommand {

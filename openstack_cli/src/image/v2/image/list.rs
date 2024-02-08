@@ -37,7 +37,6 @@ use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-
 use std::fmt;
 use structable_derive::StructTable;
 

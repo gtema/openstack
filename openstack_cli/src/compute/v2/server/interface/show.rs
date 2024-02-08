@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::interface::get;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Shows details for a port interface that is attached to a server.
@@ -57,26 +57,26 @@ pub struct InterfaceCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Interface response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// Fixed IP addresses with subnet IDs.
     #[serde()]
     #[structable(optional)]
-    fixed_ips: Option<VecResponseFixedIps>,
+    fixed_ips: Option<Value>,
 
     /// The MAC address.
     #[serde()]
@@ -105,50 +105,6 @@ pub struct ResponseData {
     #[serde()]
     #[structable(optional)]
     tag: Option<String>,
-}
-/// struct response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseFixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
-}
-
-impl fmt::Display for ResponseFixedIps {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "ip_address={}",
-                self.ip_address
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "subnet_id={}",
-                self.subnet_id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of ResponseFixedIps response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-pub struct VecResponseFixedIps(Vec<ResponseFixedIps>);
-impl fmt::Display for VecResponseFixedIps {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl InterfaceCommand {

@@ -70,7 +70,7 @@ struct PathParameters {
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
-    #[arg(value_name = "GROUP_ID", id = "path_param_group_id")]
+    #[arg(id = "path_param_group_id", value_name = "GROUP_ID")]
     group_id: String,
 }
 /// Roles response representation

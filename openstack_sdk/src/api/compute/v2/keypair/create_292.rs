@@ -26,9 +26,9 @@ use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
-use serde::Serialize;
 
 use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -151,7 +151,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("keypair".into())
     }
 
     /// Returns headers to be set into the request
@@ -162,12 +162,12 @@ impl<'a> RestEndpoint for Request<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-
     use serde_json::json;
 
     #[test]
@@ -190,18 +190,21 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .keypair(
-                KeypairBuilder::default()
-                    .name("foo")
-                    .public_key("foo")
-                    .build()
-                    .unwrap()
-            )
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert_eq!(
+            Request::builder()
+                .keypair(
+                    KeypairBuilder::default()
+                        .name("foo")
+                        .public_key("foo")
+                        .build()
+                        .unwrap()
+                )
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "keypair"
+        );
     }
 
     #[test]
@@ -213,7 +216,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "keypair": {} }));
         });
 
         let endpoint = Request::builder()
@@ -240,7 +243,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "keypair": {} }));
         });
 
         let endpoint = Request::builder()

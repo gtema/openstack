@@ -59,11 +59,11 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
-    #[arg(value_name = "ROUTER_ID", id = "path_param_router_id")]
+    #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// L3Agent response representation

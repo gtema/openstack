@@ -59,18 +59,18 @@ pub struct TagCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// Tag response representation
 #[derive(Deserialize, Serialize, Clone)]
-pub struct ResponseData(String);
+struct ResponseData(String);
 
 impl StructTable for ResponseData {
     fn build(&self, _: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

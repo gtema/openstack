@@ -353,14 +353,13 @@ impl EcpCommand {
         let mut identity_builder = create::IdentityBuilder::default();
 
         identity_builder.methods(
-            &args
-                .identity
+            args.identity
                 .methods
                 .iter()
                 .map(|v| v.into())
                 .collect::<Vec<_>>(),
         );
-        if let Some(val) = &args.identity.password {
+        if let Some(val) = &&args.identity.password {
             let mut password_builder = create::PasswordBuilder::default();
             if let Some(val) = &val.user {
                 let mut user_builder = create::UserBuilder::default();
@@ -387,13 +386,13 @@ impl EcpCommand {
             }
             identity_builder.password(password_builder.build().expect("A valid object"));
         }
-        if let Some(val) = &args.identity.token {
+        if let Some(val) = &&args.identity.token {
             let mut token_builder = create::TokenBuilder::default();
 
             token_builder.id(val.id.clone());
             identity_builder.token(token_builder.build().expect("A valid object"));
         }
-        if let Some(val) = &args.identity.totp {
+        if let Some(val) = &&args.identity.totp {
             let mut totp_builder = create::TotpBuilder::default();
 
             let mut user_builder = create::TotpUserBuilder::default();
@@ -418,7 +417,7 @@ impl EcpCommand {
             totp_builder.user(user_builder.build().expect("A valid object"));
             identity_builder.totp(totp_builder.build().expect("A valid object"));
         }
-        if let Some(val) = &args.identity.application_credential {
+        if let Some(val) = &&args.identity.application_credential {
             let mut application_credential_builder =
                 create::ApplicationCredentialBuilder::default();
             if let Some(val) = &val.id {

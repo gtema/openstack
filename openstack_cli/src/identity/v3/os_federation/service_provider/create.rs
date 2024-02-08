@@ -62,7 +62,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
-    #[arg(value_name = "SP_ID", id = "path_param_sp_id")]
+    #[arg(id = "path_param_sp_id", value_name = "SP_ID")]
     sp_id: String,
 }
 /// ServiceProvider Body data

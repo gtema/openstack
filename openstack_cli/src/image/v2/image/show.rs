@@ -37,7 +37,6 @@ use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-
 use std::fmt;
 use structable_derive::StructTable;
 

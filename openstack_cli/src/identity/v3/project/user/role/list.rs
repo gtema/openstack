@@ -70,7 +70,7 @@ struct PathParameters {
 
     /// user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles
     /// API
-    #[arg(value_name = "USER_ID", id = "path_param_user_id")]
+    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
 /// Roles response representation

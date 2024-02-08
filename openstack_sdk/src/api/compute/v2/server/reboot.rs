@@ -19,9 +19,9 @@ use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
-use serde::Serialize;
 
 use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -138,19 +138,19 @@ impl<'a> RestEndpoint for Request<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-
     use serde_json::json;
 
     #[test]
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
+                .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -161,7 +161,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
+            .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
             .build()
             .unwrap()
             .response_key()
@@ -182,7 +182,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
+            .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -204,7 +204,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .reboot(RebootBuilder::default()._type(Type::Soft).build().unwrap())
+            .reboot(RebootBuilder::default()._type(Type::Hard).build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

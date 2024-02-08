@@ -93,7 +93,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("interfaceAttachments".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -104,12 +104,12 @@ impl<'a> RestEndpoint for Request<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-
     use serde_json::json;
 
     #[test]
@@ -122,10 +122,7 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
-            "interfaceAttachments"
-        );
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[test]
@@ -139,7 +136,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "interfaceAttachments": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder().server_id("server_id").build().unwrap();
@@ -160,7 +157,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "interfaceAttachments": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()

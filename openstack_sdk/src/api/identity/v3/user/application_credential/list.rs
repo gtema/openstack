@@ -110,12 +110,12 @@ impl<'a> RestEndpoint for Request<'a> {
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_imports)]
     use super::*;
     use crate::api::Query;
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
-
     use serde_json::json;
 
     #[test]

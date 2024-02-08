@@ -65,18 +65,18 @@ pub struct ServerPasswordCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
 /// ServerPassword response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {}
+struct ResponseData {}
 
 impl ServerPasswordCommand {
     /// Perform command action

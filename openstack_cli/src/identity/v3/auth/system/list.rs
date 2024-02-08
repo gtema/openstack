@@ -65,18 +65,17 @@ struct QueryParameters {}
 struct PathParameters {}
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, bool>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
+        rows.extend(
+            self.0
+                .iter()
+                .map(|(k, v)| Vec::from([k.clone(), v.to_string()])),
+        );
         (headers, rows)
     }
 }

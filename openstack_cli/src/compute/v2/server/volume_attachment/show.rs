@@ -33,8 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use openstack_sdk::api::compute::v2::server::volume_attachment::find;
-use openstack_sdk::api::find;
+use openstack_sdk::api::compute::v2::server::volume_attachment::get;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
@@ -57,23 +56,23 @@ pub struct VolumeAttachmentCommand {
 
 /// Query parameters
 #[derive(Args)]
-pub struct QueryParameters {}
+struct QueryParameters {}
 
 /// Path parameters
 #[derive(Args)]
-pub struct PathParameters {
+struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    #[arg(value_name = "SERVER_ID", id = "path_param_server_id")]
+    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// VolumeAttachment response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-pub struct ResponseData {
+struct ResponseData {
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     #[serde()]
     #[structable(optional)]
@@ -144,16 +143,20 @@ impl VolumeAttachmentCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut find_builder = find::Request::builder();
+        let mut ep_builder = get::Request::builder();
 
-        find_builder.server_id(&self.path.server_id);
-        find_builder.id(&self.path.id);
-        let find_ep = find_builder
+        // Set path parameters
+        ep_builder.server_id(&self.path.server_id);
+        ep_builder.id(&self.path.id);
+        // Set query parameters
+        // Set body parameters
+
+        let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
 
-        op.output_single::<ResponseData>(find_data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

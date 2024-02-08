@@ -34,7 +34,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
-
+use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::extra_spec::create;
 use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
@@ -68,23 +68,22 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
-    #[arg(value_name = "FLAVOR_ID", id = "path_param_flavor_id")]
+    #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
     flavor_id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, NumString>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
         let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
         let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
+        rows.extend(
+            self.0
+                .iter()
+                .map(|(k, v)| Vec::from([k.clone(), v.to_string()])),
+        );
         (headers, rows)
     }
 }
