@@ -58,16 +58,16 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
-    #[arg(value_name = "VOLUME_ID", id = "path_param_volume_id")]
+    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/encryption/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {

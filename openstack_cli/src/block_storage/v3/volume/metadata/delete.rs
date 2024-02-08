@@ -59,11 +59,11 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
-    #[arg(value_name = "VOLUME_ID", id = "path_param_volume_id")]
+    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Metadata response representation

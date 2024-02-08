@@ -61,7 +61,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
-    #[arg(value_name = "ID", id = "path_param_id")]
+    #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// OsUpdateReadonlyFlag Body data
@@ -73,7 +73,7 @@ struct OsUpdateReadonlyFlag {
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, serde_json::Value>);
+struct ResponseData(HashMap<String, Value>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
