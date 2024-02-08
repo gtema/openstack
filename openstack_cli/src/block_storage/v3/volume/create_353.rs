@@ -37,7 +37,6 @@ use crate::common::parse_key_val;
 use openstack_sdk::api::block_storage::v3::volume::create_353;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-
 use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;

@@ -63,7 +63,7 @@ struct PathParameters {
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(value_name = "ID", id = "path_param_id")]
     id: String,
 }
 /// Metadata response representation
