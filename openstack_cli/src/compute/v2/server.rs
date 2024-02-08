@@ -25,7 +25,7 @@ mod add_floating_ip_21;
 mod add_security_group;
 mod change_password;
 mod confirm_resize;
-mod create_20;
+// mod create_20;
 mod create_21;
 mod create_219;
 mod create_232;
@@ -61,10 +61,11 @@ mod metadata;
 mod migrate_256;
 mod migration;
 mod os_get_console_output;
-mod os_get_rdpconsole_21;
-mod os_get_serial_console_21;
-mod os_get_spiceconsole_21;
-mod os_get_vncconsole_21;
+// Comment out deprecated APIs
+// mod os_get_rdpconsole_21;
+// mod os_get_serial_console_21;
+// mod os_get_spiceconsole_21;
+// mod os_get_vncconsole_21;
 mod os_migrate_live_20;
 mod os_migrate_live_225;
 mod os_migrate_live_230;
@@ -96,7 +97,7 @@ mod security_group {
     pub(super) mod list;
 }
 mod server_password;
-mod set_20;
+// mod set_20;
 mod set_21;
 mod set_219;
 mod set_290;
