@@ -18,6 +18,7 @@
 //! `/v3/services` REST operations of identity
 pub mod create;
 pub mod delete;
+pub mod find;
 pub mod get;
 pub mod head;
 pub mod list;

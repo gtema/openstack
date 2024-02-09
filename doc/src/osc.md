@@ -668,6 +668,9 @@ Returns a detailed list of volumes
 * `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of < key > [: < direction > ]. A valid direction is asc (ascending) or desc (descending)
 * `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
 * `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+
+  Possible values: `asc`, `desc`
+
 * `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
 * `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
@@ -1417,7 +1420,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 * `--min-ram <MIN_RAM>`
 * `--min-disk <MIN_DISK>`
 * `--sort-key <SORT_KEY>`
+
+  Possible values: `created_at`, `description`, `disabled`, `ephemeral_gb`, `flavorid`, `id`, `is_public`, `memory_mb`, `name`, `root_gb`, `rxtx_factor`, `swap`, `updated_at`, `vcpu_weight`, `vcpus`
+
 * `--sort-dir <SORT_DIR>`
+
+  Possible values: `asc`, `desc`
+
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -3425,6 +3434,9 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 * `--auto-disk-config <AUTO_DISK_CONFIG>`
 * `--progress <PROGRESS>`
 * `--sort-key <SORT_KEY>`
+
+  Possible values: `access_ip_v4`, `access_ip_v6`, `auto_disk_config`, `availability_zone`, `config_drive`, `created_at`, `display_description`, `display_name`, `host`, `hostname`, `image_ref`, `instance_type_id`, `kernel_id`, `key_name`, `launch_index`, `launched_at`, `locked`, `locked_by`, `node`, `power_state`, `progress`, `project_id`, `ramdisk_id`, `root_device_name`, `task_state`, `terminated_at`, `updated_at`, `user_id`, `uuid`, `vm_state`
+
 * `--sort-dir <SORT_DIR>`
 * `--all-tenants <ALL_TENANTS>`
 * `--soft-deleted <SOFT_DELETED>`
@@ -6919,16 +6931,25 @@ Error response codes: 400, 401, 403
 * `--status <STATUS>` — Filters the response by an image status
 * `--tag <TAG>` — Filters the response by the specified tag value. May be repeated, but keep in mind that you're making a conjunctive query, so only images containing all the tags specified will appear in the response
 * `--visibility <VISIBILITY>` — Filters the response by an image visibility value. A valid value is public, private, community, shared, or all. (Note that if you filter on shared, the images included in the response will only be those where your member status is accepted unless you explicitly include a member_status filter in the request.) If you omit this parameter, the response shows public, private, and those shared images with a member status of accepted
+
+  Possible values: `all`, `community`, `private`, `public`, `shared`
+
 * `--os-hidden <OS_HIDDEN>` — When true, filters the response to display only "hidden" images. By default, "hidden" images are not included in the image-list response. (Since Image API v2.7)
 
   Possible values: `true`, `false`
 
 * `--member-status <MEMBER_STATUS>` — Filters the response by a member status. A valid value is accepted, pending, rejected, or all. Default is accepted
+
+  Possible values: `accepted`, `all`, `pending`, `rejected`
+
 * `--size-max <SIZE_MAX>` — Filters the response by a maximum image size, in bytes
 * `--size-min <SIZE_MIN>` — Filters the response by a minimum image size, in bytes
 * `--created-at <CREATED_AT>` — Specify a comparison filter based on the date and time when the resource was created
 * `--updated-at <UPDATED_AT>` — Specify a comparison filter based on the date and time when the resource was most recently modified
 * `--sort-dir <SORT_DIR>` — Sorts the response by a set of one or more sort direction and attribute (sort_key) combinations. A valid value for the sort direction is asc (ascending) or desc (descending). If you omit the sort direction in a set, the default is desc
+
+  Possible values: `asc`, `desc`
+
 * `--sort-key <SORT_KEY>` — Sorts the response by an attribute, such as name, id, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key image attribute
 * `--sort <SORT>` — Sorts the response by one or more attribute and sort direction combinations. You can also set multiple sort keys and directions. Default direction is desc. Use the comma (,) character to separate multiple values. For example: `sort=name:asc,status:desc`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
@@ -8067,7 +8088,13 @@ Error response codes: 401
   Possible values: `true`, `false`
 
 * `--ipv6-ra-mode <IPV6_RA_MODE>` — ipv6_ra_mode query parameter for /v2.0/subnets API
+
+  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
+
 * `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — ipv6_address_mode query parameter for /v2.0/subnets API
+
+  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
+
 * `--shared <SHARED>` — shared query parameter for /v2.0/subnets API
 
   Possible values: `true`, `false`

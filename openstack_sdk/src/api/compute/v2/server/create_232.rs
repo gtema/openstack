@@ -918,8 +918,8 @@ mod tests {
             Request::builder()
                 .server(
                     ServerBuilder::default()
-                        .name("foo")
                         .flavor_ref("foo")
+                        .name("foo")
                         .build()
                         .unwrap()
                 )
@@ -935,8 +935,8 @@ mod tests {
         assert!(Request::builder()
             .server(
                 ServerBuilder::default()
-                    .name("foo")
                     .flavor_ref("foo")
+                    .name("foo")
                     .build()
                     .unwrap()
             )
@@ -961,8 +961,8 @@ mod tests {
         let endpoint = Request::builder()
             .server(
                 ServerBuilder::default()
-                    .name("foo")
                     .flavor_ref("foo")
+                    .name("foo")
                     .build()
                     .unwrap(),
             )
@@ -988,8 +988,8 @@ mod tests {
         let endpoint = Request::builder()
             .server(
                 ServerBuilder::default()
-                    .name("foo")
                     .flavor_ref("foo")
+                    .name("foo")
                     .build()
                     .unwrap(),
             )

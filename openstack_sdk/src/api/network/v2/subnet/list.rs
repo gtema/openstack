@@ -53,8 +53,8 @@ pub struct Request<'a> {
     name: Option<Cow<'a, str>>,
 
     /// ip_version query parameter for /v2.0/subnets API
-    #[builder(default, setter(into))]
-    ip_version: Option<Cow<'a, str>>,
+    #[builder(default)]
+    ip_version: Option<i32>,
 
     /// network_id query parameter for /v2.0/subnets API
     #[builder(default, setter(into))]
@@ -220,7 +220,7 @@ impl<'a> RestEndpoint for Request<'a> {
         let mut params = QueryParams::default();
         params.push_opt("id", self.id.as_ref());
         params.push_opt("name", self.name.as_ref());
-        params.push_opt("ip_version", self.ip_version.as_ref());
+        params.push_opt("ip_version", self.ip_version);
         params.push_opt("network_id", self.network_id.as_ref());
         params.push_opt("subnetpool_id", self.subnetpool_id.as_ref());
         params.push_opt("cidr", self.cidr.as_ref());

@@ -139,7 +139,7 @@ mod tests {
             Request::builder()
                 .os_reset_state(
                     OsResetStateBuilder::default()
-                        .state(State::Error)
+                        .state(State::Active)
                         .build()
                         .unwrap()
                 )
@@ -155,7 +155,7 @@ mod tests {
         assert!(Request::builder()
             .os_reset_state(
                 OsResetStateBuilder::default()
-                    .state(State::Error)
+                    .state(State::Active)
                     .build()
                     .unwrap()
             )
@@ -181,7 +181,7 @@ mod tests {
             .id("id")
             .os_reset_state(
                 OsResetStateBuilder::default()
-                    .state(State::Error)
+                    .state(State::Active)
                     .build()
                     .unwrap(),
             )
@@ -208,7 +208,7 @@ mod tests {
             .id("id")
             .os_reset_state(
                 OsResetStateBuilder::default()
-                    .state(State::Error)
+                    .state(State::Active)
                     .build()
                     .unwrap(),
             )

@@ -69,7 +69,7 @@ struct QueryParameters {
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API
-    #[arg(long)]
+    #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers

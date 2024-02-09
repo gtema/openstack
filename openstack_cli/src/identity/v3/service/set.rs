@@ -33,6 +33,8 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use openstack_sdk::api::find;
+use openstack_sdk::api::identity::v3::service::find;
 use openstack_sdk::api::identity::v3::service::set;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
@@ -144,10 +146,21 @@ impl ServiceCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
+        let mut find_builder = find::Request::builder();
+
+        find_builder.id(&self.path.id);
+        let find_ep = find_builder
+            .build()
+            .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+        let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
-        ep_builder.id(&self.path.id);
+        let resource_id = find_data["id"]
+            .as_str()
+            .expect("Resource ID is a string")
+            .to_string();
+        ep_builder.id(resource_id.clone());
         // Set query parameters
         // Set body parameters
         // Set Request.service data

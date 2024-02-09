@@ -67,7 +67,7 @@ struct QueryParameters {
     vif_type: Option<String>,
 
     /// vnic_type query parameter for /v2.0/ports/{port_id}/bindings API
-    #[arg(long)]
+    #[arg(long, value_parser = ["accelerator-direct","accelerator-direct-physical","baremetal","direct","direct-physical","macvtap","normal","remote-managed","smart-nic","vdpa","virtio-forwarder"])]
     vnic_type: Option<String>,
 
     /// status query parameter for /v2.0/ports/{port_id}/bindings API

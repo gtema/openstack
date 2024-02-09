@@ -171,7 +171,7 @@ struct QueryParameters {
     #[arg(long)]
     progress: Option<String>,
 
-    #[arg(long)]
+    #[arg(long, value_parser = ["access_ip_v4","access_ip_v6","auto_disk_config","availability_zone","config_drive","created_at","display_description","display_name","host","hostname","image_ref","instance_type_id","kernel_id","key_name","launch_index","launched_at","locked","locked_by","node","power_state","progress","project_id","ramdisk_id","root_device_name","task_state","terminated_at","updated_at","user_id","uuid","vm_state"])]
     sort_key: Option<String>,
 
     #[arg(long)]
