@@ -190,8 +190,8 @@ mod tests {
             Request::builder()
                 .remote_console(
                     RemoteConsoleBuilder::default()
-                        .protocol(Protocol::Mks)
                         ._type(Type::Novnc)
+                        .protocol(Protocol::Mks)
                         .build()
                         .unwrap()
                 )
@@ -208,8 +208,8 @@ mod tests {
             Request::builder()
                 .remote_console(
                     RemoteConsoleBuilder::default()
-                        .protocol(Protocol::Mks)
                         ._type(Type::Novnc)
+                        .protocol(Protocol::Mks)
                         .build()
                         .unwrap()
                 )
@@ -239,8 +239,8 @@ mod tests {
             .server_id("server_id")
             .remote_console(
                 RemoteConsoleBuilder::default()
-                    .protocol(Protocol::Mks)
                     ._type(Type::Novnc)
+                    .protocol(Protocol::Mks)
                     .build()
                     .unwrap(),
             )
@@ -270,8 +270,8 @@ mod tests {
             .server_id("server_id")
             .remote_console(
                 RemoteConsoleBuilder::default()
-                    .protocol(Protocol::Mks)
                     ._type(Type::Novnc)
+                    .protocol(Protocol::Mks)
                     .build()
                     .unwrap(),
             )

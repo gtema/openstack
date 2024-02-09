@@ -80,7 +80,7 @@ struct QueryParameters {
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
-    #[arg(long)]
+    #[arg(long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Requests a page size of items. Returns a number of items up to a limit

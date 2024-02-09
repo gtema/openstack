@@ -206,10 +206,10 @@ mod tests {
             Request::builder()
                 .flavor(
                     FlavorBuilder::default()
+                        .disk("foo")
                         .name("foo")
                         .ram("foo")
                         .vcpus("foo")
-                        .disk("foo")
                         .build()
                         .unwrap()
                 )
@@ -226,10 +226,10 @@ mod tests {
             Request::builder()
                 .flavor(
                     FlavorBuilder::default()
+                        .disk("foo")
                         .name("foo")
                         .ram("foo")
                         .vcpus("foo")
-                        .disk("foo")
                         .build()
                         .unwrap()
                 )
@@ -256,10 +256,10 @@ mod tests {
         let endpoint = Request::builder()
             .flavor(
                 FlavorBuilder::default()
+                    .disk("foo")
                     .name("foo")
                     .ram("foo")
                     .vcpus("foo")
-                    .disk("foo")
                     .build()
                     .unwrap(),
             )
@@ -285,10 +285,10 @@ mod tests {
         let endpoint = Request::builder()
             .flavor(
                 FlavorBuilder::default()
+                    .disk("foo")
                     .name("foo")
                     .ram("foo")
                     .vcpus("foo")
-                    .disk("foo")
                     .build()
                     .unwrap(),
             )

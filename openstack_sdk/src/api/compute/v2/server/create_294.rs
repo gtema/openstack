@@ -980,8 +980,8 @@ mod tests {
             Request::builder()
                 .server(
                     ServerBuilder::default()
-                        .name("foo")
                         .flavor_ref("foo")
+                        .name("foo")
                         .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
                             .build()
                             .unwrap()])))
@@ -1000,8 +1000,8 @@ mod tests {
         assert!(Request::builder()
             .server(
                 ServerBuilder::default()
-                    .name("foo")
                     .flavor_ref("foo")
+                    .name("foo")
                     .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
                         .build()
                         .unwrap()])))
@@ -1029,8 +1029,8 @@ mod tests {
         let endpoint = Request::builder()
             .server(
                 ServerBuilder::default()
-                    .name("foo")
                     .flavor_ref("foo")
+                    .name("foo")
                     .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
                         .build()
                         .unwrap()])))
@@ -1059,8 +1059,8 @@ mod tests {
         let endpoint = Request::builder()
             .server(
                 ServerBuilder::default()
-                    .name("foo")
                     .flavor_ref("foo")
+                    .name("foo")
                     .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
                         .build()
                         .unwrap()])))

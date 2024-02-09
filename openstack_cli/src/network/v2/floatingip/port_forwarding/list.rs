@@ -80,7 +80,7 @@ struct QueryParameters {
 
     /// protocol query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    #[arg(long)]
+    #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 
     /// internal_port_id query parameter for

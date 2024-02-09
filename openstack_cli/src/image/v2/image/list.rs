@@ -218,7 +218,7 @@ struct QueryParameters {
     /// member_status filter in the request.) If you omit this parameter, the
     /// response shows public, private, and those shared images with a member
     /// status of accepted.
-    #[arg(long)]
+    #[arg(long, value_parser = ["all","community","private","public","shared"])]
     visibility: Option<String>,
 
     /// When true, filters the response to display only "hidden" images. By
@@ -229,7 +229,7 @@ struct QueryParameters {
 
     /// Filters the response by a member status. A valid value is accepted,
     /// pending, rejected, or all. Default is accepted.
-    #[arg(long)]
+    #[arg(long, value_parser = ["accepted","all","pending","rejected"])]
     member_status: Option<String>,
 
     /// Filters the response by a maximum image size, in bytes.
@@ -254,7 +254,7 @@ struct QueryParameters {
     /// (sort_key) combinations. A valid value for the sort direction is asc
     /// (ascending) or desc (descending). If you omit the sort direction in a
     /// set, the default is desc.
-    #[arg(long)]
+    #[arg(long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts the response by an attribute, such as name, id, or updated_at.

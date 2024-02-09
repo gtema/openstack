@@ -169,8 +169,8 @@ mod tests {
             Request::builder()
                 .create_backup(
                     CreateBackupBuilder::default()
-                        .name("foo")
                         .backup_type("foo")
+                        .name("foo")
                         .rotation("foo")
                         .build()
                         .unwrap()
@@ -187,8 +187,8 @@ mod tests {
         assert!(Request::builder()
             .create_backup(
                 CreateBackupBuilder::default()
-                    .name("foo")
                     .backup_type("foo")
+                    .name("foo")
                     .rotation("foo")
                     .build()
                     .unwrap()
@@ -215,8 +215,8 @@ mod tests {
             .id("id")
             .create_backup(
                 CreateBackupBuilder::default()
-                    .name("foo")
                     .backup_type("foo")
+                    .name("foo")
                     .rotation("foo")
                     .build()
                     .unwrap(),
@@ -244,8 +244,8 @@ mod tests {
             .id("id")
             .create_backup(
                 CreateBackupBuilder::default()
-                    .name("foo")
                     .backup_type("foo")
+                    .name("foo")
                     .rotation("foo")
                     .build()
                     .unwrap(),

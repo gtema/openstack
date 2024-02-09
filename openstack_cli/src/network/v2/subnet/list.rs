@@ -82,7 +82,7 @@ struct QueryParameters {
 
     /// ip_version query parameter for /v2.0/subnets API
     #[arg(long)]
-    ip_version: Option<String>,
+    ip_version: Option<i32>,
 
     /// network_id query parameter for /v2.0/subnets API
     #[arg(long)]
@@ -109,11 +109,11 @@ struct QueryParameters {
     enable_dhcp: Option<bool>,
 
     /// ipv6_ra_mode query parameter for /v2.0/subnets API
-    #[arg(long)]
+    #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_ra_mode: Option<String>,
 
     /// ipv6_address_mode query parameter for /v2.0/subnets API
-    #[arg(long)]
+    #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_address_mode: Option<String>,
 
     /// shared query parameter for /v2.0/subnets API
@@ -313,7 +313,7 @@ impl SubnetsCommand {
             ep_builder.name(val.clone());
         }
         if let Some(val) = &self.query.ip_version {
-            ep_builder.ip_version(val.clone());
+            ep_builder.ip_version(*val);
         }
         if let Some(val) = &self.query.network_id {
             ep_builder.network_id(val.clone());

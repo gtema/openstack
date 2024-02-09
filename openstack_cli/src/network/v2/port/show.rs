@@ -235,7 +235,7 @@ struct ResponseData {
     /// like nova that the hybrid plugging strategy for OVS should be used.
     #[serde(rename = "binding:vif_details")]
     #[structable(optional, title = "binding:vif_details")]
-    binding_vif_details: Option<String>,
+    binding_vif_details: Option<HashMapStringValue>,
 
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port.
