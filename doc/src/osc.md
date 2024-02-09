@@ -205,6 +205,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity application-credential delete`↴](#osc-identity-application-credential-delete)
 * [`osc identity application-credential list`↴](#osc-identity-application-credential-list)
 * [`osc identity application-credential show`↴](#osc-identity-application-credential-show)
+* [`osc identity endpoint`↴](#osc-identity-endpoint)
+* [`osc identity endpoint create`↴](#osc-identity-endpoint-create)
+* [`osc identity endpoint delete`↴](#osc-identity-endpoint-delete)
+* [`osc identity endpoint list`↴](#osc-identity-endpoint-list)
+* [`osc identity endpoint set`↴](#osc-identity-endpoint-set)
+* [`osc identity endpoint show`↴](#osc-identity-endpoint-show)
 * [`osc identity federation`↴](#osc-identity-federation)
 * [`osc identity federation identity-provider`↴](#osc-identity-federation-identity-provider)
 * [`osc identity federation identity-provider create`↴](#osc-identity-federation-identity-provider-create)
@@ -238,6 +244,18 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity project list`↴](#osc-identity-project-list)
 * [`osc identity project set`↴](#osc-identity-project-set)
 * [`osc identity project show`↴](#osc-identity-project-show)
+* [`osc identity region`↴](#osc-identity-region)
+* [`osc identity region create`↴](#osc-identity-region-create)
+* [`osc identity region delete`↴](#osc-identity-region-delete)
+* [`osc identity region list`↴](#osc-identity-region-list)
+* [`osc identity region set`↴](#osc-identity-region-set)
+* [`osc identity region show`↴](#osc-identity-region-show)
+* [`osc identity service`↴](#osc-identity-service)
+* [`osc identity service create`↴](#osc-identity-service-create)
+* [`osc identity service delete`↴](#osc-identity-service-delete)
+* [`osc identity service list`↴](#osc-identity-service-list)
+* [`osc identity service set`↴](#osc-identity-service-set)
+* [`osc identity service show`↴](#osc-identity-service-show)
 * [`osc identity user`↴](#osc-identity-user)
 * [`osc identity user create`↴](#osc-identity-user-create)
 * [`osc identity user delete`↴](#osc-identity-user-delete)
@@ -5314,8 +5332,11 @@ Identity (Keystone) commands
 
 * `access-rule` — **Application Credentials - Access Rules**
 * `application-credential` — **Application Credentials**
+* `endpoint` — Endpoint commands
 * `federation` — OS-Federation
 * `project` — Identity Project commands
+* `region` — Region commands
+* `service` — Service commands
 * `user` — User commands
 
 
@@ -5519,6 +5540,112 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 * `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+
+
+## `osc identity endpoint`
+
+Endpoint commands
+
+**Usage:** `osc identity endpoint <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create endpoint
+* `delete` — Delete endpoint
+* `list` — List endpoints
+* `set` — Update endpoint
+* `show` — Show endpoint details
+
+
+
+## `osc identity endpoint create`
+
+Creates an endpoint.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+
+**Usage:** `osc identity endpoint create [OPTIONS] --interface <INTERFACE> --service-id <SERVICE_ID> --url <URL>`
+
+###### **Options:**
+
+* `--enabled <ENABLED>` — Defines whether the endpoint appears in the service catalog: - `false`. The endpoint does not appear in the service catalog. - `true`. The endpoint appears in the service catalog. Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--interface <INTERFACE>` — The interface type, which describes the visibility of the endpoint. Value is: - `public`. Visible by end users on a publicly available network interface. - `internal`. Visible by end users on an unmetered internal network interface. - `admin`. Visible by administrative users on a secure network interface
+
+  Possible values: `admin`, `internal`, `public`
+
+* `--region <REGION>` — The geographic location of the service endpoint
+* `--region-id <REGION_ID>` — (Since v3.2) The ID of the region that contains the service endpoint
+* `--service-id <SERVICE_ID>` — The UUID of the service to which the endpoint belongs
+* `--url <URL>` — The endpoint URL
+
+
+
+## `osc identity endpoint delete`
+
+Deletes an endpoint.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint`
+
+**Usage:** `osc identity endpoint delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+
+
+
+## `osc identity endpoint list`
+
+Lists all available endpoints.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+
+**Usage:** `osc identity endpoint list [OPTIONS]`
+
+###### **Options:**
+
+* `--service-id <SERVICE_ID>` — Filters the response by a service ID
+* `--region <REGION>` — Filters the response by a region ID
+* `--interface <INTERFACE>` — Filters the response by an interface
+
+  Possible values: `admin`, `internal`, `public`
+
+
+
+
+## `osc identity endpoint set`
+
+Updates an endpoint.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint`
+
+**Usage:** `osc identity endpoint set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity endpoint show`
+
+Shows details for an endpoint.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+
+**Usage:** `osc identity endpoint show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
 
 
 
@@ -6098,6 +6225,224 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 ###### **Arguments:**
 
 * `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity region`
+
+Region commands
+
+A region is a general division of an OpenStack deployment. You can associate zero or more sub-regions with a region to create a tree- like structured hierarchy.
+
+Although a region does not have a geographical connotation, a deployment can use a geographical name for a region ID, such as us- east.
+
+You can list, create, update, show details for, and delete regions.
+
+**Usage:** `osc identity region <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create region
+* `delete` — Delete region
+* `list` — List regions
+* `set` — Update region
+* `show` — Show region details
+
+
+
+## `osc identity region create`
+
+Creates a region.
+
+When you create the region, you can optionally specify a region ID. If you include characters in the region ID that are not allowed in a URI, you must URL-encode the ID. If you omit an ID, the API assigns an ID to the region.
+
+The following errors might occur:
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+
+**Usage:** `osc identity region create [OPTIONS]`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The region description
+* `--id <ID>` — The ID for the region
+* `--parent-id <PARENT_ID>` — To make this region a child of another region, set this parameter to the ID of the parent region
+
+
+
+## `osc identity region delete`
+
+Deletes a region.
+
+The following error might occur:
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
+
+**Usage:** `osc identity region delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — region_id parameter for /v3/regions/{region_id} API
+
+
+
+## `osc identity region list`
+
+Lists regions.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+
+**Usage:** `osc identity region list [OPTIONS]`
+
+###### **Options:**
+
+* `--parent-region-id <PARENT_REGION_ID>` — Filters the response by a parent region, by ID
+
+
+
+## `osc identity region set`
+
+Updates a region.
+
+You can update the description or parent region ID for a region. You cannot update the region ID.
+
+The following error might occur:
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
+
+**Usage:** `osc identity region set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — region_id parameter for /v3/regions/{region_id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The region description
+* `--id <ID>` — The ID for the region
+* `--parent-id <PARENT_ID>` — To make this region a child of another region, set this parameter to the ID of the parent region
+
+
+
+## `osc identity region show`
+
+Shows details for a region, by ID.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+
+**Usage:** `osc identity region show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — region_id parameter for /v3/regions/{region_id} API
+
+
+
+## `osc identity service`
+
+Service commands
+
+A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
+
+**Usage:** `osc identity service <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create service
+* `delete` — Delete service
+* `list` — List services
+* `set` — Update service
+* `show` — Show service details
+
+
+
+## `osc identity service create`
+
+Creates a service.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+
+**Usage:** `osc identity service create [OPTIONS] --type <TYPE>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The service description
+* `--enabled <ENABLED>` — Defines whether the service and its endpoints appear in the service catalog: - `false`. The service and its endpoints do not appear in the service catalog. - `true`. The service and its endpoints appear in the service catalog
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The service name
+* `--type <TYPE>` — The service type, which describes the API implemented by the service. Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`
+
+
+
+## `osc identity service delete`
+
+Deletes a service.
+
+If you try to delete a service that still has associated endpoints, this call either deletes all associated endpoints or fails until all endpoints are deleted.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
+
+**Usage:** `osc identity service delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — service_id parameter for /v3/services/{service_id} API
+
+
+
+## `osc identity service list`
+
+Lists all services.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+
+**Usage:** `osc identity service list [OPTIONS]`
+
+###### **Options:**
+
+* `--service <SERVICE>` — Filters the response by a domain ID
+
+
+
+## `osc identity service set`
+
+Updates a service.
+
+The request body is the same as the create service request body, except that you include only those attributes that you want to update.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+
+**Usage:** `osc identity service set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — service_id parameter for /v3/services/{service_id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The service description
+* `--enabled <ENABLED>` — Defines whether the service and its endpoints appear in the service catalog: - `false`. The service and its endpoints do not appear in the service catalog. - `true`. The service and its endpoints appear in the service catalog. Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The service name
+* `--type <TYPE>` — The service type, which describes the API implemented by the service. Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`
+
+
+
+## `osc identity service show`
+
+Shows details for a service.
+
+Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
+
+**Usage:** `osc identity service show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — service_id parameter for /v3/services/{service_id} API
 
 
 

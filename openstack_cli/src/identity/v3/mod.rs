@@ -19,8 +19,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod endpoint;
 mod os_federation;
 mod project;
+mod region;
+mod service;
 mod user;
 
 /// Identity (Keystone) commands
@@ -37,8 +40,11 @@ pub struct IdentityCommand {
 pub enum IdentityCommands {
     AccessRule(user::access_rule::AccessRuleCommand),
     ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
+    Endpoint(endpoint::EndpointCommand),
     Federation(os_federation::FederationCommand),
     Project(project::ProjectCommand),
+    Region(region::RegionCommand),
+    Service(service::ServiceCommand),
     User(user::UserCommand),
 }
 
@@ -54,8 +60,11 @@ impl IdentityCommand {
             IdentityCommands::ApplicationCredential(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
+            IdentityCommands::Endpoint(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::Region(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::Service(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
