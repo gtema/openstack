@@ -14,6 +14,8 @@
 
 mod cli {
     mod identity {
+        use assert_cmd::prelude::*;
+        use std::process::Command;
 
         // TODO(gtema): devstack regular user (the one we want to
         // use for regular tests) has no permission to list
@@ -24,6 +26,38 @@ mod cli {
         //     let mut cmd = Command::cargo_bin("osc")?;
 
         //     cmd.arg("identity").arg("project").arg("list");
+        //     cmd.assert().success();
+
+        //     Ok(())
+        // }
+        #[test]
+        #[ignore]
+        fn region_list() -> Result<(), Box<dyn std::error::Error>> {
+            let mut cmd = Command::cargo_bin("osc")?;
+
+            cmd.arg("identity").arg("region").arg("list");
+            cmd.assert().success();
+
+            Ok(())
+        }
+
+        // #[test]
+        // #[ignore]
+        // fn service_list() -> Result<(), Box<dyn std::error::Error>> {
+        //     let mut cmd = Command::cargo_bin("osc")?;
+
+        //     cmd.arg("identity").arg("service").arg("list");
+        //     cmd.assert().success();
+
+        //     Ok(())
+        // }
+
+        // #[test]
+        // #[ignore]
+        // fn endpoint_list() -> Result<(), Box<dyn std::error::Error>> {
+        //     let mut cmd = Command::cargo_bin("osc")?;
+
+        //     cmd.arg("identity").arg("endpoint").arg("list");
         //     cmd.assert().success();
 
         //     Ok(())
