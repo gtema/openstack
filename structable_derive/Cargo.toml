@@ -2,17 +2,16 @@
 name = "structable_derive"
 version = "0.1.0"
 authors = ["Artem Goncharov (gtema)"]
-license = "Apache-2.0"
 description = "A crate for 'serializing' structs as Vec<Vec<String>> tables"
-homepage = "https://github.com/gtema/vectable-derive"
-repository = "https://github.com/gtema/vectable-derive"
 categories = ["command-line-interface"]
 keywords = ["table", "cli", "format"]
 readme = "README.md"
 include = ["Cargo.toml", "src/**/*.rs", "README.md"]
-edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
 
 [dependencies]
 darling = "~0.20"
