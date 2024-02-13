@@ -1,3 +1,70 @@
+<a name=""></a>
+##  OpenStack CLI and SDK in Rust (2024-02-13)
+
+
+#### Features
+
+*   simplify invokation interface ([1328ebf3](https://github.com/gtema/openstack/commit/1328ebf3f5e0043310b00e6cdcd930d31368cdcf))
+*   switch to generated token auth code ([3ae63e93](https://github.com/gtema/openstack/commit/3ae63e93a43fbdfe29dcb2ebecebe97df94ba04c))
+*   add typos and clog ([fca2dc08](https://github.com/gtema/openstack/commit/fca2dc0813e00d33936a8302fdfd3ef2883df3d7))
+*   regenerate block_storage volume with mv support ([dbbfb862](https://github.com/gtema/openstack/commit/dbbfb86257f49a93019e2c97dbe280cce9be9321))
+*   enable help colors ([d62d0bbe](https://github.com/gtema/openstack/commit/d62d0bbe2e4f802d805c1bdf73cfb57b4e499231))
+*   major new generator content ([6449f3c6](https://github.com/gtema/openstack/commit/6449f3c6fc5f5e9a1f193134030cc308d116a4ae))
+*   add microversion base keypair mgmt ([288d884d](https://github.com/gtema/openstack/commit/288d884d9c24602a86aa9251f5c7a2ee54f08ef2))
+*   add network extension[s] command ([a33fabc1](https://github.com/gtema/openstack/commit/a33fabc1327edc0f205d21fa406b71e2a412bc04))
+*   add compute.extensions support ([6a8b89cf](https://github.com/gtema/openstack/commit/6a8b89cf5e663e927dffedd3b9e29cf13ff9ffb9))
+*   modify target url construction ([b76b6cb5](https://github.com/gtema/openstack/commit/b76b6cb5f83979ecdfa40651a73b82e42b3cce39))
+*   add IntString result type ([a78069f8](https://github.com/gtema/openstack/commit/a78069f8998be6a0736e11c22acd9021e92354fc))
+*   add block storage volume create and set ([19bc4b08](https://github.com/gtema/openstack/commit/19bc4b08d8cc838d9b0171015e88d33e007d490e))
+*   add network.availability-zone ([04076c80](https://github.com/gtema/openstack/commit/04076c800bff6b3316b0ec266f5665f04037ebac))
+*   add more network resources ([c1fcf2cc](https://github.com/gtema/openstack/commit/c1fcf2ccb1d5abff672f7160471f252146cb2dd1))
+*   add few network bindings ([e0ed6904](https://github.com/gtema/openstack/commit/e0ed69044e015290dc336839637601ad714da94c))
+*   add network.router to sdk ([113a233c](https://github.com/gtema/openstack/commit/113a233cb105912bf1de0422d69905f3614bae19))
+*   add few commands ([3e966a7a](https://github.com/gtema/openstack/commit/3e966a7a75857d01c94eb8df42ed961b6da0bc76))
+*   add volume show ([f73f19a0](https://github.com/gtema/openstack/commit/f73f19a0ad973a90942b5867e9480cec134c5869))
+*   add block_storage volume list ([887a326c](https://github.com/gtema/openstack/commit/887a326ccf2bd9ba2467772a6bd2bc2878164dc7))
+*   first usable version ([94f97186](https://github.com/gtema/openstack/commit/94f97186376d565ec0e06e5455b56167d2bd3edb))
+* **auth:**
+  *  add MFA auth support ([0656387d](https://github.com/gtema/openstack/commit/0656387ddbfae93fa017d15e8ca7254c5d1fe40b))
+  *  implement stub `osc auth login` command ([cfe92da4](https://github.com/gtema/openstack/commit/cfe92da4c58f6ad6ee4f12a94cac807bcc438cfe))
+  *  Add auth caching ([0d200faa](https://github.com/gtema/openstack/commit/0d200faa807eb8702ef2a1c11c2a4a7f6cb76356))
+* **bs:**  Add block-storage type implementation ([67d02fea](https://github.com/gtema/openstack/commit/67d02fea6ddcb3c400a9a75cfeaa6d5270fccba0))
+* **cli:**  add `osc auth show` command ([af4d2f94](https://github.com/gtema/openstack/commit/af4d2f941f21333521041832838380f3d236d5bc))
+* **compute:**
+  *  add full server implementation ([6071e2c2](https://github.com/gtema/openstack/commit/6071e2c27ff3878608825841ed114b196074eb28))
+  *  add hypervisor and aggregate commands ([c4ecdc3e](https://github.com/gtema/openstack/commit/c4ecdc3ec3b03ffe2e337dd3adb6699e78c14baf))
+  *  Add list AZ ([7a51d3a1](https://github.com/gtema/openstack/commit/7a51d3a1f4986c16c5730d4ab7bbd569da3c0f2d))
+  *  enable all compute flavor commands ([b4062069](https://github.com/gtema/openstack/commit/b40620699ddb44349ee96c7592d3c74a0148c606))
+* **doc:**
+  *  improve general documentation ([6c61a584](https://github.com/gtema/openstack/commit/6c61a5840dd642f3a8dc0b1ffeafc849c32c08d4))
+  *  update doc with latest image changes ([e25919db](https://github.com/gtema/openstack/commit/e25919dbf284492567eb187fa0d69da11586d037))
+* **identity:**
+  *  Add service, endpoint and region commands ([f3c4b731](https://github.com/gtema/openstack/commit/f3c4b731aa4a41917c461ce18a88795851029021))
+  *  Add federation implementation ([be6921fc](https://github.com/gtema/openstack/commit/be6921fc0c4db50e1863b724aa0b6e5c4789c76b))
+  *  cover application credentials commands ([23dd6cef](https://github.com/gtema/openstack/commit/23dd6cef52ce0a47787015d0281464b191db6124))
+  *  Add user mgmt commands ([1c99817a](https://github.com/gtema/openstack/commit/1c99817a2b3d5588eeeff17ed9f10e06ce8a555a))
+  *  add project support ([4bd8681d](https://github.com/gtema/openstack/commit/4bd8681d5ad52629a3255ac8b1500ce66359c9a1))
+* **network:**  Add floatingip implementation ([cbf5d7ac](https://github.com/gtema/openstack/commit/cbf5d7ac67f992f921f49db2650b1e9023271f25))
+* **output:**  Output all available attributes by default ([1ce4bf7b](https://github.com/gtema/openstack/commit/1ce4bf7b3990a0f94808bffb68839d83f1753c8e))
+* **volme:**  Add volume metadata ([e06e91f0](https://github.com/gtema/openstack/commit/e06e91f043240f2bf3245dcd4a6821f0121fd2e5))
+* **volume:**
+  *  improve volume actions schema ([f22abc1c](https://github.com/gtema/openstack/commit/f22abc1c6017f36ac05eff33ff6b3fc623b97a40))
+  *  add volume resize ([d147979f](https://github.com/gtema/openstack/commit/d147979f4dd77e088e66cdd9a4f4df2b24ae8f39))
+  *  Activate block_storage.volume set command ([422f2ffd](https://github.com/gtema/openstack/commit/422f2ffdc0e8e2db75fcb0e018ee7290947836a7))
+
+#### Bug Fixes
+
+*   correct docstrings containing codeblocks ([eef6e300](https://github.com/gtema/openstack/commit/eef6e3009c813e63ef8b23389c836b8bd41ea79b))
+*   deduplicate project_id in url ([9050d095](https://github.com/gtema/openstack/commit/9050d09538645c7eb6c6b74da838c7d03906a0d3))
+*   flavor.swap can be empty string ([bb95daf1](https://github.com/gtema/openstack/commit/bb95daf175b00e69830a1efcf0730b9bedc8f648))
+*   only use url from discovery if it is more preciese ([ee6a58be](https://github.com/gtema/openstack/commit/ee6a58be75eeba32d3407939bec21ca2b5713e73))
+*   drop few tricky image fields ([3e54aa68](https://github.com/gtema/openstack/commit/3e54aa6817089217508dd664b50068c4be2dc6f0))
+*   post keypair require wrapping container ([1285951d](https://github.com/gtema/openstack/commit/1285951d5f4ded063a70bb1cfea76b5ee87f1ee5))
+* **auth:**  add missed doc update ([8118fd2a](https://github.com/gtema/openstack/commit/8118fd2a49d384cf8d348aca8916802889bb6796))
+* **sdk:**  ensure microversion header can be overridden ([e304a25f](https://github.com/gtema/openstack/commit/e304a25ff31a88e88357c443956058e6f58e73d1))
+
+
+
 CHANGES
 =======
 
