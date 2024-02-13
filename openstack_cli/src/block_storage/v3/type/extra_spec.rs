@@ -12,33 +12,39 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Block storage v3 commands
+//! Block Storage Type Extra Specs commands
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod r#type;
-mod volume;
+mod create;
+mod delete;
+mod list;
+mod set;
+mod show;
 
-/// Block Storage (Volume) service (Cinder) commands
+/// Type extra specs
 #[derive(Parser)]
-pub struct BlockStorageCommand {
+pub struct ExtraSpecsCommand {
     /// subcommand
     #[command(subcommand)]
-    command: BlockStorageCommands,
+    command: ExtraSpecsCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum BlockStorageCommands {
-    Volume(volume::VolumeCommand),
-    Type(r#type::VolumeTypeCommand),
+pub enum ExtraSpecsCommands {
+    Create(create::ExtraSpecCommand),
+    Delete(delete::ExtraSpecCommand),
+    List(list::ExtraSpecsCommand),
+    Show(show::ExtraSpecCommand),
+    Set(set::ExtraSpecCommand),
 }
 
-impl BlockStorageCommand {
+impl ExtraSpecsCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -46,8 +52,11 @@ impl BlockStorageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
-            BlockStorageCommands::Type(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            ExtraSpecsCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
