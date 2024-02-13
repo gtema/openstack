@@ -8,6 +8,7 @@ members = [
 ]
 default-members = ["openstack_cli", "openstack_sdk"]
 license = "Apache-2.0"
+authors = ["Artem Goncharov (gtema)"]
 
 [workspace.dependencies]
 async-trait = { version = "~0.1" } #, optional = true }

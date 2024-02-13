@@ -1,7 +1,7 @@
 [package]
 name = "structable_derive"
 version = "0.1.0"
-authors = ["Artem Goncharov <artem.goncharov@gmail.com>"]
+authors = ["Artem Goncharov (gtema)"]
 license = "Apache-2.0"
 description = "A crate for 'serializing' structs as Vec<Vec<String>> tables"
 homepage = "https://github.com/gtema/vectable-derive"

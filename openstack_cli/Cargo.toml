@@ -3,7 +3,7 @@ name = "openstack_cli"
 version = "0.1.0"
 edition = "2021"
 authors = [
-    "Artem Goncharov",
+    "Artem Goncharov (gtema)",
 ]
 description = "OpenStack client rewritten in Rust"
 categories = ["command-line-interface"]
