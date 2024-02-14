@@ -342,7 +342,7 @@ impl ConfigFile {
 
     /// Return true if auth caching is enabled
     pub fn is_auth_cache_enabled(&self) -> bool {
-        self.cache.as_ref().and_then(|c| c.auth).unwrap_or(false)
+        self.cache.as_ref().and_then(|c| c.auth).unwrap_or(true)
     }
 }
 
@@ -351,6 +351,8 @@ mod tests {
     use crate::config;
     use std::env;
     use std::path::PathBuf;
+
+    use super::ConfigFile;
 
     #[test]
     fn test_get_search_paths() {
@@ -376,5 +378,11 @@ mod tests {
             ],
             config::get_config_file_search_paths(fname)
         );
+    }
+
+    #[test]
+    fn test_default_auth_cache_enabled() {
+        let cfg = ConfigFile::new().unwrap();
+        assert_eq!(true, cfg.is_auth_cache_enabled());
     }
 }
