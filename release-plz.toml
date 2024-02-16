@@ -1,0 +1,25 @@
+[workspace]
+allow_dirty = false
+dependencies_update = true # run `cargo update`
+git_release_enable = false
+
+[[package]]
+name = "openstack_sdk"
+git_release_enable = true
+
+[[package]]
+name = "openstack_cli"
+changelog_include = ["openstack_sdk"]
+git_release_enable = true
+
+[[package]]
+name = "structable_derive"
+git_release_enable = true
+git_tag_enable = false
+publish = false
+
+[[package]]
+name = "xtask"
+git_release_enable = false
+publish = false
+release = false
