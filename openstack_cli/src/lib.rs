@@ -12,30 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! OpenStackCLI - a.k.a. `osc` rewritten in Rust.
-//!
-//! This is a new OpenStackCLI written in Rust.
-//!
-//! Facts:
-//!  - not specifying `-o` will cause a Table output with a CLI
-//!  normalized and known attribute names only. Requesting
-//!  unsupported fields present in the API response is not going
-//!  to be supported (due to the name convention collision)
-//!
-//! - `-o wide` is still considered a human response and support
-//! normalized/supported names only
-//!
-//! - `--plain` may be implemented to output a text form table
-//! without borders and separators
-//!
-//! - `-o json` is treated as machine response and returns
-//! server side names and does not support requesting certain
-//! fields (they are not known in advance). This decision may be
-//! re-evaluated
-//!
-//! More description to come
+#![doc = include_str!("../../doc/src/osc.md")]
 #![deny(missing_docs)]
-// #![allow(unused_variables, dead_code, unused_imports)]
 use std::io::{self, IsTerminal};
 
 use clap::Parser;
