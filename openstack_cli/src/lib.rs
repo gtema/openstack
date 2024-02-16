@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![doc = include_str!("../../doc/src/osc.md")]
+#![doc = include_str!("../README.md")]
 #![deny(missing_docs)]
 use std::io::{self, IsTerminal};
 
