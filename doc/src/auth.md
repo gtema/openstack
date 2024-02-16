@@ -1,4 +1,4 @@
-## Authentication and authorization
+# Authentication and authorization
 
 Understanding authentication in OpenStack is far away from being a trivial
 task. In general authentication and authorization are different things, but
@@ -32,3 +32,91 @@ valid auth information for the requested scope if it already exists (which may
 be even shared between processes) or reuse valid authentication data to get new
 valid requested authorization saving user from need to re-process MFA or SSO
 requirements.
+
+## Configuration
+
+Rust based tools support typical
+[`clouds.yaml`/`secure.yaml`](https://docs.openstack.org/openstacksdk/latest/user/config/configuration.html)
+files for configuration.
+
+### Authentication methods
+
+Currently only a subset of all possible authentication methods is covered with
+the work on adding further method ongoing
+
+#### v3Token
+
+A most basic auth method is an API token (`X-Auth-Token`). In the `clouds.yaml`
+this requires setting `auth_type` to one of the [`v3token`, `token`]. The token
+itself should be specified in the `token` attribute.
+
+#### v3Password
+
+A most common auth method is a username/password. In the `clouds.yaml` this
+requires setting `auth_type` to one of the [`v3password`, `password`] or
+leaving it empty.
+
+Following attributes specify the authentication data:
+
+- `username` - The user name
+- `user_id` - The user ID
+- `password` - The user password
+- `user_domain_name` - The name of the domain user belongs to
+- `user_domain_id` - The ID of the domain user belongs to
+
+It is required to specify `username` or `user_id` as well as `user_domain_name`
+or `user_domain_id`.
+
+
+#### v3Totp
+
+Once user login is protected with the MFA a OTP token must be specified. It is
+represented as `passcode`, but it not indended to be used directly in the `clouds.yaml`
+
+#### v3Multifactor
+
+A better way to handle MFA is by using a `v3multifactor` auth type. In this
+case configuration looks a liitle bit different:
+
+- `auth_type` = `v3multifactor`
+- `auth_methods` is a list of individual `auth_type`s combined in the
+authentication flow (i.e `['v3password', 'v3totp']`)
+
+When a cloud connection is being established in an interactive mode and server
+responds that it require additional authentication methods those would be
+processed based on the available data.
+
+#### v3WebSso
+
+An authentication method that is getting more a more popular is a Single Sign
+On using remote Identiy Data Provider. This flow requires user to authenticate
+itself in the broswer by the IDP directly. It is required to provide following
+data in the configuration in order for this mode to be used:
+
+- `auth_type` = `v3websso`
+- `identity_provider` - identity provider as configured in the Keystone
+- `protocol` - IDP protocol as configured in the Keystone
+
+**Note:** This authentication type only works in the interactive mode. That
+means in the case of the CLI that there must be a valid terminal (`echo foo |
+osc identity user create` will not work)
+
+## Caching
+
+As described above in difference to the Python OpenStack tooling authentication
+caching is enabled by default. It can be disabled using `cache.auth: false` in
+the `clouds.yaml`.
+
+Data is cached locally in the `~/.osc` folder. It is represented by set of
+files where file name is construced as a hash of authentication information
+(discarding sensitive data). Content of the file is a serialized map of
+authorization data (scope) with the token information (catalog, expiration,
+etc).
+
+Every time a new connection need to be established first a search in the cache
+is performed to find an exact match using supplied authentication and
+authorization information. When there is no usable information (no information
+at all or cached token is alredy expired) a search is performed for any valid
+token ignoring the scope (authz). When a valid token is found in the cache it
+is used to obtain a new authorization with required scope. Otherwise a new
+authentication is being performed.
