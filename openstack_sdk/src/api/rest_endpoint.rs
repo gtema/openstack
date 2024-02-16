@@ -133,6 +133,7 @@ where
     }
 }
 
+/// Cast response to Json Value
 pub(super) fn get_json<C>(rsp: &Response<Bytes>) -> Result<serde_json::Value, ApiError<C::Error>>
 where
     C: RestClient,
@@ -147,6 +148,23 @@ where
         return Err(ApiError::from_openstack(status, v));
     }
     Ok(v)
+}
+
+/// Check for possible error in the response
+pub fn check_response_error<C>(rsp: &Response<Bytes>) -> Result<(), ApiError<C::Error>>
+where
+    C: RestClient,
+{
+    let status = rsp.status();
+    if !status.is_success() {
+        let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
+            v
+        } else {
+            return Err(ApiError::server_error(status, rsp.body()));
+        };
+        return Err(ApiError::from_openstack(status, v));
+    }
+    Ok(())
 }
 
 impl<E, T, C> Query<T, C> for E
@@ -276,16 +294,9 @@ where
 
         let rsp = client.rest_async(req, data).await?;
 
-        let status = rsp.status();
-        if inspect_error.unwrap_or(true) && !status.is_success() {
-            let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
-                v
-            } else {
-                return Err(ApiError::server_error(status, rsp.body()));
-            };
-            return Err(ApiError::from_openstack(status, v));
+        if inspect_error.unwrap_or(true) {
+            check_response_error::<C>(&rsp)?;
         }
-
         Ok(rsp)
     }
 
@@ -317,15 +328,7 @@ where
 
         let rsp = client.rest_read_body_async(req, data).await?;
 
-        let status = rsp.status();
-        if !status.is_success() {
-            let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
-                v
-            } else {
-                return Err(ApiError::server_error(status, rsp.body()));
-            };
-            return Err(ApiError::from_openstack(status, v));
-        }
+        check_response_error::<C>(&rsp)?;
 
         Ok(rsp)
     }
