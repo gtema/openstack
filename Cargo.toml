@@ -49,6 +49,8 @@ installers = ["shell"]
 targets = ["x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl"]
 # Publish jobs to run in CI
 pr-run-mode = "plan"
+# Whether cargo-dist should create a Github Release or use an existing draft
+create-release = false
 
 [profile.dev]
 debug = 0
