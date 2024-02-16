@@ -1761,7 +1761,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_cli"
-version = "0.1.1"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1788,7 +1788,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_sdk"
-version = "0.1.1"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -2429,7 +2429,7 @@ checksum = "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623"
 
 [[package]]
 name = "structable_derive"
-version = "0.1.1"
+version = "0.1.0"
 dependencies = [
  "darling 0.20.6",
  "proc-macro2",
