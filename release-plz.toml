@@ -1,6 +1,6 @@
 [workspace]
-allow_dirty = false
-dependencies_update = true # run `cargo update`
+allow_dirty = true
+# dependencies_update = false # run `cargo update`
 git_release_enable = false
 
 [[package]]
@@ -18,8 +18,8 @@ git_release_enable = true
 git_tag_enable = false
 publish = false
 
-[[package]]
-name = "xtask"
-git_release_enable = false
-publish = false
-release = false
+# [[package]]
+# name = "xtask"
+# git_release_enable = false
+# publish = false
+# release = false
