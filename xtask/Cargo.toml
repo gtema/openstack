@@ -2,10 +2,13 @@
 name = "xtask"
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+release = false
+publish = false
 
 [dependencies]
 clap = { workspace = true }
 openstack_cli = { path="../openstack_cli" }
 clap-markdown = "~0.1"
+
+[package.metadata.dist]
+dist = false
