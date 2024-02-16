@@ -12,8 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![doc = include_str!("../../doc/src/sdk.md")]
-#![doc = include_str!("../../doc/src/auth.md")]
+#![doc = include_str!("../README.md")]
 
 pub mod api;
 mod auth;
