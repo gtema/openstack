@@ -44,6 +44,7 @@ pub use self::client::AsyncClient;
 pub use self::client::Client;
 pub use self::client::RestClient;
 
+pub use self::rest_endpoint::check_response_error;
 pub use self::rest_endpoint::RestEndpoint;
 
 pub use self::query::Query;

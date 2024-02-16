@@ -74,6 +74,7 @@ pub mod config;
 mod openstack;
 mod state;
 mod utils;
+mod websso;
 
 pub mod types;
 

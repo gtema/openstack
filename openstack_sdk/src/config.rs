@@ -120,6 +120,11 @@ pub(crate) struct Auth {
     pub(crate) project_domain_id: Option<String>,
     /// `Project` scope Project.Domain.Name
     pub(crate) project_domain_name: Option<String>,
+
+    /// `Federation` protocol
+    pub(crate) protocol: Option<String>,
+    /// `Federation` identity provider
+    pub(crate) identity_provider: Option<String>,
 }
 
 impl fmt::Debug for Auth {
@@ -135,6 +140,8 @@ impl fmt::Debug for Auth {
             .field("username", &self.username)
             .field("user_domain_id", &self.user_domain_id)
             .field("user_domain_name", &self.user_domain_name)
+            .field("protocol", &self.protocol)
+            .field("identity_provider", &self.identity_provider)
             .finish()
     }
 }
@@ -179,6 +186,12 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.user_domain_name {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.identity_provider {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.protocol {
             data.hash(&mut s);
         }
     }
@@ -232,6 +245,12 @@ impl CloudConfig {
             }
             if auth.user_domain_id.is_none() && update_auth.user_domain_id.is_some() {
                 auth.user_domain_id = update_auth.user_domain_id.clone();
+            }
+            if auth.protocol.is_none() && update_auth.protocol.is_some() {
+                auth.protocol = update_auth.protocol.clone();
+            }
+            if auth.identity_provider.is_none() && update_auth.identity_provider.is_some() {
+                auth.identity_provider = update_auth.identity_provider.clone();
             }
         }
         if self.auth_type.is_none() && update.auth_type.is_some() {
@@ -342,7 +361,7 @@ impl ConfigFile {
 
     /// Return true if auth caching is enabled
     pub fn is_auth_cache_enabled(&self) -> bool {
-        self.cache.as_ref().and_then(|c| c.auth).unwrap_or(false)
+        self.cache.as_ref().and_then(|c| c.auth).unwrap_or(true)
     }
 }
 
@@ -351,6 +370,8 @@ mod tests {
     use crate::config;
     use std::env;
     use std::path::PathBuf;
+
+    use super::ConfigFile;
 
     #[test]
     fn test_get_search_paths() {
@@ -376,5 +397,11 @@ mod tests {
             ],
             config::get_config_file_search_paths(fname)
         );
+    }
+
+    #[test]
+    fn test_default_auth_cache_enabled() {
+        let cfg = ConfigFile::new().unwrap();
+        assert!(cfg.is_auth_cache_enabled());
     }
 }

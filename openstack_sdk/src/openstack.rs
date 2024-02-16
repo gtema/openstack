@@ -15,11 +15,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use std::any;
-//use std::collections::hash_map::DefaultHasher;
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
-//use std::hash::Hash;
-//use std::hash::Hasher;
+use std::net::SocketAddr;
 use std::time::SystemTime;
 use tracing::{debug, error, info, span, trace, Level};
 
@@ -30,28 +28,32 @@ use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
 use http::{HeaderMap, Response as HttpResponse, StatusCode};
 
+use tokio::signal;
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
+use tokio_util::sync::CancellationToken;
 
 use reqwest::{blocking::Client, Body, Client as AsyncClient, Request, Response};
 use thiserror::Error;
 use url::Url;
+
+use dialoguer::Confirm;
 
 use crate::config::CloudConfig;
 
 use crate::api;
 use crate::api::query;
 use crate::api::query::{RawQuery, RawQueryAsync};
-//use crate::api::RestClient;
-//use crate::api::RestEndpoint;
-//use crate::api::AsyncClient;
-use crate::auth::{self, Auth, AuthError, AuthorizationScope};
+use crate::api::RestClient;
+use crate::auth::{self, Auth, AuthError, AuthType, AuthorizationScope};
 use crate::config::{get_config_identity_hash, ConfigError, ConfigFile};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project, ServiceEndpoints};
 use crate::types::{BoxedAsyncRead, ServiceType};
 
 use crate::api::identity::v3::auth::token::create as token_v3;
+
+use crate::websso::{websso_callback_server, SsoState};
 
 use crate::catalog::{Catalog, CatalogError, EndpointVersion, ServiceEndpoint};
 
@@ -143,6 +145,30 @@ pub enum OpenStackError {
 
     #[error("Endpoint version discovery error: {}", msg)]
     Discovery { msg: String },
+
+    #[error("WebSSO callback didn't return a token")]
+    WebSSONoToken,
+
+    #[error("WebSSO authentication failed")]
+    WebSSOFailed,
+
+    #[error(
+        "Interactive mode is required but not available (running `echo foo | osc`?). {}",
+        msg
+    )]
+    NonInteractiveMode { msg: String },
+
+    #[error("`IO` error: {}", source)]
+    IO {
+        #[from]
+        source: IoError,
+    },
+
+    #[error("`Join` error: {}", source)]
+    Join {
+        #[from]
+        source: tokio::task::JoinError,
+    },
 
     #[error(transparent)]
     Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
@@ -290,29 +316,28 @@ impl OpenStack {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
-            let auth_ep = match self.state.get_any_valid_auth() {
-                Some(available_auth) => {
-                    // State contain valid authentication for different
-                    // scope/unscoped. It is possible to request new authz
-                    // using this other auth
-                    trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                    auth::build_reauth_request(&available_auth, &requested_scope)?
-                }
-                None => {
-                    // No auth/authz information available. Proceed with new auth
-                    trace!("No Auth already available. Proceeding with new login");
+            let mut rsp;
+            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), renew_auth) {
+                // State contain valid authentication for different
+                // scope/unscoped. It is possible to request new authz
+                // using this other auth
+                trace!("Valid Auth is available for reauthz: {:?}", available_auth);
+                let auth_ep = auth::build_reauth_request(&available_auth, &requested_scope)?;
+                rsp = auth_ep.raw_query(self)?;
+            } else {
+                // No auth/authz information available. Proceed with new auth
+                trace!("No Auth already available. Proceeding with new login");
 
-                    let auth_data = auth_data
-                        .unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+                // TODO: How to deal with SSO in sync?
+                let auth_data =
+                    auth_data.unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
 
-                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?
-                }
+                let auth_ep =
+                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?;
+                rsp = auth_ep.raw_query(self)?;
             };
-            let mut rsp = auth_ep.raw_query(self)?;
 
-            // TODO(gtema): here would be the MFA handling. When Keystone
-            // returns 401 with recept we currently not land here due to error
-            // processing
+            // Handle the MFA
             if let StatusCode::UNAUTHORIZED = rsp.status() {
                 if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
                     let receipt_data: AuthReceiptResponse = serde_json::from_slice(rsp.body())
@@ -327,6 +352,7 @@ impl OpenStack {
                     rsp = auth_endpoint.raw_query(self)?;
                 }
             }
+            api::check_response_error::<Self>(&rsp)?;
 
             let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
             debug!("Auth token is {:?}", data);
@@ -683,6 +709,53 @@ impl AsyncOpenStack {
         Ok(session)
     }
 
+    /// Perform WebSSO by opening a browser window with tiny webserver started to capture the
+    /// callback
+    ///
+    /// - start callback server
+    /// - open browser pointing to the SSO url
+    /// - wait for the response with the OpenStack token
+    async fn websso(&mut self) -> Result<SsoState, OpenStackError> {
+        let auth_url = auth::build_sso_auth_endpoint(&self.config)?;
+
+        let mut url = self.rest_endpoint(&ServiceType::Identity, &auth_url)?;
+        url.set_query(Some("origin=http://localhost:8050/callback"));
+        let confirmation = Confirm::new()
+            .with_prompt(format!(
+                "A default browser is going to be opened at `{}`. Do you want to continue?",
+                url.as_str()
+            ))
+            .interact()
+            .unwrap();
+        if confirmation {
+            info!("Opening browser at {:?}", url.as_str());
+            let addr = SocketAddr::from(([127, 0, 0, 1], 8050));
+            let cancel_token = CancellationToken::new();
+
+            tokio::spawn({
+                let cancel_token = cancel_token.clone();
+                async move {
+                    if let Ok(()) = signal::ctrl_c().await {
+                        info!("received Ctrl-C, shutting down");
+                        cancel_token.cancel();
+                    }
+                }
+            });
+
+            let websso_handle = tokio::spawn({
+                let cancel_token = cancel_token.clone();
+                async move { websso_callback_server(addr, cancel_token).await }
+            });
+            open::that(url.as_str())?;
+
+            let res = websso_handle.await?;
+
+            Ok(res?)
+        } else {
+            Err(OpenStackError::WebSSOFailed)
+        }
+    }
+
     /// Authorize against the cloud using provided credentials and get the session token
     pub async fn authorize(
         &mut self,
@@ -701,28 +774,61 @@ where {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
-            let auth_ep;
+            let mut rsp;
             if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), renew_auth) {
                 // State contain valid authentication for different
                 // scope/unscoped. It is possible to request new authz
                 // using this other auth
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                auth_ep = auth::build_reauth_request(&available_auth, &requested_scope)?;
+                let auth_ep = auth::build_reauth_request(&available_auth, &requested_scope)?;
+                rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
             } else {
                 // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
 
-                let auth_data =
-                    auth_data.unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+                if AuthType::from_cloud_config(&self.config)? == AuthType::V3WebSso {
+                    // SSO Handling is requested.
+                    if !interactive {
+                        return Err(OpenStackError::NonInteractiveMode {
+                            msg: "WebSSO requires interactive mode to open browser".to_string(),
+                        });
+                    }
+                    let sso_state = self.websso().await?;
+                    let mut token_auth = auth::AuthToken {
+                        token: sso_state.token.clone(),
+                        auth_info: None,
+                    };
+                    // Set retrieved token as current auth
+                    self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
 
-                auth_ep =
-                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?;
+                    // Check the current token to get it's expiration
+                    let check_token_ep = auth::build_token_info_endpoint(token_auth.token.clone())?;
+                    rsp = check_token_ep.raw_query_async_ll(self, Some(false)).await?;
+                    api::check_response_error::<Self>(&rsp)?;
+
+                    let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+                    token_auth.auth_info = Some(data.clone());
+                    let scope = AuthorizationScope::from(&data);
+
+                    self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
+                    self.state.set_scope_auth(&scope, &token_auth);
+
+                    // And now time to rescope the token
+                    let auth_ep = auth::build_reauth_request(&token_auth, &requested_scope)?;
+                    rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
+                } else {
+                    let auth_data = auth_data
+                        .unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+
+                    let auth_ep = auth::build_auth_request_with_identity_and_scope(
+                        &auth_data,
+                        &requested_scope,
+                    )?;
+                    rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
+                }
             };
-            let mut rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
 
-            // TODO(gtema): here would be the MFA handling. When Keystone
-            // returns 401 with recept we currently not land here due to error
-            // processing
+            // Handle the MFA
             if let StatusCode::UNAUTHORIZED = rsp.status() {
                 if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
                     let receipt_data: AuthReceiptResponse = serde_json::from_slice(rsp.body())
@@ -737,6 +843,7 @@ where {
                     rsp = auth_endpoint.raw_query_async(self).await?;
                 }
             }
+            api::check_response_error::<Self>(&rsp)?;
 
             let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
             debug!("Auth token is {:?}", data);

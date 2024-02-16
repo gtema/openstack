@@ -15,15 +15,22 @@
 use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 
+use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt::{self, Debug};
+use std::str::FromStr;
 use tracing::{error, trace};
 
 use thiserror::Error;
 
 use dialoguer::{Input, Password};
 
+use crate::api::identity::v3::auth::os_federation::{
+    identity_provider::protocol::websso::get as fed_idp_sso_get, websso::get as fed_sso_get,
+};
 use crate::api::identity::v3::auth::token::create as token_v3;
+use crate::api::identity::v3::auth::token::get as token_v3_info;
+use crate::api::RestEndpoint;
 use crate::config;
 use crate::types::identity::v3::{
     self as types_v3, AuthReceiptResponse, AuthResponse, Domain, Project,
@@ -48,7 +55,10 @@ pub enum AuthError {
     #[error("Cannot construct auth from config: {}", msg)]
     Config { msg: String },
 
-    #[error("Unsupported auth_type: {}", auth_type)]
+    #[error(
+        "AuthType `{}` is not a supported type for authenticating towards the cloud",
+        auth_type
+    )]
     IdentityMethod { auth_type: String },
 
     #[error("Cannot determine scope from config")]
@@ -142,7 +152,23 @@ pub enum AuthError {
         #[from]
         source: token_v3::RequestBuilderError,
     },
-
+    #[error("error preparing auth request: {}", source)]
+    AuthWebSsoBuilderError {
+        #[from]
+        source: fed_sso_get::RequestBuilderError,
+    },
+    #[error("error preparing auth request: {}", source)]
+    AuthWebIdpSsoBuilderError {
+        #[from]
+        source: fed_idp_sso_get::RequestBuilderError,
+    },
+    #[error("error preparing auth request: missing protocol information for federated login")]
+    AuthSsoMissingProtocol,
+    #[error("error preparing auth request: {}", source)]
+    AuthTokenInfoBuilderError {
+        #[from]
+        source: token_v3_info::RequestBuilderError,
+    },
     #[error(transparent)]
     Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
 }
@@ -166,6 +192,59 @@ impl AuthError {
 }
 
 pub(crate) type AuthResult<T> = Result<T, AuthError>;
+
+/// Supported AuthTypes
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
+#[allow(clippy::enum_variant_names)]
+pub enum AuthType {
+    /// v3 Password
+    V3Password,
+    /// v3 Token
+    V3Token,
+    /// TOTP
+    V3Totp,
+    /// v3multifactor
+    V3Multifactor,
+    /// WebSSO
+    V3WebSso,
+}
+
+impl FromStr for AuthType {
+    type Err = AuthError;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "v3password" | "password" => Ok(Self::V3Password),
+            "v3token" | "token" => Ok(Self::V3Token),
+            "v3totp" => Ok(Self::V3Totp),
+            "v3multifactor" => Ok(Self::V3Multifactor),
+            "v3websso" => Ok(Self::V3WebSso),
+            other => Err(AuthError::auth_type(other)),
+        }
+    }
+}
+
+impl AuthType {
+    /// Get the auth_type of the cloud connection
+    pub fn from_cloud_config(config: &config::CloudConfig) -> Result<Self, AuthError> {
+        if let Some(auth_type) = &config.auth_type {
+            Self::from_str(auth_type)
+        } else {
+            Ok(Self::V3Password)
+        }
+    }
+
+    /// Return String representation of the AuthType
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::V3Password => "v3password",
+            Self::V3Token => "v3token",
+            Self::V3Multifactor => "v3multifactor",
+            Self::V3Totp => "v3totp",
+            Self::V3WebSso => "v3websso",
+        }
+    }
+}
 
 /// Fill Auth Request Identity with user password data
 pub fn fill_identity_using_password(
@@ -299,20 +378,22 @@ fn process_auth_type(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
     interactive: bool,
-    auth_type: &str,
+    auth_type: &AuthType,
 ) -> Result<(), AuthError> {
     match auth_type {
-        "v3password" | "password" => {
+        AuthType::V3Password => {
             fill_identity_using_password(identity_builder, auth_data, interactive)?;
         }
-        "v3token" | "token" => {
+        AuthType::V3Token => {
             fill_identity_using_token(identity_builder, auth_data, interactive)?;
         }
-        "v3totp" | "totp" => {
+        AuthType::V3Totp => {
             fill_identity_using_totp(identity_builder, auth_data, interactive)?;
         }
         other => {
-            return Err(AuthError::auth_type(other));
+            return Err(AuthError::IdentityMethod {
+                auth_type: other.as_str().to_string(),
+            });
         }
     };
     Ok(())
@@ -323,25 +404,27 @@ pub fn build_identity_data_from_config<'a>(
     interactive: bool,
 ) -> Result<token_v3::Identity<'a>, AuthError> {
     let auth = config.auth.clone().ok_or(AuthError::MissingAuthData)?;
-    let auth_type = config.auth_type.clone().unwrap_or("password".to_string());
+    let auth_type = AuthType::from_cloud_config(config)?;
     let mut identity_builder = token_v3::IdentityBuilder::default();
-    match auth_type.as_str() {
-        "v3multifactor" | "multifactor" => {
+    match auth_type {
+        AuthType::V3Multifactor => {
             let mut methods: Vec<token_v3::Methods> = Vec::new();
-            for auth_type in config
+            for auth_method in config
                 .auth_methods
                 .as_ref()
                 .expect("`auth_methods` is an array of string when auth_type=`multifactor`")
             {
-                process_auth_type(&mut identity_builder, &auth, interactive, auth_type)?;
-                match auth_type.as_str() {
-                    "v3password" | "password" => {
+                let method_type = AuthType::from_str(auth_method)?;
+                process_auth_type(&mut identity_builder, &auth, interactive, &method_type)?;
+                // process_auth_type resets methods so we need to recover it
+                match method_type {
+                    AuthType::V3Password => {
                         methods.push(token_v3::Methods::Password);
                     }
-                    "v3token" | "token" => {
+                    AuthType::V3Token => {
                         methods.push(token_v3::Methods::Token);
                     }
-                    "v3totp" | "totp" => {
+                    AuthType::V3Totp => {
                         methods.push(token_v3::Methods::Totp);
                     }
                     _other => {}
@@ -351,7 +434,7 @@ pub fn build_identity_data_from_config<'a>(
             identity_builder.methods(methods);
         }
         other => {
-            process_auth_type(&mut identity_builder, &auth, interactive, other)?;
+            process_auth_type(&mut identity_builder, &auth, interactive, &other)?;
         }
     };
     Ok(identity_builder.build()?)
@@ -505,6 +588,7 @@ pub(crate) fn build_auth_request_with_identity_and_scope<'a>(
     auth: &token_v3::Identity<'a>,
     scope: &AuthorizationScope,
 ) -> Result<token_v3::Request<'a>, AuthError> {
+    //) -> Result<impl RestEndpoint + 'a, AuthError> {
     let mut auth_request_data = token_v3::AuthBuilder::default();
     auth_request_data.identity(auth.clone());
     if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
@@ -540,7 +624,7 @@ pub(crate) fn build_auth_request_from_receipt<'a>(
     receipt_data: &AuthReceiptResponse,
     scope: &AuthorizationScope,
     interactive: bool,
-) -> Result<token_v3::Request<'a>, AuthError> {
+) -> Result<impl RestEndpoint + 'a, AuthError> {
     let mut identity_builder = token_v3::IdentityBuilder::default();
     let auth = config.auth.clone().ok_or(AuthError::MissingAuthData)?;
     // Check required_auth_methods rules
@@ -554,7 +638,12 @@ pub(crate) fn build_auth_request_from_receipt<'a>(
                 .any(|x| x == required_method)
             {
                 trace!("Adding {:?} auth data", required_method);
-                process_auth_type(&mut identity_builder, &auth, interactive, required_method)?;
+                process_auth_type(
+                    &mut identity_builder,
+                    &auth,
+                    interactive,
+                    &AuthType::from_str(required_method)?,
+                )?;
             }
         }
     }
@@ -679,6 +768,47 @@ impl From<&AuthResponse> for AuthorizationScope {
             Self::Unscoped
         }
     }
+}
+
+/// Prepare Endpoint for the WebSSO authentication
+pub fn build_sso_auth_endpoint(
+    config: &config::CloudConfig,
+) -> Result<Cow<'static, str>, AuthError> {
+    if let Some(auth) = &config.auth {
+        if let Some(identity_provider) = &auth.identity_provider {
+            let mut ep = fed_idp_sso_get::RequestBuilder::default();
+            ep.idp_id(identity_provider);
+            if let Some(protocol) = &auth.protocol {
+                ep.protocol_id(protocol);
+            } else {
+                return Err(AuthError::AuthSsoMissingProtocol);
+            }
+            return Ok(ep.build()?.endpoint());
+        } else {
+            let mut ep = fed_sso_get::RequestBuilder::default();
+            if let Some(protocol) = &auth.protocol {
+                ep.protocol_id(protocol);
+            } else {
+                return Err(AuthError::AuthSsoMissingProtocol);
+            }
+            return Ok(ep.build()?.endpoint());
+        }
+    }
+    Err(AuthError::MissingAuthData)
+}
+
+pub fn build_token_info_endpoint<'a>(
+    subject_token: String,
+) -> Result<token_v3_info::Request<'a>, AuthError> {
+    Ok(token_v3_info::RequestBuilder::default()
+        .headers(
+            [(
+                Some(HeaderName::from_static("x-subject-token")),
+                HeaderValue::from_str(subject_token.as_str()).expect("Valid string"),
+            )]
+            .into_iter(),
+        )
+        .build()?)
 }
 
 #[cfg(test)]
