@@ -427,7 +427,7 @@ Example:
   - `delete`:
     DELETE
 
-* `--header <key=value>` — Additional headers
+* `-H`, `--header <key=value>` — Additional headers
 * `--body <BODY>` — Request body to be used
 
 
