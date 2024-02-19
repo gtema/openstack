@@ -96,7 +96,7 @@ pub struct ApiCommand {
     method: Method,
 
     /// Additional headers
-    #[arg(long, value_name="key=value", value_parser = parse_key_val::<String, String>)]
+    #[arg(long, short='H', value_name="key=value", value_parser = parse_key_val::<String, String>)]
     header: Vec<(String, String)>,
 
     /// Request body to be used
@@ -122,7 +122,7 @@ impl ApiCommand {
 
         let endpoint = client.rest_endpoint(&service, &self.url)?;
 
-        let req = http::Request::builder()
+        let mut req = http::Request::builder()
             .method::<http::Method>(self.method.clone().into())
             .uri(url_to_http_uri(endpoint))
             .header(
@@ -130,7 +130,13 @@ impl ApiCommand {
                 http::HeaderValue::from_static("application/json"),
             );
 
-        info!("Request = {:?}", req);
+        let headers = req.headers_mut().unwrap();
+        for (name, val) in &self.header {
+            headers.insert(
+                http::HeaderName::from_lowercase(name.to_lowercase().as_bytes()).unwrap(),
+                http::HeaderValue::from_str(val.as_str()).unwrap(),
+            );
+        }
 
         let rsp = client
             .rest_async(

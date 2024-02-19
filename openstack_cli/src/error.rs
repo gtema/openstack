@@ -99,6 +99,22 @@ pub enum OpenStackCliError {
     #[error("Cloud connection for `{0:?}` cannot be found")]
     ConnectionNotFound(String),
 
+    /// Invalid header name
+    #[error("Invalid header name `{}`", source)]
+    InvalidHeaderName {
+        /// The source of the error.
+        #[from]
+        source: http::header::InvalidHeaderName,
+    },
+
+    /// Invalid header value
+    #[error("Invalid header value `{}`", source)]
+    InvalidHeaderValue {
+        /// The source of the error.
+        #[from]
+        source: http::header::InvalidHeaderValue,
+    },
+
     /// Others
     #[error(transparent)]
     Other(#[from] anyhow::Error),
