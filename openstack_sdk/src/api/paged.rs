@@ -108,16 +108,12 @@ where
 
                 {
                     let mut pairs = page_url.query_pairs_mut();
-                    pairs.append_pair("limit", &per_page_str);
+                    if per_page < usize::MAX {
+                        pairs.append_pair("limit", &per_page_str);
+                    }
                     if let Some(ref m) = marker {
                         pairs.append_pair("marker", m.as_str());
                     }
-
-                    // if use_keyset_pagination {
-                    //     pairs.append_pair("pagination", "keyset");
-                    // } else {
-                    //     pairs.append_pair("page", &page_str);
-                    // }
                 }
 
                 page_url
@@ -199,11 +195,20 @@ where
             }
             trace!("items data = {:?}", v.clone());
 
-            let page =
+            let mut page =
                 serde_json::from_value::<Vec<T>>(v).map_err(ApiError::data_type::<Vec<T>>)?;
             let page_len = page.len();
             let is_last_page = {
                 let mut locked_results = results.lock().expect("poisoned results");
+                if let Pagination::Limit(limit) = self.pagination {
+                    // with total limit need to check whether the page contains more data then necessary
+                    let total_read_till_now = locked_results.len();
+                    if total_read_till_now + page.len() > limit {
+                        // Discard unnecessary data
+                        page.truncate(limit - total_read_till_now);
+                    }
+                }
+
                 locked_results.extend(page);
                 self.pagination.is_last_page(page_len, locked_results.len())
             };
@@ -285,9 +290,7 @@ mod tests {
     fn test_non_json_response() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/paged_dummy")
-                .query_param("limit", "100");
+            when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(200).body("not json");
         });
 
@@ -306,9 +309,7 @@ mod tests {
     fn test_error_bad_json() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/paged_dummy")
-                .query_param("limit", "100");
+            when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::CONFLICT.into());
         });
 
@@ -327,9 +328,7 @@ mod tests {
     fn test_error_detection() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/paged_dummy")
-                .query_param("limit", "100");
+            when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(json!({"message": "dummy error message"}));
         });

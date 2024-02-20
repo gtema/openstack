@@ -12,9 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Paged endpoint iterator implements an iterator interface to lazily fetch
-//! pages when required. This is similar to the python generator.
-//!
+//! Paged endpoint iterator implements an iterator interface to lazily fetch pages when required.
+//! This is similar to the python generator.
 
 use std::sync::RwLock;
 
@@ -26,7 +25,7 @@ use http::{header, HeaderValue, Request, Response};
 use serde::de::DeserializeOwned;
 use url::Url;
 
-use crate::api::paged::{next_page, Pageable, Paged};
+use crate::api::paged::{next_page, Pageable, Paged, Pagination};
 use crate::api::rest_endpoint::set_latest_microversion;
 use crate::api::{
     query, ApiError, AsyncClient, Client, Query, QueryAsync, RestClient, RestEndpoint,
@@ -110,9 +109,7 @@ impl Page {
                 let page_str = page.to_string();
                 pairs.append_pair("page", &page_str);
             }
-            Self::Keyset(_) => {
-                //pairs.append_pair("pagination", "keyset");
-            }
+            Self::Keyset(_) => {}
             Self::Done => {
                 unreachable!("The `Done` state should not be applied to any url")
             }
@@ -174,10 +171,7 @@ impl<'a, E> PagedState<'a, E>
 where
     E: RestEndpoint,
 {
-    fn page_url(&self, endpoint_url: Url) -> Option<Url>
-//    where
-//        C: RestClient,
-    {
+    fn page_url(&self, endpoint_url: Url) -> Option<Url> {
         let page_state = self.page_state.read().expect("poisoned next_page");
         let next_page = &page_state.next_page;
 
@@ -189,20 +183,18 @@ where
             next_url.clone()
         } else {
             let mut url = endpoint_url.clone();
-            //client.rest_endpoint(
-            //    &self.paged.endpoint.service_type(),
-            //    &self.paged.endpoint.endpoint(),
-            //)?;
             self.paged.endpoint.parameters().add_to_url(&mut url);
 
             let per_page = self.paged.pagination.page_limit();
-            let per_page_str = per_page.to_string();
+            if per_page < usize::MAX {
+                let per_page_str = per_page.to_string();
 
-            {
-                let mut pairs = url.query_pairs_mut();
-                pairs.append_pair("limit", &per_page_str);
+                {
+                    let mut pairs = url.query_pairs_mut();
+                    pairs.append_pair("limit", &per_page_str);
 
-                next_page.apply_to(&mut pairs);
+                    next_page.apply_to(&mut pairs);
+                }
             }
 
             url
@@ -260,7 +252,6 @@ where
 
         let next_url = if self.paged.endpoint.use_keyset_pagination() {
             next_page::next_page_from_body(&v, &self.paged.endpoint.response_key(), base)?
-            //link_header::next_page_from_headers(rsp.headers())?
         } else {
             None
         };
@@ -279,7 +270,21 @@ where
             }
         }
 
-        let page = serde_json::from_value::<Vec<T>>(v).map_err(ApiError::data_type::<Vec<T>>)?;
+        let mut page =
+            serde_json::from_value::<Vec<T>>(v).map_err(ApiError::data_type::<Vec<T>>)?;
+
+        if let Pagination::Limit(limit) = self.paged.pagination {
+            // with total limit need to check whether the page contains more data then necessary
+            let total_read_till_now = self
+                .page_state
+                .read()
+                .expect("poisoned state")
+                .total_results;
+            if total_read_till_now + page.len() > limit {
+                // Discard unnecessary data
+                page.truncate(limit - total_read_till_now);
+            }
+        }
         self.next_page(page.len(), next_url);
 
         Ok(page)

@@ -23,12 +23,6 @@ use http::HeaderMap;
 
 use crate::api::PaginationError;
 
-// /// LinkHeader struct
-// #[derive(Debug)]
-// struct LinkHeader<'a> {
-//     url: &'a str,
-//     params: Vec<(&'a str, &'a str)>,
-// }
 pub(crate) fn next_page_from_headers(_headers: &HeaderMap) -> Result<Option<Url>, PaginationError> {
     Err(PaginationError::Body {
         msg: "error".into(),
