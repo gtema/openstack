@@ -12,6 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Results pagination
+
 use anyhow;
 use thiserror::Error;
 
@@ -38,29 +40,25 @@ pub enum PaginationError {
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum Pagination {
     /// Return all results.
-    ///
-    /// Note that most endpoints may have a server-side limit to the number of results.
     #[default]
     All,
-    /// Limit to a number of results.
+    /// Limit to a total number of results.
     Limit(usize),
 }
 
-const MAX_PAGE_SIZE: usize = 100;
-
 impl Pagination {
     pub(crate) fn page_limit(self) -> usize {
-        match self {
-            // Set page size to max
-            Pagination::All => MAX_PAGE_SIZE,
-            // Set page size to min(limit, max_page_size)
-            Pagination::Limit(size) => size.min(MAX_PAGE_SIZE),
-        }
+        usize::MAX
     }
 
     pub(crate) fn is_last_page(self, last_page_size: usize, num_results: usize) -> bool {
         // If the last page has fewer elements than our limit, we're definitely done.
-        if last_page_size < self.page_limit() {
+        if self.page_limit() < usize::MAX && last_page_size < self.page_limit() {
+            return true;
+        }
+
+        // If last page is empty we are definitely done
+        if last_page_size == 0 {
             return true;
         }
 
