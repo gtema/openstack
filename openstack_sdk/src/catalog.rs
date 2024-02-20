@@ -12,6 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Service Catalog processing
+
 use bytes::Bytes;
 use serde::de::Deserializer;
 use serde::Deserialize;
@@ -54,6 +56,17 @@ pub struct ServiceEndpoint {
 }
 
 impl ServiceEndpoint {
+    /// Build new ServiceEndpoint from string URL
+    pub fn from_url_string(fixed_url: &str) -> Result<Self, CatalogError> {
+        Ok(Self {
+            url: Url::parse(fixed_url)
+                .with_context(|| format!("Wrong endpoint URL: `{}`", fixed_url))?,
+            discovered: false,
+            versions: Vec::new(),
+            current_version: None,
+        })
+    }
+
     /// Process Endpoint version discovery response
     pub fn process_discovery(&mut self, data: &Bytes) -> Result<(), CatalogError> {
         // Unversioned endpoint normally returns: `{versions: []}`
@@ -156,7 +169,7 @@ pub struct EndpointVersion {
     pub status: EndpointVersionStatus,
     pub version: Option<String>,
     pub min_version: Option<String>,
-    pub links: Vec<Link>, //    pub url: Url,
+    pub links: Vec<Link>,
 }
 
 /// `Versions` array of Endpoint Versions
@@ -170,21 +183,21 @@ pub(crate) struct EndpointVersions {
 pub(crate) struct EndpointVersionsValues {
     pub versions: EndpointVersionValues,
 }
-///
+
 /// Endpoint version values structure
 #[derive(Debug, Deserialize, Clone)]
 pub(crate) struct EndpointVersionValues {
     pub values: Vec<EndpointVersion>,
 }
 
-/// Structure representing the ServiceCatalog
+/// Structure representing session ServiceCatalog
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Catalog {
     /// HashMap containing service endpoints by the service type
     service_endpoints: HashMap<String, ServiceEndpoint>,
     token_catalog: Option<Vec<ServiceEndpoints>>,
     /// Configured endpoint overrides
-    endpoint_overrides: HashMap<String, String>,
+    endpoint_overrides: HashMap<String, ServiceEndpoint>,
 }
 
 impl Catalog {
@@ -195,13 +208,7 @@ impl Catalog {
             fixed_url.push('/');
         }
 
-        Ok(ServiceEndpoint {
-            url: Url::parse(&fixed_url)
-                .with_context(|| format!("Wrong endpoint URL: `{}`", fixed_url))?,
-            discovered: false,
-            versions: Vec::new(),
-            current_version: None,
-        })
+        ServiceEndpoint::from_url_string(&fixed_url)
     }
 
     /// Register single service endpoint
@@ -210,15 +217,13 @@ impl Catalog {
         service_type: &str,
         url: &str,
     ) -> Result<(), CatalogError> {
-        // Get the URL from catalog/input respecting known overrides
-        let real_url = match self.endpoint_overrides.get(&service_type.to_string()) {
-            Some(new_url) => new_url.as_str(),
-            None => url,
-        };
-
+        //// Set the URL from catalog/input respecting known overrides
         self.service_endpoints.insert(
             service_type.to_string(),
-            self.build_service_endpoint(real_url)?,
+            match self.endpoint_overrides.get(&service_type.to_string()) {
+                Some(ep) => ep.clone(),
+                None => self.build_service_endpoint(url)?,
+            },
         );
         Ok(())
     }
@@ -264,7 +269,11 @@ impl Catalog {
                 return Some(sep.clone());
             }
         }
-        None
+        // There is nothing in the altered catalog, but what if the service is not present in the
+        // catalog while being set as endpoint_override
+        self.endpoint_overrides
+            .get(&service_type.to_string())
+            .cloned()
     }
 
     /// Invoke process_discovery of the endpoint by the service type
@@ -302,8 +311,10 @@ impl Catalog {
                 let srv_type = &name[..(len - 18)];
                 let service_type = &srv_type.replace('_', "-");
 
-                self.endpoint_overrides
-                    .insert(service_type.to_string(), val.to_string());
+                self.endpoint_overrides.insert(
+                    service_type.to_string(),
+                    self.build_service_endpoint(&val.to_string())?,
+                );
             }
         }
         Ok(self)
