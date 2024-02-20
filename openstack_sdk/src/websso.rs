@@ -33,9 +33,13 @@ use hyper::service::service_fn;
 use hyper::{body::Incoming as IncomingBody, Method, Request, Response, StatusCode};
 use hyper_util::rt::TokioIo;
 use tokio::net::TcpListener;
+use tokio::signal;
 use tokio_util::sync::CancellationToken;
+use url::Url;
 
-use crate::OpenStackError;
+use dialoguer::Confirm;
+
+use crate::auth::AuthError;
 
 /// SSOState structure to return data from the WebServer back to the invoker
 #[derive(Debug)]
@@ -50,11 +54,55 @@ struct CallbackServerState {
     cancel_token: CancellationToken,
 }
 
+// Perform WebSSO by opening a browser window with tiny webserver started to capture the
+/// callback
+///
+/// - start callback server
+/// - open browser pointing to the SSO url
+/// - wait for the response with the OpenStack token
+pub async fn websso(url: &mut Url) -> Result<SsoState, AuthError> {
+    url.set_query(Some("origin=http://localhost:8050/callback"));
+    let confirmation = Confirm::new()
+        .with_prompt(format!(
+            "A default browser is going to be opened at `{}`. Do you want to continue?",
+            url.as_str()
+        ))
+        .interact()
+        .unwrap();
+    if confirmation {
+        info!("Opening browser at {:?}", url.as_str());
+        let addr = SocketAddr::from(([127, 0, 0, 1], 8050));
+        let cancel_token = CancellationToken::new();
+
+        tokio::spawn({
+            let cancel_token = cancel_token.clone();
+            async move {
+                if let Ok(()) = signal::ctrl_c().await {
+                    info!("received Ctrl-C, shutting down");
+                    cancel_token.cancel();
+                }
+            }
+        });
+
+        let websso_handle = tokio::spawn({
+            let cancel_token = cancel_token.clone();
+            async move { websso_callback_server(addr, cancel_token).await }
+        });
+        open::that(url.as_str())?;
+
+        let res = websso_handle.await?;
+
+        Ok(res?)
+    } else {
+        Err(AuthError::WebSSOFailed)
+    }
+}
+
 /// Start the WebSSO callback server
 pub(crate) async fn websso_callback_server(
     addr: SocketAddr,
     cancel_token: CancellationToken,
-) -> Result<SsoState, OpenStackError> {
+) -> Result<SsoState, AuthError> {
     let listener = TcpListener::bind(addr).await?;
     info!("Starting webserver to receive SSO callback");
     let state: Arc<Mutex<CallbackServerState>> = Arc::new(Mutex::new(CallbackServerState {
@@ -86,7 +134,7 @@ pub(crate) async fn websso_callback_server(
             },
             _ = cancel_token.cancelled() => {
                 info!("Stopping webserver");
-                return Ok(SsoState { token: state_clone.lock().unwrap().token.clone().ok_or(OpenStackError::WebSSONoToken)?});
+                return Ok(SsoState { token: state_clone.lock().unwrap().token.clone().ok_or(AuthError::WebSSONoToken)?});
             },
             _ = tokio::time::sleep(webserver_timeout) => {
                 warn!("Timeout of {} sec waiting for authentication expired. Shutting down", webserver_timeout.as_secs());
@@ -143,7 +191,7 @@ mod tests {
     use tokio_util::sync::CancellationToken;
 
     use super::websso_callback_server;
-    use crate::OpenStackError;
+    use crate::auth::AuthError;
 
     #[tokio::test]
     async fn test_callback() {
@@ -208,7 +256,7 @@ mod tests {
             .unwrap();
 
         match websso_handle.await.unwrap().unwrap_err() {
-            OpenStackError::WebSSONoToken => {}
+            AuthError::WebSSONoToken => {}
             _ => {
                 panic!("Unexpected error")
             }
