@@ -349,6 +349,14 @@ impl OpenStack {
         Ok(())
     }
 
+    /// Return current authentication token
+    pub fn get_auth_token(&self) -> Option<String> {
+        if let Auth::AuthToken(token) = &self.auth {
+            return Some(token.token.clone());
+        }
+        None
+    }
+
     /// Perform a REST query with a given auth.
     pub fn rest_with_auth(
         &self,
