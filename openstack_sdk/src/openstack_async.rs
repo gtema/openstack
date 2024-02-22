@@ -271,7 +271,22 @@ impl AsyncOpenStack {
         self.auth = auth;
         if !skip_cache_update {
             if let Auth::AuthToken(auth) = &self.auth {
-                self.state.set_scope_auth(&auth.get_scope(), auth);
+                // For app creds we shuld save auth as unscoped since:
+                // - on request it is disallowed to specify scope
+                // - response contain fixed scope
+                // With this it is not possible to find auth in the cache if we use the real
+                // scope
+                let scope = match &auth.auth_info {
+                    Some(info) => {
+                        if info.token.application_credential.is_some() {
+                            authtoken::AuthorizationScope::Unscoped
+                        } else {
+                            auth.get_scope()
+                        }
+                    }
+                    _ => auth.get_scope(),
+                };
+                self.state.set_scope_auth(&scope, auth);
             }
         }
         self
@@ -307,8 +322,17 @@ where {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
+            let auth_type = AuthType::from_cloud_config(&self.config)?;
+            let mut force_new_auth = renew_auth;
+            if let AuthType::V3ApplicationCredential = auth_type {
+                // application_credentials token can not be used to get new token without again
+                // supplying application credentials (bug in Keystone?)
+                // So for AppCred we just force a brand new auth
+                force_new_auth = true;
+            }
             let mut rsp;
-            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), renew_auth) {
+            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), force_new_auth)
+            {
                 // State contain valid authentication for different scope/unscoped. It is possible
                 // to request new authz using this other auth
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
@@ -318,7 +342,16 @@ where {
                 // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
 
-                match AuthType::from_cloud_config(&self.config)? {
+                match auth_type {
+                    AuthType::V3ApplicationCredential => {
+                        let identity =
+                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                        let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
+                            &identity,
+                            &authtoken::AuthorizationScope::Unscoped,
+                        )?;
+                        rsp = auth_ep.raw_query_async(self).await?;
+                    }
                     AuthType::V3Password
                     | AuthType::V3Token
                     | AuthType::V3Totp
@@ -369,7 +402,7 @@ where {
                         // And now time to rescope the token
                         let auth_ep =
                             authtoken::build_reauth_request(&token_auth, &requested_scope)?;
-                        rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
+                        rsp = auth_ep.raw_query_async(self).await?;
                     }
                 }
             };
@@ -480,7 +513,7 @@ where {
         token: S,
     ) -> Result<AuthResponse, OpenStackError> {
         let auth_ep = auth::authtoken::build_token_info_endpoint(token)?;
-        let rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
+        let rsp = auth_ep.raw_query_async(self).await?;
         let data: AuthResponse = serde_json::from_slice(rsp.body())?;
         Ok(data)
     }

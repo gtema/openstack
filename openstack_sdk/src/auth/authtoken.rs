@@ -30,7 +30,7 @@ use crate::api::identity::v3::auth::os_federation::{
 use crate::api::identity::v3::auth::token::create as token_v3;
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
-use crate::auth::{v3password, v3token, v3totp, AuthState};
+use crate::auth::{v3applicationcredential, v3password, v3token, v3totp, AuthState};
 use crate::config;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Domain, Project};
 
@@ -80,7 +80,6 @@ pub enum AuthTokenError {
     MissingPasscode,
     #[error("Federation protocol information is missing")]
     MissingFederationProtocol,
-
     #[error("Cannot construct password auth information from config: {}", source)]
     AuthRequestIdentityPassword {
         #[from]
@@ -179,6 +178,12 @@ pub enum AuthTokenError {
     #[error("WebSSO authentication failed")]
     WebSSOFailed,
 
+    #[error("ApplicationCredential authentication error: {}", source)]
+    ApplicationCredential {
+        #[from]
+        source: v3applicationcredential::ApplicationCredentialError,
+    },
+
     #[error("`IO` error: {}", source)]
     IO {
         #[from]
@@ -262,6 +267,8 @@ pub enum AuthorizationScope {
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 #[allow(clippy::enum_variant_names)]
 pub enum AuthType {
+    /// v3 Application Credentials
+    V3ApplicationCredential,
     /// v3 Password
     V3Password,
     /// v3 Token
@@ -279,6 +286,9 @@ impl FromStr for AuthType {
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
+            "v3applicationcredential" | "applicationcredential" => {
+                Ok(Self::V3ApplicationCredential)
+            }
             "v3password" | "password" => Ok(Self::V3Password),
             "v3token" | "token" => Ok(Self::V3Token),
             "v3totp" => Ok(Self::V3Totp),
@@ -304,6 +314,7 @@ impl AuthType {
     /// Return String representation of the AuthType
     pub fn as_str(self) -> &'static str {
         match self {
+            Self::V3ApplicationCredential => "v3applicationcredential",
             Self::V3Password => "v3password",
             Self::V3Token => "v3token",
             Self::V3Multifactor => "v3multifactor",
@@ -321,6 +332,9 @@ fn process_auth_type(
     auth_type: &AuthType,
 ) -> Result<(), AuthTokenError> {
     match auth_type {
+        AuthType::V3ApplicationCredential => {
+            v3applicationcredential::fill_identity(identity_builder, auth_data)?;
+        }
         AuthType::V3Password => {
             v3password::fill_identity_using_password(identity_builder, auth_data, interactive)?;
         }
@@ -388,8 +402,14 @@ pub(crate) fn build_auth_request_with_identity_and_scope<'a>(
 ) -> Result<token_v3::Request<'a>, AuthTokenError> {
     let mut auth_request_data = token_v3::AuthBuilder::default();
     auth_request_data.identity(auth.clone());
-    if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
-        auth_request_data.scope(scope_data);
+    match scope {
+        // For no scope we should not fill anything
+        AuthorizationScope::Unscoped => {}
+        _ => {
+            if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
+                auth_request_data.scope(scope_data);
+            }
+        }
     }
 
     Ok(token_v3::RequestBuilder::default()
@@ -405,8 +425,14 @@ pub(crate) fn build_reauth_request<'a>(
     let identity_data = token_v3::Identity::try_from(auth)?;
     let mut auth_request_data = token_v3::AuthBuilder::default();
     auth_request_data.identity(identity_data);
-    if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
-        auth_request_data.scope(scope_data);
+    match scope {
+        // For no scope we should not fill anything
+        AuthorizationScope::Unscoped => {}
+        _ => {
+            if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
+                auth_request_data.scope(scope_data);
+            }
+        }
     }
 
     Ok(token_v3::RequestBuilder::default()

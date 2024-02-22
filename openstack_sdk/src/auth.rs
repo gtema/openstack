@@ -28,6 +28,7 @@ use thiserror::Error;
 
 pub mod authtoken;
 mod authtoken_utils;
+pub mod v3applicationcredential;
 pub mod v3password;
 pub mod v3token;
 pub mod v3totp;

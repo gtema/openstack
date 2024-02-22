@@ -18,13 +18,17 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::IdAndName;
 
+/// AuthResponse structure returned by token authentication calls
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct AuthResponse {
     pub token: AuthToken,
 }
 
+/// AuthToken response information
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct AuthToken {
+    /// Application credential information
+    pub application_credential: Option<ApplicationCredential>,
     pub catalog: Option<Vec<ServiceEndpoints>>,
     pub roles: Option<Vec<IdAndName>>,
     pub user: User,
@@ -98,6 +102,17 @@ pub struct AuthReceipt {
     pub expires_at: DateTime<Local>,
 }
 
+/// Application Credential information from the token
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+pub struct ApplicationCredential {
+    /// The ID of the application credential.
+    pub id: Option<String>,
+    /// The name of the application credential.
+    pub name: Option<String>,
+    /// A flag indicating whether the application credential may be used for creation or destruction
+    /// of other application credentials or trusts.
+    pub restricted: Option<bool>,
+}
 /// Build Domain type if id or name are given
 #[inline]
 pub(crate) fn get_domain(id: Option<String>, name: Option<String>) -> Option<Domain> {
