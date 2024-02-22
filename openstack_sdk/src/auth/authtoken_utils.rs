@@ -15,25 +15,9 @@
 //! AuthToken supporting utilities
 
 use crate::api::identity::v3::auth::token::create as token_v3;
-use crate::auth::authtoken::{AuthToken, AuthTokenError, AuthorizationScope};
+use crate::auth::authtoken::{AuthTokenError, AuthorizationScope};
 use crate::config;
 use crate::types::identity::v3::{self as types_v3, AuthResponse, Domain, Project};
-
-/// Build Auth `Identity` from existing `Auth` (use token)
-impl TryFrom<&AuthToken> for token_v3::Identity<'_> {
-    type Error = AuthTokenError;
-
-    fn try_from(auth: &AuthToken) -> Result<Self, Self::Error> {
-        Ok(token_v3::IdentityBuilder::default()
-            .methods(Vec::from([token_v3::Methods::Token]))
-            .token(
-                token_v3::TokenBuilder::default()
-                    .id(auth.token.clone())
-                    .build()?,
-            )
-            .build()?)
-    }
-}
 
 /// Build Auth `Scope` data from `CloudConfig`
 impl TryFrom<&config::CloudConfig> for token_v3::Scope<'_> {

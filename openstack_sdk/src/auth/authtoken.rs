@@ -18,22 +18,22 @@ use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use futures::io::Error as IoError;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::{error, trace};
 
-use crate::api::identity::v3::auth::os_federation::{
-    identity_provider::protocol::websso::get as fed_idp_sso_get, websso::get as fed_sso_get,
-};
+//use crate::api::identity::v3::auth::os_federation::{
+//    identity_provider::protocol::websso::get as fed_idp_sso_get, websso::get as fed_sso_get,
+//};
 use crate::api::identity::v3::auth::token::create as token_v3;
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
-use crate::auth::{v3applicationcredential, v3password, v3token, v3totp, AuthState};
+use crate::auth::{v3applicationcredential, v3password, v3token, v3totp, v3websso, AuthState};
 use crate::config;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Domain, Project};
 
+/// AuthToken (X-Auth-Token) based auth errors
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum AuthTokenError {
@@ -70,51 +70,6 @@ pub enum AuthTokenError {
     MissingAuthData,
     #[error("Auth URL is missing")]
     MissingAuthUrl,
-    #[error("User password is missing")]
-    MissingPassword,
-    #[error("User id/name is missing")]
-    MissingUserId,
-    #[error("Auth token is missing")]
-    MissingToken,
-    #[error("MFA passcode is missing")]
-    MissingPasscode,
-    #[error("Federation protocol information is missing")]
-    MissingFederationProtocol,
-    #[error("Cannot construct password auth information from config: {}", source)]
-    AuthRequestIdentityPassword {
-        #[from]
-        source: token_v3::PasswordBuilderError,
-    },
-    #[error("Cannot construct token auth information from config: {}", source)]
-    AuthRequestIdentityToken {
-        #[from]
-        source: token_v3::TokenBuilderError,
-    },
-    #[error("Cannot construct user auth information from config: {}", source)]
-    AuthRequestIdentityUser {
-        #[from]
-        source: token_v3::UserBuilderError,
-    },
-    #[error("Cannot construct user domain information from config: {}", source)]
-    AuthRequestIdentityUserDomain {
-        #[from]
-        source: token_v3::DomainBuilderError,
-    },
-    #[error("Cannot construct TOTP user information: {}", source)]
-    AuthRequestIdentityTotpUser {
-        #[from]
-        source: token_v3::TotpUserBuilderError,
-    },
-    #[error("Cannot construct TOTP user domain information: {}", source)]
-    AuthRequestIdentityTotpUserDomain {
-        #[from]
-        source: token_v3::UserDomainStructBuilderError,
-    },
-    #[error("Cannot construct TOTP auth information: {}", source)]
-    AuthRequestIdentityTotp {
-        #[from]
-        source: token_v3::TotpBuilderError,
-    },
     #[error("Cannot construct identity auth information from config: {}", source)]
     AuthRequestIdentity {
         #[from]
@@ -156,44 +111,50 @@ pub enum AuthTokenError {
         #[from]
         source: token_v3::RequestBuilderError,
     },
-    #[error("error preparing auth request: {}", source)]
-    AuthRequestFederationSso {
-        #[from]
-        source: fed_sso_get::RequestBuilderError,
-    },
-    #[error("error preparing auth request: {}", source)]
-    RequestFederationIdpSsoAuth {
-        #[from]
-        source: fed_idp_sso_get::RequestBuilderError,
-    },
     #[error("error preparing token info request: {}", source)]
     InfoRequest {
         #[from]
         source: token_v3_info::RequestBuilderError,
     },
 
-    #[error("WebSSO callback didn't return a token")]
-    WebSSONoToken,
-
-    #[error("WebSSO authentication failed")]
-    WebSSOFailed,
-
+    /// ApplicationCredentials Identity error
     #[error("ApplicationCredential authentication error: {}", source)]
     ApplicationCredential {
         #[from]
+        /// Error source
         source: v3applicationcredential::ApplicationCredentialError,
     },
 
-    #[error("`IO` error: {}", source)]
-    IO {
+    /// Password Identity error
+    #[error("Password based authentication error: {}", source)]
+    Password {
         #[from]
-        source: IoError,
+        /// Error source
+        source: v3password::PasswordError,
     },
 
-    #[error("`Join` error: {}", source)]
-    Join {
+    /// Token Identity error
+    #[error("Token based authentication error: {}", source)]
+    Token {
         #[from]
-        source: tokio::task::JoinError,
+        /// Error source
+        source: v3token::TokenError,
+    },
+
+    /// TOTP Idetinty error
+    #[error("Password based authentication error: {}", source)]
+    Totp {
+        #[from]
+        /// Error source
+        source: v3totp::TotpError,
+    },
+
+    /// WebSSO Identity error
+    #[error("SSO based authentication error: {}", source)]
+    WebSso {
+        #[from]
+        /// Error source
+        source: v3websso::WebSsoError,
     },
 
     #[error(transparent)]
@@ -336,13 +297,13 @@ fn process_auth_type(
             v3applicationcredential::fill_identity(identity_builder, auth_data)?;
         }
         AuthType::V3Password => {
-            v3password::fill_identity_using_password(identity_builder, auth_data, interactive)?;
+            v3password::fill_identity(identity_builder, auth_data, interactive)?;
         }
         AuthType::V3Token => {
-            v3token::fill_identity_using_token(identity_builder, auth_data, interactive)?;
+            v3token::fill_identity(identity_builder, auth_data, interactive)?;
         }
         AuthType::V3Totp => {
-            v3totp::fill_identity_using_totp(identity_builder, auth_data, interactive)?;
+            v3totp::fill_identity(identity_builder, auth_data, interactive)?;
         }
         other => {
             return Err(AuthTokenError::IdentityMethod {

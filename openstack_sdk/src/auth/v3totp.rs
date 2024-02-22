@@ -13,19 +13,72 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Helper methods to deal with OpenStack authentication with TOTP token
+//!
+//! ```json
+//! {
+//!     "auth": {
+//!         "identity": {
+//!             "methods": [
+//!                 "totp"
+//!             ],
+//!             "totp": {
+//!                 "user": {
+//!                     "id": "ee4dfb6e5540447cb3741905149d9b6e",
+//!                     "passcode": "123456"
+//!                 }
+//!             }
+//!         },
+//!     }
+//! }
+//! ```
+
+use thiserror::Error;
 
 use dialoguer::Input;
 
 use crate::api::identity::v3::auth::token::create as token_v3;
-use crate::auth::authtoken::AuthTokenError;
 use crate::config;
 
+/// TOTP related errors
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum TotpError {
+    /// UserID is required
+    #[error("User id is missing")]
+    MissingUserId,
+
+    /// Passcode is required
+    #[error("Auth token is missing")]
+    MissingPasscode,
+
+    /// TotpUser builder
+    #[error("Cannot construct TOTP user information: {}", source)]
+    UserBuilder {
+        #[from]
+        source: token_v3::TotpUserBuilderError,
+    },
+
+    /// TotpUserDomain builder
+    #[error("Cannot construct TOTP user domain information: {}", source)]
+    UserDomainBuilder {
+        #[from]
+        source: token_v3::UserDomainStructBuilderError,
+    },
+
+    /// Totp builder
+    #[error("Cannot construct TOTP auth information: {}", source)]
+    TotpBuilder {
+        #[from]
+        source: token_v3::TotpBuilderError,
+    },
+}
+
 /// Fill Auth Request Identity with MFA passcode
-pub fn fill_identity_using_totp(
+pub fn fill_identity(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
     interactive: bool,
-) -> Result<(), AuthTokenError> {
+) -> Result<(), TotpError> {
     identity_builder.methods(Vec::from([token_v3::Methods::Totp]));
     let mut user = token_v3::TotpUserBuilder::default();
     if let Some(val) = &auth_data.user_id {
@@ -40,7 +93,7 @@ pub fn fill_identity_using_totp(
             .unwrap();
         user.name(name);
     } else {
-        return Err(AuthTokenError::MissingUserId);
+        return Err(TotpError::MissingUserId);
     }
     // Process user domain information
     if auth_data.user_domain_id.is_some() || auth_data.user_domain_name.is_some() {
@@ -64,7 +117,7 @@ pub fn fill_identity_using_totp(
             .unwrap();
         user.passcode(name);
     } else {
-        return Err(AuthTokenError::MissingPasscode);
+        return Err(TotpError::MissingPasscode);
     }
     identity_builder.totp(
         token_v3::TotpBuilder::default()
@@ -72,4 +125,75 @@ pub fn fill_identity_using_totp(
             .build()?,
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+    use crate::api::identity::v3::auth::token::create as token_v3;
+    use crate::config;
+
+    #[test]
+    fn test_fill_raise_no_user_id() {
+        let config = config::Auth {
+            passcode: Some("pass".to_string()),
+            ..Default::default()
+        };
+        let mut identity = token_v3::IdentityBuilder::default();
+        let res = fill_identity(&mut identity, &config, false);
+        match res.unwrap_err() {
+            TotpError::MissingUserId => {}
+            other => {
+                panic!("Unexpected error: {}", other)
+            }
+        }
+    }
+
+    #[test]
+    fn test_fill_raise_no_user_passcode() {
+        let config = config::Auth {
+            user_id: Some("uid".to_string()),
+            ..Default::default()
+        };
+        let mut identity = token_v3::IdentityBuilder::default();
+        let res = fill_identity(&mut identity, &config, false);
+        match res.unwrap_err() {
+            TotpError::MissingPasscode => {}
+            other => {
+                panic!("Unexpected error: {}", other)
+            }
+        }
+    }
+
+    #[test]
+    fn test_fill() {
+        let config = config::Auth {
+            user_id: Some("uid".to_string()),
+            username: Some("un".to_string()),
+            user_domain_id: Some("udi".to_string()),
+            user_domain_name: Some("udn".to_string()),
+            passcode: Some("pass".to_string()),
+            ..Default::default()
+        };
+        let mut identity = token_v3::IdentityBuilder::default();
+        fill_identity(&mut identity, &config, false).unwrap();
+        assert_eq!(
+            serde_json::to_value(identity.build().unwrap()).unwrap(),
+            json!({
+                "methods": ["totp"],
+                "totp": {
+                    "user": {
+                        "id": "uid",
+                        "domain": {
+                            "id": "udi",
+                            "name": "udn"
+                        },
+                        "passcode": "pass"
+                    },
+                }
+            })
+        );
+    }
 }

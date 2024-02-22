@@ -133,8 +133,18 @@ pub enum OpenStackError {
         source: serde_json::Error,
     },
 
+    /// WebSSO auth errors
+    ///
+    /// this is necessary since we directly invoke v3websso in the connection
+    #[error("WebSSO auth error: {}", source)]
+    WebSso {
+        #[from]
+        /// error source
+        source: crate::auth::v3websso::WebSsoError,
+    },
+
     #[error(transparent)]
-    Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
+    Other(#[from] anyhow::Error),
 }
 
 impl OpenStackError {
