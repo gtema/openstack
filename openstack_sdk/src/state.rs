@@ -12,9 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! SDK State
+//! SDK connection state
 //!
-//! A session object keeps certain information that may need to be cached. This module implements caching of the authentication/authorization information with certain functionality to manage cache data.
+//! A session object keeps certain information that may need to be cached. This module implements
+//! caching of the authentication/authorization information with certain functionality to manage
+//! cache data.
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -23,7 +25,10 @@ use std::io::prelude::*;
 use std::path::PathBuf;
 use tracing::{trace, warn};
 
-use crate::auth::{AuthState, AuthToken, AuthorizationScope};
+use crate::auth::{
+    authtoken::{AuthToken, AuthorizationScope},
+    AuthState,
+};
 use thiserror::Error;
 
 /// Errors which may occur when creating connection state data.
@@ -46,6 +51,7 @@ pub enum StateError {
     Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
 }
 
+/// A HashMap of Scope to Token
 #[derive(Clone, Default, Deserialize, Serialize, Debug)]
 pub(crate) struct ScopeAuths(HashMap<AuthorizationScope, AuthToken>);
 

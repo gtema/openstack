@@ -1,1 +1,1 @@
-../../openstack_sdk/README.md
+{{#include ../../openstack_sdk/README.md}}

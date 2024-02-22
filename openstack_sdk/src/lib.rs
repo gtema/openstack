@@ -18,15 +18,18 @@ pub mod api;
 mod auth;
 mod catalog;
 pub mod config;
+mod error;
 mod openstack;
+mod openstack_async;
 mod state;
 mod utils;
-mod websso;
 
 pub mod types;
 
 pub use crate::auth::AuthError;
-pub use crate::openstack::{AsyncOpenStack, OpenStack, OpenStackError, RestError};
+pub use crate::error::{OpenStackError, RestError};
+pub use crate::openstack::OpenStack;
+pub use crate::openstack_async::AsyncOpenStack;
 
 #[cfg(test)]
 #[allow(dead_code)]
