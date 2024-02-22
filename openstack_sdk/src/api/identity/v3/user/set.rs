@@ -164,6 +164,7 @@ pub struct User<'a> {
     pub(crate) options: Option<Options<'a>>,
 
     #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 

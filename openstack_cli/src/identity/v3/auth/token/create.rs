@@ -99,6 +99,10 @@ struct Domain {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct User {
+    /// A `domain` object
+    #[command(flatten)]
+    domain: Option<Domain>,
+
     /// The ID of the user. Required if you do not
     /// specify the user name.
     #[arg(long)]
@@ -113,10 +117,6 @@ struct User {
     /// User Password
     #[arg(long)]
     password: Option<String>,
-
-    /// A `domain` object
-    #[command(flatten)]
-    domain: Option<Domain>,
 }
 
 /// Password Body data
@@ -152,6 +152,9 @@ struct UserDomainStructInput {
 #[derive(Args)]
 #[group(required = true, multiple = true)]
 struct TotpUser {
+    #[command(flatten)]
+    domain: Option<UserDomainStructInput>,
+
     /// The user ID
     #[arg(long)]
     id: Option<String>,
@@ -159,9 +162,6 @@ struct TotpUser {
     /// The user name
     #[arg(long)]
     name: Option<String>,
-
-    #[command(flatten)]
-    domain: Option<UserDomainStructInput>,
 
     /// MFA passcode
     #[arg(long, required = false)]
@@ -180,6 +180,9 @@ struct Totp {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct ApplicationCredentialUser {
+    #[command(flatten)]
+    domain: Option<UserDomainStructInput>,
+
     /// The user ID
     #[arg(long)]
     id: Option<String>,
@@ -187,9 +190,6 @@ struct ApplicationCredentialUser {
     /// The user name
     #[arg(long)]
     name: Option<String>,
-
-    #[command(flatten)]
-    domain: Option<UserDomainStructInput>,
 }
 
 /// ApplicationCredential Body data
@@ -216,6 +216,10 @@ struct ApplicationCredential {
 #[derive(Args)]
 #[group(required = true, multiple = true)]
 struct Identity {
+    /// An application credential object.
+    #[command(flatten)]
+    application_credential: Option<ApplicationCredential>,
+
     /// The authentication method. For password
     /// authentication, specify `password`.
     #[arg(action=clap::ArgAction::Append, long, required=false)]
@@ -232,10 +236,6 @@ struct Identity {
     /// Multi Factor Authentication information
     #[command(flatten)]
     totp: Option<Totp>,
-
-    /// An application credential object.
-    #[command(flatten)]
-    application_credential: Option<ApplicationCredential>,
 }
 
 /// ProjectDomain Body data
@@ -255,16 +255,16 @@ struct ProjectDomain {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct Project {
-    /// Project Name
-    #[arg(long)]
-    name: Option<String>,
+    #[command(flatten)]
+    domain: Option<ProjectDomain>,
 
     /// Project Id
     #[arg(long)]
     id: Option<String>,
 
-    #[command(flatten)]
-    domain: Option<ProjectDomain>,
+    /// Project Name
+    #[arg(long)]
+    name: Option<String>,
 }
 
 /// ScopeDomain Body data
@@ -301,13 +301,13 @@ struct System {
 #[group(required = false, multiple = true)]
 struct Scope {
     #[command(flatten)]
-    project: Option<Project>,
-
-    #[command(flatten)]
     domain: Option<ScopeDomain>,
 
     #[command(flatten)]
     os_trust_trust: Option<OsTrustTrust>,
+
+    #[command(flatten)]
+    project: Option<Project>,
 
     #[command(flatten)]
     system: Option<System>,

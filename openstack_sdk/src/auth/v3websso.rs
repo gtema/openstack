@@ -258,7 +258,7 @@ mod tests {
             .await
             .unwrap();
 
-        let _res = websso_handle.await.unwrap().unwrap();
+        websso_handle.await.unwrap().unwrap();
         assert_eq!(*state.lock().unwrap(), Some(params[0].1.to_string()));
     }
 
@@ -292,7 +292,7 @@ mod tests {
             .await
             .unwrap();
 
-        let _res = websso_handle.await.unwrap().unwrap();
+        websso_handle.await.unwrap().unwrap();
         assert_eq!(*state.lock().unwrap(), None);
     }
 }

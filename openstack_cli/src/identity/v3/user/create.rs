@@ -74,22 +74,22 @@ struct Options {
     ignore_change_password_upon_first_use: Option<bool>,
 
     #[arg(action=clap::ArgAction::Set, long)]
+    ignore_lockout_failure_attempts: Option<bool>,
+
+    #[arg(action=clap::ArgAction::Set, long)]
     ignore_password_expiry: Option<bool>,
 
     #[arg(action=clap::ArgAction::Set, long)]
-    ignore_lockout_failure_attempts: Option<bool>,
+    ignore_user_inactivity: Option<bool>,
 
     #[arg(action=clap::ArgAction::Set, long)]
     lock_password: Option<bool>,
 
     #[arg(action=clap::ArgAction::Set, long)]
-    ignore_user_inactivity: Option<bool>,
+    multi_factor_auth_enabled: Option<bool>,
 
     #[arg(action=clap::ArgAction::Append, long)]
     multi_factor_auth_rules: Option<Vec<String>>,
-
-    #[arg(action=clap::ArgAction::Set, long)]
-    multi_factor_auth_enabled: Option<bool>,
 }
 
 /// User Body data

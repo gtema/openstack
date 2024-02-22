@@ -124,6 +124,7 @@ pub struct Volume<'a> {
     pub(crate) group_id: Option<Option<Cow<'a, str>>>,
 
     #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 

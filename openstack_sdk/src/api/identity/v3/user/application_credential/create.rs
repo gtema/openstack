@@ -113,6 +113,7 @@ pub struct ApplicationCredential<'a> {
     pub(crate) access_rules: Option<Vec<AccessRules<'a>>>,
 
     #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 
