@@ -82,14 +82,14 @@ struct PathParameters {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct ExternalGatewayInfo {
-    #[arg(long, required = false)]
-    network_id: String,
-
     #[arg(action=clap::ArgAction::Set, long)]
     enable_snat: Option<bool>,
 
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     external_fixed_ips: Option<Vec<Value>>,
+
+    #[arg(long, required = false)]
+    network_id: String,
 }
 
 /// Router Body data

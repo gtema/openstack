@@ -113,11 +113,11 @@ enum NetworksStringEnum {
 #[derive(Args)]
 #[group(required = true, multiple = false)]
 struct NetworksEnumGroupStruct {
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
-    networks: Option<Vec<Value>>,
-
     #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
     auto_networks: bool,
+
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    networks: Option<Vec<Value>>,
 
     #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
     none_networks: bool,

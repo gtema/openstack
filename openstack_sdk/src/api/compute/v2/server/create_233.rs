@@ -665,6 +665,7 @@ pub struct OsSchedulerHints<'a> {
     pub(crate) cidr: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 
@@ -763,6 +764,7 @@ pub struct OsSchHntSchedulerHints<'a> {
     pub(crate) cidr: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 

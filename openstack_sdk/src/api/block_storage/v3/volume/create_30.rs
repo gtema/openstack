@@ -120,6 +120,7 @@ pub struct Volume<'a> {
     pub(crate) image_ref: Option<Option<Cow<'a, str>>>,
 
     #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
     _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 
