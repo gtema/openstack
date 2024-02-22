@@ -19,8 +19,6 @@
 
 pub use std::borrow::Cow;
 
-// pub use http::Method;
-
 pub use crate::api::BodyError;
 pub use crate::api::Client;
 pub use crate::api::JsonBodyParams;

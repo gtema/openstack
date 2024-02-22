@@ -20,7 +20,7 @@ use thiserror::Error;
 use futures::io::Error as IoError;
 
 use crate::api;
-use crate::auth::AuthError;
+use crate::auth::{authtoken::AuthTokenError, AuthError};
 use crate::catalog::CatalogError;
 use crate::config::ConfigError;
 
@@ -71,6 +71,12 @@ pub enum OpenStackError {
         source: AuthError,
     },
 
+    #[error("error setting auth header: {}", source)]
+    AuthTokenError {
+        #[from]
+        source: AuthTokenError,
+    },
+
     #[error("communication with cloud: {}", source)]
     Communication {
         #[from]
@@ -118,6 +124,14 @@ pub enum OpenStackError {
         msg
     )]
     NonInteractiveMode { msg: String },
+
+    /// JSON deserialization from OpenStack failed.
+    #[error("could not parse JSON response: {}", source)]
+    Json {
+        /// The source of the error.
+        #[from]
+        source: serde_json::Error,
+    },
 
     #[error(transparent)]
     Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error

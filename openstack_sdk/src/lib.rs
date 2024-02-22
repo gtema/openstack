@@ -23,7 +23,6 @@ mod openstack;
 mod openstack_async;
 mod state;
 mod utils;
-mod websso;
 
 pub mod types;
 

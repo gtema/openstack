@@ -18,6 +18,7 @@
 //! endpoint to be invoked with POST method and a form data containing OpenStack token. Once
 //! endpoint is invoked the server stops and returns `SsoState` structure with the populated token.
 
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::convert::Infallible;
 use std::net::SocketAddr;
@@ -39,28 +40,57 @@ use url::Url;
 
 use dialoguer::Confirm;
 
-use crate::auth::AuthError;
+use crate::api::identity::v3::auth::os_federation::{
+    identity_provider::protocol::websso::get as fed_idp_sso_get, websso::get as fed_sso_get,
+};
+use crate::api::RestEndpoint;
+use crate::auth::authtoken::{AuthToken, AuthTokenError};
+use crate::config;
 
-/// SSOState structure to return data from the WebServer back to the invoker
-#[derive(Debug)]
-pub(crate) struct SsoState {
-    /// Federation token
-    pub(crate) token: String,
+/// Get URL as a string for the WebSSO authentication by constructing the [`RestEndpoint`] and
+/// returning resulting `endpoint`
+pub fn get_auth_url(config: &config::CloudConfig) -> Result<Cow<'static, str>, AuthTokenError> {
+    if let Some(auth) = &config.auth {
+        if let Some(identity_provider) = &auth.identity_provider {
+            let mut ep = fed_idp_sso_get::RequestBuilder::default();
+            ep.idp_id(identity_provider);
+            if let Some(protocol) = &auth.protocol {
+                ep.protocol_id(protocol);
+            } else {
+                return Err(AuthTokenError::MissingFederationProtocol);
+            }
+            return Ok(ep.build()?.endpoint());
+        } else {
+            let mut ep = fed_sso_get::RequestBuilder::default();
+            if let Some(protocol) = &auth.protocol {
+                ep.protocol_id(protocol);
+            } else {
+                return Err(AuthTokenError::MissingFederationProtocol);
+            }
+            return Ok(ep.build()?.endpoint());
+        }
+    }
+    Err(AuthTokenError::MissingAuthData)
 }
 
-#[derive(Debug)]
-struct CallbackServerState {
-    token: Option<String>,
-    cancel_token: CancellationToken,
+/// Return [`AuthToken`] obtained using the WebSSO (Keystone behind mod_auth_oidc)
+pub async fn get_token_auth(url: &mut Url) -> Result<AuthToken, AuthTokenError> {
+    let token = get_token(url, None).await?;
+    Ok(AuthToken {
+        token: token.clone(),
+        auth_info: None,
+    })
 }
 
-// Perform WebSSO by opening a browser window with tiny webserver started to capture the
-/// callback
+// Perform WebSSO by opening a browser window with tiny webserver started to capture the callback
 ///
 /// - start callback server
 /// - open browser pointing to the SSO url
 /// - wait for the response with the OpenStack token
-pub async fn websso(url: &mut Url) -> Result<SsoState, AuthError> {
+async fn get_token(
+    url: &mut Url,
+    socket_addr: Option<SocketAddr>,
+) -> Result<String, AuthTokenError> {
     url.set_query(Some("origin=http://localhost:8050/callback"));
     let confirmation = Confirm::new()
         .with_prompt(format!(
@@ -71,8 +101,9 @@ pub async fn websso(url: &mut Url) -> Result<SsoState, AuthError> {
         .unwrap();
     if confirmation {
         info!("Opening browser at {:?}", url.as_str());
-        let addr = SocketAddr::from(([127, 0, 0, 1], 8050));
+        let addr = socket_addr.unwrap_or(SocketAddr::from(([127, 0, 0, 1], 8050)));
         let cancel_token = CancellationToken::new();
+        let state: Arc<Mutex<Option<String>>> = Arc::new(Mutex::new(None));
 
         tokio::spawn({
             let cancel_token = cancel_token.clone();
@@ -86,29 +117,28 @@ pub async fn websso(url: &mut Url) -> Result<SsoState, AuthError> {
 
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
-            async move { websso_callback_server(addr, cancel_token).await }
+            let state = state.clone();
+            async move { websso_callback_server(addr, state, cancel_token).await }
         });
         open::that(url.as_str())?;
 
-        let res = websso_handle.await?;
+        let _res = websso_handle.await?;
 
-        Ok(res?)
+        let guard = state.lock().expect("poisoned guard");
+        guard.clone().ok_or(AuthTokenError::WebSSONoToken)
     } else {
-        Err(AuthError::WebSSOFailed)
+        Err(AuthTokenError::WebSSOFailed)
     }
 }
 
 /// Start the WebSSO callback server
-pub(crate) async fn websso_callback_server(
+async fn websso_callback_server(
     addr: SocketAddr,
+    state: Arc<Mutex<Option<String>>>,
     cancel_token: CancellationToken,
-) -> Result<SsoState, AuthError> {
+) -> Result<(), AuthTokenError> {
     let listener = TcpListener::bind(addr).await?;
     info!("Starting webserver to receive SSO callback");
-    let state: Arc<Mutex<CallbackServerState>> = Arc::new(Mutex::new(CallbackServerState {
-        token: None,
-        cancel_token: cancel_token.clone(),
-    }));
     // Wait maximum 2 minute for auth processing
     let webserver_timeout = Duration::from_secs(120);
     loop {
@@ -117,15 +147,17 @@ pub(crate) async fn websso_callback_server(
         tokio::select! {
             Ok((stream, _addr)) = listener.accept() => {
                 let io = TokioIo::new(stream);
-                let cancel_token = cancel_token.clone();
+                let cancel_token_srv = cancel_token.clone();
+                let cancel_token_conn = cancel_token.clone();
 
                 let service = service_fn(move |req| {
                     let state_clone = state_clone.clone();
-                    handle_request(req, state_clone)
+                    let cancel_token = cancel_token_srv.clone();
+                    handle_request(req, state_clone, cancel_token)
                 });
 
                 tokio::task::spawn(async move {
-                    let cancel_token = cancel_token.clone();
+                    let cancel_token = cancel_token_conn.clone();
                     if let Err(err) = http1::Builder::new().serve_connection(io, service).await {
                         error!("Failed to serve connection: {:?}", err);
                         cancel_token.cancel();
@@ -134,7 +166,7 @@ pub(crate) async fn websso_callback_server(
             },
             _ = cancel_token.cancelled() => {
                 info!("Stopping webserver");
-                return Ok(SsoState { token: state_clone.lock().unwrap().token.clone().ok_or(AuthError::WebSSONoToken)?});
+                break;
             },
             _ = tokio::time::sleep(webserver_timeout) => {
                 warn!("Timeout of {} sec waiting for authentication expired. Shutting down", webserver_timeout.as_secs());
@@ -142,12 +174,14 @@ pub(crate) async fn websso_callback_server(
             }
         }
     }
+    Ok(())
 }
 
 /// Server request handler function
 async fn handle_request(
     req: Request<IncomingBody>,
-    state: Arc<Mutex<CallbackServerState>>,
+    state: Arc<Mutex<Option<String>>>,
+    cancel_token: CancellationToken,
 ) -> Result<Response<BoxBody<Bytes, Infallible>>, hyper::Error> {
     match (req.method(), req.uri().path()) {
         (&Method::POST, "/callback") => {
@@ -158,17 +192,16 @@ async fn handle_request(
                 .collect::<HashMap<String, String>>();
             trace!("Params = {:?}", params);
 
-            let mut data = state.lock().unwrap();
+            let mut data = state.lock().expect("state lock can be obtained");
             if let Some(token) = params.get("token") {
-                data.token = Some(token.clone());
-                //data.cancel_token.cancel();
+                *data = Some(token.clone());
             }
-            data.cancel_token.cancel();
+            cancel_token.cancel();
 
             Ok(Response::builder()
                 .body(
                     Full::new(Bytes::from(
-                        include_str!("../static/callback.html").to_string(),
+                        include_str!("../../static/callback.html").to_string(),
                     ))
                     .boxed(),
                 )
@@ -187,11 +220,11 @@ async fn handle_request(
 #[cfg(test)]
 mod tests {
     use reserve_port::ReservedSocketAddr;
+    use std::sync::{Arc, Mutex};
     use tokio::signal;
     use tokio_util::sync::CancellationToken;
 
     use super::websso_callback_server;
-    use crate::auth::AuthError;
 
     #[tokio::test]
     async fn test_callback() {
@@ -209,9 +242,11 @@ mod tests {
             }
         });
 
+        let state = Arc::new(Mutex::new(None));
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
-            async move { websso_callback_server(addr, cancel_token).await }
+            let state = state.clone();
+            async move { websso_callback_server(addr, state, cancel_token).await }
         });
 
         let params = [("token", "foo_bar_baz")];
@@ -223,8 +258,8 @@ mod tests {
             .await
             .unwrap();
 
-        let res = websso_handle.await.unwrap().unwrap();
-        assert_eq!(res.token, params[0].1.to_string());
+        let _res = websso_handle.await.unwrap().unwrap();
+        assert_eq!(*state.lock().unwrap(), Some(params[0].1.to_string()));
     }
 
     #[tokio::test]
@@ -243,9 +278,11 @@ mod tests {
             }
         });
 
+        let state = Arc::new(Mutex::new(None));
         let websso_handle = tokio::spawn({
             let cancel_token = cancel_token.clone();
-            async move { websso_callback_server(addr, cancel_token).await }
+            let state = state.clone();
+            async move { websso_callback_server(addr, state, cancel_token).await }
         });
 
         let client = reqwest::Client::new();
@@ -255,11 +292,7 @@ mod tests {
             .await
             .unwrap();
 
-        match websso_handle.await.unwrap().unwrap_err() {
-            AuthError::WebSSONoToken => {}
-            _ => {
-                panic!("Unexpected error")
-            }
-        }
+        let _res = websso_handle.await.unwrap().unwrap();
+        assert_eq!(*state.lock().unwrap(), None);
     }
 }

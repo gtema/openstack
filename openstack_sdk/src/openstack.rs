@@ -13,6 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Synchronous OpenStack client
+
 #![deny(dead_code, unused_imports, unused_mut)]
 
 use std::convert::TryInto;
@@ -32,13 +33,15 @@ use crate::config::CloudConfig;
 use crate::api;
 use crate::api::query;
 use crate::api::query::RawQuery;
-use crate::auth::{self, Auth, AuthError, AuthorizationScope};
+use crate::auth::{
+    self, authtoken,
+    authtoken::{AuthTokenError, AuthType},
+    Auth,
+};
 use crate::config::{get_config_identity_hash, ConfigFile};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project};
 use crate::types::ServiceType;
-
-use crate::api::identity::v3::auth::token::create as token_v3;
 
 use crate::catalog::{Catalog, ServiceEndpoint};
 
@@ -57,9 +60,41 @@ enum ClientCert {
     Pem(Vec<u8>),
 }
 
-/// A representation of the OpenStack API for a single user.
+/// Synchronous client for the OpenStack API for a single user.
 ///
-/// Separate users should use separate instances of this.
+/// Separate Identity (not the scope) should use separate instances of this.
+/// ```rust
+/// use openstack_sdk::api::{paged, Pagination, Query};
+/// use openstack_sdk::{OpenStack, config::ConfigFile, OpenStackError};
+/// use openstack_sdk::types::ServiceType;
+/// use openstack_sdk::api::compute::v2::flavor::list;
+///
+/// fn list_flavors() -> Result<(), OpenStackError> {
+///     // Get the builder for the listing Flavors Endpoint
+///     let mut ep_builder = list::Request::builder();
+///     // Set the `min_disk` query param
+///     ep_builder.min_disk("15");
+///     let ep = ep_builder.build().unwrap();
+///
+///     let cfg = ConfigFile::new().unwrap();
+///     // Get connection config from clouds.yaml/secure.yaml
+///     let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+///     // Establish connection
+///     let mut session = OpenStack::new(&profile)?;
+///
+///     // Invoke service discovery when desired.
+///     session.discover_service_endpoint(&ServiceType::Compute)?;
+///
+///     // Execute the call with pagination limiting maximum amount of entries to 1000
+///     let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(1000))
+///         .query(&session)
+///         .unwrap();
+///
+///     println!("Data = {:?}", data);
+///     Ok(())
+/// }
+/// ```
+
 #[derive(Clone)]
 pub struct OpenStack {
     /// The client to use for API calls.
@@ -113,12 +148,12 @@ impl OpenStack {
             .config
             .auth
             .as_ref()
-            .ok_or(AuthError::MissingAuthData)?;
+            .ok_or(AuthTokenError::MissingAuthData)?;
 
         let identity_service_url = auth_data
             .auth_url
             .as_ref()
-            .ok_or(AuthError::MissingAuthUrl)?;
+            .ok_or(AuthTokenError::MissingAuthUrl)?;
 
         session
             .catalog
@@ -145,20 +180,41 @@ impl OpenStack {
         // Ensure we resolve identity endpoint using version discovery
         session.discover_service_endpoint(&ServiceType::Identity)?;
 
-        session.authorize(None, None, false, false)?;
+        session.authorize(None, false, false)?;
 
         Ok(session)
+    }
+
+    /// Set the authorization to be used by the client
+    fn set_auth(&mut self, auth: auth::Auth, skip_cache_update: bool) -> &mut Self {
+        self.auth = auth;
+        if !skip_cache_update {
+            if let Auth::AuthToken(auth) = &self.auth {
+                self.state.set_scope_auth(&auth.get_scope(), auth);
+            }
+        }
+        self
+    }
+
+    /// Set TokenAuth as current authorization
+    fn set_token_auth(&mut self, token: String, token_info: Option<AuthResponse>) -> &mut Self {
+        let token_auth = authtoken::AuthToken {
+            token,
+            auth_info: token_info,
+        };
+        self.set_auth(auth::Auth::AuthToken(Box::new(token_auth.clone())), false);
+        self
     }
 
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize(
         &mut self,
-        auth_data: Option<token_v3::Identity<'_>>,
-        scope: Option<AuthorizationScope>,
+        scope: Option<authtoken::AuthorizationScope>,
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError> {
-        let requested_scope = scope.unwrap_or(AuthorizationScope::try_from(&self.config)?);
+        let requested_scope =
+            scope.unwrap_or(authtoken::AuthorizationScope::try_from(&self.config)?);
 
         if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
             // Valid authorization is already available and no renewal is required
@@ -173,57 +229,62 @@ impl OpenStack {
                 // scope/unscoped. It is possible to request new authz
                 // using this other auth
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
-                let auth_ep = auth::build_reauth_request(&available_auth, &requested_scope)?;
+                let auth_ep = authtoken::build_reauth_request(&available_auth, &requested_scope)?;
                 rsp = auth_ep.raw_query(self)?;
             } else {
                 // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
 
-                // TODO: How to deal with SSO in sync?
-                let auth_data =
-                    auth_data.unwrap_or(auth::build_identity_data_from_config(&self.config, true)?);
+                match AuthType::from_cloud_config(&self.config)? {
+                    AuthType::V3Password
+                    | AuthType::V3Token
+                    | AuthType::V3Totp
+                    | AuthType::V3Multifactor => {
+                        let identity =
+                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                        let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
+                            &identity,
+                            &requested_scope,
+                        )?;
+                        rsp = auth_ep.raw_query(self)?;
 
-                let auth_ep =
-                    auth::build_auth_request_with_identity_and_scope(&auth_data, &requested_scope)?;
-                rsp = auth_ep.raw_query(self)?;
+                        // Handle the MFA
+                        if let StatusCode::UNAUTHORIZED = rsp.status() {
+                            if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
+                                let receipt_data: AuthReceiptResponse =
+                                    serde_json::from_slice(rsp.body())
+                                        .expect("A valid OpenStack Auth receipt body");
+                                let auth_endpoint = authtoken::build_auth_request_from_receipt(
+                                    &self.config,
+                                    receipt.clone(),
+                                    &receipt_data,
+                                    &requested_scope,
+                                    interactive,
+                                )?;
+                                rsp = auth_endpoint.raw_query(self)?;
+                            }
+                        }
+                        api::check_response_error::<Self>(&rsp)?;
+                    }
+                    other => {
+                        return Err(AuthTokenError::IdentityMethodSync {
+                            auth_type: other.as_str().to_string(),
+                        })?
+                    }
+                }
             };
 
-            // Handle the MFA
-            if let StatusCode::UNAUTHORIZED = rsp.status() {
-                if let Some(receipt) = rsp.headers().get("openstack-auth-receipt") {
-                    let receipt_data: AuthReceiptResponse = serde_json::from_slice(rsp.body())
-                        .expect("A valid OpenStack Auth receipt body");
-                    let auth_endpoint = auth::build_auth_request_from_receipt(
-                        &self.config,
-                        receipt.clone(),
-                        &receipt_data,
-                        &requested_scope,
-                        interactive,
-                    )?;
-                    rsp = auth_endpoint.raw_query(self)?;
-                }
-            }
-            api::check_response_error::<Self>(&rsp)?;
-
-            let data: AuthResponse = serde_json::from_slice(rsp.body()).unwrap();
+            let data: AuthResponse = serde_json::from_slice(rsp.body())?;
             debug!("Auth token is {:?}", data);
 
             let token = rsp
                 .headers()
                 .get("x-subject-token")
-                .unwrap()
+                .expect("x-subject-token present")
                 .to_str()
-                .unwrap();
+                .expect("x-subject-token is a string");
 
-            let token_auth = auth::AuthToken {
-                token: token.to_string().clone(),
-                auth_info: Some(data.clone()),
-            };
-            let full_scope = AuthorizationScope::from(&data);
-
-            self.auth = auth::Auth::AuthToken(Box::new(token_auth.clone()));
-
-            self.state.set_scope_auth(&full_scope, &token_auth);
+            self.set_token_auth(token.to_string(), Some(data));
         }
 
         if let auth::Auth::AuthToken(token_data) = &self.auth {

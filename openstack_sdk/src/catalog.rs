@@ -119,6 +119,7 @@ impl ServiceEndpoint {
     }
 }
 
+/// Endpoint version status
 #[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(rename_all = "lowercase")]
 #[serde(remote = "EndpointVersionStatus")]
