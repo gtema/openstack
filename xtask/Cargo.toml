@@ -7,7 +7,7 @@ publish = false
 [dependencies]
 clap = { workspace = true }
 openstack_cli = { path="../openstack_cli" }
-clap-markdown = "~0.1"
+clap-markdown = "^0.1"
 
 [package.metadata.dist]
 dist = false

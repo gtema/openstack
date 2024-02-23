@@ -20,13 +20,13 @@ path = "src/bin/osc.rs"
 anyhow = {workspace = true}
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
-cli-table = "~0.4"
+cli-table = "^0.4"
 dialoguer = {workspace = true}
 http = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.1" }
-indicatif = "~0.17"
-regex = "~1.10"
+indicatif = "^0.17"
+regex = "^1.10"
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = {workspace = true}
@@ -35,8 +35,8 @@ tokio = { workspace = true, features = ["fs", "macros", "net", "sync", "rt-multi
 tokio-util = {workspace = true}
 thiserror = { workspace = true }
 tracing = { workspace = true}
-tracing-subscriber = { version = "~0.3" }
+tracing-subscriber = { version = "^0.3" }
 url = { workspace = true }
 
 [dev-dependencies]
-assert_cmd = "~2.0"
+assert_cmd = "^2.0"
