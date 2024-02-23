@@ -599,7 +599,7 @@ pub struct OsSchedulerHints<'a> {
     /// Schedule the server on a host in the network specified with an IP
     /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
     /// If `os:scheduler_hints:build_near_host_ip` is specified and this
-    /// paramete is omitted, `/24` is used. It is available when
+    /// parameter is omitted, `/24` is used. It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -696,7 +696,7 @@ pub struct OsSchHntSchedulerHints<'a> {
     /// Schedule the server on a host in the network specified with an IP
     /// address (`os:scheduler_hints:build_near_host_ip`) and this parameter.
     /// If `os:scheduler_hints:build_near_host_ip` is specified and this
-    /// paramete is omitted, `/24` is used. It is available when
+    /// parameter is omitted, `/24` is used. It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]

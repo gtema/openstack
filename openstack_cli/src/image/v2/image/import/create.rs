@@ -75,7 +75,7 @@ use structable_derive::StructTable;
 /// To set the behavior of the import workflow in case of error, you can use
 /// the optional boolean body parameter `all_stores_must_succeed`. When set to
 /// True (default), if an error occurs during the upload in at least one store,
-/// the worfklow fails, the data is deleted from stores where copying is done
+/// the workflow fails, the data is deleted from stores where copying is done
 /// and the state of the image remains unchanged. When set to False, the
 /// workflow will fail only if the upload fails on all stores specified. In
 /// case of a partial success, the locations added to the image will be the

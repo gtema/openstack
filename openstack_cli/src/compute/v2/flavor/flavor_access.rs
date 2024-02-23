@@ -41,7 +41,7 @@ pub enum FlavorAccessCommands {
     Add(add_tenant_access::FlavorCommand),
     /// Lists flavor access information.
     #[command(about = "List Flavor Access Information For Given Flavor")]
-    List(list::FlavorAccesesCommand),
+    List(list::FlavorAccessesCommand),
     /// Removes flavor access from a tenant and flavor.
     #[command(about = "Remove Flavor Access From Tenant (removeTenantAccess Action)")]
     Remove(remove_tenant_access::FlavorCommand),

@@ -16,7 +16,7 @@
 //!
 //! When authenticating with AuthToken user is able to explicitly request scope (authorization)
 //!
-//! - `project` - itention to work with a certain project
+//! - `project` - intention to work with a certain project
 //! - `domain` - intention to work with a certain domain
 //! - `unscoped` - authenticate without any explicit roles
 

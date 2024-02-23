@@ -14,7 +14,7 @@ additional convenience features.
 - Sync and Async interface
 - `Query`, `Find` and `Pagination` interfaces implementing basic functionality
 - `RawQuery` interface providing more control over the API
-  invokation with upload and download capabilities.
+  invocation with upload and download capabilities.
 - Every combination of URL + http method + body schema is represented by a
 dedicated module
 

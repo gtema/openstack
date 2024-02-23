@@ -207,7 +207,7 @@ struct Rebuild {
     /// Note
     ///
     /// This information is published via the metadata service and requires
-    /// application such as `cloud-init` to propogate it through to the
+    /// application such as `cloud-init` to propagate it through to the
     /// instance.
     ///
     /// **New in version 2.90**

@@ -271,7 +271,7 @@ impl AsyncOpenStack {
         self.auth = auth;
         if !skip_cache_update {
             if let Auth::AuthToken(auth) = &self.auth {
-                // For app creds we shuld save auth as unscoped since:
+                // For app creds we should save auth as unscoped since:
                 // - on request it is disallowed to specify scope
                 // - response contain fixed scope
                 // With this it is not possible to find auth in the cache if we use the real

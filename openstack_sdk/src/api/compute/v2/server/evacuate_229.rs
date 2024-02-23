@@ -67,7 +67,7 @@ pub struct Evacuate<'a> {
     /// Furthermore, this should not be specified when evacuating instances
     /// managed by a clustered hypervisor driver like ironic since you cannot
     /// specify a node, so the compute service will pick a node randomly which
-    /// may not be able to accomodate the instance.
+    /// may not be able to accommodate the instance.
     ///
     /// **New in version 2.29**
     ///

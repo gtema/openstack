@@ -3,7 +3,7 @@
 Python based OpenStack API binding tools are structured on a resource base,
 where every API resource is a class/object having multiple methods for the
 resource CRUD and other operations. Moreover microversion differences are also
-being dealed inside this single object. This causes method typing being
+being dealt inside this single object. This causes method typing being
 problematic and not definite (i.e. when create and get operations return
 different structures or microversions require modified types).
 

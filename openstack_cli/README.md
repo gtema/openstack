@@ -60,5 +60,5 @@ can be invoked with requested parameters. This approach allows user to be very
 explicit in the requirement and have a guarantee of the expected parameters.
 When a newer microversion is required user should explicitly to do "migration"
 step adapting the invocation to a newer set of parameters. Microversion (or
-functionality) deprecation is also much simplier this way and is handled by
+functionality) deprecation is also much simpler this way and is handled by
 marking the whole command deprecated and/or drop it completely.
