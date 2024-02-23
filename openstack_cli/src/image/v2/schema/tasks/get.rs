@@ -46,12 +46,13 @@ use structable_derive::StructTable;
 /// An tasks list entity is a container of entities containing abbreviated
 /// information about individual tasks.
 ///
-/// The following schema is solely an example. Consider only the
-/// response to the API call as authoritative.
+/// The following schema is solely an example. Consider only the response to
+/// the API call as authoritative.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
+///
 #[derive(Args)]
 #[command(about = "Show tasks schema")]
 pub struct TasksCommand {

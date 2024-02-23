@@ -42,12 +42,13 @@ use structable_derive::StructTable;
 /// Deletes a flavor.
 ///
 /// This is typically an admin only action. Deleting a flavor that is in use by
-/// existing servers is not recommended as it can cause incorrect data to
-/// be returned to the user under some operations.
+/// existing servers is not recommended as it can cause incorrect data to be
+/// returned to the user under some operations.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Delete Flavor")]
 pub struct FlavorCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

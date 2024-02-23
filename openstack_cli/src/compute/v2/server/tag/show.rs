@@ -40,12 +40,12 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Checks tag existence on the server. If tag exists response with 204 status
-/// code
-/// will be returned. Otherwise returns 404.
+/// code will be returned. Otherwise returns 404.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Check Tag Existence")]
 pub struct TagCommand {
@@ -66,10 +66,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

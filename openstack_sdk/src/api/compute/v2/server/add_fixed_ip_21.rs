@@ -25,10 +25,12 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to add a fixed ip address to a server.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct AddFixedIp<'a> {
     /// The network ID.
+    ///
     #[serde(rename = "networkId")]
     #[builder(setter(into))]
     pub(crate) network_id: Cow<'a, str>,
@@ -38,10 +40,12 @@ pub struct AddFixedIp<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to add a fixed ip address to a server.
+    ///
     #[builder(setter(into))]
     pub(crate) add_fixed_ip: AddFixedIp<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

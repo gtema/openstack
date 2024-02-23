@@ -39,11 +39,12 @@ use std::collections::HashMap;
 
 /// New in version 3.10
 ///
-/// This call returns the list of systems that are available to be scoped
-/// to based on the X-Auth-Token provided in the request.
+/// This call returns the list of systems that are available to be scoped to
+/// based on the X-Auth-Token provided in the request.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/auth\_system`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_system`
+///
 #[derive(Args)]
 #[command(about = "Get available system scopes")]
 pub struct SystemsCommand {

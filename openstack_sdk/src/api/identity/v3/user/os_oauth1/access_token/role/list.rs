@@ -18,7 +18,8 @@
 //! List roles for a user access token.
 //!
 //! GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/
-//!          {access_token_id}/roles
+//! {access_token_id}/roles
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -31,11 +32,14 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 
-    /// access_token_id parameter for /v3/users/{user_id}/OS-
-    /// OAUTH1/access_tokens/{access_token_id}/roles/{role_id} API
+    /// access_token_id parameter for
+    /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
+    /// API
+    ///
     #[builder(default, setter(into))]
     access_token_id: Cow<'a, str>,
 

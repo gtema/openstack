@@ -17,13 +17,13 @@
 
 //! New in version 3.3
 //!
-//! This call returns the list of domains that are available to be scoped
-//! to based on the X-Auth-Token provided in the request.
+//! This call returns the list of domains that are available to be scoped to
+//! based on the X-Auth-Token provided in the request.
 //!
 //! The structure is the same as listing domains.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/auth\_domains`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/auth_domains`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

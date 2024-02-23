@@ -17,11 +17,9 @@
 
 //! Shows details for a router.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. For information, see [Filtering and
-//! Column Selection](http://specs.openstack.org/openstack/neutron-
-//! specs/specs/api/networking_general_api_information.html#filtering-and-
-//! column-selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. For information, see
+//! [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 //!
 //! Normal response codes: 200
 //!
@@ -38,6 +36,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

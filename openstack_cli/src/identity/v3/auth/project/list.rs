@@ -40,14 +40,15 @@ use structable_derive::StructTable;
 
 /// New in version 3.3
 ///
-/// This call returns the list of projects that are available to be scoped
-/// to based on the X-Auth-Token provided in the request.
+/// This call returns the list of projects that are available to be scoped to
+/// based on the X-Auth-Token provided in the request.
 ///
-/// The structure of the response is exactly the same as listing projects
-/// for a user.
+/// The structure of the response is exactly the same as listing projects for a
+/// user.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/auth\_projects`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_projects`
+///
 #[derive(Args)]
 #[command(about = "Get available project scopes")]
 pub struct ProjectsCommand {
@@ -71,27 +72,32 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the domain for the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
     /// The ID for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The name of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// If set to `true`, project is enabled. If set to
-    /// `false`, project is disabled.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// The links for the `project` resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,

@@ -40,17 +40,17 @@ use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
-/// Shows tasks associated with an image.
-/// *(Since Image API v2.12)*
+/// Shows tasks associated with an image. *(Since Image API v2.12)*
 ///
-/// The response body contains list of tasks, possibly empty, associated
-/// with the specified image.
+/// The response body contains list of tasks, possibly empty, associated with
+/// the specified image.
 ///
 /// Preconditions
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 404
+///
 #[derive(Args)]
 #[command(about = "Show tasks associated with image")]
 pub struct TasksCommand {
@@ -71,6 +71,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }
@@ -78,67 +79,80 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// An identifier for the task
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The type of task represented by this content
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type", wide)]
     _type: Option<String>,
 
     /// The current status of this task
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// The parameters required by task, JSON blob
+    ///
     #[serde()]
     #[structable(optional, wide)]
     input: Option<HashMapStringValue>,
 
     /// The result of current task, JSON blob
+    ///
     #[serde()]
     #[structable(optional, wide)]
     result: Option<HashMapStringValue>,
 
     /// An identifier for the owner of this task
+    ///
     #[serde()]
     #[structable(optional, wide)]
     owner: Option<String>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
+    ///
     #[serde()]
     #[structable(optional, wide)]
     message: Option<String>,
 
     /// Image associated with the task
+    ///
     #[serde()]
     #[structable(optional, wide)]
     image_id: Option<String>,
 
     /// Human-readable informative request-id
+    ///
     #[serde()]
     #[structable(optional, wide)]
     request_id: Option<String>,
 
     /// User associated with the task
+    ///
     #[serde()]
     #[structable(optional, wide)]
     user_id: Option<String>,
 
     /// Datetime when this resource would be subject to removal
+    ///
     #[serde()]
     #[structable(optional, wide)]
     expires_at: Option<String>,
 
     /// Datetime when this resource was created
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Datetime when this resource was updated
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
@@ -151,7 +165,7 @@ struct ResponseData {
     #[structable(optional, wide)]
     schema: Option<String>,
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {

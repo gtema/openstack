@@ -18,6 +18,7 @@
 //! Update a service provider.
 //!
 //! PATCH /OS-FEDERATION/service_providers/{sp_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -42,8 +43,9 @@ pub struct ServiceProvider<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
@@ -60,6 +62,7 @@ pub struct Request<'a> {
     pub(crate) service_provider: ServiceProvider<'a>,
 
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    ///
     #[builder(default, setter(into))]
     sp_id: Cow<'a, str>,
 

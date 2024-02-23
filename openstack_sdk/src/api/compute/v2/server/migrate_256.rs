@@ -24,9 +24,9 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-/// The action to cold migrate a server.
-/// This parameter can be `null`.
-/// Up to microversion 2.55, this parameter should be `null`.
+/// The action to cold migrate a server. This parameter can be `null`. Up to
+/// microversion 2.55, this parameter should be `null`.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Migrate<'a> {
@@ -38,13 +38,14 @@ pub struct Migrate<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// The action to cold migrate a server.
-    /// This parameter can be `null`.
-    /// Up to microversion 2.55, this parameter should be `null`.
+    /// The action to cold migrate a server. This parameter can be `null`. Up
+    /// to microversion 2.55, this parameter should be `null`.
+    ///
     #[builder(setter(into))]
     pub(crate) migrate: Option<Migrate<'a>>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

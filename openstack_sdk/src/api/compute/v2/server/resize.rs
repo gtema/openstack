@@ -33,49 +33,38 @@ pub enum OsDcfDiskConfig {
 }
 
 /// The action to resize a server.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Resize<'a> {
     /// The flavor ID for resizing the server. The size of the disk in the
-    /// flavor
-    /// being resized to must be greater than or equal to the size of the disk
-    /// in
-    /// the current flavor.
-    ///
+    /// flavor being resized to must be greater than or equal to the size of
+    /// the disk in the current flavor.
     ///
     /// If a specified flavor ID is the same as the current one of the server,
     /// the request returns a `Bad Request (400)` response code.
+    ///
     #[serde(rename = "flavorRef")]
     #[builder(setter(into))]
     pub(crate) flavor_ref: Cow<'a, str>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
-    /// resize servers.
-    /// A server inherits the `OS-DCF:diskConfig` value from the image from
-    /// which it
-    /// was created, and an image inherits the `OS-DCF:diskConfig` value from
-    /// the server
-    /// from which it was created. To override the inherited setting, you can
-    /// include
-    /// this attribute in the request body of a server create, rebuild, or
-    /// resize request. If
-    /// the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot
-    /// create
-    /// a server from that image and set its `OS-DCF:diskConfig` value to
-    /// `AUTO`.
+    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
+    /// the image from which it was created, and an image inherits the
+    /// `OS-DCF:diskConfig` value from the server from which it was created. To
+    /// override the inherited setting, you can include this attribute in the
+    /// request body of a server create, rebuild, or resize request. If the
+    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
+    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
     /// A valid value is:
     ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using whatever partition
+    ///   scheme and file system is in the source image. If the target flavor
+    ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    /// * `AUTO`. The API builds the server with a single partition the size of
-    /// the
-    /// target flavor disk. The API automatically adjusts the file system to
-    /// fit the
-    /// entire partition.
-    /// * `MANUAL`. The API builds the server by using whatever partition
-    /// scheme and
-    /// file system is in the source image. If the target flavor disk is
-    /// larger, the API
-    /// does not partition the remaining disk space.
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
@@ -85,10 +74,12 @@ pub struct Resize<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to resize a server.
+    ///
     #[builder(setter(into))]
     pub(crate) resize: Resize<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

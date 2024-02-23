@@ -42,6 +42,7 @@ use structable_derive::StructTable;
 /// Update a mapping.
 ///
 /// PATCH /OS-FEDERATION/mappings/{mapping_id}
+///
 #[derive(Args)]
 pub struct MappingCommand {
     /// Request Query parameters
@@ -64,6 +65,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -78,6 +80,7 @@ struct Mapping {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The Federation Mapping unique ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,

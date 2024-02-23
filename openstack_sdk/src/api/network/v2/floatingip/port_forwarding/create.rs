@@ -47,6 +47,7 @@ pub enum Protocol {
 }
 
 /// A `floating IP port forwarding` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct PortForwarding<'a> {
@@ -55,51 +56,56 @@ pub struct PortForwarding<'a> {
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
-    /// floating IP
-    /// address.
+    /// floating IP address.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_port: Option<Option<f32>>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) internal_port: Option<Option<f32>>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
-    /// IP
-    /// port forwarding.
+    /// IP port forwarding.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) internal_ip_address: Option<Cow<'a, str>>,
 
     /// The IP protocol used in the floating IP port forwarding.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) protocol: Option<Protocol>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) internal_port_id: Option<Cow<'a, str>>,
 
-    /// A text describing the rule, which helps users to
-    /// manage/find easily theirs rules.
+    /// A text describing the rule, which helps users to manage/find easily
+    /// theirs rules.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
-    /// IP
-    /// address.
+    /// IP address.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) external_port_range: Option<f32>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) internal_port_range: Option<f32>,
@@ -109,11 +115,13 @@ pub struct PortForwarding<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `floating IP port forwarding` object.
+    ///
     #[builder(setter(into))]
     pub(crate) port_forwarding: PortForwarding<'a>,
 
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
+    ///
     #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,
 

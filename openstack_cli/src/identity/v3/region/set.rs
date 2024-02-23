@@ -39,13 +39,14 @@ use structable_derive::StructTable;
 
 /// Updates a region.
 ///
-/// You can update the description or parent region ID for a region.
-/// You cannot update the region ID.
+/// You can update the description or parent region ID for a region. You cannot
+/// update the region ID.
 ///
 /// The following error might occur:
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/region`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/region`
+///
 #[derive(Args)]
 #[command(about = "Update region")]
 pub struct RegionCommand {
@@ -69,6 +70,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// region_id parameter for /v3/regions/{region_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -76,15 +78,18 @@ struct PathParameters {
 #[derive(Args)]
 struct Region {
     /// The region description.
+    ///
     #[arg(long)]
     description: Option<String>,
 
     /// The ID for the region.
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
+    ///
     #[arg(long)]
     parent_id: Option<String>,
 }
@@ -93,17 +98,20 @@ struct Region {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The region description.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The ID for the region.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
+    ///
     #[serde()]
     #[structable(optional)]
     parent_id: Option<String>,

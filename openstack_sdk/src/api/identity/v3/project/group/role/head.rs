@@ -18,6 +18,7 @@
 //! List grants for group on project.
 //!
 //! GET/HEAD /v3/projects/{project_id}/groups/{group_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -30,11 +31,13 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[builder(default, setter(into))]
     group_id: Cow<'a, str>,
 

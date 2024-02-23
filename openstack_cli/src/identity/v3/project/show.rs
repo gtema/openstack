@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Shows details for a project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/project`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/project`
+///
 #[derive(Args)]
 #[command(about = "Show project details")]
 pub struct ProjectCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -71,57 +73,65 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The description of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The ID of the domain for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde()]
     #[structable(optional)]
     is_domain: Option<bool>,
 
     /// The ID of the parent for the project.
     ///
-    ///
     /// **New in version 3.4**
+    ///
     #[serde()]
     #[structable(optional)]
     parent_id: Option<String>,
 
     /// The name of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// A list of simple strings assigned to a project.
+    ///
     #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
+    ///
     #[serde()]
     #[structable(optional)]
     options: Option<ResponseOptions>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {
@@ -137,7 +147,7 @@ impl fmt::Display for VecString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseOptions {
     immutable: Option<bool>,

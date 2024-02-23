@@ -43,6 +43,7 @@ use std::collections::HashMap;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 403
+///
 #[derive(Args)]
 #[command(about = "List DHCP agents hosting a network")]
 pub struct DhcpAgentsCommand {
@@ -63,6 +64,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
+    ///
     #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
     network_id: String,
 }

@@ -41,12 +41,13 @@ use structable_derive::StructTable;
 
 /// Deletes a service.
 ///
-/// If you try to delete a service that still has associated endpoints,
-/// this call either deletes all associated endpoints or fails until
-/// all endpoints are deleted.
+/// If you try to delete a service that still has associated endpoints, this
+/// call either deletes all associated endpoints or fails until all endpoints
+/// are deleted.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/service`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/service`
+///
 #[derive(Args)]
 #[command(about = "Delete service")]
 pub struct ServiceCommand {
@@ -67,6 +68,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// service_id parameter for /v3/services/{service_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

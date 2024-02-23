@@ -32,6 +32,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// network_id parameter for /v2.0/networks/{network_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

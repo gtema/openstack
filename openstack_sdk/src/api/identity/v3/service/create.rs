@@ -17,8 +17,8 @@
 
 //! Creates a service.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/services`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -30,30 +30,34 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `service` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Service<'a> {
     /// The service description.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
-    /// Defines whether the service and its endpoints
-    /// appear in the service catalog: - `false`. The service and its
-    /// endpoints do not appear in the service catalog. - `true`. The
-    /// service and its endpoints appear in the service catalog.
+    /// Defines whether the service and its endpoints appear in the service
+    /// catalog: - `false`. The service and its endpoints do not appear in the
+    /// service catalog. - `true`. The service and its endpoints appear in the
+    /// service catalog.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
     /// The service name.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
-    /// The service type, which describes the API
-    /// implemented by the service. Value is `compute`, `ec2`,
-    /// `identity`, `image`, `network`, or `volume`.
+    /// The service type, which describes the API implemented by the service.
+    /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
+    ///
     #[serde(rename = "type")]
     #[builder(setter(into))]
     pub(crate) _type: Cow<'a, str>,
@@ -63,6 +67,7 @@ pub struct Service<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `service` object.
+    ///
     #[builder(setter(into))]
     pub(crate) service: Service<'a>,
 

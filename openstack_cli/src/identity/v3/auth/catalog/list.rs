@@ -47,8 +47,9 @@ use structable_derive::StructTable;
 /// The structure of the catalog object is identical to that contained in a
 /// token.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/auth\_catalog`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_catalog`
+///
 #[derive(Args)]
 #[command(about = "Get service catalog")]
 pub struct CatalogsCommand {
@@ -72,23 +73,26 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// A list of `endpoint` objects.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     endpoints: Option<Value>,
 
     /// The UUID of the service to which the endpoint belongs.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The service type, which describes the API
-    /// implemented by the service. Value is `compute`, `ec2`,
-    /// `identity`, `image`, `network`, or `volume`.
+    /// The service type, which describes the API implemented by the service.
+    /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type", wide)]
     _type: Option<String>,
 
     /// The service name.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,

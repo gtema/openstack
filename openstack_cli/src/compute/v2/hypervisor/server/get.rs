@@ -38,16 +38,17 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// List all servers belong to each hypervisor whose host name is matching
-/// a given hypervisor host name or portion of it.
+/// List all servers belong to each hypervisor whose host name is matching a
+/// given hypervisor host name or portion of it.
 ///
 /// Policy defaults enable only users with the administrative role to perform
-/// this operation. Cloud providers can change these permissions through
-/// the `policy.json` file.
+/// this operation. Cloud providers can change these permissions through the
+/// `policy.json` file.
 ///
 /// Normal response code: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Hypervisor Servers (DEPRECATED)")]
 pub struct ServerCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

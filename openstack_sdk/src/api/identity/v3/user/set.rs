@@ -17,11 +17,11 @@
 
 //! Updates a user.
 //!
-//! If the back-end driver does not support this functionality, this
-//! call might return the HTTP `Not Implemented (501)` response code.
+//! If the back-end driver does not support this functionality, this call might
+//! return the HTTP `Not Implemented (501)` response code.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/user`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -59,10 +59,11 @@ pub struct Federated<'a> {
 }
 
 /// The resource options for the user. Available resource options are
-/// `ignore\_change\_password\_upon\_first\_use`, `ignore\_password\_expiry`,
-/// `ignore\_lockout\_failure\_attempts`, `lock\_password`,
-/// `multi\_factor\_auth\_enabled`, and `multi\_factor\_auth\_rules`
-/// `ignore\_user\_inactivity`.
+/// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+/// `ignore_lockout_failure_attempts`, `lock_password`,
+/// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+/// `ignore_user_inactivity`.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Options<'a> {
@@ -96,69 +97,74 @@ pub struct Options<'a> {
 }
 
 /// A `user` object
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User<'a> {
     /// The ID of the default project for the user.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
     /// The new description of the group.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the domain.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Cow<'a, str>>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
-    /// list
-    /// contains the `idp\_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol\_id` and `unique\_id` of
-    /// the protocol and user respectively. For example:
-    ///
-    ///
+    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
+    /// objects, each of which contains `protocol_id` and `unique_id` of the
+    /// protocol and user respectively. For example:
     ///
     /// ```text
     /// "federated": [
     ///   {
-    ///     "idp\_id": "efbab5a6acad4d108fec6c63d9609d83",
+    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol\_id": "mapped", "unique\_id": "test@example.com"}
+    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
     ///
     /// ```
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) federated: Option<Vec<Federated<'a>>>,
 
     /// The user name. Must be unique within the owning domain.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// The new password for the user.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) password: Option<Option<Cow<'a, str>>>,
 
     /// The resource options for the user. Available resource options are
-    /// `ignore\_change\_password\_upon\_first\_use`,
-    /// `ignore\_password\_expiry`,
-    /// `ignore\_lockout\_failure\_attempts`, `lock\_password`,
-    /// `multi\_factor\_auth\_enabled`, and `multi\_factor\_auth\_rules`
-    /// `ignore\_user\_inactivity`.
+    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+    /// `ignore_lockout_failure_attempts`, `lock_password`,
+    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+    /// `ignore_user_inactivity`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options<'a>>,
@@ -186,11 +192,13 @@ impl<'a> UserBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `user` object
+    ///
     #[builder(setter(into))]
     pub(crate) user: User<'a>,
 
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

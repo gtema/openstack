@@ -49,6 +49,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403, 404, 412
+///
 #[derive(Args)]
 #[command(about = "Update network")]
 pub struct NetworkCommand {
@@ -72,6 +73,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -79,39 +81,43 @@ struct PathParameters {
 #[derive(Args)]
 struct Network {
     /// Human-readable name of the network.
+    ///
     #[arg(long)]
     name: Option<String>,
 
-    /// The administrative state of the network, which is
-    /// up (`true`) or down (`false`).
+    /// The administrative state of the network, which is up (`true`) or down
+    /// (`false`).
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     admin_state_up: Option<bool>,
 
-    /// Indicates whether this resource is shared across all projects.
-    /// By default, only administrative users can change this value.
+    /// Indicates whether this resource is shared across all projects. By
+    /// default, only administrative users can change this value.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     shared: Option<bool>,
 
     /// Indicates whether the network has an external routing facility that’s
-    /// not
-    /// managed by the networking service.
+    /// not managed by the networking service.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     router_external: Option<bool>,
 
     /// A list of provider `segment` objects.
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     segments: Option<Vec<Value>>,
 
-    /// The maximum transmission unit (MTU) value to
-    /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
-    /// IPv6.
+    /// The maximum transmission unit (MTU) value to address fragmentation.
+    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
+    ///
     #[arg(long)]
     mtu: Option<i32>,
 
-    /// The port security status of the network. Valid values are
-    /// enabled (`true`) and disabled (`false`).
-    /// This value is used as the default value of `port\_security\_enabled`
-    /// field of a newly created port.
+    /// The port security status of the network. Valid values are enabled
+    /// (`true`) and disabled (`false`). This value is used as the default
+    /// value of `port_security_enabled` field of a newly created port.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     port_security_enabled: Option<bool>,
 
@@ -125,19 +131,23 @@ struct Network {
     provider_segmentation_id: Option<String>,
 
     /// The ID of the QoS policy associated with the network.
+    ///
     #[arg(long)]
     qos_policy_id: Option<String>,
 
     /// The network is default or not.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     is_default: Option<bool>,
 
     /// A valid DNS domain.
+    ///
     #[arg(long)]
     dns_domain: Option<String>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[arg(long)]
     description: Option<String>,
 }
@@ -146,98 +156,108 @@ struct Network {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the network.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Human-readable name of the network.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The associated subnets.
+    ///
     #[serde()]
     #[structable(optional)]
     subnets: Option<VecString>,
 
-    /// The administrative state of the network, which is
-    /// up (`true`) or down (`false`).
+    /// The administrative state of the network, which is up (`true`) or down
+    /// (`false`).
+    ///
     #[serde()]
     #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     tenant_id: Option<String>,
 
     /// Indicates whether this network is shared across all tenants. By
-    /// default,
-    /// only administrative users can change this value.
+    /// default, only administrative users can change this value.
+    ///
     #[serde()]
     #[structable(optional)]
     shared: Option<BoolString>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
+    ///
     #[serde()]
     #[structable(optional)]
     ipv4_address_scope: Option<String>,
 
     /// The ID of the IPv6 address scope that the network is associated with.
+    ///
     #[serde()]
     #[structable(optional)]
     ipv6_address_scope: Option<String>,
 
     /// Defines whether the network may be used for creation of floating IPs.
-    /// Only
-    /// networks with this flag may be an external gateway for routers.
+    /// Only networks with this flag may be an external gateway for routers.
     /// The network must have an external routing facility that is not managed
-    /// by
-    /// the networking service. If the network is updated from external to
-    /// internal
-    /// the unused floating IPs of this network are automatically deleted when
-    /// extension `floatingip-autodelete-internal` is present.
+    /// by the networking service. If the network is updated from external to
+    /// internal the unused floating IPs of this network are automatically
+    /// deleted when extension `floatingip-autodelete-internal` is present.
+    ///
     #[serde(rename = "router:external")]
     #[structable(optional, title = "router:external")]
     router_external: Option<BoolString>,
 
-    /// Indicates whether L2 connectivity is available throughout
-    /// the `network`.
+    /// Indicates whether L2 connectivity is available throughout the
+    /// `network`.
+    ///
     #[serde()]
     #[structable(optional)]
     l2_adjacency: Option<String>,
 
     /// A list of provider `segment` objects.
+    ///
     #[serde()]
     #[structable(optional)]
     segments: Option<Value>,
 
-    /// The maximum transmission unit (MTU) value to
-    /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
-    /// IPv6.
+    /// The maximum transmission unit (MTU) value to address fragmentation.
+    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
+    ///
     #[serde()]
     #[structable(optional)]
     mtu: Option<i32>,
 
     /// The availability zone for the network.
+    ///
     #[serde()]
     #[structable(optional)]
     availability_zones: Option<VecString>,
 
     /// The availability zone candidate for the network.
+    ///
     #[serde()]
     #[structable(optional)]
     availability_zone_hints: Option<VecString>,
 
-    /// The port security status of the network. Valid values are
-    /// enabled (`true`) and disabled (`false`).
-    /// This value is used as the default value of `port\_security\_enabled`
-    /// field of a newly created port.
+    /// The port security status of the network. Valid values are enabled
+    /// (`true`) and disabled (`false`). This value is used as the default
+    /// value of `port_security_enabled` field of a newly created port.
+    ///
     #[serde()]
     #[structable(optional)]
     port_security_enabled: Option<BoolString>,
@@ -255,46 +275,54 @@ struct ResponseData {
     provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
+    ///
     #[serde()]
     #[structable(optional)]
     qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The list of tags on the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// The network is default pool or not.
+    ///
     #[serde()]
     #[structable(optional)]
     is_default: Option<BoolString>,
 
     /// A valid DNS domain.
+    ///
     #[serde()]
     #[structable(optional)]
     dns_domain: Option<String>,
 
     /// A human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

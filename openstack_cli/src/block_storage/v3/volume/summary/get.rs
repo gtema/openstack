@@ -39,6 +39,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Return summary of volumes.
+///
 #[derive(Args)]
 pub struct SummaryCommand {
     /// Request Query parameters

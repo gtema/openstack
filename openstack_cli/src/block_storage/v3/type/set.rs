@@ -42,6 +42,7 @@ use std::fmt;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TypeCommand {
     /// Request Query parameters
@@ -64,6 +65,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/types/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -84,44 +86,51 @@ struct VolumeType {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The volume type description.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// A key and value pair that contains additional
-    /// specifications that are associated with the volume type. Examples
-    /// include capabilities, capacity, compression, and so on, depending
-    /// on the storage driver in use.
+    /// A key and value pair that contains additional specifications that are
+    /// associated with the volume type. Examples include capabilities,
+    /// capacity, compression, and so on, depending on the storage driver in
+    /// use.
+    ///
     #[serde()]
     #[structable(optional)]
     extra_specs: Option<HashMapStringOptionString>,
 
     /// The UUID of the volume type.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Whether the volume type is publicly visible.
+    ///
     #[serde()]
     #[structable(optional)]
     is_public: Option<bool>,
 
     /// The name of the volume type.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// Whether the volume type is publicly visible.
+    ///
     #[serde(rename = "os-volume-type-access:is_public")]
     #[structable(optional, title = "os-volume-type-access:is_public")]
     os_volume_type_access_is_public: Option<bool>,
 
     /// The QoS specifications ID.
+    ///
     #[serde()]
     #[structable(optional)]
     qos_specs_id: Option<String>,
 }
-/// HashMap of Option<String> response type
+/// HashMap of `Option<String>` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringOptionString(HashMap<String, Option<String>>);
 impl fmt::Display for HashMapStringOptionString {

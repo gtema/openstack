@@ -17,8 +17,8 @@
 
 //! Lists users.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/users`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -31,35 +31,42 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filters the response by a domain ID.
+    ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
+    ///
     #[builder(default)]
     enabled: Option<bool>,
 
     /// Filter for Identity Providers’ ID attribute
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// Filters the response by a resource name.
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Filter results based on which user passwords have expired. The query
     /// should include an operator and a timestamp with a colon (:) separating
     /// the two, for example: `password_expires_at={operator}:{timestamp}`.
-    /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`.
-    /// Valid timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
+    /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
+    /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
+    ///
     #[builder(default, setter(into))]
     password_expires_at: Option<Cow<'a, str>>,
 
     /// Filters the response by a protocol ID.
+    ///
     #[builder(default, setter(into))]
     protocol_id: Option<Cow<'a, str>>,
 
     /// Filters the response by a unique ID.
+    ///
     #[builder(default, setter(into))]
     unique_id: Option<Cow<'a, str>>,
 

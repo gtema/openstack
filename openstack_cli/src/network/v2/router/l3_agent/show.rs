@@ -39,6 +39,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct L3AgentCommand {
     /// Request Query parameters
@@ -58,10 +59,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

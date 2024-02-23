@@ -47,37 +47,33 @@ use structable_derive::StructTable;
 ///
 /// **Preconditions**
 ///
-/// The server OS-EXT-STS:task\_state value must be `migrating`.
+/// The server OS-EXT-STS:task_state value must be `migrating`.
 ///
 /// If the server is locked, you must have administrator privileges to force
-/// the
-/// completion of the server migration.
+/// the completion of the server migration.
 ///
 /// For microversions from 2.24 to 2.64 the migration status must be `running`,
 /// for microversion 2.65 and greater, the migration status can also be
-/// `queued`
-/// and `preparing`.
+/// `queued` and `preparing`.
 ///
 /// **Asynchronous Postconditions**
 ///
 /// After you make this request, you typically must keep polling the server
-/// status
-/// to determine whether the request succeeded. You may also monitor the
-/// migration
-/// using:
+/// status to determine whether the request succeeded. You may also monitor the
+/// migration using:
 ///
 /// **Troubleshooting**
 ///
-/// If the server status remains `MIGRATING` for an inordinate amount of
-/// time, the request may have failed. Ensure you meet the preconditions and
-/// run
-/// the request again. If the request fails again, investigate the compute back
+/// If the server status remains `MIGRATING` for an inordinate amount of time,
+/// the request may have failed. Ensure you meet the preconditions and run the
+/// request again. If the request fails again, investigate the compute back
 /// end.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Delete (Abort) Migration")]
 pub struct MigrationCommand {
@@ -98,10 +94,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

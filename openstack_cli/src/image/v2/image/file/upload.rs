@@ -40,20 +40,19 @@ use openstack_sdk::api::image::v2::image::file::upload;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Uploads binary image data.
-/// *(Since Image API v2.0)*
+/// Uploads binary image data. *(Since Image API v2.0)*
 ///
 /// Set the `Content-Type` request header to `application/octet-stream`.
 ///
-/// A multiple store backend support is introduced in the Rocky release
-/// as a part of the EXPERIMENTAL Image API v2.8.
+/// A multiple store backend support is introduced in the Rocky release as a
+/// part of the EXPERIMENTAL Image API v2.8.
 ///
-/// Beginning with API version 2.8, an optional `X-Image-Meta-Store`
-/// header may be added to the request. When present, the image data will be
-/// placed into the backing store whose identifier is the value of this
-/// header. If the store identifier specified is not recognized, a 400 (Bad
-/// Request) response is returned. When the header is not present, the image
-/// data is placed into the default backing store.
+/// Beginning with API version 2.8, an optional `X-Image-Meta-Store` header may
+/// be added to the request. When present, the image data will be placed into
+/// the backing store whose identifier is the value of this header. If the
+/// store identifier specified is not recognized, a 400 (Bad Request) response
+/// is returned. When the header is not present, the image data is placed into
+/// the default backing store.
 ///
 /// Example call:
 ///
@@ -69,6 +68,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
+///
 #[derive(Args)]
 #[command(about = "Upload binary image data")]
 pub struct FileCommand {
@@ -93,6 +93,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }

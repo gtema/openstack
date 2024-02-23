@@ -40,11 +40,11 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Delete an access rule. An access rule that is still in use by an
-/// application
-/// credential cannot be deleted.
+/// application credential cannot be deleted.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/access\_rules`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
+///
 #[derive(Args)]
 #[command(about = "Delete access rule")]
 pub struct AccessRuleCommand {
@@ -66,11 +66,13 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -46,6 +46,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Migrations")]
 pub struct MigrationsCommand {
@@ -66,6 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -75,17 +77,15 @@ struct ResponseData {
     /// The date and time when the resource was created. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
-    ///
-    ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
-    /// value, if included, is the time zone as an offset from UTC. In
-    /// the previous example, the offset value is `-05:00`.
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
@@ -93,52 +93,57 @@ struct ResponseData {
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
-    ///
-    ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
-    /// value, if included, is the time zone as an offset from UTC. In
-    /// the previous example, the offset value is `-05:00`.
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// The target compute for a migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     dest_compute: Option<String>,
 
     /// The target host for a migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     dest_host: Option<String>,
 
     /// The target node for a migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     dest_node: Option<String>,
 
     /// The ID of the server migration.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<i32>,
 
     /// The source compute for a migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     source_compute: Option<String>,
 
     /// The source node for a migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     source_node: Option<String>,
 
     /// The current status of the migration.
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
@@ -146,62 +151,69 @@ struct ResponseData {
     /// The ID of the project which initiated the server migration. The value
     /// may be `null` for older migration records.
     ///
-    ///
     /// **New in version 2.80**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     project_id: Option<String>,
 
-    /// The ID of the user which initiated the server migration. The value
-    /// may be `null` for older migration records.
-    ///
+    /// The ID of the user which initiated the server migration. The value may
+    /// be `null` for older migration records.
     ///
     /// **New in version 2.80**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     user_id: Option<String>,
 
     /// The UUID of the migration.
     ///
-    ///
     /// **New in version 2.59**
+    ///
     #[serde()]
     #[structable(optional)]
     uuid: Option<String>,
 
     /// The amount of disk, in bytes, that has been processed during the
     /// migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     disk_processed_bytes: Option<i32>,
 
     /// The amount of disk, in bytes, that still needs to be migrated.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     disk_remaining_bytes: Option<i32>,
 
     /// The total amount of disk, in bytes, that needs to be migrated.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     disk_total_bytes: Option<i32>,
 
     /// The amount of memory, in bytes, that has been processed during the
     /// migration.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     memory_processed_bytes: Option<i32>,
 
     /// The amount of memory, in bytes, that still needs to be migrated.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     memory_remaining_bytes: Option<i32>,
 
     /// The total amount of memory, in bytes, that needs to be migrated.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     memory_total_bytes: Option<i32>,
 
     /// The UUID of the server.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     server_uuid: Option<String>,

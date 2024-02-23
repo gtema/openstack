@@ -40,6 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 #[command(about = "Live-Migrate Server (os-migrateLive Action) (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -63,6 +64,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -70,42 +72,35 @@ struct PathParameters {
 #[derive(Args)]
 struct OsMigrateLive {
     /// Set to `True` to enable over commit when the destination host is
-    /// checked for
-    /// available disk space. Set to `False` to disable over commit. This
-    /// setting affects
-    /// only the libvirt virt driver.
-    ///
+    /// checked for available disk space. Set to `False` to disable over
+    /// commit. This setting affects only the libvirt virt driver.
     ///
     /// **Available until version 2.25**
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     block_migration: bool,
 
     /// Set to `True` to enable over commit when the destination host is
-    /// checked for
-    /// available disk space. Set to `False` to disable over commit. This
-    /// setting affects
-    /// only the libvirt virt driver.
-    ///
+    /// checked for available disk space. Set to `False` to disable over
+    /// commit. This setting affects only the libvirt virt driver.
     ///
     /// **Available until version 2.25**
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     disk_over_commit: bool,
 
     /// The host to which to migrate the server. If this parameter is `None`,
     /// the scheduler chooses a host.
     ///
-    ///
-    ///
     /// Warning
     ///
+    /// Prior to microversion 2.30, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually migrate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.30 and without
+    /// `force=True` set.
     ///
-    /// Prior to microversion 2.30, specifying a host will bypass
-    /// validation by the scheduler, which could result in failures to actually
-    /// migrate the instance to the specified host, or over-subscription of the
-    /// host. It is recommended to either not specify a host so that the
-    /// scheduler will pick one, or specify a host with microversion >= 2.30
-    /// and
-    /// without `force=True` set.
     #[arg(long)]
     host: String,
 }

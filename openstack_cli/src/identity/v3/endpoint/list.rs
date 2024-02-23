@@ -39,8 +39,9 @@ use structable_derive::StructTable;
 
 /// Lists all available endpoints.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/endpoints`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
+///
 #[derive(Args)]
 #[command(about = "List endpoints")]
 pub struct EndpointsCommand {
@@ -57,14 +58,17 @@ pub struct EndpointsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Filters the response by a service ID.
+    ///
     #[arg(long)]
     service_id: Option<String>,
 
     /// Filters the response by a region ID.
+    ///
     #[arg(long)]
     region: Option<String>,
 
     /// Filters the response by an interface.
+    ///
     #[arg(long, value_parser = ["admin","internal","public"])]
     interface: Option<String>,
 }
@@ -75,48 +79,50 @@ struct PathParameters {}
 /// Endpoints response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// Indicates whether the endpoint appears in the
-    /// service catalog: - `false`. The endpoint does not appear in the
-    /// service catalog. - `true`. The endpoint appears in the service
-    /// catalog.
+    /// Indicates whether the endpoint appears in the service catalog: -
+    /// `false`. The endpoint does not appear in the service catalog. - `true`.
+    /// The endpoint appears in the service catalog.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// The endpoint ID.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The interface type, which describes the
-    /// visibility of the endpoint. Value is: - `public`. Visible by
-    /// end users on a publicly available network interface. -
-    /// `internal`. Visible by end users on an unmetered internal
-    /// network interface. - `admin`. Visible by administrative users
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: - `public`. Visible by end users on a publicly available
+    /// network interface. - `internal`. Visible by end users on an unmetered
+    /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     interface: Option<String>,
 
-    /// (Deprecated in v3.2) The geographic location of
-    /// the service endpoint.
+    /// (Deprecated in v3.2) The geographic location of the service endpoint.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     region: Option<String>,
 
-    /// (Since v3.2) The ID of the region that contains
-    /// the service endpoint.
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     region_id: Option<String>,
 
-    /// The UUID of the service to which the endpoint
-    /// belongs.
+    /// The UUID of the service to which the endpoint belongs.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     service_id: Option<String>,
 
     /// The endpoint URL.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     url: Option<String>,

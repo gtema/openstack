@@ -39,15 +39,15 @@ use structable_derive::StructTable;
 
 /// Creates a region.
 ///
-/// When you create the region, you can optionally specify a region ID.
-/// If you include characters in the region ID that are not allowed in
-/// a URI, you must URL-encode the ID. If you omit an ID, the API
-/// assigns an ID to the region.
+/// When you create the region, you can optionally specify a region ID. If you
+/// include characters in the region ID that are not allowed in a URI, you must
+/// URL-encode the ID. If you omit an ID, the API assigns an ID to the region.
 ///
 /// The following errors might occur:
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/regions`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
+///
 #[derive(Args)]
 #[command(about = "Create region")]
 pub struct RegionCommand {
@@ -74,15 +74,18 @@ struct PathParameters {}
 #[derive(Args)]
 struct Region {
     /// The region description.
+    ///
     #[arg(long)]
     description: Option<String>,
 
     /// The ID for the region.
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
+    ///
     #[arg(long)]
     parent_id: Option<String>,
 }
@@ -91,17 +94,20 @@ struct Region {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The region description.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The ID for the region.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
+    ///
     #[serde()]
     #[structable(optional)]
     parent_id: Option<String>,

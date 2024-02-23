@@ -26,29 +26,32 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 /// The action.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct CreateBackup<'a> {
     /// The name of the image to be backed up.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// The type of the backup, for example, `daily`.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) backup_type: Cow<'a, str>,
 
     /// The rotation of the back up image, the oldest image will be removed
-    /// when image count
-    /// exceed the rotation count.
+    /// when image count exceed the rotation count.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) rotation: Cow<'a, str>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
-    /// value is
-    /// 255 bytes each.
+    /// value is 255 bytes each.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
@@ -56,8 +59,8 @@ pub struct CreateBackup<'a> {
 
 impl<'a> CreateBackupBuilder<'a> {
     /// Metadata key and value pairs. The maximum size of the metadata key and
-    /// value is
-    /// 255 bytes each.
+    /// value is 255 bytes each.
+    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -76,10 +79,12 @@ impl<'a> CreateBackupBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
+    ///
     #[builder(setter(into))]
     pub(crate) create_backup: CreateBackup<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

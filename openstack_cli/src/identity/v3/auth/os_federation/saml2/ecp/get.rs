@@ -39,6 +39,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// GET operation on /v3/auth/OS-FEDERATION/saml2/ecp
+///
 #[derive(Args)]
 pub struct EcpCommand {
     /// Request Query parameters

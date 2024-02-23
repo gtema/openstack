@@ -25,63 +25,54 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action to evacuate a server to another host.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Evacuate<'a> {
-    /// The name or ID of the host to which the server is evacuated.
-    /// If you omit this parameter, the scheduler chooses a host.
-    ///
-    ///
+    /// The name or ID of the host to which the server is evacuated. If you
+    /// omit this parameter, the scheduler chooses a host.
     ///
     /// Warning
     ///
+    /// Prior to microversion 2.29, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually evacuate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.29 and without
+    /// `force=True` set.
     ///
-    /// Prior to microversion 2.29, specifying a host will bypass
-    /// validation by the scheduler, which could result in failures to actually
-    /// evacuate the instance to the specified host, or over-subscription of
-    /// the
-    /// host. It is recommended to either not specify a host so that the
-    /// scheduler will pick one, or specify a host with microversion >= 2.29
-    /// and
-    /// without `force=True` set.
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
 
-    /// An administrative password to access the evacuated server.
-    /// If you omit this parameter, the operation generates a new password.
-    /// Up to API version 2.13, if `onSharedStorage` is set to `True` and
-    /// this parameter is specified, an error is raised.
+    /// An administrative password to access the evacuated server. If you omit
+    /// this parameter, the operation generates a new password. Up to API
+    /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
+    /// is specified, an error is raised.
+    ///
     #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) admin_pass: Option<Cow<'a, str>>,
 
     /// Force an evacuation by not verifying the provided destination host by
-    /// the
-    /// scheduler.
-    ///
-    ///
+    /// the scheduler.
     ///
     /// Warning
     ///
-    ///
-    /// This could result in failures to actually evacuate the
-    /// instance to the specified host. It is recommended to either not specify
-    /// a host so that the scheduler will pick one, or specify a host without
-    /// `force=True` set.
-    ///
+    /// This could result in failures to actually evacuate the instance to the
+    /// specified host. It is recommended to either not specify a host so that
+    /// the scheduler will pick one, or specify a host without `force=True`
+    /// set.
     ///
     /// Furthermore, this should not be specified when evacuating instances
-    /// managed by a clustered hypervisor driver like ironic since you
-    /// cannot specify a node, so the compute service will pick a node randomly
-    /// which may not be able to accomodate the instance.
-    ///
-    ///
+    /// managed by a clustered hypervisor driver like ironic since you cannot
+    /// specify a node, so the compute service will pick a node randomly which
+    /// may not be able to accommodate the instance.
     ///
     /// **New in version 2.29**
     ///
-    ///
     /// **Available until version 2.67**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) force: Option<bool>,
@@ -91,10 +82,12 @@ pub struct Evacuate<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action to evacuate a server to another host.
+    ///
     #[builder(setter(into))]
     pub(crate) evacuate: Evacuate<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

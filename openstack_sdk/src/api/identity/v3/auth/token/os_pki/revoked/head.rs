@@ -18,6 +18,7 @@
 //! Deprecated; get revoked token list.
 //!
 //! GET/HEAD /v3/auth/tokens/OS-PKI/revoked
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

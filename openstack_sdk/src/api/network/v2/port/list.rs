@@ -17,22 +17,20 @@
 
 //! Lists ports to which the user has access.
 //!
-//! Default policy settings return only those ports that are owned by
-//! the project of the user who submits the request, unless the request is
-//! submitted
-//! by a user with administrative rights.
+//! Default policy settings return only those ports that are owned by the
+//! project of the user who submits the request, unless the request is
+//! submitted by a user with administrative rights.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. Additionally, you can filter results
-//! by using query string parameters. For information, see [Filtering
-//! and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-//! specification#Filtering_and_Column_Selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! If the `ip-substring-filtering` extension is enabled, the Neutron API
-//! supports IP address substring filtering on the `fixed\_ips` attribute.
-//! If you specify an IP address substring (`ip\_address\_substr`) in
-//! an entry of the `fixed\_ips` attribute, the Neutron API will list all
-//! ports that have an IP address matching the substring.
+//! supports IP address substring filtering on the `fixed_ips` attribute. If
+//! you specify an IP address substring (`ip_address_substr`) in an entry of
+//! the `fixed_ips` attribute, the Neutron API will list all ports that have an
+//! IP address matching the substring.
 //!
 //! Normal response codes: 200
 //!
@@ -51,78 +49,97 @@ use std::collections::BTreeSet;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// network_id query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     network_id: Option<Cow<'a, str>>,
 
     /// admin_state_up query parameter for /v2.0/ports API
+    ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
     /// mac_address query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     mac_address: Option<Cow<'a, str>>,
 
     /// fixed_ips query parameter for /v2.0/ports API
+    ///
     #[builder(default, private, setter(name = "_fixed_ips"))]
     fixed_ips: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// device_id query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     device_id: Option<Cow<'a, str>>,
 
     /// device_owner query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     device_owner: Option<Cow<'a, str>>,
 
     /// tenant_id query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// status query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// ip_allocation query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     ip_allocation: Option<Cow<'a, str>>,
 
     /// binding:host_id query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     binding_host_id: Option<Cow<'a, str>>,
 
     /// revision_number query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/ports API
+    ///
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/ports API
+    ///
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/ports API
+    ///
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/ports API
+    ///
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// description query parameter for /v2.0/ports API
+    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// security_groups query parameter for /v2.0/ports API
+    ///
     #[builder(default, private, setter(name = "_security_groups"))]
     security_groups: BTreeSet<Cow<'a, str>>,
 
@@ -138,6 +155,7 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// fixed_ips query parameter for /v2.0/ports API
+    ///
     pub fn fixed_ips<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -151,6 +169,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags query parameter for /v2.0/ports API
+    ///
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -164,6 +183,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags-any query parameter for /v2.0/ports API
+    ///
     pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -177,6 +197,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags query parameter for /v2.0/ports API
+    ///
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -190,6 +211,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags-any query parameter for /v2.0/ports API
+    ///
     pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -203,6 +225,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// security_groups query parameter for /v2.0/ports API
+    ///
     pub fn security_groups<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

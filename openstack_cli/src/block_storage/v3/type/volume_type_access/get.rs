@@ -38,6 +38,7 @@ use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct VolumeTypeAccessCommand {
     /// Request Query parameters
@@ -57,6 +58,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
     type_id: String,
 }
@@ -64,11 +66,13 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The UUID of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     project_id: Option<String>,
 
     /// The UUID of the volume type.
+    ///
     #[serde()]
     #[structable(optional)]
     volume_type_id: Option<String>,

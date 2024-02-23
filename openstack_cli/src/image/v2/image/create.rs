@@ -43,16 +43,16 @@ use openstack_sdk::api::RawQueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Creates a catalog record for an operating system disk image.
-/// *(Since Image API v2.0)*
+/// Creates a catalog record for an operating system disk image. *(Since Image
+/// API v2.0)*
 ///
 /// The `Location` response header contains the URI for the image.
 ///
-/// A multiple store backend support is introduced in the Rocky release
-/// as a part of the EXPERIMENTAL Image API v2.8. Since Image API v2.8 a
-/// new header `OpenStack-image-store-ids` which contains the list of
-/// available stores will be included in response. This header is only
-/// included if multiple backend stores are supported.
+/// A multiple store backend support is introduced in the Rocky release as a
+/// part of the EXPERIMENTAL Image API v2.8. Since Image API v2.8 a new header
+/// `OpenStack-image-store-ids` which contains the list of available stores
+/// will be included in response. This header is only included if multiple
+/// backend stores are supported.
 ///
 /// The response body contains the new image entity.
 ///
@@ -61,6 +61,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 409, 413, 415
+///
 #[derive(Args)]
 #[command(about = "Create image")]
 pub struct ImageCommand {

@@ -45,8 +45,8 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
-/// itemNotFound(404),
-/// conflict(409), notImplemented(501)
+/// itemNotFound(404), conflict(409), notImplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Get VNC Console (os-getVNCConsole Action) (DEPRECATED) (microversion = 2.1)")]
 pub struct ServerCommand {
@@ -70,6 +70,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -84,6 +85,7 @@ enum Type {
 #[derive(Args)]
 struct OsGetVncconsole {
     /// The type of VNC console. The only valid value is `novnc`.
+    ///
     #[arg(long)]
     _type: Type,
 }
@@ -92,11 +94,13 @@ struct OsGetVncconsole {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The type of VNC console. The only valid value is `novnc`.
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
     _type: Option<String>,
 
     /// The URL used to connect to the VNC console.
+    ///
     #[serde()]
     #[structable(optional)]
     url: Option<String>,

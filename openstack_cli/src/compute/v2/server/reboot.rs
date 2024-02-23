@@ -52,8 +52,8 @@ use structable_derive::StructTable;
 ///
 /// You can only *HARD* reboot a server when its status is one of:
 ///
-/// If the server is locked, you must have administrator privileges
-/// to reboot the server.
+/// If the server is locked, you must have administrator privileges to reboot
+/// the server.
 ///
 /// **Asynchronous Postconditions**
 ///
@@ -63,6 +63,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Reboot Server (reboot Action)")]
 pub struct ServerCommand {
@@ -86,6 +87,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -103,6 +105,7 @@ struct Reboot {
     /// A `SOFT` reboot attempts a graceful shutdown and restart of the server.
     /// A `HARD` reboot attempts a forced shutdown and restart of the server.
     /// The `HARD` reboot corresponds to the power cycles of the server.
+    ///
     #[arg(long)]
     _type: Type,
 }

@@ -44,6 +44,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 404
+///
 #[derive(Args)]
 #[command(about = "Delete a conntrack helper")]
 pub struct ConntrackHelperCommand {
@@ -64,10 +65,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

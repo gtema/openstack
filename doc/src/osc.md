@@ -525,7 +525,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -558,7 +558,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -591,7 +591,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -623,7 +623,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -680,7 +680,7 @@ Returns a detailed list of volumes
 
   Possible values: `true`, `false`
 
-* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of < key > [: < direction > ]. A valid direction is asc (ascending) or desc (descending)
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
 * `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
 * `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
 
@@ -1158,7 +1158,7 @@ Add Host
 
 ## `osc compute aggregate create`
 
-Creates an aggregate. If specifying an option availability\_zone, the aggregate is created as an availability zone and the availability zone is visible to normal users.
+Creates an aggregate. If specifying an option availability_zone, the aggregate is created as an availability zone and the availability zone is visible to normal users.
 
 Normal response codes: 200
 
@@ -1809,7 +1809,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
   Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
-* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+* `--user-id <USER_ID>` — The user_id for a keypair. This allows administrative users to upload keys for other users than themselves
 
 
 
@@ -1831,7 +1831,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
   Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
-* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+* `--user-id <USER_ID>` — The user_id for a keypair. This allows administrative users to upload keys for other users than themselves
 
 
 
@@ -2084,9 +2084,9 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 Adds a floating IP address to a server, which associates that address with the server.
 
-A pool of floating IP addresses, configured by the cloud administrator, is available in OpenStack Compute. The project quota defines the maximum number of floating IP addresses that you can allocate to the project. After you [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate- floating-ip-address) for a project, you can associate that address with the server. Specify the `addFloatingIp` action in the request body.
+A pool of floating IP addresses, configured by the cloud administrator, is available in OpenStack Compute. The project quota defines the maximum number of floating IP addresses that you can allocate to the project. After you [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate-floating-ip-address) for a project, you can associate that address with the server. Specify the `addFloatingIp` action in the request body.
 
-If an instance is connected to multiple networks, you can associate a floating IP address with a specific fixed IP address by using the optional `fixed\_address` parameter.
+If an instance is connected to multiple networks, you can associate a floating IP address with a specific fixed IP address by using the optional `fixed_address` parameter.
 
 **Preconditions**
 
@@ -2163,13 +2163,13 @@ After you make this request, you typically must keep polling the server status t
 
 **Preconditions**
 
-You can only confirm the resized server where the status is `VERIFY\_RESIZE`.
+You can only confirm the resized server where the status is `VERIFY_RESIZE`.
 
 If the server is locked, you must have administrator privileges to confirm the server.
 
 **Troubleshooting**
 
-If the server status remains `VERIFY\_RESIZE`, the request failed. Ensure you meet the preconditions and run the request again. If the request fails again, the server status should be `ERROR` and a migration status of `error`. Investigate the compute back end or ask your cloud provider. There are some options for trying to correct the server status:
+If the server status remains `VERIFY_RESIZE`, the request failed. Ensure you meet the preconditions and run the request again. If the request fails again, the server status should be `ERROR` and a migration status of `error`. Investigate the compute back end or ask your cloud provider. There are some options for trying to correct the server status:
 
 Note that the cloud provider may still need to cleanup any orphaned resources on the source hypervisor.
 
@@ -2197,9 +2197,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2238,14 +2238,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2263,8 +2263,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2280,9 +2280,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2321,14 +2321,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2346,8 +2346,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2363,9 +2363,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2404,14 +2404,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2428,8 +2428,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2445,9 +2445,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2486,14 +2486,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2508,8 +2508,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2525,9 +2525,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2566,14 +2566,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2588,8 +2588,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2605,9 +2605,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2646,14 +2646,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2667,8 +2667,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2684,9 +2684,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2726,14 +2726,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2747,8 +2747,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2764,9 +2764,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2806,14 +2806,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2826,8 +2826,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2843,9 +2843,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2885,14 +2885,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2905,8 +2905,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2922,9 +2922,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2956,14 +2956,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2976,8 +2976,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2993,9 +2993,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -3027,14 +3027,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -3047,8 +3047,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3064,9 +3064,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -3098,14 +3098,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -3118,8 +3118,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3135,9 +3135,9 @@ The `Location` header returns the full URL to the newly created server and is av
 
 When you create a server, the response shows only the server ID, its links, and the admin password. You can get additional attributes through subsequent `GET` requests on the server.
 
-Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
+Include the `block_device_mapping_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -3169,14 +3169,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -3188,8 +3188,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
 * `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler\_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler\_hints:build\_near\_host\_ip`) and this parameter. If `os:scheduler\_hints:build\_near\_host\_ip` is specified and this paramete is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3233,7 +3233,7 @@ Create Image (createImage Action) (microversion = 2.1)
 
 Deletes a server.
 
-By default, the instance is going to be (hard) deleted immediately from the system, but you can set `reclaim\_instance\_interval` > 0 to make the API soft delete the instance, so that the instance won’t be deleted until the `reclaim\_instance\_interval` has expired since the instance was soft deleted. The instance marked as `SOFT\_DELETED` can be recovered via `restore` action before it’s really deleted from the system.
+By default, the instance is going to be (hard) deleted immediately from the system, but you can set `reclaim_instance_interval` > 0 to make the API soft delete the instance, so that the instance won’t be deleted until the `reclaim_instance_interval` has expired since the instance was soft deleted. The instance marked as `SOFT_DELETED` can be recovered via `restore` action before it’s really deleted from the system.
 
 **Preconditions**
 
@@ -3369,7 +3369,7 @@ Shows console output for a server.
 
 This API returns the text of the console since boot. The content returned may be large. Limit the lines of console text, beginning at the tail of the content, by setting the optional `length` parameter in the request body.
 
-The server to get console log from should set `export LC\_ALL=en\_US.UTF-8` in order to avoid incorrect unicode error.
+The server to get console log from should set `export LC_ALL=en_US.UTF-8` in order to avoid incorrect unicode error.
 
 Normal response codes: 200
 
@@ -3486,9 +3486,9 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--net-id <NET_ID>` — The ID of the network for which you want to create a port interface. The `net\_id` and `port\_id` parameters are mutually exclusive. If you do not specify the `net\_id` parameter, the OpenStack Networking API v2.0 uses the network information cache that is associated with the instance
-* `--port-id <PORT_ID>` — The ID of the port for which you want to create an interface. The `net\_id` and `port\_id` parameters are mutually exclusive. If you do not specify the `port\_id` parameter, the OpenStack Networking API v2.0 allocates a port and creates an interface for it on the network
-* `--fixed-ips <FIXED_IPS>` — Fixed IP addresses. If you request a specific fixed IP address without a `net\_id`, the request returns a `Bad Request (400)` response code
+* `--net-id <NET_ID>` — The ID of the network for which you want to create a port interface. The `net_id` and `port_id` parameters are mutually exclusive. If you do not specify the `net_id` parameter, the OpenStack Networking API v2.0 uses the network information cache that is associated with the instance
+* `--port-id <PORT_ID>` — The ID of the port for which you want to create an interface. The `net_id` and `port_id` parameters are mutually exclusive. If you do not specify the `port_id` parameter, the OpenStack Networking API v2.0 allocates a port and creates an interface for it on the network
+* `--fixed-ips <FIXED_IPS>` — Fixed IP addresses. If you request a specific fixed IP address without a `net_id`, the request returns a `Bad Request (400)` response code
 * `--tag <TAG>` — A device role tag that can be applied to a network interface when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
 
 
@@ -3619,9 +3619,9 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 For each server, shows server details including config drive, extended status, and server usage information.
 
-The extended status information appears in the OS-EXT-STS:vm\_state, OS-EXT-STS:power\_state, and OS-EXT-STS:task\_state attributes.
+The extended status information appears in the OS-EXT-STS:vm_state, OS-EXT-STS:power_state, and OS-EXT-STS:task_state attributes.
 
-The server usage information appears in the OS-SRV-USG:launched\_at and OS-SRV-USG:terminated\_at attributes.
+The server usage information appears in the OS-SRV-USG:launched_at and OS-SRV-USG:terminated_at attributes.
 
 HostId is unique per account and is not globally unique.
 
@@ -3793,11 +3793,11 @@ Locks a server.
 
 Specify the `lock` action in the request body.
 
-Most actions by non-admin users are not allowed to the server after this operation is successful and the server is locked. See the “Lock, Unlock” item in [Server actions](https://docs.openstack.org/api- guide/compute/server_concepts.html#server-actions) for the restricted actions. But administrators can perform actions on the server even though the server is locked. Note that from microversion 2.73 it is possible to specify a reason when locking the server.
+Most actions by non-admin users are not allowed to the server after this operation is successful and the server is locked. See the “Lock, Unlock” item in [Server actions](https://docs.openstack.org/api-guide/compute/server_concepts.html#server-actions) for the restricted actions. But administrators can perform actions on the server even though the server is locked. Note that from microversion 2.73 it is possible to specify a reason when locking the server.
 
-The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock- server-unlock-action) will unlock a server in locked state so additional actions can be performed on the server by non-admin users.
+The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock-server-unlock-action) will unlock a server in locked state so additional actions can be performed on the server by non-admin users.
 
-You can know whether a server is locked or not and the `locked\_reason` (if specified, from the 2.73 microversion) by the [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed) or the [Show Server Details API](https://docs.openstack.org/api- ref/compute/#show-server-details).
+You can know whether a server is locked or not and the `locked_reason` (if specified, from the 2.73 microversion) by the [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed) or the [Show Server Details API](https://docs.openstack.org/api-ref/compute/#show-server-details).
 
 Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file. Administrators can overwrite owner’s lock.
 
@@ -3975,7 +3975,7 @@ Up to microversion 2.55, the scheduler chooses the host. Starting from microvers
 
 **Asynchronous Postconditions**
 
-A successfully migrated server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize\_confirm\_window] (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r esize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the migrate operation after the configured interval.
+A successfully migrated server shows a `VERIFY_RESIZE` status and `finished` migration status. If the cloud has configured the [resize_confirm_window](https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.resize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the migrate operation after the configured interval.
 
 There are two different policies for this action, depending on whether the host parameter is set. Both defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
 
@@ -4020,7 +4020,7 @@ Policy defaults enable only users with the administrative role to perform this o
 
 **Preconditions**
 
-The server OS-EXT-STS:task\_state value must be `migrating`.
+The server OS-EXT-STS:task_state value must be `migrating`.
 
 If the server is locked, you must have administrator privileges to force the completion of the server migration.
 
@@ -4051,13 +4051,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 Force an in-progress live migration for a given server to complete.
 
-Specify the `force\_complete` action in the request body.
+Specify the `force_complete` action in the request body.
 
 Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
 
 **Preconditions**
 
-The server OS-EXT-STS:vm\_state value must be `active` and the server OS-EXT-STS:task\_state value must be `migrating`.
+The server OS-EXT-STS:vm_state value must be `active` and the server OS-EXT-STS:task_state value must be `migrating`.
 
 If the server is locked, you must have administrator privileges to force the completion of the server migration.
 
@@ -4069,7 +4069,7 @@ After you make this request, you typically must keep polling the server status t
 
 **Troubleshooting**
 
-If the server status remains `MIGRATING` for an inordinate amount of time, the request may have failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end. More details can be found in the [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration- usage.html#what-to-do-when-the-migration-times-out).
+If the server status remains `MIGRATING` for an inordinate amount of time, the request may have failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end. More details can be found in the [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration-usage.html#what-to-do-when-the-migration-times-out).
 
 Normal response codes: 202
 
@@ -4385,7 +4385,7 @@ Rebuild Server (rebuild Action) (microversion = 2.57)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 
 
 
@@ -4417,7 +4417,7 @@ Rebuild Server (rebuild Action) (microversion = 2.63)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
 
 
@@ -4450,7 +4450,7 @@ Rebuild Server (rebuild Action) (microversion = 2.90)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
 * `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 
@@ -4484,7 +4484,7 @@ Rebuild Server (rebuild Action) (microversion = 2.94)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
 * `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 
@@ -4631,11 +4631,11 @@ Puts a server in rescue mode and changes its status to `RESCUE`.
 
 Specify the `rescue` action in the request body.
 
-If you specify the `rescue\_image\_ref` extended attribute, the image is used to rescue the instance. If you omit an image reference, the base image reference is used by default.
+If you specify the `rescue_image_ref` extended attribute, the image is used to rescue the instance. If you omit an image reference, the base image reference is used by default.
 
 **Asynchronous Postconditions**
 
-After you successfully rescue a server and make a `GET /servers/​{server\_id}​` request, its status changes to `RESCUE`.
+After you successfully rescue a server and make a `GET /servers/​{server_id}​` request, its status changes to `RESCUE`.
 
 Normal response codes: 200
 
@@ -4688,7 +4688,7 @@ If the server is locked, you must have administrator privileges to resize the se
 
 **Asynchronous Postconditions**
 
-A successfully resized server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize\_confirm\_window] (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r esize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the resize operation after the configured interval.
+A successfully resized server shows a `VERIFY_RESIZE` status and `finished` migration status. If the cloud has configured the [resize_confirm_window](https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.resize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the resize operation after the configured interval.
 
 Normal response codes: 202
 
@@ -4758,17 +4758,17 @@ Specify the `revertResize` action in the request body.
 
 **Preconditions**
 
-You can only revert the resized server where the status is `VERIFY\_RESIZE` and the OS-EXT-STS:vm\_state is `resized`.
+You can only revert the resized server where the status is `VERIFY_RESIZE` and the OS-EXT-STS:vm_state is `resized`.
 
 If the server is locked, you must have administrator privileges to revert the resizing.
 
 **Asynchronous Postconditions**
 
-After you make this request, you typically must keep polling the server status to determine whether the request succeeded. A reverting resize operation shows a status of `REVERT\_RESIZE` and a task\_state of `resize\_reverting`. If successful, the status will return to `ACTIVE` or `SHUTOFF`. You can also see the reverted server in the compute node that OpenStack Compute manages.
+After you make this request, you typically must keep polling the server status to determine whether the request succeeded. A reverting resize operation shows a status of `REVERT_RESIZE` and a task_state of `resize_reverting`. If successful, the status will return to `ACTIVE` or `SHUTOFF`. You can also see the reverted server in the compute node that OpenStack Compute manages.
 
 **Troubleshooting**
 
-If the server status remains `VERIFY\_RESIZE`, the request failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end.
+If the server status remains `VERIFY_RESIZE`, the request failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end.
 
 The server is not reverted in the compute node that OpenStack Compute manages.
 
@@ -4929,11 +4929,11 @@ If the server is locked, you must have administrator privileges to shelve the se
 
 After you successfully shelve a server, its status changes to `SHELVED` and the image status is `ACTIVE`. The server instance data appears on the compute node that the Compute service manages.
 
-If you boot the server from volumes or set the `shelved\_offload\_time` option to 0, the Compute service automatically deletes the instance on compute nodes and changes the server status to `SHELVED\_OFFLOADED`.
+If you boot the server from volumes or set the `shelved_offload_time` option to 0, the Compute service automatically deletes the instance on compute nodes and changes the server status to `SHELVED_OFFLOADED`.
 
 **Troubleshooting**
 
-If the server status does not change to `SHELVED` or `SHELVED\_OFFLOADED`, the shelve operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
+If the server status does not change to `SHELVED` or `SHELVED_OFFLOADED`, the shelve operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
 
 Normal response codes: 202
 
@@ -4961,15 +4961,15 @@ Policy defaults enable only users with the administrative role or the owner of t
 
 The server status must be `SHELVED`.
 
-If the server is locked, you must have administrator privileges to shelve- offload the server.
+If the server is locked, you must have administrator privileges to shelve-offload the server.
 
 **Asynchronous Postconditions**
 
-After you successfully shelve-offload a server, its status changes to `SHELVED\_OFFLOADED`. The server instance data appears on the compute node.
+After you successfully shelve-offload a server, its status changes to `SHELVED_OFFLOADED`. The server instance data appears on the compute node.
 
 **Troubleshooting**
 
-If the server status does not change to `SHELVED\_OFFLOADED`, the shelve- offload operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
+If the server status does not change to `SHELVED_OFFLOADED`, the shelve-offload operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
 
 Normal response codes: 202
 
@@ -4989,9 +4989,9 @@ Shows details for a server.
 
 Includes server details including configuration drive, extended status, and server usage information.
 
-The extended status information appears in the `OS-EXT-STS:vm\_state`, `OS- EXT-STS:power\_state`, and `OS-EXT-STS:task\_state` attributes.
+The extended status information appears in the `OS-EXT-STS:vm_state`, `OS-EXT-STS:power_state`, and `OS-EXT-STS:task_state` attributes.
 
-The server usage information appears in the `OS-SRV-USG:launched\_at` and `OS-SRV-USG:terminated\_at` attributes.
+The server usage information appears in the `OS-SRV-USG:launched_at` and `OS-SRV-USG:terminated_at` attributes.
 
 HostId is unique per account and is not globally unique.
 
@@ -5313,7 +5313,7 @@ You can only unrescue a server when its status is `RESCUE`.
 
 **Asynchronous Postconditions**
 
-After you successfully unrescue a server and make a `GET /servers/​{server\_id}​` request, its status changes to `ACTIVE`.
+After you successfully unrescue a server and make a `GET /servers/​{server_id}​` request, its status changes to `ACTIVE`.
 
 Normal response codes: 202
 
@@ -5495,7 +5495,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 Update a volume attachment.
 
-Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is [system, project], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
+Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system, project\], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
 
 Updating, or what is commonly referred to as “swapping”, volume attachments with volumes that have more than one read/write attachment, is not supported.
 
@@ -5520,7 +5520,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 Update a volume attachment.
 
-Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is [system, project], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
+Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system, project\], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
 
 Updating, or what is commonly referred to as “swapping”, volume attachments with volumes that have more than one read/write attachment, is not supported.
 
@@ -5625,7 +5625,7 @@ An access rule created for one application credential can be re-used by providin
 
 Delete an access rule. An access rule that is still in use by an application credential cannot be deleted.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
 
 **Usage:** `osc identity access-rule delete <USER_ID> <ID>`
 
@@ -5640,7 +5640,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_
 
 List all access rules for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
 
 **Usage:** `osc identity access-rule list <USER_ID>`
 
@@ -5654,7 +5654,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_
 
 Show details of an access rule.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
 
 **Usage:** `osc identity access-rule show <USER_ID> <ID>`
 
@@ -5716,7 +5716,7 @@ An access rule created for one application credential can be re-used by providin
 
 Creates an application credential for a user on the project to which the current token is scoped.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
 **Usage:** `osc identity application-credential create [OPTIONS] --name <NAME> <USER_ID>`
 
@@ -5735,7 +5735,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
   Possible values: `true`, `false`
 
-* `--access-rules <JSON>` — A list of `access\_rules` objects
+* `--access-rules <JSON>` — A list of `access_rules` objects
 
 
 
@@ -5743,7 +5743,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 Delete an application credential.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
 **Usage:** `osc identity application-credential delete <USER_ID> <ID>`
 
@@ -5758,7 +5758,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 List all application credentials for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
 **Usage:** `osc identity application-credential list [OPTIONS] <USER_ID>`
 
@@ -5776,7 +5776,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 Show details of an application credential.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
 **Usage:** `osc identity application-credential show <USER_ID> <ID>`
 
@@ -5807,7 +5807,7 @@ Endpoint commands
 
 Creates an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
 **Usage:** `osc identity endpoint create [OPTIONS] --interface <INTERFACE> --service-id <SERVICE_ID> --url <URL>`
 
@@ -5832,13 +5832,13 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Deletes an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
 
 **Usage:** `osc identity endpoint delete <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
 
 
 
@@ -5846,7 +5846,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Lists all available endpoints.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
 **Usage:** `osc identity endpoint list [OPTIONS]`
 
@@ -5865,13 +5865,13 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Updates an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
 
 **Usage:** `osc identity endpoint set [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
 
 ###### **Options:**
 
@@ -5883,13 +5883,13 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Shows details for an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
 **Usage:** `osc identity endpoint show <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
 
 
 
@@ -5939,7 +5939,7 @@ PUT /OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 ###### **Options:**
 
@@ -5962,7 +5962,7 @@ DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 
 
@@ -6018,8 +6018,8 @@ PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 ###### **Options:**
 
@@ -6038,8 +6038,8 @@ DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 
 
@@ -6053,7 +6053,7 @@ HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 
 
@@ -6067,8 +6067,8 @@ PATCH /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 ###### **Options:**
 
@@ -6087,8 +6087,8 @@ HEAD/GET /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 
 
@@ -6100,7 +6100,7 @@ PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 ###### **Options:**
 
@@ -6122,7 +6122,7 @@ GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 
 
@@ -6360,7 +6360,7 @@ Identity Project commands
 
 Creates a project, where the project may act as a domain.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
 **Usage:** `osc identity project create [OPTIONS] --name <NAME>`
 
@@ -6390,7 +6390,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects
 
 Deletes a project.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 **Usage:** `osc identity project delete <ID>`
 
@@ -6404,7 +6404,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 Lists projects.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
 **Usage:** `osc identity project list [OPTIONS]`
 
@@ -6428,7 +6428,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects
 
 Updates a project.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 **Usage:** `osc identity project set [OPTIONS] <ID>`
 
@@ -6462,7 +6462,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 Shows details for a project.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 **Usage:** `osc identity project show <ID>`
 
@@ -6502,7 +6502,7 @@ When you create the region, you can optionally specify a region ID. If you inclu
 
 The following errors might occur:
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 **Usage:** `osc identity region create [OPTIONS]`
 
@@ -6520,7 +6520,7 @@ Deletes a region.
 
 The following error might occur:
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/region`
 
 **Usage:** `osc identity region delete <ID>`
 
@@ -6534,7 +6534,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
 
 Lists regions.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 **Usage:** `osc identity region list [OPTIONS]`
 
@@ -6552,7 +6552,7 @@ You can update the description or parent region ID for a region. You cannot upda
 
 The following error might occur:
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/region`
 
 **Usage:** `osc identity region set [OPTIONS] <ID>`
 
@@ -6572,7 +6572,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
 
 Shows details for a region, by ID.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 **Usage:** `osc identity region show <ID>`
 
@@ -6604,7 +6604,7 @@ A service is an OpenStack web service that you can access through a URL, i.e. an
 
 Creates a service.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
 **Usage:** `osc identity service create [OPTIONS] --type <TYPE>`
 
@@ -6626,7 +6626,7 @@ Deletes a service.
 
 If you try to delete a service that still has associated endpoints, this call either deletes all associated endpoints or fails until all endpoints are deleted.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/service`
 
 **Usage:** `osc identity service delete <ID>`
 
@@ -6640,7 +6640,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
 
 Lists all services.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
 **Usage:** `osc identity service list [OPTIONS]`
 
@@ -6656,7 +6656,7 @@ Updates a service.
 
 The request body is the same as the create service request body, except that you include only those attributes that you want to update.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
 **Usage:** `osc identity service set [OPTIONS] <ID>`
 
@@ -6680,7 +6680,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services
 
 Shows details for a service.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/service`
 
 **Usage:** `osc identity service show <ID>`
 
@@ -6719,7 +6719,7 @@ You can also list groups, projects, and role assignments for a specified user.
 
 Creates a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 
 **Usage:** `osc identity user create [OPTIONS] --name <NAME>`
 
@@ -6732,7 +6732,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
   Possible values: `true`, `false`
 
-* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp\_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol\_id` and `unique\_id` of the protocol and user respectively. For example:
+* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol_id` and `unique_id` of the protocol and user respectively. For example:
 * `--name <NAME>` — The user name. Must be unique within the owning domain
 * `--password <PASSWORD>` — The new password for the user
 * `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
@@ -6767,7 +6767,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
 Deletes a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 **Usage:** `osc identity user delete <ID>`
 
@@ -6781,7 +6781,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 Lists groups to which a user belongs.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_groups`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user_groups`
 
 **Usage:** `osc identity user groups <USER_ID>`
 
@@ -6795,7 +6795,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_gr
 
 Lists users.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 
 **Usage:** `osc identity user list [OPTIONS]`
 
@@ -6832,7 +6832,7 @@ This subcommand allows user to change the password
 
 Changes the password for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_change\_password`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user_change_password`
 
 **Usage:** `osc identity user password set [OPTIONS] <USER_ID>`
 
@@ -6851,7 +6851,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_ch
 
 List projects to which the user has authorization to access.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_projects`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user_projects`
 
 **Usage:** `osc identity user projects <USER_ID>`
 
@@ -6867,7 +6867,7 @@ Updates a user.
 
 If the back-end driver does not support this functionality, this call might return the HTTP `Not Implemented (501)` response code.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 **Usage:** `osc identity user set [OPTIONS] <ID>`
 
@@ -6884,7 +6884,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
   Possible values: `true`, `false`
 
-* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp\_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol\_id` and `unique\_id` of the protocol and user respectively. For example:
+* `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol_id` and `unique_id` of the protocol and user respectively. For example:
 * `--name <NAME>` — The user name. Must be unique within the owning domain
 * `--password <PASSWORD>` — The new password for the user
 * `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
@@ -6919,7 +6919,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 Shows details for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 **Usage:** `osc identity user show <ID>`
 
@@ -7057,7 +7057,7 @@ Error response codes: 400, 401, 403, 404, 409
 
 Downloads binary image data. *(Since Image API v2.0)*
 
-Example call: `curl -i -X GET -H "X-Auth-Token: $token" $image\_url/v2/images/{image\_id}/file`
+Example call: `curl -i -X GET -H "X-Auth-Token: $token" $image_url/v2/images/{image_id}/file`
 
 The response body contains the raw binary data that represents the actual virtual disk. The `Content-Type` header contains the `application/octet-stream` value. The `Content-MD5` header contains an MD5 checksum of the image data. Use this checksum to verify the integrity of the image data.
 
@@ -7113,7 +7113,7 @@ For most of these, usage is straight forward. For example, to list images in que
 
 To find images in a particular list of image IDs, use:
 
-`GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f- 44b5-baf2-2eb4babae53d`
+`GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-44b5-baf2-2eb4babae53d`
 
 Using the `in` operator with the `name` property of images can be a bit trickier, depending upon how creatively you have named your images. The general rule is that if an image name contains a comma (`,`), you must enclose the entire name in quotation marks (`"`). As usual, you must URL encode any characters that require it.
 
@@ -7125,13 +7125,13 @@ As with regular filtering by name, you must specify the complete name you are lo
 
 **Size Comparison Filters**
 
-You can use the `size\_min` and `size\_max` query parameters to filter images that are greater than or less than the image size. The size, in bytes, is the size of an image on disk.
+You can use the `size_min` and `size_max` query parameters to filter images that are greater than or less than the image size. The size, in bytes, is the size of an image on disk.
 
-For example, to filter the container to include only images that are from 1 to 4 MB, set the `size\_min` query parameter to `1048576` and the `size\_max` query parameter to `4194304`.
+For example, to filter the container to include only images that are from 1 to 4 MB, set the `size_min` query parameter to `1048576` and the `size_max` query parameter to `4194304`.
 
 **Time Comparison Filters**
 
-You can use a *comparison operator* along with the `created\_at` or `updated\_at` fields to filter your results. Specify the operator first, a colon (`:`) as a separator, and then the time in [ISO 8601 Format](https://en.wikipedia.org/wiki/ISO_8601). Available comparison operators are:
+You can use a *comparison operator* along with the `created_at` or `updated_at` fields to filter your results. Specify the operator first, a colon (`:`) as a separator, and then the time in [ISO 8601 Format](https://en.wikipedia.org/wiki/ISO_8601). Available comparison operators are:
 
 For example:
 
@@ -7139,7 +7139,7 @@ For example:
 
 You can use query parameters to sort the results of this operation.
 
-To sort the response, use the `sort\_key` and `sort\_dir` query parameters:
+To sort the response, use the `sort_key` and `sort_dir` query parameters:
 
 Alternatively, specify the `sort` query parameter:
 
@@ -7218,7 +7218,7 @@ Attempting to make a PATCH call using some other media type will provoke a respo
 
 The `application/openstack-images-v2.1-json-patch` media type provides a useful and compatible subset of the functionality defined in JavaScript Object Notation (JSON) Patch [RFC6902](http://tools.ietf.org/html/rfc6902), which defines the `application/json-patch+json` media type.
 
-For information about the PATCH method and the available media types, see [Image API v2 HTTP PATCH media types](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/http- patch-image-api-v2.html).
+For information about the PATCH method and the available media types, see [Image API v2 HTTP PATCH media types](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/http-patch-image-api-v2.html).
 
 Attempting to modify some image properties will cause the entire request to fail with a 403 (Forbidden) response code:
 
@@ -7533,7 +7533,7 @@ To associate the floating IP with an internal port, specify the port ID attribut
 
 Default policy settings enable only administrative users to set floating IP addresses and some non-administrative users might require a floating IP address. If you do not specify a floating IP address in the request, the operation automatically allocates one.
 
-By default, this operation associates the floating IP address with a single fixed IP address that is configured on an OpenStack Networking port. If a port has multiple IP addresses, you must specify the `fixed\_ip\_address` attribute in the request body to associate a fixed IP address with the floating IP address.
+By default, this operation associates the floating IP address with a single fixed IP address that is configured on an OpenStack Networking port. If a port has multiple IP addresses, you must specify the `fixed_ip_address` attribute in the request body to associate a fixed IP address with the floating IP address.
 
 You can create floating IPs on only external networks. When you create a floating IP, you must specify the ID of the network on which you want to create the floating IP. Alternatively, you can create a floating IP on a subnet in the external network, based on the costs and quality of that subnet.
 
@@ -7557,7 +7557,7 @@ Error response codes: 400, 401, 404, 409
 * `--subnet-id <SUBNET_ID>` — The subnet ID on which you want to create the floating IP
 * `--floating-network-id <FLOATING_NETWORK_ID>` — The ID of the network associated with the floating IP
 * `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP at creation time, you must specify the identifier of the internal port
-* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed\_ip\_address` parameter
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed_ip_address` parameter
 * `--tenant-id <TENANT_ID>` — The ID of the project
 * `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy associated with the floating IP
 * `--dns-name <DNS_NAME>` — A valid DNS name
@@ -7592,7 +7592,7 @@ Default policy settings return only the floating IPs owned by the user’s proje
 
 This example request lists floating IPs in JSON format:
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 Normal response codes: 200
 
@@ -7624,7 +7624,7 @@ Updates a floating IP and its association with an internal port.
 
 The association process is the same as the process for the create floating IP operation.
 
-To disassociate a floating IP from a port, set the `port\_id` attribute to null or omit it from the request body.
+To disassociate a floating IP from a port, set the `port_id` attribute to null or omit it from the request body.
 
 This example updates a floating IP:
 
@@ -7643,7 +7643,7 @@ Error response codes: 400, 401, 404, 409, 412
 ###### **Options:**
 
 * `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP, you must specify the ID of the internal port. To disassociate the floating IP, `null` should be specified
-* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed\_ip\_address` parameter
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed_ip_address` parameter
 * `--qos-policy-id <QOS_POLICY_ID>`
 * `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
 
@@ -7653,9 +7653,9 @@ Error response codes: 400, 401, 404, 409, 412
 
 Shows details for a floating IP.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
-This example request shows details for a floating IP in JSON format. This example also filters the result by the `fixed\_ip\_address` and `floating\_ip\_address` fields.
+This example request shows details for a floating IP in JSON format. This example also filters the result by the `fixed_ip_address` and `floating_ip_address` fields.
 
 Normal response codes: 200
 
@@ -7815,7 +7815,7 @@ Error response codes: 400, 401
 
   Possible values: `true`, `false`
 
-* `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status of the network. Valid values are enabled (`true`) and disabled (`false`). This value is used as the default value of `port\_security\_enabled` field of a newly created port
+* `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status of the network. Valid values are enabled (`true`) and disabled (`false`). This value is used as the default value of `port_security_enabled` field of a newly created port
 
   Possible values: `true`, `false`
 
@@ -7854,9 +7854,9 @@ Lists networks to which the project has access.
 
 Default policy settings return only networks that the project who submits the request owns, unless an administrative user submits the request. In addition, networks shared with the project who submits the request are also returned.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
-You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query parameter to filter the response with tags. For information, see [REST API Impact](http://specs.openstack.org/openstack/neutron- specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
+You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query parameter to filter the response with tags. For information, see [REST API Impact](http://specs.openstack.org/openstack/neutron-specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
 
 Normal response codes: 200
 
@@ -7903,7 +7903,7 @@ Error response codes: 401
 
 Shows details for a network.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 Normal response codes: 200
 
@@ -7936,7 +7936,7 @@ Port commands
 
 Creates a port on a network.
 
-To define the network in which to create the port, specify the `network\_id` attribute in the request body.
+To define the network in which to create the port, specify the `network_id` attribute in the request body.
 
 Normal response codes: 201
 
@@ -7953,11 +7953,11 @@ Error response codes: 400, 401, 403, 404
   Possible values: `true`, `false`
 
 * `--mac-address <MAC_ADDRESS>` — The MAC address of the port. If unspecified, a MAC address is automatically generated
-* `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip\_address`) and the subnet ID from which the IP address is assigned (`subnet\_id`)
+* `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip_address`) and the subnet ID from which the IP address is assigned (`subnet_id`)
 * `--device-id <DEVICE_ID>` — The ID of the device that uses this port. For example, a server instance or a logical router
-* `--device-owner <DEVICE_OWNER>` — The entity type that uses this port. For example, `compute:nova` (server instance), `network:dhcp` (DHCP agent) or `network:router\_interface` (router interface)
+* `--device-owner <DEVICE_OWNER>` — The entity type that uses this port. For example, `compute:nova` (server instance), `network:dhcp` (DHCP agent) or `network:router_interface` (router interface)
 * `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
-* `--allowed-address-pairs <JSON>` — A set of zero or more allowed address pair objects each where address pair object contains an `ip\_address` and `mac\_address`. While the `ip\_address` is required, the `mac\_address` will be taken from the port if not specified. The value of `ip\_address` can be an IP Address or a CIDR (if supported by the underlying extension plugin). A server connected to the port can send a packet with source address which matches one of the specified allowed address pairs
+* `--allowed-address-pairs <JSON>` — A set of zero or more allowed address pair objects each where address pair object contains an `ip_address` and `mac_address`. While the `ip_address` is required, the `mac_address` will be taken from the port if not specified. The value of `ip_address` can be an IP Address or a CIDR (if supported by the underlying extension plugin). A server connected to the port can send a packet with source address which matches one of the specified allowed address pairs
 * `--extra-dhcp-opts <JSON>` — A set of zero or more extra DHCP option pairs. An option pair consists of an option value and name
 * `--device-profile <DEVICE_PROFILE>`
 * `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
@@ -7970,7 +7970,7 @@ Error response codes: 400, 401, 403, 404
   Possible values: `accelerator-direct`, `accelerator-direct-physical`, `baremetal`, `direct`, `direct-physical`, `macvtap`, `normal`, `remote-managed`, `smart-nic`, `vdpa`, `virtio-forwarder`
 
 * `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port resides. The default is an empty string
-* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back- end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device\_mac\_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac\_address` field of the port resource will be updated to the MAC from the active binding
+* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back-end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device_mac_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac_address` field of the port resource will be updated to the MAC from the active binding
 * `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status. A valid value is enabled (`true`) or disabled (`false`). If port security is enabled for the port, security group rules and anti-spoofing rules are applied to the traffic on the port. If disabled, no such rules are applied
 
   Possible values: `true`, `false`
@@ -8012,9 +8012,9 @@ Lists ports to which the user has access.
 
 Default policy settings return only those ports that are owned by the project of the user who submits the request, unless the request is submitted by a user with administrative rights.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
-If the `ip-substring-filtering` extension is enabled, the Neutron API supports IP address substring filtering on the `fixed\_ips` attribute. If you specify an IP address substring (`ip\_address\_substr`) in an entry of the `fixed\_ips` attribute, the Neutron API will list all ports that have an IP address matching the substring.
+If the `ip-substring-filtering` extension is enabled, the Neutron API supports IP address substring filtering on the `fixed_ips` attribute. If you specify an IP address substring (`ip_address_substr`) in an entry of the `fixed_ips` attribute, the Neutron API will list all ports that have an IP address matching the substring.
 
 Normal response codes: 200
 
@@ -8053,7 +8053,7 @@ Error response codes: 401
 
 Shows details for a port.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 Normal response codes: 200
 
@@ -8086,7 +8086,7 @@ Router commands
 
 Creates a logical router.
 
-This operation creates a logical router. The logical router does not have any internal interface and it is not associated with any subnet. You can optionally specify an external gateway for a router at create time. The external gateway for the router must be plugged into an external network. An external network has its `router:external` extended field set to `true`. To specify an external gateway, the ID of the external network must be passed in the `network\_id` parameter of the `external\_gateway\_info` attribute in the request body.
+This operation creates a logical router. The logical router does not have any internal interface and it is not associated with any subnet. You can optionally specify an external gateway for a router at create time. The external gateway for the router must be plugged into an external network. An external network has its `router:external` extended field set to `true`. To specify an external gateway, the ID of the external network must be passed in the `network_id` parameter of the `external_gateway_info` attribute in the request body.
 
 Normal response codes: 201
 
@@ -8112,12 +8112,12 @@ Error response codes: 400, 401
 
   Possible values: `true`, `false`
 
-* `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — Enable NDP proxy attribute. Default is `false`, To persist this attribute value, set the `enable\_ndp\_proxy\_by\_default` option in the `neutron.conf` file. It is available when `router-extend-ndp-proxy` extension is enabled
+* `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — Enable NDP proxy attribute. Default is `false`, To persist this attribute value, set the `enable_ndp_proxy_by_default` option in the `neutron.conf` file. It is available when `router-extend-ndp-proxy` extension is enabled
 
   Possible values: `true`, `false`
 
 * `--flavor-id <FLAVOR_ID>` — The ID of the flavor associated with the router
-* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidates for the router. It is available when `router\_availability\_zone` extension is enabled
+* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidates for the router. It is available when `router_availability_zone` extension is enabled
 * `--distributed <DISTRIBUTED>` — `true` indicates a distributed router. It is available when `dvr` extension is enabled
 
   Possible values: `true`, `false`
@@ -8150,7 +8150,7 @@ Lists logical routers that the project who submits the request can access.
 
 Default policy settings return only those routers that the project who submits the request owns, unless an administrative user submits the request.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 Normal response codes: 200
 
@@ -8183,7 +8183,7 @@ Error response codes: 401
 
 Shows details for a router.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 Normal response codes: 200
 
@@ -8216,17 +8216,17 @@ Subnet commands
 
 Creates a subnet on a network.
 
-OpenStack Networking does not try to derive the correct IP version from the CIDR. If you do not specify the `gateway\_ip` attribute, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet.
+OpenStack Networking does not try to derive the correct IP version from the CIDR. If you do not specify the `gateway_ip` attribute, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet.
 
-To specify a subnet without a gateway, set the `gateway\_ip` attribute to `null` in the request body. If you do not specify the `allocation\_pools` attribute, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway. Otherwise, you can explicitly specify allocation pools as shown in the following example.
+To specify a subnet without a gateway, set the `gateway_ip` attribute to `null` in the request body. If you do not specify the `allocation_pools` attribute, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway. Otherwise, you can explicitly specify allocation pools as shown in the following example.
 
-When you specify both the `allocation\_pools` and `gateway\_ip` attributes, you must ensure that the gateway IP does not overlap with the allocation pools; otherwise, the call returns the `Conflict (409)` response code.
+When you specify both the `allocation_pools` and `gateway_ip` attributes, you must ensure that the gateway IP does not overlap with the allocation pools; otherwise, the call returns the `Conflict (409)` response code.
 
 A subnet can have one or more name servers and host routes. Hosts in this subnet use the name servers. Devices with IP addresses from this subnet, not including the local subnet route, use the host routes.
 
-Specify the `ipv6\_ra\_mode` and `ipv6\_address\_mode` attributes to create subnets that support IPv6 configurations, such as stateless address autoconfiguration (SLAAC), DHCPv6 stateful, and DHCPv6 stateless configurations.
+Specify the `ipv6_ra_mode` and `ipv6_address_mode` attributes to create subnets that support IPv6 configurations, such as stateless address autoconfiguration (SLAAC), DHCPv6 stateful, and DHCPv6 stateless configurations.
 
-A subnet can optionally be associated with a network segment when it is created by specifying the `segment\_id` of a valid segment on the specified network. A network with subnets associated in this way is called a routed network. On any given network, all of the subnets must be associated with segments or none of them can be. Neutron enforces this invariant. Currently, routed networks are only supported for provider networks.
+A subnet can optionally be associated with a network segment when it is created by specifying the `segment_id` of a valid segment on the specified network. A network with subnets associated in this way is called a routed network. On any given network, all of the subnets must be associated with segments or none of them can be. Neutron enforces this invariant. Currently, routed networks are only supported for provider networks.
 
 Normal response codes: 201
 
@@ -8240,10 +8240,10 @@ Error response codes: 400, 401, 403, 404, 409
 * `--ip-version <IP_VERSION>` — The IP protocol version. Value is `4` or `6`
 * `--network-id <NETWORK_ID>` — The ID of the network to which the subnet belongs
 * `--subnetpool-id <SUBNETPOOL_ID>` — The ID of the subnet pool associated with the subnet
-* `--prefixlen <PREFIXLEN>` — The prefix length to use for subnet allocation from a subnet pool. If not specified, the `default\_prefixlen` value of the subnet pool will be used
+* `--prefixlen <PREFIXLEN>` — The prefix length to use for subnet allocation from a subnet pool. If not specified, the `default_prefixlen` value of the subnet pool will be used
 * `--cidr <CIDR>` — The CIDR of the subnet
-* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway\_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
-* `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation\_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
+* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
+* `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
 * `--dns-nameservers <DNS_NAMESERVERS>` — List of dns name servers associated with the subnet. Default is an empty list
 * `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
 * `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
@@ -8297,7 +8297,7 @@ Lists subnets that the project has access to.
 
 Default policy settings return only subnets owned by the project of the user submitting the request, unless the user has administrative role. You can control which attributes are returned by using the fields query parameter. You can filter results by using query string parameters.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 Normal response codes: 200
 

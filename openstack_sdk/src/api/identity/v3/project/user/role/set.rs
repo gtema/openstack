@@ -17,8 +17,8 @@
 
 //! Assigns a role to a user on a project.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/project\_user\_role`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -34,16 +34,19 @@ use std::collections::BTreeMap;
 pub struct Request<'a> {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 
     /// user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

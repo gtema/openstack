@@ -42,8 +42,9 @@ use structable_derive::StructTable;
 
 /// Changes the password for a user.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/user\_change\_password`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/user_change_password`
+///
 #[derive(Args)]
 #[command(about = "Change password for user")]
 pub struct PasswordCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
@@ -75,10 +77,12 @@ struct PathParameters {
 #[derive(Args)]
 struct User {
     /// The original password for the user.
+    ///
     #[arg(long)]
     original_password: Option<String>,
 
     /// The new password for the user.
+    ///
     #[arg(long)]
     password: Option<String>,
 }

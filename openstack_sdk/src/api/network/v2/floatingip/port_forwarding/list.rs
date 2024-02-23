@@ -18,15 +18,13 @@
 //! Lists floating IP port forwardings that the project has access to.
 //!
 //! Default policy settings return only the port forwardings associated to
-//! floating
-//! IPs owned by the project of the user submitting the request, unless the
-//! user has administrative role.
+//! floating IPs owned by the project of the user submitting the request,
+//! unless the user has administrative role.
 //!
 //! Use the `fields` query parameter to control which fields are returned in
-//! the response body.
-//! Additionally, you can filter results by using query string parameters.
-//! For information, see [Filtering and Column Selection](https://wiki.openstac
-//! k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! Normal response codes: 200
 //!
@@ -44,36 +42,43 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
+    ///
     #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,
 
     /// id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// external_port query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
     #[builder(default)]
     external_port: Option<f32>,
 
     /// protocol query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
     #[builder(default, setter(into))]
     protocol: Option<Cow<'a, str>>,
 
     /// internal_port_id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
     #[builder(default, setter(into))]
     internal_port_id: Option<Cow<'a, str>>,
 
     /// description query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// external_port_range query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
     #[builder(default)]
     external_port_range: Option<f32>,
 

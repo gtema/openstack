@@ -17,8 +17,8 @@
 
 //! Lists regions.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/regions`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -31,6 +31,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filters the response by a parent region, by ID.
+    ///
     #[builder(default, setter(into))]
     parent_region_id: Option<Cow<'a, str>>,
 

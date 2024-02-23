@@ -17,13 +17,12 @@
 
 //! Deletes a server.
 //!
-//! By default, the instance is going to be (hard) deleted immediately from
-//! the system, but you can set `reclaim\_instance\_interval` > 0 to make
-//! the API soft delete the instance, so that the instance won’t be
-//! deleted until the `reclaim\_instance\_interval` has expired since the
-//! instance was soft deleted. The instance marked as `SOFT\_DELETED` can
-//! be recovered via `restore` action before it’s really deleted from the
-//! system.
+//! By default, the instance is going to be (hard) deleted immediately from the
+//! system, but you can set `reclaim_instance_interval` > 0 to make the API
+//! soft delete the instance, so that the instance won’t be deleted until the
+//! `reclaim_instance_interval` has expired since the instance was soft
+//! deleted. The instance marked as `SOFT_DELETED` can be recovered via
+//! `restore` action before it’s really deleted from the system.
 //!
 //! **Preconditions**
 //!
@@ -33,8 +32,8 @@
 //!
 //! Normal response codes: 204
 //!
-//! Error response codes: unauthorized(401), forbidden(403),
-//! itemNotFound(404), conflict(409)
+//! Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
+//! conflict(409)
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -47,6 +46,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

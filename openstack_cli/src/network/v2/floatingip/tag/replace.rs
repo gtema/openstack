@@ -37,6 +37,7 @@ use openstack_sdk::api::network::v2::floatingip::tag::replace;
 use openstack_sdk::api::QueryAsync;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagCommand {
     /// Request Query parameters
@@ -60,6 +61,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
+    ///
     #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
     floatingip_id: String,
 }

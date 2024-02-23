@@ -17,8 +17,8 @@
 
 //! Creates an endpoint.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/endpoints`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -40,45 +40,48 @@ pub enum Interface {
 }
 
 /// An `endpoint` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Endpoint<'a> {
-    /// Defines whether the endpoint appears in the
-    /// service catalog: - `false`. The endpoint does not appear in the
-    /// service catalog. - `true`. The endpoint appears in the service
-    /// catalog. Default is `true`.
+    /// Defines whether the endpoint appears in the service catalog: - `false`.
+    /// The endpoint does not appear in the service catalog. - `true`. The
+    /// endpoint appears in the service catalog. Default is `true`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
-    /// The interface type, which describes the
-    /// visibility of the endpoint. Value is: - `public`. Visible by
-    /// end users on a publicly available network interface. -
-    /// `internal`. Visible by end users on an unmetered internal
-    /// network interface. - `admin`. Visible by administrative users
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: - `public`. Visible by end users on a publicly available
+    /// network interface. - `internal`. Visible by end users on an unmetered
+    /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
+    ///
     #[serde()]
     #[builder()]
     pub(crate) interface: Interface,
 
     /// The geographic location of the service endpoint.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region: Option<Cow<'a, str>>,
 
-    /// (Since v3.2) The ID of the region that contains
-    /// the service endpoint.
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) region_id: Option<Cow<'a, str>>,
 
-    /// The UUID of the service to which the endpoint
-    /// belongs.
+    /// The UUID of the service to which the endpoint belongs.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) service_id: Cow<'a, str>,
 
     /// The endpoint URL.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) url: Cow<'a, str>,
@@ -88,6 +91,7 @@ pub struct Endpoint<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// An `endpoint` object.
+    ///
     #[builder(setter(into))]
     pub(crate) endpoint: Endpoint<'a>,
 

@@ -41,30 +41,29 @@ use structable_derive::StructTable;
 /// Creates a floating IP, and, if you specify port information, associates the
 /// floating IP with an internal port.
 ///
-/// To associate the floating IP with an internal port, specify the
-/// port ID attribute in the request body. If you do not specify a
-/// port ID in the request, you can issue a PUT request instead of a
-/// POST request.
+/// To associate the floating IP with an internal port, specify the port ID
+/// attribute in the request body. If you do not specify a port ID in the
+/// request, you can issue a PUT request instead of a POST request.
 ///
-/// Default policy settings enable only administrative users to set
-/// floating IP addresses and some non-administrative users might
-/// require a floating IP address. If you do not specify a floating IP
-/// address in the request, the operation automatically allocates one.
+/// Default policy settings enable only administrative users to set floating IP
+/// addresses and some non-administrative users might require a floating IP
+/// address. If you do not specify a floating IP address in the request, the
+/// operation automatically allocates one.
 ///
-/// By default, this operation associates the floating IP address with
-/// a single fixed IP address that is configured on an OpenStack
-/// Networking port. If a port has multiple IP addresses, you must
-/// specify the `fixed\_ip\_address` attribute in the request body to
-/// associate a fixed IP address with the floating IP address.
+/// By default, this operation associates the floating IP address with a single
+/// fixed IP address that is configured on an OpenStack Networking port. If a
+/// port has multiple IP addresses, you must specify the `fixed_ip_address`
+/// attribute in the request body to associate a fixed IP address with the
+/// floating IP address.
 ///
-/// You can create floating IPs on only external networks. When you
-/// create a floating IP, you must specify the ID of the network on
-/// which you want to create the floating IP. Alternatively, you can
-/// create a floating IP on a subnet in the external network, based on
-/// the costs and quality of that subnet.
+/// You can create floating IPs on only external networks. When you create a
+/// floating IP, you must specify the ID of the network on which you want to
+/// create the floating IP. Alternatively, you can create a floating IP on a
+/// subnet in the external network, based on the costs and quality of that
+/// subnet.
 ///
-/// You must configure an IP address with the internal OpenStack
-/// Networking port that is associated with the floating IP address.
+/// You must configure an IP address with the internal OpenStack Networking
+/// port that is associated with the floating IP address.
 ///
 /// The operation returns the `Bad Request (400)` response code for one of
 /// reasons:
@@ -77,6 +76,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 404, 409
+///
 #[derive(Args)]
 #[command(about = "Create floating IP")]
 pub struct FloatingipCommand {
@@ -103,49 +103,58 @@ struct PathParameters {}
 #[derive(Args)]
 struct Floatingip {
     /// The floating IP address.
+    ///
     #[arg(long)]
     floating_ip_address: Option<String>,
 
     /// The subnet ID on which you want to create the floating IP.
+    ///
     #[arg(long)]
     subnet_id: Option<String>,
 
-    /// The ID of the network associated with the
-    /// floating IP.
+    /// The ID of the network associated with the floating IP.
+    ///
     #[arg(long)]
     floating_network_id: String,
 
-    /// The ID of a port associated with the floating IP.
-    /// To associate the floating IP with a fixed IP at creation time,
-    /// you must specify the identifier of the internal port.
+    /// The ID of a port associated with the floating IP. To associate the
+    /// floating IP with a fixed IP at creation time, you must specify the
+    /// identifier of the internal port.
+    ///
     #[arg(long)]
     port_id: Option<String>,
 
-    /// The fixed IP address that is associated with the floating IP.
-    /// If an internal port has multiple associated IP addresses,
-    /// the service chooses the first IP address unless you explicitly
-    /// define a fixed IP address in the `fixed\_ip\_address` parameter.
+    /// The fixed IP address that is associated with the floating IP. If an
+    /// internal port has multiple associated IP addresses, the service chooses
+    /// the first IP address unless you explicitly define a fixed IP address in
+    /// the `fixed_ip_address` parameter.
+    ///
     #[arg(long)]
     fixed_ip_address: Option<String>,
 
     /// The ID of the project.
+    ///
     #[arg(long)]
     tenant_id: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
+    ///
     #[arg(long)]
     qos_policy_id: Option<String>,
 
     /// A valid DNS name.
+    ///
     #[arg(long)]
     dns_name: Option<String>,
 
     /// A valid DNS domain.
+    ///
     #[arg(long)]
     dns_domain: Option<String>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[arg(long)]
     description: Option<String>,
 }
@@ -154,89 +163,102 @@ struct Floatingip {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the floating IP address.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The floating IP address.
+    ///
     #[serde()]
     #[structable(optional)]
     floating_ip_address: Option<String>,
 
-    /// The ID of the network associated with the
-    /// floating IP.
+    /// The ID of the network associated with the floating IP.
+    ///
     #[serde()]
     #[structable(optional)]
     floating_network_id: Option<String>,
 
     /// The ID of the router for the floating IP.
+    ///
     #[serde()]
     #[structable(optional)]
     router_id: Option<String>,
 
     /// The ID of a port associated with the floating IP.
+    ///
     #[serde()]
     #[structable(optional)]
     port_id: Option<String>,
 
-    /// The fixed IP address that is associated with the
-    /// floating IP address.
+    /// The fixed IP address that is associated with the floating IP address.
+    ///
     #[serde()]
     #[structable(optional)]
     fixed_ip_address: Option<String>,
 
     /// The ID of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     tenant_id: Option<String>,
 
-    /// The status of the floating IP. Values are
-    /// `ACTIVE`, `DOWN` and `ERROR`.
+    /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
+    ///
     #[serde()]
     #[structable(optional)]
     qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The list of tags on the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// A valid DNS name.
+    ///
     #[serde()]
     #[structable(optional)]
     dns_name: Option<String>,
 
     /// A valid DNS domain.
+    ///
     #[serde()]
     #[structable(optional)]
     dns_domain: Option<String>,
 
-    /// The information of the port that this floating IP associates with.
-    /// In particular, if the floating IP is associated with a port, this field
+    /// The information of the port that this floating IP associates with. In
+    /// particular, if the floating IP is associated with a port, this field
     /// contains some attributes of the associated port, including `name`,
-    /// `network\_id`, `mac\_address`, `admin\_state\_up`, `status`,
-    /// `device\_id` and `device\_owner`. If the floating IP is not associated
-    /// with a port, this field is `null`.
+    /// `network_id`, `mac_address`, `admin_state_up`, `status`, `device_id`
+    /// and `device_owner`. If the floating IP is not associated with a port,
+    /// this field is `null`.
+    ///
     #[serde()]
     #[structable(optional)]
     port_details: Option<String>,
@@ -245,20 +267,22 @@ struct ResponseData {
     /// floating IP has multiple port forwarding resources, this field has
     /// multiple entries. Each entry consists of network IP protocol
     /// (`protocol`), the fixed IP address of internal neutron port
-    /// (`internal\_ip\_address`), the TCP or UDP port or port range used by
-    /// internal neutron port (`internal\_port`) or (`internal\_port\_range`)
-    /// and the TCP or UDP port or port range used by floating IP
-    /// (`external\_port`) or (`external\_port\_range`).
+    /// (`internal_ip_address`), the TCP or UDP port or port range used by
+    /// internal neutron port (`internal_port`) or (`internal_port_range`) and
+    /// the TCP or UDP port or port range used by floating IP (`external_port`)
+    /// or (`external_port_range`).
+    ///
     #[serde()]
     #[structable(optional)]
     port_forwardings: Option<String>,
 
     /// A human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

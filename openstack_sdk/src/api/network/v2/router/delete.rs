@@ -17,9 +17,9 @@
 
 //! Deletes a logical router and, if present, its external gateway interface.
 //!
-//! This operation fails if the router has attached interfaces.
-//! Use the remove router interface operation to remove all router
-//! interfaces before you delete the router.
+//! This operation fails if the router has attached interfaces. Use the remove
+//! router interface operation to remove all router interfaces before you
+//! delete the router.
 //!
 //! Normal response codes: 204
 //!
@@ -36,6 +36,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

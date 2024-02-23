@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Deletes a project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/project`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/project`
+///
 #[derive(Args)]
 #[command(about = "Delete project")]
 pub struct ProjectCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

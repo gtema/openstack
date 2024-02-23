@@ -40,20 +40,16 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Sets the status for an image member.
-/// *(Since Image API v2.1)*
+/// Sets the status for an image member. *(Since Image API v2.1)*
 ///
 /// This call allows an image member to change his or her *member status*.
 ///
 /// When an image is shared with you, you have immediate access to the image.
-/// What
-/// updating your member status on the image does for you is that it affects
-/// whether the image will appear in your image list response.
+/// What updating your member status on the image does for you is that it
+/// affects whether the image will appear in your image list response.
 ///
-/// For a more detailed discussion of image sharing, please consult [Image API
-/// v2
-/// Sharing](http://specs.openstack.org/openstack/glance-
-/// specs/specs/api/v2/sharing-image-api-v2.html).
+/// For a more detailed discussion of image sharing, please consult
+/// [Image API v2 Sharing](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/sharing-image-api-v2.html).
 ///
 /// Preconditions
 ///
@@ -62,6 +58,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 404, 403
+///
 #[derive(Args)]
 #[command(about = "Update image member")]
 pub struct MemberCommand {
@@ -85,10 +82,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 
     /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -97,72 +96,67 @@ struct PathParameters {
 struct ResponseData {
     /// The ID of the image member. An image member is usually a project (also
     /// called the “tenant”) with whom the image is shared.
+    ///
     #[serde()]
     #[structable(optional)]
     member_id: Option<String>,
 
     /// The UUID of the image.
+    ///
     #[serde()]
     #[structable(optional)]
     image_id: Option<String>,
 
     /// The date and time when the resource was created.
     ///
-    ///
-    /// The date and time stamp format is [ISO
-    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
-    ///
     /// For example, `2015-08-27T09:49:58-05:00`.
     ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC.
     ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset
-    /// from UTC.
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// The date and time when the resource was updated.
     ///
-    ///
-    /// The date and time stamp format is [ISO
-    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
-    ///
     /// For example, `2015-08-27T09:49:58-05:00`.
     ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC. In the previous example, the offset value is `-05:00`.
     ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset
-    /// from UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    ///
-    /// If the `updated\_at` date and time stamp is not set, its value is
+    /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// The status of this image member. Value is one of `pending`,
-    /// `accepted`, `rejected`.
+    /// The status of this image member. Value is one of `pending`, `accepted`,
+    /// `rejected`.
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// The URL for the schema describing an image member.
+    ///
     #[serde()]
     #[structable(optional)]
     schema: Option<String>,

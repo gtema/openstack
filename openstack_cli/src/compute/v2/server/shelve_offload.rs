@@ -55,25 +55,26 @@ use structable_derive::StructTable;
 ///
 /// The server status must be `SHELVED`.
 ///
-/// If the server is locked, you must have administrator privileges to shelve-
-/// offload the server.
+/// If the server is locked, you must have administrator privileges to
+/// shelve-offload the server.
 ///
 /// **Asynchronous Postconditions**
 ///
 /// After you successfully shelve-offload a server, its status changes to
-/// `SHELVED\_OFFLOADED`. The server instance data appears on the compute node.
+/// `SHELVED_OFFLOADED`. The server instance data appears on the compute node.
 ///
 /// **Troubleshooting**
 ///
-/// If the server status does not change to `SHELVED\_OFFLOADED`, the shelve-
-/// offload operation failed. Ensure that you meet the preconditions and run
-/// the request again. If the request fails again, investigate whether another
-/// operation is running that causes a race condition.
+/// If the server status does not change to `SHELVED_OFFLOADED`, the
+/// shelve-offload operation failed. Ensure that you meet the preconditions and
+/// run the request again. If the request fails again, investigate whether
+/// another operation is running that causes a race condition.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Shelf-Offload (Remove) Server (shelveOffload Action)")]
 pub struct ServerCommand {
@@ -94,6 +95,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

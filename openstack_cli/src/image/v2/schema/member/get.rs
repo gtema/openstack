@@ -43,12 +43,13 @@ use structable_derive::StructTable;
 ///
 /// Shows a JSON schema document that represents an *image member* entity.
 ///
-/// The following schema is solely an example. Consider only the
-/// response to the API call as authoritative.
+/// The following schema is solely an example. Consider only the response to
+/// the API call as authoritative.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401
+///
 #[derive(Args)]
 #[command(about = "Show image member schema")]
 pub struct MemberCommand {

@@ -18,21 +18,18 @@
 //! Lists networks to which the project has access.
 //!
 //! Default policy settings return only networks that the project who submits
-//! the
-//! request owns, unless an administrative user submits the request. In
-//! addition,
-//! networks shared with the project who submits the request are also returned.
+//! the request owns, unless an administrative user submits the request. In
+//! addition, networks shared with the project who submits the request are also
+//! returned.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. Additionally, you can filter results
-//! by using query string parameters. For information, see [Filtering
-//! and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-//! specification#Filtering_and_Column_Selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
-//! You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any`
-//! query parameter to filter the response with tags. For information,
-//! see [REST API Impact](http://specs.openstack.org/openstack/neutron-
-//! specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
+//! You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query
+//! parameter to filter the response with tags. For information, see
+//! [REST API Impact](http://specs.openstack.org/openstack/neutron-specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
 //!
 //! Normal response codes: 200
 //!
@@ -50,74 +47,92 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// admin_state_up query parameter for /v2.0/networks API
+    ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
     /// status query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// tenant_id query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// shared query parameter for /v2.0/networks API
+    ///
     #[builder(default)]
     shared: Option<bool>,
 
     /// router:external query parameter for /v2.0/networks API
+    ///
     #[builder(default)]
     router_external: Option<bool>,
 
     /// mtu query parameter for /v2.0/networks API
+    ///
     #[builder(default)]
     mtu: Option<i32>,
 
     /// provider:network_type query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     provider_network_type: Option<Cow<'a, str>>,
 
     /// provider:physical_network query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     provider_physical_network: Option<Cow<'a, str>>,
 
     /// provider:segmentation_id query parameter for /v2.0/networks API
+    ///
     #[builder(default)]
     provider_segmentation_id: Option<i32>,
 
     /// revision_number query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/networks API
+    ///
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/networks API
+    ///
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/networks API
+    ///
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/networks API
+    ///
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// is_default query parameter for /v2.0/networks API
+    ///
     #[builder(default)]
     is_default: Option<bool>,
 
     /// description query parameter for /v2.0/networks API
+    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
@@ -133,6 +148,7 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// tags query parameter for /v2.0/networks API
+    ///
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -146,6 +162,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags-any query parameter for /v2.0/networks API
+    ///
     pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -159,6 +176,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags query parameter for /v2.0/networks API
+    ///
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -172,6 +190,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags-any query parameter for /v2.0/networks API
+    ///
     pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

@@ -35,5 +35,5 @@ $> osc --os-cloud devstack compute flavor list
 ## Documentation
 
 Project [Documentation](https://gtema.github.io/openstack) is part of this
-repository as well. It follows "code as a documetation" approach to keep
+repository as well. It follows "code as a documentation" approach to keep
 document matching the real code.

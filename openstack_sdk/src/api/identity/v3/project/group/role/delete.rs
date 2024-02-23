@@ -17,8 +17,8 @@
 
 //! Unassigns a role from a group on a project.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/project\_group\_role`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/project_group_role`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -32,16 +32,19 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[builder(default, setter(into))]
     group_id: Cow<'a, str>,
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

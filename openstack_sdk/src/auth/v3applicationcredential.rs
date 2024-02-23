@@ -74,8 +74,8 @@ pub enum ApplicationCredentialError {
     #[error("User name/id is required when application credential name is used")]
     MissingUser,
 
-    /// `applicationcredential` part build erro
-    #[error("Cannot construct aplication credential data: {}", source)]
+    /// `applicationcredential` part build error
+    #[error("Cannot construct application credential data: {}", source)]
     ApplicationCredentialBuilder {
         /// The error source
         #[from]
@@ -83,7 +83,7 @@ pub enum ApplicationCredentialError {
     },
 
     /// `user` part build error
-    #[error("Cannot construct aplication credential user data: {}", source)]
+    #[error("Cannot construct application credential user data: {}", source)]
     UserBuilder {
         /// The request source
         #[from]
@@ -91,7 +91,7 @@ pub enum ApplicationCredentialError {
     },
 
     /// `user.domain` part build error
-    #[error("Cannot construct aplication credential user domain data: {}", source)]
+    #[error("Cannot construct application credential user domain data: {}", source)]
     UserDomainBuilder {
         #[from]
         source: token_v3::UserDomainStructBuilderError,

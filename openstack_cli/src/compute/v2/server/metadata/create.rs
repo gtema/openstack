@@ -41,10 +41,8 @@ use std::collections::HashMap;
 /// Create or update one or more metadata items for a server.
 ///
 /// Creates any metadata items that do not already exist in the server,
-/// replaces
-/// exists metadata items that match keys. Does not modify items that are not
-/// in
-/// the request.
+/// replaces exists metadata items that match keys. Does not modify items that
+/// are not in the request.
 ///
 /// Policy defaults enable only users with the administrative role or the owner
 /// of the server to perform this operation. Cloud providers can change these
@@ -54,6 +52,7 @@ use std::collections::HashMap;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Create or Update Metadata Items")]
 pub struct MetadataCommand {
@@ -77,6 +76,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }

@@ -41,6 +41,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Request of the routers/id/add_extraroutes:put operation
+///
 #[derive(Args)]
 #[command(about = "Add extra routes to router")]
 pub struct RouterCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Lists users.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/users`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/users`
+///
 #[derive(Args)]
 #[command(about = "List users")]
 pub struct UsersCommand {
@@ -59,35 +60,42 @@ pub struct UsersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Filters the response by a domain ID.
+    ///
     #[arg(long)]
     domain_id: Option<String>,
 
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
+    ///
     #[arg(long)]
     enabled: Option<bool>,
 
     /// Filter for Identity Providers’ ID attribute
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// Filters the response by a resource name.
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// Filter results based on which user passwords have expired. The query
     /// should include an operator and a timestamp with a colon (:) separating
     /// the two, for example: `password_expires_at={operator}:{timestamp}`.
-    /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`.
-    /// Valid timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
+    /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
+    /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
+    ///
     #[arg(long)]
     password_expires_at: Option<String>,
 
     /// Filters the response by a protocol ID.
+    ///
     #[arg(long)]
     protocol_id: Option<String>,
 
     /// Filters the response by a unique ID.
+    ///
     #[arg(long)]
     unique_id: Option<String>,
 }
@@ -99,75 +107,80 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The user ID.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The ID of the default project for the user.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     default_project_id: Option<String>,
 
     /// The new description of the group.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The ID of the domain.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
-    /// list
-    /// contains the `idp\_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol\_id` and `unique\_id` of
-    /// the protocol and user respectively. For example:
-    ///
-    ///
+    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
+    /// objects, each of which contains `protocol_id` and `unique_id` of the
+    /// protocol and user respectively. For example:
     ///
     /// ```text
     /// "federated": [
     ///   {
-    ///     "idp\_id": "efbab5a6acad4d108fec6c63d9609d83",
+    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol\_id": "mapped", "unique\_id": "test@example.com"}
+    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
     ///
     /// ```
+    ///
     #[serde()]
     #[structable(optional, wide)]
     federated: Option<Value>,
 
     /// The user name. Must be unique within the owning domain.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The new password for the user.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     password: Option<String>,
 
     /// The resource options for the user. Available resource options are
-    /// `ignore\_change\_password\_upon\_first\_use`,
-    /// `ignore\_password\_expiry`,
-    /// `ignore\_lockout\_failure\_attempts`, `lock\_password`,
-    /// `multi\_factor\_auth\_enabled`, and `multi\_factor\_auth\_rules`
-    /// `ignore\_user\_inactivity`.
+    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+    /// `ignore_lockout_failure_attempts`, `lock_password`,
+    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+    /// `ignore_user_inactivity`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     options: Option<ResponseOptions>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {
@@ -183,7 +196,7 @@ impl fmt::Display for VecString {
         )
     }
 }
-/// Vector of VecString response type
+/// Vector of `VecString` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecVecString(Vec<VecString>);
 impl fmt::Display for VecVecString {
@@ -199,7 +212,7 @@ impl fmt::Display for VecVecString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseOptions {
     ignore_change_password_upon_first_use: Option<bool>,

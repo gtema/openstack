@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Checks if a project contains the specified tag.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/projects`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
+///
 #[derive(Args)]
 #[command(about = "Check if project contains tag")]
 pub struct TagCommand {
@@ -64,10 +65,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// value parameter for /v3/projects/{project_id}/tags/{value} API
+    ///
     #[arg(id = "path_param_value", value_name = "VALUE")]
     value: String,
 }

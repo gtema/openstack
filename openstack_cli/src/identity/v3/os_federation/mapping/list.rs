@@ -39,6 +39,7 @@ use serde_json::Value;
 use structable_derive::StructTable;
 
 /// GET operation on /v3/OS-FEDERATION/mappings
+///
 #[derive(Args)]
 pub struct MappingsCommand {
     /// Request Query parameters
@@ -61,6 +62,7 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The Federation Mapping unique ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,

@@ -41,12 +41,13 @@ use structable_derive::StructTable;
 
 /// Deletes a port.
 ///
-/// Any IP addresses that are associated with the port are returned to
-/// the respective subnets allocation pools.
+/// Any IP addresses that are associated with the port are returned to the
+/// respective subnets allocation pools.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: 401, 403, 404, 412
+///
 #[derive(Args)]
 #[command(about = "Delete port")]
 pub struct PortCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

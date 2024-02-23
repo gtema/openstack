@@ -42,6 +42,7 @@ use structable_derive::StructTable;
 /// Check grant for project, user, role.
 ///
 /// GET/HEAD /v3/projects/{project_id/users/{user_id}/roles/{role_id}
+///
 #[derive(Args)]
 pub struct RoleCommand {
     /// Request Query parameters
@@ -62,16 +63,19 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -40,8 +40,8 @@ use structable_derive::StructTable;
 
 /// Get possible project scopes for token.
 ///
-/// GET/HEAD /v3/auth/projects
-/// GET/HEAD /v3/OS-FEDERATION/projects
+/// GET/HEAD /v3/auth/projects GET/HEAD /v3/OS-FEDERATION/projects
+///
 #[derive(Args)]
 pub struct ProjectsCommand {
     /// Request Query parameters
@@ -64,27 +64,32 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the domain for the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
     /// The ID for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The name of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// If set to `true`, project is enabled. If set to
-    /// `false`, project is disabled.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// The links for the `project` resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,

@@ -18,7 +18,8 @@
 //! Get protocols for an IDP.
 //!
 //! HEAD/GET /OS-FEDERATION/identity_providers/
-//!          {idp_id}/protocols/{protocol_id}
+//! {idp_id}/protocols/{protocol_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -29,13 +30,16 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// idp_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols API
+    /// idp_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 
-    /// protocol_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+    /// protocol_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
+    /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

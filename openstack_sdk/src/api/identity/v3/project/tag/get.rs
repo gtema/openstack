@@ -17,8 +17,8 @@
 
 //! Checks if a project contains the specified tag.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/projects`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -32,10 +32,12 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,
 
     /// value parameter for /v3/projects/{project_id}/tags/{value} API
+    ///
     #[builder(default, setter(into))]
     value: Cow<'a, str>,
 

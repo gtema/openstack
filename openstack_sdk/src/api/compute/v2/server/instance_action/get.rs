@@ -17,14 +17,12 @@
 
 //! Shows details for a server action.
 //!
-//! Action details of deleted instances can be returned for requests later
-//! than microversion 2.21.
+//! Action details of deleted instances can be returned for requests later than
+//! microversion 2.21.
 //!
 //! Policy defaults enable only users with the administrative role or the owner
-//! of
-//! the server to perform this operation. Cloud providers can change these
-//! permissions
-//! through the `policy.json` file.
+//! of the server to perform this operation. Cloud providers can change these
+//! permissions through the `policy.json` file.
 //!
 //! Normal response codes: 200
 //!
@@ -41,10 +39,12 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

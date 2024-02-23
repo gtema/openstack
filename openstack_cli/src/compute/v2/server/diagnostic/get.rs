@@ -43,13 +43,13 @@ use structable_derive::StructTable;
 /// Shows basic usage data for a server.
 ///
 /// Policy defaults enable only users with the administrative role. Cloud
-/// providers can change these permissions through the `policy.json`
-/// file.
+/// providers can change these permissions through the `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), notfound(404),
 /// conflict(409), notimplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Show Server Diagnostics")]
 pub struct DiagnosticCommand {
@@ -70,6 +70,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -79,13 +80,12 @@ struct ResponseData {
     /// The list of dictionaries with detailed information about VM CPUs.
     /// Following fields are presented in each dictionary:
     ///
-    ///
-    /// * `id` - the ID of CPU (Integer)
-    /// * `time` - CPU Time in nano seconds (Integer)
-    /// * `utilisation` - CPU utilisation in percents (Integer)
-    ///
+    /// - `id` - the ID of CPU (Integer)
+    /// - `time` - CPU Time in nano seconds (Integer)
+    /// - `utilisation` - CPU utilisation in percents (Integer)
     ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     cpu_details: Option<VecHashMapStringValue>,
@@ -93,38 +93,36 @@ struct ResponseData {
     /// The list of dictionaries with detailed information about VM disks.
     /// Following fields are presented in each dictionary:
     ///
-    ///
-    /// * `read\_bytes` - Disk reads in bytes (Integer)
-    /// * `read\_requests` - Read requests (Integer)
-    /// * `write\_bytes` - Disk writes in bytes (Integer)
-    /// * `write\_requests` - Write requests (Integer)
-    /// * `errors\_count` - Disk errors (Integer)
-    ///
+    /// - `read_bytes` - Disk reads in bytes (Integer)
+    /// - `read_requests` - Read requests (Integer)
+    /// - `write_bytes` - Disk writes in bytes (Integer)
+    /// - `write_requests` - Write requests (Integer)
+    /// - `errors_count` - Disk errors (Integer)
     ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     disk_details: Option<VecHashMapStringValue>,
 
     /// The driver on which the VM is running. Possible values are:
     ///
-    ///
-    /// * `libvirt`
-    /// * `xenapi`
-    /// * `hyperv`
-    /// * `vmwareapi`
-    /// * `ironic`
-    ///
+    /// - `libvirt`
+    /// - `xenapi`
+    /// - `hyperv`
+    /// - `vmwareapi`
+    /// - `ironic`
     ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     driver: Option<String>,
 
     /// Indicates whether or not a config drive was used for this server.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     config_drive: Option<bool>,
@@ -132,41 +130,41 @@ struct ResponseData {
     /// The hypervisor on which the VM is running. Examples for libvirt driver
     /// may be: `qemu`, `kvm` or `xen`.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     hypervisor: Option<String>,
 
     /// The hypervisor OS.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     hypervisor_os: Option<String>,
 
     /// Id of the resource
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The dictionary with information about VM memory usage.
-    /// Following fields are presented in the dictionary:
+    /// The dictionary with information about VM memory usage. Following fields
+    /// are presented in the dictionary:
     ///
-    ///
-    /// * `maximum` - Amount of memory provisioned for the VM in MiB (Integer)
-    /// * `used` - Amount of memory that is currently used by the guest
-    /// operating
-    /// system and its applications in MiB (Integer)
-    ///
+    /// - `maximum` - Amount of memory provisioned for the VM in MiB (Integer)
+    /// - `used` - Amount of memory that is currently used by the guest
+    ///   operating system and its applications in MiB (Integer)
     ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     memory_details: Option<VecHashMapStringValue>,
 
     /// Name
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
@@ -174,45 +172,44 @@ struct ResponseData {
     /// The list of dictionaries with detailed information about VM NICs.
     /// Following fields are presented in each dictionary:
     ///
-    ///
-    /// * `mac\_address` - Mac address of the interface (String)
-    /// * `rx\_octets` - Received octets (Integer)
-    /// * `rx\_errors` - Received errors (Integer)
-    /// * `rx\_drop` - Received packets dropped (Integer)
-    /// * `rx\_packets` - Received packets (Integer)
-    /// * `rx\_rate` - Receive rate in bytes (Integer)
-    /// * `tx\_octets` - Transmitted Octets (Integer)
-    /// * `tx\_errors` - Transmit errors (Integer)
-    /// * `tx\_drop` - Transmit dropped packets (Integer)
-    /// * `tx\_packets` - Transmit packets (Integer)
-    /// * `tx\_rate` - Transmit rate in bytes (Integer)
-    ///
+    /// - `mac_address` - Mac address of the interface (String)
+    /// - `rx_octets` - Received octets (Integer)
+    /// - `rx_errors` - Received errors (Integer)
+    /// - `rx_drop` - Received packets dropped (Integer)
+    /// - `rx_packets` - Received packets (Integer)
+    /// - `rx_rate` - Receive rate in bytes (Integer)
+    /// - `tx_octets` - Transmitted Octets (Integer)
+    /// - `tx_errors` - Transmit errors (Integer)
+    /// - `tx_drop` - Transmit dropped packets (Integer)
+    /// - `tx_packets` - Transmit packets (Integer)
+    /// - `tx_rate` - Transmit rate in bytes (Integer)
     ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     nic_details: Option<Value>,
 
     /// The number of vCPUs.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     num_cpus: Option<i32>,
 
     /// The number of disks.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     num_disks: Option<i32>,
 
     /// The number of vNICs.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     num_nics: Option<i32>,
@@ -220,29 +217,28 @@ struct ResponseData {
     /// A string enum denoting the current state of the VM. Possible values
     /// are:
     ///
-    ///
-    /// * `pending`
-    /// * `running`
-    /// * `paused`
-    /// * `shutdown`
-    /// * `crashed`
-    /// * `suspended`
-    ///
+    /// - `pending`
+    /// - `running`
+    /// - `paused`
+    /// - `shutdown`
+    /// - `crashed`
+    /// - `suspended`
     ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     state: Option<String>,
 
     /// The amount of time in seconds that the VM has been running.
     ///
-    ///
     /// **New in version 2.48**
+    ///
     #[serde()]
     #[structable(optional)]
     uptime: Option<i32>,
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
@@ -258,7 +254,7 @@ impl fmt::Display for HashMapStringValue {
         )
     }
 }
-/// Vector of HashMapStringValue response type
+/// Vector of `HashMapStringValue` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {

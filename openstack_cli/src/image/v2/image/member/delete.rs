@@ -39,8 +39,8 @@ use openstack_sdk::api::image::v2::image::member::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Deletes a tenant ID from the member list of an image.
-/// *(Since Image API v2.1)*
+/// Deletes a tenant ID from the member list of an image. *(Since Image API
+/// v2.1)*
 ///
 /// Preconditions
 ///
@@ -51,6 +51,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 400, 401, 403, 404
+///
 #[derive(Args)]
 #[command(about = "Delete image member")]
 pub struct MemberCommand {
@@ -71,10 +72,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 
     /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

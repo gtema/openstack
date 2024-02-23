@@ -21,8 +21,8 @@
 //!
 //! An image members entity is a container of image member entities.
 //!
-//! The following schema is solely an example. Consider only the
-//! response to the API call as authoritative.
+//! The following schema is solely an example. Consider only the response to
+//! the API call as authoritative.
 //!
 //! Normal response codes: 200
 //!

@@ -33,56 +33,48 @@ use std::borrow::Cow;
 
 /// A dictionary representation of a volume attachment containing the fields
 /// `device` and `volumeId`.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
     /// The UUID of the volume to attach.
+    ///
     #[serde(rename = "volumeId")]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
 
     /// Name of the device such as, `/dev/vdb`. Omit or set this parameter to
-    /// null for
-    /// auto-assignment, if supported. If you specify this parameter, the
-    /// device must
-    /// not exist in the guest operating system. Note that as of the 12.0.0
-    /// Liberty release,
-    /// the Nova libvirt driver no longer honors a user-supplied device name.
-    /// This is
-    /// the same behavior as if the device name parameter is not supplied on
-    /// the request.
+    /// null for auto-assignment, if supported. If you specify this parameter,
+    /// the device must not exist in the guest operating system. Note that as
+    /// of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors
+    /// a user-supplied device name. This is the same behavior as if the device
+    /// name parameter is not supplied on the request.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) device: Option<Option<Cow<'a, str>>>,
 
     /// A device role tag that can be applied to a volume when attaching it to
-    /// the
-    /// VM. The guest OS of a server that has devices tagged in this manner can
-    /// access hardware metadata about the tagged devices from the metadata API
-    /// and
-    /// on the config drive, if enabled.
-    ///
-    ///
+    /// the VM. The guest OS of a server that has devices tagged in this manner
+    /// can access hardware metadata about the tagged devices from the metadata
+    /// API and on the config drive, if enabled.
     ///
     /// Note
-    ///
     ///
     /// Tagged volume attachment is not supported for shelved-offloaded
     /// instances.
     ///
-    ///
-    ///
     /// **New in version 2.49**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
 
     /// To delete the attached volume when the server is destroyed, specify
-    /// `true`.
-    /// Otherwise, specify `false`. Default: `false`
-    ///
+    /// `true`. Otherwise, specify `false`. Default: `false`
     ///
     /// **New in version 2.79**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) delete_on_termination: Option<bool>,
@@ -92,12 +84,13 @@ pub struct VolumeAttachment<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A dictionary representation of a volume attachment containing the
-    /// fields
-    /// `device` and `volumeId`.
+    /// fields `device` and `volumeId`.
+    ///
     #[builder(setter(into))]
     pub(crate) volume_attachment: VolumeAttachment<'a>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

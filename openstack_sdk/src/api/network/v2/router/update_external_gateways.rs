@@ -18,40 +18,39 @@
 //! Update some external gateways of router.
 //!
 //! For general information on the add/update/remove external gateways
-//! operations see `add\_external\_gateways` above.
+//! operations see `add_external_gateways` above.
 //!
-//! The external gateways to be updated are identified by the `network\_ids`
-//! found in the PUT request. The `external\_fixed\_ips`, `enable\_snat`,
-//! fields can be updated. The `network\_id` field cannot be updated - any
-//! changes will cause a gateway port to be removed and recreated.
+//! The external gateways to be updated are identified by the `network_ids`
+//! found in the PUT request. The `external_fixed_ips`, `enable_snat`, fields
+//! can be updated. The `network_id` field cannot be updated - any changes will
+//! cause a gateway port to be removed and recreated.
 //!
 //! The format of the request body is the same as the format of the read-only
-//! `router.external\_gateways` parameter, but wrapped as follows:
+//! `router.external_gateways` parameter, but wrapped as follows:
 //!
-//! The `enable\_snat` field does not have any effect for extra gateways except
+//! The `enable_snat` field does not have any effect for extra gateways except
 //! for the first external gateway in the list.
 //!
-//! The `network\_id` field is used to identify a particular gateway port along
-//! with the `external\_fixed\_ips` field. Specifying just the `network\_id`
-//! field
+//! The `network_id` field is used to identify a particular gateway port along
+//! with the `external_fixed_ips` field. Specifying just the `network_id` field
 //! is ambiguous: Neutron will attempt to find the matching gateway port but if
 //! there are multiple matches it will return an error response code.
 //!
-//! The `enable\_snat` field can be omitted from the request. Specifying
-//! `external\_fixed\_ips` will result in matching ports based on those
-//! fixed IPs. If a gateway port has a subset of the specified fixed IPs,
-//! then the set of IPs will be updated to match the ones in the request.
-//! Alternatively, if a gateway port has a superset of fixed IPs from the
-//! request the IPs will be removed from the gateway port.
+//! The `enable_snat` field can be omitted from the request. Specifying
+//! `external_fixed_ips` will result in matching ports based on those fixed
+//! IPs. If a gateway port has a subset of the specified fixed IPs, then the
+//! set of IPs will be updated to match the ones in the request. Alternatively,
+//! if a gateway port has a superset of fixed IPs from the request the IPs will
+//! be removed from the gateway port.
 //!
-//! The response codes and response body are the same as to the update of
-//! the router. That is the whole router object is returned including the
-//! `external\_gateway\_info` and `external\_gateways` parameters which
-//! represents the result of the operation.
+//! The response codes and response body are the same as to the update of the
+//! router. That is the whole router object is returned including the
+//! `external_gateway_info` and `external_gateways` parameters which represents
+//! the result of the operation.
 //!
-//! Please note that updating `external\_gateway\_info` also updates
-//! the first element of `external\_gateways` and it leaves the rest of
-//! `external\_gateways` unchanged.
+//! Please note that updating `external_gateway_info` also updates the first
+//! element of `external_gateways` and it leaves the rest of
+//! `external_gateways` unchanged.
 //!
 //! Normal response codes: 200
 //!
@@ -70,6 +69,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

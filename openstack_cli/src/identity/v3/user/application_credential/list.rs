@@ -40,8 +40,9 @@ use structable_derive::StructTable;
 
 /// List all application credentials for a user.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/application\_credentials`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
+///
 #[derive(Args)]
 #[command(about = "List application credentials")]
 pub struct ApplicationCredentialsCommand {
@@ -58,6 +59,7 @@ pub struct ApplicationCredentialsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// The name of the application credential. Must be unique to a user.
+    ///
     #[arg(long)]
     name: Option<String>,
 }
@@ -67,6 +69,7 @@ struct QueryParameters {
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
@@ -74,6 +77,7 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the application credential.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
@@ -81,6 +85,7 @@ struct ResponseData {
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
     /// scoped to.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     project_id: Option<String>,

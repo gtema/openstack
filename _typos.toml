@@ -1,0 +1,4 @@
+[default]
+
+[type.rust.extend-identifiers]
+"wher"="wher"

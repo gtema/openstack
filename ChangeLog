@@ -4,7 +4,7 @@
 
 #### Features
 
-*   simplify invokation interface ([1328ebf3](https://github.com/gtema/openstack/commit/1328ebf3f5e0043310b00e6cdcd930d31368cdcf))
+*   simplify invocation interface ([1328ebf3](https://github.com/gtema/openstack/commit/1328ebf3f5e0043310b00e6cdcd930d31368cdcf))
 *   switch to generated token auth code ([3ae63e93](https://github.com/gtema/openstack/commit/3ae63e93a43fbdfe29dcb2ebecebe97df94ba04c))
 *   add typos and clog ([fca2dc08](https://github.com/gtema/openstack/commit/fca2dc0813e00d33936a8302fdfd3ef2883df3d7))
 *   regenerate block_storage volume with mv support ([dbbfb862](https://github.com/gtema/openstack/commit/dbbfb86257f49a93019e2c97dbe280cce9be9321))

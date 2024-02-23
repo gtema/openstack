@@ -42,13 +42,13 @@ use structable_derive::StructTable;
 /// Shows NUMA topology information for a server.
 ///
 /// Policy defaults enable only users with the administrative role or the
-/// owners
-/// of the server to perform this operation. Cloud providers can change these
-/// permissions through the `policy.json` file.
+/// owners of the server to perform this operation. Cloud providers can change
+/// these permissions through the `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), notfound(404), forbidden(403)
+///
 #[derive(Args)]
 #[command(about = "Show Server Topology")]
 pub struct TopologiesCommand {
@@ -69,6 +69,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -76,37 +77,43 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The mapping of server cores to host physical CPU
+    ///
     #[serde()]
     #[structable(optional)]
     cpu_pinning: Option<HashMapStringi32>,
 
     /// A list of IDs of the virtual CPU assigned to this NUMA node.
+    ///
     #[serde()]
     #[structable(optional)]
     vcpu_set: Option<Veci32>,
 
     /// A mapping of host cpus thread sibling.
+    ///
     #[serde()]
     #[structable(optional)]
     siblings: Option<Veci32>,
 
     /// The amount of memory assigned to this NUMA node in MB.
+    ///
     #[serde()]
     #[structable(optional)]
     memory_mb: Option<i32>,
 
     /// The host NUMA node the virtual NUMA node is map to.
+    ///
     #[serde()]
     #[structable(optional)]
     host_node: Option<i32>,
 
-    /// The page size in KB of a server. This field is `null` if the
-    /// page size information is not available.
+    /// The page size in KB of a server. This field is `null` if the page size
+    /// information is not available.
+    ///
     #[serde()]
     #[structable(optional)]
     pagesize_kb: Option<i32>,
 }
-/// HashMap of i32 response type
+/// HashMap of `i32` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringi32(HashMap<String, i32>);
 impl fmt::Display for HashMapStringi32 {
@@ -122,7 +129,7 @@ impl fmt::Display for HashMapStringi32 {
         )
     }
 }
-/// Vector of i32 response type
+/// Vector of `i32` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct Veci32(Vec<i32>);
 impl fmt::Display for Veci32 {

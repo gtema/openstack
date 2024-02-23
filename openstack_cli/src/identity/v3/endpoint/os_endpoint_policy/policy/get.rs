@@ -39,6 +39,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// GET operation on /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy
+///
 #[derive(Args)]
 pub struct PolicyCommand {
     /// Request Query parameters
@@ -57,8 +58,9 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-
-    /// POLICY/policy API
+    /// endpoint_id parameter for
+    /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+    ///
     #[arg(id = "path_param_endpoint_id", value_name = "ENDPOINT_ID")]
     endpoint_id: String,
 }

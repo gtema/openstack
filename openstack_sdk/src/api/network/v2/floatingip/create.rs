@@ -18,30 +18,29 @@
 //! Creates a floating IP, and, if you specify port information, associates the
 //! floating IP with an internal port.
 //!
-//! To associate the floating IP with an internal port, specify the
-//! port ID attribute in the request body. If you do not specify a
-//! port ID in the request, you can issue a PUT request instead of a
-//! POST request.
+//! To associate the floating IP with an internal port, specify the port ID
+//! attribute in the request body. If you do not specify a port ID in the
+//! request, you can issue a PUT request instead of a POST request.
 //!
-//! Default policy settings enable only administrative users to set
-//! floating IP addresses and some non-administrative users might
-//! require a floating IP address. If you do not specify a floating IP
-//! address in the request, the operation automatically allocates one.
+//! Default policy settings enable only administrative users to set floating IP
+//! addresses and some non-administrative users might require a floating IP
+//! address. If you do not specify a floating IP address in the request, the
+//! operation automatically allocates one.
 //!
-//! By default, this operation associates the floating IP address with
-//! a single fixed IP address that is configured on an OpenStack
-//! Networking port. If a port has multiple IP addresses, you must
-//! specify the `fixed\_ip\_address` attribute in the request body to
-//! associate a fixed IP address with the floating IP address.
+//! By default, this operation associates the floating IP address with a single
+//! fixed IP address that is configured on an OpenStack Networking port. If a
+//! port has multiple IP addresses, you must specify the `fixed_ip_address`
+//! attribute in the request body to associate a fixed IP address with the
+//! floating IP address.
 //!
-//! You can create floating IPs on only external networks. When you
-//! create a floating IP, you must specify the ID of the network on
-//! which you want to create the floating IP. Alternatively, you can
-//! create a floating IP on a subnet in the external network, based on
-//! the costs and quality of that subnet.
+//! You can create floating IPs on only external networks. When you create a
+//! floating IP, you must specify the ID of the network on which you want to
+//! create the floating IP. Alternatively, you can create a floating IP on a
+//! subnet in the external network, based on the costs and quality of that
+//! subnet.
 //!
-//! You must configure an IP address with the internal OpenStack
-//! Networking port that is associated with the floating IP address.
+//! You must configure an IP address with the internal OpenStack Networking
+//! port that is associated with the floating IP address.
 //!
 //! The operation returns the `Bad Request (400)` response code for one of
 //! reasons:
@@ -64,66 +63,76 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-/// A `floatingip` object. When you associate a
-/// floating IP address with a VM, the instance has the same public IP
-/// address each time that it boots, basically to maintain a
-/// consistent IP address for maintaining DNS assignment.
+/// A `floatingip` object. When you associate a floating IP address with a VM,
+/// the instance has the same public IP address each time that it boots,
+/// basically to maintain a consistent IP address for maintaining DNS
+/// assignment.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Floatingip<'a> {
     /// The floating IP address.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) floating_ip_address: Option<Cow<'a, str>>,
 
     /// The subnet ID on which you want to create the floating IP.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Option<Cow<'a, str>>>,
 
-    /// The ID of the network associated with the
-    /// floating IP.
+    /// The ID of the network associated with the floating IP.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) floating_network_id: Cow<'a, str>,
 
-    /// The ID of a port associated with the floating IP.
-    /// To associate the floating IP with a fixed IP at creation time,
-    /// you must specify the identifier of the internal port.
+    /// The ID of a port associated with the floating IP. To associate the
+    /// floating IP with a fixed IP at creation time, you must specify the
+    /// identifier of the internal port.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Option<Cow<'a, str>>>,
 
-    /// The fixed IP address that is associated with the floating IP.
-    /// If an internal port has multiple associated IP addresses,
-    /// the service chooses the first IP address unless you explicitly
-    /// define a fixed IP address in the `fixed\_ip\_address` parameter.
+    /// The fixed IP address that is associated with the floating IP. If an
+    /// internal port has multiple associated IP addresses, the service chooses
+    /// the first IP address unless you explicitly define a fixed IP address in
+    /// the `fixed_ip_address` parameter.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
 
     /// The ID of the project.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
 
     /// The ID of the QoS policy associated with the floating IP.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
     /// A valid DNS name.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) dns_name: Option<Cow<'a, str>>,
 
     /// A valid DNS domain.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) dns_domain: Option<Cow<'a, str>>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -132,10 +141,11 @@ pub struct Floatingip<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// A `floatingip` object. When you associate a
-    /// floating IP address with a VM, the instance has the same public IP
-    /// address each time that it boots, basically to maintain a
-    /// consistent IP address for maintaining DNS assignment.
+    /// A `floatingip` object. When you associate a floating IP address with a
+    /// VM, the instance has the same public IP address each time that it
+    /// boots, basically to maintain a consistent IP address for maintaining
+    /// DNS assignment.
+    ///
     #[builder(setter(into))]
     pub(crate) floatingip: Floatingip<'a>,
 

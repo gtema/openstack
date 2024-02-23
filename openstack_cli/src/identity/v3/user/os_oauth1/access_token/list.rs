@@ -41,6 +41,7 @@ use std::collections::HashMap;
 /// List OAuth1 Access Tokens for user.
 ///
 /// GET /v3/users/{user_id}/OS-OAUTH1/access_tokens
+///
 #[derive(Args)]
 pub struct AccessTokensCommand {
     /// Request Query parameters
@@ -61,6 +62,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }

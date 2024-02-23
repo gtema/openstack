@@ -44,6 +44,7 @@ use std::fmt;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct BindingCommand {
     /// Request Query parameters
@@ -67,6 +68,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
+    ///
     #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
     port_id: String,
 }
@@ -133,7 +135,7 @@ struct ResponseData {
     #[structable(optional)]
     project_id: Option<String>,
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {

@@ -46,6 +46,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 401, 404, 412
+///
 #[derive(Args)]
 #[command(about = "Delete floating IP")]
 pub struct FloatingipCommand {
@@ -66,6 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/floatingips/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

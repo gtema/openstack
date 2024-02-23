@@ -40,6 +40,7 @@ pub struct Request<'a> {
     pub(crate) os_initialize_connection: OsInitializeConnection,
 
     /// id parameter for /v3/volumes/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

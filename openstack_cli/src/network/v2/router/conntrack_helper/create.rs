@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 404
+///
 #[derive(Args)]
 #[command(about = "Create conntrack helper")]
 pub struct ConntrackHelperCommand {
@@ -66,6 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 }
@@ -87,14 +89,17 @@ struct ConntrackHelper {
     project_id: Option<String>,
 
     /// The network protocol for the netfilter conntrack target rule.
+    ///
     #[arg(long)]
     protocol: Option<Protocol>,
 
     /// The network port for the netfilter conntrack target rule.
+    ///
     #[arg(long)]
     port: Option<f32>,
 
     /// The netfilter conntrack helper module.
+    ///
     #[arg(long)]
     helper: Option<String>,
 }
@@ -103,21 +108,25 @@ struct ConntrackHelper {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the conntrack helper.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The network protocol for the netfilter conntrack target rule.
+    ///
     #[serde()]
     #[structable(optional)]
     protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
+    ///
     #[serde()]
     #[structable(optional)]
     port: Option<f32>,
 
     /// The netfilter conntrack helper module.
+    ///
     #[serde()]
     #[structable(optional)]
     helper: Option<String>,

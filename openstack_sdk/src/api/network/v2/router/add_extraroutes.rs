@@ -18,25 +18,23 @@
 //! Atomically adds a set of extra routes to the router’s already existing
 //! extra routes.
 //!
-//! This operation is a variation on updating the router’s `routes`
-//! parameter. In all ways it works the same, except the extra routes sent
-//! in the request body do not replace the existing set of extra routes.
-//! Instead the extra routes sent are added to the existing set of
-//! extra routes.
+//! This operation is a variation on updating the router’s `routes` parameter.
+//! In all ways it works the same, except the extra routes sent in the request
+//! body do not replace the existing set of extra routes. Instead the extra
+//! routes sent are added to the existing set of extra routes.
 //!
-//! The use of the add\_extraroutes/remove\_extraroutes member actions
-//! is preferred to updating the `routes` attribute in all cases when
-//! concurrent updates to the set of extra routes are possible.
+//! The use of the add_extraroutes/remove_extraroutes member actions is
+//! preferred to updating the `routes` attribute in all cases when concurrent
+//! updates to the set of extra routes are possible.
 //!
 //! The addition’s corner cases behave the following way:
 //!
-//! The format of the request body is the same as the format of a PUT
-//! request to the router changing the `routes` parameter only.
+//! The format of the request body is the same as the format of a PUT request
+//! to the router changing the `routes` parameter only.
 //!
-//! The response codes and response body are the same as to the update of
-//! the `routes` parameter. That is the whole router object is returned
-//! including the `routes` parameter which represents the result of the
-//! addition.
+//! The response codes and response body are the same as to the update of the
+//! `routes` parameter. That is the whole router object is returned including
+//! the `routes` parameter which represents the result of the addition.
 //!
 //! Normal response codes: 200
 //!
@@ -55,6 +53,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Remove all tags from a given project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/projects`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
+///
 #[derive(Args)]
 #[command(about = "Remove all tags from a project")]
 pub struct TagCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 }

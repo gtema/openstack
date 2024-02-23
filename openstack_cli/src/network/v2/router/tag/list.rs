@@ -37,6 +37,7 @@ use openstack_sdk::api::network::v2::router::tag::list;
 use openstack_sdk::api::QueryAsync;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagsCommand {
     /// Request Query parameters
@@ -56,6 +57,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 }

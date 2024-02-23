@@ -40,39 +40,33 @@ use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
-/// Lists public virtual machine (VM) images.
-/// *(Since Image API v2.0)*
+/// Lists public virtual machine (VM) images. *(Since Image API v2.0)*
 ///
 /// **Pagination**
 ///
 /// Returns a subset of the larger collection of images and a link that you can
-/// use
-/// to get the next set of images. You should always check for the presence of
-/// a
-/// `next` link and use it as the URI in a subsequent HTTP GET request. You
-/// should follow this pattern until a `next` link is no longer provided.
+/// use to get the next set of images. You should always check for the presence
+/// of a `next` link and use it as the URI in a subsequent HTTP GET request.
+/// You should follow this pattern until a `next` link is no longer provided.
 ///
 /// The `next` link preserves any query parameters that you send in your
-/// initial
-/// request. You can use the `first` link to jump back to the first page of the
-/// collection. If you prefer to paginate through images manually, use the
-/// `limit` and `marker` parameters.
+/// initial request. You can use the `first` link to jump back to the first
+/// page of the collection. If you prefer to paginate through images manually,
+/// use the `limit` and `marker` parameters.
 ///
 /// **Query Filters**
 ///
 /// The list operation accepts query parameters to filter the response.
 ///
 /// A client can provide direct comparison filters by using most image
-/// attributes,
-/// such as `name=Ubuntu`, `visibility=public`, and so on.
+/// attributes, such as `name=Ubuntu`, `visibility=public`, and so on.
 ///
 /// To filter using image tags, use the filter `tag` (note the singular). To
 /// filter on multiple tags, include each tag separately in the query. For
 /// example, to find images with the tag **ready**, include `tag=ready` in your
 /// query string. To find images tagged with **ready** and **approved**,
-/// include
-/// `tag=ready&tag=approved` in your query string. (Note that only images
-/// containing *both* tags will be included in the response.)
+/// include `tag=ready&tag=approved` in your query string. (Note that only
+/// images containing *both* tags will be included in the response.)
 ///
 /// A client cannot use any `link` in the json-schema, such as self, file, or
 /// schema, to filter the response.
@@ -92,8 +86,7 @@ use structable_derive::StructTable;
 ///
 /// To find images in a particular list of image IDs, use:
 ///
-/// `GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-
-/// 44b5-baf2-2eb4babae53d`
+/// `GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-44b5-baf2-2eb4babae53d`
 ///
 /// Using the `in` operator with the `name` property of images can be a bit
 /// trickier, depending upon how creatively you have named your images. The
@@ -107,33 +100,28 @@ use structable_derive::StructTable;
 /// `GET v2/images?name=in:"glass,%20darkly",share%20me`
 ///
 /// As with regular filtering by name, you must specify the complete name you
-/// are
-/// looking for. Thus, for example, the query string `name=in:glass,share` will
-/// only match images with the exact name `glass` or the exact name `share`.
-/// It will not find an image named `glass, darkly` or an image named `share
-/// me`.
+/// are looking for. Thus, for example, the query string `name=in:glass,share`
+/// will only match images with the exact name `glass` or the exact name
+/// `share`. It will not find an image named `glass, darkly` or an image named
+/// `share me`.
 ///
 /// **Size Comparison Filters**
 ///
-/// You can use the `size\_min` and `size\_max` query parameters to filter
-/// images
+/// You can use the `size_min` and `size_max` query parameters to filter images
 /// that are greater than or less than the image size. The size, in bytes, is
-/// the
-/// size of an image on disk.
+/// the size of an image on disk.
 ///
 /// For example, to filter the container to include only images that are from 1
-/// to
-/// 4 MB, set the `size\_min` query parameter to `1048576` and the `size\_max`
+/// to 4 MB, set the `size_min` query parameter to `1048576` and the `size_max`
 /// query parameter to `4194304`.
 ///
 /// **Time Comparison Filters**
 ///
-/// You can use a *comparison operator* along with the `created\_at` or
-/// `updated\_at` fields to filter your results. Specify the operator first, a
-/// colon (`:`) as a separator, and then the time in [ISO 8601
-/// Format](https://en.wikipedia.org/wiki/ISO_8601). Available comparison
-/// operators
-/// are:
+/// You can use a *comparison operator* along with the `created_at` or
+/// `updated_at` fields to filter your results. Specify the operator first, a
+/// colon (`:`) as a separator, and then the time in
+/// [ISO 8601 Format](https://en.wikipedia.org/wiki/ISO_8601). Available
+/// comparison operators are:
 ///
 /// For example:
 ///
@@ -141,14 +129,14 @@ use structable_derive::StructTable;
 ///
 /// You can use query parameters to sort the results of this operation.
 ///
-/// To sort the response, use the `sort\_key` and `sort\_dir` query
-/// parameters:
+/// To sort the response, use the `sort_key` and `sort_dir` query parameters:
 ///
 /// Alternatively, specify the `sort` query parameter:
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403
+///
 #[derive(Args)]
 #[command(about = "List images")]
 pub struct ImagesCommand {
@@ -172,42 +160,50 @@ struct QueryParameters {
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
+    ///
     #[arg(long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
+    ///
     #[arg(long)]
     marker: Option<String>,
 
     /// Filters the response by a name, as a string. A valid value is the name
     /// of an image.
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// id filter parameter
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// Filters the response by a project (also called a “tenant”) ID. Shows
     /// only images that are shared with you by the specified owner.
+    ///
     #[arg(long)]
     owner: Option<String>,
 
     /// Filters the response by the ‘protected’ image property. A valid value
     /// is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
     /// result in a 400 response.
+    ///
     #[arg(long)]
     protected: Option<bool>,
 
     /// Filters the response by an image status.
+    ///
     #[arg(long)]
     status: Option<String>,
 
     /// Filters the response by the specified tag value. May be repeated, but
     /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
+    ///
     #[arg(long)]
     tag: Option<Vec<String>>,
 
@@ -218,35 +214,42 @@ struct QueryParameters {
     /// member_status filter in the request.) If you omit this parameter, the
     /// response shows public, private, and those shared images with a member
     /// status of accepted.
+    ///
     #[arg(long, value_parser = ["all","community","private","public","shared"])]
     visibility: Option<String>,
 
     /// When true, filters the response to display only "hidden" images. By
     /// default, "hidden" images are not included in the image-list response.
     /// (Since Image API v2.7)
+    ///
     #[arg(long)]
     os_hidden: Option<bool>,
 
     /// Filters the response by a member status. A valid value is accepted,
     /// pending, rejected, or all. Default is accepted.
+    ///
     #[arg(long, value_parser = ["accepted","all","pending","rejected"])]
     member_status: Option<String>,
 
     /// Filters the response by a maximum image size, in bytes.
+    ///
     #[arg(long)]
     size_max: Option<String>,
 
     /// Filters the response by a minimum image size, in bytes.
+    ///
     #[arg(long)]
     size_min: Option<String>,
 
     /// Specify a comparison filter based on the date and time when the
     /// resource was created.
+    ///
     #[arg(long)]
     created_at: Option<String>,
 
     /// Specify a comparison filter based on the date and time when the
     /// resource was most recently modified.
+    ///
     #[arg(long)]
     updated_at: Option<String>,
 
@@ -254,12 +257,14 @@ struct QueryParameters {
     /// (sort_key) combinations. A valid value for the sort direction is asc
     /// (ascending) or desc (descending). If you omit the sort direction in a
     /// set, the default is desc.
+    ///
     #[arg(long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts the response by an attribute, such as name, id, or updated_at.
     /// Default is created_at. The API uses the natural sorting direction of
     /// the sort_key image attribute.
+    ///
     #[arg(long)]
     sort_key: Option<String>,
 
@@ -267,6 +272,7 @@ struct QueryParameters {
     /// combinations. You can also set multiple sort keys and directions.
     /// Default direction is desc. Use the comma (,) character to separate
     /// multiple values. For example: `sort=name:asc,status:desc`
+    ///
     #[arg(long)]
     sort: Option<String>,
 }
@@ -278,134 +284,159 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// An identifier for the image
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Descriptive name for the image
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// Status of the image
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// Scope of image accessibility
+    ///
     #[serde()]
     #[structable(optional, wide)]
     visibility: Option<String>,
 
     /// If true, image will not be deletable.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     protected: Option<bool>,
 
     /// If true, image will not appear in default image list response.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     os_hidden: Option<bool>,
 
     /// md5 hash of image contents.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     checksum: Option<String>,
 
     /// Algorithm to calculate the os_hash_value
+    ///
     #[serde()]
     #[structable(optional, wide)]
     os_hash_algo: Option<String>,
 
     /// Hexdigest of the image contents using the algorithm specified by the
     /// os_hash_algo
+    ///
     #[serde()]
     #[structable(optional, wide)]
     os_hash_value: Option<String>,
 
     /// Owner of the image
+    ///
     #[serde()]
     #[structable(optional, wide)]
     owner: Option<String>,
 
     /// Size of image file in bytes
+    ///
     #[serde()]
     #[structable(optional, wide)]
     size: Option<i64>,
 
     /// Virtual size of image in bytes
+    ///
     #[serde()]
     #[structable(optional, wide)]
     virtual_size: Option<i64>,
 
     /// Format of the container
+    ///
     #[serde()]
     #[structable(optional, wide)]
     container_format: Option<String>,
 
     /// Format of the disk
+    ///
     #[serde()]
     #[structable(optional, wide)]
     disk_format: Option<String>,
 
     /// Date and time of image registration
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Date and time of the last image modification
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// List of strings related to the image
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tags: Option<VecString>,
 
     /// URL to access the image file kept in external store
+    ///
     #[serde()]
     #[structable(optional, wide)]
     direct_url: Option<String>,
 
     /// Amount of ram (in MB) required to boot image.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     min_ram: Option<i32>,
 
     /// Amount of disk space (in GB) required to boot image.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     min_disk: Option<i32>,
 
     /// An image self url
+    ///
     #[serde(rename = "self")]
     #[structable(optional, title = "self", wide)]
     _self: Option<String>,
 
     /// An image file url
+    ///
     #[serde()]
     #[structable(optional, wide)]
     file: Option<String>,
 
-    /// Store in which image data resides.  Only present when the operator has
-    /// enabled multiple stores.  May be a comma-separated list of store
+    /// Store in which image data resides. Only present when the operator has
+    /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     stores: Option<String>,
 
     /// An image schema url
+    ///
     #[serde()]
     #[structable(optional, wide)]
     schema: Option<String>,
 
     /// A set of URLs to access the image file kept in external store
+    ///
     #[serde()]
     #[structable(optional, wide)]
     locations: Option<Value>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

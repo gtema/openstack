@@ -41,13 +41,14 @@ use std::collections::HashMap;
 /// Shows the uptime for a given hypervisor.
 ///
 /// Policy defaults enable only users with the administrative role to perform
-/// this operation. Cloud providers can change these permissions through
-/// the `policy.json` file.
+/// this operation. Cloud providers can change these permissions through the
+/// `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), NotImplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Show Hypervisor Uptime (DEPRECATED)")]
 pub struct UptimeCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

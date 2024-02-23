@@ -39,12 +39,13 @@ use structable_derive::StructTable;
 
 /// Lists available extensions.
 ///
-/// Lists available Networking API v2.0 extensions and shows details
-/// for an extension.
+/// Lists available Networking API v2.0 extensions and shows details for an
+/// extension.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
+///
 #[derive(Args)]
 #[command(about = "List extensions")]
 pub struct ExtensionsCommand {
@@ -67,29 +68,32 @@ struct PathParameters {}
 /// Extensions response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The alias for the extension. For example “quotas” or
-    /// “security-group”.
+    /// The alias for the extension. For example “quotas” or “security-group”.
+    ///
     #[serde()]
     #[structable(optional)]
     alias: Option<String>,
 
     /// The human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// Human-readable name of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// A URL pointing to the namespace for this extension.
+    ///
     #[serde()]
     #[structable(optional)]
     namespace: Option<String>,
 
-    /// The date and timestamp when the extension was
-    /// last updated.
+    /// The date and timestamp when the extension was last updated.
+    ///
     #[serde()]
     #[structable(optional)]
     updated: Option<String>,

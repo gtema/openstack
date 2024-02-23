@@ -25,10 +25,12 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoveTenantAccess<'a> {
     /// The UUID of the tenant in a multi-tenancy cloud.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) tenant: Cow<'a, str>,
@@ -38,10 +40,12 @@ pub struct RemoveTenantAccess<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
+    ///
     #[builder(setter(into))]
     pub(crate) remove_tenant_access: RemoveTenantAccess<'a>,
 
     /// id parameter for /v2.1/flavors/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -41,17 +41,16 @@ use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Downloads binary image data.
-/// *(Since Image API v2.0)*
+/// Downloads binary image data. *(Since Image API v2.0)*
 ///
-/// Example call: `curl -i -X GET -H "X-Auth-Token: $token"
-/// $image\_url/v2/images/{image\_id}/file`
+/// Example call:
+/// `curl -i -X GET -H "X-Auth-Token: $token" $image_url/v2/images/{image_id}/file`
 ///
-/// The response body contains the raw binary data that represents the
-/// actual virtual disk. The `Content-Type` header contains the
-/// `application/octet-stream` value. The `Content-MD5` header
-/// contains an MD5 checksum of the image data. Use this checksum to
-/// verify the integrity of the image data.
+/// The response body contains the raw binary data that represents the actual
+/// virtual disk. The `Content-Type` header contains the
+/// `application/octet-stream` value. The `Content-MD5` header contains an MD5
+/// checksum of the image data. Use this checksum to verify the integrity of
+/// the image data.
 ///
 /// **Preconditions**
 ///
@@ -60,6 +59,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200, 204, 206
 ///
 /// Error response codes: 400, 403, 404, 416
+///
 #[derive(Args)]
 #[command(about = "Download binary image data")]
 pub struct FileCommand {
@@ -84,6 +84,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }

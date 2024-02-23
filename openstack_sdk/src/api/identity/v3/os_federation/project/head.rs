@@ -17,8 +17,8 @@
 
 //! Get possible project scopes for token.
 //!
-//! GET/HEAD /v3/auth/projects
-//! GET/HEAD /v3/OS-FEDERATION/projects
+//! GET/HEAD /v3/auth/projects GET/HEAD /v3/OS-FEDERATION/projects
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

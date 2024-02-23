@@ -48,16 +48,14 @@ use structable_derive::StructTable;
 ///
 /// You can only resize a server when its status is `ACTIVE` or `SHUTOFF`.
 ///
-/// If the server is locked, you must have administrator privileges
-/// to resize the server.
+/// If the server is locked, you must have administrator privileges to resize
+/// the server.
 ///
 /// **Asynchronous Postconditions**
 ///
-/// A successfully resized server shows a `VERIFY\_RESIZE` status and
-/// `finished`
-/// migration status. If the cloud has configured the [resize\_confirm\_window]
-/// (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r
-/// esize_confirm_window)
+/// A successfully resized server shows a `VERIFY_RESIZE` status and `finished`
+/// migration status. If the cloud has configured the
+/// [resize_confirm_window](https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.resize_confirm_window)
 /// option of the Compute service to a positive value, the Compute service
 /// automatically confirms the resize operation after the configured interval.
 ///
@@ -65,6 +63,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Resize Server (resize Action)")]
 pub struct ServerCommand {
@@ -88,6 +87,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -102,44 +102,32 @@ enum OsDcfDiskConfig {
 #[derive(Args)]
 struct Resize {
     /// The flavor ID for resizing the server. The size of the disk in the
-    /// flavor
-    /// being resized to must be greater than or equal to the size of the disk
-    /// in
-    /// the current flavor.
-    ///
+    /// flavor being resized to must be greater than or equal to the size of
+    /// the disk in the current flavor.
     ///
     /// If a specified flavor ID is the same as the current one of the server,
     /// the request returns a `Bad Request (400)` response code.
+    ///
     #[arg(long)]
     flavor_ref: String,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
-    /// resize servers.
-    /// A server inherits the `OS-DCF:diskConfig` value from the image from
-    /// which it
-    /// was created, and an image inherits the `OS-DCF:diskConfig` value from
-    /// the server
-    /// from which it was created. To override the inherited setting, you can
-    /// include
-    /// this attribute in the request body of a server create, rebuild, or
-    /// resize request. If
-    /// the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot
-    /// create
-    /// a server from that image and set its `OS-DCF:diskConfig` value to
-    /// `AUTO`.
+    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
+    /// the image from which it was created, and an image inherits the
+    /// `OS-DCF:diskConfig` value from the server from which it was created. To
+    /// override the inherited setting, you can include this attribute in the
+    /// request body of a server create, rebuild, or resize request. If the
+    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
+    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
     /// A valid value is:
     ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using whatever partition
+    ///   scheme and file system is in the source image. If the target flavor
+    ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    /// * `AUTO`. The API builds the server with a single partition the size of
-    /// the
-    /// target flavor disk. The API automatically adjusts the file system to
-    /// fit the
-    /// entire partition.
-    /// * `MANUAL`. The API builds the server by using whatever partition
-    /// scheme and
-    /// file system is in the source image. If the target flavor disk is
-    /// larger, the API
-    /// does not partition the remaining disk space.
     #[arg(long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 }

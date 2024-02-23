@@ -39,8 +39,9 @@ use structable_derive::StructTable;
 
 /// Show details of an access rule.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/access\_rules`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
+///
 #[derive(Args)]
 #[command(about = "Show access rule details")]
 pub struct AccessRuleCommand {
@@ -62,11 +63,13 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

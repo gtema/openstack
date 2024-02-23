@@ -45,6 +45,7 @@ use std::collections::HashMap;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Update An Extra Spec For A Flavor")]
 pub struct ExtraSpecCommand {
@@ -68,10 +69,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+    ///
     #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
     flavor_id: String,
 
     /// id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -40,14 +40,14 @@ use structable_derive::StructTable;
 /// Lists router conntrack helpers associated with a router.
 ///
 /// Use the `fields` query parameter to control which fields are returned in
-/// the response body.
-/// Additionally, you can filter results by using query string parameters.
-/// For information, see [Filtering and Column Selection](https://wiki.openstac
-/// k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+/// the response body. Additionally, you can filter results by using query
+/// string parameters. For information, see
+/// [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 404
+///
 #[derive(Args)]
 #[command(about = "List router conntrack helpers")]
 pub struct ConntrackHelpersCommand {
@@ -64,21 +64,25 @@ pub struct ConntrackHelpersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API
+    ///
     #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
+    ///
     #[arg(long)]
     port: Option<f32>,
 
     /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
+    ///
     #[arg(long)]
     helper: Option<String>,
 }
@@ -87,6 +91,7 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 }
@@ -94,21 +99,25 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the conntrack helper.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The network protocol for the netfilter conntrack target rule.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     port: Option<f32>,
 
     /// The netfilter conntrack helper module.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     helper: Option<String>,

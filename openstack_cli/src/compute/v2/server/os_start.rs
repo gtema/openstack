@@ -47,8 +47,8 @@ use structable_derive::StructTable;
 ///
 /// The server status must be `SHUTOFF`.
 ///
-/// If the server is locked, you must have administrator privileges
-/// to start the server.
+/// If the server is locked, you must have administrator privileges to start
+/// the server.
 ///
 /// **Asynchronous Postconditions**
 ///
@@ -57,16 +57,15 @@ use structable_derive::StructTable;
 /// **Troubleshooting**
 ///
 /// If the server status does not change to `ACTIVE`, the start operation
-/// failed.
-/// Ensure that you meet the preconditions and run the request again.
+/// failed. Ensure that you meet the preconditions and run the request again.
 /// If the request fails again, investigate whether another operation is
-/// running
-/// that causes a race condition.
+/// running that causes a race condition.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Start Server (os-start Action)")]
 pub struct ServerCommand {
@@ -87,6 +86,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

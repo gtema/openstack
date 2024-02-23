@@ -17,21 +17,20 @@
 
 //! Lists IDs, names, and links for servers.
 //!
-//! By default the servers are filtered using the project ID associated
-//! with the authenticated request.
+//! By default the servers are filtered using the project ID associated with
+//! the authenticated request.
 //!
-//! Servers contain a status attribute that indicates the current server
-//! state. You can filter on the server status when you complete a list
-//! servers request. The server status is returned in the response
-//! body. The possible server status values are:
+//! Servers contain a status attribute that indicates the current server state.
+//! You can filter on the server status when you complete a list servers
+//! request. The server status is returned in the response body. The possible
+//! server status values are:
 //!
 //! There is whitelist for valid filter keys. Any filter key other than from
 //! whitelist will be silently ignored.
 //!
 //! Normal response codes: 200
 //!
-//! Error response codes: badRequest(400), unauthorized(401),
-//! forbidden(403)
+//! Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

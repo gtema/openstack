@@ -71,12 +71,12 @@ or `user_domain_id`.
 #### v3Totp
 
 Once user login is protected with the MFA a OTP token must be specified. It is
-represented as `passcode`, but it not indended to be used directly in the `clouds.yaml`
+represented as `passcode`, but it not intended to be used directly in the `clouds.yaml`
 
 #### v3Multifactor
 
 A better way to handle MFA is by using a `v3multifactor` auth type. In this
-case configuration looks a liitle bit different:
+case configuration looks a little bit different:
 
 - `auth_type` = `v3multifactor`
 - `auth_methods` is a list of individual `auth_type`s combined in the
@@ -89,8 +89,8 @@ processed based on the available data.
 #### v3WebSso
 
 An authentication method that is getting more a more popular is a Single Sign
-On using remote Identiy Data Provider. This flow requires user to authenticate
-itself in the broswer by the IDP directly. It is required to provide following
+On using remote Identity Data Provider. This flow requires user to authenticate
+itself in the browser by the IDP directly. It is required to provide following
 data in the configuration in order for this mode to be used:
 
 - `auth_type` = `v3websso`
@@ -143,7 +143,7 @@ caching is enabled by default. It can be disabled using `cache.auth: false` in
 the `clouds.yaml`.
 
 Data is cached locally in the `~/.osc` folder. It is represented by set of
-files where file name is construced as a hash of authentication information
+files where file name is constructed as a hash of authentication information
 (discarding sensitive data). Content of the file is a serialized map of
 authorization data (scope) with the token information (catalog, expiration,
 etc).
@@ -151,7 +151,7 @@ etc).
 Every time a new connection need to be established first a search in the cache
 is performed to find an exact match using supplied authentication and
 authorization information. When there is no usable information (no information
-at all or cached token is alredy expired) a search is performed for any valid
+at all or cached token is already expired) a search is performed for any valid
 token ignoring the scope (authz). When a valid token is found in the cache it
 is used to obtain a new authorization with required scope. Otherwise a new
 authentication is being performed.

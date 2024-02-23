@@ -16,17 +16,15 @@
 // `openstack-codegenerator`.
 
 //! The API provides a unified request for creating a remote console. The user
-//! can
-//! get a URL to connect the console from this API. The URL includes the token
-//! which is used to get permission to access the console. Servers may support
-//! different console protocols. To return a remote console using a specific
-//! protocol, such as RDP, set the `protocol` parameter to `rdp`.
+//! can get a URL to connect the console from this API. The URL includes the
+//! token which is used to get permission to access the console. Servers may
+//! support different console protocols. To return a remote console using a
+//! specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
 //!
 //! Normal response codes: 200
 //!
 //! Error response codes: badRequest(400), unauthorized(401), forbidden(403),
-//! itemNotFound(404),
-//! conflict(409), notImplemented(501)
+//! itemNotFound(404), conflict(409), notImplemented(501)
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -64,19 +62,22 @@ pub enum Type {
 }
 
 /// The remote console object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
     /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
     /// Microversion `2.8`.
+    ///
     #[serde()]
     #[builder()]
     pub(crate) protocol: Protocol,
 
-    /// The type of remote console. The valid values are `novnc`,
-    /// `rdp-html5`, `spice-html5`, `serial`, and `webmks`. The type
-    /// `webmks` is added since Microversion `2.8`.
+    /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
+    /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
+    /// Microversion `2.8`.
+    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
@@ -86,10 +87,12 @@ pub struct RemoteConsole {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The remote console object.
+    ///
     #[builder(setter(into))]
     pub(crate) remote_console: RemoteConsole,
 
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

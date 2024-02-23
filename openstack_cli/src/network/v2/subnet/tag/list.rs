@@ -37,6 +37,7 @@ use openstack_sdk::api::network::v2::subnet::tag::list;
 use openstack_sdk::api::QueryAsync;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagsCommand {
     /// Request Query parameters
@@ -56,6 +57,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
+    ///
     #[arg(id = "path_param_subnet_id", value_name = "SUBNET_ID")]
     subnet_id: String,
 }

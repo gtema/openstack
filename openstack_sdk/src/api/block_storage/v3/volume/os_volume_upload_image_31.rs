@@ -89,6 +89,7 @@ pub struct Request<'a> {
     pub(crate) os_volume_upload_image: OsVolumeUploadImage<'a>,
 
     /// id parameter for /v3/volumes/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

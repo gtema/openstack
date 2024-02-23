@@ -38,6 +38,7 @@ use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 #[command(about = "Evacuate Server (evacuate Action) (microversion = 2.29)")]
 pub struct ServerCommand {
@@ -61,64 +62,55 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Evacuate Body data
 #[derive(Args)]
 struct Evacuate {
-    /// The name or ID of the host to which the server is evacuated.
-    /// If you omit this parameter, the scheduler chooses a host.
-    ///
-    ///
+    /// The name or ID of the host to which the server is evacuated. If you
+    /// omit this parameter, the scheduler chooses a host.
     ///
     /// Warning
     ///
+    /// Prior to microversion 2.29, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually evacuate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.29 and without
+    /// `force=True` set.
     ///
-    /// Prior to microversion 2.29, specifying a host will bypass
-    /// validation by the scheduler, which could result in failures to actually
-    /// evacuate the instance to the specified host, or over-subscription of
-    /// the
-    /// host. It is recommended to either not specify a host so that the
-    /// scheduler will pick one, or specify a host with microversion >= 2.29
-    /// and
-    /// without `force=True` set.
     #[arg(long)]
     host: Option<String>,
 
-    /// An administrative password to access the evacuated server.
-    /// If you omit this parameter, the operation generates a new password.
-    /// Up to API version 2.13, if `onSharedStorage` is set to `True` and
-    /// this parameter is specified, an error is raised.
+    /// An administrative password to access the evacuated server. If you omit
+    /// this parameter, the operation generates a new password. Up to API
+    /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
+    /// is specified, an error is raised.
+    ///
     #[arg(long)]
     admin_pass: Option<String>,
 
     /// Force an evacuation by not verifying the provided destination host by
-    /// the
-    /// scheduler.
-    ///
-    ///
+    /// the scheduler.
     ///
     /// Warning
     ///
-    ///
-    /// This could result in failures to actually evacuate the
-    /// instance to the specified host. It is recommended to either not specify
-    /// a host so that the scheduler will pick one, or specify a host without
-    /// `force=True` set.
-    ///
+    /// This could result in failures to actually evacuate the instance to the
+    /// specified host. It is recommended to either not specify a host so that
+    /// the scheduler will pick one, or specify a host without `force=True`
+    /// set.
     ///
     /// Furthermore, this should not be specified when evacuating instances
-    /// managed by a clustered hypervisor driver like ironic since you
-    /// cannot specify a node, so the compute service will pick a node randomly
-    /// which may not be able to accomodate the instance.
-    ///
-    ///
+    /// managed by a clustered hypervisor driver like ironic since you cannot
+    /// specify a node, so the compute service will pick a node randomly which
+    /// may not be able to accommodate the instance.
     ///
     /// **New in version 2.29**
     ///
-    ///
     /// **Available until version 2.67**
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     force: Option<bool>,
 }
@@ -126,13 +118,12 @@ struct Evacuate {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// An administrative password to access the evacuated instance.
-    /// If you set `enable\_instance\_password` configuration option to
-    /// `False`,
-    /// the API wouldn’t return the `adminPass` field in response.
-    ///
+    /// An administrative password to access the evacuated instance. If you set
+    /// `enable_instance_password` configuration option to `False`, the API
+    /// wouldn’t return the `adminPass` field in response.
     ///
     /// **Available until version 2.13**
+    ///
     #[serde(rename = "adminPass")]
     #[structable(title = "adminPass")]
     admin_pass: String,

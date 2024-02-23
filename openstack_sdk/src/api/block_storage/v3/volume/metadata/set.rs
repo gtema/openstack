@@ -30,10 +30,12 @@ pub struct Request<'a> {
     pub(crate) meta: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+    ///
     #[builder(default, setter(into))]
     volume_id: Cow<'a, str>,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

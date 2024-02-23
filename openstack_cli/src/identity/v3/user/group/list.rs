@@ -39,8 +39,9 @@ use structable_derive::StructTable;
 
 /// Lists groups to which a user belongs.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/user\_groups`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/user_groups`
+///
 #[derive(Args)]
 #[command(about = "List groups to which a user belongs")]
 pub struct GroupsCommand {
@@ -62,6 +63,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
@@ -69,30 +71,34 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The description of the group.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The ID of the domain of the group.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
     /// The ID of the group.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The name of the group.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// The date and time when the group membership expires.
-    /// A `null` value indicates that the membership never expires.
-    ///
+    /// The date and time when the group membership expires. A `null` value
+    /// indicates that the membership never expires.
     ///
     /// **New in version 3.14**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     membership_expires_at: Option<String>,

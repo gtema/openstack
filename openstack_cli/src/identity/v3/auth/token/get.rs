@@ -45,11 +45,12 @@ use structable_derive::StructTable;
 ///
 /// Pass your own token in the `X-Auth-Token` request header.
 ///
-/// Pass the token that you want to validate in the `X-Subject-Token`
-/// request header.
+/// Pass the token that you want to validate in the `X-Subject-Token` request
+/// header.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/auth\_tokens`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
+///
 #[derive(Args)]
 #[command(about = "Validate and show information for token")]
 pub struct TokenCommand {
@@ -72,68 +73,68 @@ struct PathParameters {}
 /// Token response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// A list of one or two audit IDs. An audit ID is a
-    /// unique, randomly generated, URL-safe string that you can use to
-    /// track a token. The first audit ID is the current audit ID for the
-    /// token. The second audit ID is present for only re-scoped tokens
-    /// and is the audit ID from the token before it was re-scoped. A re-
-    /// scoped token is one that was exchanged for another token of the
-    /// same or different scope. You can use these audit IDs to track the
-    /// use of a token or chain of tokens across multiple requests and
-    /// endpoints without exposing the token ID to non-privileged users.
+    /// A list of one or two audit IDs. An audit ID is a unique, randomly
+    /// generated, URL-safe string that you can use to track a token. The first
+    /// audit ID is the current audit ID for the token. The second audit ID is
+    /// present for only re-scoped tokens and is the audit ID from the token
+    /// before it was re-scoped. A re- scoped token is one that was exchanged
+    /// for another token of the same or different scope. You can use these
+    /// audit IDs to track the use of a token or chain of tokens across
+    /// multiple requests and endpoints without exposing the token ID to
+    /// non-privileged users.
+    ///
     #[serde()]
     #[structable(optional)]
     audit_ids: Option<VecString>,
 
     /// A `catalog` object.
+    ///
     #[serde()]
     #[structable(optional)]
     catalog: Option<Value>,
 
     /// The date and time when the token expires.
     ///
-    ///
-    /// The date and time stamp format is [ISO
-    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss.sssZ
     ///
     /// ```
     ///
-    ///
     /// For example, `2015-08-27T09:49:58.000000Z`.
     ///
-    ///
     /// A `null` value indicates that the token never expires.
+    ///
     #[serde()]
     #[structable(optional)]
     expires_at: Option<String>,
 
     /// The date and time when the token was issued.
+    ///
     #[serde()]
     #[structable(optional)]
     issues_at: Option<String>,
 
-    /// The authentication methods, which are commonly `password`,
-    /// `token`, or other methods. Indicates the accumulated set of
-    /// authentication methods that were used to obtain the token. For
-    /// example, if the token was obtained by password authentication, it
-    /// contains `password`. Later, if the token is exchanged by using
-    /// the token authentication method one or more times, the
-    /// subsequently created tokens contain both `password` and
+    /// The authentication methods, which are commonly `password`, `token`, or
+    /// other methods. Indicates the accumulated set of authentication methods
+    /// that were used to obtain the token. For example, if the token was
+    /// obtained by password authentication, it contains `password`. Later, if
+    /// the token is exchanged by using the token authentication method one or
+    /// more times, the subsequently created tokens contain both `password` and
     /// `token` in their `methods` attribute. Unlike multi-factor
-    /// authentication, the `methods` attribute merely indicates the
-    /// methods that were used to authenticate the user in exchange for a
-    /// token. The client is responsible for determining the total number
-    /// of authentication factors.
+    /// authentication, the `methods` attribute merely indicates the methods
+    /// that were used to authenticate the user in exchange for a token. The
+    /// client is responsible for determining the total number of
+    /// authentication factors.
+    ///
     #[serde()]
     #[structable(optional)]
     methods: Option<VecString>,
 
     /// A `user` object.
+    ///
     #[serde()]
     #[structable(optional)]
     user: Option<ResponseUser>,
@@ -145,33 +146,35 @@ struct ResponseData {
     /// A domain object including the id and name representing the domain the
     /// token is scoped to. This is only included in tokens that are scoped to
     /// a domain.
+    ///
     #[serde()]
     #[structable(optional)]
     domain: Option<ResponseDomainStructResponse>,
 
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
-    /// in
-    /// tokens that are scoped to a project.
+    /// in tokens that are scoped to a project.
+    ///
     #[serde()]
     #[structable(optional)]
     project: Option<ResponseProject>,
 
     /// A list of `role` objects
+    ///
     #[serde()]
     #[structable(optional)]
     roles: Option<Value>,
 
     /// A `system` object containing information about which parts of the
-    /// system
-    /// the token is scoped to. If the token is scoped to the entire deployment
-    /// system, the `system` object will consist of `{"all": true}`. This is
-    /// only included in tokens that are scoped to the system.
+    /// system the token is scoped to. If the token is scoped to the entire
+    /// deployment system, the `system` object will consist of `{"all": true}`.
+    /// This is only included in tokens that are scoped to the system.
+    ///
     #[serde()]
     #[structable(optional)]
     system: Option<HashMapStringbool>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {
@@ -187,7 +190,7 @@ impl fmt::Display for VecString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseDomain {
     id: Option<String>,
@@ -215,7 +218,7 @@ impl fmt::Display for ResponseDomain {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
@@ -231,7 +234,7 @@ impl fmt::Display for HashMapStringValue {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseUser {
     id: Option<String>,
@@ -283,7 +286,7 @@ impl fmt::Display for ResponseUser {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseDomainStructResponse {
     id: Option<String>,
@@ -311,7 +314,7 @@ impl fmt::Display for ResponseDomainStructResponse {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseProject {
     id: Option<String>,
@@ -339,7 +342,7 @@ impl fmt::Display for ResponseProject {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of bool response type
+/// HashMap of `bool` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringbool(HashMap<String, bool>);
 impl fmt::Display for HashMapStringbool {

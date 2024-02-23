@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! GET operation on /v3/OS-FEDERATION/identity_providers
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -27,10 +28,12 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filter for Identity Providers’ ID attribute
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// Filter for Identity Providers’ enabled attribute
+    ///
     #[builder(default)]
     enabled: Option<bool>,
 

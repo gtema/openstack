@@ -17,9 +17,8 @@
 
 //! Creates a flavor.
 //!
-//! Creating a flavor is typically only available to administrators of a
-//! cloud because this has implications for scheduling efficiently in the
-//! cloud.
+//! Creating a flavor is typically only available to administrators of a cloud
+//! because this has implications for scheduling efficiently in the cloud.
 //!
 //! Normal response codes: 200
 //!
@@ -36,42 +35,47 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The ID and links for the flavor for your server instance. A flavor is a
-/// combination
-/// of memory, disk size, and CPUs.
+/// combination of memory, disk size, and CPUs.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Flavor<'a> {
     /// The display name of a flavor.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
     /// Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces
     /// and dots ‘.’ are permitted. If an ID is not provided, then a default
-    /// UUID
-    /// will be assigned.
+    /// UUID will be assigned.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Option<Cow<'a, str>>>,
 
     /// The number of virtual CPUs that will be allocated to the server.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) ram: Cow<'a, str>,
 
     /// The number of virtual CPUs that will be allocated to the server.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) vcpus: Cow<'a, str>,
 
-    /// The size of a dedicated swap disk that will be allocated, in
-    /// MiB. If 0 (the default), no dedicated swap disk will be created.
+    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
+    /// (the default), no dedicated swap disk will be created.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) disk: Cow<'a, str>,
 
-    /// The size of a dedicated swap disk that will be allocated, in
-    /// MiB. If 0 (the default), no dedicated swap disk will be created.
+    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
+    /// (the default), no dedicated swap disk will be created.
+    ///
     #[serde(
         rename = "OS-FLV-EXT-DATA:ephemeral",
         skip_serializing_if = "Option::is_none"
@@ -79,21 +83,24 @@ pub struct Flavor<'a> {
     #[builder(default, setter(into))]
     pub(crate) os_flv_ext_data_ephemeral: Option<Cow<'a, str>>,
 
-    /// The size of a dedicated swap disk that will be allocated, in
-    /// MiB. If 0 (the default), no dedicated swap disk will be created.
+    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
+    /// (the default), no dedicated swap disk will be created.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) swap: Option<Cow<'a, str>>,
 
-    /// The receive / transmit factor (as a float) that will be set on
-    /// ports if the network backend supports the QOS extension.
-    /// Otherwise it will be ignored. It defaults to 1.0.
+    /// The receive / transmit factor (as a float) that will be set on ports if
+    /// the network backend supports the QOS extension. Otherwise it will be
+    /// ignored. It defaults to 1.0.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) rxtx_factor: Option<Cow<'a, str>>,
 
-    /// Whether the flavor is public (available to all projects) or scoped
-    /// to a set of projects. Default is True if not specified.
+    /// Whether the flavor is public (available to all projects) or scoped to a
+    /// set of projects. Default is True if not specified.
+    ///
     #[serde(
         rename = "os-flavor-access:is_public",
         skip_serializing_if = "Option::is_none"
@@ -101,11 +108,11 @@ pub struct Flavor<'a> {
     #[builder(default)]
     pub(crate) os_flavor_access_is_public: Option<bool>,
 
-    /// A free form description of the flavor. Limited to 65535 characters
-    /// in length. Only printable characters are allowed.
-    ///
+    /// A free form description of the flavor. Limited to 65535 characters in
+    /// length. Only printable characters are allowed.
     ///
     /// **New in version 2.55**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -115,8 +122,8 @@ pub struct Flavor<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The ID and links for the flavor for your server instance. A flavor is a
-    /// combination
-    /// of memory, disk size, and CPUs.
+    /// combination of memory, disk size, and CPUs.
+    ///
     #[builder(setter(into))]
     pub(crate) flavor: Flavor<'a>,
 

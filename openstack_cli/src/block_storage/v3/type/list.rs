@@ -40,6 +40,7 @@ use std::fmt;
 use structable_derive::StructTable;
 
 /// Returns the list of volume types.
+///
 #[derive(Args)]
 pub struct TypesCommand {
     /// Request Query parameters
@@ -62,44 +63,51 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The volume type description.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// A key and value pair that contains additional
-    /// specifications that are associated with the volume type. Examples
-    /// include capabilities, capacity, compression, and so on, depending
-    /// on the storage driver in use.
+    /// A key and value pair that contains additional specifications that are
+    /// associated with the volume type. Examples include capabilities,
+    /// capacity, compression, and so on, depending on the storage driver in
+    /// use.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     extra_specs: Option<HashMapStringOptionString>,
 
     /// The UUID of the volume type.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Whether the volume type is publicly visible.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     is_public: Option<bool>,
 
     /// The name of the volume type.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// Whether the volume type is publicly visible.
+    ///
     #[serde(rename = "os-volume-type-access:is_public")]
     #[structable(optional, title = "os-volume-type-access:is_public", wide)]
     os_volume_type_access_is_public: Option<bool>,
 
     /// The QoS specifications ID.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     qos_specs_id: Option<String>,
 }
-/// HashMap of Option<String> response type
+/// HashMap of `Option<String>` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringOptionString(HashMap<String, Option<String>>);
 impl fmt::Display for HashMapStringOptionString {

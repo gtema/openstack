@@ -42,8 +42,9 @@ use std::collections::HashMap;
 
 /// Creates a user.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/users`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/users`
+///
 #[derive(Args)]
 #[command(about = "Create user")]
 pub struct UserCommand {
@@ -96,58 +97,62 @@ struct Options {
 #[derive(Args)]
 struct User {
     /// The ID of the default project for the user.
+    ///
     #[arg(long)]
     default_project_id: Option<String>,
 
     /// The new description of the group.
+    ///
     #[arg(long)]
     description: Option<String>,
 
     /// The ID of the domain.
+    ///
     #[arg(long)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
-    /// list
-    /// contains the `idp\_id` and `protocols`. `protocols` is a list of
-    /// objects, each of which contains `protocol\_id` and `unique\_id` of
-    /// the protocol and user respectively. For example:
-    ///
-    ///
+    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
+    /// objects, each of which contains `protocol_id` and `unique_id` of the
+    /// protocol and user respectively. For example:
     ///
     /// ```text
     /// "federated": [
     ///   {
-    ///     "idp\_id": "efbab5a6acad4d108fec6c63d9609d83",
+    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol\_id": "mapped", "unique\_id": "test@example.com"}
+    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
     ///
     /// ```
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     federated: Option<Vec<Value>>,
 
     /// The user name. Must be unique within the owning domain.
+    ///
     #[arg(long)]
     name: String,
 
     /// The new password for the user.
+    ///
     #[arg(long)]
     password: Option<String>,
 
     /// The resource options for the user. Available resource options are
-    /// `ignore\_change\_password\_upon\_first\_use`,
-    /// `ignore\_password\_expiry`,
-    /// `ignore\_lockout\_failure\_attempts`, `lock\_password`,
-    /// `multi\_factor\_auth\_enabled`, and `multi\_factor\_auth\_rules`
-    /// `ignore\_user\_inactivity`.
+    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+    /// `ignore_lockout_failure_attempts`, `lock_password`,
+    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+    /// `ignore_user_inactivity`.
+    ///
     #[command(flatten)]
     options: Option<Options>,
 }

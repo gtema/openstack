@@ -17,8 +17,8 @@
 
 //! Get project or list projects.
 //!
-//! GET/HEAD /v3/projects
-//! GET/HEAD /v3/projects/{project_id}
+//! GET/HEAD /v3/projects GET/HEAD /v3/projects/{project_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

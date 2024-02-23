@@ -18,9 +18,8 @@
 //! Shows NUMA topology information for a server.
 //!
 //! Policy defaults enable only users with the administrative role or the
-//! owners
-//! of the server to perform this operation. Cloud providers can change these
-//! permissions through the `policy.json` file.
+//! owners of the server to perform this operation. Cloud providers can change
+//! these permissions through the `policy.json` file.
 //!
 //! Normal response codes: 200
 //!
@@ -37,6 +36,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

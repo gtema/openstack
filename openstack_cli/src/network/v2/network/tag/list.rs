@@ -37,6 +37,7 @@ use openstack_sdk::api::network::v2::network::tag::list;
 use openstack_sdk::api::QueryAsync;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagsCommand {
     /// Request Query parameters
@@ -56,6 +57,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
+    ///
     #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
     network_id: String,
 }

@@ -40,6 +40,7 @@ use structable_derive::StructTable;
 /// Create a service provider.
 ///
 /// PUT /OS-FEDERATION/service_providers/{sp_id}
+///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
@@ -62,6 +63,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    ///
     #[arg(id = "path_param_sp_id", value_name = "SP_ID")]
     sp_id: String,
 }
@@ -77,8 +79,9 @@ struct ServiceProvider {
     #[arg(long)]
     description: Option<String>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
@@ -90,31 +93,37 @@ struct ServiceProvider {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The URL to authenticate against
+    ///
     #[serde()]
     #[structable()]
     auth_url: String,
 
     /// The description of the Service Provider
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The Service Provider unique ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Whether the Service Provider is enabled or not
+    ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
     /// The prefix of the RelayState SAML attribute
+    ///
     #[serde()]
     #[structable(optional)]
     relay_state_prefix: Option<String>,
 
     /// The Service Provider’s URL
+    ///
     #[serde()]
     #[structable()]
     sp_url: String,

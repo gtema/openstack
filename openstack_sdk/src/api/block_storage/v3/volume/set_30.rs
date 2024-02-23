@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Update a volume.
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -72,6 +73,7 @@ pub struct Request<'a> {
     pub(crate) volume: Volume<'a>,
 
     /// id parameter for /v3/volumes/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

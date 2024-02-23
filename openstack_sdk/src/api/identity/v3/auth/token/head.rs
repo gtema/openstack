@@ -17,16 +17,16 @@
 
 //! Validates a token.
 //!
-//! This call is similar to `GET /auth/tokens` but no response body
-//! is provided even in the `X-Subject-Token` header.
+//! This call is similar to `GET /auth/tokens` but no response body is provided
+//! even in the `X-Subject-Token` header.
 //!
-//! The Identity API returns the same response as when the subject
-//! token was issued by `POST /auth/tokens` even if an error occurs
-//! because the token is not valid. An HTTP `204` response code
-//! indicates that the `X-Subject-Token` is valid.
+//! The Identity API returns the same response as when the subject token was
+//! issued by `POST /auth/tokens` even if an error occurs because the token is
+//! not valid. An HTTP `204` response code indicates that the `X-Subject-Token`
+//! is valid.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/auth\_tokens`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

@@ -45,15 +45,14 @@ use structable_derive::StructTable;
 /// starting with microversion 2.21.
 ///
 /// Policy defaults enable only users with the administrative role or the owner
-/// of
-/// the server to perform this operation. Cloud providers can change these
-/// permissions
-/// through the `policy.json` file.
+/// of the server to perform this operation. Cloud providers can change these
+/// permissions through the `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Actions For Server")]
 pub struct InstanceActionsCommand {
@@ -90,6 +89,7 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -97,6 +97,7 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The name of the action.
+    ///
     #[serde()]
     #[structable(optional)]
     action: Option<String>,
@@ -104,40 +105,42 @@ struct ResponseData {
     /// The events which occurred in this action in descending order of
     /// creation.
     ///
-    ///
     /// Policy defaults enable only users with the administrative role or the
-    /// owner
-    /// of the server to see instance action event information. Cloud providers
-    /// can
-    /// change these permissions through the `policy.json` file.
-    ///
+    /// owner of the server to see instance action event information. Cloud
+    /// providers can change these permissions through the `policy.json` file.
     ///
     /// **New in version 2.51**
+    ///
     #[serde()]
     #[structable(optional)]
     events: Option<Value>,
 
     /// The related error message for when an action fails.
+    ///
     #[serde()]
     #[structable(optional)]
     message: Option<String>,
 
     /// The ID of the project which initiated the server action.
+    ///
     #[serde()]
     #[structable(optional)]
     project_id: Option<String>,
 
     /// The request id generated when execute the API of this action.
+    ///
     #[serde()]
     #[structable(optional)]
     request_id: Option<String>,
 
     /// The date and time when the action was started.
+    ///
     #[serde()]
     #[structable(optional)]
     start_time: Option<String>,
 
     /// The ID of the user which initiated the server action.
+    ///
     #[serde()]
     #[structable(optional)]
     user_id: Option<String>,
@@ -146,20 +149,17 @@ struct ResponseData {
     /// instance action was updated. The date and time stamp format is
     /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
-    ///
-    ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
-    /// value, if included, is the time zone as an offset from UTC. In
-    /// the previous example, the offset value is `-05:00`.
-    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     ///
     /// **New in version 2.58**
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,

@@ -44,45 +44,42 @@ use structable_derive::StructTable;
 
 /// Creates a subnet on a network.
 ///
-/// OpenStack Networking does not try to derive the correct IP version
-/// from the CIDR. If you do not specify the `gateway\_ip` attribute,
-/// OpenStack Networking allocates an address from the CIDR for the
-/// gateway for the subnet.
+/// OpenStack Networking does not try to derive the correct IP version from the
+/// CIDR. If you do not specify the `gateway_ip` attribute, OpenStack
+/// Networking allocates an address from the CIDR for the gateway for the
+/// subnet.
 ///
-/// To specify a subnet without a gateway, set the `gateway\_ip`
-/// attribute to `null` in the request body. If you do not specify
-/// the `allocation\_pools` attribute, OpenStack Networking
-/// automatically allocates pools for covering all IP addresses in the
-/// CIDR, excluding the address reserved for the subnet gateway.
-/// Otherwise, you can explicitly specify allocation pools as shown in
+/// To specify a subnet without a gateway, set the `gateway_ip` attribute to
+/// `null` in the request body. If you do not specify the `allocation_pools`
+/// attribute, OpenStack Networking automatically allocates pools for covering
+/// all IP addresses in the CIDR, excluding the address reserved for the subnet
+/// gateway. Otherwise, you can explicitly specify allocation pools as shown in
 /// the following example.
 ///
-/// When you specify both the `allocation\_pools` and `gateway\_ip`
-/// attributes, you must ensure that the gateway IP does not overlap
-/// with the allocation pools; otherwise, the call returns the
-/// `Conflict (409)` response code.
+/// When you specify both the `allocation_pools` and `gateway_ip` attributes,
+/// you must ensure that the gateway IP does not overlap with the allocation
+/// pools; otherwise, the call returns the `Conflict (409)` response code.
 ///
-/// A subnet can have one or more name servers and host routes. Hosts
-/// in this subnet use the name servers. Devices with IP addresses from
-/// this subnet, not including the local subnet route, use the host
-/// routes.
+/// A subnet can have one or more name servers and host routes. Hosts in this
+/// subnet use the name servers. Devices with IP addresses from this subnet,
+/// not including the local subnet route, use the host routes.
 ///
-/// Specify the `ipv6\_ra\_mode` and `ipv6\_address\_mode` attributes
-/// to create subnets that support IPv6 configurations, such as
-/// stateless address autoconfiguration (SLAAC), DHCPv6 stateful, and
-/// DHCPv6 stateless configurations.
+/// Specify the `ipv6_ra_mode` and `ipv6_address_mode` attributes to create
+/// subnets that support IPv6 configurations, such as stateless address
+/// autoconfiguration (SLAAC), DHCPv6 stateful, and DHCPv6 stateless
+/// configurations.
 ///
-/// A subnet can optionally be associated with a network segment when
-/// it is created by specifying the `segment\_id` of a valid segment
-/// on the specified network. A network with subnets associated in this
-/// way is called a routed network. On any given network, all of the
-/// subnets must be associated with segments or none of them can be.
-/// Neutron enforces this invariant. Currently, routed networks are
-/// only supported for provider networks.
+/// A subnet can optionally be associated with a network segment when it is
+/// created by specifying the `segment_id` of a valid segment on the specified
+/// network. A network with subnets associated in this way is called a routed
+/// network. On any given network, all of the subnets must be associated with
+/// segments or none of them can be. Neutron enforces this invariant.
+/// Currently, routed networks are only supported for provider networks.
 ///
 /// Normal response codes: 201
 ///
 /// Error response codes: 400, 401, 403, 404, 409
+///
 #[derive(Args)]
 #[command(about = "Create subnet")]
 pub struct SubnetCommand {
@@ -124,100 +121,116 @@ enum Ipv6AddressMode {
 #[derive(Args)]
 struct Subnet {
     /// Human-readable name of the resource. Default is an empty string.
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// The IP protocol version. Value is `4` or `6`.
+    ///
     #[arg(long)]
     ip_version: i32,
 
     /// The ID of the network to which the subnet belongs.
+    ///
     #[arg(long)]
     network_id: String,
 
     /// The ID of the subnet pool associated with the subnet.
+    ///
     #[arg(long)]
     subnetpool_id: Option<String>,
 
-    /// The prefix length to use for subnet allocation from a subnet pool.
-    /// If not specified, the `default\_prefixlen` value of the subnet pool
-    /// will be used.
+    /// The prefix length to use for subnet allocation from a subnet pool. If
+    /// not specified, the `default_prefixlen` value of the subnet pool will be
+    /// used.
+    ///
     #[arg(long)]
     prefixlen: Option<i32>,
 
     /// The CIDR of the subnet.
+    ///
     #[arg(long)]
     cidr: Option<String>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
-    /// gateway is associated with the subnet. If the gateway\_ip is not
-    /// specified, OpenStack Networking allocates an address from the CIDR
-    /// for the gateway for the subnet by default.
+    /// gateway is associated with the subnet. If the gateway_ip is not
+    /// specified, OpenStack Networking allocates an address from the CIDR for
+    /// the gateway for the subnet by default.
+    ///
     #[arg(long)]
     gateway_ip: Option<String>,
 
-    /// Allocation pools with `start` and `end` IP addresses
-    /// for this subnet. If allocation\_pools are not specified, OpenStack
-    /// Networking automatically allocates pools for covering all IP addresses
-    /// in the CIDR, excluding the address reserved for the subnet gateway by
-    /// default.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
+    /// If allocation_pools are not specified, OpenStack Networking
+    /// automatically allocates pools for covering all IP addresses in the
+    /// CIDR, excluding the address reserved for the subnet gateway by default.
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     allocation_pools: Option<Vec<Value>>,
 
     /// List of dns name servers associated with the subnet. Default is an
     /// empty list.
+    ///
     #[arg(action=clap::ArgAction::Append, long)]
     dns_nameservers: Option<Vec<String>>,
 
     /// Additional routes for the subnet. A list of dictionaries with
-    /// `destination` and `nexthop` parameters. Default value is
-    /// an empty list.
+    /// `destination` and `nexthop` parameters. Default value is an empty list.
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     host_routes: Option<Vec<Value>>,
 
-    /// The ID of the project that owns the resource.
-    /// Only administrative and users with advsvc role can specify
-    /// a project ID other than their own.
+    /// The ID of the project that owns the resource. Only administrative and
+    /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
+    ///
     #[arg(long)]
     tenant_id: Option<String>,
 
-    /// Indicates whether dhcp is enabled or disabled
-    /// for the subnet. Default is `true`.
+    /// Indicates whether dhcp is enabled or disabled for the subnet. Default
+    /// is `true`.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     enable_dhcp: Option<bool>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless`.
+    ///
     #[arg(long)]
     ipv6_ra_mode: Option<Ipv6RaMode>,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`.
+    ///
     #[arg(long)]
     ipv6_address_mode: Option<Ipv6AddressMode>,
 
     /// The service types associated with the subnet.
+    ///
     #[arg(action=clap::ArgAction::Append, long)]
     service_types: Option<Vec<String>>,
 
     /// Whether to allocate this subnet from the default subnet pool.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     use_default_subnetpool: Option<bool>,
 
-    /// Whether to publish DNS records for IPs from this subnet. Default
-    /// is `false`.
+    /// Whether to publish DNS records for IPs from this subnet. Default is
+    /// `false`.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     dns_publish_fixed_ip: Option<bool>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[arg(long)]
     description: Option<String>,
 
-    /// The ID of a network segment the subnet is associated with.
-    /// It is available when `segment` extension is enabled.
+    /// The ID of a network segment the subnet is associated with. It is
+    /// available when `segment` extension is enabled.
+    ///
     #[arg(long)]
     segment_id: Option<String>,
 }
@@ -226,65 +239,75 @@ struct Subnet {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Human-readable name of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The IP protocol version. Value is `4` or `6`.
+    ///
     #[serde()]
     #[structable(optional)]
     ip_version: Option<i32>,
 
     /// The ID of the network to which the subnet belongs.
+    ///
     #[serde()]
     #[structable(optional)]
     network_id: Option<String>,
 
     /// The ID of the subnet pool associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     subnetpool_id: Option<String>,
 
     /// The CIDR of the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     cidr: Option<String>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     gateway_ip: Option<String>,
 
-    /// Allocation pools with `start` and `end` IP addresses
-    /// for this subnet.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     allocation_pools: Option<Value>,
 
     /// List of dns name servers associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     dns_nameservers: Option<VecString>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
+    ///
     #[serde()]
     #[structable(optional)]
     host_routes: Option<Value>,
 
     /// The ID of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     tenant_id: Option<String>,
 
-    /// Indicates whether dhcp is enabled or disabled
-    /// for the subnet.
+    /// Indicates whether dhcp is enabled or disabled for the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     enable_dhcp: Option<BoolString>,
@@ -292,58 +315,68 @@ struct ResponseData {
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    ///
     #[serde()]
     #[structable(optional)]
     ipv6_ra_mode: Option<String>,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    ///
     #[serde()]
     #[structable(optional)]
     ipv6_address_mode: Option<String>,
 
     /// The revision number of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     revision_number: Option<i32>,
 
     /// The service types associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     service_types: Option<VecString>,
 
     /// The list of tags on the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// Whether to publish DNS records for IPs from this subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     dns_publish_fixed_ip: Option<BoolString>,
 
     /// A human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// The ID of a network segment the subnet is associated with.
-    /// It is available when `segment` extension is enabled.
+    /// The ID of a network segment the subnet is associated with. It is
+    /// available when `segment` extension is enabled.
+    ///
     #[serde()]
     #[structable(optional)]
     segment_id: Option<String>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -28,8 +29,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityProvider<'a> {
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
@@ -53,8 +55,9 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) identity_provider: IdentityProvider<'a>,
 
-    /// idp_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols API
+    /// idp_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 

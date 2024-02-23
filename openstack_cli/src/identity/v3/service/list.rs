@@ -39,8 +39,9 @@ use structable_derive::StructTable;
 
 /// Lists all services.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/services`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/services`
+///
 #[derive(Args)]
 #[command(about = "List services")]
 pub struct ServicesCommand {
@@ -57,6 +58,7 @@ pub struct ServicesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Filters the response by a domain ID.
+    ///
     #[arg(long)]
     service: Option<String>,
 }
@@ -68,32 +70,35 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The service description.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// Defines whether the service and its endpoints
-    /// appear in the service catalog: - `false`. The service and its
-    /// endpoints do not appear in the service catalog. - `true`. The
-    /// service and its endpoints appear in the service catalog.
+    /// Defines whether the service and its endpoints appear in the service
+    /// catalog: - `false`. The service and its endpoints do not appear in the
+    /// service catalog. - `true`. The service and its endpoints appear in the
+    /// service catalog.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
-    /// The UUID of the service to which the endpoint
-    /// belongs.
+    /// The UUID of the service to which the endpoint belongs.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The service name.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// The service type, which describes the API
-    /// implemented by the service. Value is `compute`, `ec2`,
-    /// `identity`, `image`, `network`, or `volume`.
+    /// The service type, which describes the API implemented by the service.
+    /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type", wide)]
     _type: Option<String>,

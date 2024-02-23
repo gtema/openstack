@@ -39,21 +39,20 @@ use openstack_sdk::api::compute::v2::server::add_floating_ip_21;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Adds a floating IP address to a server, which associates
-/// that address with the server.
+/// Adds a floating IP address to a server, which associates that address with
+/// the server.
 ///
-/// A pool of floating IP addresses, configured by the cloud administrator,
-/// is available in OpenStack Compute. The project quota defines the maximum
-/// number of floating IP addresses that you can allocate to the project.
-/// After you [create (allocate) a floating
-/// IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate-
-/// floating-ip-address)
-/// for a project, you can associate that address with the server. Specify
-/// the `addFloatingIp` action in the request body.
+/// A pool of floating IP addresses, configured by the cloud administrator, is
+/// available in OpenStack Compute. The project quota defines the maximum
+/// number of floating IP addresses that you can allocate to the project. After
+/// you
+/// [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate-floating-ip-address)
+/// for a project, you can associate that address with the server. Specify the
+/// `addFloatingIp` action in the request body.
 ///
 /// If an instance is connected to multiple networks, you can associate a
-/// floating IP address with a specific fixed IP address by using the
-/// optional `fixed\_address` parameter.
+/// floating IP address with a specific fixed IP address by using the optional
+/// `fixed_address` parameter.
 ///
 /// **Preconditions**
 ///
@@ -66,6 +65,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
+///
 #[derive(Args)]
 #[command(
     about = "Add (Associate) Floating Ip (addFloatingIp Action) (DEPRECATED) (microversion = 2.1)"
@@ -91,6 +91,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -99,11 +100,13 @@ struct PathParameters {
 struct AddFloatingIp {
     /// The fixed IP address with which you want to associate the floating IP
     /// address.
+    ///
     #[arg(long)]
     address: String,
 
     /// The fixed IP address with which you want to associate the floating IP
     /// address.
+    ///
     #[arg(long)]
     fixed_address: Option<String>,
 }

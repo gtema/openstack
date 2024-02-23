@@ -47,6 +47,7 @@ pub struct Request<'a> {
     pub(crate) volume_type: VolumeType<'a>,
 
     /// id parameter for /v3/types/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

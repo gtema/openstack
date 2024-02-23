@@ -43,13 +43,14 @@ use structable_derive::StructTable;
 ///
 /// Specify the `unlock` action in the request body.
 ///
-/// Policy defaults enable only users with the administrative role or
-/// the owner of the server to perform this operation. Cloud providers
-/// can change these permissions through the `policy.json` file.
+/// Policy defaults enable only users with the administrative role or the owner
+/// of the server to perform this operation. Cloud providers can change these
+/// permissions through the `policy.json` file.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Unlock Server (unlock Action)")]
 pub struct ServerCommand {
@@ -70,6 +71,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

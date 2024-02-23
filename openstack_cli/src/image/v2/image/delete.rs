@@ -41,8 +41,8 @@ use structable_derive::StructTable;
 
 /// (Since Image API v2.0) Deletes an image.
 ///
-/// You cannot delete images with the `protected` attribute set to
-/// `true` (boolean).
+/// You cannot delete images with the `protected` attribute set to `true`
+/// (boolean).
 ///
 /// Preconditions
 ///
@@ -51,6 +51,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 400, 401, 403, 404, 409
+///
 #[derive(Args)]
 #[command(about = "Delete image")]
 pub struct ImageCommand {
@@ -71,6 +72,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

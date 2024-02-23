@@ -43,8 +43,9 @@ use structable_derive::StructTable;
 /// Creates an application credential for a user on the project to which the
 /// current token is scoped.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/application\_credentials`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
+///
 #[derive(Args)]
 #[command(about = "Create application credential")]
 pub struct ApplicationCredentialCommand {
@@ -69,6 +70,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
@@ -76,38 +78,44 @@ struct PathParameters {
 #[derive(Args)]
 struct ApplicationCredential {
     /// The name of the application credential. Must be unique to a user.
+    ///
     #[arg(long)]
     name: String,
 
     /// A description of the application credential’s purpose.
+    ///
     #[arg(long)]
     description: Option<String>,
 
     /// The secret that the application credential will be created with. If not
     /// provided, one will be generated.
+    ///
     #[arg(long)]
     secret: Option<String>,
 
     /// An optional expiry time for the application credential. If unset, the
     /// application credential does not expire.
+    ///
     #[arg(long)]
     expires_at: Option<String>,
 
     /// An optional list of role objects, identified by ID or name. The list
-    /// may only contain roles that the user has assigned on the project.
-    /// If not provided, the roles assigned to the application credential will
-    /// be the same as the roles in the current token.
+    /// may only contain roles that the user has assigned on the project. If
+    /// not provided, the roles assigned to the application credential will be
+    /// the same as the roles in the current token.
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     roles: Option<Vec<Value>>,
 
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
-    /// or
-    /// trusts. Defaults to false.
+    /// or trusts. Defaults to false.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     unrestricted: Option<bool>,
 
-    /// A list of `access\_rules` objects
+    /// A list of `access_rules` objects
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     access_rules: Option<Vec<Value>>,
 }
@@ -116,11 +124,13 @@ struct ApplicationCredential {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The UUID for the credential.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The ID for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     project_id: Option<String>,
@@ -153,6 +163,7 @@ struct ResponseData {
     /// server or provided by the user. This is only ever shown once in the
     /// response to a create request. It is not stored nor ever shown again. If
     /// the secret is lost, a new application credential must be created.
+    ///
     #[serde()]
     #[structable(optional)]
     secret: Option<String>,

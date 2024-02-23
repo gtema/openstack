@@ -17,8 +17,8 @@
 
 //! Lists available extensions.
 //!
-//! Lists available Networking API v2.0 extensions and shows details
-//! for an extension.
+//! Lists available Networking API v2.0 extensions and shows details for an
+//! extension.
 //!
 //! Normal response codes: 200
 //!

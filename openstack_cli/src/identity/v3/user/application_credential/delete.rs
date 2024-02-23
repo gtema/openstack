@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Delete an application credential.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/application\_credentials`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
+///
 #[derive(Args)]
 #[command(about = "Delete application credential")]
 pub struct ApplicationCredentialCommand {
@@ -64,12 +65,14 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

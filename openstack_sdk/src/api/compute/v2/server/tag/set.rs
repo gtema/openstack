@@ -16,8 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Adds a single tag to the server if server has no specified tag. Response
-//! code
-//! in this case is 201.
+//! code in this case is 201.
 //!
 //! If the server has specified tag just returns 204.
 //!
@@ -37,10 +36,12 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/servers/{server_id}/tags/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

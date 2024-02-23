@@ -39,6 +39,7 @@ use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 #[command(about = "Create Server Back Up (createBackup Action) (microversion = 2.0)")]
 pub struct ServerCommand {
@@ -62,6 +63,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -69,22 +71,24 @@ struct PathParameters {
 #[derive(Args)]
 struct CreateBackup {
     /// The name of the image to be backed up.
+    ///
     #[arg(long)]
     name: String,
 
     /// The type of the backup, for example, `daily`.
+    ///
     #[arg(long)]
     backup_type: String,
 
     /// The rotation of the back up image, the oldest image will be removed
-    /// when image count
-    /// exceed the rotation count.
+    /// when image count exceed the rotation count.
+    ///
     #[arg(long)]
     rotation: String,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
-    /// value is
-    /// 255 bytes each.
+    /// value is 255 bytes each.
+    ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 }
@@ -93,6 +97,7 @@ struct CreateBackup {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The UUID for the resulting image snapshot.
+    ///
     #[serde()]
     #[structable()]
     image_id: String,

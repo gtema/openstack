@@ -41,7 +41,8 @@ use std::collections::HashMap;
 /// Get role for access token.
 ///
 /// GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/
-///          {access_token_id}/roles/{role_id}
+/// {access_token_id}/roles/{role_id}
+///
 #[derive(Args)]
 pub struct RoleCommand {
     /// Request Query parameters
@@ -62,16 +63,21 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
-    /// access_token_id parameter for /v3/users/{user_id}/OS-
-    /// OAUTH1/access_tokens/{access_token_id}/roles/{role_id} API
+    /// access_token_id parameter for
+    /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
+    /// API
+    ///
     #[arg(id = "path_param_access_token_id", value_name = "ACCESS_TOKEN_ID")]
     access_token_id: String,
 
-    /// role_id parameter for /v3/users/{user_id}/OS-
-    /// OAUTH1/access_tokens/{access_token_id}/roles/{role_id} API
+    /// role_id parameter for
+    /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
+    /// API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

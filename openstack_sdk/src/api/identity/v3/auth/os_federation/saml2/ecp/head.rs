@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! HEAD operation on /v3/auth/OS-FEDERATION/saml2/ecp
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

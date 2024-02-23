@@ -38,8 +38,9 @@ use openstack_sdk::api::QueryAsync;
 
 /// Lists all tags within a project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/projects`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
+///
 #[derive(Args)]
 #[command(about = "List tags for a project")]
 pub struct TagsCommand {
@@ -61,6 +62,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 }

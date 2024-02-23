@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
+///
 #[derive(Args)]
 #[command(about = "List Keypairs")]
 pub struct KeypairsCommand {
@@ -79,24 +80,27 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The name for the keypair.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The keypair public key.
+    ///
     #[serde()]
     #[structable(optional)]
     public_key: Option<String>,
 
     /// The fingerprint for the keypair.
+    ///
     #[serde()]
     #[structable(optional)]
     fingerprint: Option<String>,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
-    ///
     /// **New in version 2.2**
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type", wide)]
     _type: Option<String>,

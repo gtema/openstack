@@ -47,19 +47,20 @@ use structable_derive::StructTable;
 ///
 /// The server status must be `ACTIVE` or `ERROR`.
 ///
-/// If the server is locked, you must have administrator privileges
-/// to stop the server.
+/// If the server is locked, you must have administrator privileges to stop the
+/// server.
 ///
 /// **Asynchronous Postconditions**
 ///
-/// After you successfully stop a server, its status changes to `SHUTOFF`.
-/// This API operation does not delete the server instance data and the data
-/// will be available again after `os-start` action.
+/// After you successfully stop a server, its status changes to `SHUTOFF`. This
+/// API operation does not delete the server instance data and the data will be
+/// available again after `os-start` action.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Stop Server (os-stop Action)")]
 pub struct ServerCommand {
@@ -80,6 +81,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

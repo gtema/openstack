@@ -42,8 +42,9 @@ use structable_derive::StructTable;
 
 /// Lists role assignments for a group on a project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/project\_user\_role`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
+///
 #[derive(Args)]
 #[command(about = "List role assignments for group on project")]
 pub struct RolesCommand {
@@ -65,11 +66,13 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_group_id", value_name = "GROUP_ID")]
     group_id: String,
 }
@@ -77,32 +80,37 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The role ID.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The link to the resources in question.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     links: Option<HashMapStringValue>,
 
     /// The role name.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The role description.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     options: Option<ResponseOptions>,
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
@@ -118,7 +126,7 @@ impl fmt::Display for HashMapStringValue {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseOptions {
     immutable: Option<bool>,
