@@ -54,6 +54,7 @@ pub enum TotpError {
     /// TotpUser builder
     #[error("Cannot construct TOTP user information: {}", source)]
     UserBuilder {
+        /// The error source
         #[from]
         source: token_v3::TotpUserBuilderError,
     },
@@ -61,6 +62,7 @@ pub enum TotpError {
     /// TotpUserDomain builder
     #[error("Cannot construct TOTP user domain information: {}", source)]
     UserDomainBuilder {
+        /// The error source
         #[from]
         source: token_v3::UserDomainStructBuilderError,
     },
@@ -68,12 +70,13 @@ pub enum TotpError {
     /// Totp builder
     #[error("Cannot construct TOTP auth information: {}", source)]
     TotpBuilder {
+        /// The error source
         #[from]
         source: token_v3::TotpBuilderError,
     },
 }
 
-/// Fill Auth Request Identity with MFA passcode
+/// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with MFA passcode
 pub fn fill_identity(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,

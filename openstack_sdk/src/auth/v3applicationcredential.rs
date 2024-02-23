@@ -62,23 +62,35 @@ use crate::config;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum ApplicationCredentialError {
+    /// Missing secret
     #[error("Application credential secret is missing")]
     MissingSecret,
+
+    /// Missing ID and Name
     #[error("Application credential id or name must be present")]
     MissingIdOrName,
+
+    /// Missing User info
     #[error("User name/id is required when application credential name is used")]
     MissingUser,
 
+    /// `applicationcredential` part build erro
     #[error("Cannot construct aplication credential data: {}", source)]
     ApplicationCredentialBuilder {
+        /// The error source
         #[from]
         source: token_v3::ApplicationCredentialBuilderError,
     },
+
+    /// `user` part build error
     #[error("Cannot construct aplication credential user data: {}", source)]
     UserBuilder {
+        /// The request source
         #[from]
         source: token_v3::ApplicationCredentialUserBuilderError,
     },
+
+    /// `user.domain` part build error
     #[error("Cannot construct aplication credential user domain data: {}", source)]
     UserDomainBuilder {
         #[from]
@@ -86,7 +98,7 @@ pub enum ApplicationCredentialError {
     },
 }
 
-/// Fill Auth Request Identity with application credential
+/// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with application credential
 pub fn fill_identity(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,

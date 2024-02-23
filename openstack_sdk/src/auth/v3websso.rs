@@ -73,6 +73,7 @@ pub enum WebSsoError {
     /// Federation Auth builder
     #[error("error preparing auth request: {}", source)]
     FederationSsoBuilder {
+        /// The error source
         #[from]
         source: fed_sso_get::RequestBuilderError,
     },
@@ -80,18 +81,23 @@ pub enum WebSsoError {
     /// Federation Auth SSO with IDP and Protocol builder
     #[error("error preparing auth request: {}", source)]
     FederationIdpSsoAuth {
+        /// The error source
         #[from]
         source: fed_idp_sso_get::RequestBuilderError,
     },
 
+    /// IO communication error
     #[error("`IO` error: {}", source)]
     IO {
+        /// The error source
         #[from]
         source: IoError,
     },
 
+    /// Thread join error
     #[error("`Join` error: {}", source)]
     Join {
+        /// The error source
         #[from]
         source: tokio::task::JoinError,
     },

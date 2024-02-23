@@ -279,7 +279,7 @@ impl AsyncOpenStack {
                 let scope = match &auth.auth_info {
                     Some(info) => {
                         if info.token.application_credential.is_some() {
-                            authtoken::AuthorizationScope::Unscoped
+                            authtoken::AuthTokenScope::Unscoped
                         } else {
                             auth.get_scope()
                         }
@@ -305,13 +305,13 @@ impl AsyncOpenStack {
     /// Authorize against the cloud using provided credentials and get the session token
     pub async fn authorize(
         &mut self,
-        scope: Option<authtoken::AuthorizationScope>,
+        scope: Option<authtoken::AuthTokenScope>,
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError>
 where {
         let requested_scope = scope.map_or_else(
-            || authtoken::AuthorizationScope::try_from(&self.config),
+            || authtoken::AuthTokenScope::try_from(&self.config),
             |v| Ok(v.clone()),
         )?;
 
@@ -348,7 +348,7 @@ where {
                             authtoken::build_identity_data_from_config(&self.config, interactive)?;
                         let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
                             &identity,
-                            &authtoken::AuthorizationScope::Unscoped,
+                            &authtoken::AuthTokenScope::Unscoped,
                         )?;
                         rsp = auth_ep.raw_query_async(self).await?;
                     }
@@ -394,7 +394,7 @@ where {
                         // Get the token info (for the expiration)
                         let token_info = self.fetch_token_info(token_auth.token.clone()).await?;
                         token_auth.auth_info = Some(token_info.clone());
-                        let scope = authtoken::AuthorizationScope::from(&token_info);
+                        let scope = authtoken::AuthTokenScope::from(&token_info);
 
                         // Save unscoped token in the cache
                         self.state.set_scope_auth(&scope, &token_auth);

@@ -45,6 +45,7 @@ pub enum TokenError {
     /// Token Identity builder
     #[error("Cannot construct token auth information from config: {}", source)]
     TokenBuilder {
+        /// The error source
         #[from]
         source: token_v3::TokenBuilderError,
     },
@@ -52,12 +53,13 @@ pub enum TokenError {
     /// Identity builder
     #[error("Cannot construct identity auth information from config: {}", source)]
     Identity {
+        /// The error source
         #[from]
         source: token_v3::IdentityBuilderError,
     },
 }
 
-/// Fill Auth Request Identity with user token
+/// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with user token
 pub fn fill_identity(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
@@ -71,7 +73,7 @@ pub fn fill_identity(
     Ok(())
 }
 
-/// Build Auth `Identity` from existing `Auth` (use token)
+/// Build Auth [`Identity`][`token_v3::Identity`] from existing [`AuthToken`] using current token
 impl TryFrom<&AuthToken> for token_v3::Identity<'_> {
     type Error = TokenError;
 
@@ -97,9 +99,7 @@ mod tests {
 
     #[test]
     fn test_fill_raise_no_token() {
-        let config = config::Auth {
-            ..Default::default()
-        };
+        let config = config::Auth::default();
         let mut identity = token_v3::IdentityBuilder::default();
         let res = fill_identity(&mut identity, &config, false);
         match res.unwrap_err() {

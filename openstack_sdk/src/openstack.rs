@@ -198,7 +198,7 @@ impl OpenStack {
                 let scope = match &auth.auth_info {
                     Some(info) => {
                         if info.token.application_credential.is_some() {
-                            authtoken::AuthorizationScope::Unscoped
+                            authtoken::AuthTokenScope::Unscoped
                         } else {
                             auth.get_scope()
                         }
@@ -224,12 +224,11 @@ impl OpenStack {
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize(
         &mut self,
-        scope: Option<authtoken::AuthorizationScope>,
+        scope: Option<authtoken::AuthTokenScope>,
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError> {
-        let requested_scope =
-            scope.unwrap_or(authtoken::AuthorizationScope::try_from(&self.config)?);
+        let requested_scope = scope.unwrap_or(authtoken::AuthTokenScope::try_from(&self.config)?);
 
         if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
             // Valid authorization is already available and no renewal is required
@@ -265,7 +264,7 @@ impl OpenStack {
                             authtoken::build_identity_data_from_config(&self.config, interactive)?;
                         let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
                             &identity,
-                            &authtoken::AuthorizationScope::Unscoped,
+                            &authtoken::AuthTokenScope::Unscoped,
                         )?;
                         rsp = auth_ep.raw_query(self)?;
                     }

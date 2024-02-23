@@ -17,108 +17,118 @@
 use std::any;
 use thiserror::Error;
 
-use futures::io::Error as IoError;
-
 use crate::api;
-use crate::auth::{authtoken::AuthTokenError, AuthError};
+use crate::auth::{
+    authtoken::AuthTokenError, authtoken_scope::AuthTokenScopeError, v3websso::WebSsoError,
+    AuthError,
+};
 use crate::catalog::CatalogError;
 use crate::config::ConfigError;
 
+/// Rest errors that may happen during API communication
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum RestError {
+    /// Auth error
     #[error("error setting auth header: {}", source)]
     AuthError {
+        /// The source of the error.
         #[from]
         source: AuthError,
     },
 
+    /// API communication error
     #[error("communication with openstack: {}", source)]
     Communication {
+        /// The source of the error.
         #[from]
         source: reqwest::Error,
     },
 
+    /// HTTP error
     #[error("`http` error: {}", source)]
     Http {
+        /// The source of the error.
         #[from]
         source: http::Error,
     },
-    #[error("`IO` error: {}", source)]
-    IO {
-        #[from]
-        source: IoError,
-    },
-    #[error("`Catalog` error: {}", source)]
-    Catalog {
-        #[from]
-        source: CatalogError,
-    },
 }
 
+/// OpenStack Client error
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum OpenStackError {
+    /// URL parse error
     #[error("failed to parse url: {}", source)]
     UrlParse {
+        /// The source of the error.
         #[from]
         source: url::ParseError,
     },
 
+    /// Authentication error
     #[error("error setting auth header: {}", source)]
     AuthError {
+        /// The source of the error.
         #[from]
         source: AuthError,
     },
 
-    #[error("error setting auth header: {}", source)]
-    AuthTokenError {
-        #[from]
-        source: AuthTokenError,
-    },
-
+    /// API Communication error
     #[error("communication with cloud: {}", source)]
     Communication {
+        /// The source of the error.
         #[from]
         source: reqwest::Error,
     },
 
+    /// HTTP error
     #[error("openstack HTTP error: {}", status)]
     Http { status: reqwest::StatusCode },
 
+    /// No response
     #[error("no response from API")]
     NoResponse {},
 
+    /// Json deserialization error
     #[error("could not parse {} data from JSON: {}", typename, source)]
     DataType {
+        /// The source of the error.
         #[source]
         source: serde_json::Error,
+        /// type name that could not be parsed
         typename: &'static str,
     },
 
+    /// API error
     #[error("api error: {}", source)]
     Api {
+        /// The source of the error.
         #[from]
         source: api::ApiError<RestError>,
     },
-    #[error("config error: {}", msg)]
-    Config { msg: String },
 
+    /// Service catalog error
     #[error("service_catalog error: {}", source)]
     Catalog {
+        /// The source of the error.
         #[from]
+        /// error source
         source: CatalogError,
     },
 
     #[error("configuration error: {}", source)]
     ConfigError {
+        /// The source of the error.
         #[from]
         source: ConfigError,
     },
 
+    /// Service version discovery error
     #[error("Endpoint version discovery error: {}", msg)]
     Discovery { msg: String },
 
+    /// Interactive mode required
     #[error(
         "Interactive mode is required but not available (running `echo foo | osc`?). {}",
         msg
@@ -133,16 +143,7 @@ pub enum OpenStackError {
         source: serde_json::Error,
     },
 
-    /// WebSSO auth errors
-    ///
-    /// this is necessary since we directly invoke v3websso in the connection
-    #[error("WebSSO auth error: {}", source)]
-    WebSso {
-        #[from]
-        /// error source
-        source: crate::auth::v3websso::WebSsoError,
-    },
-
+    /// Any other error
     #[error(transparent)]
     Other(#[from] anyhow::Error),
 }
@@ -160,6 +161,31 @@ impl OpenStackError {
         OpenStackError::DataType {
             source,
             typename: any::type_name::<T>(),
+        }
+    }
+}
+
+// Explicitly implement From to easier propagate nested errors
+impl From<AuthTokenError> for OpenStackError {
+    fn from(source: AuthTokenError) -> Self {
+        Self::AuthError {
+            source: AuthError::AuthToken { source },
+        }
+    }
+}
+
+impl From<AuthTokenScopeError> for OpenStackError {
+    fn from(source: AuthTokenScopeError) -> Self {
+        Self::AuthError {
+            source: source.into(),
+        }
+    }
+}
+
+impl From<WebSsoError> for OpenStackError {
+    fn from(source: WebSsoError) -> Self {
+        Self::AuthError {
+            source: source.into(),
         }
     }
 }

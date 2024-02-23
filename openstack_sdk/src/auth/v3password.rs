@@ -46,28 +46,40 @@ use crate::config;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum PasswordError {
+    /// Password missing
     #[error("User password is missing")]
     MissingPassword,
+
+    /// User name/id missing
     #[error("User id/name is missing")]
     MissingUserId,
+
+    /// `password` part build error
     #[error("Cannot construct password auth information from config: {}", source)]
     PasswordBuilder {
+        /// The error source
         #[from]
         source: token_v3::PasswordBuilderError,
     },
+
+    /// `user` part build error
     #[error("Cannot construct user auth information from config: {}", source)]
     UserBuilder {
+        /// The error source
         #[from]
         source: token_v3::UserBuilderError,
     },
+
+    /// `user.domain` part build error
     #[error("Cannot construct user domain information from config: {}", source)]
     UserDomainBuilder {
+        /// The error source
         #[from]
         source: token_v3::DomainBuilderError,
     },
 }
 
-/// Fill Auth Request Identity with user password data
+/// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with user password data
 pub fn fill_identity(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,

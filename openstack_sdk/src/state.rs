@@ -26,7 +26,7 @@ use std::path::PathBuf;
 use tracing::{trace, warn};
 
 use crate::auth::{
-    authtoken::{AuthToken, AuthorizationScope},
+    authtoken::{AuthToken, AuthTokenScope},
     AuthState,
 };
 use thiserror::Error;
@@ -53,7 +53,7 @@ pub enum StateError {
 
 /// A HashMap of Scope to Token
 #[derive(Clone, Default, Deserialize, Serialize, Debug)]
-pub(crate) struct ScopeAuths(HashMap<AuthorizationScope, AuthToken>);
+pub(crate) struct ScopeAuths(HashMap<AuthTokenScope, AuthToken>);
 
 impl ScopeAuths {
     /// Filter out all invalid auth data keeping only valid ones
@@ -65,7 +65,7 @@ impl ScopeAuths {
     /// Find valid unscoped authz
     fn find_valid_unscoped_auth(&self) -> Option<AuthToken> {
         for (k, v) in self.0.iter() {
-            if let AuthorizationScope::Unscoped = k {
+            if let AuthTokenScope::Unscoped = k {
                 if let AuthState::Valid = v.get_state() {
                     return Some(v.clone());
                 }
@@ -124,7 +124,7 @@ impl State {
     }
 
     /// Set authz into the state
-    pub fn set_scope_auth(&mut self, scope: &AuthorizationScope, authz: &AuthToken) {
+    pub fn set_scope_auth(&mut self, scope: &AuthTokenScope, authz: &AuthToken) {
         self.auth_state.filter_invalid_auths();
         self.auth_state.0.insert(scope.clone(), authz.clone());
         if self.auth_cache_enabled {
@@ -133,7 +133,7 @@ impl State {
     }
 
     /// Get authz for requested scope from the state
-    pub fn get_scope_auth(&mut self, scope: &AuthorizationScope) -> Option<AuthToken> {
+    pub fn get_scope_auth(&mut self, scope: &AuthTokenScope) -> Option<AuthToken> {
         trace!("Get authz information for {:?}", scope);
         self.auth_state.filter_invalid_auths();
         match self.auth_state.0.get(scope) {
@@ -177,14 +177,14 @@ impl State {
     fn find_scope_authz(
         &self,
         state: &ScopeAuths,
-        scope: &AuthorizationScope,
-    ) -> Option<(AuthorizationScope, AuthToken)> {
+        scope: &AuthTokenScope,
+    ) -> Option<(AuthTokenScope, AuthToken)> {
         trace!("Searching requested scope authz in state");
         for (k, v) in state.0.iter() {
             trace!("Analyse known auth for scope {:?}", k);
             match scope {
-                AuthorizationScope::Project(project) => {
-                    if let AuthorizationScope::Project(cached) = k {
+                AuthTokenScope::Project(project) => {
+                    if let AuthTokenScope::Project(cached) = k {
                         // Scope type matches
                         if project.id == cached.id {
                             // Match by ID is definite
@@ -205,8 +205,8 @@ impl State {
                         }
                     }
                 }
-                AuthorizationScope::Domain(domain) => {
-                    if let AuthorizationScope::Domain(cached) = k {
+                AuthTokenScope::Domain(domain) => {
+                    if let AuthTokenScope::Domain(cached) = k {
                         // Scope type matches
                         if domain.id == cached.id
                             || (domain.id.is_none() && domain.name == cached.name)
@@ -215,8 +215,8 @@ impl State {
                         }
                     }
                 }
-                AuthorizationScope::Unscoped => {
-                    if let AuthorizationScope::Unscoped = k {
+                AuthTokenScope::Unscoped => {
+                    if let AuthTokenScope::Unscoped = k {
                         return Some((k.clone(), v.clone()));
                     }
                 }
@@ -269,7 +269,7 @@ impl State {
     }
 
     /// Save auth state to the FS
-    pub fn save_scope_auth_to_file(&self, scope: &AuthorizationScope, data: &AuthToken) {
+    pub fn save_scope_auth_to_file(&self, scope: &AuthTokenScope, data: &AuthToken) {
         let fname = self.get_auth_state_filename(self.auth_hash);
         let mut state = self
             .load_auth_state(Some(fname.clone()))
