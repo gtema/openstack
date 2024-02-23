@@ -2211,7 +2211,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2220,11 +2220,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2294,7 +2294,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2303,11 +2303,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2377,7 +2377,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2386,11 +2386,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2459,7 +2459,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2468,11 +2468,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2539,7 +2539,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2548,11 +2548,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2619,7 +2619,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2628,11 +2628,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2698,7 +2698,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2707,11 +2707,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2778,7 +2778,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2787,11 +2787,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -2857,7 +2857,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--networks <JSON>|--auto-networks|--none-networks>`
+**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
@@ -2866,11 +2866,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>`
 * `--auto-networks`
 
   Possible values: `true`, `false`
 
+* `--networks <JSON>`
 * `--none-networks`
 
   Possible values: `true`, `false`
@@ -6739,15 +6739,11 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
   Possible values: `true`, `false`
 
-* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
-
-  Possible values: `true`, `false`
-
 * `--ignore-lockout-failure-attempts <IGNORE_LOCKOUT_FAILURE_ATTEMPTS>`
 
   Possible values: `true`, `false`
 
-* `--lock-password <LOCK_PASSWORD>`
+* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
 
   Possible values: `true`, `false`
 
@@ -6755,11 +6751,15 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
   Possible values: `true`, `false`
 
-* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--lock-password <LOCK_PASSWORD>`
+
+  Possible values: `true`, `false`
+
 * `--multi-factor-auth-enabled <MULTI_FACTOR_AUTH_ENABLED>`
 
   Possible values: `true`, `false`
 
+* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
 
 
 
@@ -6891,15 +6891,11 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
   Possible values: `true`, `false`
 
-* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
-
-  Possible values: `true`, `false`
-
 * `--ignore-lockout-failure-attempts <IGNORE_LOCKOUT_FAILURE_ATTEMPTS>`
 
   Possible values: `true`, `false`
 
-* `--lock-password <LOCK_PASSWORD>`
+* `--ignore-password-expiry <IGNORE_PASSWORD_EXPIRY>`
 
   Possible values: `true`, `false`
 
@@ -6907,11 +6903,15 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
   Possible values: `true`, `false`
 
-* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--lock-password <LOCK_PASSWORD>`
+
+  Possible values: `true`, `false`
+
 * `--multi-factor-auth-enabled <MULTI_FACTOR_AUTH_ENABLED>`
 
   Possible values: `true`, `false`
 
+* `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
 
 
 
@@ -8102,12 +8102,12 @@ Error response codes: 400, 401
   Possible values: `true`, `false`
 
 * `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
-* `--network-id <NETWORK_ID>`
 * `--enable-snat <ENABLE_SNAT>`
 
   Possible values: `true`, `false`
 
 * `--external-fixed-ips <JSON>`
+* `--network-id <NETWORK_ID>`
 * `--ha <HA>` — `true` indicates a highly-available router. It is available when `l3-ha` extension is enabled
 
   Possible values: `true`, `false`

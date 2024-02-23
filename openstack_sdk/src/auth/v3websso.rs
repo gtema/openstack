@@ -27,7 +27,10 @@ use std::time::Duration;
 
 use tracing::{error, info, trace, warn};
 
+use thiserror::Error;
+
 use bytes::Bytes;
+use futures::io::Error as IoError;
 use http_body_util::{combinators::BoxBody, BodyExt, Empty, Full};
 use hyper::server::conn::http1;
 use hyper::service::service_fn;
@@ -47,9 +50,62 @@ use crate::api::RestEndpoint;
 use crate::auth::authtoken::{AuthToken, AuthTokenError};
 use crate::config;
 
+/// WebSSO related errors
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum WebSsoError {
+    /// Auth data is missing
+    #[error("Auth data is missing")]
+    MissingAuthData,
+
+    /// Protocol is missing
+    #[error("Federation protocol information is missing")]
+    MissingProtocol,
+
+    /// Callback did not returned a token
+    #[error("WebSSO callback didn't return a token")]
+    CallbackNoToken,
+
+    /// Some failure in the SSO flow
+    #[error("WebSSO authentication failed")]
+    CallbackFailed,
+
+    /// Federation Auth builder
+    #[error("error preparing auth request: {}", source)]
+    FederationSsoBuilder {
+        /// The error source
+        #[from]
+        source: fed_sso_get::RequestBuilderError,
+    },
+
+    /// Federation Auth SSO with IDP and Protocol builder
+    #[error("error preparing auth request: {}", source)]
+    FederationIdpSsoAuth {
+        /// The error source
+        #[from]
+        source: fed_idp_sso_get::RequestBuilderError,
+    },
+
+    /// IO communication error
+    #[error("`IO` error: {}", source)]
+    IO {
+        /// The error source
+        #[from]
+        source: IoError,
+    },
+
+    /// Thread join error
+    #[error("`Join` error: {}", source)]
+    Join {
+        /// The error source
+        #[from]
+        source: tokio::task::JoinError,
+    },
+}
+
 /// Get URL as a string for the WebSSO authentication by constructing the [`RestEndpoint`] and
 /// returning resulting `endpoint`
-pub fn get_auth_url(config: &config::CloudConfig) -> Result<Cow<'static, str>, AuthTokenError> {
+pub fn get_auth_url(config: &config::CloudConfig) -> Result<Cow<'static, str>, WebSsoError> {
     if let Some(auth) = &config.auth {
         if let Some(identity_provider) = &auth.identity_provider {
             let mut ep = fed_idp_sso_get::RequestBuilder::default();
@@ -57,7 +113,7 @@ pub fn get_auth_url(config: &config::CloudConfig) -> Result<Cow<'static, str>, A
             if let Some(protocol) = &auth.protocol {
                 ep.protocol_id(protocol);
             } else {
-                return Err(AuthTokenError::MissingFederationProtocol);
+                return Err(WebSsoError::MissingProtocol);
             }
             return Ok(ep.build()?.endpoint());
         } else {
@@ -65,12 +121,12 @@ pub fn get_auth_url(config: &config::CloudConfig) -> Result<Cow<'static, str>, A
             if let Some(protocol) = &auth.protocol {
                 ep.protocol_id(protocol);
             } else {
-                return Err(AuthTokenError::MissingFederationProtocol);
+                return Err(WebSsoError::MissingProtocol);
             }
             return Ok(ep.build()?.endpoint());
         }
     }
-    Err(AuthTokenError::MissingAuthData)
+    Err(WebSsoError::MissingAuthData)
 }
 
 /// Return [`AuthToken`] obtained using the WebSSO (Keystone behind mod_auth_oidc)
@@ -87,10 +143,7 @@ pub async fn get_token_auth(url: &mut Url) -> Result<AuthToken, AuthTokenError> 
 /// - start callback server
 /// - open browser pointing to the SSO url
 /// - wait for the response with the OpenStack token
-async fn get_token(
-    url: &mut Url,
-    socket_addr: Option<SocketAddr>,
-) -> Result<String, AuthTokenError> {
+async fn get_token(url: &mut Url, socket_addr: Option<SocketAddr>) -> Result<String, WebSsoError> {
     url.set_query(Some("origin=http://localhost:8050/callback"));
     let confirmation = Confirm::new()
         .with_prompt(format!(
@@ -125,9 +178,9 @@ async fn get_token(
         let _res = websso_handle.await?;
 
         let guard = state.lock().expect("poisoned guard");
-        guard.clone().ok_or(AuthTokenError::WebSSONoToken)
+        guard.clone().ok_or(WebSsoError::CallbackNoToken)
     } else {
-        Err(AuthTokenError::WebSSOFailed)
+        Err(WebSsoError::CallbackFailed)
     }
 }
 
@@ -136,7 +189,7 @@ async fn websso_callback_server(
     addr: SocketAddr,
     state: Arc<Mutex<Option<String>>>,
     cancel_token: CancellationToken,
-) -> Result<(), AuthTokenError> {
+) -> Result<(), WebSsoError> {
     let listener = TcpListener::bind(addr).await?;
     info!("Starting webserver to receive SSO callback");
     // Wait maximum 2 minute for auth processing

@@ -190,7 +190,22 @@ impl OpenStack {
         self.auth = auth;
         if !skip_cache_update {
             if let Auth::AuthToken(auth) = &self.auth {
-                self.state.set_scope_auth(&auth.get_scope(), auth);
+                // For app creds we shuld save auth as unscoped since:
+                // - on request it is disallowed to specify scope
+                // - response contain fixed scope
+                // With this it is not possible to find auth in the cache if we use the real
+                // scope
+                let scope = match &auth.auth_info {
+                    Some(info) => {
+                        if info.token.application_credential.is_some() {
+                            authtoken::AuthTokenScope::Unscoped
+                        } else {
+                            auth.get_scope()
+                        }
+                    }
+                    _ => auth.get_scope(),
+                };
+                self.state.set_scope_auth(&scope, auth);
             }
         }
         self
@@ -209,12 +224,11 @@ impl OpenStack {
     /// Authorize against the cloud using provided credentials and get the session token
     pub fn authorize(
         &mut self,
-        scope: Option<authtoken::AuthorizationScope>,
+        scope: Option<authtoken::AuthTokenScope>,
         interactive: bool,
         renew_auth: bool,
     ) -> Result<(), OpenStackError> {
-        let requested_scope =
-            scope.unwrap_or(authtoken::AuthorizationScope::try_from(&self.config)?);
+        let requested_scope = scope.unwrap_or(authtoken::AuthTokenScope::try_from(&self.config)?);
 
         if let (Some(auth), false) = (self.state.get_scope_auth(&requested_scope), renew_auth) {
             // Valid authorization is already available and no renewal is required
@@ -223,8 +237,17 @@ impl OpenStack {
         } else {
             // No valid authorization data is available in the state or
             // renewal is requested
+            let auth_type = AuthType::from_cloud_config(&self.config)?;
+            let mut force_new_auth = renew_auth;
+            if let AuthType::V3ApplicationCredential = auth_type {
+                // application_credentials token can not be used to get new token without again
+                // supplying application credentials (bug in Keystone?)
+                // So for AppCred we just force a brand new auth
+                force_new_auth = true;
+            }
             let mut rsp;
-            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), renew_auth) {
+            if let (Some(available_auth), false) = (self.state.get_any_valid_auth(), force_new_auth)
+            {
                 // State contain valid authentication for different
                 // scope/unscoped. It is possible to request new authz
                 // using this other auth
@@ -236,6 +259,15 @@ impl OpenStack {
                 trace!("No Auth already available. Proceeding with new login");
 
                 match AuthType::from_cloud_config(&self.config)? {
+                    AuthType::V3ApplicationCredential => {
+                        let identity =
+                            authtoken::build_identity_data_from_config(&self.config, interactive)?;
+                        let auth_ep = authtoken::build_auth_request_with_identity_and_scope(
+                            &identity,
+                            &authtoken::AuthTokenScope::Unscoped,
+                        )?;
+                        rsp = auth_ep.raw_query(self)?;
+                    }
                     AuthType::V3Password
                     | AuthType::V3Token
                     | AuthType::V3Totp

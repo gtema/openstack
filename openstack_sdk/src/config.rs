@@ -125,6 +125,13 @@ pub(crate) struct Auth {
     pub(crate) protocol: Option<String>,
     /// `Federation` identity provider
     pub(crate) identity_provider: Option<String>,
+
+    /// `Application Credential` ID
+    pub(crate) application_credential_id: Option<String>,
+    /// `Application Credential` Name
+    pub(crate) application_credential_name: Option<String>,
+    /// `Application Credential` Secret
+    pub(crate) application_credential_secret: Option<String>,
 }
 
 impl fmt::Debug for Auth {
@@ -142,6 +149,15 @@ impl fmt::Debug for Auth {
             .field("user_domain_name", &self.user_domain_name)
             .field("protocol", &self.protocol)
             .field("identity_provider", &self.identity_provider)
+            .field("application_credential_id", &self.application_credential_id)
+            .field(
+                "application_credential_name",
+                &self.application_credential_name,
+            )
+            .field(
+                "application_credential_secret",
+                &self.application_credential_secret,
+            )
             .finish()
     }
 }
@@ -192,6 +208,12 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.protocol {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.application_credential_name {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.application_credential_id {
             data.hash(&mut s);
         }
     }
@@ -251,6 +273,22 @@ impl CloudConfig {
             }
             if auth.identity_provider.is_none() && update_auth.identity_provider.is_some() {
                 auth.identity_provider = update_auth.identity_provider.clone();
+            }
+            if auth.application_credential_id.is_none()
+                && update_auth.application_credential_id.is_some()
+            {
+                auth.application_credential_id = update_auth.application_credential_id.clone();
+            }
+            if auth.application_credential_name.is_none()
+                && update_auth.application_credential_name.is_some()
+            {
+                auth.application_credential_name = update_auth.application_credential_name.clone();
+            }
+            if auth.application_credential_secret.is_none()
+                && update_auth.application_credential_secret.is_some()
+            {
+                auth.application_credential_secret =
+                    update_auth.application_credential_secret.clone();
             }
         }
         if self.auth_type.is_none() && update.auth_type.is_some() {

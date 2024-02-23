@@ -27,47 +27,53 @@ use tracing::error;
 use thiserror::Error;
 
 pub mod authtoken;
+pub mod authtoken_scope;
 mod authtoken_utils;
+pub mod v3applicationcredential;
 pub mod v3password;
 pub mod v3token;
 pub mod v3totp;
 pub mod v3websso;
 
 use authtoken::{AuthToken, AuthTokenError};
+use authtoken_scope::AuthTokenScopeError;
+use v3websso::WebSsoError;
 
 /// Authentication error
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum AuthError {
+    /// Header error
     #[error("header value error: {}", source)]
     HeaderValue {
-        #[from]
         /// Error source
+        #[from]
         source: http::header::InvalidHeaderValue,
     },
 
-    #[error("Invalid auth_url: {}", source)]
-    InvalidAuthUrl {
-        #[from]
-        /// Error source
-        source: url::ParseError,
-    },
-
+    /// AuthToken error
     #[error("AuthToken error: {}", source)]
     AuthToken {
-        #[from]
         /// Error source
+        #[from]
         source: AuthTokenError,
     },
+}
 
-    #[error("Cannot construct auth from config: {}", msg)]
-    Config {
-        /// Error source
-        msg: String,
-    },
-
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
+// Explicitly implement From to easier propagate nested errors
+impl From<AuthTokenScopeError> for AuthError {
+    fn from(source: AuthTokenScopeError) -> Self {
+        Self::AuthToken {
+            source: AuthTokenError::Scope { source },
+        }
+    }
+}
+impl From<WebSsoError> for AuthError {
+    fn from(source: v3websso::WebSsoError) -> Self {
+        Self::AuthToken {
+            source: source.into(),
+        }
+    }
 }
 
 /// Authentication state enum
@@ -104,5 +110,45 @@ impl Auth {
         }
 
         Ok(headers)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::types::identity::v3::{AuthResponse, AuthToken};
+
+    #[test]
+    fn test_auth_validity_unset() {
+        let auth = super::AuthToken::default();
+        assert!(matches!(auth.get_state(), AuthState::Unset));
+    }
+
+    #[test]
+    fn test_auth_validity_expired() {
+        let auth = super::AuthToken {
+            token: "".to_string(),
+            auth_info: Some(AuthResponse {
+                token: AuthToken {
+                    expires_at: chrono::offset::Local::now() - chrono::Duration::days(1),
+                    ..Default::default()
+                },
+            }),
+        };
+        assert!(matches!(auth.get_state(), AuthState::Expired));
+    }
+
+    #[test]
+    fn test_auth_validity_valid() {
+        let auth = super::AuthToken {
+            token: "".to_string(),
+            auth_info: Some(AuthResponse {
+                token: AuthToken {
+                    expires_at: chrono::offset::Local::now() + chrono::Duration::days(1),
+                    ..Default::default()
+                },
+            }),
+        };
+        assert!(matches!(auth.get_state(), AuthState::Valid));
     }
 }

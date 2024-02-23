@@ -18,181 +18,134 @@ use std::fmt;
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use futures::io::Error as IoError;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tracing::{error, trace};
 
-use crate::api::identity::v3::auth::os_federation::{
-    identity_provider::protocol::websso::get as fed_idp_sso_get, websso::get as fed_sso_get,
-};
 use crate::api::identity::v3::auth::token::create as token_v3;
 use crate::api::identity::v3::auth::token::get as token_v3_info;
 use crate::api::RestEndpoint;
-use crate::auth::{v3password, v3token, v3totp, AuthState};
+use crate::auth::{
+    authtoken_scope, v3applicationcredential, v3password, v3token, v3totp, v3websso, AuthState,
+};
 use crate::config;
-use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Domain, Project};
+use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse};
 
+pub use crate::auth::authtoken::authtoken_scope::AuthTokenScope;
+
+/// AuthToken (X-Auth-Token) based auth errors
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum AuthTokenError {
+    /// Header error
     #[error("header value error: {}", source)]
     HeaderValue {
         #[from]
         source: http::header::InvalidHeaderValue,
     },
 
-    #[error("Invalid auth_url: {}", source)]
-    InvalidAuthUrl {
-        #[from]
-        source: url::ParseError,
-    },
-
-    #[error("Cannot construct auth from config: {}", msg)]
-    Config { msg: String },
-
+    /// Unsupported identity method
     #[error(
         "AuthType `{}` is not a supported type for authenticating towards the cloud",
         auth_type
     )]
     IdentityMethod { auth_type: String },
 
+    /// Unsupported identity method in sync mode
     #[error(
         "AuthType `{}` is not a supported type for authenticating towards the cloud with sync interface",
         auth_type
     )]
     IdentityMethodSync { auth_type: String },
 
-    #[error("Cannot determine authorization scope from config")]
-    MissingScope,
+    /// Auth data is missing
     #[error("Auth data is missing")]
     MissingAuthData,
+
+    /// auth_url is missing
     #[error("Auth URL is missing")]
     MissingAuthUrl,
-    #[error("User password is missing")]
-    MissingPassword,
-    #[error("User id/name is missing")]
-    MissingUserId,
-    #[error("Auth token is missing")]
-    MissingToken,
-    #[error("MFA passcode is missing")]
-    MissingPasscode,
-    #[error("Federation protocol information is missing")]
-    MissingFederationProtocol,
 
-    #[error("Cannot construct password auth information from config: {}", source)]
-    AuthRequestIdentityPassword {
-        #[from]
-        source: token_v3::PasswordBuilderError,
-    },
-    #[error("Cannot construct token auth information from config: {}", source)]
-    AuthRequestIdentityToken {
-        #[from]
-        source: token_v3::TokenBuilderError,
-    },
-    #[error("Cannot construct user auth information from config: {}", source)]
-    AuthRequestIdentityUser {
-        #[from]
-        source: token_v3::UserBuilderError,
-    },
-    #[error("Cannot construct user domain information from config: {}", source)]
-    AuthRequestIdentityUserDomain {
-        #[from]
-        source: token_v3::DomainBuilderError,
-    },
-    #[error("Cannot construct TOTP user information: {}", source)]
-    AuthRequestIdentityTotpUser {
-        #[from]
-        source: token_v3::TotpUserBuilderError,
-    },
-    #[error("Cannot construct TOTP user domain information: {}", source)]
-    AuthRequestIdentityTotpUserDomain {
-        #[from]
-        source: token_v3::UserDomainStructBuilderError,
-    },
-    #[error("Cannot construct TOTP auth information: {}", source)]
-    AuthRequestIdentityTotp {
-        #[from]
-        source: token_v3::TotpBuilderError,
-    },
+    /// `Identity` request part build error
     #[error("Cannot construct identity auth information from config: {}", source)]
     AuthRequestIdentity {
+        /// The error source
         #[from]
         source: token_v3::IdentityBuilderError,
     },
-    #[error("Cannot construct project scope information from config: {}", source)]
-    AuthRequestScopeProject {
-        #[from]
-        source: token_v3::ProjectBuilderError,
-    },
-    #[error(
-        "Cannot construct project scope domain information from config: {}",
-        source
-    )]
-    AuthRequestScopeProjectDomain {
-        #[from]
-        source: token_v3::ProjectDomainBuilderError,
-    },
-    #[error(
-        "Cannot construct project scope domain information from config: {}",
-        source
-    )]
-    AuthRequestScopeDomain {
-        #[from]
-        source: token_v3::ScopeDomainBuilderError,
-    },
-    #[error("Cannot construct auth scope information from config: {}", source)]
-    AuthRequestScope {
-        #[from]
-        source: token_v3::ScopeBuilderError,
-    },
+
+    /// `Auth` request part build error
     #[error("error preparing auth request: {}", source)]
     AuthRequestAuth {
+        /// The error source
         #[from]
         source: token_v3::AuthBuilderError,
     },
+
+    /// Auth request build error
     #[error("error preparing auth request: {}", source)]
     AuthRequest {
+        /// The error source
         #[from]
         source: token_v3::RequestBuilderError,
     },
-    #[error("error preparing auth request: {}", source)]
-    AuthRequestFederationSso {
-        #[from]
-        source: fed_sso_get::RequestBuilderError,
-    },
-    #[error("error preparing auth request: {}", source)]
-    RequestFederationIdpSsoAuth {
-        #[from]
-        source: fed_idp_sso_get::RequestBuilderError,
-    },
+
+    /// Token `Info` request build error
     #[error("error preparing token info request: {}", source)]
     InfoRequest {
+        /// The error source
         #[from]
         source: token_v3_info::RequestBuilderError,
     },
 
-    #[error("WebSSO callback didn't return a token")]
-    WebSSONoToken,
-
-    #[error("WebSSO authentication failed")]
-    WebSSOFailed,
-
-    #[error("`IO` error: {}", source)]
-    IO {
+    /// Token Scope error
+    #[error("Scope error: {}", source)]
+    Scope {
+        /// The error source
         #[from]
-        source: IoError,
+        source: authtoken_scope::AuthTokenScopeError,
     },
 
-    #[error("`Join` error: {}", source)]
-    Join {
+    /// ApplicationCredentials Identity error
+    #[error("ApplicationCredential authentication error: {}", source)]
+    ApplicationCredential {
+        /// The error source
         #[from]
-        source: tokio::task::JoinError,
+        source: v3applicationcredential::ApplicationCredentialError,
     },
 
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
+    /// Password Identity error
+    #[error("Password based authentication error: {}", source)]
+    Password {
+        /// The error source
+        #[from]
+        source: v3password::PasswordError,
+    },
+
+    /// Token Identity error
+    #[error("Token based authentication error: {}", source)]
+    Token {
+        /// The error source
+        #[from]
+        source: v3token::TokenError,
+    },
+
+    /// TOTP Idetinty error
+    #[error("Password based authentication error: {}", source)]
+    Totp {
+        /// The error source
+        #[from]
+        source: v3totp::TotpError,
+    },
+
+    /// WebSSO Identity error
+    #[error("SSO based authentication error: {}", source)]
+    WebSso {
+        /// The error source
+        #[from]
+        source: v3websso::WebSsoError,
+    },
 }
 
 type AuthResult<T> = Result<T, AuthTokenError>;
@@ -200,7 +153,9 @@ type AuthResult<T> = Result<T, AuthTokenError>;
 /// OpenStack AuthToken authorization structure
 #[derive(Clone, Default, Deserialize, Serialize)]
 pub struct AuthToken {
+    /// Token itself
     pub(crate) token: String,
+    /// Auth info reported by the server
     pub(crate) auth_info: Option<AuthResponse>,
 }
 
@@ -242,26 +197,20 @@ impl AuthToken {
     }
 
     /// Get Token scope information
-    pub fn get_scope(&self) -> AuthorizationScope {
+    pub fn get_scope(&self) -> AuthTokenScope {
         match &self.auth_info {
-            Some(ref data) => AuthorizationScope::from(data),
-            _ => AuthorizationScope::Unscoped,
+            Some(ref data) => AuthTokenScope::from(data),
+            _ => AuthTokenScope::Unscoped,
         }
     }
-}
-
-/// Represent authorization scope
-#[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
-pub enum AuthorizationScope {
-    Project(Project),
-    Domain(Domain),
-    Unscoped,
 }
 
 /// Supported AuthTypes
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 #[allow(clippy::enum_variant_names)]
 pub enum AuthType {
+    /// v3 Application Credentials
+    V3ApplicationCredential,
     /// v3 Password
     V3Password,
     /// v3 Token
@@ -279,6 +228,9 @@ impl FromStr for AuthType {
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
+            "v3applicationcredential" | "applicationcredential" => {
+                Ok(Self::V3ApplicationCredential)
+            }
             "v3password" | "password" => Ok(Self::V3Password),
             "v3token" | "token" => Ok(Self::V3Token),
             "v3totp" => Ok(Self::V3Totp),
@@ -304,6 +256,7 @@ impl AuthType {
     /// Return String representation of the AuthType
     pub fn as_str(self) -> &'static str {
         match self {
+            Self::V3ApplicationCredential => "v3applicationcredential",
             Self::V3Password => "v3password",
             Self::V3Token => "v3token",
             Self::V3Multifactor => "v3multifactor",
@@ -321,14 +274,17 @@ fn process_auth_type(
     auth_type: &AuthType,
 ) -> Result<(), AuthTokenError> {
     match auth_type {
+        AuthType::V3ApplicationCredential => {
+            v3applicationcredential::fill_identity(identity_builder, auth_data)?;
+        }
         AuthType::V3Password => {
-            v3password::fill_identity_using_password(identity_builder, auth_data, interactive)?;
+            v3password::fill_identity(identity_builder, auth_data, interactive)?;
         }
         AuthType::V3Token => {
-            v3token::fill_identity_using_token(identity_builder, auth_data, interactive)?;
+            v3token::fill_identity(identity_builder, auth_data, interactive)?;
         }
         AuthType::V3Totp => {
-            v3totp::fill_identity_using_totp(identity_builder, auth_data, interactive)?;
+            v3totp::fill_identity(identity_builder, auth_data, interactive)?;
         }
         other => {
             return Err(AuthTokenError::IdentityMethod {
@@ -384,12 +340,18 @@ pub(crate) fn build_identity_data_from_config<'a>(
 /// Build Auth request from `Identity` and `AuthScope`
 pub(crate) fn build_auth_request_with_identity_and_scope<'a>(
     auth: &token_v3::Identity<'a>,
-    scope: &AuthorizationScope,
+    scope: &AuthTokenScope,
 ) -> Result<token_v3::Request<'a>, AuthTokenError> {
     let mut auth_request_data = token_v3::AuthBuilder::default();
     auth_request_data.identity(auth.clone());
-    if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
-        auth_request_data.scope(scope_data);
+    match scope {
+        // For no scope we should not fill anything
+        AuthTokenScope::Unscoped => {}
+        _ => {
+            if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
+                auth_request_data.scope(scope_data);
+            }
+        }
     }
 
     Ok(token_v3::RequestBuilder::default()
@@ -400,13 +362,19 @@ pub(crate) fn build_auth_request_with_identity_and_scope<'a>(
 /// Build Auth request from `AuthToken` and `AuthScope
 pub(crate) fn build_reauth_request<'a>(
     auth: &AuthToken,
-    scope: &AuthorizationScope,
+    scope: &AuthTokenScope,
 ) -> Result<token_v3::Request<'a>, AuthTokenError> {
     let identity_data = token_v3::Identity::try_from(auth)?;
     let mut auth_request_data = token_v3::AuthBuilder::default();
     auth_request_data.identity(identity_data);
-    if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
-        auth_request_data.scope(scope_data);
+    match scope {
+        // For no scope we should not fill anything
+        AuthTokenScope::Unscoped => {}
+        _ => {
+            if let Ok(scope_data) = token_v3::Scope::try_from(scope) {
+                auth_request_data.scope(scope_data);
+            }
+        }
     }
 
     Ok(token_v3::RequestBuilder::default()
@@ -419,7 +387,7 @@ pub(crate) fn build_auth_request_from_receipt<'a>(
     config: &config::CloudConfig,
     receipt_header: HeaderValue,
     receipt_data: &AuthReceiptResponse,
-    scope: &AuthorizationScope,
+    scope: &AuthTokenScope,
     interactive: bool,
 ) -> Result<impl RestEndpoint + 'a, AuthTokenError> {
     let mut identity_builder = token_v3::IdentityBuilder::default();
@@ -482,13 +450,11 @@ pub(crate) fn build_token_info_endpoint<'a, S: AsRef<str>>(
 
 #[cfg(test)]
 mod tests {
-
     use serde_json::json;
 
     use super::*;
 
     use crate::config;
-    use crate::types::identity::v3::{AuthResponse, AuthToken};
 
     #[test]
     fn test_config_into_auth_password() -> Result<(), &'static str> {
@@ -550,39 +516,5 @@ mod tests {
             serde_json::to_value(auth_data).unwrap()
         );
         Ok(())
-    }
-
-    #[test]
-    fn test_auth_validity_unset() {
-        let auth = super::AuthToken::default();
-        assert!(matches!(auth.get_state(), AuthState::Unset));
-    }
-
-    #[test]
-    fn test_auth_validity_expired() {
-        let auth = super::AuthToken {
-            token: "".to_string(),
-            auth_info: Some(AuthResponse {
-                token: AuthToken {
-                    expires_at: chrono::offset::Local::now() - chrono::Duration::days(1),
-                    ..Default::default()
-                },
-            }),
-        };
-        assert!(matches!(auth.get_state(), AuthState::Expired));
-    }
-
-    #[test]
-    fn test_auth_validity_valid() {
-        let auth = super::AuthToken {
-            token: "".to_string(),
-            auth_info: Some(AuthResponse {
-                token: AuthToken {
-                    expires_at: chrono::offset::Local::now() + chrono::Duration::days(1),
-                    ..Default::default()
-                },
-            }),
-        };
-        assert!(matches!(auth.get_state(), AuthState::Valid));
     }
 }

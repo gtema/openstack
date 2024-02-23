@@ -101,6 +101,41 @@ data in the configuration in order for this mode to be used:
 means in the case of the CLI that there must be a valid terminal (`echo foo |
 osc identity user create` will not work)
 
+#### v3ApplicationCredential
+
+Application credentials provide a way to delegate a user’s authorization to an
+application without sharing the user’s password authentication. This is a
+useful security measure, especially for situations where the user’s
+identification is provided by an external source, such as LDAP or a
+single-sign-on service. Instead of storing user passwords in config files, a
+user creates an application credential for a specific project, with all or a
+subset of the role assignments they have on that project, and then stores the
+application credential identifier and secret in the config file.
+
+Multiple application credentials may be active at once, so you can easily
+rotate application credentials by creating a second one, converting your
+applications to use it one by one, and finally deleting the first one.
+
+Application credentials are limited by the lifespan of the user that created
+them. If the user is deleted, disabled, or loses a role assignment on a
+project, the application credential is deleted.
+
+Required configuration:
+
+- `auth_type` = `v3applicationcredential`
+- `application_credential_secret` - a secret part of the application credential
+- `application_credential_id` - application credential identity
+- `application_credential_name` - application credential name. **Note:** It is
+required to specify user data when using application credential name
+- `user_id` - user ID when `application_credential_name` is used
+- `user_name` - user name when `application_credential_name` is used
+- `user_domain_id` - User domain ID when `application_credential_name` is used
+- `user_domain_name` - User domain ID when `application_credential_name` is used
+
+Either `application_credential_id` is required or `application_credential_name`
+in which case additionally the user information is required.
+
+
 ## Caching
 
 As described above in difference to the Python OpenStack tooling authentication

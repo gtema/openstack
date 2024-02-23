@@ -13,24 +13,119 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Helper methods to deal with OpenStack authentication with Auth Token
+//!
+//! ```json
+//! {
+//!     "auth": {
+//!         "identity": {
+//!             "methods": [
+//!                 "token"
+//!             ],
+//!             "token": {
+//!                 "id": "'$OS_TOKEN'"
+//!             }
+//!         },
+//!     }
+//! }
+
+use thiserror::Error;
 
 use crate::api::identity::v3::auth::token::create as token_v3;
-use crate::auth::authtoken::AuthTokenError;
+use crate::auth::AuthToken;
 use crate::config;
 
-/// Fill Auth Request Identity with user token
-pub fn fill_identity_using_token(
+/// User name/pass related errors
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum TokenError {
+    /// Token is missing
+    #[error("Auth token is missing")]
+    MissingToken,
+
+    /// Token Identity builder
+    #[error("Cannot construct token auth information from config: {}", source)]
+    TokenBuilder {
+        /// The error source
+        #[from]
+        source: token_v3::TokenBuilderError,
+    },
+
+    /// Identity builder
+    #[error("Cannot construct identity auth information from config: {}", source)]
+    Identity {
+        /// The error source
+        #[from]
+        source: token_v3::IdentityBuilderError,
+    },
+}
+
+/// Fill [`IdentityBuilder`][`token_v3::IdentityBuilder`] with user token
+pub fn fill_identity(
     identity_builder: &mut token_v3::IdentityBuilder<'_>,
     auth_data: &config::Auth,
     _interactive: bool,
-) -> Result<(), AuthTokenError> {
+) -> Result<(), TokenError> {
     identity_builder.methods(Vec::from([token_v3::Methods::Token]));
     let token = token_v3::TokenBuilder::default()
-        .id(auth_data
-            .token
-            .clone()
-            .ok_or(AuthTokenError::MissingToken)?)
+        .id(auth_data.token.clone().ok_or(TokenError::MissingToken)?)
         .build()?;
     identity_builder.token(token);
     Ok(())
+}
+
+/// Build Auth [`Identity`][`token_v3::Identity`] from existing [`AuthToken`] using current token
+impl TryFrom<&AuthToken> for token_v3::Identity<'_> {
+    type Error = TokenError;
+
+    fn try_from(auth: &AuthToken) -> Result<Self, Self::Error> {
+        Ok(token_v3::IdentityBuilder::default()
+            .methods(Vec::from([token_v3::Methods::Token]))
+            .token(
+                token_v3::TokenBuilder::default()
+                    .id(auth.token.clone())
+                    .build()?,
+            )
+            .build()?)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+    use crate::api::identity::v3::auth::token::create as token_v3;
+    use crate::config;
+
+    #[test]
+    fn test_fill_raise_no_token() {
+        let config = config::Auth::default();
+        let mut identity = token_v3::IdentityBuilder::default();
+        let res = fill_identity(&mut identity, &config, false);
+        match res.unwrap_err() {
+            TokenError::MissingToken => {}
+            other => {
+                panic!("Unexpected error: {}", other)
+            }
+        }
+    }
+
+    #[test]
+    fn test_fill() {
+        let config = config::Auth {
+            token: Some("foo".to_string()),
+            ..Default::default()
+        };
+        let mut identity = token_v3::IdentityBuilder::default();
+        fill_identity(&mut identity, &config, false).unwrap();
+        assert_eq!(
+            serde_json::to_value(identity.build().unwrap()).unwrap(),
+            json!({
+                "methods": ["token"],
+                "token": {
+                    "id": "foo",
+                }
+            })
+        );
+    }
 }
