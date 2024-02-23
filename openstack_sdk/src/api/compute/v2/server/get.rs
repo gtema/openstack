@@ -20,11 +20,11 @@
 //! Includes server details including configuration drive, extended status, and
 //! server usage information.
 //!
-//! The extended status information appears in the `OS-EXT-STS:vm\_state`, `OS-
-//! EXT-STS:power\_state`, and `OS-EXT-STS:task\_state` attributes.
+//! The extended status information appears in the `OS-EXT-STS:vm_state`,
+//! `OS-EXT-STS:power_state`, and `OS-EXT-STS:task_state` attributes.
 //!
-//! The server usage information appears in the `OS-SRV-USG:launched\_at` and
-//! `OS-SRV-USG:terminated\_at` attributes.
+//! The server usage information appears in the `OS-SRV-USG:launched_at` and
+//! `OS-SRV-USG:terminated_at` attributes.
 //!
 //! HostId is unique per account and is not globally unique.
 //!
@@ -34,8 +34,7 @@
 //!
 //! Normal response codes: 200
 //!
-//! Error response codes: unauthorized(401), forbidden(403),
-//! itemNotFound(404)
+//! Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -48,6 +47,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

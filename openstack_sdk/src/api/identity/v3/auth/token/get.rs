@@ -20,11 +20,11 @@
 //!
 //! Pass your own token in the `X-Auth-Token` request header.
 //!
-//! Pass the token that you want to validate in the `X-Subject-Token`
-//! request header.
+//! Pass the token that you want to validate in the `X-Subject-Token` request
+//! header.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/auth\_tokens`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -36,9 +36,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// The authentication token. An authentication
-    /// response returns the token ID in this header rather than in the
-    /// response body.
+    /// The authentication token. An authentication response returns the token
+    /// ID in this header rather than in the response body.
+    ///
     #[builder(default, setter(into))]
     x_subject_token: Cow<'a, str>,
 

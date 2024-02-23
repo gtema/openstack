@@ -17,8 +17,8 @@
 
 //! Lists groups to which a user belongs.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/user\_groups`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/user_groups`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -32,6 +32,7 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

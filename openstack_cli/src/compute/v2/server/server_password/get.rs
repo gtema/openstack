@@ -44,8 +44,7 @@ use structable_derive::StructTable;
 ///
 /// The password saved in the metadata service is typically encrypted using the
 /// public SSH key injected into this server, so the SSH private key is needed
-/// to
-/// read the password.
+/// to read the password.
 ///
 /// Policy defaults enable only users with the administrative role or the owner
 /// of the server to perform this operation. Cloud providers can change these
@@ -54,6 +53,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Show Server Password")]
 pub struct ServerPasswordCommand {
@@ -74,6 +74,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -81,6 +82,7 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The password returned from metadata server.
+    ///
     #[serde()]
     #[structable()]
     password: String,

@@ -38,6 +38,7 @@ use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Return a single encryption item.
+///
 #[derive(Args)]
 pub struct EncryptionCommand {
     /// Request Query parameters
@@ -57,10 +58,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
     type_id: String,
 
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -69,6 +72,7 @@ struct PathParameters {
 struct ResponseData {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
+    ///
     #[serde()]
     #[structable()]
     cipher: String,

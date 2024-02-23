@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Delete a volume.
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -27,6 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v3/volumes/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

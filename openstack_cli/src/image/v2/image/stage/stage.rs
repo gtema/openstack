@@ -41,6 +41,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Request of the images/image_id/stage:put operation
+///
 #[derive(Args)]
 #[command(about = "Stage binary image data")]
 pub struct StageCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }

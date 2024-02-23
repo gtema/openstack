@@ -52,13 +52,13 @@ use structable_derive::StructTable;
 /// **Asynchronous Postconditions**
 ///
 /// After you successfully unrescue a server and make a
-/// `GET /servers/​{server\_id}​`
-/// request, its status changes to `ACTIVE`.
+/// `GET /servers/​{server_id}​` request, its status changes to `ACTIVE`.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409), notImplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Unrescue Server (unrescue Action)")]
 pub struct ServerCommand {
@@ -79,6 +79,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

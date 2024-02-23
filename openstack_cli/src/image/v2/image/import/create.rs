@@ -39,10 +39,9 @@ use openstack_sdk::api::image::v2::image::import::create;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Signals the Image Service to complete the image import workflow
-/// by processing data that has been made available to the OpenStack
-/// image service.
-/// *(Since Image API v2.6)*
+/// Signals the Image Service to complete the image import workflow by
+/// processing data that has been made available to the OpenStack image
+/// service. *(Since Image API v2.6)*
 ///
 /// In the `glance-direct` workflow, the data has been made available to the
 /// Image service via the [Stage binary image data](#image-stage-call) API
@@ -56,49 +55,39 @@ use structable_derive::StructTable;
 ///
 /// In the `glance-download` workflow, the data is made available to the Image
 /// service by fetching an image accessible from another glance service
-/// specified
-/// by a region name and an image id that you know.
+/// specified by a region name and an image id that you know.
 ///
 /// Beginning with API version 2.8, an optional `stores` parameter may be added
 /// to the body request. When present, it contains the list of backing store
 /// identifiers to import the image binary data to. If at least one store
 /// identifier specified is not recognized, a 409 (Conflict) response is
-/// returned.
-/// When the parameter is not present, the image data is placed into the
-/// default
-/// backing store.
+/// returned. When the parameter is not present, the image data is placed into
+/// the default backing store.
 ///
 /// For backwards compatibility, if the `stores` parameter is not specified,
-/// the
-/// header ‘X-Image-Meta-Store’ is evaluated.
+/// the header ‘X-Image-Meta-Store’ is evaluated.
 ///
 /// To import the data into the entire set of stores you may consume from this
 /// particular deployment of Glance without specifying each one of them, you
-/// can
-/// use the optional boolean body parameter `all\_stores`.
-/// Note that this can’t be used simultaneously with the `stores` parameter.
+/// can use the optional boolean body parameter `all_stores`. Note that this
+/// can’t be used simultaneously with the `stores` parameter.
 ///
 /// To set the behavior of the import workflow in case of error, you can use
-/// the
-/// optional boolean body parameter `all\_stores\_must\_succeed`.
-/// When set to True (default), if an error occurs during the upload in at
-/// least one store,
+/// the optional boolean body parameter `all_stores_must_succeed`. When set to
+/// True (default), if an error occurs during the upload in at least one store,
 /// the worfklow fails, the data is deleted from stores where copying is done
-/// and
-/// the state of the image remains unchanged.
-/// When set to False, the workflow will fail only if the upload fails
-/// on all stores specified. In case of a partial success, the locations added
-/// to
-/// the image will be the stores where the data has been correctly uploaded.
+/// and the state of the image remains unchanged. When set to False, the
+/// workflow will fail only if the upload fails on all stores specified. In
+/// case of a partial success, the locations added to the image will be the
+/// stores where the data has been correctly uploaded.
 ///
-/// The JSON request body specifies what import method you wish to use
-/// for this image request.
+/// The JSON request body specifies what import method you wish to use for this
+/// image request.
 ///
 /// **Preconditions**
 ///
 /// Before you can complete the interoperable image import workflow, you must
-/// meet
-/// the following preconditions:
+/// meet the following preconditions:
 ///
 /// **Additional Preconditions**
 ///
@@ -116,8 +105,9 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: 400, 401, 403, 404, 405, 409, 410, 413, 415, 503
 ///
-/// If the image import process is not enabled in your cloud, this request
-/// will result in a 404 response code with an appropriate message.
+/// If the image import process is not enabled in your cloud, this request will
+/// result in a 404 response code with an appropriate message.
+///
 #[derive(Args)]
 #[command(about = "Import an image")]
 pub struct ImportCommand {
@@ -147,6 +137,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }

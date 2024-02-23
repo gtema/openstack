@@ -39,8 +39,9 @@ use structable_derive::StructTable;
 
 /// List projects to which the user has authorization to access.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/user\_projects`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/user_projects`
+///
 #[derive(Args)]
 #[command(about = "List projects for user")]
 pub struct ProjectsCommand {
@@ -62,6 +63,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 }
@@ -69,26 +71,31 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The description of the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The ID of the domain of the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
     /// The ID of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The parent id of the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     parent_id: Option<String>,
 
     /// The name of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,

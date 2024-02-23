@@ -34,13 +34,14 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. It
-    /// appears
-    /// in the os-extra-specs’ “create” REQUEST body, as well as the
+    /// appears in the os-extra-specs’ “create” REQUEST body, as well as the
     /// os-extra-specs’ “create” and “list” RESPONSE body.
+    ///
     #[builder(private, setter(name = "_extra_specs"))]
     pub(crate) extra_specs: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+    ///
     #[builder(default, setter(into))]
     flavor_id: Cow<'a, str>,
 
@@ -56,9 +57,9 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. It
-    /// appears
-    /// in the os-extra-specs’ “create” REQUEST body, as well as the
+    /// appears in the os-extra-specs’ “create” REQUEST body, as well as the
     /// os-extra-specs’ “create” and “list” RESPONSE body.
+    ///
     pub fn extra_specs<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

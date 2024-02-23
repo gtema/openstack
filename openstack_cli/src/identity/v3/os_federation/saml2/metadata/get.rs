@@ -42,6 +42,7 @@ use structable_derive::StructTable;
 /// Get SAML2 metadata.
 ///
 /// GET/HEAD /OS-FEDERATION/saml2/metadata
+///
 #[derive(Args)]
 pub struct MetadataCommand {
     /// Request Query parameters

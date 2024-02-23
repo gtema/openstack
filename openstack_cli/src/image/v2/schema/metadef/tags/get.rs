@@ -40,6 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagsCommand {
     /// Request Query parameters

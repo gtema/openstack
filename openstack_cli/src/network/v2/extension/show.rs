@@ -37,13 +37,14 @@ use openstack_sdk::api::network::v2::extension::get;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Shows details for an extension, by alias.
-/// The response shows the extension name and its alias. To show
-/// details for an extension, you specify the alias.
+/// Shows details for an extension, by alias. The response shows the extension
+/// name and its alias. To show details for an extension, you specify the
+/// alias.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404
+///
 #[derive(Args)]
 #[command(about = "Show extension details")]
 pub struct ExtensionCommand {
@@ -64,35 +65,39 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/extensions/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Extension response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The alias for the extension. For example “quotas” or
-    /// “security-group”.
+    /// The alias for the extension. For example “quotas” or “security-group”.
+    ///
     #[serde()]
     #[structable(optional)]
     alias: Option<String>,
 
     /// The human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// Human-readable name of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// A URL pointing to the namespace for this extension.
+    ///
     #[serde()]
     #[structable(optional)]
     namespace: Option<String>,
 
-    /// The date and timestamp when the extension was
-    /// last updated.
+    /// The date and timestamp when the extension was last updated.
+    ///
     #[serde()]
     #[structable(optional)]
     updated: Option<String>,

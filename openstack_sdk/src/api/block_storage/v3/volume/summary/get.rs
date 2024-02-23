@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Return summary of volumes.
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

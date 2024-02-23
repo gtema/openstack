@@ -44,6 +44,7 @@ use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 #[command(about = "Rebuild Server (rebuild Action) (microversion = 2.19)")]
 pub struct ServerCommand {
@@ -67,6 +68,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -81,104 +83,92 @@ enum OsDcfDiskConfig {
 #[derive(Args)]
 struct Rebuild {
     /// The server name.
+    ///
     #[arg(long)]
     name: Option<String>,
 
-    /// The UUID of the image to rebuild for your server instance. It
-    /// must be a valid UUID otherwise API will return 400. To rebuild a
-    /// volume-backed server with a new image, at least microversion 2.93
-    /// needs to be provided in the request else the request will fall
-    /// back to old behaviour i.e. the API will return 400 (for an image
-    /// different from the image used when creating the volume). For
-    /// non-volume-backed servers, specifying a new image will result in
-    /// validating that the image is acceptable for the current compute
-    /// host on which the server exists. If the new image is not valid,
-    /// the server will go into `ERROR` status.
+    /// The UUID of the image to rebuild for your server instance. It must be a
+    /// valid UUID otherwise API will return 400. To rebuild a volume-backed
+    /// server with a new image, at least microversion 2.93 needs to be
+    /// provided in the request else the request will fall back to old
+    /// behaviour i.e. the API will return 400 (for an image different from the
+    /// image used when creating the volume). For non-volume-backed servers,
+    /// specifying a new image will result in validating that the image is
+    /// acceptable for the current compute host on which the server exists. If
+    /// the new image is not valid, the server will go into `ERROR` status.
+    ///
     #[arg(long)]
     image_ref: String,
 
     /// The administrative password of the server. If you omit this parameter,
-    /// the operation
-    /// generates a new password.
+    /// the operation generates a new password.
+    ///
     #[arg(long)]
     admin_pass: Option<String>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
-    /// value is
-    /// 255 bytes each.
+    /// value is 255 bytes each.
+    ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// Indicates whether the server is rebuilt with the preservation of the
-    /// ephemeral
-    /// partition (`true`).
-    ///
-    ///
+    /// ephemeral partition (`true`).
     ///
     /// Note
     ///
+    /// This only works with baremetal servers provided by Ironic. Passing it
+    /// to any other server instance results in a fault and will prevent the
+    /// rebuild from happening.
     ///
-    /// This only works with baremetal servers provided by
-    /// Ironic. Passing it to any other server instance results in a
-    /// fault and will prevent the rebuild from happening.
     #[arg(action=clap::ArgAction::Set, long)]
     preserve_ephemeral: Option<bool>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
-    /// resize servers.
-    /// A server inherits the `OS-DCF:diskConfig` value from the image from
-    /// which it
-    /// was created, and an image inherits the `OS-DCF:diskConfig` value from
-    /// the server
-    /// from which it was created. To override the inherited setting, you can
-    /// include
-    /// this attribute in the request body of a server create, rebuild, or
-    /// resize request. If
-    /// the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot
-    /// create
-    /// a server from that image and set its `OS-DCF:diskConfig` value to
-    /// `AUTO`.
+    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
+    /// the image from which it was created, and an image inherits the
+    /// `OS-DCF:diskConfig` value from the server from which it was created. To
+    /// override the inherited setting, you can include this attribute in the
+    /// request body of a server create, rebuild, or resize request. If the
+    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
+    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
     /// A valid value is:
     ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using whatever partition
+    ///   scheme and file system is in the source image. If the target flavor
+    ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    /// * `AUTO`. The API builds the server with a single partition the size of
-    /// the
-    /// target flavor disk. The API automatically adjusts the file system to
-    /// fit the
-    /// entire partition.
-    /// * `MANUAL`. The API builds the server by using whatever partition
-    /// scheme and
-    /// file system is in the source image. If the target flavor disk is
-    /// larger, the API
-    /// does not partition the remaining disk space.
     #[arg(long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// IPv4 address that should be used to access this server.
+    ///
     #[arg(long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
+    ///
     #[arg(long)]
     access_ipv6: Option<String>,
 
     /// The file path and contents, text only, to inject into the server at
-    /// launch. The
-    /// maximum size of the file path data is 255 bytes. The maximum limit is
-    /// the number
-    /// of allowed bytes in the decoded, rather than encoded, data.
-    ///
+    /// launch. The maximum size of the file path data is 255 bytes. The
+    /// maximum limit is the number of allowed bytes in the decoded, rather
+    /// than encoded, data.
     ///
     /// **Available until version 2.56**
+    ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     personality: Option<Vec<Value>>,
 
-    /// A free form description of the server. Limited to 255 characters
-    /// in length. Before microversion 2.19 this was set to the server
-    /// name.
-    ///
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
     ///
     /// **New in version 2.19**
+    ///
     #[arg(long)]
     description: Option<String>,
 }

@@ -41,6 +41,7 @@ use structable_derive::StructTable;
 /// Create an idp resource for federated authentication.
 ///
 /// PUT /OS-FEDERATION/identity_providers/{idp_id}
+///
 #[derive(Args)]
 pub struct IdentityProviderCommand {
     /// Request Query parameters
@@ -62,16 +63,18 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// idp_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols API
+    /// idp_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    ///
     #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
     idp_id: String,
 }
 /// IdentityProvider Body data
 #[derive(Args)]
 struct IdentityProvider {
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
@@ -92,37 +95,43 @@ struct IdentityProvider {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The Identity Provider unique ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The Identity Provider description
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
+    ///
     #[serde()]
     #[structable(optional)]
     domain_id: Option<String>,
 
     /// The length of validity in minutes for group memberships carried over
     /// through mapping and persisted in the database.
+    ///
     #[serde()]
     #[structable(optional)]
     authorization_ttl: Option<i32>,
 
     /// Whether the Identity Provider is enabled or not
+    ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
     /// List of the unique Identity Provider’s remote IDs
+    ///
     #[serde()]
     #[structable(optional)]
     remote_ids: Option<VecString>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

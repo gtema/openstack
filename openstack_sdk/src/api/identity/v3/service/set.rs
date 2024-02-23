@@ -17,12 +17,11 @@
 
 //! Updates a service.
 //!
-//! The request body is the same as the create service request body,
-//! except that you include only those attributes that you want to
-//! update.
+//! The request body is the same as the create service request body, except
+//! that you include only those attributes that you want to update.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/services`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -34,31 +33,34 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `service` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Service<'a> {
     /// The service description.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
-    /// Defines whether the service and its endpoints
-    /// appear in the service catalog: - `false`. The service and its
-    /// endpoints do not appear in the service catalog. - `true`. The
-    /// service and its endpoints appear in the service catalog.
-    /// Default is `true`.
+    /// Defines whether the service and its endpoints appear in the service
+    /// catalog: - `false`. The service and its endpoints do not appear in the
+    /// service catalog. - `true`. The service and its endpoints appear in the
+    /// service catalog. Default is `true`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
     /// The service name.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
-    /// The service type, which describes the API
-    /// implemented by the service. Value is `compute`, `ec2`,
-    /// `identity`, `image`, `network`, or `volume`.
+    /// The service type, which describes the API implemented by the service.
+    /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
+    ///
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) _type: Option<Cow<'a, str>>,
@@ -68,10 +70,12 @@ pub struct Service<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `service` object.
+    ///
     #[builder(setter(into))]
     pub(crate) service: Service<'a>,
 
     /// service_id parameter for /v3/services/{service_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

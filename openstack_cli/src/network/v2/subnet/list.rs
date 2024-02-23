@@ -42,21 +42,20 @@ use structable_derive::StructTable;
 
 /// Lists subnets that the project has access to.
 ///
-/// Default policy settings return only subnets owned by the
-/// project of the user submitting the request, unless the
-/// user has administrative role. You can control which attributes
-/// are returned by using the fields query parameter. You can filter
-/// results by using query string parameters.
+/// Default policy settings return only subnets owned by the project of the
+/// user submitting the request, unless the user has administrative role. You
+/// can control which attributes are returned by using the fields query
+/// parameter. You can filter results by using query string parameters.
 ///
-/// Use the `fields` query parameter to control which fields are
-/// returned in the response body. Additionally, you can filter results
-/// by using query string parameters. For information, see [Filtering
-/// and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-/// specification#Filtering_and_Column_Selection).
+/// Use the `fields` query parameter to control which fields are returned in
+/// the response body. Additionally, you can filter results by using query
+/// string parameters. For information, see
+/// [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
+///
 #[derive(Args)]
 #[command(about = "List subnets")]
 pub struct SubnetsCommand {
@@ -73,78 +72,97 @@ pub struct SubnetsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// id query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// name query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// ip_version query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     ip_version: Option<i32>,
 
     /// network_id query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     network_id: Option<String>,
 
     /// subnetpool_id query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     subnetpool_id: Option<String>,
 
     /// cidr query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     cidr: Option<String>,
 
     /// gateway_ip query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     gateway_ip: Option<String>,
 
     /// tenant_id query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     tenant_id: Option<String>,
 
     /// enable_dhcp query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     enable_dhcp: Option<bool>,
 
     /// ipv6_ra_mode query parameter for /v2.0/subnets API
+    ///
     #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_ra_mode: Option<String>,
 
     /// ipv6_address_mode query parameter for /v2.0/subnets API
+    ///
     #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_address_mode: Option<String>,
 
     /// shared query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     shared: Option<bool>,
 
     /// revision_number query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     revision_number: Option<String>,
 
     /// tags query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     not_tags_any: Option<Vec<String>>,
 
     /// description query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     description: Option<String>,
 
     /// segment_id query parameter for /v2.0/subnets API
+    ///
     #[arg(long)]
     segment_id: Option<String>,
 }
@@ -156,65 +174,75 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the subnet.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Human-readable name of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The IP protocol version. Value is `4` or `6`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     ip_version: Option<i32>,
 
     /// The ID of the network to which the subnet belongs.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     network_id: Option<String>,
 
     /// The ID of the subnet pool associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     subnetpool_id: Option<String>,
 
     /// The CIDR of the subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     cidr: Option<String>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     gateway_ip: Option<String>,
 
-    /// Allocation pools with `start` and `end` IP addresses
-    /// for this subnet.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     allocation_pools: Option<Value>,
 
     /// List of dns name servers associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     dns_nameservers: Option<VecString>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     host_routes: Option<Value>,
 
     /// The ID of the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tenant_id: Option<String>,
 
-    /// Indicates whether dhcp is enabled or disabled
-    /// for the subnet.
+    /// Indicates whether dhcp is enabled or disabled for the subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enable_dhcp: Option<BoolString>,
@@ -222,58 +250,68 @@ struct ResponseData {
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     ipv6_ra_mode: Option<String>,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     ipv6_address_mode: Option<String>,
 
     /// The revision number of the resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     revision_number: Option<i32>,
 
     /// The service types associated with the subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     service_types: Option<VecString>,
 
     /// The list of tags on the resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// Whether to publish DNS records for IPs from this subnet.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     dns_publish_fixed_ip: Option<BoolString>,
 
     /// A human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// The ID of a network segment the subnet is associated with.
-    /// It is available when `segment` extension is enabled.
+    /// The ID of a network segment the subnet is associated with. It is
+    /// available when `segment` extension is enabled.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     segment_id: Option<String>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

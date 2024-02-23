@@ -47,6 +47,7 @@ pub enum Protocol {
 }
 
 /// A router `conntrack helper` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ConntrackHelper<'a> {
@@ -55,16 +56,19 @@ pub struct ConntrackHelper<'a> {
     pub(crate) project_id: Option<Cow<'a, str>>,
 
     /// The network protocol for the netfilter conntrack target rule.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) protocol: Option<Protocol>,
 
     /// The network port for the netfilter conntrack target rule.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) port: Option<f32>,
 
     /// The netfilter conntrack helper module.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) helper: Option<Cow<'a, str>>,
@@ -74,10 +78,12 @@ pub struct ConntrackHelper<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A router `conntrack helper` object.
+    ///
     #[builder(setter(into))]
     pub(crate) conntrack_helper: ConntrackHelper<'a>,
 
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[builder(default, setter(into))]
     router_id: Cow<'a, str>,
 

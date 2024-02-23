@@ -33,10 +33,12 @@ pub enum State {
 }
 
 /// The action.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsResetState {
     /// The state of the server to be set, `active` or `error` are valid.
+    ///
     #[serde()]
     #[builder()]
     pub(crate) state: State,
@@ -46,10 +48,12 @@ pub struct OsResetState {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
+    ///
     #[builder(setter(into))]
     pub(crate) os_reset_state: OsResetState,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

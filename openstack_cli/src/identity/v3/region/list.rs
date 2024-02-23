@@ -39,8 +39,9 @@ use structable_derive::StructTable;
 
 /// Lists regions.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/regions`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
+///
 #[derive(Args)]
 #[command(about = "List regions")]
 pub struct RegionsCommand {
@@ -57,6 +58,7 @@ pub struct RegionsCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Filters the response by a parent region, by ID.
+    ///
     #[arg(long)]
     parent_region_id: Option<String>,
 }
@@ -68,17 +70,20 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The region description.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The ID for the region.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     parent_id: Option<String>,

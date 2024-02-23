@@ -18,6 +18,7 @@
 //! Create protocol for an IDP.
 //!
 //! PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -45,13 +46,16 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) protocol: Protocol<'a>,
 
-    /// idp_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols API
+    /// idp_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 
-    /// protocol_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+    /// protocol_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
+    /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

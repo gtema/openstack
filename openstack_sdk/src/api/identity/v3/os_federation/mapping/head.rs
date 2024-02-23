@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! HEAD operation on /v3/OS-FEDERATION/mappings
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

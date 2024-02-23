@@ -17,9 +17,9 @@
 
 //! Updates a subnet.
 //!
-//! Some attributes, such as IP version (ip\_version), CIDR (cidr), and
-//! segment (segment\_id) cannot be updated. Attempting to update these
-//! attributes results in a `400 Bad Request` error.
+//! Some attributes, such as IP version (ip_version), CIDR (cidr), and segment
+//! (segment_id) cannot be updated. Attempting to update these attributes
+//! results in a `400 Bad Request` error.
 //!
 //! Normal response codes: 200
 //!
@@ -62,65 +62,73 @@ pub struct HostRoutes<'a> {
 #[builder(setter(strip_option))]
 pub struct Subnet<'a> {
     /// Human-readable name of the resource.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
-    /// gateway is associated with the subnet. If the gateway\_ip is not
-    /// specified, OpenStack Networking allocates an address from the CIDR
-    /// for the gateway for the subnet by default.
+    /// gateway is associated with the subnet. If the gateway_ip is not
+    /// specified, OpenStack Networking allocates an address from the CIDR for
+    /// the gateway for the subnet by default.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) gateway_ip: Option<Cow<'a, str>>,
 
-    /// Allocation pools with `start` and `end` IP addresses
-    /// for this subnet. If allocation\_pools are not specified, OpenStack
-    /// Networking automatically allocates pools for covering all IP addresses
-    /// in the CIDR, excluding the address reserved for the subnet gateway by
-    /// default.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
+    /// If allocation_pools are not specified, OpenStack Networking
+    /// automatically allocates pools for covering all IP addresses in the
+    /// CIDR, excluding the address reserved for the subnet gateway by default.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) allocation_pools: Option<Vec<AllocationPools<'a>>>,
 
     /// List of dns name servers associated with the subnet. Default is an
     /// empty list.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) dns_nameservers: Option<Vec<Cow<'a, str>>>,
 
     /// Additional routes for the subnet. A list of dictionaries with
-    /// `destination` and `nexthop` parameters. Default value is
-    /// an empty list.
+    /// `destination` and `nexthop` parameters. Default value is an empty list.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) host_routes: Option<Vec<HostRoutes<'a>>>,
 
-    /// Indicates whether dhcp is enabled or disabled
-    /// for the subnet. Default is `true`.
+    /// Indicates whether dhcp is enabled or disabled for the subnet. Default
+    /// is `true`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enable_dhcp: Option<bool>,
 
     /// The service types associated with the subnet.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) service_types: Option<Vec<Cow<'a, str>>>,
 
-    /// Whether to publish DNS records for IPs from this subnet. Default
-    /// is `false`.
+    /// Whether to publish DNS records for IPs from this subnet. Default is
+    /// `false`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) dns_publish_fixed_ip: Option<bool>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
-    /// The ID of a network segment the subnet is associated with.
-    /// It is available when `segment` extension is enabled.
+    /// The ID of a network segment the subnet is associated with. It is
+    /// available when `segment` extension is enabled.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) segment_id: Option<Option<Cow<'a, str>>>,
@@ -133,6 +141,7 @@ pub struct Request<'a> {
     pub(crate) subnet: Subnet<'a>,
 
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

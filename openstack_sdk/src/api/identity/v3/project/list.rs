@@ -17,8 +17,8 @@
 
 //! Lists projects.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/projects`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -31,25 +31,30 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Filters the response by a domain ID.
+    ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
+    ///
     #[builder(default)]
     enabled: Option<bool>,
 
     /// If this is specified as true, then only projects acting as a domain are
     /// included. Otherwise, only projects that are not acting as a domain are
     /// included.
+    ///
     #[builder(default)]
     is_domain: Option<bool>,
 
     /// Filters the response by a resource name.
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Filters the response by a parent ID.
+    ///
     #[builder(default, setter(into))]
     parent_id: Option<Cow<'a, str>>,
 

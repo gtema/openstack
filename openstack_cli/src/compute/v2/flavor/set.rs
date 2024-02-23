@@ -48,14 +48,15 @@ use structable_derive::StructTable;
 ///
 /// This API is available starting with microversion 2.55.
 ///
-/// Policy defaults enable only users with the administrative role to
-/// perform this operation. Cloud providers can change these permissions
-/// through the `policy.json` file.
+/// Policy defaults enable only users with the administrative role to perform
+/// this operation. Cloud providers can change these permissions through the
+/// `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Update Flavor Description")]
 pub struct FlavorCommand {
@@ -79,14 +80,16 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// Flavor Body data
 #[derive(Args)]
 struct Flavor {
-    /// A free form description of the flavor. Limited to 65535 characters
-    /// in length. Only printable characters are allowed.
+    /// A free form description of the flavor. Limited to 65535 characters in
+    /// length. Only printable characters are allowed.
+    ///
     #[arg(long)]
     description: String,
 }
@@ -95,88 +98,94 @@ struct Flavor {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The display name of a flavor.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
-    /// The ID of the flavor. While people often make this look like
-    /// an int, this is really a string.
+    /// The ID of the flavor. While people often make this look like an int,
+    /// this is really a string.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The amount of RAM a flavor has, in MiB.
+    ///
     #[serde()]
     #[structable(optional)]
     ram: Option<IntString>,
 
     /// The number of virtual CPUs that will be allocated to the server.
+    ///
     #[serde()]
     #[structable(optional)]
     vcpus: Option<IntString>,
 
-    /// The size of the root disk that will be created in GiB. If 0 the
-    /// root disk will be set to exactly the size of the image used to
-    /// deploy the instance. However, in this case the scheduler cannot
-    /// select the compute host based on the virtual image size. Therefore,
-    /// 0 should only be used for volume booted instances or for testing
-    /// purposes. Volume-backed instances can be enforced for flavors with
-    /// zero root disk via the
-    /// `os\_compute\_api:servers:create:zero\_disk\_flavor`
-    /// policy rule.
+    /// The size of the root disk that will be created in GiB. If 0 the root
+    /// disk will be set to exactly the size of the image used to deploy the
+    /// instance. However, in this case the scheduler cannot select the compute
+    /// host based on the virtual image size. Therefore, 0 should only be used
+    /// for volume booted instances or for testing purposes. Volume-backed
+    /// instances can be enforced for flavors with zero root disk via the
+    /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
+    ///
     #[serde()]
     #[structable(optional)]
     disk: Option<IntString>,
 
-    /// The size of the ephemeral disk that will be created, in
-    /// GiB. Ephemeral disks may be written over on server state
-    /// changes. So should only be used as a scratch space for
-    /// applications that are aware of its limitations. Defaults to 0.
+    /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
+    /// disks may be written over on server state changes. So should only be
+    /// used as a scratch space for applications that are aware of its
+    /// limitations. Defaults to 0.
+    ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
     #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral")]
     os_flv_ext_data_ephemeral: Option<IntString>,
 
-    /// The size of a dedicated swap disk that will be allocated, in
-    /// MiB. If 0 (the default), no dedicated swap disk will be created.
-    /// Currently, the empty string (‘’) is used to represent 0.
-    /// As of microversion 2.75 default return value of swap is 0
-    /// instead of empty string.
+    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
+    /// (the default), no dedicated swap disk will be created. Currently, the
+    /// empty string (‘’) is used to represent 0. As of microversion 2.75
+    /// default return value of swap is 0 instead of empty string.
+    ///
     #[serde()]
     #[structable(optional)]
     swap: Option<IntString>,
 
-    /// The receive / transmit factor (as a float) that will be set on
-    /// ports if the network backend supports the QOS extension.
-    /// Otherwise it will be ignored. It defaults to 1.0.
+    /// The receive / transmit factor (as a float) that will be set on ports if
+    /// the network backend supports the QOS extension. Otherwise it will be
+    /// ignored. It defaults to 1.0.
+    ///
     #[serde()]
     #[structable(optional)]
     rxtx_factor: Option<NumString>,
 
-    /// Whether the flavor is public (available to all projects) or scoped
-    /// to a set of projects. Default is True if not specified.
+    /// Whether the flavor is public (available to all projects) or scoped to a
+    /// set of projects. Default is True if not specified.
+    ///
     #[serde(rename = "os-flavor-access:is_public")]
     #[structable(optional, title = "os-flavor-access:is_public")]
     os_flavor_access_is_public: Option<bool>,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
     /// only be included if the user is allowed by policy to index flavor
-    /// extra\_specs.
-    ///
+    /// extra_specs.
     ///
     /// **New in version 2.61**
+    ///
     #[serde()]
     #[structable(optional)]
     extra_specs: Option<HashMapStringNumString>,
 
-    /// Links to the resources in question. See [API Guide / Links and
-    /// References](https://docs.openstack.org/api-
-    /// guide/compute/links_and_references.html)
+    /// Links to the resources in question. See
+    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
+    ///
     #[serde()]
     #[structable(optional)]
     links: Option<Value>,
 }
-/// HashMap of NumString response type
+/// HashMap of `NumString` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringNumString(HashMap<String, NumString>);
 impl fmt::Display for HashMapStringNumString {

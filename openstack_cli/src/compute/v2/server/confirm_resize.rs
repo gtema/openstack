@@ -45,35 +45,34 @@ use structable_derive::StructTable;
 ///
 /// After you make this request, you typically must keep polling the server
 /// status to determine whether the request succeeded. A successfully
-/// confirming resize operation shows a status of `ACTIVE` or `SHUTOFF`
-/// and a migration status of `confirmed`. You can also see the resized
-/// server in the compute node that OpenStack Compute manages.
+/// confirming resize operation shows a status of `ACTIVE` or `SHUTOFF` and a
+/// migration status of `confirmed`. You can also see the resized server in the
+/// compute node that OpenStack Compute manages.
 ///
 /// **Preconditions**
 ///
 /// You can only confirm the resized server where the status is
-/// `VERIFY\_RESIZE`.
+/// `VERIFY_RESIZE`.
 ///
-/// If the server is locked, you must have administrator privileges
-/// to confirm the server.
+/// If the server is locked, you must have administrator privileges to confirm
+/// the server.
 ///
 /// **Troubleshooting**
 ///
-/// If the server status remains `VERIFY\_RESIZE`, the request failed. Ensure
-/// you
-/// meet the preconditions and run the request again. If the request fails
+/// If the server status remains `VERIFY_RESIZE`, the request failed. Ensure
+/// you meet the preconditions and run the request again. If the request fails
 /// again, the server status should be `ERROR` and a migration status of
-/// `error`. Investigate the compute back end or ask your cloud provider.
-/// There are some options for trying to correct the server status:
+/// `error`. Investigate the compute back end or ask your cloud provider. There
+/// are some options for trying to correct the server status:
 ///
 /// Note that the cloud provider may still need to cleanup any orphaned
-/// resources
-/// on the source hypervisor.
+/// resources on the source hypervisor.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Confirm Resized Server (confirmResize Action)")]
 pub struct ServerCommand {
@@ -94,6 +93,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

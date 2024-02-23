@@ -17,11 +17,9 @@
 
 //! Shows details for a port.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. For information, see [Filtering and
-//! Column Selection](http://specs.openstack.org/openstack/neutron-
-//! specs/specs/api/networking_general_api_information.html#filtering-and-
-//! column-selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. For information, see
+//! [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 //!
 //! Normal response codes: 200
 //!
@@ -39,6 +37,7 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

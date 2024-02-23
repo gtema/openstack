@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Deletes an endpoint.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/endpoint`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
+///
 #[derive(Args)]
 #[command(about = "Delete endpoint")]
 pub struct EndpointCommand {
@@ -62,8 +63,9 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-
-    /// POLICY/policy API
+    /// endpoint_id parameter for
+    /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

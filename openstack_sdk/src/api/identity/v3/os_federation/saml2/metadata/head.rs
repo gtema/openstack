@@ -18,6 +18,7 @@
 //! Get SAML2 metadata.
 //!
 //! GET/HEAD /OS-FEDERATION/saml2/metadata
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

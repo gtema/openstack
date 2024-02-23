@@ -38,6 +38,7 @@ use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
+///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
@@ -57,6 +58,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    ///
     #[arg(id = "path_param_sp_id", value_name = "SP_ID")]
     sp_id: String,
 }
@@ -64,31 +66,37 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The URL to authenticate against
+    ///
     #[serde()]
     #[structable()]
     auth_url: String,
 
     /// The description of the Service Provider
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The Service Provider unique ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Whether the Service Provider is enabled or not
+    ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
     /// The prefix of the RelayState SAML attribute
+    ///
     #[serde()]
     #[structable(optional)]
     relay_state_prefix: Option<String>,
 
     /// The Service Provider’s URL
+    ///
     #[serde()]
     #[structable()]
     sp_url: String,

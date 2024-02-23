@@ -18,6 +18,7 @@
 //! Get possible system scopes for token.
 //!
 //! GET/HEAD /v3/auth/system
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

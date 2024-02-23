@@ -18,8 +18,7 @@
 //! Lists revoked PKI tokens.
 //!
 //! Relationship:
-//! `https://docs.openstack.org/api/openstack-identity/3/rel/tokens/OS-
-//! PKI/revoked`
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/tokens/OS-PKI/revoked`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

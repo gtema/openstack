@@ -40,6 +40,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TypeCommand {
     /// Request Query parameters
@@ -62,6 +63,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v3/types/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

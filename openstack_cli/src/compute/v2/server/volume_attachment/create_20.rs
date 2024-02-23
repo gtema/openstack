@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Attach a volume to an instance (microversion = 2.0)")]
 pub struct VolumeAttachmentCommand {
@@ -66,6 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -73,19 +75,17 @@ struct PathParameters {
 #[derive(Args)]
 struct VolumeAttachment {
     /// The UUID of the volume to attach.
+    ///
     #[arg(long)]
     volume_id: String,
 
     /// Name of the device such as, `/dev/vdb`. Omit or set this parameter to
-    /// null for
-    /// auto-assignment, if supported. If you specify this parameter, the
-    /// device must
-    /// not exist in the guest operating system. Note that as of the 12.0.0
-    /// Liberty release,
-    /// the Nova libvirt driver no longer honors a user-supplied device name.
-    /// This is
-    /// the same behavior as if the device name parameter is not supplied on
-    /// the request.
+    /// null for auto-assignment, if supported. If you specify this parameter,
+    /// the device must not exist in the guest operating system. Note that as
+    /// of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors
+    /// a user-supplied device name. This is the same behavior as if the device
+    /// name parameter is not supplied on the request.
+    ///
     #[arg(long)]
     device: Option<String>,
 }
@@ -94,58 +94,60 @@ struct VolumeAttachment {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
+    ///
     #[serde()]
     #[structable(optional)]
     device: Option<String>,
 
     /// The volume ID of the attachment.
     ///
-    ///
     /// **Available until version 2.88**
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The UUID of the server.
+    ///
     #[serde(rename = "serverId")]
     #[structable(optional, title = "serverId")]
     server_id: Option<String>,
 
     /// The UUID of the attached volume.
+    ///
     #[serde(rename = "volumeId")]
     #[structable(optional, title = "volumeId")]
     volume_id: Option<String>,
 
     /// The device tag applied to the volume block device or `null`.
     ///
-    ///
     /// **New in version 2.70**
+    ///
     #[serde()]
     #[structable(optional)]
     tag: Option<String>,
 
     /// A flag indicating if the attached volume will be deleted when the
-    /// server is
-    /// deleted.
-    ///
+    /// server is deleted.
     ///
     /// **New in version 2.79**
+    ///
     #[serde()]
     #[structable(optional)]
     delete_on_termination: Option<bool>,
 
     /// The UUID of the associated volume attachment in Cinder.
     ///
-    ///
     /// **New in version 2.89**
+    ///
     #[serde()]
     #[structable(optional)]
     attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
     ///
-    ///
     /// **New in version 2.89**
+    ///
     #[serde()]
     #[structable(optional)]
     bdm_uuid: Option<String>,

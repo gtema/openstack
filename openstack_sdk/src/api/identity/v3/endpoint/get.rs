@@ -17,8 +17,8 @@
 
 //! Shows details for an endpoint.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/endpoints`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -30,8 +30,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-
-    /// POLICY/policy API
+    /// endpoint_id parameter for
+    /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

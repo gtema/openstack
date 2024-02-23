@@ -47,8 +47,9 @@ use structable_derive::StructTable;
 ///
 /// Normal response codes: 200
 ///
-/// Error response codes: badRequest(400), unauthorized(401),
-/// forbidden(403), itemNotFound(404)
+/// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
+/// itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Update Server (microversion = 2.1)")]
 pub struct ServerCommand {
@@ -72,6 +73,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -86,44 +88,37 @@ enum OsDcfDiskConfig {
 #[derive(Args)]
 struct Server {
     /// The server name.
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
-    /// resize servers.
-    /// A server inherits the `OS-DCF:diskConfig` value from the image from
-    /// which it
-    /// was created, and an image inherits the `OS-DCF:diskConfig` value from
-    /// the server
-    /// from which it was created. To override the inherited setting, you can
-    /// include
-    /// this attribute in the request body of a server create, rebuild, or
-    /// resize request. If
-    /// the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot
-    /// create
-    /// a server from that image and set its `OS-DCF:diskConfig` value to
-    /// `AUTO`.
+    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
+    /// the image from which it was created, and an image inherits the
+    /// `OS-DCF:diskConfig` value from the server from which it was created. To
+    /// override the inherited setting, you can include this attribute in the
+    /// request body of a server create, rebuild, or resize request. If the
+    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
+    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
     /// A valid value is:
     ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using whatever partition
+    ///   scheme and file system is in the source image. If the target flavor
+    ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    /// * `AUTO`. The API builds the server with a single partition the size of
-    /// the
-    /// target flavor disk. The API automatically adjusts the file system to
-    /// fit the
-    /// entire partition.
-    /// * `MANUAL`. The API builds the server by using whatever partition
-    /// scheme and
-    /// file system is in the source image. If the target flavor disk is
-    /// larger, the API
-    /// does not partition the remaining disk space.
     #[arg(long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// IPv4 address that should be used to access this server.
+    ///
     #[arg(long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
+    ///
     #[arg(long)]
     access_ipv6: Option<String>,
 }
@@ -133,53 +128,55 @@ struct Server {
 struct ResponseData {
     /// IPv4 address that should be used to access this server. May be
     /// automatically set by the provider.
+    ///
     #[serde(rename = "accessIPv4")]
     #[structable(optional, title = "accessIPv4")]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server. May be
     /// automatically set by the provider.
+    ///
     #[serde(rename = "accessIPv6")]
     #[structable(optional, title = "accessIPv6")]
     access_ipv6: Option<String>,
 
     /// The addresses for the server. Servers with status `BUILD` hide their
     /// addresses information.
+    ///
     #[serde()]
     #[structable(optional)]
     addresses: Option<HashMapStringValue>,
 
     /// The attached volumes, if any.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "os-extended-volumes:volumes_attached")]
     #[structable(optional, title = "os-extended-volumes:volumes_attached")]
     os_extended_volumes_volumes_attached: Option<VecHashMapStringValue>,
 
     /// The availability zone name.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-AZ:availability_zone")]
     #[structable(optional, title = "OS-EXT-AZ:availability_zone")]
     os_ext_az_availability_zone: Option<String>,
 
-    /// The name of the compute host on which this instance is running.
-    /// Appears in the response for administrative users only.
-    ///
+    /// The name of the compute host on which this instance is running. Appears
+    /// in the response for administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:host")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:host")]
     os_ext_srv_attr_host: Option<String>,
 
-    /// Indicates whether or not a config drive was used for this server.
-    /// The value is `True` or an empty string. An empty string stands for
-    /// `False`.
-    ///
+    /// Indicates whether or not a config drive was used for this server. The
+    /// value is `True` or an empty string. An empty string stands for `False`.
     ///
     /// **New in version 2.75**
+    ///
     #[serde()]
     #[structable(optional)]
     config_drive: Option<String>,
@@ -187,46 +184,44 @@ struct ResponseData {
     /// The date and time when the resource was created. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
-    ///
-    ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
-    /// value, if included, is the time zone as an offset from UTC. In
-    /// the previous example, the offset value is `-05:00`.
     #[serde()]
     #[structable(optional)]
     created: Option<String>,
 
-    /// The description of the server.
-    /// Before microversion 2.19 this was set to the server name.
-    ///
+    /// The description of the server. Before microversion 2.19 this was set to
+    /// the server name.
     ///
     /// **New in version 2.19**
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// Disk configuration. The value is either:
     ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using the partition scheme and
+    ///   file system that is in the source image. If the target flavor disk is
+    ///   larger, The API does not partition the remaining disk space.
     ///
-    /// * `AUTO`. The API builds the server with a single partition the size of
-    /// the target flavor disk. The API automatically adjusts the file system
-    /// to
-    /// fit the entire partition.
-    /// * `MANUAL`. The API builds the server by using the partition scheme and
-    /// file system that is in the source image. If the target flavor disk is
-    /// larger, The API does not partition the remaining disk space.
     #[serde(rename = "OS-DCF:diskConfig")]
     #[structable(optional, title = "OS-DCF:diskConfig")]
     os_dcf_disk_config: Option<String>,
 
     /// A fault object. Only displayed when the server status is `ERROR` or
     /// `DELETED` and a fault occurred.
+    ///
     #[serde()]
     #[structable(optional)]
     fault: Option<ResponseFault>,
@@ -235,23 +230,22 @@ struct ResponseData {
     /// used to boot the server instance. This can be an empty object in case
     /// flavor information is no longer present in the system.
     ///
-    ///
     /// As of microversion 2.47 this contains a subset of the actual flavor
     /// information used to create the server instance, represented as a nested
     /// dictionary.
+    ///
     #[serde()]
     #[structable(optional)]
     flavor: Option<ResponseFlavor>,
 
     /// An ID string representing the host. This is a hashed value so will not
-    /// actually look like
-    /// a hostname, and is hashed with data from the project\_id, so the same
-    /// physical host as seen
-    /// by two different project\_ids, will be different. It is useful when
-    /// within the same project you
-    /// need to determine if two instances are on the same or different
-    /// physical hosts for the
-    /// purposes of availability or performance.
+    /// actually look like a hostname, and is hashed with data from the
+    /// project_id, so the same physical host as seen by two different
+    /// project_ids, will be different. It is useful when within the same
+    /// project you need to determine if two instances are on the same or
+    /// different physical hosts for the purposes of availability or
+    /// performance.
+    ///
     #[serde(rename = "hostId")]
     #[structable(optional, title = "hostId")]
     host_id: Option<String>,
@@ -259,162 +253,150 @@ struct ResponseData {
     /// The host status. Values where next value in list can override the
     /// previous:
     ///
+    /// - `UP` if nova-compute up.
+    /// - `UNKNOWN` if nova-compute not reported by servicegroup driver.
+    /// - `DOWN` if nova-compute forced down.
+    /// - `MAINTENANCE` if nova-compute is disabled.
+    /// - Empty string indicates there is no host for server.
     ///
-    /// * `UP` if nova-compute up.
-    /// * `UNKNOWN` if nova-compute not reported by servicegroup driver.
-    /// * `DOWN` if nova-compute forced down.
-    /// * `MAINTENANCE` if nova-compute is disabled.
-    /// * Empty string indicates there is no host for server.
-    ///
-    ///
-    /// This attribute appears in the response only if the policy permits.
-    /// By default, only administrators can get this parameter.
-    ///
+    /// This attribute appears in the response only if the policy permits. By
+    /// default, only administrators can get this parameter.
     ///
     /// **New in version 2.75**
+    ///
     #[serde()]
     #[structable(optional)]
     host_status: Option<String>,
 
-    /// The hostname of the instance reported in the metadata service.
-    /// This parameter only appears in responses for administrators until
+    /// The hostname of the instance reported in the metadata service. This
+    /// parameter only appears in responses for administrators until
     /// microversion 2.90, after which it is shown for all users.
     ///
-    ///
-    ///
     /// Note
-    ///
     ///
     /// This information is published via the metadata service and requires
     /// application such as `cloud-init` to propogate it through to the
     /// instance.
     ///
-    ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:hostname")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:hostname")]
     os_ext_srv_attr_hostname: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
-    /// Ironic driver,
-    /// it is the Ironic node uuid. Appears in the response for administrative
-    /// users only.
-    ///
+    /// Ironic driver, it is the Ironic node uuid. Appears in the response for
+    /// administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
     os_ext_srv_attr_hypervisor_hostname: Option<String>,
 
     /// Id of the server
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The UUID and links for the image for your server instance. The `image`
-    /// object
-    /// will be an empty string when you boot the server from a volume.
+    /// object will be an empty string when you boot the server from a volume.
+    ///
     #[serde()]
     #[structable(optional)]
     image: Option<ResponseImage>,
 
     /// The instance name. The Compute API generates the instance name from the
-    /// instance
-    /// name template. Appears in the response for administrative users only.
-    ///
+    /// instance name template. Appears in the response for administrative
+    /// users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:instance_name")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:instance_name")]
     os_ext_srv_attr_instance_name: Option<String>,
 
     /// True if the instance is locked otherwise False.
     ///
-    ///
     /// **New in version 2.9**
+    ///
     #[serde()]
     #[structable(optional)]
     locked: Option<bool>,
 
-    /// The UUID of the kernel image when using an AMI. Will be null if not.
-    /// By default, it appears in the response for administrative users only.
-    ///
+    /// The UUID of the kernel image when using an AMI. Will be null if not. By
+    /// default, it appears in the response for administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:kernel_id")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:kernel_id")]
     os_ext_srv_attr_kernel_id: Option<String>,
 
     /// The name of associated key pair, if any.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde()]
     #[structable(optional)]
     key_name: Option<String>,
 
-    /// When servers are launched via multiple create, this is the
-    /// sequence in which the servers were launched.
-    /// By default, it appears in the response for administrative users only.
-    ///
+    /// When servers are launched via multiple create, this is the sequence in
+    /// which the servers were launched. By default, it appears in the response
+    /// for administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:launch_index")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:launch_index")]
     os_ext_srv_attr_launch_index: Option<i32>,
 
     /// The date and time when the server was launched.
     ///
-    ///
-    /// The date and time stamp format is [ISO
-    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
-    ///
     /// For example, `2015-08-27T09:49:58-05:00`.
     ///
-    ///
     /// The `hh±:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    /// If the `deleted\_at` date and time stamp is not set, its value is
+    /// UTC. If the `deleted_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-SRV-USG:launched_at")]
     #[structable(optional, title = "OS-SRV-USG:launched_at")]
     os_srv_usg_launched_at: Option<String>,
 
-    /// Links to the resources in question. See [API Guide / Links and
-    /// References](https://docs.openstack.org/api-
-    /// guide/compute/links_and_references.html) for more info.
+    /// Links to the resources in question. See
+    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+    /// for more info.
+    ///
     #[serde()]
     #[structable(optional)]
     links: Option<Value>,
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
-    /// backward
-    /// compatibility.
+    /// backward compatibility.
+    ///
     #[serde()]
     #[structable(optional)]
     metadata: Option<HashMapStringString>,
 
     /// The server name.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The power state of the instance. This is an enum value that is mapped
     /// as:
-    ///
-    ///
     ///
     /// ```text
     /// 0: NOSTATE
@@ -426,20 +408,22 @@ struct ResponseData {
     ///
     /// ```
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-STS:power_state")]
     #[structable(optional, title = "OS-EXT-STS:power_state")]
     os_ext_sts_power_state: Option<i32>,
 
-    /// A percentage value of the operation progress.
-    /// This parameter only appears when the server status is `ACTIVE`,
-    /// `BUILD`, `REBUILD`, `RESIZE`, `VERIFY\_RESIZE` or `MIGRATING`.
+    /// A percentage value of the operation progress. This parameter only
+    /// appears when the server status is `ACTIVE`, `BUILD`, `REBUILD`,
+    /// `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
+    ///
     #[serde()]
     #[structable(optional)]
     progress: Option<i32>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
+    ///
     #[serde()]
     #[structable(optional)]
     tenant_id: Option<String>,
@@ -447,36 +431,36 @@ struct ResponseData {
     /// The UUID of the ramdisk image when using an AMI. Will be null if not.
     /// By default, it appears in the response for administrative users only.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:ramdisk_id")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:ramdisk_id")]
     os_ext_srv_attr_ramdisk_id: Option<String>,
 
-    /// The reservation id for the server. This is an id that can
-    /// be useful in tracking groups of servers created with multiple
-    /// create, that will all have the same reservation\_id.
-    /// By default, it appears in the response for administrative users only.
-    ///
+    /// The reservation id for the server. This is an id that can be useful in
+    /// tracking groups of servers created with multiple create, that will all
+    /// have the same reservation_id. By default, it appears in the response
+    /// for administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:reservation_id")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:reservation_id")]
     os_ext_srv_attr_reservation_id: Option<String>,
 
-    /// The root device name for the instance
-    /// By default, it appears in the response for administrative users only.
-    ///
+    /// The root device name for the instance By default, it appears in the
+    /// response for administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:root_device_name")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:root_device_name")]
     os_ext_srv_attr_root_device_name: Option<String>,
 
     /// One or more security groups objects.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde()]
     #[structable(optional)]
     security_groups: Option<Value>,
@@ -484,67 +468,61 @@ struct ResponseData {
     /// The UUIDs of the server groups to which the server belongs. Currently
     /// this can contain at most one entry.
     ///
-    ///
     /// **New in version 2.71**
+    ///
     #[serde()]
     #[structable(optional)]
     server_groups: Option<VecString>,
 
     /// The server status.
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// A list of tags. The maximum count of tags in this list is 50.
     ///
-    ///
     /// **New in version 2.26**
+    ///
     #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
     /// The task state of the instance.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-STS:task_state")]
     #[structable(optional, title = "OS-EXT-STS:task_state")]
     os_ext_sts_task_state: Option<String>,
 
     /// The date and time when the server was deleted.
     ///
-    ///
-    /// The date and time stamp format is [ISO
-    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    /// If the `deleted\_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. If the `deleted_at`
+    /// date and time stamp is not set, its value is `null`.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-SRV-USG:terminated_at")]
     #[structable(optional, title = "OS-SRV-USG:terminated_at")]
     os_srv_usg_terminated_at: Option<String>,
 
     /// A list of trusted certificate IDs, that were used during image
-    /// signature
-    /// verification to verify the signing certificate. The list is restricted
-    /// to a maximum of 50 IDs. The value is `null` if trusted certificate IDs
-    /// are not set.
-    ///
+    /// signature verification to verify the signing certificate. The list is
+    /// restricted to a maximum of 50 IDs. The value is `null` if trusted
+    /// certificate IDs are not set.
     ///
     /// **New in version 2.63**
+    ///
     #[serde()]
     #[structable(optional)]
     trusted_image_certificates: Option<VecString>,
@@ -552,44 +530,43 @@ struct ResponseData {
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
-    ///
-    ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
-    /// value, if included, is the time zone as an offset from UTC. In
-    /// the previous example, the offset value is `-05:00`.
     #[serde()]
     #[structable(optional)]
     updated: Option<String>,
 
-    /// The user\_data the instance was created with.
-    /// By default, it appears in the response for administrative users only.
-    ///
+    /// The user_data the instance was created with. By default, it appears in
+    /// the response for administrative users only.
     ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-SRV-ATTR:user_data")]
     #[structable(optional, title = "OS-EXT-SRV-ATTR:user_data")]
     os_ext_srv_attr_user_data: Option<String>,
 
     /// The user ID of the user who owns the server.
+    ///
     #[serde()]
     #[structable(optional)]
     user_id: Option<String>,
 
     /// The VM state.
     ///
-    ///
     /// **New in version 2.75**
+    ///
     #[serde(rename = "OS-EXT-STS:vm_state")]
     #[structable(optional, title = "OS-EXT-STS:vm_state")]
     os_ext_sts_vm_state: Option<String>,
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
@@ -605,7 +582,7 @@ impl fmt::Display for HashMapStringValue {
         )
     }
 }
-/// Vector of HashMapStringValue response type
+/// Vector of `HashMapStringValue` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecHashMapStringValue(Vec<HashMapStringValue>);
 impl fmt::Display for VecHashMapStringValue {
@@ -621,7 +598,7 @@ impl fmt::Display for VecHashMapStringValue {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseFault {
     code: Option<i32>,
@@ -662,7 +639,7 @@ impl fmt::Display for ResponseFault {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of String response type
+/// HashMap of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringString(HashMap<String, String>);
 impl fmt::Display for HashMapStringString {
@@ -678,7 +655,7 @@ impl fmt::Display for HashMapStringString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseFlavor {
     id: Option<String>,
@@ -749,7 +726,7 @@ impl fmt::Display for ResponseFlavor {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseImage {
     id: Option<String>,
@@ -777,7 +754,7 @@ impl fmt::Display for ResponseImage {
         write!(f, "{}", data.join(";"))
     }
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

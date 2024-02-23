@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -27,6 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    ///
     #[builder(default, setter(into))]
     sp_id: Cow<'a, str>,
 

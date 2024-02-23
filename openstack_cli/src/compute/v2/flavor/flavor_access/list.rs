@@ -42,6 +42,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Flavor Access Information For Given Flavor")]
 pub struct FlavorAccesesCommand {
@@ -62,19 +63,22 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+    ///
     #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
     flavor_id: String,
 }
 /// FlavorAcceses response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the flavor. While people often make this look like
-    /// an int, this is really a string.
+    /// The ID of the flavor. While people often make this look like an int,
+    /// this is really a string.
+    ///
     #[serde()]
     #[structable(optional)]
     flavor_id: Option<String>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
+    ///
     #[serde()]
     #[structable(optional)]
     tenant_id: Option<String>,

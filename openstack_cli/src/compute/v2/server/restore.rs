@@ -39,19 +39,20 @@ use openstack_sdk::api::compute::v2::server::restore;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Restores a previously soft-deleted server instance. You cannot use
-/// this method to restore deleted instances.
+/// Restores a previously soft-deleted server instance. You cannot use this
+/// method to restore deleted instances.
 ///
 /// Specify the `restore` action in the request body.
 ///
-/// Policy defaults enable only users with the administrative role or
-/// the owner of the server to perform this operation. Cloud providers
-/// can change these permissions through the `policy.json` file.
+/// Policy defaults enable only users with the administrative role or the owner
+/// of the server to perform this operation. Cloud providers can change these
+/// permissions through the `policy.json` file.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Restore Soft-Deleted Instance (restore Action)")]
 pub struct ServerCommand {
@@ -72,6 +73,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

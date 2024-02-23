@@ -29,6 +29,7 @@ pub struct Request<'a> {
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// network_id parameter for /v2.0/networks/{network_id} API
+    ///
     #[builder(default, setter(into))]
     network_id: Cow<'a, str>,
 

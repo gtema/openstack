@@ -43,8 +43,9 @@ use structable_derive::StructTable;
 ///
 /// The following error might occur:
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/region`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/region`
+///
 #[derive(Args)]
 #[command(about = "Delete region")]
 pub struct RegionCommand {
@@ -65,6 +66,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// region_id parameter for /v3/regions/{region_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -29,6 +29,7 @@ pub struct Request<'a> {
     pub(crate) tags: Vec<Cow<'a, str>>,
 
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
+    ///
     #[builder(default, setter(into))]
     subnet_id: Cow<'a, str>,
 

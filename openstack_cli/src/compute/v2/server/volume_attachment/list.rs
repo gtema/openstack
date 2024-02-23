@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List volume attachments for an instance")]
 pub struct VolumeAttachmentsCommand {
@@ -73,6 +74,7 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -80,58 +82,60 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     device: Option<String>,
 
     /// The volume ID of the attachment.
     ///
-    ///
     /// **Available until version 2.88**
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The UUID of the server.
+    ///
     #[serde(rename = "serverId")]
     #[structable(optional, title = "serverId", wide)]
     server_id: Option<String>,
 
     /// The UUID of the attached volume.
+    ///
     #[serde(rename = "volumeId")]
     #[structable(optional, title = "volumeId", wide)]
     volume_id: Option<String>,
 
     /// The device tag applied to the volume block device or `null`.
     ///
-    ///
     /// **New in version 2.70**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tag: Option<String>,
 
     /// A flag indicating if the attached volume will be deleted when the
-    /// server is
-    /// deleted.
-    ///
+    /// server is deleted.
     ///
     /// **New in version 2.79**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     delete_on_termination: Option<bool>,
 
     /// The UUID of the associated volume attachment in Cinder.
     ///
-    ///
     /// **New in version 2.89**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
     ///
-    ///
     /// **New in version 2.89**
+    ///
     #[serde()]
     #[structable(optional, wide)]
     bdm_uuid: Option<String>,

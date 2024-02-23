@@ -34,40 +34,40 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct FixedIps<'a> {
-    /// The IP address. It is required when `fixed\_ips` is specified.
+    /// The IP address. It is required when `fixed_ips` is specified.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) ip_address: Cow<'a, str>,
 }
 
 /// Specify the `interfaceAttachment` action in the request body.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct InterfaceAttachment<'a> {
     /// The ID of the network for which you want to create a port interface.
-    /// The `net\_id`
-    /// and `port\_id` parameters are mutually exclusive. If you do not specify
-    /// the
-    /// `net\_id` parameter, the OpenStack Networking API v2.0 uses the network
-    /// information
-    /// cache that is associated with the instance.
+    /// The `net_id` and `port_id` parameters are mutually exclusive. If you do
+    /// not specify the `net_id` parameter, the OpenStack Networking API v2.0
+    /// uses the network information cache that is associated with the
+    /// instance.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) net_id: Option<Cow<'a, str>>,
 
     /// The ID of the port for which you want to create an interface. The
-    /// `net\_id`
-    /// and `port\_id` parameters are mutually exclusive. If you do not specify
-    /// the
-    /// `port\_id` parameter, the OpenStack Networking API v2.0 allocates a
-    /// port and
-    /// creates an interface for it on the network.
+    /// `net_id` and `port_id` parameters are mutually exclusive. If you do not
+    /// specify the `port_id` parameter, the OpenStack Networking API v2.0
+    /// allocates a port and creates an interface for it on the network.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Cow<'a, str>>,
 
     /// Fixed IP addresses. If you request a specific fixed IP address without
-    /// a `net\_id`, the request returns a `Bad Request (400)` response code.
+    /// a `net_id`, the request returns a `Bad Request (400)` response code.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
@@ -77,10 +77,12 @@ pub struct InterfaceAttachment<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Specify the `interfaceAttachment` action in the request body.
+    ///
     #[builder(setter(into))]
     pub(crate) interface_attachment: InterfaceAttachment<'a>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

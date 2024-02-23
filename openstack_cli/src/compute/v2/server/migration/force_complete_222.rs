@@ -41,7 +41,7 @@ use structable_derive::StructTable;
 
 /// Force an in-progress live migration for a given server to complete.
 ///
-/// Specify the `force\_complete` action in the request body.
+/// Specify the `force_complete` action in the request body.
 ///
 /// Policy defaults enable only users with the administrative role to perform
 /// this operation. Cloud providers can change these permissions through the
@@ -49,35 +49,32 @@ use structable_derive::StructTable;
 ///
 /// **Preconditions**
 ///
-/// The server OS-EXT-STS:vm\_state value must be `active` and the server
-/// OS-EXT-STS:task\_state value must be `migrating`.
+/// The server OS-EXT-STS:vm_state value must be `active` and the server
+/// OS-EXT-STS:task_state value must be `migrating`.
 ///
 /// If the server is locked, you must have administrator privileges to force
-/// the
-/// completion of the server migration.
+/// the completion of the server migration.
 ///
 /// The migration status must be `running`.
 ///
 /// **Asynchronous Postconditions**
 ///
 /// After you make this request, you typically must keep polling the server
-/// status
-/// to determine whether the request succeeded.
+/// status to determine whether the request succeeded.
 ///
 /// **Troubleshooting**
 ///
 /// If the server status remains `MIGRATING` for an inordinate amount of time,
 /// the request may have failed. Ensure you meet the preconditions and run the
 /// request again. If the request fails again, investigate the compute back
-/// end.
-/// More details can be found in the
-/// [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration-
-/// usage.html#what-to-do-when-the-migration-times-out).
+/// end. More details can be found in the
+/// [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration-usage.html#what-to-do-when-the-migration-times-out).
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Force Migration Complete Action (force_complete Action) (microversion = 2.22)")]
 pub struct MigrationCommand {
@@ -98,10 +95,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

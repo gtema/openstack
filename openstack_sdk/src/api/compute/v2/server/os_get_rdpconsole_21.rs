@@ -31,10 +31,12 @@ pub enum Type {
 }
 
 /// The action.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsGetRdpconsole {
     /// The type of RDP console. The only valid value is `rdp-html5`.
+    ///
     #[serde(rename = "type")]
     #[builder()]
     pub(crate) _type: Type,
@@ -44,10 +46,12 @@ pub struct OsGetRdpconsole {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
+    ///
     #[builder(setter(into))]
     pub(crate) os_get_rdpconsole: OsGetRdpconsole,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -41,6 +41,7 @@ use std::collections::HashMap;
 /// Check grant for project, group, role.
 ///
 /// GET/HEAD /v3/projects/{project_id/groups/{group_id}/roles/{role_id}
+///
 #[derive(Args)]
 pub struct RoleCommand {
     /// Request Query parameters
@@ -61,16 +62,19 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_group_id", value_name = "GROUP_ID")]
     group_id: String,
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

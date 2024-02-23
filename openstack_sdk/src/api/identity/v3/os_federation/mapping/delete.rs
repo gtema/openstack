@@ -18,6 +18,7 @@
 //! Delete a mapping.
 //!
 //! DELETE /OS-FEDERATION/mappings/{mapping_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -29,6 +30,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

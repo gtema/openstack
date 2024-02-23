@@ -40,13 +40,13 @@ use structable_derive::StructTable;
 /// Lists IP addresses that are assigned to an instance.
 ///
 /// Policy defaults enable only users with the administrative role or the owner
-/// of
-/// the server to perform this operation. Cloud providers can change these
+/// of the server to perform this operation. Cloud providers can change these
 /// permissions through the `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Ips")]
 pub struct IpsCommand {
@@ -67,6 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -74,11 +75,13 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The IP address.
+    ///
     #[serde()]
     #[structable(optional)]
     addr: Option<String>,
 
     /// The IP version of the address associated with server.
+    ///
     #[serde()]
     #[structable(optional)]
     version: Option<i32>,

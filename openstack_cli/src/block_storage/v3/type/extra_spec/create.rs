@@ -39,6 +39,7 @@ use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct ExtraSpecCommand {
     /// Request Query parameters
@@ -61,6 +62,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
     type_id: String,
 }

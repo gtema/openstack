@@ -39,6 +39,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Returns the encryption metadata for a given volume.
+///
 #[derive(Args)]
 pub struct EncryptionsCommand {
     /// Request Query parameters
@@ -58,6 +59,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
     volume_id: String,
 }

@@ -40,6 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagCommand {
     /// Request Query parameters
@@ -59,10 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 
     /// tag_value parameter for /v2/images/{image_id}/tags/{tag_value} API
+    ///
     #[arg(id = "path_param_tag_value", value_name = "TAG_VALUE")]
     tag_value: String,
 }

@@ -41,13 +41,14 @@ use structable_derive::StructTable;
 
 /// Deletes a logical router and, if present, its external gateway interface.
 ///
-/// This operation fails if the router has attached interfaces.
-/// Use the remove router interface operation to remove all router
-/// interfaces before you delete the router.
+/// This operation fails if the router has attached interfaces. Use the remove
+/// router interface operation to remove all router interfaces before you
+/// delete the router.
 ///
 /// Normal response codes: 204
 ///
 /// Error response codes: 401, 404, 409, 412
+///
 #[derive(Args)]
 #[command(about = "Delete router")]
 pub struct RouterCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

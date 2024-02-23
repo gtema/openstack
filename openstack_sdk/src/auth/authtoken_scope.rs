@@ -202,7 +202,7 @@ impl TryFrom<&AuthTokenScope> for token_v3::Scope<'_> {
     }
 }
 
-/// Build Auth [`Scope`] data from [`CloudConfig`]
+/// Build Auth [`Scope`][`token_v3::Scope`] data from [`CloudConfig`][`config::CloudConfig`]
 impl TryFrom<&config::CloudConfig> for token_v3::Scope<'_> {
     type Error = AuthTokenError;
     fn try_from(config: &config::CloudConfig) -> Result<Self, Self::Error> {

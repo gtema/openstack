@@ -17,13 +17,12 @@
 
 //! Revokes a token.
 //!
-//! This call is similar to the HEAD `/auth/tokens` call except that
-//! the `X-Subject-Token` token is immediately not valid, regardless
-//! of the `expires\_at` attribute value. An additional
-//! `X-Auth-Token` is not required.
+//! This call is similar to the HEAD `/auth/tokens` call except that the
+//! `X-Subject-Token` token is immediately not valid, regardless of the
+//! `expires_at` attribute value. An additional `X-Auth-Token` is not required.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/auth\_tokens`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

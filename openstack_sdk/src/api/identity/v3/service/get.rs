@@ -17,8 +17,8 @@
 
 //! Shows details for a service.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/service`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/service`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -31,6 +31,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// service_id parameter for /v3/services/{service_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

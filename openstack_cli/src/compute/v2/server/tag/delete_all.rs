@@ -44,6 +44,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Delete All Tags")]
 pub struct TagCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }

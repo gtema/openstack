@@ -22,11 +22,10 @@
 //!
 //! This example request lists floating IPs in JSON format:
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. Additionally, you can filter results
-//! by using query string parameters. For information, see [Filtering
-//! and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-//! specification#Filtering_and_Column_Selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! Normal response codes: 200
 //!
@@ -44,54 +43,67 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// floating_ip_address query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     floating_ip_address: Option<Cow<'a, str>>,
 
     /// floating_network_id query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     floating_network_id: Option<Cow<'a, str>>,
 
     /// router_id query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     router_id: Option<Cow<'a, str>>,
 
     /// port_id query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     port_id: Option<Cow<'a, str>>,
 
     /// fixed_ip_address query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     fixed_ip_address: Option<Cow<'a, str>>,
 
     /// tenant_id query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// status query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     status: Option<Cow<'a, str>>,
 
     /// revision_number query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// description query parameter for /v2.0/floatingips API
+    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
@@ -107,6 +119,7 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// tags query parameter for /v2.0/floatingips API
+    ///
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -120,6 +133,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags-any query parameter for /v2.0/floatingips API
+    ///
     pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -133,6 +147,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags query parameter for /v2.0/floatingips API
+    ///
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -146,6 +161,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags-any query parameter for /v2.0/floatingips API
+    ///
     pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

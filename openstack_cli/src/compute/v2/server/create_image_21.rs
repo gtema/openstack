@@ -39,6 +39,7 @@ use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 #[command(about = "Create Image (createImage Action) (microversion = 2.1)")]
 pub struct ServerCommand {
@@ -62,6 +63,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -69,11 +71,13 @@ struct PathParameters {
 #[derive(Args)]
 struct CreateImage {
     /// The display name of an Image.
+    ///
     #[arg(long)]
     name: String,
 
-    /// Metadata key and value pairs for the image.
-    /// The maximum size for each metadata key and value pair is 255 bytes.
+    /// Metadata key and value pairs for the image. The maximum size for each
+    /// metadata key and value pair is 255 bytes.
+    ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 }
@@ -82,6 +86,7 @@ struct CreateImage {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The UUID for the resulting image snapshot.
+    ///
     #[serde()]
     #[structable()]
     image_id: String,

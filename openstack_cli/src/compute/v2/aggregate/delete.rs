@@ -45,6 +45,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Delete Aggregate")]
 pub struct AggregateCommand {
@@ -65,6 +66,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/images API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

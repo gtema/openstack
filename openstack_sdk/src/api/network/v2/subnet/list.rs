@@ -17,17 +17,15 @@
 
 //! Lists subnets that the project has access to.
 //!
-//! Default policy settings return only subnets owned by the
-//! project of the user submitting the request, unless the
-//! user has administrative role. You can control which attributes
-//! are returned by using the fields query parameter. You can filter
-//! results by using query string parameters.
+//! Default policy settings return only subnets owned by the project of the
+//! user submitting the request, unless the user has administrative role. You
+//! can control which attributes are returned by using the fields query
+//! parameter. You can filter results by using query string parameters.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. Additionally, you can filter results
-//! by using query string parameters. For information, see [Filtering
-//! and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-//! specification#Filtering_and_Column_Selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! Normal response codes: 200
 //!
@@ -45,78 +43,97 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// ip_version query parameter for /v2.0/subnets API
+    ///
     #[builder(default)]
     ip_version: Option<i32>,
 
     /// network_id query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     network_id: Option<Cow<'a, str>>,
 
     /// subnetpool_id query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     subnetpool_id: Option<Cow<'a, str>>,
 
     /// cidr query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     cidr: Option<Cow<'a, str>>,
 
     /// gateway_ip query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     gateway_ip: Option<Cow<'a, str>>,
 
     /// tenant_id query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// enable_dhcp query parameter for /v2.0/subnets API
+    ///
     #[builder(default)]
     enable_dhcp: Option<bool>,
 
     /// ipv6_ra_mode query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     ipv6_ra_mode: Option<Cow<'a, str>>,
 
     /// ipv6_address_mode query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     ipv6_address_mode: Option<Cow<'a, str>>,
 
     /// shared query parameter for /v2.0/subnets API
+    ///
     #[builder(default)]
     shared: Option<bool>,
 
     /// revision_number query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/subnets API
+    ///
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/subnets API
+    ///
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/subnets API
+    ///
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/subnets API
+    ///
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// description query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
     /// segment_id query parameter for /v2.0/subnets API
+    ///
     #[builder(default, setter(into))]
     segment_id: Option<Cow<'a, str>>,
 
@@ -132,6 +149,7 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// tags query parameter for /v2.0/subnets API
+    ///
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -145,6 +163,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags-any query parameter for /v2.0/subnets API
+    ///
     pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -158,6 +177,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags query parameter for /v2.0/subnets API
+    ///
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -171,6 +191,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags-any query parameter for /v2.0/subnets API
+    ///
     pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

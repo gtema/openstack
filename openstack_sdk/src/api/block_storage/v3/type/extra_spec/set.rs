@@ -27,10 +27,12 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[builder(default, setter(into))]
     type_id: Cow<'a, str>,
 
     /// id parameter for /v3/types/{type_id}/extra_specs/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

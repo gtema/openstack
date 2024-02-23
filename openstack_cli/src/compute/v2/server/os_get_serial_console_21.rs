@@ -42,14 +42,14 @@ use structable_derive::StructTable;
 ///
 /// Specify the `os-getSerialConsole` action in the request body.
 ///
-/// The only supported connection type is `serial`. The `type` parameter
-/// should be set as `serial`.
+/// The only supported connection type is `serial`. The `type` parameter should
+/// be set as `serial`.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
-/// itemNotFound(404),
-/// conflict(409), notImplemented(501)
+/// itemNotFound(404), conflict(409), notImplemented(501)
+///
 #[derive(Args)]
 #[command(
     about = "Get Serial Console (os-getSerialConsole Action) (DEPRECATED) (microversion = 2.1)"
@@ -75,6 +75,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -88,6 +89,7 @@ enum Type {
 #[derive(Args)]
 struct OsGetSerialConsole {
     /// The type of serial console. The only valid value is `serial`.
+    ///
     #[arg(long)]
     _type: Type,
 }
@@ -96,11 +98,13 @@ struct OsGetSerialConsole {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The type of VNC console. The only valid value is `novnc`.
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
     _type: Option<String>,
 
     /// The URL used to connect to the VNC console.
+    ///
     #[serde()]
     #[structable(optional)]
     url: Option<String>,

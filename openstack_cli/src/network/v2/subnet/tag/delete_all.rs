@@ -40,6 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct TagCommand {
     /// Request Query parameters
@@ -59,6 +60,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
+    ///
     #[arg(id = "path_param_subnet_id", value_name = "SUBNET_ID")]
     subnet_id: String,
 }

@@ -18,10 +18,9 @@
 //! Lists router conntrack helpers associated with a router.
 //!
 //! Use the `fields` query parameter to control which fields are returned in
-//! the response body.
-//! Additionally, you can filter results by using query string parameters.
-//! For information, see [Filtering and Column Selection](https://wiki.openstac
-//! k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! Normal response codes: 200
 //!
@@ -38,25 +37,30 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[builder(default, setter(into))]
     router_id: Cow<'a, str>,
 
     /// id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+    ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API
+    ///
     #[builder(default, setter(into))]
     protocol: Option<Cow<'a, str>>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
+    ///
     #[builder(default)]
     port: Option<f32>,
 
     /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
+    ///
     #[builder(default, setter(into))]
     helper: Option<Cow<'a, str>>,
 

@@ -41,6 +41,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Request of the ports/port_id/bindings/id/activate:put operation
+///
 #[derive(Args)]
 #[command(about = "Activate Port binding")]
 pub struct ActivateCommand {
@@ -65,10 +66,12 @@ struct QueryParameters {}
 struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
+    ///
     #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
     port_id: String,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

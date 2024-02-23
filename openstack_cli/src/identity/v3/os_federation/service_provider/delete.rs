@@ -42,6 +42,7 @@ use structable_derive::StructTable;
 /// Delete a service provider.
 ///
 /// DELETE /OS-FEDERATION/service_providers/{sp_id}
+///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
@@ -61,6 +62,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    ///
     #[arg(id = "path_param_sp_id", value_name = "SP_ID")]
     sp_id: String,
 }

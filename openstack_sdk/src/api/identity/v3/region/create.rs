@@ -17,15 +17,14 @@
 
 //! Creates a region.
 //!
-//! When you create the region, you can optionally specify a region ID.
-//! If you include characters in the region ID that are not allowed in
-//! a URI, you must URL-encode the ID. If you omit an ID, the API
-//! assigns an ID to the region.
+//! When you create the region, you can optionally specify a region ID. If you
+//! include characters in the region ID that are not allowed in a URI, you must
+//! URL-encode the ID. If you omit an ID, the API assigns an ID to the region.
 //!
 //! The following errors might occur:
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/regions`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -37,21 +36,25 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `region` object
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Region<'a> {
     /// The region description.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The ID for the region.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) parent_id: Option<Cow<'a, str>>,
@@ -61,6 +64,7 @@ pub struct Region<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `region` object
+    ///
     #[builder(setter(into))]
     pub(crate) region: Region<'a>,
 

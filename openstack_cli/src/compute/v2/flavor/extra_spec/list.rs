@@ -43,6 +43,7 @@ use std::collections::HashMap;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Extra Specs For A Flavor")]
 pub struct ExtraSpecsCommand {
@@ -63,6 +64,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+    ///
     #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
     flavor_id: String,
 }

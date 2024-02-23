@@ -45,12 +45,13 @@ use structable_derive::StructTable;
 /// Authenticates an identity and generates a token. Uses the password
 /// authentication method. Authorization is unscoped.
 ///
-/// The request body must include a payload that specifies the
-/// authentication method, which is `password`, and the user, by ID
-/// or name, and password credentials.
+/// The request body must include a payload that specifies the authentication
+/// method, which is `password`, and the user, by ID or name, and password
+/// credentials.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/auth\_tokens`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
+///
 #[derive(Args)]
 #[command(about = "Password authentication with unscoped authorization")]
 pub struct TokenCommand {
@@ -87,10 +88,12 @@ enum Methods {
 #[group(required = false, multiple = true)]
 struct Domain {
     /// User Domain ID
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// User Domain Name
+    ///
     #[arg(long)]
     name: Option<String>,
 }
@@ -100,21 +103,24 @@ struct Domain {
 #[group(required = false, multiple = true)]
 struct User {
     /// A `domain` object
+    ///
     #[command(flatten)]
     domain: Option<Domain>,
 
-    /// The ID of the user. Required if you do not
-    /// specify the user name.
+    /// The ID of the user. Required if you do not specify the user name.
+    ///
     #[arg(long)]
     id: Option<String>,
 
-    /// The user name. Required if you do not specify
-    /// the ID of the user. If you specify the user name, you must also
-    /// specify the domain, by ID or name.
+    /// The user name. Required if you do not specify the ID of the user. If
+    /// you specify the user name, you must also specify the domain, by ID or
+    /// name.
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// User Password
+    ///
     #[arg(long)]
     password: Option<String>,
 }
@@ -124,6 +130,7 @@ struct User {
 #[group(required = false, multiple = true)]
 struct Password {
     /// A `user` object.
+    ///
     #[command(flatten)]
     user: Option<User>,
 }
@@ -133,6 +140,7 @@ struct Password {
 #[group(required = false, multiple = true)]
 struct Token {
     /// Authorization Token value
+    ///
     #[arg(long, required = false)]
     id: Option<String>,
 }
@@ -156,14 +164,17 @@ struct TotpUser {
     domain: Option<UserDomainStructInput>,
 
     /// The user ID
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// The user name
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// MFA passcode
+    ///
     #[arg(long, required = false)]
     passcode: Option<String>,
 }
@@ -184,10 +195,12 @@ struct ApplicationCredentialUser {
     domain: Option<UserDomainStructInput>,
 
     /// The user ID
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// The user name
+    ///
     #[arg(long)]
     name: Option<String>,
 }
@@ -203,11 +216,13 @@ struct ApplicationCredential {
     name: Option<String>,
 
     /// The secret for authenticating the application credential.
+    ///
     #[arg(long, required = false)]
     secret: Option<String>,
 
     /// A user object, required if an application credential is identified by
     /// name and not ID.
+    ///
     #[command(flatten)]
     user: Option<ApplicationCredentialUser>,
 }
@@ -217,23 +232,28 @@ struct ApplicationCredential {
 #[group(required = true, multiple = true)]
 struct Identity {
     /// An application credential object.
+    ///
     #[command(flatten)]
     application_credential: Option<ApplicationCredential>,
 
-    /// The authentication method. For password
-    /// authentication, specify `password`.
+    /// The authentication method. For password authentication, specify
+    /// `password`.
+    ///
     #[arg(action=clap::ArgAction::Append, long, required=false)]
     methods: Vec<Methods>,
 
     /// The `password` object, contains the authentication information.
+    ///
     #[command(flatten)]
     password: Option<Password>,
 
     /// A `token` object
+    ///
     #[command(flatten)]
     token: Option<Token>,
 
     /// Multi Factor Authentication information
+    ///
     #[command(flatten)]
     totp: Option<Totp>,
 }
@@ -243,10 +263,12 @@ struct Identity {
 #[group(required = false, multiple = true)]
 struct ProjectDomain {
     /// Project domain Id
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// Project domain name
+    ///
     #[arg(long)]
     name: Option<String>,
 }
@@ -259,10 +281,12 @@ struct Project {
     domain: Option<ProjectDomain>,
 
     /// Project Id
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// Project Name
+    ///
     #[arg(long)]
     name: Option<String>,
 }
@@ -272,10 +296,12 @@ struct Project {
 #[group(required = false, multiple = true)]
 struct ScopeDomain {
     /// Domain id
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// Domain name
+    ///
     #[arg(long)]
     name: Option<String>,
 }
@@ -317,6 +343,7 @@ struct Scope {
 #[derive(Args)]
 struct Auth {
     /// An `identity` object.
+    ///
     #[command(flatten)]
     identity: Identity,
 
@@ -329,6 +356,7 @@ struct Auth {
     /// domain of the project must also be specified in order to uniquely
     /// identify the project by name. A domain scope may be specified by either
     /// the domain’s ID or name with equivalent results.
+    ///
     #[command(flatten)]
     scope: Option<Scope>,
 }
@@ -336,68 +364,68 @@ struct Auth {
 /// Token response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// A list of one or two audit IDs. An audit ID is a
-    /// unique, randomly generated, URL-safe string that you can use to
-    /// track a token. The first audit ID is the current audit ID for the
-    /// token. The second audit ID is present for only re-scoped tokens
-    /// and is the audit ID from the token before it was re-scoped. A re-
-    /// scoped token is one that was exchanged for another token of the
-    /// same or different scope. You can use these audit IDs to track the
-    /// use of a token or chain of tokens across multiple requests and
-    /// endpoints without exposing the token ID to non-privileged users.
+    /// A list of one or two audit IDs. An audit ID is a unique, randomly
+    /// generated, URL-safe string that you can use to track a token. The first
+    /// audit ID is the current audit ID for the token. The second audit ID is
+    /// present for only re-scoped tokens and is the audit ID from the token
+    /// before it was re-scoped. A re- scoped token is one that was exchanged
+    /// for another token of the same or different scope. You can use these
+    /// audit IDs to track the use of a token or chain of tokens across
+    /// multiple requests and endpoints without exposing the token ID to
+    /// non-privileged users.
+    ///
     #[serde()]
     #[structable(optional)]
     audit_ids: Option<VecString>,
 
     /// A `catalog` object.
+    ///
     #[serde()]
     #[structable(optional)]
     catalog: Option<Value>,
 
     /// The date and time when the token expires.
     ///
-    ///
-    /// The date and time stamp format is [ISO
-    /// 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
     ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss.sssZ
     ///
     /// ```
     ///
-    ///
     /// For example, `2015-08-27T09:49:58.000000Z`.
     ///
-    ///
     /// A `null` value indicates that the token never expires.
+    ///
     #[serde()]
     #[structable(optional)]
     expires_at: Option<String>,
 
     /// The date and time when the token was issued.
+    ///
     #[serde()]
     #[structable(optional)]
     issues_at: Option<String>,
 
-    /// The authentication methods, which are commonly `password`,
-    /// `token`, or other methods. Indicates the accumulated set of
-    /// authentication methods that were used to obtain the token. For
-    /// example, if the token was obtained by password authentication, it
-    /// contains `password`. Later, if the token is exchanged by using
-    /// the token authentication method one or more times, the
-    /// subsequently created tokens contain both `password` and
+    /// The authentication methods, which are commonly `password`, `token`, or
+    /// other methods. Indicates the accumulated set of authentication methods
+    /// that were used to obtain the token. For example, if the token was
+    /// obtained by password authentication, it contains `password`. Later, if
+    /// the token is exchanged by using the token authentication method one or
+    /// more times, the subsequently created tokens contain both `password` and
     /// `token` in their `methods` attribute. Unlike multi-factor
-    /// authentication, the `methods` attribute merely indicates the
-    /// methods that were used to authenticate the user in exchange for a
-    /// token. The client is responsible for determining the total number
-    /// of authentication factors.
+    /// authentication, the `methods` attribute merely indicates the methods
+    /// that were used to authenticate the user in exchange for a token. The
+    /// client is responsible for determining the total number of
+    /// authentication factors.
+    ///
     #[serde()]
     #[structable(optional)]
     methods: Option<VecString>,
 
     /// A `user` object.
+    ///
     #[serde()]
     #[structable(optional)]
     user: Option<ResponseUser>,
@@ -409,33 +437,35 @@ struct ResponseData {
     /// A domain object including the id and name representing the domain the
     /// token is scoped to. This is only included in tokens that are scoped to
     /// a domain.
+    ///
     #[serde()]
     #[structable(optional)]
     domain: Option<ResponseDomainStructResponse>,
 
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
-    /// in
-    /// tokens that are scoped to a project.
+    /// in tokens that are scoped to a project.
+    ///
     #[serde()]
     #[structable(optional)]
     project: Option<ResponseProject>,
 
     /// A list of `role` objects
+    ///
     #[serde()]
     #[structable(optional)]
     roles: Option<Value>,
 
     /// A `system` object containing information about which parts of the
-    /// system
-    /// the token is scoped to. If the token is scoped to the entire deployment
-    /// system, the `system` object will consist of `{"all": true}`. This is
-    /// only included in tokens that are scoped to the system.
+    /// system the token is scoped to. If the token is scoped to the entire
+    /// deployment system, the `system` object will consist of `{"all": true}`.
+    /// This is only included in tokens that are scoped to the system.
+    ///
     #[serde()]
     #[structable(optional)]
     system: Option<HashMapStringbool>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {
@@ -451,7 +481,7 @@ impl fmt::Display for VecString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseDomain {
     id: Option<String>,
@@ -479,7 +509,7 @@ impl fmt::Display for ResponseDomain {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
@@ -495,7 +525,7 @@ impl fmt::Display for HashMapStringValue {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseUser {
     id: Option<String>,
@@ -547,7 +577,7 @@ impl fmt::Display for ResponseUser {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseDomainStructResponse {
     id: Option<String>,
@@ -575,7 +605,7 @@ impl fmt::Display for ResponseDomainStructResponse {
         write!(f, "{}", data.join(";"))
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseProject {
     id: Option<String>,
@@ -603,7 +633,7 @@ impl fmt::Display for ResponseProject {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of bool response type
+/// HashMap of `bool` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringbool(HashMap<String, bool>);
 impl fmt::Display for HashMapStringbool {

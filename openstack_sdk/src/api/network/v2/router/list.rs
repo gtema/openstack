@@ -17,15 +17,14 @@
 
 //! Lists logical routers that the project who submits the request can access.
 //!
-//! Default policy settings return only those routers that the project
-//! who submits the request owns, unless an administrative user submits
-//! the request.
+//! Default policy settings return only those routers that the project who
+//! submits the request owns, unless an administrative user submits the
+//! request.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. Additionally, you can filter results
-//! by using query string parameters. For information, see [Filtering
-//! and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-//! specification#Filtering_and_Column_Selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. Additionally, you can filter results by using query
+//! string parameters. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! Normal response codes: 200
 //!
@@ -43,42 +42,52 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// name query parameter for /v2.0/routers API
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// admin_state_up query parameter for /v2.0/routers API
+    ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
     /// tenant_id query parameter for /v2.0/routers API
+    ///
     #[builder(default, setter(into))]
     tenant_id: Option<Cow<'a, str>>,
 
     /// enable_ndp_proxy query parameter for /v2.0/routers API
+    ///
     #[builder(default)]
     enable_ndp_proxy: Option<bool>,
 
     /// revision_number query parameter for /v2.0/routers API
+    ///
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
     /// tags query parameter for /v2.0/routers API
+    ///
     #[builder(default, private, setter(name = "_tags"))]
     tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// tags-any query parameter for /v2.0/routers API
+    ///
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/routers API
+    ///
     #[builder(default, private, setter(name = "_not_tags"))]
     not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags-any query parameter for /v2.0/routers API
+    ///
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// description query parameter for /v2.0/routers API
+    ///
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
@@ -94,6 +103,7 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// tags query parameter for /v2.0/routers API
+    ///
     pub fn tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -107,6 +117,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// tags-any query parameter for /v2.0/routers API
+    ///
     pub fn tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -120,6 +131,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags query parameter for /v2.0/routers API
+    ///
     pub fn not_tags<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,
@@ -133,6 +145,7 @@ impl<'a> RequestBuilder<'a> {
     }
 
     /// not-tags-any query parameter for /v2.0/routers API
+    ///
     pub fn not_tags_any<I, T>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = T>,

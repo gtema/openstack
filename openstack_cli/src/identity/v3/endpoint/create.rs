@@ -40,8 +40,9 @@ use structable_derive::StructTable;
 
 /// Creates an endpoint.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/endpoints`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
+///
 #[derive(Args)]
 #[command(about = "Create endpoint")]
 pub struct EndpointCommand {
@@ -75,37 +76,39 @@ enum Interface {
 /// Endpoint Body data
 #[derive(Args)]
 struct Endpoint {
-    /// Defines whether the endpoint appears in the
-    /// service catalog: - `false`. The endpoint does not appear in the
-    /// service catalog. - `true`. The endpoint appears in the service
-    /// catalog. Default is `true`.
+    /// Defines whether the endpoint appears in the service catalog: - `false`.
+    /// The endpoint does not appear in the service catalog. - `true`. The
+    /// endpoint appears in the service catalog. Default is `true`.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
-    /// The interface type, which describes the
-    /// visibility of the endpoint. Value is: - `public`. Visible by
-    /// end users on a publicly available network interface. -
-    /// `internal`. Visible by end users on an unmetered internal
-    /// network interface. - `admin`. Visible by administrative users
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: - `public`. Visible by end users on a publicly available
+    /// network interface. - `internal`. Visible by end users on an unmetered
+    /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
+    ///
     #[arg(long)]
     interface: Interface,
 
     /// The geographic location of the service endpoint.
+    ///
     #[arg(long)]
     region: Option<String>,
 
-    /// (Since v3.2) The ID of the region that contains
-    /// the service endpoint.
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
+    ///
     #[arg(long)]
     region_id: Option<String>,
 
-    /// The UUID of the service to which the endpoint
-    /// belongs.
+    /// The UUID of the service to which the endpoint belongs.
+    ///
     #[arg(long)]
     service_id: String,
 
     /// The endpoint URL.
+    ///
     #[arg(long)]
     url: String,
 }
@@ -113,48 +116,50 @@ struct Endpoint {
 /// Endpoint response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// Indicates whether the endpoint appears in the
-    /// service catalog: - `false`. The endpoint does not appear in the
-    /// service catalog. - `true`. The endpoint appears in the service
-    /// catalog.
+    /// Indicates whether the endpoint appears in the service catalog: -
+    /// `false`. The endpoint does not appear in the service catalog. - `true`.
+    /// The endpoint appears in the service catalog.
+    ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
     /// The endpoint ID.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The interface type, which describes the
-    /// visibility of the endpoint. Value is: - `public`. Visible by
-    /// end users on a publicly available network interface. -
-    /// `internal`. Visible by end users on an unmetered internal
-    /// network interface. - `admin`. Visible by administrative users
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: - `public`. Visible by end users on a publicly available
+    /// network interface. - `internal`. Visible by end users on an unmetered
+    /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
+    ///
     #[serde()]
     #[structable(optional)]
     interface: Option<String>,
 
-    /// (Deprecated in v3.2) The geographic location of
-    /// the service endpoint.
+    /// (Deprecated in v3.2) The geographic location of the service endpoint.
+    ///
     #[serde()]
     #[structable(optional)]
     region: Option<String>,
 
-    /// (Since v3.2) The ID of the region that contains
-    /// the service endpoint.
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
+    ///
     #[serde()]
     #[structable(optional)]
     region_id: Option<String>,
 
-    /// The UUID of the service to which the endpoint
-    /// belongs.
+    /// The UUID of the service to which the endpoint belongs.
+    ///
     #[serde()]
     #[structable(optional)]
     service_id: Option<String>,
 
     /// The endpoint URL.
+    ///
     #[serde()]
     #[structable(optional)]
     url: Option<String>,

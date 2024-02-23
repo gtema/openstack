@@ -39,18 +39,18 @@ use structable_derive::StructTable;
 
 /// Shows console output for a server.
 ///
-/// This API returns the text of the console since boot.
-/// The content returned may be large. Limit the lines of console
-/// text, beginning at the tail of the content, by setting
-/// the optional `length` parameter in the request body.
+/// This API returns the text of the console since boot. The content returned
+/// may be large. Limit the lines of console text, beginning at the tail of the
+/// content, by setting the optional `length` parameter in the request body.
 ///
-/// The server to get console log from should set
-/// `export LC\_ALL=en\_US.UTF-8` in order to avoid incorrect unicode error.
+/// The server to get console log from should set `export LC_ALL=en_US.UTF-8`
+/// in order to avoid incorrect unicode error.
 ///
 /// Normal response codes: 200
 ///
-/// Error response codes: unauthorized(401), forbidden(403),
-/// notFound(404), conflict(409), methodNotImplemented(501)
+/// Error response codes: unauthorized(401), forbidden(403), notFound(404),
+/// conflict(409), methodNotImplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Show Console Output (os-getConsoleOutput Action)")]
 pub struct ServerCommand {
@@ -74,22 +74,21 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
 /// OsGetConsoleOutput Body data
 #[derive(Args)]
 struct OsGetConsoleOutput {
-    /// The number of lines to fetch from the end of console log. All
-    /// lines will be returned if this is not specified.
-    ///
-    ///
+    /// The number of lines to fetch from the end of console log. All lines
+    /// will be returned if this is not specified.
     ///
     /// Note
     ///
-    ///
     /// This parameter can be specified as not only ‘integer’ but also
     /// ‘string’.
+    ///
     #[arg(long)]
     length: Option<String>,
 }
@@ -97,8 +96,9 @@ struct OsGetConsoleOutput {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The console output as a string. Control characters will be escaped
-    /// to create a valid JSON string.
+    /// The console output as a string. Control characters will be escaped to
+    /// create a valid JSON string.
+    ///
     #[serde()]
     #[structable()]
     output: String,

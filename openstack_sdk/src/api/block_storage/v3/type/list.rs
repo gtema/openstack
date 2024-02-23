@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Returns the list of volume types.
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

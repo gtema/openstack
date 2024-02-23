@@ -47,6 +47,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Remove Security Group From A Server (removeSecurityGroup Action)")]
 pub struct ServerCommand {
@@ -67,6 +68,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

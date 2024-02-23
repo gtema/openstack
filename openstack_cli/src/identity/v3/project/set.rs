@@ -43,8 +43,9 @@ use structable_derive::StructTable;
 
 /// Updates a project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/project`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/project`
+///
 #[derive(Args)]
 #[command(about = "Update project")]
 pub struct ProjectCommand {
@@ -69,6 +70,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -84,43 +86,48 @@ struct Options {
 #[derive(Args)]
 struct Project {
     /// The description of the project.
+    ///
     #[arg(long)]
     description: Option<String>,
 
     /// The ID of the new domain for the project. The ability to change the
-    /// domain
-    /// of a project is now deprecated, and will be removed in subequent
-    /// release.
-    /// It is already disabled by default in most Identity service
+    /// domain of a project is now deprecated, and will be removed in subequent
+    /// release. It is already disabled by default in most Identity service
     /// implementations.
+    ///
     #[arg(long)]
     domain_id: Option<String>,
 
-    /// If set to `true`, project is enabled. If set to
-    /// `false`, project is disabled.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
-    /// If set to `true`, project is enabled. If set to
-    /// `false`, project is disabled.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     is_domain: Option<bool>,
 
     #[arg(long)]
     parent_id: Option<String>,
 
-    /// The name of the project, which must be unique within the
-    /// owning domain. A project can have the same name as its domain.
+    /// The name of the project, which must be unique within the owning domain.
+    /// A project can have the same name as its domain.
+    ///
     #[arg(long)]
     name: Option<String>,
 
-    /// A list of simple strings assigned to a project.
-    /// Tags can be used to classify projects into groups.
+    /// A list of simple strings assigned to a project. Tags can be used to
+    /// classify projects into groups.
+    ///
     #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
+    ///
     #[command(flatten)]
     options: Option<Options>,
 }
@@ -129,57 +136,65 @@ struct Project {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The description of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// The ID of the domain for the project.
+    ///
     #[serde()]
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
-    /// If the user is enabled, this value is `true`.
-    /// If the user is disabled, this value is `false`.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde()]
     #[structable(optional)]
     is_domain: Option<bool>,
 
     /// The ID of the parent for the project.
     ///
-    ///
     /// **New in version 3.4**
+    ///
     #[serde()]
     #[structable(optional)]
     parent_id: Option<String>,
 
     /// The name of the project.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// A list of simple strings assigned to a project.
+    ///
     #[serde()]
     #[structable(optional)]
     tags: Option<VecString>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
+    ///
     #[serde()]
     #[structable(optional)]
     options: Option<ResponseOptions>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {
@@ -195,7 +210,7 @@ impl fmt::Display for VecString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseOptions {
     immutable: Option<bool>,

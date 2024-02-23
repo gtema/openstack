@@ -40,8 +40,8 @@ use structable_derive::StructTable;
 
 /// Get possible domain scopes for token.
 ///
-/// GET/HEAD /v3/auth/domains
-/// GET/HEAD /v3/OS-FEDERATION/domains
+/// GET/HEAD /v3/auth/domains GET/HEAD /v3/OS-FEDERATION/domains
+///
 #[derive(Args)]
 pub struct DomainsCommand {
     /// Request Query parameters
@@ -64,27 +64,32 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the domain.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The name of the domain.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The description of the domain.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// If set to `true`, domain is enabled. If set to
-    /// `false`, domain is disabled.
+    /// If set to `true`, domain is enabled. If set to `false`, domain is
+    /// disabled.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// The links to the `domain` resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,

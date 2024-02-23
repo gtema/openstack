@@ -44,8 +44,9 @@ use structable_derive::StructTable;
 
 /// Assigns a role to a group on a project.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/project\_group\_role`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/project_group_role`
+///
 #[derive(Args)]
 #[command(about = "Assign role to group on project")]
 pub struct RoleCommand {
@@ -70,16 +71,19 @@ struct QueryParameters {}
 struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
     project_id: String,
 
     /// group_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    ///
     #[arg(id = "path_param_group_id", value_name = "GROUP_ID")]
     group_id: String,
 
     /// role_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

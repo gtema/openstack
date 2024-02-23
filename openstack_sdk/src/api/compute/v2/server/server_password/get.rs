@@ -22,8 +22,7 @@
 //!
 //! The password saved in the metadata service is typically encrypted using the
 //! public SSH key injected into this server, so the SSH private key is needed
-//! to
-//! read the password.
+//! to read the password.
 //!
 //! Policy defaults enable only users with the administrative role or the owner
 //! of the server to perform this operation. Cloud providers can change these
@@ -44,6 +43,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 

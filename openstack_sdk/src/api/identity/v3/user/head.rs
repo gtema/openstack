@@ -17,8 +17,8 @@
 
 //! Get a user resource or list users.
 //!
-//! GET/HEAD /v3/users
-//! GET/HEAD /v3/users/{user_id}
+//! GET/HEAD /v3/users GET/HEAD /v3/users/{user_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

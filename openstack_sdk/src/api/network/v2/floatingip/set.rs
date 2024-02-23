@@ -17,16 +17,16 @@
 
 //! Updates a floating IP and its association with an internal port.
 //!
-//! The association process is the same as the process for the create
-//! floating IP operation.
+//! The association process is the same as the process for the create floating
+//! IP operation.
 //!
-//! To disassociate a floating IP from a port, set the `port\_id`
-//! attribute to null or omit it from the request body.
+//! To disassociate a floating IP from a port, set the `port_id` attribute to
+//! null or omit it from the request body.
 //!
 //! This example updates a floating IP:
 //!
-//! Depending on the request body that you submit, this request
-//! associates a port with or disassociates a port from a floating IP.
+//! Depending on the request body that you submit, this request associates a
+//! port with or disassociates a port from a floating IP.
 //!
 //! Normal response codes: 200
 //!
@@ -41,25 +41,27 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-/// A `floatingip` object. When you associate a
-/// floating IP address with a VM, the instance has the same public IP
-/// address each time that it boots, basically to maintain a
-/// consistent IP address for maintaining DNS assignment.
+/// A `floatingip` object. When you associate a floating IP address with a VM,
+/// the instance has the same public IP address each time that it boots,
+/// basically to maintain a consistent IP address for maintaining DNS
+/// assignment.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Floatingip<'a> {
-    /// The ID of a port associated with the floating IP.
-    /// To associate the floating IP with a fixed IP,
-    /// you must specify the ID of the internal port.
-    /// To disassociate the floating IP, `null` should be specified.
+    /// The ID of a port associated with the floating IP. To associate the
+    /// floating IP with a fixed IP, you must specify the ID of the internal
+    /// port. To disassociate the floating IP, `null` should be specified.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Option<Cow<'a, str>>>,
 
-    /// The fixed IP address that is associated with the floating IP.
-    /// If an internal port has multiple associated IP addresses,
-    /// the service chooses the first IP address unless you explicitly
-    /// define a fixed IP address in the `fixed\_ip\_address` parameter.
+    /// The fixed IP address that is associated with the floating IP. If an
+    /// internal port has multiple associated IP addresses, the service chooses
+    /// the first IP address unless you explicitly define a fixed IP address in
+    /// the `fixed_ip_address` parameter.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
@@ -68,8 +70,9 @@ pub struct Floatingip<'a> {
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -78,14 +81,16 @@ pub struct Floatingip<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// A `floatingip` object. When you associate a
-    /// floating IP address with a VM, the instance has the same public IP
-    /// address each time that it boots, basically to maintain a
-    /// consistent IP address for maintaining DNS assignment.
+    /// A `floatingip` object. When you associate a floating IP address with a
+    /// VM, the instance has the same public IP address each time that it
+    /// boots, basically to maintain a consistent IP address for maintaining
+    /// DNS assignment.
+    ///
     #[builder(setter(into))]
     pub(crate) floatingip: Floatingip<'a>,
 
     /// id parameter for /v2.0/floatingips/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

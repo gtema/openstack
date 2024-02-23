@@ -43,14 +43,15 @@ use structable_derive::StructTable;
 ///
 /// Specify the `injectNetworkInfo` action in the request body.
 ///
-/// Policy defaults enable only users with the administrative role to
-/// perform this operation. Cloud providers can change these permissions
-/// through the `policy.json` file.
+/// Policy defaults enable only users with the administrative role to perform
+/// this operation. Cloud providers can change these permissions through the
+/// `policy.json` file.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Inject Network Information (injectNetworkInfo Action)")]
 pub struct ServerCommand {
@@ -71,6 +72,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

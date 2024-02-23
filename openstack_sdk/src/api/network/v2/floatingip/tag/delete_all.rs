@@ -27,6 +27,7 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
+    ///
     #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,
 

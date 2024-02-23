@@ -39,6 +39,7 @@ use std::fmt;
 use structable_derive::StructTable;
 
 /// GET operation on /v3/OS-FEDERATION/identity_providers
+///
 #[derive(Args)]
 pub struct IdentityProvidersCommand {
     /// Request Query parameters
@@ -54,10 +55,12 @@ pub struct IdentityProvidersCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// Filter for Identity Providers’ ID attribute
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// Filter for Identity Providers’ enabled attribute
+    ///
     #[arg(long)]
     enabled: Option<bool>,
 }
@@ -69,37 +72,43 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The Identity Provider unique ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The Identity Provider description
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
     /// The length of validity in minutes for group memberships carried over
     /// through mapping and persisted in the database.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     authorization_ttl: Option<i32>,
 
     /// Whether the Identity Provider is enabled or not
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// List of the unique Identity Provider’s remote IDs
+    ///
     #[serde()]
     #[structable(optional, wide)]
     remote_ids: Option<VecString>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

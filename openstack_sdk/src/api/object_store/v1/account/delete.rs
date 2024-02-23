@@ -12,17 +12,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Deletes the specified account when a reseller admin issues this request.
-//! Accounts are only deleted by (1) having a reseller admin level auth token
-//! (2) sending a DELETE to a proxy server for the account to be deleted and
-//! (3) that proxy server having the allow_account_management” config option
-//! set to true.
-//! Note that an issuing a DELETE request simply marks the account for deletion
-//! later as outlined in the link:
-//! https://docs.openstack.org/swift/latest/overview_reaper.html.
-//! Take care when performing this operation because deleting an account is a
-//! one-way operation that is not trivially recoverable. It''s crucial to note
-//! that in an OpenStack context, you should delete an account after the
+//! Deletes the specified account when a reseller admin issues this request. Accounts are only
+//! deleted by (1) having a reseller admin level auth token (2) sending a DELETE to a proxy server
+//! for the account to be deleted and (3) that proxy server having the allow_account_management”
+//! config option set to true. Note that an issuing a DELETE request simply marks the account for
+//! deletion later as outlined in the link:
+//! `https://docs.openstack.org/swift/latest/overview_reaper.html`. Take care when performing this
+//! operation because deleting an account is a one-way operation that is not trivially recoverable.
+//! It''s crucial to note that in an OpenStack context, you should delete an account after the
 //! project/tenant has been deleted from Keystone.
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

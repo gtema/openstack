@@ -525,7 +525,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -558,7 +558,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -591,7 +591,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -623,7 +623,7 @@ Creates a new volume.
 * `--description <DESCRIPTION>` — The volume description
 * `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage- multi-backend.html)
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
 * `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
@@ -680,7 +680,7 @@ Returns a detailed list of volumes
 
   Possible values: `true`, `false`
 
-* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of < key > [: < direction > ]. A valid direction is asc (ascending) or desc (descending)
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
 * `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
 * `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
 
@@ -1158,7 +1158,7 @@ Add Host
 
 ## `osc compute aggregate create`
 
-Creates an aggregate. If specifying an option availability\_zone, the aggregate is created as an availability zone and the availability zone is visible to normal users.
+Creates an aggregate. If specifying an option availability_zone, the aggregate is created as an availability zone and the availability zone is visible to normal users.
 
 Normal response codes: 200
 
@@ -1809,7 +1809,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
   Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
-* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+* `--user-id <USER_ID>` — The user_id for a keypair. This allows administrative users to upload keys for other users than themselves
 
 
 
@@ -1831,7 +1831,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
   Possible values: `ssh`, `x509`
 
 * `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
-* `--user-id <USER_ID>` — The user\_id for a keypair. This allows administrative users to upload keys for other users than themselves
+* `--user-id <USER_ID>` — The user_id for a keypair. This allows administrative users to upload keys for other users than themselves
 
 
 
@@ -2084,7 +2084,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 Adds a floating IP address to a server, which associates that address with the server.
 
-A pool of floating IP addresses, configured by the cloud administrator, is available in OpenStack Compute. The project quota defines the maximum number of floating IP addresses that you can allocate to the project. After you [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate- floating-ip-address) for a project, you can associate that address with the server. Specify the `addFloatingIp` action in the request body.
+A pool of floating IP addresses, configured by the cloud administrator, is available in OpenStack Compute. The project quota defines the maximum number of floating IP addresses that you can allocate to the project. After you [create (allocate) a floating IPaddress](https://docs.openstack.org/api-ref/compute/#create-allocate-floating-ip-address) for a project, you can associate that address with the server. Specify the `addFloatingIp` action in the request body.
 
 If an instance is connected to multiple networks, you can associate a floating IP address with a specific fixed IP address by using the optional `fixed\_address` parameter.
 
@@ -2199,7 +2199,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2238,14 +2238,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2282,7 +2282,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2321,14 +2321,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2365,7 +2365,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2404,14 +2404,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2447,7 +2447,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2486,14 +2486,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2527,7 +2527,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2566,14 +2566,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2607,7 +2607,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2646,14 +2646,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2686,7 +2686,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2726,14 +2726,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2766,7 +2766,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2806,14 +2806,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2845,7 +2845,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2885,14 +2885,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2924,7 +2924,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -2956,14 +2956,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -2995,7 +2995,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -3027,14 +3027,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -3066,7 +3066,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -3098,14 +3098,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -3137,7 +3137,7 @@ When you create a server, the response shows only the server ID, its links, and 
 
 Include the `block\_device\_mapping\_v2` parameter in the create request body to boot a server from a volume.
 
-Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or- import-keypair) request.
+Include the `key\_name` parameter in the create request body to add a keypair to the server when you create it. To create a keypair, make a [create keypair](https://docs.openstack.org/api-ref/compute/#create-or-import-keypair) request.
 
 **Preconditions**
 
@@ -3169,14 +3169,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
-* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config\_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+* `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config\_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
@@ -3619,9 +3619,9 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 For each server, shows server details including config drive, extended status, and server usage information.
 
-The extended status information appears in the OS-EXT-STS:vm\_state, OS-EXT-STS:power\_state, and OS-EXT-STS:task\_state attributes.
+The extended status information appears in the OS-EXT-STS:vm_state, OS-EXT-STS:power_state, and OS-EXT-STS:task_state attributes.
 
-The server usage information appears in the OS-SRV-USG:launched\_at and OS-SRV-USG:terminated\_at attributes.
+The server usage information appears in the OS-SRV-USG:launched_at and OS-SRV-USG:terminated_at attributes.
 
 HostId is unique per account and is not globally unique.
 
@@ -3793,11 +3793,11 @@ Locks a server.
 
 Specify the `lock` action in the request body.
 
-Most actions by non-admin users are not allowed to the server after this operation is successful and the server is locked. See the “Lock, Unlock” item in [Server actions](https://docs.openstack.org/api- guide/compute/server_concepts.html#server-actions) for the restricted actions. But administrators can perform actions on the server even though the server is locked. Note that from microversion 2.73 it is possible to specify a reason when locking the server.
+Most actions by non-admin users are not allowed to the server after this operation is successful and the server is locked. See the “Lock, Unlock” item in [Server actions](https://docs.openstack.org/api-guide/compute/server_concepts.html#server-actions) for the restricted actions. But administrators can perform actions on the server even though the server is locked. Note that from microversion 2.73 it is possible to specify a reason when locking the server.
 
-The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock- server-unlock-action) will unlock a server in locked state so additional actions can be performed on the server by non-admin users.
+The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock-server-unlock-action) will unlock a server in locked state so additional actions can be performed on the server by non-admin users.
 
-You can know whether a server is locked or not and the `locked\_reason` (if specified, from the 2.73 microversion) by the [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed) or the [Show Server Details API](https://docs.openstack.org/api- ref/compute/#show-server-details).
+You can know whether a server is locked or not and the `locked\_reason` (if specified, from the 2.73 microversion) by the [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed) or the [Show Server Details API](https://docs.openstack.org/api-ref/compute/#show-server-details).
 
 Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file. Administrators can overwrite owner’s lock.
 
@@ -3975,7 +3975,7 @@ Up to microversion 2.55, the scheduler chooses the host. Starting from microvers
 
 **Asynchronous Postconditions**
 
-A successfully migrated server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize\_confirm\_window] (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r esize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the migrate operation after the configured interval.
+A successfully migrated server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize_confirm_window](https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.resize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the migrate operation after the configured interval.
 
 There are two different policies for this action, depending on whether the host parameter is set. Both defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
 
@@ -4020,7 +4020,7 @@ Policy defaults enable only users with the administrative role to perform this o
 
 **Preconditions**
 
-The server OS-EXT-STS:task\_state value must be `migrating`.
+The server OS-EXT-STS:task_state value must be `migrating`.
 
 If the server is locked, you must have administrator privileges to force the completion of the server migration.
 
@@ -4057,7 +4057,7 @@ Policy defaults enable only users with the administrative role to perform this o
 
 **Preconditions**
 
-The server OS-EXT-STS:vm\_state value must be `active` and the server OS-EXT-STS:task\_state value must be `migrating`.
+The server OS-EXT-STS:vm_state value must be `active` and the server OS-EXT-STS:task_state value must be `migrating`.
 
 If the server is locked, you must have administrator privileges to force the completion of the server migration.
 
@@ -4069,7 +4069,7 @@ After you make this request, you typically must keep polling the server status t
 
 **Troubleshooting**
 
-If the server status remains `MIGRATING` for an inordinate amount of time, the request may have failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end. More details can be found in the [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration- usage.html#what-to-do-when-the-migration-times-out).
+If the server status remains `MIGRATING` for an inordinate amount of time, the request may have failed. Ensure you meet the preconditions and run the request again. If the request fails again, investigate the compute back end. More details can be found in the [admin guide](https://docs.openstack.org/nova/latest/admin/live-migration-usage.html#what-to-do-when-the-migration-times-out).
 
 Normal response codes: 202
 
@@ -4385,7 +4385,7 @@ Rebuild Server (rebuild Action) (microversion = 2.57)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 
 
 
@@ -4417,7 +4417,7 @@ Rebuild Server (rebuild Action) (microversion = 2.63)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
 
 
@@ -4450,7 +4450,7 @@ Rebuild Server (rebuild Action) (microversion = 2.90)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
 * `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 
@@ -4484,7 +4484,7 @@ Rebuild Server (rebuild Action) (microversion = 2.94)
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user\_data is unset
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
 * `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 
@@ -4688,7 +4688,7 @@ If the server is locked, you must have administrator privileges to resize the se
 
 **Asynchronous Postconditions**
 
-A successfully resized server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize\_confirm\_window] (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r esize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the resize operation after the configured interval.
+A successfully resized server shows a `VERIFY\_RESIZE` status and `finished` migration status. If the cloud has configured the [resize_confirm_window](https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.resize_confirm_window) option of the Compute service to a positive value, the Compute service automatically confirms the resize operation after the configured interval.
 
 Normal response codes: 202
 
@@ -4758,13 +4758,13 @@ Specify the `revertResize` action in the request body.
 
 **Preconditions**
 
-You can only revert the resized server where the status is `VERIFY\_RESIZE` and the OS-EXT-STS:vm\_state is `resized`.
+You can only revert the resized server where the status is `VERIFY\_RESIZE` and the OS-EXT-STS:vm_state is `resized`.
 
 If the server is locked, you must have administrator privileges to revert the resizing.
 
 **Asynchronous Postconditions**
 
-After you make this request, you typically must keep polling the server status to determine whether the request succeeded. A reverting resize operation shows a status of `REVERT\_RESIZE` and a task\_state of `resize\_reverting`. If successful, the status will return to `ACTIVE` or `SHUTOFF`. You can also see the reverted server in the compute node that OpenStack Compute manages.
+After you make this request, you typically must keep polling the server status to determine whether the request succeeded. A reverting resize operation shows a status of `REVERT\_RESIZE` and a task_state of `resize\_reverting`. If successful, the status will return to `ACTIVE` or `SHUTOFF`. You can also see the reverted server in the compute node that OpenStack Compute manages.
 
 **Troubleshooting**
 
@@ -4961,7 +4961,7 @@ Policy defaults enable only users with the administrative role or the owner of t
 
 The server status must be `SHELVED`.
 
-If the server is locked, you must have administrator privileges to shelve- offload the server.
+If the server is locked, you must have administrator privileges to shelve-offload the server.
 
 **Asynchronous Postconditions**
 
@@ -4969,7 +4969,7 @@ After you successfully shelve-offload a server, its status changes to `SHELVED\_
 
 **Troubleshooting**
 
-If the server status does not change to `SHELVED\_OFFLOADED`, the shelve- offload operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
+If the server status does not change to `SHELVED\_OFFLOADED`, the shelve-offload operation failed. Ensure that you meet the preconditions and run the request again. If the request fails again, investigate whether another operation is running that causes a race condition.
 
 Normal response codes: 202
 
@@ -4989,7 +4989,7 @@ Shows details for a server.
 
 Includes server details including configuration drive, extended status, and server usage information.
 
-The extended status information appears in the `OS-EXT-STS:vm\_state`, `OS- EXT-STS:power\_state`, and `OS-EXT-STS:task\_state` attributes.
+The extended status information appears in the `OS-EXT-STS:vm\_state`, `OS-EXT-STS:power\_state`, and `OS-EXT-STS:task\_state` attributes.
 
 The server usage information appears in the `OS-SRV-USG:launched\_at` and `OS-SRV-USG:terminated\_at` attributes.
 
@@ -5495,7 +5495,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 Update a volume attachment.
 
-Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is [system, project], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
+Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system, project\], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
 
 Updating, or what is commonly referred to as “swapping”, volume attachments with volumes that have more than one read/write attachment, is not supported.
 
@@ -5520,7 +5520,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 Update a volume attachment.
 
-Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is [system, project], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
+Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system, project\], which allow project members or system admins to change the fields of an attached volume of a server. Policy defaults enable only users with the administrative role to change `volumeId` via this operation. Cloud providers can change these permissions through the `policy.json` file.
 
 Updating, or what is commonly referred to as “swapping”, volume attachments with volumes that have more than one read/write attachment, is not supported.
 
@@ -5625,7 +5625,7 @@ An access rule created for one application credential can be re-used by providin
 
 Delete an access rule. An access rule that is still in use by an application credential cannot be deleted.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access\_rules`
 
 **Usage:** `osc identity access-rule delete <USER_ID> <ID>`
 
@@ -5640,7 +5640,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_
 
 List all access rules for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access\_rules`
 
 **Usage:** `osc identity access-rule list <USER_ID>`
 
@@ -5654,7 +5654,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_
 
 Show details of an access rule.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/access\_rules`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access\_rules`
 
 **Usage:** `osc identity access-rule show <USER_ID> <ID>`
 
@@ -5716,7 +5716,7 @@ An access rule created for one application credential can be re-used by providin
 
 Creates an application credential for a user on the project to which the current token is scoped.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential create [OPTIONS] --name <NAME> <USER_ID>`
 
@@ -5743,7 +5743,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 Delete an application credential.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential delete <USER_ID> <ID>`
 
@@ -5758,7 +5758,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 List all application credentials for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential list [OPTIONS] <USER_ID>`
 
@@ -5776,7 +5776,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/applicat
 
 Show details of an application credential.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/application\_credentials`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application\_credentials`
 
 **Usage:** `osc identity application-credential show <USER_ID> <ID>`
 
@@ -5807,7 +5807,7 @@ Endpoint commands
 
 Creates an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
 **Usage:** `osc identity endpoint create [OPTIONS] --interface <INTERFACE> --service-id <SERVICE_ID> --url <URL>`
 
@@ -5832,13 +5832,13 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Deletes an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
 
 **Usage:** `osc identity endpoint delete <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
 
 
 
@@ -5846,7 +5846,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Lists all available endpoints.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
 **Usage:** `osc identity endpoint list [OPTIONS]`
 
@@ -5865,13 +5865,13 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Updates an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
 
 **Usage:** `osc identity endpoint set [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
 
 ###### **Options:**
 
@@ -5883,13 +5883,13 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoint
 
 Shows details for an endpoint.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/endpoints`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
 **Usage:** `osc identity endpoint show <ID>`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT- POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
 
 
 
@@ -5939,7 +5939,7 @@ PUT /OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 ###### **Options:**
 
@@ -5962,7 +5962,7 @@ DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 
 
@@ -6018,8 +6018,8 @@ PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 ###### **Options:**
 
@@ -6038,8 +6038,8 @@ DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 
 
@@ -6053,7 +6053,7 @@ HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 
 
@@ -6067,8 +6067,8 @@ PATCH /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 ###### **Options:**
 
@@ -6087,8 +6087,8 @@ HEAD/GET /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
-* `<ID>` — protocol_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<ID>` — protocol_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
 
 
 
@@ -6100,7 +6100,7 @@ PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 ###### **Options:**
 
@@ -6122,7 +6122,7 @@ GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS- FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
 
 
 
@@ -6360,7 +6360,7 @@ Identity Project commands
 
 Creates a project, where the project may act as a domain.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
 **Usage:** `osc identity project create [OPTIONS] --name <NAME>`
 
@@ -6390,7 +6390,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects
 
 Deletes a project.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 **Usage:** `osc identity project delete <ID>`
 
@@ -6404,7 +6404,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 Lists projects.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
 **Usage:** `osc identity project list [OPTIONS]`
 
@@ -6428,7 +6428,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/projects
 
 Updates a project.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 **Usage:** `osc identity project set [OPTIONS] <ID>`
 
@@ -6462,7 +6462,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
 
 Shows details for a project.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/project`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 **Usage:** `osc identity project show <ID>`
 
@@ -6502,7 +6502,7 @@ When you create the region, you can optionally specify a region ID. If you inclu
 
 The following errors might occur:
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 **Usage:** `osc identity region create [OPTIONS]`
 
@@ -6520,7 +6520,7 @@ Deletes a region.
 
 The following error might occur:
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/region`
 
 **Usage:** `osc identity region delete <ID>`
 
@@ -6534,7 +6534,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
 
 Lists regions.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 **Usage:** `osc identity region list [OPTIONS]`
 
@@ -6552,7 +6552,7 @@ You can update the description or parent region ID for a region. You cannot upda
 
 The following error might occur:
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/region`
 
 **Usage:** `osc identity region set [OPTIONS] <ID>`
 
@@ -6572,7 +6572,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/region`
 
 Shows details for a region, by ID.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/regions`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 **Usage:** `osc identity region show <ID>`
 
@@ -6604,7 +6604,7 @@ A service is an OpenStack web service that you can access through a URL, i.e. an
 
 Creates a service.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
 **Usage:** `osc identity service create [OPTIONS] --type <TYPE>`
 
@@ -6626,7 +6626,7 @@ Deletes a service.
 
 If you try to delete a service that still has associated endpoints, this call either deletes all associated endpoints or fails until all endpoints are deleted.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/service`
 
 **Usage:** `osc identity service delete <ID>`
 
@@ -6640,7 +6640,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
 
 Lists all services.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
 **Usage:** `osc identity service list [OPTIONS]`
 
@@ -6656,7 +6656,7 @@ Updates a service.
 
 The request body is the same as the create service request body, except that you include only those attributes that you want to update.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
 **Usage:** `osc identity service set [OPTIONS] <ID>`
 
@@ -6680,7 +6680,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/services
 
 Shows details for a service.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/service`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/service`
 
 **Usage:** `osc identity service show <ID>`
 
@@ -6719,7 +6719,7 @@ You can also list groups, projects, and role assignments for a specified user.
 
 Creates a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 
 **Usage:** `osc identity user create [OPTIONS] --name <NAME>`
 
@@ -6767,7 +6767,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
 
 Deletes a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 **Usage:** `osc identity user delete <ID>`
 
@@ -6781,7 +6781,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 Lists groups to which a user belongs.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_groups`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user\_groups`
 
 **Usage:** `osc identity user groups <USER_ID>`
 
@@ -6795,7 +6795,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_gr
 
 Lists users.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/users`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 
 **Usage:** `osc identity user list [OPTIONS]`
 
@@ -6832,7 +6832,7 @@ This subcommand allows user to change the password
 
 Changes the password for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_change\_password`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user\_change\_password`
 
 **Usage:** `osc identity user password set [OPTIONS] <USER_ID>`
 
@@ -6851,7 +6851,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_ch
 
 List projects to which the user has authorization to access.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user\_projects`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user\_projects`
 
 **Usage:** `osc identity user projects <USER_ID>`
 
@@ -6867,7 +6867,7 @@ Updates a user.
 
 If the back-end driver does not support this functionality, this call might return the HTTP `Not Implemented (501)` response code.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 **Usage:** `osc identity user set [OPTIONS] <ID>`
 
@@ -6919,7 +6919,7 @@ Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
 
 Shows details for a user.
 
-Relationship: `https://docs.openstack.org/api/openstack- identity/3/rel/user`
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 **Usage:** `osc identity user show <ID>`
 
@@ -7113,7 +7113,7 @@ For most of these, usage is straight forward. For example, to list images in que
 
 To find images in a particular list of image IDs, use:
 
-`GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f- 44b5-baf2-2eb4babae53d`
+`GET /v2/images?id=in:3afb79c1-131a-4c38-a87c-bc4b801d14e6,2e011209-660f-44b5-baf2-2eb4babae53d`
 
 Using the `in` operator with the `name` property of images can be a bit trickier, depending upon how creatively you have named your images. The general rule is that if an image name contains a comma (`,`), you must enclose the entire name in quotation marks (`"`). As usual, you must URL encode any characters that require it.
 
@@ -7218,7 +7218,7 @@ Attempting to make a PATCH call using some other media type will provoke a respo
 
 The `application/openstack-images-v2.1-json-patch` media type provides a useful and compatible subset of the functionality defined in JavaScript Object Notation (JSON) Patch [RFC6902](http://tools.ietf.org/html/rfc6902), which defines the `application/json-patch+json` media type.
 
-For information about the PATCH method and the available media types, see [Image API v2 HTTP PATCH media types](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/http- patch-image-api-v2.html).
+For information about the PATCH method and the available media types, see [Image API v2 HTTP PATCH media types](http://specs.openstack.org/openstack/glance-specs/specs/api/v2/http-patch-image-api-v2.html).
 
 Attempting to modify some image properties will cause the entire request to fail with a 403 (Forbidden) response code:
 
@@ -7592,7 +7592,7 @@ Default policy settings return only the floating IPs owned by the user’s proje
 
 This example request lists floating IPs in JSON format:
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 Normal response codes: 200
 
@@ -7653,7 +7653,7 @@ Error response codes: 400, 401, 404, 409, 412
 
 Shows details for a floating IP.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 This example request shows details for a floating IP in JSON format. This example also filters the result by the `fixed\_ip\_address` and `floating\_ip\_address` fields.
 
@@ -7854,9 +7854,9 @@ Lists networks to which the project has access.
 
 Default policy settings return only networks that the project who submits the request owns, unless an administrative user submits the request. In addition, networks shared with the project who submits the request are also returned.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
-You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query parameter to filter the response with tags. For information, see [REST API Impact](http://specs.openstack.org/openstack/neutron- specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
+You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query parameter to filter the response with tags. For information, see [REST API Impact](http://specs.openstack.org/openstack/neutron-specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
 
 Normal response codes: 200
 
@@ -7903,7 +7903,7 @@ Error response codes: 401
 
 Shows details for a network.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 Normal response codes: 200
 
@@ -7970,7 +7970,7 @@ Error response codes: 400, 401, 403, 404
   Possible values: `accelerator-direct`, `accelerator-direct-physical`, `baremetal`, `direct`, `direct-physical`, `macvtap`, `normal`, `remote-managed`, `smart-nic`, `vdpa`, `virtio-forwarder`
 
 * `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port resides. The default is an empty string
-* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back- end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device\_mac\_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac\_address` field of the port resource will be updated to the MAC from the active binding
+* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back-end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device\_mac\_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac\_address` field of the port resource will be updated to the MAC from the active binding
 * `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status. A valid value is enabled (`true`) or disabled (`false`). If port security is enabled for the port, security group rules and anti-spoofing rules are applied to the traffic on the port. If disabled, no such rules are applied
 
   Possible values: `true`, `false`
@@ -8012,7 +8012,7 @@ Lists ports to which the user has access.
 
 Default policy settings return only those ports that are owned by the project of the user who submits the request, unless the request is submitted by a user with administrative rights.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 If the `ip-substring-filtering` extension is enabled, the Neutron API supports IP address substring filtering on the `fixed\_ips` attribute. If you specify an IP address substring (`ip\_address\_substr`) in an entry of the `fixed\_ips` attribute, the Neutron API will list all ports that have an IP address matching the substring.
 
@@ -8053,7 +8053,7 @@ Error response codes: 401
 
 Shows details for a port.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 Normal response codes: 200
 
@@ -8150,7 +8150,7 @@ Lists logical routers that the project who submits the request can access.
 
 Default policy settings return only those routers that the project who submits the request owns, unless an administrative user submits the request.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 Normal response codes: 200
 
@@ -8183,7 +8183,7 @@ Error response codes: 401
 
 Shows details for a router.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron- specs/specs/api/networking_general_api_information.html#filtering-and- column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 
 Normal response codes: 200
 
@@ -8242,8 +8242,8 @@ Error response codes: 400, 401, 403, 404, 409
 * `--subnetpool-id <SUBNETPOOL_ID>` — The ID of the subnet pool associated with the subnet
 * `--prefixlen <PREFIXLEN>` — The prefix length to use for subnet allocation from a subnet pool. If not specified, the `default\_prefixlen` value of the subnet pool will be used
 * `--cidr <CIDR>` — The CIDR of the subnet
-* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway\_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
-* `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation\_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
+* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
+* `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
 * `--dns-nameservers <DNS_NAMESERVERS>` — List of dns name servers associated with the subnet. Default is an empty list
 * `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
 * `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
@@ -8297,7 +8297,7 @@ Lists subnets that the project has access to.
 
 Default policy settings return only subnets owned by the project of the user submitting the request, unless the user has administrative role. You can control which attributes are returned by using the fields query parameter. You can filter results by using query string parameters.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2- specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 
 Normal response codes: 200
 

@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Update encryption specs for a given volume type.
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -80,10 +81,12 @@ pub struct Request<'a> {
     pub(crate) encryption: Encryption<'a>,
 
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[builder(default, setter(into))]
     type_id: Cow<'a, str>,
 
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

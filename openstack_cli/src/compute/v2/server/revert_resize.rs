@@ -45,8 +45,8 @@ use structable_derive::StructTable;
 ///
 /// **Preconditions**
 ///
-/// You can only revert the resized server where the status is
-/// `VERIFY\_RESIZE` and the OS-EXT-STS:vm\_state is `resized`.
+/// You can only revert the resized server where the status is `VERIFY_RESIZE`
+/// and the OS-EXT-STS:vm_state is `resized`.
 ///
 /// If the server is locked, you must have administrator privileges to revert
 /// the resizing.
@@ -54,20 +54,17 @@ use structable_derive::StructTable;
 /// **Asynchronous Postconditions**
 ///
 /// After you make this request, you typically must keep polling the server
-/// status
-/// to determine whether the request succeeded. A reverting resize operation
-/// shows
-/// a status of `REVERT\_RESIZE` and a task\_state of `resize\_reverting`. If
-/// successful, the status will return to `ACTIVE` or `SHUTOFF`. You can also
-/// see the reverted server in the compute node that OpenStack Compute manages.
+/// status to determine whether the request succeeded. A reverting resize
+/// operation shows a status of `REVERT_RESIZE` and a task_state of
+/// `resize_reverting`. If successful, the status will return to `ACTIVE` or
+/// `SHUTOFF`. You can also see the reverted server in the compute node that
+/// OpenStack Compute manages.
 ///
 /// **Troubleshooting**
 ///
-/// If the server status remains `VERIFY\_RESIZE`, the request failed. Ensure
-/// you
-/// meet the preconditions and run the request again. If the request fails
-/// again,
-/// investigate the compute back end.
+/// If the server status remains `VERIFY_RESIZE`, the request failed. Ensure
+/// you meet the preconditions and run the request again. If the request fails
+/// again, investigate the compute back end.
 ///
 /// The server is not reverted in the compute node that OpenStack Compute
 /// manages.
@@ -76,6 +73,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Revert Resized Server (revertResize Action)")]
 pub struct ServerCommand {
@@ -96,6 +94,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

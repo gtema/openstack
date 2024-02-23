@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Import (or create) Keypair (microversion = 2.1)")]
 pub struct KeypairCommand {
@@ -70,21 +71,18 @@ struct PathParameters {}
 struct Keypair {
     /// A name for the keypair which will be used to reference it later.
     ///
-    ///
-    ///
     /// Note
     ///
-    ///
     /// Since microversion 2.92, allowed characters are ASCII letters
-    /// `[a-zA-Z]`, digits `[0-9]` and the following special
-    /// characters: `[@.\_- ]`.
+    /// `[a-zA-Z]`, digits `[0-9]` and the following special characters:
+    /// `[@._- ]`.
+    ///
     #[arg(long)]
     name: String,
 
-    /// The public ssh key to import.
-    /// Was optional before microversion 2.92 : if you were omitting this
-    /// value, a
-    /// keypair was generated for you.
+    /// The public ssh key to import. Was optional before microversion 2.92 :
+    /// if you were omitting this value, a keypair was generated for you.
+    ///
     #[arg(long)]
     public_key: Option<String>,
 }
@@ -92,67 +90,76 @@ struct Keypair {
 /// Keypair response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The user\_id for a keypair.
+    /// The user_id for a keypair.
+    ///
     #[serde()]
     #[structable(optional)]
     user_id: Option<String>,
 
     /// A boolean indicates whether this keypair is deleted or not. The value
     /// is always false (not deleted).
+    ///
     #[serde()]
     #[structable(optional)]
     deleted: Option<bool>,
 
     /// The date and time when the resource was created.
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// It is always null.
+    ///
     #[serde()]
     #[structable(optional)]
     deleted_at: Option<String>,
 
     /// It is always null.
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// The keypair ID.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<i32>,
 
     /// The name for the keypair.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The keypair public key.
+    ///
     #[serde()]
     #[structable(optional)]
     public_key: Option<String>,
 
     /// The fingerprint for the keypair.
+    ///
     #[serde()]
     #[structable(optional)]
     fingerprint: Option<String>,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
-    ///
     /// **New in version 2.2**
+    ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
     _type: Option<String>,
 
-    /// If you do not provide a public key on create, a new keypair will
-    /// be built for you, and the private key will be returned during the
-    /// initial create call. Make sure to save this, as there is no way to
-    /// get this private key again in the future.
-    ///
+    /// If you do not provide a public key on create, a new keypair will be
+    /// built for you, and the private key will be returned during the initial
+    /// create call. Make sure to save this, as there is no way to get this
+    /// private key again in the future.
     ///
     /// **Available until version 2.91**
+    ///
     #[serde()]
     #[structable(optional)]
     private_key: Option<String>,

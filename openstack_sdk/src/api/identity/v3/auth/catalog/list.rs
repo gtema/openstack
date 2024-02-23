@@ -24,8 +24,8 @@
 //! The structure of the catalog object is identical to that contained in a
 //! token.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/auth\_catalog`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/auth_catalog`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

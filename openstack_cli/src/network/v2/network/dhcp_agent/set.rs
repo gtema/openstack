@@ -41,6 +41,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 pub struct DhcpAgentCommand {
     /// Request Query parameters
@@ -63,10 +64,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id} API
+    ///
     #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
     network_id: String,
 
     /// id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

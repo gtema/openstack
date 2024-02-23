@@ -38,6 +38,7 @@ use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
 
 /// Returns the list of extra specs for a given volume type.
+///
 #[derive(Args)]
 pub struct ExtraSpecsCommand {
     /// Request Query parameters
@@ -57,6 +58,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
     type_id: String,
 }

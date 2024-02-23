@@ -44,6 +44,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 202, 204
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Delete Keypair")]
 pub struct KeypairCommand {
@@ -67,6 +68,7 @@ struct QueryParameters {
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/os-keypairs/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

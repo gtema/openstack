@@ -26,6 +26,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[builder(default, setter(into))]
     type_id: Cow<'a, str>,
 

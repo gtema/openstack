@@ -42,6 +42,7 @@ use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Request of the images/image_id/actions/reactivate:post operation
+///
 #[derive(Args)]
 #[command(about = "Reactivate image")]
 pub struct ImageCommand {
@@ -65,6 +66,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -17,14 +17,14 @@
 
 //! New in version 3.3
 //!
-//! This call returns the list of projects that are available to be scoped
-//! to based on the X-Auth-Token provided in the request.
+//! This call returns the list of projects that are available to be scoped to
+//! based on the X-Auth-Token provided in the request.
 //!
-//! The structure of the response is exactly the same as listing projects
-//! for a user.
+//! The structure of the response is exactly the same as listing projects for a
+//! user.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/auth\_projects`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/auth_projects`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

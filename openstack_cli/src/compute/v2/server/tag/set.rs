@@ -40,8 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Adds a single tag to the server if server has no specified tag. Response
-/// code
-/// in this case is 201.
+/// code in this case is 201.
 ///
 /// If the server has specified tag just returns 204.
 ///
@@ -49,6 +48,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Add a Single Tag")]
 pub struct TagCommand {
@@ -69,10 +69,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

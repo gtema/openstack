@@ -45,6 +45,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409), computeFault(500), NotImplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Create Interface (microversion = 2.0)")]
 pub struct InterfaceCommand {
@@ -68,6 +69,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -75,27 +77,25 @@ struct PathParameters {
 #[derive(Args)]
 struct InterfaceAttachment {
     /// The ID of the network for which you want to create a port interface.
-    /// The `net\_id`
-    /// and `port\_id` parameters are mutually exclusive. If you do not specify
-    /// the
-    /// `net\_id` parameter, the OpenStack Networking API v2.0 uses the network
-    /// information
-    /// cache that is associated with the instance.
+    /// The `net_id` and `port_id` parameters are mutually exclusive. If you do
+    /// not specify the `net_id` parameter, the OpenStack Networking API v2.0
+    /// uses the network information cache that is associated with the
+    /// instance.
+    ///
     #[arg(long)]
     net_id: Option<String>,
 
     /// The ID of the port for which you want to create an interface. The
-    /// `net\_id`
-    /// and `port\_id` parameters are mutually exclusive. If you do not specify
-    /// the
-    /// `port\_id` parameter, the OpenStack Networking API v2.0 allocates a
-    /// port and
-    /// creates an interface for it on the network.
+    /// `net_id` and `port_id` parameters are mutually exclusive. If you do not
+    /// specify the `port_id` parameter, the OpenStack Networking API v2.0
+    /// allocates a port and creates an interface for it on the network.
+    ///
     #[arg(long)]
     port_id: Option<String>,
 
     /// Fixed IP addresses. If you request a specific fixed IP address without
-    /// a `net\_id`, the request returns a `Bad Request (400)` response code.
+    /// a `net_id`, the request returns a `Bad Request (400)` response code.
+    ///
     #[arg(action=clap::ArgAction::Append, long)]
     fixed_ips: Option<Vec<String>>,
 }

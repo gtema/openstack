@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401)
+///
 #[derive(Args)]
 #[command(about = "List Extensions")]
 pub struct ExtensionsCommand {
@@ -66,28 +67,32 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// A short name by which this extension is also known.
+    ///
     #[serde()]
     #[structable(optional)]
     alias: Option<String>,
 
     /// Text describing this extension’s purpose.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
     /// Links pertaining to this extension. This is a list of dictionaries,
-    /// each including
-    /// keys `href` and `rel`.
+    /// each including keys `href` and `rel`.
+    ///
     #[serde()]
     #[structable(optional)]
     links: Option<Value>,
 
     /// Name of the extension.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// A URL pointing to the namespace for this extension.
+    ///
     #[serde()]
     #[structable(optional)]
     namespace: Option<String>,
@@ -95,17 +100,15 @@ struct ResponseData {
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
-    ///
-    ///
     /// ```text
     /// CCYY-MM-DDThh:mm:ss±hh:mm
     ///
     /// ```
     ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
     ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm`
-    /// value, if included, is the time zone as an offset from UTC. In
-    /// the previous example, the offset value is `-05:00`.
     #[serde()]
     #[structable(optional)]
     updated: Option<String>,

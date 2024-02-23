@@ -19,8 +19,8 @@
 //!
 //! The following error might occur:
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/region`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/region`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -33,6 +33,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// region_id parameter for /v3/regions/{region_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

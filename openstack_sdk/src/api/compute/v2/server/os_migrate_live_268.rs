@@ -25,24 +25,20 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// The action.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsMigrateLive<'a> {
     /// Migrates local disks by using block migration. Set to `auto` which
-    /// means
-    /// nova will detect whether source and destination hosts on shared
-    /// storage. if they are
-    /// on shared storage, the live-migration won’t be block migration.
-    /// Otherwise the block
-    /// migration will be executed. Set to `True`, means the request will fail
-    /// when the
-    /// source or destination host uses shared storage. Set to `False` means
-    /// the request
-    /// will fail when the source and destination hosts are not on the shared
-    /// storage.
-    ///
+    /// means nova will detect whether source and destination hosts on shared
+    /// storage. if they are on shared storage, the live-migration won’t be
+    /// block migration. Otherwise the block migration will be executed. Set to
+    /// `True`, means the request will fail when the source or destination host
+    /// uses shared storage. Set to `False` means the request will fail when
+    /// the source and destination hosts are not on the shared storage.
     ///
     /// **New in version 2.25**
+    ///
     #[serde()]
     #[builder()]
     pub(crate) block_migration: bool,
@@ -50,18 +46,15 @@ pub struct OsMigrateLive<'a> {
     /// The host to which to migrate the server. If this parameter is `None`,
     /// the scheduler chooses a host.
     ///
-    ///
-    ///
     /// Warning
     ///
+    /// Prior to microversion 2.30, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually migrate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.30 and without
+    /// `force=True` set.
     ///
-    /// Prior to microversion 2.30, specifying a host will bypass
-    /// validation by the scheduler, which could result in failures to actually
-    /// migrate the instance to the specified host, or over-subscription of the
-    /// host. It is recommended to either not specify a host so that the
-    /// scheduler will pick one, or specify a host with microversion >= 2.30
-    /// and
-    /// without `force=True` set.
     #[serde()]
     #[builder(setter(into))]
     pub(crate) host: Option<Cow<'a, str>>,
@@ -71,10 +64,12 @@ pub struct OsMigrateLive<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// The action.
+    ///
     #[builder(setter(into))]
     pub(crate) os_migrate_live: OsMigrateLive<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

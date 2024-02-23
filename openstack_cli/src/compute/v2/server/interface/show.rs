@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Show Port Interface Details")]
 pub struct InterfaceCommand {
@@ -63,10 +64,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -74,34 +77,39 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// Fixed IP addresses with subnet IDs.
+    ///
     #[serde()]
     #[structable(optional)]
     fixed_ips: Option<Value>,
 
     /// The MAC address.
+    ///
     #[serde()]
     #[structable(optional)]
     mac_addr: Option<String>,
 
     /// The network ID.
+    ///
     #[serde()]
     #[structable(optional)]
     net_id: Option<String>,
 
     /// The port ID.
+    ///
     #[serde()]
     #[structable(optional)]
     port_id: Option<String>,
 
     /// The port state.
+    ///
     #[serde()]
     #[structable(optional)]
     port_state: Option<String>,
 
     /// The device tag applied to the virtual network interface or `null`.
     ///
-    ///
     /// **New in version 2.70**
+    ///
     #[serde()]
     #[structable(optional)]
     tag: Option<String>,

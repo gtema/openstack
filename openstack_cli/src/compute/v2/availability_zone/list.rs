@@ -40,15 +40,14 @@ use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
-/// Gets detailed availability zone information.
-/// Policy defaults enable only users with the administrative role to perform
-/// this operation.
-/// Cloud providers can change these permissions through the `policy.json`
-/// file.
+/// Gets detailed availability zone information. Policy defaults enable only
+/// users with the administrative role to perform this operation. Cloud
+/// providers can change these permissions through the `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
+///
 #[derive(Args)]
 #[command(about = "Get Detailed Availability Zone Information")]
 pub struct AvailabilityZonesCommand {
@@ -72,25 +71,27 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The availability zone name.
+    ///
     #[serde(rename = "zoneName")]
     #[structable(optional, title = "zoneName", wide)]
     zone_name: Option<String>,
 
     /// The current state of the availability zone.
+    ///
     #[serde(rename = "zoneState")]
     #[structable(optional, title = "zoneState", wide)]
     zone_state: Option<ResponseZoneState>,
 
     /// An object containing a list of host information. The host information
-    /// is comprised
-    /// of host and service objects. The service object returns three
-    /// parameters representing
-    /// the states of the service: `active`, `available`, and `updated\_at`.
+    /// is comprised of host and service objects. The service object returns
+    /// three parameters representing the states of the service: `active`,
+    /// `available`, and `updated_at`.
+    ///
     #[serde()]
     #[structable(optional)]
     hosts: Option<HashMapStringValue>,
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseZoneState {
     available: Option<bool>,
@@ -107,7 +108,7 @@ impl fmt::Display for ResponseZoneState {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {

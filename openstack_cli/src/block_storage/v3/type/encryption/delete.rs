@@ -40,6 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Delete encryption specs for a given volume type.
+///
 #[derive(Args)]
 pub struct EncryptionCommand {
     /// Request Query parameters
@@ -59,10 +60,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
     type_id: String,
 
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

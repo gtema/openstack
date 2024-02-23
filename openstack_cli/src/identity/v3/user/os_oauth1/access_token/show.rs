@@ -41,6 +41,7 @@ use std::collections::HashMap;
 /// Get specific access token.
 ///
 /// GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}
+///
 #[derive(Args)]
 pub struct AccessTokenCommand {
     /// Request Query parameters
@@ -61,11 +62,14 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_user_id", value_name = "USER_ID")]
     user_id: String,
 
-    /// access_token_id parameter for /v3/users/{user_id}/OS-
-    /// OAUTH1/access_tokens/{access_token_id}/roles/{role_id} API
+    /// access_token_id parameter for
+    /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
+    /// API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

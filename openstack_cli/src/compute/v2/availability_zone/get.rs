@@ -44,6 +44,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403)
+///
 #[derive(Args)]
 #[command(about = "Get Availability Zone Information")]
 pub struct AvailabilityZoneCommand {
@@ -67,21 +68,24 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The availability zone name.
+    ///
     #[serde(rename = "zoneName")]
     #[structable(optional, title = "zoneName")]
     zone_name: Option<String>,
 
     /// The current state of the availability zone.
+    ///
     #[serde(rename = "zoneState")]
     #[structable(optional, title = "zoneState")]
     zone_state: Option<ResponseZoneState>,
 
     /// It is always `null`.
+    ///
     #[serde()]
     #[structable(optional)]
     hosts: Option<Value>,
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseZoneState {
     available: Option<bool>,

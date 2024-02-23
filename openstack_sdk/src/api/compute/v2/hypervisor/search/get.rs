@@ -18,8 +18,8 @@
 //! Search hypervisor by a given hypervisor host name or portion of it.
 //!
 //! Policy defaults enable only users with the administrative role to perform
-//! this operation. Cloud providers can change these permissions through
-//! the `policy.json` file.
+//! this operation. Cloud providers can change these permissions through the
+//! `policy.json` file.
 //!
 //! Normal response code: 200
 //!
@@ -36,6 +36,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

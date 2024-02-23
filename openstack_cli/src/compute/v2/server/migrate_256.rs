@@ -43,32 +43,29 @@ use structable_derive::StructTable;
 ///
 /// Specify the `migrate` action in the request body.
 ///
-/// Up to microversion 2.55, the scheduler chooses the host.
-/// Starting from microversion 2.56, the `host` parameter is available
-/// to specify the destination host. If you specify `null` or don’t specify
-/// this parameter, the scheduler chooses a host.
+/// Up to microversion 2.55, the scheduler chooses the host. Starting from
+/// microversion 2.56, the `host` parameter is available to specify the
+/// destination host. If you specify `null` or don’t specify this parameter,
+/// the scheduler chooses a host.
 ///
 /// **Asynchronous Postconditions**
 ///
-/// A successfully migrated server shows a `VERIFY\_RESIZE` status and
-/// `finished`
-/// migration status. If the cloud has configured the [resize\_confirm\_window]
-/// (https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.r
-/// esize_confirm_window)
+/// A successfully migrated server shows a `VERIFY_RESIZE` status and
+/// `finished` migration status. If the cloud has configured the
+/// [resize_confirm_window](https://docs.openstack.org/nova/latest/configuration/config.html#DEFAULT.resize_confirm_window)
 /// option of the Compute service to a positive value, the Compute service
 /// automatically confirms the migrate operation after the configured interval.
 ///
 /// There are two different policies for this action, depending on whether the
-/// host
-/// parameter is set. Both defaults enable only users with the administrative
-/// role
-/// to perform this operation. Cloud providers can change these permissions
-/// through the `policy.json` file.
+/// host parameter is set. Both defaults enable only users with the
+/// administrative role to perform this operation. Cloud providers can change
+/// these permissions through the `policy.json` file.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Migrate Server (migrate Action) (microversion = 2.56)")]
 pub struct ServerCommand {
@@ -92,6 +89,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

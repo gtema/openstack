@@ -64,13 +64,13 @@ use structable_derive::StructTable;
 /// the image status is `ACTIVE`. The server instance data appears on the
 /// compute node that the Compute service manages.
 ///
-/// If you boot the server from volumes or set the `shelved\_offload\_time`
+/// If you boot the server from volumes or set the `shelved_offload_time`
 /// option to 0, the Compute service automatically deletes the instance on
-/// compute nodes and changes the server status to `SHELVED\_OFFLOADED`.
+/// compute nodes and changes the server status to `SHELVED_OFFLOADED`.
 ///
 /// **Troubleshooting**
 ///
-/// If the server status does not change to `SHELVED` or `SHELVED\_OFFLOADED`,
+/// If the server status does not change to `SHELVED` or `SHELVED_OFFLOADED`,
 /// the shelve operation failed. Ensure that you meet the preconditions and run
 /// the request again. If the request fails again, investigate whether another
 /// operation is running that causes a race condition.
@@ -79,6 +79,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404),
 /// conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Shelve Server (shelve Action)")]
 pub struct ServerCommand {
@@ -99,6 +100,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

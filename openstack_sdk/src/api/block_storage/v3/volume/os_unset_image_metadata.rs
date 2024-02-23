@@ -39,6 +39,7 @@ pub struct Request<'a> {
     pub(crate) os_unset_image_metadata: OsUnsetImageMetadata<'a>,
 
     /// id parameter for /v3/volumes/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

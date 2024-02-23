@@ -40,6 +40,7 @@ use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
+///
 #[derive(Args)]
 #[command(about = "Live-Migrate Server (os-migrateLive Action) (microversion = 2.30)")]
 pub struct ServerCommand {
@@ -63,6 +64,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -70,61 +72,47 @@ struct PathParameters {
 #[derive(Args)]
 struct OsMigrateLive {
     /// Migrates local disks by using block migration. Set to `auto` which
-    /// means
-    /// nova will detect whether source and destination hosts on shared
-    /// storage. if they are
-    /// on shared storage, the live-migration won’t be block migration.
-    /// Otherwise the block
-    /// migration will be executed. Set to `True`, means the request will fail
-    /// when the
-    /// source or destination host uses shared storage. Set to `False` means
-    /// the request
-    /// will fail when the source and destination hosts are not on the shared
-    /// storage.
-    ///
+    /// means nova will detect whether source and destination hosts on shared
+    /// storage. if they are on shared storage, the live-migration won’t be
+    /// block migration. Otherwise the block migration will be executed. Set to
+    /// `True`, means the request will fail when the source or destination host
+    /// uses shared storage. Set to `False` means the request will fail when
+    /// the source and destination hosts are not on the shared storage.
     ///
     /// **New in version 2.25**
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     block_migration: bool,
 
     /// The host to which to migrate the server. If this parameter is `None`,
     /// the scheduler chooses a host.
     ///
-    ///
-    ///
     /// Warning
     ///
+    /// Prior to microversion 2.30, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually migrate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.30 and without
+    /// `force=True` set.
     ///
-    /// Prior to microversion 2.30, specifying a host will bypass
-    /// validation by the scheduler, which could result in failures to actually
-    /// migrate the instance to the specified host, or over-subscription of the
-    /// host. It is recommended to either not specify a host so that the
-    /// scheduler will pick one, or specify a host with microversion >= 2.30
-    /// and
-    /// without `force=True` set.
     #[arg(long)]
     host: String,
 
     /// Force a live-migration by not verifying the provided destination host
-    /// by
-    /// the scheduler.
-    ///
-    ///
+    /// by the scheduler.
     ///
     /// Warning
     ///
-    ///
-    /// This could result in failures to actually live migrate the
-    /// instance to the specified host. It is recommended to either not specify
-    /// a host so that the scheduler will pick one, or specify a host without
+    /// This could result in failures to actually live migrate the instance to
+    /// the specified host. It is recommended to either not specify a host so
+    /// that the scheduler will pick one, or specify a host without
     /// `force=True` set.
-    ///
-    ///
     ///
     /// **New in version 2.30**
     ///
-    ///
     /// **Available until version 2.67**
+    ///
     #[arg(action=clap::ArgAction::Set, long)]
     force: Option<bool>,
 }

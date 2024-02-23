@@ -43,36 +43,34 @@ use structable_derive::StructTable;
 ///
 /// Specify the `lock` action in the request body.
 ///
-/// Most actions by non-admin users are not allowed to the server
-/// after this operation is successful and the server is locked.
-/// See the “Lock, Unlock” item in [Server
-/// actions](https://docs.openstack.org/api-
-/// guide/compute/server_concepts.html#server-actions)
-/// for the restricted actions.
-/// But administrators can perform actions on the server
-/// even though the server is locked. Note that from microversion 2.73 it is
-/// possible to specify a reason when locking the server.
+/// Most actions by non-admin users are not allowed to the server after this
+/// operation is successful and the server is locked. See the “Lock, Unlock”
+/// item in
+/// [Server actions](https://docs.openstack.org/api-guide/compute/server_concepts.html#server-actions)
+/// for the restricted actions. But administrators can perform actions on the
+/// server even though the server is locked. Note that from microversion 2.73
+/// it is possible to specify a reason when locking the server.
 ///
-/// The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock-
-/// server-unlock-action)
-/// will unlock a server in locked state so additional actions can
-/// be performed on the server by non-admin users.
+/// The
+/// [unlock action](https://docs.openstack.org/api-ref/compute/#unlock-server-unlock-action)
+/// will unlock a server in locked state so additional actions can be performed
+/// on the server by non-admin users.
 ///
-/// You can know whether a server is locked or not and the `locked\_reason`
-/// (if specified, from the 2.73 microversion) by the [List Servers Detailed
-/// API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed)
-/// or
-/// the [Show Server Details API](https://docs.openstack.org/api-
-/// ref/compute/#show-server-details).
+/// You can know whether a server is locked or not and the `locked_reason` (if
+/// specified, from the 2.73 microversion) by the
+/// [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed)
+/// or the
+/// [Show Server Details API](https://docs.openstack.org/api-ref/compute/#show-server-details).
 ///
-/// Policy defaults enable only users with the administrative role or
-/// the owner of the server to perform this operation. Cloud providers
-/// can change these permissions through the `policy.json` file.
-/// Administrators can overwrite owner’s lock.
+/// Policy defaults enable only users with the administrative role or the owner
+/// of the server to perform this operation. Cloud providers can change these
+/// permissions through the `policy.json` file. Administrators can overwrite
+/// owner’s lock.
 ///
 /// Normal response codes: 202
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Lock Server (lock Action) (microversion = 2.73)")]
 pub struct ServerCommand {
@@ -96,6 +94,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

@@ -17,8 +17,8 @@
 
 //! Shows details for a user.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/user`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -32,6 +32,7 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

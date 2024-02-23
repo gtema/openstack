@@ -43,7 +43,8 @@ use structable_derive::StructTable;
 /// Authenticate from dedicated uri endpoint.
 ///
 /// GET/HEAD /OS-FEDERATION/identity_providers/
-///          {idp_id}/protocols/{protocol_id}/auth
+/// {idp_id}/protocols/{protocol_id}/auth
+///
 #[derive(Args)]
 pub struct AuthCommand {
     /// Request Query parameters
@@ -62,13 +63,16 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// idp_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols API
+    /// idp_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    ///
     #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
     idp_id: String,
 
-    /// protocol_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id} API
+    /// protocol_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
+    /// API
+    ///
     #[arg(id = "path_param_protocol_id", value_name = "PROTOCOL_ID")]
     protocol_id: String,
 }
@@ -82,23 +86,27 @@ struct ResponseData {
     /// before it was re-scoped. A re- scoped token is one that was exchanged
     /// for another token of the same or different scope. You can use these
     /// audit IDs to track the use of a token or chain of tokens across
-    /// multiple requests and endpoints without exposing the token ID to non-
-    /// privileged users.
+    /// multiple requests and endpoints without exposing the token ID to
+    /// non-privileged users.
+    ///
     #[serde()]
     #[structable(optional)]
     audit_ids: Option<VecString>,
 
     /// A catalog object.
+    ///
     #[serde()]
     #[structable(optional)]
     catalog: Option<Value>,
 
     /// The date and time when the token expires.
+    ///
     #[serde()]
     #[structable(optional)]
     expires_at: Option<String>,
 
     /// The date and time when the token was issued.
+    ///
     #[serde()]
     #[structable(optional)]
     issues_at: Option<String>,
@@ -113,16 +121,18 @@ struct ResponseData {
     /// the methods attribute merely indicates the methods that were used to
     /// authenticate the user in exchange for a token. The client is
     /// responsible for determining the total number of authentication factors.
+    ///
     #[serde()]
     #[structable(optional)]
     methods: Option<VecString>,
 
     /// A user object
+    ///
     #[serde()]
     #[structable(optional)]
     user: Option<ResponseUser>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {
@@ -138,7 +148,7 @@ impl fmt::Display for VecString {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseDomain {
     id: Option<String>,
@@ -166,7 +176,7 @@ impl fmt::Display for ResponseDomain {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of Value response type
+/// HashMap of `Value` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct HashMapStringValue(HashMap<String, Value>);
 impl fmt::Display for HashMapStringValue {
@@ -182,7 +192,7 @@ impl fmt::Display for HashMapStringValue {
         )
     }
 }
-/// struct response type
+/// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseUser {
     id: Option<String>,

@@ -17,15 +17,13 @@
 
 //! Shows details for a floating IP.
 //!
-//! Use the `fields` query parameter to control which fields are
-//! returned in the response body. For information, see [Filtering and
-//! Column Selection](http://specs.openstack.org/openstack/neutron-
-//! specs/specs/api/networking_general_api_information.html#filtering-and-
-//! column-selection).
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. For information, see
+//! [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
 //!
-//! This example request shows details for a floating IP in JSON
-//! format. This example also filters the result by the
-//! `fixed\_ip\_address` and `floating\_ip\_address` fields.
+//! This example request shows details for a floating IP in JSON format. This
+//! example also filters the result by the `fixed_ip_address` and
+//! `floating_ip_address` fields.
 //!
 //! Normal response codes: 200
 //!
@@ -42,6 +40,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/floatingips/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

@@ -17,8 +17,8 @@
 
 //! Get possible domain scopes for token.
 //!
-//! GET/HEAD /v3/auth/domains
-//! GET/HEAD /v3/OS-FEDERATION/domains
+//! GET/HEAD /v3/auth/domains GET/HEAD /v3/OS-FEDERATION/domains
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

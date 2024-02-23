@@ -16,8 +16,7 @@
 // `openstack-codegenerator`.
 
 //! Checks tag existence on the server. If tag exists response with 204 status
-//! code
-//! will be returned. Otherwise returns 404.
+//! code will be returned. Otherwise returns 404.
 //!
 //! Normal response codes: 204
 //!
@@ -34,10 +33,12 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/servers/{server_id}/tags/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

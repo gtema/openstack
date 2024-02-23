@@ -42,12 +42,13 @@ use std::collections::HashMap;
 /// nodes.
 ///
 /// Policy defaults enable only users with the administrative role to perform
-/// this operation. Cloud providers can change these permissions through
-/// the `policy.json` file.
+/// this operation. Cloud providers can change these permissions through the
+/// `policy.json` file.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "Show Hypervisor Statistics (DEPRECATED)")]
 pub struct StatisticCommand {

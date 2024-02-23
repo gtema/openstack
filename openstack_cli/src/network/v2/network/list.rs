@@ -44,25 +44,23 @@ use structable_derive::StructTable;
 /// Lists networks to which the project has access.
 ///
 /// Default policy settings return only networks that the project who submits
-/// the
-/// request owns, unless an administrative user submits the request. In
-/// addition,
-/// networks shared with the project who submits the request are also returned.
+/// the request owns, unless an administrative user submits the request. In
+/// addition, networks shared with the project who submits the request are also
+/// returned.
 ///
-/// Use the `fields` query parameter to control which fields are
-/// returned in the response body. Additionally, you can filter results
-/// by using query string parameters. For information, see [Filtering
-/// and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-
-/// specification#Filtering_and_Column_Selection).
+/// Use the `fields` query parameter to control which fields are returned in
+/// the response body. Additionally, you can filter results by using query
+/// string parameters. For information, see
+/// [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 ///
-/// You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any`
-/// query parameter to filter the response with tags. For information,
-/// see [REST API Impact](http://specs.openstack.org/openstack/neutron-
-/// specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
+/// You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query
+/// parameter to filter the response with tags. For information, see
+/// [REST API Impact](http://specs.openstack.org/openstack/neutron-specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
+///
 #[derive(Args)]
 #[command(about = "List networks")]
 pub struct NetworksCommand {
@@ -79,74 +77,92 @@ pub struct NetworksCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// id query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     id: Option<String>,
 
     /// name query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// admin_state_up query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     admin_state_up: Option<bool>,
 
     /// status query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     status: Option<String>,
 
     /// tenant_id query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     tenant_id: Option<String>,
 
     /// shared query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     shared: Option<bool>,
 
     /// router:external query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     router_external: Option<bool>,
 
     /// mtu query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     mtu: Option<i32>,
 
     /// provider:network_type query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     provider_network_type: Option<String>,
 
     /// provider:physical_network query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     provider_physical_network: Option<String>,
 
     /// provider:segmentation_id query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     provider_segmentation_id: Option<i32>,
 
     /// revision_number query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     revision_number: Option<String>,
 
     /// tags query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     not_tags_any: Option<Vec<String>>,
 
     /// is_default query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     is_default: Option<bool>,
 
     /// description query parameter for /v2.0/networks API
+    ///
     #[arg(long)]
     description: Option<String>,
 }
@@ -158,98 +174,108 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the network.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// Human-readable name of the network.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The associated subnets.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     subnets: Option<VecString>,
 
-    /// The administrative state of the network, which is
-    /// up (`true`) or down (`false`).
+    /// The administrative state of the network, which is up (`true`) or down
+    /// (`false`).
+    ///
     #[serde()]
     #[structable(optional, wide)]
     admin_state_up: Option<BoolString>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,
 
     /// The ID of the project.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tenant_id: Option<String>,
 
     /// Indicates whether this network is shared across all tenants. By
-    /// default,
-    /// only administrative users can change this value.
+    /// default, only administrative users can change this value.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     shared: Option<BoolString>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     ipv4_address_scope: Option<String>,
 
     /// The ID of the IPv6 address scope that the network is associated with.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     ipv6_address_scope: Option<String>,
 
     /// Defines whether the network may be used for creation of floating IPs.
-    /// Only
-    /// networks with this flag may be an external gateway for routers.
+    /// Only networks with this flag may be an external gateway for routers.
     /// The network must have an external routing facility that is not managed
-    /// by
-    /// the networking service. If the network is updated from external to
-    /// internal
-    /// the unused floating IPs of this network are automatically deleted when
-    /// extension `floatingip-autodelete-internal` is present.
+    /// by the networking service. If the network is updated from external to
+    /// internal the unused floating IPs of this network are automatically
+    /// deleted when extension `floatingip-autodelete-internal` is present.
+    ///
     #[serde(rename = "router:external")]
     #[structable(optional, title = "router:external", wide)]
     router_external: Option<BoolString>,
 
-    /// Indicates whether L2 connectivity is available throughout
-    /// the `network`.
+    /// Indicates whether L2 connectivity is available throughout the
+    /// `network`.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     l2_adjacency: Option<String>,
 
     /// A list of provider `segment` objects.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     segments: Option<Value>,
 
-    /// The maximum transmission unit (MTU) value to
-    /// address fragmentation. Minimum value is 68 for IPv4, and 1280 for
-    /// IPv6.
+    /// The maximum transmission unit (MTU) value to address fragmentation.
+    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     mtu: Option<i32>,
 
     /// The availability zone for the network.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     availability_zones: Option<VecString>,
 
     /// The availability zone candidate for the network.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     availability_zone_hints: Option<VecString>,
 
-    /// The port security status of the network. Valid values are
-    /// enabled (`true`) and disabled (`false`).
-    /// This value is used as the default value of `port\_security\_enabled`
-    /// field of a newly created port.
+    /// The port security status of the network. Valid values are enabled
+    /// (`true`) and disabled (`false`). This value is used as the default
+    /// value of `port_security_enabled` field of a newly created port.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     port_security_enabled: Option<BoolString>,
@@ -267,46 +293,54 @@ struct ResponseData {
     provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     revision_number: Option<i32>,
 
     /// The list of tags on the resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tags: Option<VecString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// The network is default pool or not.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     is_default: Option<BoolString>,
 
     /// A valid DNS domain.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     dns_domain: Option<String>,
 
     /// A human-readable description for the resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 }
-/// Vector of String response type
+/// Vector of `String` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct VecString(Vec<String>);
 impl fmt::Display for VecString {

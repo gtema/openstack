@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! HEAD operation on /v3/users/{user_id}/projects
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -28,6 +29,7 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

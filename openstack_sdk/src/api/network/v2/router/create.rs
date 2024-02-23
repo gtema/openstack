@@ -17,14 +17,13 @@
 
 //! Creates a logical router.
 //!
-//! This operation creates a logical router. The logical router does
-//! not have any internal interface and it is not associated with any
-//! subnet. You can optionally specify an external gateway for a router
-//! at create time. The external gateway for the router must be plugged
-//! into an external network. An external network has its
-//! `router:external` extended field set to `true`. To specify an
-//! external gateway, the ID of the external network must be passed
-//! in the `network\_id` parameter of the `external\_gateway\_info`
+//! This operation creates a logical router. The logical router does not have
+//! any internal interface and it is not associated with any subnet. You can
+//! optionally specify an external gateway for a router at create time. The
+//! external gateway for the router must be plugged into an external network.
+//! An external network has its `router:external` extended field set to `true`.
+//! To specify an external gateway, the ID of the external network must be
+//! passed in the `network_id` parameter of the `external_gateway_info`
 //! attribute in the request body.
 //!
 //! Normal response codes: 201
@@ -52,11 +51,10 @@ pub struct ExternalFixedIps<'a> {
     pub(crate) subnet_id: Option<Cow<'a, str>>,
 }
 
-/// The external gateway information of the router.
-/// If the router has an external gateway, this would be a dict with
-/// `network\_id`, `enable\_snat`, `external\_fixed\_ips` and
-/// `qos\_policy\_id`.
-/// Otherwise, this would be `null`.
+/// The external gateway information of the router. If the router has an
+/// external gateway, this would be a dict with `network_id`, `enable_snat`,
+/// `external_fixed_ips` and `qos_policy_id`. Otherwise, this would be `null`.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ExternalGatewayInfo<'a> {
@@ -74,73 +72,79 @@ pub struct ExternalGatewayInfo<'a> {
 }
 
 /// A `router` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Router<'a> {
-    /// Human-readable name of the resource.
-    /// Default is an empty string.
+    /// Human-readable name of the resource. Default is an empty string.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
-    /// The administrative state of the resource, which is
-    /// up (`true`) or down (`false`).
-    /// Default is `true`.
+    /// The administrative state of the resource, which is up (`true`) or down
+    /// (`false`). Default is `true`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) admin_state_up: Option<bool>,
 
-    /// The ID of the project that owns the resource.
-    /// Only administrative and users with advsvc role can specify
-    /// a project ID other than their own.
+    /// The ID of the project that owns the resource. Only administrative and
+    /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tenant_id: Option<Cow<'a, str>>,
 
-    /// The external gateway information of the router.
-    /// If the router has an external gateway, this would be a dict with
-    /// `network\_id`, `enable\_snat`, `external\_fixed\_ips` and
-    /// `qos\_policy\_id`.
-    /// Otherwise, this would be `null`.
+    /// The external gateway information of the router. If the router has an
+    /// external gateway, this would be a dict with `network_id`,
+    /// `enable_snat`, `external_fixed_ips` and `qos_policy_id`. Otherwise,
+    /// this would be `null`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_gateway_info: Option<ExternalGatewayInfo<'a>>,
 
-    /// `true` indicates a highly-available router.
-    /// It is available when `l3-ha` extension is enabled.
+    /// `true` indicates a highly-available router. It is available when
+    /// `l3-ha` extension is enabled.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ha: Option<Option<bool>>,
 
     /// Enable NDP proxy attribute. Default is `false`, To persist this
-    /// attribute
-    /// value, set the `enable\_ndp\_proxy\_by\_default` option in the
+    /// attribute value, set the `enable_ndp_proxy_by_default` option in the
     /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
     /// extension is enabled.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) enable_ndp_proxy: Option<Option<bool>>,
 
     /// The ID of the flavor associated with the router.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
-    /// The availability zone candidates for the router.
-    /// It is available when `router\_availability\_zone` extension is enabled.
+    /// The availability zone candidates for the router. It is available when
+    /// `router_availability_zone` extension is enabled.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) availability_zone_hints: Option<Vec<Cow<'a, str>>>,
 
-    /// `true` indicates a distributed router.
-    /// It is available when `dvr` extension is enabled.
+    /// `true` indicates a distributed router. It is available when `dvr`
+    /// extension is enabled.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) distributed: Option<Option<bool>>,
 
-    /// A human-readable description for the resource.
-    /// Default is an empty string.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
@@ -150,6 +154,7 @@ pub struct Router<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `router` object.
+    ///
     #[builder(setter(into))]
     pub(crate) router: Router<'a>,
 

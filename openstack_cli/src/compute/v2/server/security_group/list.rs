@@ -43,6 +43,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+///
 #[derive(Args)]
 #[command(about = "List Security Groups By Server")]
 pub struct SecurityGroupsCommand {
@@ -63,6 +64,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 }
@@ -70,26 +72,31 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the security group.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The security group name.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// Security group description.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     tenant_id: Option<String>,
 
     /// The list of security group rules.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     rules: Option<Value>,

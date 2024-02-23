@@ -42,6 +42,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 200
 ///
 /// Error response codes: 401
+///
 #[derive(Args)]
 #[command(about = "List all availability zones")]
 pub struct AvailabilityZonesCommand {
@@ -58,14 +59,17 @@ pub struct AvailabilityZonesCommand {
 #[derive(Args)]
 struct QueryParameters {
     /// name query parameter for /v2.0/availability_zones API
+    ///
     #[arg(long)]
     name: Option<String>,
 
     /// resource query parameter for /v2.0/availability_zones API
+    ///
     #[arg(long)]
     resource: Option<String>,
 
     /// state query parameter for /v2.0/availability_zones API
+    ///
     #[arg(long)]
     state: Option<String>,
 }
@@ -77,19 +81,21 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// Human-readable name of the resource.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The resource type of the availability zone. The supported resource
-    /// types
-    /// are `network` and `router`.
+    /// types are `network` and `router`.
+    ///
     #[serde()]
     #[structable(optional)]
     resource: Option<String>,
 
     /// The state of the availability zone, which is either `available` or
     /// `unavailable`.
+    ///
     #[serde()]
     #[structable(optional)]
     state: Option<String>,

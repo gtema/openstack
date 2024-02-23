@@ -18,8 +18,8 @@
 //! Deletes a flavor.
 //!
 //! This is typically an admin only action. Deleting a flavor that is in use by
-//! existing servers is not recommended as it can cause incorrect data to
-//! be returned to the user under some operations.
+//! existing servers is not recommended as it can cause incorrect data to be
+//! returned to the user under some operations.
 //!
 //! Normal response codes: 202
 //!
@@ -36,6 +36,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.1/flavors/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

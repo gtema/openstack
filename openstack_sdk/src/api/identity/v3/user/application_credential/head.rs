@@ -18,7 +18,8 @@
 //! Get application credential resource.
 //!
 //! GET/HEAD /v3/users/{user_id}/application_credentials/
-//!          {application_credential_id}
+//! {application_credential_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -31,12 +32,14 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 
     /// application_credential_id parameter for
     /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

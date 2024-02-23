@@ -39,12 +39,11 @@ use structable_derive::StructTable;
 
 /// Update a volume attachment.
 ///
-/// Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is
-/// [system, project], which allow project members or system admins to
-/// change the fields of an attached volume of a server. Policy defaults
-/// enable only users with the administrative role to change `volumeId`
-/// via this operation. Cloud providers can change these permissions
-/// through the `policy.json` file.
+/// Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system,
+/// project\], which allow project members or system admins to change the
+/// fields of an attached volume of a server. Policy defaults enable only users
+/// with the administrative role to change `volumeId` via this operation. Cloud
+/// providers can change these permissions through the `policy.json` file.
 ///
 /// Updating, or what is commonly referred to as “swapping”, volume attachments
 /// with volumes that have more than one read/write attachment, is not
@@ -54,6 +53,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Update a volume attachment (microversion = 2.0)")]
 pub struct VolumeAttachmentCommand {
@@ -77,11 +77,13 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -89,6 +91,7 @@ struct PathParameters {
 #[derive(Args)]
 struct VolumeAttachment {
     /// The UUID of the volume to attach instead of the attached volume.
+    ///
     #[arg(long)]
     volume_id: String,
 }
@@ -97,58 +100,60 @@ struct VolumeAttachment {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
+    ///
     #[serde()]
     #[structable(optional)]
     device: Option<String>,
 
     /// The volume ID of the attachment.
     ///
-    ///
     /// **Available until version 2.88**
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The UUID of the server.
+    ///
     #[serde(rename = "serverId")]
     #[structable(optional, title = "serverId")]
     server_id: Option<String>,
 
     /// The UUID of the attached volume.
+    ///
     #[serde(rename = "volumeId")]
     #[structable(optional, title = "volumeId")]
     volume_id: Option<String>,
 
     /// The device tag applied to the volume block device or `null`.
     ///
-    ///
     /// **New in version 2.70**
+    ///
     #[serde()]
     #[structable(optional)]
     tag: Option<String>,
 
     /// A flag indicating if the attached volume will be deleted when the
-    /// server is
-    /// deleted.
-    ///
+    /// server is deleted.
     ///
     /// **New in version 2.79**
+    ///
     #[serde()]
     #[structable(optional)]
     delete_on_termination: Option<bool>,
 
     /// The UUID of the associated volume attachment in Cinder.
     ///
-    ///
     /// **New in version 2.89**
+    ///
     #[serde()]
     #[structable(optional)]
     attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
     ///
-    ///
     /// **New in version 2.89**
+    ///
     #[serde()]
     #[structable(optional)]
     bdm_uuid: Option<String>,

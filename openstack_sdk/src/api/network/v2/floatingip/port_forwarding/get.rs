@@ -18,9 +18,8 @@
 //! Shows information for a floating IP port forwarding.
 //!
 //! Use the `fields` query parameter to control which fields are returned in
-//! the response body.
-//! For information, see [Filtering and Column Selection](https://wiki.openstac
-//! k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+//! the response body. For information, see
+//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 //!
 //! Normal response codes: 200
 //!
@@ -38,11 +37,13 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
+    ///
     #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,
 
     /// id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

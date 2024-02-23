@@ -40,13 +40,13 @@ use structable_derive::StructTable;
 /// Shows information for a router conntrack helper.
 ///
 /// Use the `fields` query parameter to control which fields are returned in
-/// the response body.
-/// For information, see [Filtering and Column Selection](https://wiki.openstac
-/// k.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+/// the response body. For information, see
+/// [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 404
+///
 #[derive(Args)]
 #[command(about = "Show conntrack helper")]
 pub struct ConntrackHelperCommand {
@@ -67,10 +67,12 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -78,21 +80,25 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the conntrack helper.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The network protocol for the netfilter conntrack target rule.
+    ///
     #[serde()]
     #[structable(optional)]
     protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
+    ///
     #[serde()]
     #[structable(optional)]
     port: Option<f32>,
 
     /// The netfilter conntrack helper module.
+    ///
     #[serde()]
     #[structable(optional)]
     helper: Option<String>,

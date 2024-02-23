@@ -30,6 +30,7 @@ pub struct Request<'a> {
     pub(crate) extra_specs: BTreeMap<Cow<'a, str>, Option<Cow<'a, str>>>,
 
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[builder(default, setter(into))]
     type_id: Cow<'a, str>,
 

@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! GET operation on /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -26,8 +27,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-
-    /// POLICY/policy API
+    /// endpoint_id parameter for
+    /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+    ///
     #[builder(default, setter(into))]
     endpoint_id: Cow<'a, str>,
 

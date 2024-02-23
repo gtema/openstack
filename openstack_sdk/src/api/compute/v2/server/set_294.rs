@@ -19,8 +19,8 @@
 //!
 //! Normal response codes: 200
 //!
-//! Error response codes: badRequest(400), unauthorized(401),
-//! forbidden(403), itemNotFound(404)
+//! Error response codes: badRequest(400), unauthorized(401), forbidden(403),
+//! itemNotFound(404)
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -40,84 +40,71 @@ pub enum OsDcfDiskConfig {
 }
 
 /// A `server` object.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Server<'a> {
     /// The server name.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
-    /// resize servers.
-    /// A server inherits the `OS-DCF:diskConfig` value from the image from
-    /// which it
-    /// was created, and an image inherits the `OS-DCF:diskConfig` value from
-    /// the server
-    /// from which it was created. To override the inherited setting, you can
-    /// include
-    /// this attribute in the request body of a server create, rebuild, or
-    /// resize request. If
-    /// the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot
-    /// create
-    /// a server from that image and set its `OS-DCF:diskConfig` value to
-    /// `AUTO`.
+    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
+    /// the image from which it was created, and an image inherits the
+    /// `OS-DCF:diskConfig` value from the server from which it was created. To
+    /// override the inherited setting, you can include this attribute in the
+    /// request body of a server create, rebuild, or resize request. If the
+    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
+    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
     /// A valid value is:
     ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using whatever partition
+    ///   scheme and file system is in the source image. If the target flavor
+    ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    /// * `AUTO`. The API builds the server with a single partition the size of
-    /// the
-    /// target flavor disk. The API automatically adjusts the file system to
-    /// fit the
-    /// entire partition.
-    /// * `MANUAL`. The API builds the server by using whatever partition
-    /// scheme and
-    /// file system is in the source image. If the target flavor disk is
-    /// larger, the API
-    /// does not partition the remaining disk space.
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// IPv4 address that should be used to access this server.
+    ///
     #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv4: Option<Cow<'a, str>>,
 
     /// IPv6 address that should be used to access this server.
+    ///
     #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) access_ipv6: Option<Cow<'a, str>>,
 
-    /// A free form description of the server. Limited to 255 characters
-    /// in length. Before microversion 2.19 this was set to the server
-    /// name.
-    ///
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
     ///
     /// **New in version 2.19**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The hostname to configure for the instance in the metadata service.
     ///
-    ///
     /// Starting with microversion 2.94, this can be a Fully Qualified Domain
-    /// Name
-    /// (FQDN) of up to 255 characters in length.
-    ///
-    ///
+    /// Name (FQDN) of up to 255 characters in length.
     ///
     /// Note
-    ///
     ///
     /// This information is published via the metadata service and requires
     /// application such as `cloud-init` to propogate it through to the
     /// instance.
     ///
-    ///
-    ///
     /// **New in version 2.90**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) hostname: Option<Cow<'a, str>>,
@@ -127,10 +114,12 @@ pub struct Server<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `server` object.
+    ///
     #[builder(setter(into))]
     pub(crate) server: Server<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

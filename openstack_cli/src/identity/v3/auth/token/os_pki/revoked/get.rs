@@ -41,8 +41,8 @@ use std::collections::HashMap;
 /// Lists revoked PKI tokens.
 ///
 /// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/rel/tokens/OS-
-/// PKI/revoked`
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/tokens/OS-PKI/revoked`
+///
 #[derive(Args)]
 #[command(about = "List revoked tokens")]
 pub struct RevokedCommand {

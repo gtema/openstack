@@ -42,6 +42,7 @@ use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Create encryption specs for an existing volume type.
+///
 #[derive(Args)]
 pub struct EncryptionCommand {
     /// Request Query parameters
@@ -64,6 +65,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
     #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
     type_id: String,
 }
@@ -95,48 +97,57 @@ struct Encryption {
 struct ResponseData {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
+    ///
     #[serde()]
     #[structable(optional)]
     cipher: Option<String>,
 
     /// Notional service where encryption is performed. Valid values are
     /// “front-end” or “back-end”. The default value is “front-end”.
+    ///
     #[serde()]
     #[structable(optional)]
     control_location: Option<String>,
 
     /// The date and time when the resource was created.
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// The resource is deleted or not.
+    ///
     #[serde()]
     #[structable(optional)]
     deleted: Option<bool>,
 
     /// The date and time when the resource was deleted.
+    ///
     #[serde()]
     #[structable(optional)]
     deleted_at: Option<String>,
 
     /// The UUID of the encryption.
+    ///
     #[serde()]
     #[structable(optional)]
     encryption_id: Option<String>,
 
     /// Size of encryption key, in bits. This is usually 256. The default value
     /// is None.
+    ///
     #[serde()]
     #[structable(optional)]
     key_size: Option<i32>,
 
     /// The class that provides encryption support.
+    ///
     #[serde()]
     #[structable(optional)]
     provider: Option<String>,
 
     /// The date and time when the resource was updated.
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,

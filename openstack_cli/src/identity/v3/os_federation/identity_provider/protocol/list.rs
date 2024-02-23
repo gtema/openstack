@@ -40,6 +40,7 @@ use structable_derive::StructTable;
 /// List protocols for an IDP.
 ///
 /// HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
+///
 #[derive(Args)]
 pub struct ProtocolsCommand {
     /// Request Query parameters
@@ -58,8 +59,9 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// idp_id parameter for /v3/OS-
-    /// FEDERATION/identity_providers/{idp_id}/protocols API
+    /// idp_id parameter for
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    ///
     #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
     idp_id: String,
 }
@@ -67,6 +69,7 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The federation protocol ID
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,

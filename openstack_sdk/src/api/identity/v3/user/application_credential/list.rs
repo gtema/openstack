@@ -17,8 +17,8 @@
 
 //! List all application credentials for a user.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/application\_credentials`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -32,10 +32,12 @@ use std::borrow::Cow;
 pub struct Request<'a> {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 
     /// The name of the application credential. Must be unique to a user.
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 

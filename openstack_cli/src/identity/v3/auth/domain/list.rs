@@ -40,13 +40,14 @@ use structable_derive::StructTable;
 
 /// New in version 3.3
 ///
-/// This call returns the list of domains that are available to be scoped
-/// to based on the X-Auth-Token provided in the request.
+/// This call returns the list of domains that are available to be scoped to
+/// based on the X-Auth-Token provided in the request.
 ///
 /// The structure is the same as listing domains.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/auth\_domains`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/auth_domains`
+///
 #[derive(Args)]
 #[command(about = "Get available domain scopes")]
 pub struct DomainsCommand {
@@ -70,27 +71,32 @@ struct PathParameters {}
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The ID of the domain.
+    ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
     /// The name of the domain.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
 
     /// The description of the domain.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// If set to `true`, domain is enabled. If set to
-    /// `false`, domain is disabled.
+    /// If set to `true`, domain is enabled. If set to `false`, domain is
+    /// disabled.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
     /// The links to the `domain` resource.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,

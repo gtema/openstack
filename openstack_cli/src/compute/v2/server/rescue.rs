@@ -41,19 +41,20 @@ use structable_derive::StructTable;
 ///
 /// Specify the `rescue` action in the request body.
 ///
-/// If you specify the `rescue\_image\_ref` extended attribute,
-/// the image is used to rescue the instance. If you omit an image
-/// reference, the base image reference is used by default.
+/// If you specify the `rescue_image_ref` extended attribute, the image is used
+/// to rescue the instance. If you omit an image reference, the base image
+/// reference is used by default.
 ///
 /// **Asynchronous Postconditions**
 ///
-/// After you successfully rescue a server and make a `GET
-/// /servers/​{server\_id}​` request, its status changes to `RESCUE`.
+/// After you successfully rescue a server and make a
+/// `GET /servers/​{server_id}​` request, its status changes to `RESCUE`.
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409), notImplemented(501)
+///
 #[derive(Args)]
 #[command(about = "Rescue Server (rescue Action)")]
 pub struct ServerCommand {
@@ -77,6 +78,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -93,13 +95,12 @@ struct Rescue {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// An administrative password to access the evacuated instance.
-    /// If you set `enable\_instance\_password` configuration option to
-    /// `False`,
-    /// the API wouldn’t return the `adminPass` field in response.
-    ///
+    /// An administrative password to access the evacuated instance. If you set
+    /// `enable_instance_password` configuration option to `False`, the API
+    /// wouldn’t return the `adminPass` field in response.
     ///
     /// **Available until version 2.13**
+    ///
     #[serde(rename = "adminPass")]
     #[structable(title = "adminPass")]
     admin_pass: String,

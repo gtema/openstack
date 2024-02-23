@@ -18,18 +18,18 @@
 //! Remove some external gateways from router.
 //!
 //! For general information on the add/update/remove external gateways
-//! operations see `add\_external\_gateways` above.
+//! operations see `add_external_gateways` above.
 //!
 //! The format of the request body is the same as the format of the read-only
-//! `router.external\_gateways` parameter, but wrapped as follows:
+//! `router.external_gateways` parameter, but wrapped as follows:
 //!
-//! However the request body can be partial. Only the `network\_id`
-//! and `external\_fixed\_ips` fields from the `external\_gateway\_info`
-//! structure is used in order to match the specific gateway ports.
-//! The `enable\_snat` key can be present but its value is ignored.
+//! However the request body can be partial. Only the `network_id` and
+//! `external_fixed_ips` fields from the `external_gateway_info` structure is
+//! used in order to match the specific gateway ports. The `enable_snat` key
+//! can be present but its value is ignored.
 //!
-//! Please note that setting `external\_gateway\_info` to an empty value
-//! also resets `external\_gateways` to the empty list.
+//! Please note that setting `external_gateway_info` to an empty value also
+//! resets `external_gateways` to the empty list.
 //!
 //! Normal response codes: 200
 //!
@@ -48,6 +48,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// id parameter for /v2.0/routers/{id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

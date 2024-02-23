@@ -37,23 +37,22 @@ use openstack_sdk::api::image::v2::image::member::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Lists the tenants that share this image.
-/// *(Since Image API v2.1)*
+/// Lists the tenants that share this image. *(Since Image API v2.1)*
 ///
-/// If the image owner makes this call, the complete member list is
-/// returned.
+/// If the image owner makes this call, the complete member list is returned.
 ///
-/// If a user who is an image member makes this call, the member list
-/// contains only information for that user.
+/// If a user who is an image member makes this call, the member list contains
+/// only information for that user.
 ///
-/// If a user who is not an image member makes this call, the call
-/// returns the HTTP `404` response code.
+/// If a user who is not an image member makes this call, the call returns the
+/// HTTP `404` response code.
 ///
 /// Preconditions
 ///
 /// Normal response codes: 200
 ///
 /// Error response codes: 400, 401, 403, 404
+///
 #[derive(Args)]
 #[command(about = "List image members")]
 pub struct MembersCommand {
@@ -74,6 +73,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
     #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
     image_id: String,
 }
@@ -81,26 +81,31 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// An identifier for the image member (tenantId)
+    ///
     #[serde()]
     #[structable(optional)]
     member_id: Option<String>,
 
     /// An identifier for the image
+    ///
     #[serde()]
     #[structable(optional)]
     image_id: Option<String>,
 
     /// Date and time of image member creation
+    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
     /// Date and time of last modification of image member
+    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
     /// The status of this image member
+    ///
     #[serde()]
     #[structable(optional)]
     status: Option<String>,

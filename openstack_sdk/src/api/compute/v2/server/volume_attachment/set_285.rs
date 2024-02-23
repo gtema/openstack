@@ -17,12 +17,11 @@
 
 //! Update a volume attachment.
 //!
-//! Policy default role is ‘rule:system\_admin\_or\_owner’, its scope is
-//! [system, project], which allow project members or system admins to
-//! change the fields of an attached volume of a server. Policy defaults
-//! enable only users with the administrative role to change `volumeId`
-//! via this operation. Cloud providers can change these permissions
-//! through the `policy.json` file.
+//! Policy default role is ‘rule:system_admin_or_owner’, its scope is \[system,
+//! project\], which allow project members or system admins to change the
+//! fields of an attached volume of a server. Policy defaults enable only users
+//! with the administrative role to change `volumeId` via this operation. Cloud
+//! providers can change these permissions through the `policy.json` file.
 //!
 //! Updating, or what is commonly referred to as “swapping”, volume attachments
 //! with volumes that have more than one read/write attachment, is not
@@ -43,54 +42,55 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A dictionary representation of a volume attachment containing the field
-/// `volumeId` which is the UUID of the replacement volume, and other fields
-/// to update in the attachment.
+/// `volumeId` which is the UUID of the replacement volume, and other fields to
+/// update in the attachment.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
     /// The UUID of the volume to attach instead of the attached volume.
+    ///
     #[serde(rename = "volumeId")]
     #[builder(setter(into))]
     pub(crate) volume_id: Cow<'a, str>,
 
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
-    ///
     /// **New in version 2.85**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) device: Option<Option<Cow<'a, str>>>,
 
     /// The device tag applied to the volume block device or `null`.
     ///
-    ///
     /// **New in version 2.85**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
 
     /// A flag indicating if the attached volume will be deleted when the
-    /// server is
-    /// deleted.
-    ///
+    /// server is deleted.
     ///
     /// **New in version 2.85**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) delete_on_termination: Option<bool>,
 
     /// The UUID of the server.
     ///
-    ///
     /// **New in version 2.85**
+    ///
     #[serde(rename = "serverId", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) server_id: Option<Cow<'a, str>>,
 
     /// The UUID of the attachment.
     ///
-    ///
     /// **New in version 2.85**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
@@ -101,17 +101,19 @@ pub struct VolumeAttachment<'a> {
 pub struct Request<'a> {
     /// A dictionary representation of a volume attachment containing the field
     /// `volumeId` which is the UUID of the replacement volume, and other
-    /// fields
-    /// to update in the attachment.
+    /// fields to update in the attachment.
+    ///
     #[builder(setter(into))]
     pub(crate) volume_attachment: VolumeAttachment<'a>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

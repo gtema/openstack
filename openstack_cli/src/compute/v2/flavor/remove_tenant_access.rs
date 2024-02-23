@@ -47,6 +47,7 @@ use structable_derive::StructTable;
 ///
 /// Error response codes: badRequest(400), unauthorized(401), forbidden(403),
 /// itemNotFound(404), conflict(409)
+///
 #[derive(Args)]
 #[command(about = "Remove Flavor Access From Tenant (removeTenantAccess Action)")]
 pub struct FlavorCommand {
@@ -70,6 +71,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
@@ -77,6 +79,7 @@ struct PathParameters {
 #[derive(Args)]
 struct RemoveTenantAccess {
     /// The UUID of the tenant in a multi-tenancy cloud.
+    ///
     #[arg(long)]
     tenant: String,
 }
@@ -84,7 +87,8 @@ struct RemoveTenantAccess {
 /// Flavor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// A list of objects, each with the keys `flavor\_id` and `tenant\_id`.
+    /// A list of objects, each with the keys `flavor_id` and `tenant_id`.
+    ///
     #[serde()]
     #[structable()]
     flavor_access: Value,

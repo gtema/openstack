@@ -18,10 +18,8 @@
 //! Create or update one or more metadata items for a server.
 //!
 //! Creates any metadata items that do not already exist in the server,
-//! replaces
-//! exists metadata items that match keys. Does not modify items that are not
-//! in
-//! the request.
+//! replaces exists metadata items that match keys. Does not modify items that
+//! are not in the request.
 //!
 //! Policy defaults enable only users with the administrative role or the owner
 //! of the server to perform this operation. Cloud providers can change these
@@ -44,12 +42,13 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// Metadata key and value pairs. The maximum size for each metadata key
-    /// and value
-    /// pair is 255 bytes.
+    /// and value pair is 255 bytes.
+    ///
     #[builder(private, setter(name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
 
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
 
@@ -65,8 +64,8 @@ impl<'a> Request<'a> {
 
 impl<'a> RequestBuilder<'a> {
     /// Metadata key and value pairs. The maximum size for each metadata key
-    /// and value
-    /// pair is 255 bytes.
+    /// and value pair is 255 bytes.
+    ///
     pub fn metadata<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,

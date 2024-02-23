@@ -17,8 +17,8 @@
 
 //! Changes the password for a user.
 //!
-//! Relationship: `https://docs.openstack.org/api/openstack-
-//! identity/3/rel/user\_change\_password`
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/rel/user_change_password`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -30,15 +30,18 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 /// A `user` object
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User<'a> {
     /// The original password for the user.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) original_password: Cow<'a, str>,
 
     /// The new password for the user.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) password: Cow<'a, str>,
@@ -48,11 +51,13 @@ pub struct User<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// A `user` object
+    ///
     #[builder(setter(into))]
     pub(crate) user: User<'a>,
 
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
 

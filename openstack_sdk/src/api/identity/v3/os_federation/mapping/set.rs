@@ -18,6 +18,7 @@
 //! Update a mapping.
 //!
 //! PATCH /OS-FEDERATION/mappings/{mapping_id}
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -279,6 +280,7 @@ pub struct Request<'a> {
     pub(crate) mapping: Mapping<'a>,
 
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

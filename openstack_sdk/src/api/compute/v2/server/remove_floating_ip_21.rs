@@ -24,12 +24,13 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-/// The action to remove or disassociate a floating IP address
-/// from the server.
+/// The action to remove or disassociate a floating IP address from the server.
+///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoveFloatingIp<'a> {
     /// The floating IP address.
+    ///
     #[serde()]
     #[builder(setter(into))]
     pub(crate) address: Cow<'a, str>,
@@ -38,12 +39,14 @@ pub struct RemoveFloatingIp<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// The action to remove or disassociate a floating IP address
-    /// from the server.
+    /// The action to remove or disassociate a floating IP address from the
+    /// server.
+    ///
     #[builder(setter(into))]
     pub(crate) remove_floating_ip: RemoveFloatingIp<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
+    ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 

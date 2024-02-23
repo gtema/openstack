@@ -18,6 +18,7 @@
 //! Get service catalog for token.
 //!
 //! GET/HEAD /v3/auth/catalog
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 

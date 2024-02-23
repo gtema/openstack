@@ -41,8 +41,9 @@ use structable_derive::StructTable;
 
 /// Deletes a user.
 ///
-/// Relationship: `https://docs.openstack.org/api/openstack-
-/// identity/3/rel/user`
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/rel/user`
+///
 #[derive(Args)]
 #[command(about = "Delete user")]
 pub struct UserCommand {
@@ -64,6 +65,7 @@ struct QueryParameters {}
 struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }

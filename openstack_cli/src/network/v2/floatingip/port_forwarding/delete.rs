@@ -44,6 +44,7 @@ use structable_derive::StructTable;
 /// Normal response codes: 204
 ///
 /// Error response codes: 404
+///
 #[derive(Args)]
 #[command(about = "Delete a floating IP port forwarding")]
 pub struct PortForwardingCommand {
@@ -65,11 +66,13 @@ struct QueryParameters {}
 struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
+    ///
     #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
     floatingip_id: String,
 
     /// id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
+    ///
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
