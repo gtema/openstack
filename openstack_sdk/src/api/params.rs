@@ -118,6 +118,7 @@ impl ParamValue<'static> for NaiveDate {
 #[derive(Debug, Default, Clone)]
 pub struct QueryParams<'a> {
     params: Vec<(Cow<'a, str>, Cow<'a, str>)>,
+    params_key_only: Vec<Cow<'a, str>>,
 }
 
 impl<'a> QueryParams<'a> {
@@ -145,6 +146,17 @@ impl<'a> QueryParams<'a> {
         self
     }
 
+    /// Push a single optional parameter with no value.
+    pub fn push_opt_key_only<K, V>(&mut self, key: K, value: Option<V>) -> &mut Self
+    where
+        K: Into<Cow<'a, str>>,
+    {
+        if value.is_some() {
+            self.params_key_only.push(key.into());
+        }
+        self
+    }
+
     /// Push a set of parameters.
     pub fn extend<'b, I, K, V>(&mut self, iter: I) -> &mut Self
     where
@@ -161,7 +173,11 @@ impl<'a> QueryParams<'a> {
     /// Add the parameters to a URL.
     pub fn add_to_url(&self, url: &mut Url) {
         let mut pairs = url.query_pairs_mut();
-        pairs.extend_pairs(self.params.iter());
+        pairs
+            .extend_pairs(self.params.iter())
+            .extend_keys_only::<std::slice::Iter<'_, std::borrow::Cow<'_, str>>, Cow<'_, str>>(
+                self.params_key_only.iter(),
+            );
     }
 }
 

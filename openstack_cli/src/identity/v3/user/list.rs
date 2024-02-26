@@ -67,7 +67,7 @@ struct QueryParameters {
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
     /// Filter for Identity Providers’ ID attribute

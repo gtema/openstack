@@ -264,6 +264,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity region list`↴](#osc-identity-region-list)
 * [`osc identity region set`↴](#osc-identity-region-set)
 * [`osc identity region show`↴](#osc-identity-region-show)
+* [`osc identity role-assignment`↴](#osc-identity-role-assignment)
+* [`osc identity role-assignment list`↴](#osc-identity-role-assignment-list)
 * [`osc identity service`↴](#osc-identity-service)
 * [`osc identity service create`↴](#osc-identity-service-create)
 * [`osc identity service delete`↴](#osc-identity-service-delete)
@@ -5580,6 +5582,7 @@ Identity (Keystone) commands
 * `federation` — OS-Federation
 * `project` — Identity Project commands
 * `region` — Region commands
+* `role-assignment` — Role Assignments commands
 * `service` — Service commands
 * `user` — User commands
 
@@ -6579,6 +6582,81 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 ###### **Arguments:**
 
 * `<ID>` — region_id parameter for /v3/regions/{region_id} API
+
+
+
+## `osc identity role-assignment`
+
+Role Assignments commands
+
+**Usage:** `osc identity role-assignment <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List role assignments
+
+
+
+## `osc identity role-assignment list`
+
+Get a list of role assignments.
+
+If no query parameters are specified, then this API will return a list of all role assignments.
+
+Since this list is likely to be very long, this API would typically always be used with one of more of the filter queries. Some typical examples are:
+
+`GET /v3/role_assignments?user.id={user_id}` would list all role assignments involving the specified user.
+
+`GET /v3/role_assignments?scope.project.id={project_id}` would list all role assignments involving the specified project.
+
+It is also possible to list all role assignments within a tree of projects: `GET /v3/role_assignments?scope.project.id={project_id}&include_subtree=true` would list all role assignments involving the specified project and all sub-projects. `include_subtree=true` can only be specified in conjunction with `scope.project.id`, specifying it without this will result in an HTTP 400 Bad Request being returned.
+
+Each role assignment entity in the collection contains a link to the assignment that gave rise to this entity.
+
+The scope section in the list response is extended to allow the representation of role assignments that are inherited to projects.
+
+The query filter `scope.OS-INHERIT:inherited_to` can be used to filter based on role assignments that are inherited. The only value of `scope.OS-INHERIT:inherited_to` that is currently supported is `projects`, indicating that this role is inherited to all projects of the owning domain or parent project.
+
+If the query parameter `effective` is specified, rather than simply returning a list of role assignments that have been made, the API returns a list of effective assignments at the user, project and domain level, having allowed for the effects of group membership, role inference rules as well as inheritance from the parent domain or project. Since the effects of group membership have already been allowed for, the group role assignment entities themselves will not be returned in the collection. Likewise, since the effects of inheritance have already been allowed for, the role assignment entities themselves that specify the inheritance will also not be returned in the collection. This represents the effective role assignments that would be included in a scoped token. The same set of query parameters can also be used in combination with the `effective` parameter.
+
+For example:
+
+`GET /v3/role_assignments?user.id={user_id}&effective` would, in other words, answer the question “what can this user actually do?”.
+
+`GET /v3/role_assignments?user.id={user_id}&scope.project.id={project_id}&effective` would return the equivalent set of role assignments that would be included in the token response of a project scoped token.
+
+An example response for an API call with the query parameter `effective` specified is given below:
+
+The entity `links` section of a response using the `effective` query parameter also contains, for entities that are included by virtue of group membership, a url that can be used to access the membership of the group.
+
+If the query parameter `include_names` is specified, rather than simply returning the entity IDs in the role assignments, the collection will additionally include the names of the entities. For example:
+
+`GET /v3/role_assignments?user.id={user_id}&effective&include_names=true` would return:
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assignments`
+
+**Usage:** `osc identity role-assignment list [OPTIONS]`
+
+###### **Options:**
+
+* `--group-id <GROUP_ID>` — Filters the response by a group ID
+* `--role-id <ROLE_ID>` — Filters the response by a role ID
+* `--user-id <USER_ID>` — Filters the response by a user ID
+* `--scope-domain-id <SCOPE_DOMAIN_ID>` — Filters the response by a domain ID
+* `--scope-project-id <SCOPE_PROJECT_ID>` — Filters the response by a project ID
+* `--scope-os-inherit-inherited-to <SCOPE_OS_INHERIT_INHERITED_TO>` — Filters based on role assignments that are inherited. The only value of inherited_to that is currently supported is projects
+* `--effective` — Returns the effective assignments, including any assignments gained by virtue of group membership
+
+  Possible values: `true`, `false`
+
+* `--include-names` — If set, then the names of any entities returned will be include as well as their IDs. Any value other than 0 (including no value) will be interpreted as true
+
+  Possible values: `true`, `false`
+
+* `--include-subtree` — If set, then relevant assignments in the project hierarchy below the project specified in the scope.project_id query parameter are also included in the response. Any value other than 0 (including no value) for include_subtree will be interpreted as true
+
+  Possible values: `true`, `false`
+
 
 
 

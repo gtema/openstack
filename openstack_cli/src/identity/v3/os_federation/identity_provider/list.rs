@@ -61,7 +61,7 @@ struct QueryParameters {
 
     /// Filter for Identity Providers’ enabled attribute
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 }
 
