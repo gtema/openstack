@@ -66,14 +66,14 @@ struct QueryParameters {
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
     /// If this is specified as true, then only projects acting as a domain are
     /// included. Otherwise, only projects that are not acting as a domain are
     /// included.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     is_domain: Option<bool>,
 
     /// Filters the response by a resource name.
