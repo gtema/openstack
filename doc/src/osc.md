@@ -252,6 +252,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity federation service-provider show`↴](#osc-identity-federation-service-provider-show)
 * [`osc identity federation saml2-metadata`↴](#osc-identity-federation-saml2-metadata)
 * [`osc identity federation saml2-metadata show`↴](#osc-identity-federation-saml2-metadata-show)
+* [`osc identity group`↴](#osc-identity-group)
+* [`osc identity group create`↴](#osc-identity-group-create)
+* [`osc identity group delete`↴](#osc-identity-group-delete)
+* [`osc identity group list`↴](#osc-identity-group-list)
+* [`osc identity group set`↴](#osc-identity-group-set)
+* [`osc identity group show`↴](#osc-identity-group-show)
 * [`osc identity project`↴](#osc-identity-project)
 * [`osc identity project create`↴](#osc-identity-project-create)
 * [`osc identity project delete`↴](#osc-identity-project-delete)
@@ -5609,6 +5615,7 @@ Identity (Keystone) commands
 * `application-credential` — **Application Credentials**
 * `endpoint` — Endpoint commands
 * `federation` — OS-Federation
+* `group` — Identity Group commands
 * `project` — Identity Project commands
 * `region` — Region commands
 * `role` — Identity Role commands
@@ -6371,6 +6378,110 @@ Get SAML2 metadata.
 GET/HEAD /OS-FEDERATION/saml2/metadata
 
 **Usage:** `osc identity federation saml2-metadata show`
+
+
+
+## `osc identity group`
+
+Identity Group commands
+
+A group is a collection of users. Each group is owned by a domain.
+
+You can use groups to ease the task of managing role assignments for users. Assigning a role to a group on a project or domain is equivalent to assigning the role to each group member on that project or domain.
+
+When you unassign a role from a group, that role is automatically unassigned from any user that is a member of the group. Any tokens that authenticates those users to the relevant project or domain are revoked.
+
+As with users, a group without any role assignments is useless from the perspective of an OpenStack service and has no access to resources. However, a group without role assignments is permitted as a way of acquiring or loading users and groups from external sources before mapping them to projects and domains.
+
+**Usage:** `osc identity group <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create group
+* `delete` — Delete group
+* `list` — List groups
+* `set` — Update group
+* `show` — Show group details
+
+
+
+## `osc identity group create`
+
+Creates a group.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/groups`
+
+**Usage:** `osc identity group create [OPTIONS]`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the group
+* `--domain-id <DOMAIN_ID>` — The ID of the domain
+* `--name <NAME>` — The user name. Must be unique within the owning domain
+
+
+
+## `osc identity group delete`
+
+Deletes a group.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
+
+**Usage:** `osc identity group delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — group_id parameter for /v3/groups/{group_id}/users/{user_id} API
+
+
+
+## `osc identity group list`
+
+Lists groups.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/groups`
+
+**Usage:** `osc identity group list [OPTIONS]`
+
+###### **Options:**
+
+* `--domain-id <DOMAIN_ID>` — Filters the response by a domain ID
+
+
+
+## `osc identity group set`
+
+Updates a group.
+
+If the back-end driver does not support this functionality, the call returns the `Not Implemented (501)` response code.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
+
+**Usage:** `osc identity group set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — group_id parameter for /v3/groups/{group_id}/users/{user_id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the group
+* `--domain-id <DOMAIN_ID>` — The ID of the domain
+* `--name <NAME>` — The user name. Must be unique within the owning domain
+
+
+
+## `osc identity group show`
+
+Shows details for a group.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
+
+**Usage:** `osc identity group show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — group_id parameter for /v3/groups/{group_id}/users/{user_id} API
 
 
 
@@ -7335,7 +7446,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 ###### **Options:**
 
 * `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
-* `--description <DESCRIPTION>` — The new description of the group
+* `--description <DESCRIPTION>`
 * `--domain-id <DOMAIN_ID>` — The ID of the domain
 * `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
@@ -7487,7 +7598,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 ###### **Options:**
 
 * `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
-* `--description <DESCRIPTION>` — The new description of the group
+* `--description <DESCRIPTION>`
 * `--domain-id <DOMAIN_ID>` — The ID of the domain
 * `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 

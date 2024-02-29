@@ -118,8 +118,6 @@ struct ResponseData {
     #[structable(optional, wide)]
     default_project_id: Option<String>,
 
-    /// The new description of the group.
-    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,

@@ -101,8 +101,6 @@ struct User {
     #[arg(long)]
     default_project_id: Option<String>,
 
-    /// The new description of the group.
-    ///
     #[arg(long)]
     description: Option<String>,
 
