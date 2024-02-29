@@ -15,7 +15,7 @@ It is possible to install compiled version from the GitHub releases. It comes
 with a dedicated installer and can be retrieved with the following command:
 
 ```console
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/v0.1.1/openstack_cli-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/latest/download/openstack_cli-installer.sh | sh
 ```
 
 Alternatively it is possible to compile project from sources. Since the project
