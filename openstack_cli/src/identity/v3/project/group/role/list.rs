@@ -35,8 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::project::group::role::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -85,12 +83,6 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    links: Option<HashMapStringValue>,
-
     /// The role name.
     ///
     #[serde()]
@@ -103,40 +95,24 @@ struct ResponseData {
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// The resource options for the role. Available resource options are
-    /// `immutable`.
+    /// The link to the resources in question.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    options: Option<ResponseOptions>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
+    links: Option<ResponseLinks>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseOptions {
-    immutable: Option<bool>,
+struct ResponseLinks {
+    _self: Option<String>,
 }
 
-impl fmt::Display for ResponseOptions {
+impl fmt::Display for ResponseLinks {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([format!(
-            "immutable={}",
-            self.immutable
+            "_self={}",
+            self._self
+                .clone()
                 .map(|v| v.to_string())
                 .unwrap_or("".to_string())
         )]);

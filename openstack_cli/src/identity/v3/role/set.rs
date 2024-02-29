@@ -102,7 +102,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    links: Option<HashMapStringValue>,
+    links: Option<HashMapStringOptionString>,
 
     /// The role name.
     ///
@@ -123,17 +123,17 @@ struct ResponseData {
     #[structable(optional)]
     options: Option<ResponseOptions>,
 }
-/// HashMap of `Value` response type
+/// HashMap of `Option<String>` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
+struct HashMapStringOptionString(HashMap<String, Option<String>>);
+impl fmt::Display for HashMapStringOptionString {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "{{{}}}",
             self.0
                 .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
+                .map(|v| format!("{}={}", v.0, v.1.clone().unwrap_or("".to_string())))
                 .collect::<Vec<String>>()
                 .join("\n")
         )

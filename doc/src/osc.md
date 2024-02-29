@@ -6504,17 +6504,13 @@ Assigns a role to a group on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_group_role`
 
-**Usage:** `osc identity project group role set [OPTIONS] <PROJECT_ID> <GROUP_ID> <ID>`
+**Usage:** `osc identity project group role set <PROJECT_ID> <GROUP_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
 * `<GROUP_ID>` — group_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
-
-###### **Options:**
-
-* `--property <key=value>`
 
 
 
@@ -6674,17 +6670,13 @@ Assigns a role to a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role set [OPTIONS] <PROJECT_ID> <USER_ID> <ID>`
+**Usage:** `osc identity project user role set <PROJECT_ID> <USER_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
 * `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
-
-###### **Options:**
-
-* `--property <key=value>`
 
 
 

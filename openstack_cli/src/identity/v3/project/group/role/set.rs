@@ -33,12 +33,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
 use openstack_sdk::api::identity::v3::project::group::role::set;
 use openstack_sdk::api::RawQueryAsync;
-use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Assigns a role to a group on a project.
@@ -56,9 +54,6 @@ pub struct RoleCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -110,9 +105,6 @@ impl RoleCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
 
         let ep = ep_builder
             .build()
