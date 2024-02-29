@@ -113,8 +113,6 @@ struct User {
     #[arg(long)]
     default_project_id: Option<String>,
 
-    /// The new description of the group.
-    ///
     #[arg(long)]
     description: Option<String>,
 
@@ -184,8 +182,6 @@ struct ResponseData {
     #[structable(optional)]
     default_project_id: Option<String>,
 
-    /// The new description of the group.
-    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
