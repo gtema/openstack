@@ -255,17 +255,46 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity project`↴](#osc-identity-project)
 * [`osc identity project create`↴](#osc-identity-project-create)
 * [`osc identity project delete`↴](#osc-identity-project-delete)
+* [`osc identity project group`↴](#osc-identity-project-group)
+* [`osc identity project group role`↴](#osc-identity-project-group-role)
+* [`osc identity project group role delete`↴](#osc-identity-project-group-role-delete)
+* [`osc identity project group role list`↴](#osc-identity-project-group-role-list)
+* [`osc identity project group role set`↴](#osc-identity-project-group-role-set)
+* [`osc identity project group role show`↴](#osc-identity-project-group-role-show)
 * [`osc identity project list`↴](#osc-identity-project-list)
 * [`osc identity project set`↴](#osc-identity-project-set)
 * [`osc identity project show`↴](#osc-identity-project-show)
+* [`osc identity project user`↴](#osc-identity-project-user)
+* [`osc identity project user role`↴](#osc-identity-project-user-role)
+* [`osc identity project user role delete`↴](#osc-identity-project-user-role-delete)
+* [`osc identity project user role list`↴](#osc-identity-project-user-role-list)
+* [`osc identity project user role set`↴](#osc-identity-project-user-role-set)
+* [`osc identity project user role show`↴](#osc-identity-project-user-role-show)
 * [`osc identity region`↴](#osc-identity-region)
 * [`osc identity region create`↴](#osc-identity-region-create)
 * [`osc identity region delete`↴](#osc-identity-region-delete)
 * [`osc identity region list`↴](#osc-identity-region-list)
 * [`osc identity region set`↴](#osc-identity-region-set)
 * [`osc identity region show`↴](#osc-identity-region-show)
+* [`osc identity role`↴](#osc-identity-role)
+* [`osc identity role assignment`↴](#osc-identity-role-assignment)
+* [`osc identity role assignment list`↴](#osc-identity-role-assignment-list)
+* [`osc identity role create`↴](#osc-identity-role-create)
+* [`osc identity role delete`↴](#osc-identity-role-delete)
+* [`osc identity role imply`↴](#osc-identity-role-imply)
+* [`osc identity role imply delete`↴](#osc-identity-role-imply-delete)
+* [`osc identity role imply list`↴](#osc-identity-role-imply-list)
+* [`osc identity role imply set`↴](#osc-identity-role-imply-set)
+* [`osc identity role imply show`↴](#osc-identity-role-imply-show)
+* [`osc identity role inference`↴](#osc-identity-role-inference)
+* [`osc identity role inference list`↴](#osc-identity-role-inference-list)
+* [`osc identity role list`↴](#osc-identity-role-list)
+* [`osc identity role set`↴](#osc-identity-role-set)
+* [`osc identity role show`↴](#osc-identity-role-show)
 * [`osc identity role-assignment`↴](#osc-identity-role-assignment)
 * [`osc identity role-assignment list`↴](#osc-identity-role-assignment-list)
+* [`osc identity role-inference`↴](#osc-identity-role-inference)
+* [`osc identity role-inference list`↴](#osc-identity-role-inference-list)
 * [`osc identity service`↴](#osc-identity-service)
 * [`osc identity service create`↴](#osc-identity-service-create)
 * [`osc identity service delete`↴](#osc-identity-service-delete)
@@ -5582,7 +5611,9 @@ Identity (Keystone) commands
 * `federation` — OS-Federation
 * `project` — Identity Project commands
 * `region` — Region commands
+* `role` — Identity Role commands
 * `role-assignment` — Role Assignments commands
+* `role-inference` — Role Inferences commands
 * `service` — Service commands
 * `user` — User commands
 
@@ -6353,9 +6384,11 @@ Identity Project commands
 
 * `create` — Create project
 * `delete` — Delete project
+* `group` — Project Group commands
 * `list` — List projects
 * `set` — Update project
 * `show` — Show project details
+* `user` — Project User commands
 
 
 
@@ -6400,6 +6433,104 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 ###### **Arguments:**
 
 * `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity project group`
+
+Project Group commands
+
+This command allows managing of the user group roles on the `project`
+
+**Usage:** `osc identity project group <COMMAND>`
+
+###### **Subcommands:**
+
+* `role` — Identity Project User Group Role commands
+
+
+
+## `osc identity project group role`
+
+Identity Project User Group Role commands
+
+This command allows managing of the user roles on the `project`
+
+**Usage:** `osc identity project group role <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Unassign role from group on project
+* `list` — List role assignments for group on project
+* `set` — Assign role to group on project
+* `show` — Check grant for project, group, role
+
+
+
+## `osc identity project group role delete`
+
+Unassigns a role from a group on a project.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_group_role`
+
+**Usage:** `osc identity project group role delete <PROJECT_ID> <GROUP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<GROUP_ID>` — group_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<ID>` — role_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity project group role list`
+
+Lists role assignments for a group on a project.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
+
+**Usage:** `osc identity project group role list <PROJECT_ID> <GROUP_ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<GROUP_ID>` — group_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity project group role set`
+
+Assigns a role to a group on a project.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_group_role`
+
+**Usage:** `osc identity project group role set [OPTIONS] <PROJECT_ID> <GROUP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<GROUP_ID>` — group_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<ID>` — role_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity project group role show`
+
+Check grant for project, group, role.
+
+GET/HEAD /v3/projects/{project_id/groups/{group_id}/roles/{role_id}
+
+**Usage:** `osc identity project group role show <PROJECT_ID> <GROUP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<GROUP_ID>` — group_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<ID>` — role_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles/{role_id} API
 
 
 
@@ -6472,6 +6603,104 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 ###### **Arguments:**
 
 * `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+
+
+
+## `osc identity project user`
+
+Project User commands
+
+This command allows managing of the user roles on the `project`
+
+**Usage:** `osc identity project user <COMMAND>`
+
+###### **Subcommands:**
+
+* `role` — Identity Project User Role commands
+
+
+
+## `osc identity project user role`
+
+Identity Project User Role commands
+
+This command allows managing of the user roles on the `project`
+
+**Usage:** `osc identity project user role <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Unassign role from user on project
+* `list` — List role assignments for user on project
+* `set` — Assign role to user on project
+* `show` — Check grant for project, user, role
+
+
+
+## `osc identity project user role delete`
+
+Unassigns a role from a user on a project.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
+
+**Usage:** `osc identity project user role delete <PROJECT_ID> <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
+* `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+
+
+
+## `osc identity project user role list`
+
+Lists role assignments for a user on a project.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
+
+**Usage:** `osc identity project user role list <PROJECT_ID> <USER_ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
+
+
+
+## `osc identity project user role set`
+
+Assigns a role to a user on a project.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
+
+**Usage:** `osc identity project user role set [OPTIONS] <PROJECT_ID> <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
+* `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity project user role show`
+
+Check grant for project, user, role.
+
+GET/HEAD /v3/projects/{project_id/users/{user_id}/roles/{role_id}
+
+**Usage:** `osc identity project user role show <PROJECT_ID> <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
+* `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
 
 
 
@@ -6585,6 +6814,292 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 
 
 
+## `osc identity role`
+
+Identity Role commands
+
+OpenStack services typically determine whether a user’s API request should be allowed using Role Based Access Control (RBAC). For OpenStack this means the service compares the roles that user has on the project (as indicated by the roles in the token), against the roles required for the API in question (as defined in the service’s policy file). A user obtains roles on a project by having these assigned to them via the Identity service API.
+
+Roles must initially be created as entities via the Identity services API and, once created, can then be assigned. You can assign roles to a user or group on a project, including projects owned by other domains. You can also assign roles to a user or group on a domain, although this is only currently relevant for using a domain scoped token to execute domain-level Identity service API requests.
+
+**Usage:** `osc identity role <COMMAND>`
+
+###### **Subcommands:**
+
+* `assignment` — Role Assignments commands
+* `create` — Create role
+* `delete` — Delete role
+* `imply` — Identity Implied Imply commands
+* `inference` — Role Inferences commands
+* `list` — List roles
+* `set` — Update role
+* `show` — Show role details
+
+
+
+## `osc identity role assignment`
+
+Role Assignments commands
+
+**Usage:** `osc identity role assignment <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List role assignments
+
+
+
+## `osc identity role assignment list`
+
+Get a list of role assignments.
+
+If no query parameters are specified, then this API will return a list of all role assignments.
+
+Since this list is likely to be very long, this API would typically always be used with one of more of the filter queries. Some typical examples are:
+
+`GET /v3/role_assignments?user.id={user_id}` would list all role assignments involving the specified user.
+
+`GET /v3/role_assignments?scope.project.id={project_id}` would list all role assignments involving the specified project.
+
+It is also possible to list all role assignments within a tree of projects: `GET /v3/role_assignments?scope.project.id={project_id}&include_subtree=true` would list all role assignments involving the specified project and all sub-projects. `include_subtree=true` can only be specified in conjunction with `scope.project.id`, specifying it without this will result in an HTTP 400 Bad Request being returned.
+
+Each role assignment entity in the collection contains a link to the assignment that gave rise to this entity.
+
+The scope section in the list response is extended to allow the representation of role assignments that are inherited to projects.
+
+The query filter `scope.OS-INHERIT:inherited_to` can be used to filter based on role assignments that are inherited. The only value of `scope.OS-INHERIT:inherited_to` that is currently supported is `projects`, indicating that this role is inherited to all projects of the owning domain or parent project.
+
+If the query parameter `effective` is specified, rather than simply returning a list of role assignments that have been made, the API returns a list of effective assignments at the user, project and domain level, having allowed for the effects of group membership, role inference rules as well as inheritance from the parent domain or project. Since the effects of group membership have already been allowed for, the group role assignment entities themselves will not be returned in the collection. Likewise, since the effects of inheritance have already been allowed for, the role assignment entities themselves that specify the inheritance will also not be returned in the collection. This represents the effective role assignments that would be included in a scoped token. The same set of query parameters can also be used in combination with the `effective` parameter.
+
+For example:
+
+`GET /v3/role_assignments?user.id={user_id}&effective` would, in other words, answer the question “what can this user actually do?”.
+
+`GET /v3/role_assignments?user.id={user_id}&scope.project.id={project_id}&effective` would return the equivalent set of role assignments that would be included in the token response of a project scoped token.
+
+An example response for an API call with the query parameter `effective` specified is given below:
+
+The entity `links` section of a response using the `effective` query parameter also contains, for entities that are included by virtue of group membership, a url that can be used to access the membership of the group.
+
+If the query parameter `include_names` is specified, rather than simply returning the entity IDs in the role assignments, the collection will additionally include the names of the entities. For example:
+
+`GET /v3/role_assignments?user.id={user_id}&effective&include_names=true` would return:
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assignments`
+
+**Usage:** `osc identity role assignment list [OPTIONS]`
+
+###### **Options:**
+
+* `--group-id <GROUP_ID>` — Filters the response by a group ID
+* `--role-id <ROLE_ID>` — Filters the response by a role ID
+* `--user-id <USER_ID>` — Filters the response by a user ID
+* `--scope-domain-id <SCOPE_DOMAIN_ID>` — Filters the response by a domain ID
+* `--scope-project-id <SCOPE_PROJECT_ID>` — Filters the response by a project ID
+* `--scope-os-inherit-inherited-to <SCOPE_OS_INHERIT_INHERITED_TO>` — Filters based on role assignments that are inherited. The only value of inherited_to that is currently supported is projects
+* `--effective` — Returns the effective assignments, including any assignments gained by virtue of group membership
+
+  Possible values: `true`, `false`
+
+* `--include-names` — If set, then the names of any entities returned will be include as well as their IDs. Any value other than 0 (including no value) will be interpreted as true
+
+  Possible values: `true`, `false`
+
+* `--include-subtree` — If set, then relevant assignments in the project hierarchy below the project specified in the scope.project_id query parameter are also included in the response. Any value other than 0 (including no value) for include_subtree will be interpreted as true
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc identity role create`
+
+Creates a role.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/roles`
+
+**Usage:** `osc identity role create [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--immutable <IMMUTABLE>`
+
+  Possible values: `true`, `false`
+
+* `--property <key=value>` — Additional properties to be sent with the request
+
+
+
+## `osc identity role delete`
+
+Deletes a role.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role`
+
+**Usage:** `osc identity role delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — role_id parameter for /v3/roles/{role_id} API
+
+
+
+## `osc identity role imply`
+
+Identity Implied Imply commands
+
+**Usage:** `osc identity role imply <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Delete role inference rule
+* `list` — List implied (inference) roles for role
+* `set` — Create role inference rule
+* `show` — Get role inference rule
+
+
+
+## `osc identity role imply delete`
+
+Deletes a role inference rule.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/#delete-role-inference-rule`
+
+**Usage:** `osc identity role imply delete <PRIOR_ROLE_ID> <IMPLIED_ROLE_ID>`
+
+###### **Arguments:**
+
+* `<PRIOR_ROLE_ID>` — prior_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+* `<IMPLIED_ROLE_ID>` — implied_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+
+
+
+## `osc identity role imply list`
+
+Lists implied (inference) roles for a role.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/#list-implied-roles-for-role`
+
+**Usage:** `osc identity role imply list <PRIOR_ROLE_ID>`
+
+###### **Arguments:**
+
+* `<PRIOR_ROLE_ID>` — prior_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+
+
+
+## `osc identity role imply set`
+
+Creates a role inference rule.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/#create-role-inference-rule`
+
+**Usage:** `osc identity role imply set [OPTIONS] <PRIOR_ROLE_ID> <IMPLIED_ROLE_ID>`
+
+###### **Arguments:**
+
+* `<PRIOR_ROLE_ID>` — prior_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+* `<IMPLIED_ROLE_ID>` — implied_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity role imply show`
+
+Gets a role inference rule.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/#get-role-inference-rule`
+
+**Usage:** `osc identity role imply show <PRIOR_ROLE_ID> <IMPLIED_ROLE_ID>`
+
+###### **Arguments:**
+
+* `<PRIOR_ROLE_ID>` — prior_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+* `<IMPLIED_ROLE_ID>` — implied_role_id parameter for /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+
+
+
+## `osc identity role inference`
+
+Role Inferences commands
+
+Operating the role inferences (implied roles)
+
+**Usage:** `osc identity role inference <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List all role inference rules
+
+
+
+## `osc identity role inference list`
+
+Lists all role inference rules.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/#list-all-role-inference-rules`
+
+**Usage:** `osc identity role inference list`
+
+
+
+## `osc identity role list`
+
+Lists roles.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/roles`
+
+**Usage:** `osc identity role list [OPTIONS]`
+
+###### **Options:**
+
+* `--domain-id <DOMAIN_ID>` — Filters the response by a domain ID
+
+
+
+## `osc identity role set`
+
+Updates a role.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role`
+
+**Usage:** `osc identity role set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — role_id parameter for /v3/roles/{role_id} API
+
+###### **Options:**
+
+* `--name <NAME>`
+* `--description <DESCRIPTION>`
+* `--immutable <IMMUTABLE>`
+
+  Possible values: `true`, `false`
+
+* `--property <key=value>` — Additional properties to be sent with the request
+
+
+
+## `osc identity role show`
+
+Shows details for a role.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role`
+
+**Usage:** `osc identity role show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — role_id parameter for /v3/roles/{role_id} API
+
+
+
 ## `osc identity role-assignment`
 
 Role Assignments commands
@@ -6657,6 +7172,30 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assi
 
   Possible values: `true`, `false`
 
+
+
+
+## `osc identity role-inference`
+
+Role Inferences commands
+
+Operating the role inferences (implied roles)
+
+**Usage:** `osc identity role-inference <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List all role inference rules
+
+
+
+## `osc identity role-inference list`
+
+Lists all role inference rules.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/#list-all-role-inference-rules`
+
+**Usage:** `osc identity role-inference list`
 
 
 

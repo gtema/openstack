@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity Project commands
+//! Identity Project User commands
 
 use clap::{Parser, Subcommand};
 
@@ -20,36 +20,32 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
 mod delete;
-mod group;
 mod list;
 mod set;
 mod show;
-mod user;
 
-/// Identity Project commands
+/// Identity Project User Group Role commands
+///
+/// This command allows managing of the user roles on the `project`
 #[derive(Parser)]
-pub struct ProjectCommand {
+pub struct RoleCommand {
     /// subcommand
     #[command(subcommand)]
-    command: ProjectCommands,
+    command: RoleCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum ProjectCommands {
-    Create(create::ProjectCommand),
-    Delete(delete::ProjectCommand),
-    Group(group::GroupCommand),
-    List(list::ProjectsCommand),
-    Set(set::ProjectCommand),
-    Show(show::ProjectCommand),
-    User(user::UserCommand),
+pub enum RoleCommands {
+    Delete(delete::RoleCommand),
+    List(list::RolesCommand),
+    Set(set::RoleCommand),
+    Show(show::RoleCommand),
 }
 
-impl ProjectCommand {
+impl RoleCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -57,13 +53,10 @@ impl ProjectCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ProjectCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            ProjectCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            ProjectCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
-            ProjectCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            ProjectCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
-            ProjectCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
-            ProjectCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
+            RoleCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            RoleCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            RoleCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            RoleCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

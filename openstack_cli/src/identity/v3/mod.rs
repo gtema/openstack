@@ -23,7 +23,9 @@ mod endpoint;
 mod os_federation;
 mod project;
 mod region;
+mod role;
 mod role_assignment;
+mod role_inference;
 mod service;
 mod user;
 
@@ -45,7 +47,9 @@ pub enum IdentityCommands {
     Federation(os_federation::FederationCommand),
     Project(project::ProjectCommand),
     Region(region::RegionCommand),
+    Role(role::RoleCommand),
     RoleAssignment(role_assignment::RoleAssignmentCommand),
+    RoleInference(role_inference::RoleInferenceCommand),
     Service(service::ServiceCommand),
     User(user::UserCommand),
 }
@@ -67,6 +71,8 @@ impl IdentityCommand {
             IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Region(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::RoleAssignment(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::RoleInference(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::Role(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Service(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
         }
