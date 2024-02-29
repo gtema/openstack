@@ -184,6 +184,8 @@ struct PathParameters {}
 /// RoleAssignments response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// A prior role object.
+    ///
     #[serde()]
     #[structable(optional)]
     role: Option<ResponseRole>,
@@ -214,13 +216,33 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    links: Option<ResponseLinks>,
+    links: Option<ResponseLinksStructResponse>,
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseLinks {
+    _self: Option<String>,
+}
+
+impl fmt::Display for ResponseLinks {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([format!(
+            "_self={}",
+            self._self
+                .clone()
+                .map(|v| v.to_string())
+                .unwrap_or("".to_string())
+        )]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseRole {
     id: Option<String>,
     name: Option<String>,
+    description: Option<String>,
+    links: Option<ResponseLinks>,
 }
 
 impl fmt::Display for ResponseRole {
@@ -236,6 +258,20 @@ impl fmt::Display for ResponseRole {
             format!(
                 "name={}",
                 self.name
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "description={}",
+                self.description
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "links={}",
+                self.links
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -507,12 +543,12 @@ impl fmt::Display for ResponseGroup {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
+struct ResponseLinksStructResponse {
     assignment: Option<String>,
     membership: Option<String>,
 }
 
-impl fmt::Display for ResponseLinks {
+impl fmt::Display for ResponseLinksStructResponse {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(
