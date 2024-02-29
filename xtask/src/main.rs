@@ -90,6 +90,7 @@ fn dist_binary(target: Option<&str>) -> Result<(), DynError> {
 }
 
 fn dist_manpage() -> Result<(), DynError> {
+    fs::create_dir_all(&dist_dir())?;
     fs::write(
         dist_dir().join("osc.md"),
         clap_markdown::help_markdown::<Cli>(),
