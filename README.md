@@ -15,21 +15,21 @@ It is possible to install compiled version from the GitHub releases. It comes
 with a dedicated installer and can be retrieved with the following command:
 
 ```console
-$> curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/v0.1.1/openstack_cli-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/v0.1.1/openstack_cli-installer.sh | sh
 ```
 
 Alternatively it is possible to compile project from sources. Since the project
 is a pure `Rust` it requires having a Rust compile suite.
 
 ```console
-$> cargo b
+cargo b
 ```
 
 Once the binary is available just start playing with it:
 
 ```console
-$> osc --help
-$> osc --os-cloud devstack compute flavor list
+osc --help
+osc --os-cloud devstack compute flavor list
 ```
 
 ## Documentation
