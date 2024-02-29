@@ -15,8 +15,6 @@ git_release_enable = true
 [[package]]
 name = "structable_derive"
 git_release_enable = true
-git_tag_enable = false
-publish = false
 
 # [[package]]
 # name = "xtask"
