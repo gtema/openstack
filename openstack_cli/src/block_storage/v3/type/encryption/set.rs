@@ -185,7 +185,7 @@ impl EncryptionCommand {
         }
 
         if let Some(val) = &args.provider {
-            encryption_builder.provider(val.clone());
+            encryption_builder.provider(val);
         }
 
         if let Some(val) = &args.control_location {

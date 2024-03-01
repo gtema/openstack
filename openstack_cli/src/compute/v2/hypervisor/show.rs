@@ -67,7 +67,7 @@ pub struct HypervisorCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     with_servers: Option<bool>,
 }
 

@@ -210,7 +210,7 @@ impl KeypairCommand {
         let args = &self.keypair;
         let mut keypair_builder = create_210::KeypairBuilder::default();
 
-        keypair_builder.name(args.name.clone());
+        keypair_builder.name(&args.name);
 
         if let Some(val) = &args._type {
             let tmp = match val {
@@ -221,11 +221,11 @@ impl KeypairCommand {
         }
 
         if let Some(val) = &args.public_key {
-            keypair_builder.public_key(val.clone());
+            keypair_builder.public_key(val);
         }
 
         if let Some(val) = &args.user_id {
-            keypair_builder.user_id(val.clone());
+            keypair_builder.user_id(val);
         }
 
         ep_builder.keypair(keypair_builder.build().unwrap());

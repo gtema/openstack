@@ -5850,11 +5850,11 @@ Creates an endpoint.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints`
 
-**Usage:** `osc identity endpoint create [OPTIONS] --interface <INTERFACE> --service-id <SERVICE_ID> --url <URL>`
+**Usage:** `osc identity endpoint create [OPTIONS]`
 
 ###### **Options:**
 
-* `--enabled <ENABLED>` — Defines whether the endpoint appears in the service catalog: - `false`. The endpoint does not appear in the service catalog. - `true`. The endpoint appears in the service catalog. Default is `true`
+* `--enabled <ENABLED>` — Indicates whether the endpoint appears in the service catalog: - `false`. The endpoint does not appear in the service catalog. - `true`. The endpoint appears in the service catalog
 
   Possible values: `true`, `false`
 
@@ -5862,7 +5862,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints
 
   Possible values: `admin`, `internal`, `public`
 
-* `--region <REGION>` — The geographic location of the service endpoint
+* `--region <REGION>` — (Deprecated in v3.2) The geographic location of the service endpoint
 * `--region-id <REGION_ID>` — (Since v3.2) The ID of the region that contains the service endpoint
 * `--service-id <SERVICE_ID>` — The UUID of the service to which the endpoint belongs
 * `--url <URL>` — The endpoint URL
@@ -6509,23 +6509,23 @@ Creates a project, where the project may act as a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
-**Usage:** `osc identity project create [OPTIONS] --name <NAME>`
+**Usage:** `osc identity project create [OPTIONS]`
 
 ###### **Options:**
 
 * `--description <DESCRIPTION>` — The description of the project
 * `--domain-id <DOMAIN_ID>` — The ID of the domain for the project
-* `--enabled <ENABLED>` — If set to `true`, project is enabled. If set to `false`, project is disabled. The default is `true`
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
-* `--is-domain <IS_DOMAIN>` — If set to `true`, project is enabled. If set to `false`, project is disabled. The default is `true`
+* `--is-domain <IS_DOMAIN>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
-* `--parent-id <PARENT_ID>` — The ID of the parent of the project
-* `--name <NAME>` — The name of the project, which must be unique within the owning domain. A project can have the same name as its domain
-* `--tags <TAGS>` — A list of simple strings assigned to a project. Tags can be used to classify projects into groups
+* `--parent-id <PARENT_ID>` — The ID of the parent for the project
+* `--name <NAME>` — The name of the project
+* `--tags <TAGS>` — A list of simple strings assigned to a project
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
@@ -6680,18 +6680,18 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 ###### **Options:**
 
 * `--description <DESCRIPTION>` — The description of the project
-* `--domain-id <DOMAIN_ID>` — The ID of the new domain for the project. The ability to change the domain of a project is now deprecated, and will be removed in subequent release. It is already disabled by default in most Identity service implementations
-* `--enabled <ENABLED>` — If set to `true`, project is enabled. If set to `false`, project is disabled
+* `--domain-id <DOMAIN_ID>` — The ID of the domain for the project
+* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
-* `--is-domain <IS_DOMAIN>` — If set to `true`, project is enabled. If set to `false`, project is disabled
+* `--is-domain <IS_DOMAIN>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
-* `--parent-id <PARENT_ID>`
-* `--name <NAME>` — The name of the project, which must be unique within the owning domain. A project can have the same name as its domain
-* `--tags <TAGS>` — A list of simple strings assigned to a project. Tags can be used to classify projects into groups
+* `--parent-id <PARENT_ID>` — The ID of the parent for the project
+* `--name <NAME>` — The name of the project
+* `--tags <TAGS>` — A list of simple strings assigned to a project
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
@@ -6844,7 +6844,6 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/regions`
 ###### **Options:**
 
 * `--description <DESCRIPTION>` — The region description
-* `--id <ID>` — The ID for the region
 * `--parent-id <PARENT_ID>` — To make this region a child of another region, set this parameter to the ID of the parent region
 
 
@@ -6898,7 +6897,6 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/region`
 ###### **Options:**
 
 * `--description <DESCRIPTION>` — The region description
-* `--id <ID>` — The ID for the region
 * `--parent-id <PARENT_ID>` — To make this region a child of another region, set this parameter to the ID of the parent region
 
 
@@ -7021,17 +7019,16 @@ Creates a role.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/roles`
 
-**Usage:** `osc identity role create [OPTIONS] --name <NAME>`
+**Usage:** `osc identity role create [OPTIONS]`
 
 ###### **Options:**
 
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
+* `--name <NAME>` — The role name
+* `--description <DESCRIPTION>` — The role description
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
 
-* `--property <key=value>` — Additional properties to be sent with the request
 
 
 
@@ -7179,13 +7176,12 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role`
 
 ###### **Options:**
 
-* `--name <NAME>`
-* `--description <DESCRIPTION>`
+* `--name <NAME>` — The role name
+* `--description <DESCRIPTION>` — The role description
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
 
-* `--property <key=value>` — Additional properties to be sent with the request
 
 
 
@@ -7326,12 +7322,12 @@ Creates a service.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/services`
 
-**Usage:** `osc identity service create [OPTIONS] --type <TYPE>`
+**Usage:** `osc identity service create [OPTIONS]`
 
 ###### **Options:**
 
 * `--description <DESCRIPTION>` — The service description
-* `--enabled <ENABLED>` — Defines whether the service and its endpoints appear in the service catalog: - `false`. The service and its endpoints do not appear in the service catalog. - `true`. The service and its endpoints appear in the service catalog
+* `--enabled <ENABLED>` — Defines whether the service and its endpoints appear in the service catalog: - `false`. The service and its endpoints do not appear in the service catalog. - `true`. The service and its endpoints appear in the service catalog. Default is `true`
 
   Possible values: `true`, `false`
 

@@ -79,7 +79,7 @@ struct ResponseData {
     /// Defines whether the service and its endpoints appear in the service
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
-    /// service catalog.
+    /// service catalog. Default is `true`.
     ///
     #[serde()]
     #[structable(optional)]

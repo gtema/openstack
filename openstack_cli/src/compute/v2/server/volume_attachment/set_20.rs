@@ -183,7 +183,7 @@ impl VolumeAttachmentCommand {
         let args = &self.volume_attachment;
         let mut volume_attachment_builder = set_20::VolumeAttachmentBuilder::default();
 
-        volume_attachment_builder.volume_id(args.volume_id.clone());
+        volume_attachment_builder.volume_id(&args.volume_id);
 
         ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());
 

@@ -111,7 +111,7 @@ impl VolumeCommand {
         let args = &self.os_retype;
         let mut os_retype_builder = os_retype::OsRetypeBuilder::default();
 
-        os_retype_builder.new_type(args.new_type.clone());
+        os_retype_builder.new_type(&args.new_type);
 
         if let Some(val) = &args.migration_policy {
             let tmp = match val {

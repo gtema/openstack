@@ -168,7 +168,7 @@ impl ImageCommand {
         // Set body parameters
         // Set Request.id data
         if let Some(args) = &self.id {
-            ep_builder.id(args.clone());
+            ep_builder.id(args);
         }
 
         // Set Request.name data
@@ -254,7 +254,7 @@ impl ImageCommand {
         if let Some(args) = &self.locations {
             let locations_builder: Vec<create::Locations> = args
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::Locations>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::Locations>(v.to_owned()))
                 .collect::<Vec<create::Locations>>();
             ep_builder.locations(locations_builder);
         }

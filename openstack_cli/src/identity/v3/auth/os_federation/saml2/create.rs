@@ -392,21 +392,21 @@ impl Saml2Command {
             if let Some(val) = &val.user {
                 let mut user_builder = create::UserBuilder::default();
                 if let Some(val) = &val.id {
-                    user_builder.id(val.clone());
+                    user_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    user_builder.name(val.clone());
+                    user_builder.name(val);
                 }
                 if let Some(val) = &val.password {
-                    user_builder.password(val.clone());
+                    user_builder.password(val);
                 }
                 if let Some(val) = &val.domain {
                     let mut domain_builder = create::DomainBuilder::default();
                     if let Some(val) = &val.id {
-                        domain_builder.id(val.clone());
+                        domain_builder.id(val);
                     }
                     if let Some(val) = &val.name {
-                        domain_builder.name(val.clone());
+                        domain_builder.name(val);
                     }
                     user_builder.domain(domain_builder.build().expect("A valid object"));
                 }
@@ -417,7 +417,7 @@ impl Saml2Command {
         if let Some(val) = &&args.identity.token {
             let mut token_builder = create::TokenBuilder::default();
 
-            token_builder.id(val.id.clone());
+            token_builder.id(&val.id);
             identity_builder.token(token_builder.build().expect("A valid object"));
         }
         if let Some(val) = &&args.identity.totp {
@@ -425,23 +425,23 @@ impl Saml2Command {
 
             let mut user_builder = create::TotpUserBuilder::default();
             if let Some(val) = &&val.user.id {
-                user_builder.id(val.clone());
+                user_builder.id(val);
             }
             if let Some(val) = &&val.user.name {
-                user_builder.name(val.clone());
+                user_builder.name(val);
             }
             if let Some(val) = &&val.user.domain {
                 let mut domain_builder = create::UserDomainStructInputBuilder::default();
                 if let Some(val) = &val.id {
-                    domain_builder.id(val.clone());
+                    domain_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    domain_builder.name(val.clone());
+                    domain_builder.name(val);
                 }
                 user_builder.domain(domain_builder.build().expect("A valid object"));
             }
 
-            user_builder.passcode(val.user.passcode.clone());
+            user_builder.passcode(&val.user.passcode);
             totp_builder.user(user_builder.build().expect("A valid object"));
             identity_builder.totp(totp_builder.build().expect("A valid object"));
         }
@@ -449,28 +449,28 @@ impl Saml2Command {
             let mut application_credential_builder =
                 create::ApplicationCredentialBuilder::default();
             if let Some(val) = &val.id {
-                application_credential_builder.id(val.clone());
+                application_credential_builder.id(val);
             }
             if let Some(val) = &val.name {
-                application_credential_builder.name(val.clone());
+                application_credential_builder.name(val);
             }
 
-            application_credential_builder.secret(val.secret.clone());
+            application_credential_builder.secret(&val.secret);
             if let Some(val) = &val.user {
                 let mut user_builder = create::ApplicationCredentialUserBuilder::default();
                 if let Some(val) = &val.id {
-                    user_builder.id(val.clone());
+                    user_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    user_builder.name(val.clone());
+                    user_builder.name(val);
                 }
                 if let Some(val) = &val.domain {
                     let mut domain_builder = create::UserDomainStructInputBuilder::default();
                     if let Some(val) = &val.id {
-                        domain_builder.id(val.clone());
+                        domain_builder.id(val);
                     }
                     if let Some(val) = &val.name {
-                        domain_builder.name(val.clone());
+                        domain_builder.name(val);
                     }
                     user_builder.domain(domain_builder.build().expect("A valid object"));
                 }
@@ -489,18 +489,18 @@ impl Saml2Command {
             if let Some(val) = &val.project {
                 let mut project_builder = create::ProjectBuilder::default();
                 if let Some(val) = &val.name {
-                    project_builder.name(val.clone());
+                    project_builder.name(val);
                 }
                 if let Some(val) = &val.id {
-                    project_builder.id(val.clone());
+                    project_builder.id(val);
                 }
                 if let Some(val) = &val.domain {
                     let mut domain_builder = create::ProjectDomainBuilder::default();
                     if let Some(val) = &val.id {
-                        domain_builder.id(val.clone());
+                        domain_builder.id(val);
                     }
                     if let Some(val) = &val.name {
-                        domain_builder.name(val.clone());
+                        domain_builder.name(val);
                     }
                     project_builder.domain(domain_builder.build().expect("A valid object"));
                 }
@@ -509,17 +509,17 @@ impl Saml2Command {
             if let Some(val) = &val.domain {
                 let mut domain_builder = create::ScopeDomainBuilder::default();
                 if let Some(val) = &val.id {
-                    domain_builder.id(val.clone());
+                    domain_builder.id(val);
                 }
                 if let Some(val) = &val.name {
-                    domain_builder.name(val.clone());
+                    domain_builder.name(val);
                 }
                 scope_builder.domain(domain_builder.build().expect("A valid object"));
             }
             if let Some(val) = &val.os_trust_trust {
                 let mut os_trust_trust_builder = create::OsTrustTrustBuilder::default();
                 if let Some(val) = &val.id {
-                    os_trust_trust_builder.id(val.clone());
+                    os_trust_trust_builder.id(val);
                 }
                 scope_builder
                     .os_trust_trust(os_trust_trust_builder.build().expect("A valid object"));

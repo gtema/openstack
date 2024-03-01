@@ -202,7 +202,7 @@ impl UserCommand {
         }
 
         if let Some(val) = &args.domain_id {
-            user_builder.domain_id(val.clone());
+            user_builder.domain_id(val);
         }
 
         if let Some(val) = &args.enabled {
@@ -212,12 +212,12 @@ impl UserCommand {
         if let Some(val) = &args.federated {
             let federated_builder: Vec<create::Federated> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::Federated>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::Federated>(v.to_owned()))
                 .collect::<Vec<create::Federated>>();
             user_builder.federated(federated_builder);
         }
 
-        user_builder.name(args.name.clone());
+        user_builder.name(&args.name);
 
         if let Some(val) = &args.password {
             user_builder.password(Some(val.into()));

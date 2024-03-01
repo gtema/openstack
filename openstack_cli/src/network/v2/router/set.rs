@@ -365,7 +365,7 @@ impl RouterCommand {
         let args = &self.router;
         let mut router_builder = set::RouterBuilder::default();
         if let Some(val) = &args.name {
-            router_builder.name(val.clone());
+            router_builder.name(val);
         }
 
         if let Some(val) = &args.admin_state_up {
@@ -375,14 +375,14 @@ impl RouterCommand {
         if let Some(val) = &args.external_gateway_info {
             let mut external_gateway_info_builder = set::ExternalGatewayInfoBuilder::default();
 
-            external_gateway_info_builder.network_id(val.network_id.clone());
+            external_gateway_info_builder.network_id(&val.network_id);
             if let Some(val) = &val.enable_snat {
                 external_gateway_info_builder.enable_snat(*val);
             }
             if let Some(val) = &val.external_fixed_ips {
                 let external_fixed_ips_builder: Vec<set::ExternalFixedIps> = val
                     .iter()
-                    .flat_map(|v| serde_json::from_value::<set::ExternalFixedIps>(v.clone()))
+                    .flat_map(|v| serde_json::from_value::<set::ExternalFixedIps>(v.to_owned()))
                     .collect::<Vec<set::ExternalFixedIps>>();
                 external_gateway_info_builder.external_fixed_ips(external_fixed_ips_builder);
             }
@@ -408,13 +408,13 @@ impl RouterCommand {
         if let Some(val) = &args.routes {
             let routes_builder: Vec<set::Routes> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<set::Routes>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<set::Routes>(v.to_owned()))
                 .collect::<Vec<set::Routes>>();
             router_builder.routes(routes_builder);
         }
 
         if let Some(val) = &args.description {
-            router_builder.description(val.clone());
+            router_builder.description(val);
         }
 
         ep_builder.router(router_builder.build().unwrap());

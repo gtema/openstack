@@ -117,13 +117,13 @@ impl VolumeCommand {
         let args = &self.os_attach;
         let mut os_attach_builder = os_attach::OsAttachBuilder::default();
         if let Some(val) = &args.instance_uuid {
-            os_attach_builder.instance_uuid(val.clone());
+            os_attach_builder.instance_uuid(val);
         }
 
-        os_attach_builder.mountpoint(args.mountpoint.clone());
+        os_attach_builder.mountpoint(&args.mountpoint);
 
         if let Some(val) = &args.host_name {
-            os_attach_builder.host_name(val.clone());
+            os_attach_builder.host_name(val);
         }
 
         if let Some(val) = &args.mode {

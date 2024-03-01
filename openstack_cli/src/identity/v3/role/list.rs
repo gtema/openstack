@@ -153,7 +153,7 @@ impl RolesCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.domain_id {
-            ep_builder.domain_id(val.clone());
+            ep_builder.domain_id(val);
         }
         // Set body parameters
 

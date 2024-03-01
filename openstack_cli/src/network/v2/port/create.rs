@@ -626,11 +626,11 @@ impl PortCommand {
         let args = &self.port;
         let mut port_builder = create::PortBuilder::default();
         if let Some(val) = &args.name {
-            port_builder.name(val.clone());
+            port_builder.name(val);
         }
 
         if let Some(val) = &args.network_id {
-            port_builder.network_id(val.clone());
+            port_builder.network_id(val);
         }
 
         if let Some(val) = &args.admin_state_up {
@@ -638,33 +638,33 @@ impl PortCommand {
         }
 
         if let Some(val) = &args.mac_address {
-            port_builder.mac_address(val.clone());
+            port_builder.mac_address(val);
         }
 
         if let Some(val) = &args.fixed_ips {
             let fixed_ips_builder: Vec<create::FixedIps> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::FixedIps>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::FixedIps>(v.to_owned()))
                 .collect::<Vec<create::FixedIps>>();
             port_builder.fixed_ips(fixed_ips_builder);
         }
 
         if let Some(val) = &args.device_id {
-            port_builder.device_id(val.clone());
+            port_builder.device_id(val);
         }
 
         if let Some(val) = &args.device_owner {
-            port_builder.device_owner(val.clone());
+            port_builder.device_owner(val);
         }
 
         if let Some(val) = &args.tenant_id {
-            port_builder.tenant_id(val.clone());
+            port_builder.tenant_id(val);
         }
 
         if let Some(val) = &args.allowed_address_pairs {
             let allowed_address_pairs_builder: Vec<create::AllowedAddressPairs> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::AllowedAddressPairs>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::AllowedAddressPairs>(v.to_owned()))
                 .collect::<Vec<create::AllowedAddressPairs>>();
             port_builder.allowed_address_pairs(allowed_address_pairs_builder);
         }
@@ -721,7 +721,7 @@ impl PortCommand {
         }
 
         if let Some(val) = &args.binding_host_id {
-            port_builder.binding_host_id(val.clone());
+            port_builder.binding_host_id(val);
         }
 
         if let Some(val) = &args.binding_profile {
@@ -745,15 +745,15 @@ impl PortCommand {
         }
 
         if let Some(val) = &args.dns_name {
-            port_builder.dns_name(val.clone());
+            port_builder.dns_name(val);
         }
 
         if let Some(val) = &args.dns_domain {
-            port_builder.dns_domain(val.clone());
+            port_builder.dns_domain(val);
         }
 
         if let Some(val) = &args.description {
-            port_builder.description(val.clone());
+            port_builder.description(val);
         }
 
         if let Some(val) = &args.security_groups {

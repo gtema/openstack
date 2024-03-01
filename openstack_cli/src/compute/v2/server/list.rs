@@ -887,175 +887,175 @@ impl ServersCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val.clone());
+            ep_builder.user_id(val);
         }
         if let Some(val) = &self.query.project_id {
-            ep_builder.project_id(val.clone());
+            ep_builder.project_id(val);
         }
         if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val.clone());
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.launch_index {
-            ep_builder.launch_index(val.clone());
+            ep_builder.launch_index(val);
         }
         if let Some(val) = &self.query.image_ref {
-            ep_builder.image_ref(val.clone());
+            ep_builder.image_ref(val);
         }
         if let Some(val) = &self.query.image {
-            ep_builder.image(val.clone());
+            ep_builder.image(val);
         }
         if let Some(val) = &self.query.kernel_id {
-            ep_builder.kernel_id(val.clone());
+            ep_builder.kernel_id(val);
         }
         if let Some(val) = &self.query.ramdisk_id {
-            ep_builder.ramdisk_id(val.clone());
+            ep_builder.ramdisk_id(val);
         }
         if let Some(val) = &self.query.hostname {
-            ep_builder.hostname(val.clone());
+            ep_builder.hostname(val);
         }
         if let Some(val) = &self.query.key_name {
-            ep_builder.key_name(val.clone());
+            ep_builder.key_name(val);
         }
         if let Some(val) = &self.query.power_state {
-            ep_builder.power_state(val.clone());
+            ep_builder.power_state(val);
         }
         if let Some(val) = &self.query.vm_state {
-            ep_builder.vm_state(val.clone());
+            ep_builder.vm_state(val);
         }
         if let Some(val) = &self.query.task_state {
-            ep_builder.task_state(val.clone());
+            ep_builder.task_state(val);
         }
         if let Some(val) = &self.query.host {
-            ep_builder.host(val.clone());
+            ep_builder.host(val);
         }
         if let Some(val) = &self.query.node {
-            ep_builder.node(val.clone());
+            ep_builder.node(val);
         }
         if let Some(val) = &self.query.flavor {
-            ep_builder.flavor(val.clone());
+            ep_builder.flavor(val);
         }
         if let Some(val) = &self.query.reservation_id {
-            ep_builder.reservation_id(val.clone());
+            ep_builder.reservation_id(val);
         }
         if let Some(val) = &self.query.launched_at {
-            ep_builder.launched_at(val.clone());
+            ep_builder.launched_at(val);
         }
         if let Some(val) = &self.query.terminated_at {
-            ep_builder.terminated_at(val.clone());
+            ep_builder.terminated_at(val);
         }
         if let Some(val) = &self.query.availability_zone {
-            ep_builder.availability_zone(val.clone());
+            ep_builder.availability_zone(val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.display_name {
-            ep_builder.display_name(val.clone());
+            ep_builder.display_name(val);
         }
         if let Some(val) = &self.query.description {
-            ep_builder.description(val.clone());
+            ep_builder.description(val);
         }
         if let Some(val) = &self.query.display_description {
-            ep_builder.display_description(val.clone());
+            ep_builder.display_description(val);
         }
         if let Some(val) = &self.query.locked_by {
-            ep_builder.locked_by(val.clone());
+            ep_builder.locked_by(val);
         }
         if let Some(val) = &self.query.uuid {
-            ep_builder.uuid(val.clone());
+            ep_builder.uuid(val);
         }
         if let Some(val) = &self.query.root_device_name {
-            ep_builder.root_device_name(val.clone());
+            ep_builder.root_device_name(val);
         }
         if let Some(val) = &self.query.config_drive {
-            ep_builder.config_drive(val.clone());
+            ep_builder.config_drive(val);
         }
         if let Some(val) = &self.query.access_ip_v4 {
-            ep_builder.access_ip_v4(val.clone());
+            ep_builder.access_ip_v4(val);
         }
         if let Some(val) = &self.query.access_ip_v6 {
-            ep_builder.access_ip_v6(val.clone());
+            ep_builder.access_ip_v6(val);
         }
         if let Some(val) = &self.query.auto_disk_config {
-            ep_builder.auto_disk_config(val.clone());
+            ep_builder.auto_disk_config(val);
         }
         if let Some(val) = &self.query.progress {
-            ep_builder.progress(val.clone());
+            ep_builder.progress(val);
         }
         if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.clone());
+            ep_builder.sort_key(val);
         }
         if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.clone());
+            ep_builder.sort_dir(val);
         }
         if let Some(val) = &self.query.all_tenants {
-            ep_builder.all_tenants(val.clone());
+            ep_builder.all_tenants(val);
         }
         if let Some(val) = &self.query.soft_deleted {
-            ep_builder.soft_deleted(val.clone());
+            ep_builder.soft_deleted(val);
         }
         if let Some(val) = &self.query.deleted {
-            ep_builder.deleted(val.clone());
+            ep_builder.deleted(val);
         }
         if let Some(val) = &self.query.status {
-            ep_builder.status(val.clone());
+            ep_builder.status(val);
         }
         if let Some(val) = &self.query.changes_since {
-            ep_builder.changes_since(val.clone());
+            ep_builder.changes_since(val);
         }
         if let Some(val) = &self.query.ip {
-            ep_builder.ip(val.clone());
+            ep_builder.ip(val);
         }
         if let Some(val) = &self.query.ip6 {
-            ep_builder.ip6(val.clone());
+            ep_builder.ip6(val);
         }
         if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val.clone());
+            ep_builder.created_at(val);
         }
         if let Some(val) = &self.query.block_device_mapping {
-            ep_builder.block_device_mapping(val.clone());
+            ep_builder.block_device_mapping(val);
         }
         if let Some(val) = &self.query.services {
-            ep_builder.services(val.clone());
+            ep_builder.services(val);
         }
         if let Some(val) = &self.query.metadata {
-            ep_builder.metadata(val.clone());
+            ep_builder.metadata(val);
         }
         if let Some(val) = &self.query.system_metadata {
-            ep_builder.system_metadata(val.clone());
+            ep_builder.system_metadata(val);
         }
         if let Some(val) = &self.query.info_cache {
-            ep_builder.info_cache(val.clone());
+            ep_builder.info_cache(val);
         }
         if let Some(val) = &self.query.security_groups {
-            ep_builder.security_groups(val.clone());
+            ep_builder.security_groups(val);
         }
         if let Some(val) = &self.query.pci_devices {
-            ep_builder.pci_devices(val.clone());
+            ep_builder.pci_devices(val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
-            ep_builder.marker(val.clone());
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.tags {
-            ep_builder.tags(val.clone());
+            ep_builder.tags(val);
         }
         if let Some(val) = &self.query.tags_any {
-            ep_builder.tags_any(val.clone());
+            ep_builder.tags_any(val);
         }
         if let Some(val) = &self.query.not_tags {
-            ep_builder.not_tags(val.clone());
+            ep_builder.not_tags(val);
         }
         if let Some(val) = &self.query.not_tags_any {
-            ep_builder.not_tags_any(val.clone());
+            ep_builder.not_tags_any(val);
         }
         if let Some(val) = &self.query.changes_before {
-            ep_builder.changes_before(val.clone());
+            ep_builder.changes_before(val);
         }
         if let Some(val) = &self.query.locked {
-            ep_builder.locked(val.clone());
+            ep_builder.locked(val);
         }
         // Set body parameters
 

@@ -117,7 +117,7 @@ impl ServerCommand {
         let args = &self.add_fixed_ip;
         let mut add_fixed_ip_builder = add_fixed_ip_21::AddFixedIpBuilder::default();
 
-        add_fixed_ip_builder.network_id(args.network_id.clone());
+        add_fixed_ip_builder.network_id(&args.network_id);
 
         ep_builder.add_fixed_ip(add_fixed_ip_builder.build().unwrap());
 

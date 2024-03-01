@@ -43,7 +43,7 @@ pub struct Service<'a> {
     /// Defines whether the service and its endpoints appear in the service
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
-    /// service catalog.
+    /// service catalog. Default is `true`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
@@ -58,9 +58,9 @@ pub struct Service<'a> {
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
-    #[serde(rename = "type")]
-    #[builder(setter(into))]
-    pub(crate) _type: Cow<'a, str>,
+    #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) _type: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -155,7 +155,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .service(ServiceBuilder::default()._type("foo").build().unwrap())
+                .service(ServiceBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -167,7 +167,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .service(ServiceBuilder::default()._type("foo").build().unwrap())
+                .service(ServiceBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
@@ -189,7 +189,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .service(ServiceBuilder::default()._type("foo").build().unwrap())
+            .service(ServiceBuilder::default().build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -210,14 +210,13 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .service(ServiceBuilder::default()._type("foo").build().unwrap())
+            .service(ServiceBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
                     HeaderValue::from_static("bar"),
                 )]
-                .iter()
-                .cloned(),
+                .into_iter(),
             )
             .header("not_foo", "not_bar")
             .build()

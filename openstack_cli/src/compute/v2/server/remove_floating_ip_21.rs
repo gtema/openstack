@@ -119,7 +119,7 @@ impl ServerCommand {
         let mut remove_floating_ip_builder =
             remove_floating_ip_21::RemoveFloatingIpBuilder::default();
 
-        remove_floating_ip_builder.address(args.address.clone());
+        remove_floating_ip_builder.address(&args.address);
 
         ep_builder.remove_floating_ip(remove_floating_ip_builder.build().unwrap());
 

@@ -138,7 +138,7 @@ impl VolumeCommand {
         let mut os_volume_upload_image_builder =
             os_volume_upload_image_31::OsVolumeUploadImageBuilder::default();
 
-        os_volume_upload_image_builder.image_name(args.image_name.clone());
+        os_volume_upload_image_builder.image_name(&args.image_name);
 
         if let Some(val) = &args.force {
             os_volume_upload_image_builder.force(*val);

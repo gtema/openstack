@@ -186,13 +186,13 @@ impl InstanceActionsCommand {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
-            ep_builder.marker(val.clone());
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.changes_since {
-            ep_builder.changes_since(val.clone());
+            ep_builder.changes_since(val);
         }
         if let Some(val) = &self.query.changes_before {
-            ep_builder.changes_before(val.clone());
+            ep_builder.changes_before(val);
         }
         // Set body parameters
 

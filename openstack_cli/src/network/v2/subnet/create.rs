@@ -414,12 +414,12 @@ impl SubnetCommand {
         let args = &self.subnet;
         let mut subnet_builder = create::SubnetBuilder::default();
         if let Some(val) = &args.name {
-            subnet_builder.name(val.clone());
+            subnet_builder.name(val);
         }
 
         subnet_builder.ip_version(args.ip_version);
 
-        subnet_builder.network_id(args.network_id.clone());
+        subnet_builder.network_id(&args.network_id);
 
         if let Some(val) = &args.subnetpool_id {
             subnet_builder.subnetpool_id(Some(val.into()));
@@ -434,13 +434,13 @@ impl SubnetCommand {
         }
 
         if let Some(val) = &args.gateway_ip {
-            subnet_builder.gateway_ip(val.clone());
+            subnet_builder.gateway_ip(val);
         }
 
         if let Some(val) = &args.allocation_pools {
             let allocation_pools_builder: Vec<create::AllocationPools> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::AllocationPools>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::AllocationPools>(v.to_owned()))
                 .collect::<Vec<create::AllocationPools>>();
             subnet_builder.allocation_pools(allocation_pools_builder);
         }
@@ -452,13 +452,13 @@ impl SubnetCommand {
         if let Some(val) = &args.host_routes {
             let host_routes_builder: Vec<create::HostRoutes> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::HostRoutes>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::HostRoutes>(v.to_owned()))
                 .collect::<Vec<create::HostRoutes>>();
             subnet_builder.host_routes(host_routes_builder);
         }
 
         if let Some(val) = &args.tenant_id {
-            subnet_builder.tenant_id(val.clone());
+            subnet_builder.tenant_id(val);
         }
 
         if let Some(val) = &args.enable_dhcp {
@@ -496,7 +496,7 @@ impl SubnetCommand {
         }
 
         if let Some(val) = &args.description {
-            subnet_builder.description(val.clone());
+            subnet_builder.description(val);
         }
 
         if let Some(val) = &args.segment_id {

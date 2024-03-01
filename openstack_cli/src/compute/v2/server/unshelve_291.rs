@@ -110,7 +110,7 @@ impl ServerCommand {
                 unshelve_builder.availability_zone(Some(val.into()));
             }
             if let Some(val) = &lunshelve.host {
-                unshelve_builder.host(val.clone());
+                unshelve_builder.host(val);
             }
             ep_builder.unshelve(unshelve_builder.build().expect("A valid object"));
         }

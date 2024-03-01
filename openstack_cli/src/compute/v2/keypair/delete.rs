@@ -94,7 +94,7 @@ impl KeypairCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val.clone());
+            ep_builder.user_id(val);
         }
         // Set body parameters
 

@@ -117,7 +117,7 @@ impl FlavorCommand {
         let mut remove_tenant_access_builder =
             remove_tenant_access::RemoveTenantAccessBuilder::default();
 
-        remove_tenant_access_builder.tenant(args.tenant.clone());
+        remove_tenant_access_builder.tenant(&args.tenant);
 
         ep_builder.remove_tenant_access(remove_tenant_access_builder.build().unwrap());
 

@@ -136,11 +136,11 @@ impl GroupCommand {
         }
 
         if let Some(val) = &args.domain_id {
-            group_builder.domain_id(val.clone());
+            group_builder.domain_id(val);
         }
 
         if let Some(val) = &args.name {
-            group_builder.name(val.clone());
+            group_builder.name(val);
         }
 
         ep_builder.group(group_builder.build().unwrap());

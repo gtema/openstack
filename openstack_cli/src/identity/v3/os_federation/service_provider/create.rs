@@ -151,9 +151,9 @@ impl ServiceProviderCommand {
         let args = &self.service_provider;
         let mut service_provider_builder = create::ServiceProviderBuilder::default();
 
-        service_provider_builder.auth_url(args.auth_url.clone());
+        service_provider_builder.auth_url(&args.auth_url);
 
-        service_provider_builder.sp_url(args.sp_url.clone());
+        service_provider_builder.sp_url(&args.sp_url);
 
         if let Some(val) = &args.description {
             service_provider_builder.description(Some(val.into()));

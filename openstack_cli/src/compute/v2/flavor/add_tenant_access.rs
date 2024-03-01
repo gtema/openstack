@@ -115,7 +115,7 @@ impl FlavorCommand {
         let args = &self.add_tenant_access;
         let mut add_tenant_access_builder = add_tenant_access::AddTenantAccessBuilder::default();
 
-        add_tenant_access_builder.tenant(args.tenant.clone());
+        add_tenant_access_builder.tenant(&args.tenant);
 
         ep_builder.add_tenant_access(add_tenant_access_builder.build().unwrap());
 

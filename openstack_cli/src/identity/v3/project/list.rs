@@ -203,7 +203,7 @@ impl ProjectsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.domain_id {
-            ep_builder.domain_id(val.clone());
+            ep_builder.domain_id(val);
         }
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
@@ -212,10 +212,10 @@ impl ProjectsCommand {
             ep_builder.is_domain(*val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.parent_id {
-            ep_builder.parent_id(val.clone());
+            ep_builder.parent_id(val);
         }
         // Set body parameters
 

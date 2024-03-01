@@ -53,42 +53,41 @@ pub struct Project<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The ID of the new domain for the project. The ability to change the
-    /// domain of a project is now deprecated, and will be removed in subequent
-    /// release. It is already disabled by default in most Identity service
-    /// implementations.
+    /// The ID of the domain for the project.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) is_domain: Option<bool>,
 
+    /// The ID of the parent for the project.
+    ///
+    /// **New in version 3.4**
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) parent_id: Option<Option<Cow<'a, str>>>,
 
-    /// The name of the project, which must be unique within the owning domain.
-    /// A project can have the same name as its domain.
+    /// The name of the project.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
-    /// A list of simple strings assigned to a project. Tags can be used to
-    /// classify projects into groups.
+    /// A list of simple strings assigned to a project.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -281,8 +280,7 @@ mod tests {
                     Some(HeaderName::from_static("foo")),
                     HeaderValue::from_static("bar"),
                 )]
-                .iter()
-                .cloned(),
+                .into_iter(),
             )
             .header("not_foo", "not_bar")
             .build()

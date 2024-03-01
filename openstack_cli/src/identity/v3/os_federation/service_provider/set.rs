@@ -151,11 +151,11 @@ impl ServiceProviderCommand {
         let args = &self.service_provider;
         let mut service_provider_builder = set::ServiceProviderBuilder::default();
         if let Some(val) = &args.auth_url {
-            service_provider_builder.auth_url(val.clone());
+            service_provider_builder.auth_url(val);
         }
 
         if let Some(val) = &args.sp_url {
-            service_provider_builder.sp_url(val.clone());
+            service_provider_builder.sp_url(val);
         }
 
         if let Some(val) = &args.description {

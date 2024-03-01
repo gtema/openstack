@@ -191,7 +191,7 @@ impl ApplicationCredentialCommand {
         let args = &self.application_credential;
         let mut application_credential_builder = create::ApplicationCredentialBuilder::default();
 
-        application_credential_builder.name(args.name.clone());
+        application_credential_builder.name(&args.name);
 
         if let Some(val) = &args.description {
             application_credential_builder.description(Some(val.into()));
@@ -208,7 +208,7 @@ impl ApplicationCredentialCommand {
         if let Some(val) = &args.roles {
             let roles_builder: Vec<create::Roles> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::Roles>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::Roles>(v.to_owned()))
                 .collect::<Vec<create::Roles>>();
             application_credential_builder.roles(roles_builder);
         }
@@ -220,7 +220,7 @@ impl ApplicationCredentialCommand {
         if let Some(val) = &args.access_rules {
             let access_rules_builder: Vec<create::AccessRules> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create::AccessRules>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create::AccessRules>(v.to_owned()))
                 .collect::<Vec<create::AccessRules>>();
             application_credential_builder.access_rules(access_rules_builder);
         }

@@ -104,7 +104,7 @@ impl ServerCommand {
         if let Some(lunshelve) = &args {
             let mut unshelve_builder = unshelve_277::UnshelveBuilder::default();
 
-            unshelve_builder.availability_zone(lunshelve.availability_zone.clone());
+            unshelve_builder.availability_zone(&lunshelve.availability_zone);
             ep_builder.unshelve(unshelve_builder.build().expect("A valid object"));
         }
 

@@ -320,25 +320,25 @@ impl FloatingipCommand {
         let args = &self.floatingip;
         let mut floatingip_builder = create::FloatingipBuilder::default();
         if let Some(val) = &args.floating_ip_address {
-            floatingip_builder.floating_ip_address(val.clone());
+            floatingip_builder.floating_ip_address(val);
         }
 
         if let Some(val) = &args.subnet_id {
             floatingip_builder.subnet_id(Some(val.into()));
         }
 
-        floatingip_builder.floating_network_id(args.floating_network_id.clone());
+        floatingip_builder.floating_network_id(&args.floating_network_id);
 
         if let Some(val) = &args.port_id {
             floatingip_builder.port_id(Some(val.into()));
         }
 
         if let Some(val) = &args.fixed_ip_address {
-            floatingip_builder.fixed_ip_address(val.clone());
+            floatingip_builder.fixed_ip_address(val);
         }
 
         if let Some(val) = &args.tenant_id {
-            floatingip_builder.tenant_id(val.clone());
+            floatingip_builder.tenant_id(val);
         }
 
         if let Some(val) = &args.qos_policy_id {
@@ -346,15 +346,15 @@ impl FloatingipCommand {
         }
 
         if let Some(val) = &args.dns_name {
-            floatingip_builder.dns_name(val.clone());
+            floatingip_builder.dns_name(val);
         }
 
         if let Some(val) = &args.dns_domain {
-            floatingip_builder.dns_domain(val.clone());
+            floatingip_builder.dns_domain(val);
         }
 
         if let Some(val) = &args.description {
-            floatingip_builder.description(val.clone());
+            floatingip_builder.description(val);
         }
 
         ep_builder.floatingip(floatingip_builder.build().unwrap());

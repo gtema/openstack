@@ -337,17 +337,17 @@ impl SubnetCommand {
         let args = &self.subnet;
         let mut subnet_builder = set::SubnetBuilder::default();
         if let Some(val) = &args.name {
-            subnet_builder.name(val.clone());
+            subnet_builder.name(val);
         }
 
         if let Some(val) = &args.gateway_ip {
-            subnet_builder.gateway_ip(val.clone());
+            subnet_builder.gateway_ip(val);
         }
 
         if let Some(val) = &args.allocation_pools {
             let allocation_pools_builder: Vec<set::AllocationPools> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<set::AllocationPools>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<set::AllocationPools>(v.to_owned()))
                 .collect::<Vec<set::AllocationPools>>();
             subnet_builder.allocation_pools(allocation_pools_builder);
         }
@@ -359,7 +359,7 @@ impl SubnetCommand {
         if let Some(val) = &args.host_routes {
             let host_routes_builder: Vec<set::HostRoutes> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<set::HostRoutes>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<set::HostRoutes>(v.to_owned()))
                 .collect::<Vec<set::HostRoutes>>();
             subnet_builder.host_routes(host_routes_builder);
         }
@@ -377,7 +377,7 @@ impl SubnetCommand {
         }
 
         if let Some(val) = &args.description {
-            subnet_builder.description(val.clone());
+            subnet_builder.description(val);
         }
 
         if let Some(val) = &args.segment_id {

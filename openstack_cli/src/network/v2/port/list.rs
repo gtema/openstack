@@ -94,7 +94,7 @@ struct QueryParameters {
 
     /// admin_state_up query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     admin_state_up: Option<bool>,
 
     /// mac_address query parameter for /v2.0/ports API
@@ -104,7 +104,7 @@ struct QueryParameters {
 
     /// fixed_ips query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     fixed_ips: Option<Vec<String>>,
 
     /// device_id query parameter for /v2.0/ports API
@@ -144,22 +144,22 @@ struct QueryParameters {
 
     /// tags query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
     /// description query parameter for /v2.0/ports API
@@ -169,7 +169,7 @@ struct QueryParameters {
 
     /// security_groups query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     security_groups: Option<Vec<String>>,
 }
 
@@ -519,43 +519,43 @@ impl PortsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.id {
-            ep_builder.id(val.clone());
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.network_id {
-            ep_builder.network_id(val.clone());
+            ep_builder.network_id(val);
         }
         if let Some(val) = &self.query.admin_state_up {
             ep_builder.admin_state_up(*val);
         }
         if let Some(val) = &self.query.mac_address {
-            ep_builder.mac_address(val.clone());
+            ep_builder.mac_address(val);
         }
         if let Some(val) = &self.query.fixed_ips {
             ep_builder.fixed_ips(val.iter());
         }
         if let Some(val) = &self.query.device_id {
-            ep_builder.device_id(val.clone());
+            ep_builder.device_id(val);
         }
         if let Some(val) = &self.query.device_owner {
-            ep_builder.device_owner(val.clone());
+            ep_builder.device_owner(val);
         }
         if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val.clone());
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.status {
-            ep_builder.status(val.clone());
+            ep_builder.status(val);
         }
         if let Some(val) = &self.query.ip_allocation {
-            ep_builder.ip_allocation(val.clone());
+            ep_builder.ip_allocation(val);
         }
         if let Some(val) = &self.query.binding_host_id {
-            ep_builder.binding_host_id(val.clone());
+            ep_builder.binding_host_id(val);
         }
         if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val.clone());
+            ep_builder.revision_number(val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());
@@ -570,7 +570,7 @@ impl PortsCommand {
             ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.query.description {
-            ep_builder.description(val.clone());
+            ep_builder.description(val);
         }
         if let Some(val) = &self.query.security_groups {
             ep_builder.security_groups(val.iter());

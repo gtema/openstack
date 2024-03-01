@@ -200,13 +200,13 @@ impl ServerCommand {
         let args = &self.rebuild;
         let mut rebuild_builder = rebuild_219::RebuildBuilder::default();
         if let Some(val) = &args.name {
-            rebuild_builder.name(val.clone());
+            rebuild_builder.name(val);
         }
 
-        rebuild_builder.image_ref(args.image_ref.clone());
+        rebuild_builder.image_ref(&args.image_ref);
 
         if let Some(val) = &args.admin_pass {
-            rebuild_builder.admin_pass(val.clone());
+            rebuild_builder.admin_pass(val);
         }
 
         if let Some(val) = &args.metadata {
@@ -226,17 +226,17 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.access_ipv4 {
-            rebuild_builder.access_ipv4(val.clone());
+            rebuild_builder.access_ipv4(val);
         }
 
         if let Some(val) = &args.access_ipv6 {
-            rebuild_builder.access_ipv6(val.clone());
+            rebuild_builder.access_ipv6(val);
         }
 
         if let Some(val) = &args.personality {
             let personality_builder: Vec<rebuild_219::Personality> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<rebuild_219::Personality>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<rebuild_219::Personality>(v.to_owned()))
                 .collect::<Vec<rebuild_219::Personality>>();
             rebuild_builder.personality(personality_builder);
         }

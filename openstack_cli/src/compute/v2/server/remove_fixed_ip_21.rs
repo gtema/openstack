@@ -117,7 +117,7 @@ impl ServerCommand {
         let args = &self.remove_fixed_ip;
         let mut remove_fixed_ip_builder = remove_fixed_ip_21::RemoveFixedIpBuilder::default();
 
-        remove_fixed_ip_builder.address(args.address.clone());
+        remove_fixed_ip_builder.address(&args.address);
 
         ep_builder.remove_fixed_ip(remove_fixed_ip_builder.build().unwrap());
 

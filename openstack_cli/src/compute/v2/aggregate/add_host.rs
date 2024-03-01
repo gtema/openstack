@@ -221,7 +221,7 @@ impl AggregateCommand {
         let args = &self.add_host;
         let mut add_host_builder = add_host::AddHostBuilder::default();
 
-        add_host_builder.host(args.host.clone());
+        add_host_builder.host(&args.host);
 
         ep_builder.add_host(add_host_builder.build().unwrap());
 

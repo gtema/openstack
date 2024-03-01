@@ -104,7 +104,7 @@ impl VolumeCommand {
         let args = &self.os_reimage;
         let mut os_reimage_builder = os_reimage_368::OsReimageBuilder::default();
 
-        os_reimage_builder.image_id(args.image_id.clone());
+        os_reimage_builder.image_id(&args.image_id);
 
         if let Some(val) = &args.reimage_reserved {
             os_reimage_builder.reimage_reserved(*val);

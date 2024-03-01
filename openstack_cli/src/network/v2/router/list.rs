@@ -77,7 +77,7 @@ struct QueryParameters {
 
     /// admin_state_up query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     admin_state_up: Option<bool>,
 
     /// tenant_id query parameter for /v2.0/routers API
@@ -87,7 +87,7 @@ struct QueryParameters {
 
     /// enable_ndp_proxy query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     enable_ndp_proxy: Option<bool>,
 
     /// revision_number query parameter for /v2.0/routers API
@@ -97,22 +97,22 @@ struct QueryParameters {
 
     /// tags query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
     /// description query parameter for /v2.0/routers API
@@ -323,19 +323,19 @@ impl RoutersCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.admin_state_up {
             ep_builder.admin_state_up(*val);
         }
         if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val.clone());
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.enable_ndp_proxy {
             ep_builder.enable_ndp_proxy(*val);
         }
         if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val.clone());
+            ep_builder.revision_number(val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());
@@ -350,7 +350,7 @@ impl RoutersCommand {
             ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.query.description {
-            ep_builder.description(val.clone());
+            ep_builder.description(val);
         }
         // Set body parameters
 

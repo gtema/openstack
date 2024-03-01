@@ -127,11 +127,11 @@ impl InterfaceCommand {
         let args = &self.interface_attachment;
         let mut interface_attachment_builder = create_20::InterfaceAttachmentBuilder::default();
         if let Some(val) = &args.net_id {
-            interface_attachment_builder.net_id(val.clone());
+            interface_attachment_builder.net_id(val);
         }
 
         if let Some(val) = &args.port_id {
-            interface_attachment_builder.port_id(val.clone());
+            interface_attachment_builder.port_id(val);
         }
 
         if let Some(val) = &args.fixed_ips {

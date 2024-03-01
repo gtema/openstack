@@ -130,11 +130,11 @@ impl ServerCommand {
         let args = &self.evacuate;
         let mut evacuate_builder = evacuate_214::EvacuateBuilder::default();
         if let Some(val) = &args.host {
-            evacuate_builder.host(val.clone());
+            evacuate_builder.host(val);
         }
 
         if let Some(val) = &args.admin_pass {
-            evacuate_builder.admin_pass(val.clone());
+            evacuate_builder.admin_pass(val);
         }
 
         ep_builder.evacuate(evacuate_builder.build().unwrap());

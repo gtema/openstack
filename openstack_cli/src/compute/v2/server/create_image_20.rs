@@ -115,7 +115,7 @@ impl ServerCommand {
         let args = &self.create_image;
         let mut create_image_builder = create_image_20::CreateImageBuilder::default();
 
-        create_image_builder.name(args.name.clone());
+        create_image_builder.name(&args.name);
 
         if let Some(val) = &args.metadata {
             create_image_builder.metadata(val.iter().cloned());

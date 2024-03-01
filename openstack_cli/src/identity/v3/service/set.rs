@@ -114,7 +114,7 @@ struct ResponseData {
     /// Defines whether the service and its endpoints appear in the service
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
-    /// service catalog.
+    /// service catalog. Default is `true`.
     ///
     #[serde()]
     #[structable(optional)]
@@ -173,7 +173,7 @@ impl ServiceCommand {
         let args = &self.service;
         let mut service_builder = set::ServiceBuilder::default();
         if let Some(val) = &args.description {
-            service_builder.description(val.clone());
+            service_builder.description(val);
         }
 
         if let Some(val) = &args.enabled {
@@ -181,11 +181,11 @@ impl ServiceCommand {
         }
 
         if let Some(val) = &args.name {
-            service_builder.name(val.clone());
+            service_builder.name(val);
         }
 
         if let Some(val) = &args._type {
-            service_builder._type(val.clone());
+            service_builder._type(val);
         }
 
         ep_builder.service(service_builder.build().unwrap());

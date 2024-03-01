@@ -44,9 +44,9 @@ pub enum Interface {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Endpoint<'a> {
-    /// Defines whether the endpoint appears in the service catalog: - `false`.
-    /// The endpoint does not appear in the service catalog. - `true`. The
-    /// endpoint appears in the service catalog. Default is `true`.
+    /// Indicates whether the endpoint appears in the service catalog: -
+    /// `false`. The endpoint does not appear in the service catalog. - `true`.
+    /// The endpoint appears in the service catalog.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
@@ -58,11 +58,11 @@ pub struct Endpoint<'a> {
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
     ///
-    #[serde()]
-    #[builder()]
-    pub(crate) interface: Interface,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) interface: Option<Interface>,
 
-    /// The geographic location of the service endpoint.
+    /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -76,15 +76,15 @@ pub struct Endpoint<'a> {
 
     /// The UUID of the service to which the endpoint belongs.
     ///
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) service_id: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) service_id: Option<Cow<'a, str>>,
 
     /// The endpoint URL.
     ///
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) url: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) url: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -179,14 +179,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .endpoint(
-                    EndpointBuilder::default()
-                        .interface(Interface::Admin)
-                        .service_id("foo")
-                        .url("foo")
-                        .build()
-                        .unwrap()
-                )
+                .endpoint(EndpointBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -198,14 +191,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .endpoint(
-                    EndpointBuilder::default()
-                        .interface(Interface::Admin)
-                        .service_id("foo")
-                        .url("foo")
-                        .build()
-                        .unwrap()
-                )
+                .endpoint(EndpointBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
@@ -227,14 +213,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .endpoint(
-                EndpointBuilder::default()
-                    .interface(Interface::Admin)
-                    .service_id("foo")
-                    .url("foo")
-                    .build()
-                    .unwrap(),
-            )
+            .endpoint(EndpointBuilder::default().build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -255,21 +234,13 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .endpoint(
-                EndpointBuilder::default()
-                    .interface(Interface::Admin)
-                    .service_id("foo")
-                    .url("foo")
-                    .build()
-                    .unwrap(),
-            )
+            .endpoint(EndpointBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
                     HeaderValue::from_static("bar"),
                 )]
-                .iter()
-                .cloned(),
+                .into_iter(),
             )
             .header("not_foo", "not_bar")
             .build()
