@@ -587,22 +587,22 @@ impl RoleAssignmentsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.group_id {
-            ep_builder.group_id(val.clone());
+            ep_builder.group_id(val);
         }
         if let Some(val) = &self.query.role_id {
-            ep_builder.role_id(val.clone());
+            ep_builder.role_id(val);
         }
         if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val.clone());
+            ep_builder.user_id(val);
         }
         if let Some(val) = &self.query.scope_domain_id {
-            ep_builder.scope_domain_id(val.clone());
+            ep_builder.scope_domain_id(val);
         }
         if let Some(val) = &self.query.scope_project_id {
-            ep_builder.scope_project_id(val.clone());
+            ep_builder.scope_project_id(val);
         }
         if let Some(val) = &self.query.scope_os_inherit_inherited_to {
-            ep_builder.scope_os_inherit_inherited_to(val.clone());
+            ep_builder.scope_os_inherit_inherited_to(val);
         }
         if let Some(true) = self.query.effective {
             ep_builder.effective(serde_json::Value::Null);

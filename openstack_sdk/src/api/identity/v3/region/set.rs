@@ -45,12 +45,6 @@ pub struct Region<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
-    /// The ID for the region.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) id: Option<Cow<'a, str>>,
-
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     ///
@@ -219,8 +213,7 @@ mod tests {
                     Some(HeaderName::from_static("foo")),
                     HeaderValue::from_static("bar"),
                 )]
-                .iter()
-                .cloned(),
+                .into_iter(),
             )
             .header("not_foo", "not_bar")
             .build()

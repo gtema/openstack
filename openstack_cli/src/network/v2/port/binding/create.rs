@@ -174,7 +174,7 @@ impl BindingCommand {
         let args = &self.binding;
         let mut binding_builder = create::BindingBuilder::default();
         if let Some(val) = &args.host {
-            binding_builder.host(val.clone());
+            binding_builder.host(val);
         }
 
         if let Some(val) = &args.vnic_type {
@@ -199,7 +199,7 @@ impl BindingCommand {
         }
 
         if let Some(val) = &args.project_id {
-            binding_builder.project_id(val.clone());
+            binding_builder.project_id(val);
         }
 
         ep_builder.binding(binding_builder.build().unwrap());

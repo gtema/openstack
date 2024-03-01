@@ -138,10 +138,10 @@ impl ServerCommand {
         let args = &self.add_floating_ip;
         let mut add_floating_ip_builder = add_floating_ip_21::AddFloatingIpBuilder::default();
 
-        add_floating_ip_builder.address(args.address.clone());
+        add_floating_ip_builder.address(&args.address);
 
         if let Some(val) = &args.fixed_address {
-            add_floating_ip_builder.fixed_address(val.clone());
+            add_floating_ip_builder.fixed_address(val);
         }
 
         ep_builder.add_floating_ip(add_floating_ip_builder.build().unwrap());

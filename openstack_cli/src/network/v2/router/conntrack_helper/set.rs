@@ -173,7 +173,7 @@ impl ConntrackHelperCommand {
         }
 
         if let Some(val) = &args.helper {
-            conntrack_helper_builder.helper(val.clone());
+            conntrack_helper_builder.helper(val);
         }
 
         ep_builder.conntrack_helper(conntrack_helper_builder.build().unwrap());

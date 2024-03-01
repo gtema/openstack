@@ -154,7 +154,7 @@ impl ConntrackHelperCommand {
         let args = &self.conntrack_helper;
         let mut conntrack_helper_builder = create::ConntrackHelperBuilder::default();
         if let Some(val) = &args.project_id {
-            conntrack_helper_builder.project_id(val.clone());
+            conntrack_helper_builder.project_id(val);
         }
 
         if let Some(val) = &args.protocol {
@@ -174,7 +174,7 @@ impl ConntrackHelperCommand {
         }
 
         if let Some(val) = &args.helper {
-            conntrack_helper_builder.helper(val.clone());
+            conntrack_helper_builder.helper(val);
         }
 
         ep_builder.conntrack_helper(conntrack_helper_builder.build().unwrap());

@@ -501,16 +501,16 @@ impl ServerCommand {
         let args = &self.server;
         let mut server_builder = create_267::ServerBuilder::default();
 
-        server_builder.name(args.name.clone());
+        server_builder.name(&args.name);
 
         if let Some(val) = &args.image_ref {
-            server_builder.image_ref(val.clone());
+            server_builder.image_ref(val);
         }
 
-        server_builder.flavor_ref(args.flavor_ref.clone());
+        server_builder.flavor_ref(&args.flavor_ref);
 
         if let Some(val) = &args.admin_pass {
-            server_builder.admin_pass(val.clone());
+            server_builder.admin_pass(val);
         }
 
         if let Some(val) = &args.metadata {
@@ -520,7 +520,7 @@ impl ServerCommand {
         if let Some(data) = &args.networks.networks {
             let networks_builder: Vec<create_267::Networks> = data
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create_267::Networks>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<create_267::Networks>(v.to_owned()))
                 .collect();
             server_builder.networks(create_267::NetworksEnum::F1(networks_builder));
         }
@@ -544,21 +544,23 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.access_ipv4 {
-            server_builder.access_ipv4(val.clone());
+            server_builder.access_ipv4(val);
         }
 
         if let Some(val) = &args.access_ipv6 {
-            server_builder.access_ipv6(val.clone());
+            server_builder.access_ipv6(val);
         }
 
         if let Some(val) = &args.availability_zone {
-            server_builder.availability_zone(val.clone());
+            server_builder.availability_zone(val);
         }
 
         if let Some(val) = &args.block_device_mapping {
             let block_device_mapping_builder: Vec<create_267::BlockDeviceMapping> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create_267::BlockDeviceMapping>(v.clone()))
+                .flat_map(|v| {
+                    serde_json::from_value::<create_267::BlockDeviceMapping>(v.to_owned())
+                })
                 .collect::<Vec<create_267::BlockDeviceMapping>>();
             server_builder.block_device_mapping(block_device_mapping_builder);
         }
@@ -566,7 +568,9 @@ impl ServerCommand {
         if let Some(val) = &args.block_device_mapping_v2 {
             let block_device_mapping_v2_builder: Vec<create_267::BlockDeviceMappingV2> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<create_267::BlockDeviceMappingV2>(v.clone()))
+                .flat_map(|v| {
+                    serde_json::from_value::<create_267::BlockDeviceMappingV2>(v.to_owned())
+                })
                 .collect::<Vec<create_267::BlockDeviceMappingV2>>();
             server_builder.block_device_mapping_v2(block_device_mapping_v2_builder);
         }
@@ -576,7 +580,7 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.key_name {
-            server_builder.key_name(val.clone());
+            server_builder.key_name(val);
         }
 
         if let Some(val) = &args.min_count {
@@ -600,7 +604,7 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.user_data {
-            server_builder.user_data(val.clone());
+            server_builder.user_data(val);
         }
 
         if let Some(val) = &args.description {
@@ -622,7 +626,7 @@ impl ServerCommand {
         if let Some(args) = &self.os_scheduler_hints {
             let mut os_scheduler_hints_builder = create_267::OsSchedulerHintsBuilder::default();
             if let Some(val) = &args.group {
-                os_scheduler_hints_builder.group(val.clone());
+                os_scheduler_hints_builder.group(val);
             }
 
             if let Some(val) = &args.different_host {
@@ -640,7 +644,7 @@ impl ServerCommand {
             }
 
             if let Some(val) = &args.target_cell {
-                os_scheduler_hints_builder.target_cell(val.clone());
+                os_scheduler_hints_builder.target_cell(val);
             }
 
             if let Some(val) = &args.different_cell {
@@ -649,11 +653,11 @@ impl ServerCommand {
             }
 
             if let Some(val) = &args.build_near_host_ip {
-                os_scheduler_hints_builder.build_near_host_ip(val.clone());
+                os_scheduler_hints_builder.build_near_host_ip(val);
             }
 
             if let Some(val) = &args.cidr {
-                os_scheduler_hints_builder.cidr(val.clone());
+                os_scheduler_hints_builder.cidr(val);
             }
 
             ep_builder.os_scheduler_hints(os_scheduler_hints_builder.build().unwrap());

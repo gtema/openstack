@@ -106,7 +106,7 @@ impl RegionsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.parent_region_id {
-            ep_builder.parent_region_id(val.clone());
+            ep_builder.parent_region_id(val);
         }
         // Set body parameters
 

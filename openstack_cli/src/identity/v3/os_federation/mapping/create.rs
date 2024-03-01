@@ -115,7 +115,7 @@ impl MappingCommand {
         let rules_builder: Vec<create::Rules> = args
             .rules
             .iter()
-            .flat_map(|v| serde_json::from_value::<create::Rules>(v.clone()))
+            .flat_map(|v| serde_json::from_value::<create::Rules>(v.to_owned()))
             .collect::<Vec<create::Rules>>();
         mapping_builder.rules(rules_builder);
 

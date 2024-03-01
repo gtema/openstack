@@ -126,10 +126,10 @@ impl ProtocolCommand {
         let args = &self.protocol;
         let mut protocol_builder = create::ProtocolBuilder::default();
 
-        protocol_builder.mapping_id(args.mapping_id.clone());
+        protocol_builder.mapping_id(&args.mapping_id);
 
         if let Some(val) = &args.remote_id_attribute {
-            protocol_builder.remote_id_attribute(val.clone());
+            protocol_builder.remote_id_attribute(val);
         }
 
         ep_builder.protocol(protocol_builder.build().unwrap());

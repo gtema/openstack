@@ -168,8 +168,7 @@ mod tests {
                     Some(HeaderName::from_static("foo")),
                     HeaderValue::from_static("bar"),
                 )]
-                .iter()
-                .cloned(),
+                .into_iter(),
             )
             .header("not_foo", "not_bar")
             .build()

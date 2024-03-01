@@ -158,7 +158,7 @@ impl ServerCommand {
         let args = &self.resize;
         let mut resize_builder = resize::ResizeBuilder::default();
 
-        resize_builder.flavor_ref(args.flavor_ref.clone());
+        resize_builder.flavor_ref(&args.flavor_ref);
 
         if let Some(val) = &args.os_dcf_disk_config {
             let tmp = match val {

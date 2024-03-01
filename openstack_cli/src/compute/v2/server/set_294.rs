@@ -830,7 +830,7 @@ impl ServerCommand {
         let args = &self.server;
         let mut server_builder = set_294::ServerBuilder::default();
         if let Some(val) = &args.name {
-            server_builder.name(val.clone());
+            server_builder.name(val);
         }
 
         if let Some(val) = &args.os_dcf_disk_config {
@@ -842,11 +842,11 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.access_ipv4 {
-            server_builder.access_ipv4(val.clone());
+            server_builder.access_ipv4(val);
         }
 
         if let Some(val) = &args.access_ipv6 {
-            server_builder.access_ipv6(val.clone());
+            server_builder.access_ipv6(val);
         }
 
         if let Some(val) = &args.description {
@@ -854,7 +854,7 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.hostname {
-            server_builder.hostname(val.clone());
+            server_builder.hostname(val);
         }
 
         ep_builder.server(server_builder.build().unwrap());

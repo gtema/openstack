@@ -192,7 +192,7 @@ struct QueryParameters {
     /// is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
     /// result in a 400 response.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     protected: Option<bool>,
 
     /// Filters the response by an image status.
@@ -204,7 +204,7 @@ struct QueryParameters {
     /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tag: Option<Vec<String>>,
 
     /// Filters the response by an image visibility value. A valid value is
@@ -222,7 +222,7 @@ struct QueryParameters {
     /// default, "hidden" images are not included in the image-list response.
     /// (Since Image API v2.7)
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     os_hidden: Option<bool>,
 
     /// Filters the response by a member status. A valid value is accepted,
@@ -473,55 +473,55 @@ impl ImagesCommand {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
-            ep_builder.marker(val.clone());
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.id {
-            ep_builder.id(val.clone());
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.owner {
-            ep_builder.owner(val.clone());
+            ep_builder.owner(val);
         }
         if let Some(val) = &self.query.protected {
             ep_builder.protected(*val);
         }
         if let Some(val) = &self.query.status {
-            ep_builder.status(val.clone());
+            ep_builder.status(val);
         }
         if let Some(val) = &self.query.tag {
             ep_builder.tag(val.iter());
         }
         if let Some(val) = &self.query.visibility {
-            ep_builder.visibility(val.clone());
+            ep_builder.visibility(val);
         }
         if let Some(val) = &self.query.os_hidden {
             ep_builder.os_hidden(*val);
         }
         if let Some(val) = &self.query.member_status {
-            ep_builder.member_status(val.clone());
+            ep_builder.member_status(val);
         }
         if let Some(val) = &self.query.size_max {
-            ep_builder.size_max(val.clone());
+            ep_builder.size_max(val);
         }
         if let Some(val) = &self.query.size_min {
-            ep_builder.size_min(val.clone());
+            ep_builder.size_min(val);
         }
         if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val.clone());
+            ep_builder.created_at(val);
         }
         if let Some(val) = &self.query.updated_at {
-            ep_builder.updated_at(val.clone());
+            ep_builder.updated_at(val);
         }
         if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.clone());
+            ep_builder.sort_dir(val);
         }
         if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.clone());
+            ep_builder.sort_key(val);
         }
         if let Some(val) = &self.query.sort {
-            ep_builder.sort(val.clone());
+            ep_builder.sort(val);
         }
         // Set body parameters
 

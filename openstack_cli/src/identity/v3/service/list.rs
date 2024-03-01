@@ -78,7 +78,7 @@ struct ResponseData {
     /// Defines whether the service and its endpoints appear in the service
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
-    /// service catalog.
+    /// service catalog. Default is `true`.
     ///
     #[serde()]
     #[structable(optional, wide)]
@@ -121,7 +121,7 @@ impl ServicesCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.service {
-            ep_builder.service(val.clone());
+            ep_builder.service(val);
         }
         // Set body parameters
 

@@ -219,14 +219,14 @@ impl VolumeAttachmentCommand {
         let args = &self.volume_attachment;
         let mut volume_attachment_builder = set_285::VolumeAttachmentBuilder::default();
 
-        volume_attachment_builder.volume_id(args.volume_id.clone());
+        volume_attachment_builder.volume_id(&args.volume_id);
 
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));
         }
 
         if let Some(val) = &args.tag {
-            volume_attachment_builder.tag(val.clone());
+            volume_attachment_builder.tag(val);
         }
 
         if let Some(val) = &args.delete_on_termination {
@@ -234,11 +234,11 @@ impl VolumeAttachmentCommand {
         }
 
         if let Some(val) = &args.server_id {
-            volume_attachment_builder.server_id(val.clone());
+            volume_attachment_builder.server_id(val);
         }
 
         if let Some(val) = &args.id {
-            volume_attachment_builder.id(val.clone());
+            volume_attachment_builder.id(val);
         }
 
         ep_builder.volume_attachment(volume_attachment_builder.build().unwrap());

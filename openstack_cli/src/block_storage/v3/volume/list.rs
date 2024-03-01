@@ -63,7 +63,7 @@ pub struct VolumesCommand {
 struct QueryParameters {
     /// Shows details for all project. Admin only.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     all_tenans: Option<bool>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
@@ -111,7 +111,7 @@ struct QueryParameters {
 
     /// Whether to show count in API response or not, default is False.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     with_count: Option<bool>,
 
     /// Filters reuslts by a time that resources are created at with time
@@ -132,7 +132,7 @@ struct QueryParameters {
     /// not be always possible in a cloud, see List Resource Filters to
     /// determine whether this filter is available in your cloud.
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     consumes_quota: Option<bool>,
 }
 
@@ -404,13 +404,13 @@ impl VolumesCommand {
             ep_builder.all_tenans(*val);
         }
         if let Some(val) = &self.query.sort {
-            ep_builder.sort(val.clone());
+            ep_builder.sort(val);
         }
         if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val.clone());
+            ep_builder.sort_key(val);
         }
         if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val.clone());
+            ep_builder.sort_dir(val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
@@ -419,16 +419,16 @@ impl VolumesCommand {
             ep_builder.offset(*val);
         }
         if let Some(val) = &self.query.marker {
-            ep_builder.marker(val.clone());
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.with_count {
             ep_builder.with_count(*val);
         }
         if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val.clone());
+            ep_builder.created_at(val);
         }
         if let Some(val) = &self.query.updated_at {
-            ep_builder.updated_at(val.clone());
+            ep_builder.updated_at(val);
         }
         if let Some(val) = &self.query.consumes_quota {
             ep_builder.consumes_quota(*val);

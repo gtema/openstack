@@ -111,22 +111,22 @@ struct QueryParameters {
 
     /// tags query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
     /// description query parameter for /v2.0/floatingips API
@@ -295,28 +295,28 @@ impl FloatingipsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.floating_ip_address {
-            ep_builder.floating_ip_address(val.clone());
+            ep_builder.floating_ip_address(val);
         }
         if let Some(val) = &self.query.floating_network_id {
-            ep_builder.floating_network_id(val.clone());
+            ep_builder.floating_network_id(val);
         }
         if let Some(val) = &self.query.router_id {
-            ep_builder.router_id(val.clone());
+            ep_builder.router_id(val);
         }
         if let Some(val) = &self.query.port_id {
-            ep_builder.port_id(val.clone());
+            ep_builder.port_id(val);
         }
         if let Some(val) = &self.query.fixed_ip_address {
-            ep_builder.fixed_ip_address(val.clone());
+            ep_builder.fixed_ip_address(val);
         }
         if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val.clone());
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.status {
-            ep_builder.status(val.clone());
+            ep_builder.status(val);
         }
         if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val.clone());
+            ep_builder.revision_number(val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());
@@ -331,7 +331,7 @@ impl FloatingipsCommand {
             ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.query.description {
-            ep_builder.description(val.clone());
+            ep_builder.description(val);
         }
         // Set body parameters
 

@@ -88,7 +88,7 @@ struct QueryParameters {
 
     /// admin_state_up query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     admin_state_up: Option<bool>,
 
     /// status query parameter for /v2.0/networks API
@@ -103,12 +103,12 @@ struct QueryParameters {
 
     /// shared query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     shared: Option<bool>,
 
     /// router:external query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     router_external: Option<bool>,
 
     /// mtu query parameter for /v2.0/networks API
@@ -138,27 +138,27 @@ struct QueryParameters {
 
     /// tags query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
     /// is_default query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     is_default: Option<bool>,
 
     /// description query parameter for /v2.0/networks API
@@ -374,19 +374,19 @@ impl NetworksCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.id {
-            ep_builder.id(val.clone());
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.admin_state_up {
             ep_builder.admin_state_up(*val);
         }
         if let Some(val) = &self.query.status {
-            ep_builder.status(val.clone());
+            ep_builder.status(val);
         }
         if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val.clone());
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.shared {
             ep_builder.shared(*val);
@@ -398,16 +398,16 @@ impl NetworksCommand {
             ep_builder.mtu(*val);
         }
         if let Some(val) = &self.query.provider_network_type {
-            ep_builder.provider_network_type(val.clone());
+            ep_builder.provider_network_type(val);
         }
         if let Some(val) = &self.query.provider_physical_network {
-            ep_builder.provider_physical_network(val.clone());
+            ep_builder.provider_physical_network(val);
         }
         if let Some(val) = &self.query.provider_segmentation_id {
             ep_builder.provider_segmentation_id(*val);
         }
         if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val.clone());
+            ep_builder.revision_number(val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());
@@ -425,7 +425,7 @@ impl NetworksCommand {
             ep_builder.is_default(*val);
         }
         if let Some(val) = &self.query.description {
-            ep_builder.description(val.clone());
+            ep_builder.description(val);
         }
         // Set body parameters
 

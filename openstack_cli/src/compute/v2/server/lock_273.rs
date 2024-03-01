@@ -134,7 +134,7 @@ impl ServerCommand {
         if let Some(llock) = &args {
             let mut lock_builder = lock_273::LockBuilder::default();
             if let Some(val) = &llock.locked_reason {
-                lock_builder.locked_reason(val.clone());
+                lock_builder.locked_reason(val);
             }
             ep_builder.lock(lock_builder.build().expect("A valid object"));
         }

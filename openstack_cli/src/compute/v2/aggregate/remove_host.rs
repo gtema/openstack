@@ -221,7 +221,7 @@ impl AggregateCommand {
         let args = &self.remove_host;
         let mut remove_host_builder = remove_host::RemoveHostBuilder::default();
 
-        remove_host_builder.host(args.host.clone());
+        remove_host_builder.host(&args.host);
 
         ep_builder.remove_host(remove_host_builder.build().unwrap());
 

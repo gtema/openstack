@@ -269,28 +269,28 @@ impl FlavorCommand {
         let args = &self.flavor;
         let mut flavor_builder = create_255::FlavorBuilder::default();
 
-        flavor_builder.name(args.name.clone());
+        flavor_builder.name(&args.name);
 
         if let Some(val) = &args.id {
             flavor_builder.id(Some(val.into()));
         }
 
-        flavor_builder.ram(args.ram.clone());
+        flavor_builder.ram(&args.ram);
 
-        flavor_builder.vcpus(args.vcpus.clone());
+        flavor_builder.vcpus(&args.vcpus);
 
-        flavor_builder.disk(args.disk.clone());
+        flavor_builder.disk(&args.disk);
 
         if let Some(val) = &args.os_flv_ext_data_ephemeral {
-            flavor_builder.os_flv_ext_data_ephemeral(val.clone());
+            flavor_builder.os_flv_ext_data_ephemeral(val);
         }
 
         if let Some(val) = &args.swap {
-            flavor_builder.swap(val.clone());
+            flavor_builder.swap(val);
         }
 
         if let Some(val) = &args.rxtx_factor {
-            flavor_builder.rxtx_factor(val.clone());
+            flavor_builder.rxtx_factor(val);
         }
 
         if let Some(val) = &args.os_flavor_access_is_public {

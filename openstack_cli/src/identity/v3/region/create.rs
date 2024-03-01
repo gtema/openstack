@@ -78,11 +78,6 @@ struct Region {
     #[arg(long)]
     description: Option<String>,
 
-    /// The ID for the region.
-    ///
-    #[arg(long)]
-    id: Option<String>,
-
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     ///
@@ -134,15 +129,11 @@ impl RegionCommand {
         let args = &self.region;
         let mut region_builder = create::RegionBuilder::default();
         if let Some(val) = &args.description {
-            region_builder.description(val.clone());
-        }
-
-        if let Some(val) = &args.id {
-            region_builder.id(val.clone());
+            region_builder.description(val);
         }
 
         if let Some(val) = &args.parent_id {
-            region_builder.parent_id(val.clone());
+            region_builder.parent_id(val);
         }
 
         ep_builder.region(region_builder.build().unwrap());

@@ -76,9 +76,9 @@ enum Interface {
 /// Endpoint Body data
 #[derive(Args)]
 struct Endpoint {
-    /// Defines whether the endpoint appears in the service catalog: - `false`.
-    /// The endpoint does not appear in the service catalog. - `true`. The
-    /// endpoint appears in the service catalog. Default is `true`.
+    /// Indicates whether the endpoint appears in the service catalog: -
+    /// `false`. The endpoint does not appear in the service catalog. - `true`.
+    /// The endpoint appears in the service catalog.
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
@@ -90,9 +90,9 @@ struct Endpoint {
     /// on a secure network interface.
     ///
     #[arg(long)]
-    interface: Interface,
+    interface: Option<Interface>,
 
-    /// The geographic location of the service endpoint.
+    /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
     #[arg(long)]
     region: Option<String>,
@@ -105,12 +105,12 @@ struct Endpoint {
     /// The UUID of the service to which the endpoint belongs.
     ///
     #[arg(long)]
-    service_id: String,
+    service_id: Option<String>,
 
     /// The endpoint URL.
     ///
     #[arg(long)]
-    url: String,
+    url: Option<String>,
 }
 
 /// Endpoint response representation
@@ -189,24 +189,30 @@ impl EndpointCommand {
             endpoint_builder.enabled(*val);
         }
 
-        let tmp = match &args.interface {
-            Interface::Admin => create::Interface::Admin,
-            Interface::Internal => create::Interface::Internal,
-            Interface::Public => create::Interface::Public,
-        };
-        endpoint_builder.interface(tmp);
+        if let Some(val) = &args.interface {
+            let tmp = match val {
+                Interface::Admin => create::Interface::Admin,
+                Interface::Internal => create::Interface::Internal,
+                Interface::Public => create::Interface::Public,
+            };
+            endpoint_builder.interface(tmp);
+        }
 
         if let Some(val) = &args.region {
-            endpoint_builder.region(val.clone());
+            endpoint_builder.region(val);
         }
 
         if let Some(val) = &args.region_id {
-            endpoint_builder.region_id(val.clone());
+            endpoint_builder.region_id(val);
         }
 
-        endpoint_builder.service_id(args.service_id.clone());
+        if let Some(val) = &args.service_id {
+            endpoint_builder.service_id(val);
+        }
 
-        endpoint_builder.url(args.url.clone());
+        if let Some(val) = &args.url {
+            endpoint_builder.url(val);
+        }
 
         ep_builder.endpoint(endpoint_builder.build().unwrap());
 

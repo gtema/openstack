@@ -186,16 +186,16 @@ impl BindingsCommand {
         ep_builder.port_id(&self.path.port_id);
         // Set query parameters
         if let Some(val) = &self.query.host {
-            ep_builder.host(val.clone());
+            ep_builder.host(val);
         }
         if let Some(val) = &self.query.vif_type {
-            ep_builder.vif_type(val.clone());
+            ep_builder.vif_type(val);
         }
         if let Some(val) = &self.query.vnic_type {
-            ep_builder.vnic_type(val.clone());
+            ep_builder.vnic_type(val);
         }
         if let Some(val) = &self.query.status {
-            ep_builder.status(val.clone());
+            ep_builder.status(val);
         }
         // Set body parameters
 

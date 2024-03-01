@@ -178,7 +178,7 @@ impl EncryptionCommand {
             encryption_builder.key_size(*val);
         }
 
-        encryption_builder.provider(args.provider.clone());
+        encryption_builder.provider(&args.provider);
 
         let tmp = match &args.control_location {
             ControlLocation::BackEnd => create::ControlLocation::BackEnd,

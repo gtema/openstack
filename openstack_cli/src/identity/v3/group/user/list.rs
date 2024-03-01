@@ -265,7 +265,7 @@ impl UsersCommand {
         ep_builder.group_id(&self.path.group_id);
         // Set query parameters
         if let Some(val) = &self.query.password_expires_at {
-            ep_builder.password_expires_at(val.clone());
+            ep_builder.password_expires_at(val);
         }
         // Set body parameters
 

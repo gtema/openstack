@@ -123,13 +123,13 @@ impl KeypairsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val.clone());
+            ep_builder.user_id(val);
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
-            ep_builder.marker(val.clone());
+            ep_builder.marker(val);
         }
         // Set body parameters
 

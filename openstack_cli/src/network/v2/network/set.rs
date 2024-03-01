@@ -372,7 +372,7 @@ impl NetworkCommand {
         let args = &self.network;
         let mut network_builder = set::NetworkBuilder::default();
         if let Some(val) = &args.name {
-            network_builder.name(val.clone());
+            network_builder.name(val);
         }
 
         if let Some(val) = &args.admin_state_up {
@@ -390,7 +390,7 @@ impl NetworkCommand {
         if let Some(val) = &args.segments {
             let segments_builder: Vec<set::Segments> = val
                 .iter()
-                .flat_map(|v| serde_json::from_value::<set::Segments>(v.clone()))
+                .flat_map(|v| serde_json::from_value::<set::Segments>(v.to_owned()))
                 .collect::<Vec<set::Segments>>();
             network_builder.segments(segments_builder);
         }
@@ -404,15 +404,15 @@ impl NetworkCommand {
         }
 
         if let Some(val) = &args.provider_network_type {
-            network_builder.provider_network_type(val.clone());
+            network_builder.provider_network_type(val);
         }
 
         if let Some(val) = &args.provider_physical_network {
-            network_builder.provider_physical_network(val.clone());
+            network_builder.provider_physical_network(val);
         }
 
         if let Some(val) = &args.provider_segmentation_id {
-            network_builder.provider_segmentation_id(val.clone());
+            network_builder.provider_segmentation_id(val);
         }
 
         if let Some(val) = &args.qos_policy_id {
@@ -424,11 +424,11 @@ impl NetworkCommand {
         }
 
         if let Some(val) = &args.dns_domain {
-            network_builder.dns_domain(val.clone());
+            network_builder.dns_domain(val);
         }
 
         if let Some(val) = &args.description {
-            network_builder.description(val.clone());
+            network_builder.description(val);
         }
 
         ep_builder.network(network_builder.build().unwrap());

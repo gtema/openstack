@@ -224,7 +224,7 @@ impl PortForwardingCommand {
         let args = &self.port_forwarding;
         let mut port_forwarding_builder = create::PortForwardingBuilder::default();
         if let Some(val) = &args.project_id {
-            port_forwarding_builder.project_id(val.clone());
+            port_forwarding_builder.project_id(val);
         }
 
         if let Some(val) = &args.external_port {
@@ -236,7 +236,7 @@ impl PortForwardingCommand {
         }
 
         if let Some(val) = &args.internal_ip_address {
-            port_forwarding_builder.internal_ip_address(val.clone());
+            port_forwarding_builder.internal_ip_address(val);
         }
 
         if let Some(val) = &args.protocol {
@@ -252,11 +252,11 @@ impl PortForwardingCommand {
         }
 
         if let Some(val) = &args.internal_port_id {
-            port_forwarding_builder.internal_port_id(val.clone());
+            port_forwarding_builder.internal_port_id(val);
         }
 
         if let Some(val) = &args.description {
-            port_forwarding_builder.description(val.clone());
+            port_forwarding_builder.description(val);
         }
 
         if let Some(val) = &args.external_port_range {

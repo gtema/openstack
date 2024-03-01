@@ -276,7 +276,7 @@ impl FloatingipCommand {
         }
 
         if let Some(val) = &args.fixed_ip_address {
-            floatingip_builder.fixed_ip_address(val.clone());
+            floatingip_builder.fixed_ip_address(val);
         }
 
         if let Some(val) = &args.qos_policy_id {
@@ -284,7 +284,7 @@ impl FloatingipCommand {
         }
 
         if let Some(val) = &args.description {
-            floatingip_builder.description(val.clone());
+            floatingip_builder.description(val);
         }
 
         ep_builder.floatingip(floatingip_builder.build().unwrap());

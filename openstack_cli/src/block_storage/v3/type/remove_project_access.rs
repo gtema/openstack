@@ -101,7 +101,7 @@ impl TypeCommand {
         let mut remove_project_access_builder =
             remove_project_access::RemoveProjectAccessBuilder::default();
 
-        remove_project_access_builder.project(args.project.clone());
+        remove_project_access_builder.project(&args.project);
 
         ep_builder.remove_project_access(remove_project_access_builder.build().unwrap());
 

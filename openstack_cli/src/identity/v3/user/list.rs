@@ -290,25 +290,25 @@ impl UsersCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.domain_id {
-            ep_builder.domain_id(val.clone());
+            ep_builder.domain_id(val);
         }
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
         }
         if let Some(val) = &self.query.id {
-            ep_builder.id(val.clone());
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.password_expires_at {
-            ep_builder.password_expires_at(val.clone());
+            ep_builder.password_expires_at(val);
         }
         if let Some(val) = &self.query.protocol_id {
-            ep_builder.protocol_id(val.clone());
+            ep_builder.protocol_id(val);
         }
         if let Some(val) = &self.query.unique_id {
-            ep_builder.unique_id(val.clone());
+            ep_builder.unique_id(val);
         }
         // Set body parameters
 

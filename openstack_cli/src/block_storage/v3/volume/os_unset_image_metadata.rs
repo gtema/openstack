@@ -101,7 +101,7 @@ impl VolumeCommand {
         let mut os_unset_image_metadata_builder =
             os_unset_image_metadata::OsUnsetImageMetadataBuilder::default();
 
-        os_unset_image_metadata_builder.key(args.key.clone());
+        os_unset_image_metadata_builder.key(&args.key);
 
         ep_builder.os_unset_image_metadata(os_unset_image_metadata_builder.build().unwrap());
 

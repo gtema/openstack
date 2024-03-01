@@ -123,7 +123,7 @@ impl TypeCommand {
         let args = &self.volume_type;
         let mut volume_type_builder = create::VolumeTypeBuilder::default();
 
-        volume_type_builder.name(args.name.clone());
+        volume_type_builder.name(&args.name);
 
         if let Some(val) = &args.description {
             volume_type_builder.description(Some(val.into()));

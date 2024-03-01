@@ -114,7 +114,7 @@ impl ServerCommand {
         let args = &self.change_password;
         let mut change_password_builder = change_password::ChangePasswordBuilder::default();
 
-        change_password_builder.admin_pass(args.admin_pass.clone());
+        change_password_builder.admin_pass(&args.admin_pass);
 
         ep_builder.change_password(change_password_builder.build().unwrap());
 

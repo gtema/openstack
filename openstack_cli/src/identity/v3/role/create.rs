@@ -33,10 +33,8 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::role::create;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
@@ -57,15 +55,8 @@ pub struct RoleCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long)]
-    name: String,
-    #[arg(long)]
-    description: Option<String>,
     #[command(flatten)]
-    options: Option<Options>,
-    /// Additional properties to be sent with the request
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    properties: Option<Vec<(String, Value)>>,
+    role: Role,
 }
 
 /// Query parameters
@@ -77,9 +68,30 @@ struct QueryParameters {}
 struct PathParameters {}
 /// Options Body data
 #[derive(Args)]
+#[group(required = false, multiple = true)]
 struct Options {
     #[arg(action=clap::ArgAction::Set, long)]
     immutable: Option<bool>,
+}
+
+/// Role Body data
+#[derive(Args)]
+struct Role {
+    /// The role name.
+    ///
+    #[arg(long)]
+    name: Option<String>,
+
+    /// The role description.
+    ///
+    #[arg(long)]
+    description: Option<String>,
+
+    /// The resource options for the role. Available resource options are
+    /// `immutable`.
+    ///
+    #[command(flatten)]
+    options: Option<Options>,
 }
 
 /// Role response representation
@@ -167,29 +179,26 @@ impl RoleCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        // Set Request.name data
-        let args = &self.name;
-
-        ep_builder.name(args.clone());
-
-        // Set Request.description data
-        if let Some(args) = &self.description {
-            ep_builder.description(args.clone());
+        // Set Request.role data
+        let args = &self.role;
+        let mut role_builder = create::RoleBuilder::default();
+        if let Some(val) = &args.name {
+            role_builder.name(val);
         }
 
-        // Set Request.options data
-        if let Some(args) = &self.options {
+        if let Some(val) = &args.description {
+            role_builder.description(val);
+        }
+
+        if let Some(val) = &args.options {
             let mut options_builder = create::OptionsBuilder::default();
-            if let Some(val) = &args.immutable {
+            if let Some(val) = &val.immutable {
                 options_builder.immutable(*val);
             }
-
-            ep_builder.options(options_builder.build().unwrap());
+            role_builder.options(options_builder.build().expect("A valid object"));
         }
 
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
+        ep_builder.role(role_builder.build().unwrap());
 
         let ep = ep_builder
             .build()

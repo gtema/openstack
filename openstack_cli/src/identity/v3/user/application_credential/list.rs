@@ -133,7 +133,7 @@ impl ApplicationCredentialsCommand {
         ep_builder.user_id(&self.path.user_id);
         // Set query parameters
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         // Set body parameters
 

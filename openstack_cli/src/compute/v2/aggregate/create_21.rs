@@ -234,7 +234,7 @@ impl AggregateCommand {
         let args = &self.aggregate;
         let mut aggregate_builder = create_21::AggregateBuilder::default();
 
-        aggregate_builder.name(args.name.clone());
+        aggregate_builder.name(&args.name);
 
         if let Some(val) = &args.availability_zone {
             aggregate_builder.availability_zone(Some(val.into()));

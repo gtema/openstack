@@ -113,7 +113,7 @@ struct QueryParameters {
 
     /// enable_dhcp query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     enable_dhcp: Option<bool>,
 
     /// ipv6_ra_mode query parameter for /v2.0/subnets API
@@ -128,7 +128,7 @@ struct QueryParameters {
 
     /// shared query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     shared: Option<bool>,
 
     /// revision_number query parameter for /v2.0/subnets API
@@ -138,22 +138,22 @@ struct QueryParameters {
 
     /// tags query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
     /// description query parameter for /v2.0/subnets API
@@ -345,43 +345,43 @@ impl SubnetsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.id {
-            ep_builder.id(val.clone());
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.name {
-            ep_builder.name(val.clone());
+            ep_builder.name(val);
         }
         if let Some(val) = &self.query.ip_version {
             ep_builder.ip_version(*val);
         }
         if let Some(val) = &self.query.network_id {
-            ep_builder.network_id(val.clone());
+            ep_builder.network_id(val);
         }
         if let Some(val) = &self.query.subnetpool_id {
-            ep_builder.subnetpool_id(val.clone());
+            ep_builder.subnetpool_id(val);
         }
         if let Some(val) = &self.query.cidr {
-            ep_builder.cidr(val.clone());
+            ep_builder.cidr(val);
         }
         if let Some(val) = &self.query.gateway_ip {
-            ep_builder.gateway_ip(val.clone());
+            ep_builder.gateway_ip(val);
         }
         if let Some(val) = &self.query.tenant_id {
-            ep_builder.tenant_id(val.clone());
+            ep_builder.tenant_id(val);
         }
         if let Some(val) = &self.query.enable_dhcp {
             ep_builder.enable_dhcp(*val);
         }
         if let Some(val) = &self.query.ipv6_ra_mode {
-            ep_builder.ipv6_ra_mode(val.clone());
+            ep_builder.ipv6_ra_mode(val);
         }
         if let Some(val) = &self.query.ipv6_address_mode {
-            ep_builder.ipv6_address_mode(val.clone());
+            ep_builder.ipv6_address_mode(val);
         }
         if let Some(val) = &self.query.shared {
             ep_builder.shared(*val);
         }
         if let Some(val) = &self.query.revision_number {
-            ep_builder.revision_number(val.clone());
+            ep_builder.revision_number(val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());
@@ -396,10 +396,10 @@ impl SubnetsCommand {
             ep_builder.not_tags_any(val.iter());
         }
         if let Some(val) = &self.query.description {
-            ep_builder.description(val.clone());
+            ep_builder.description(val);
         }
         if let Some(val) = &self.query.segment_id {
-            ep_builder.segment_id(val.clone());
+            ep_builder.segment_id(val);
         }
         // Set body parameters
 

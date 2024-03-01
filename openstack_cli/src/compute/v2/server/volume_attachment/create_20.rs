@@ -176,7 +176,7 @@ impl VolumeAttachmentCommand {
         let args = &self.volume_attachment;
         let mut volume_attachment_builder = create_20::VolumeAttachmentBuilder::default();
 
-        volume_attachment_builder.volume_id(args.volume_id.clone());
+        volume_attachment_builder.volume_id(&args.volume_id);
 
         if let Some(val) = &args.device {
             volume_attachment_builder.device(Some(val.into()));

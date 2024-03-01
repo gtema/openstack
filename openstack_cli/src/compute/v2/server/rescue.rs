@@ -130,10 +130,10 @@ impl ServerCommand {
         if let Some(lrescue) = &args {
             let mut rescue_builder = rescue::RescueBuilder::default();
             if let Some(val) = &lrescue.admin_pass {
-                rescue_builder.admin_pass(val.clone());
+                rescue_builder.admin_pass(val);
             }
             if let Some(val) = &lrescue.rescue_image_ref {
-                rescue_builder.rescue_image_ref(val.clone());
+                rescue_builder.rescue_image_ref(val);
             }
             ep_builder.rescue(rescue_builder.build().expect("A valid object"));
         }

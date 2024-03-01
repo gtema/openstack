@@ -100,7 +100,7 @@ impl TypeCommand {
         let args = &self.add_project_access;
         let mut add_project_access_builder = add_project_access::AddProjectAccessBuilder::default();
 
-        add_project_access_builder.project(args.project.clone());
+        add_project_access_builder.project(&args.project);
 
         ep_builder.add_project_access(add_project_access_builder.build().unwrap());
 

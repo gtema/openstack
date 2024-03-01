@@ -227,13 +227,13 @@ impl ServerCommand {
         let args = &self.rebuild;
         let mut rebuild_builder = rebuild_263::RebuildBuilder::default();
         if let Some(val) = &args.name {
-            rebuild_builder.name(val.clone());
+            rebuild_builder.name(val);
         }
 
-        rebuild_builder.image_ref(args.image_ref.clone());
+        rebuild_builder.image_ref(&args.image_ref);
 
         if let Some(val) = &args.admin_pass {
-            rebuild_builder.admin_pass(val.clone());
+            rebuild_builder.admin_pass(val);
         }
 
         if let Some(val) = &args.metadata {
@@ -253,11 +253,11 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.access_ipv4 {
-            rebuild_builder.access_ipv4(val.clone());
+            rebuild_builder.access_ipv4(val);
         }
 
         if let Some(val) = &args.access_ipv6 {
-            rebuild_builder.access_ipv6(val.clone());
+            rebuild_builder.access_ipv6(val);
         }
 
         if let Some(val) = &args.description {

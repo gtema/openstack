@@ -27,9 +27,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::Value;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
 
 /// The resource options for the role. Available resource options are
 /// `immutable`.
@@ -42,29 +40,41 @@ pub struct Options {
     pub(crate) immutable: Option<bool>,
 }
 
-#[derive(Builder, Debug, Clone)]
+/// A `role` object
+///
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Request<'a> {
+pub struct Role<'a> {
     /// The role name.
     ///
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// The role description.
     ///
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Cow<'a, str>>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
     ///
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
+}
+
+#[derive(Builder, Debug, Clone)]
+#[builder(setter(strip_option))]
+pub struct Request<'a> {
+    /// A `role` object
+    ///
+    #[builder(setter(into))]
+    pub(crate) role: Role<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-    #[builder(setter(name = "_properties"), default, private)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -96,18 +106,6 @@ where {
             .extend(iter.map(Into::into));
         self
     }
-
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 impl<'a> RestEndpoint for Request<'a> {
@@ -126,16 +124,7 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("name", serde_json::to_value(&self.name)?);
-        if let Some(val) = &self.description {
-            params.push("description", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.options {
-            params.push("options", serde_json::to_value(val)?);
-        }
-        for (key, val) in &self._properties {
-            params.push(key.clone(), val.clone());
-        }
+        params.push("role", serde_json::to_value(&self.role)?);
 
         params.into_body()
     }
@@ -145,7 +134,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("role".into())
     }
 
     /// Returns headers to be set into the request
@@ -168,7 +157,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .name("foo")
+                .role(RoleBuilder::default().build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -178,12 +167,15 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .name("foo")
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert_eq!(
+            Request::builder()
+                .role(RoleBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "role"
+        );
     }
 
     #[test]
@@ -195,10 +187,13 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "role": {} }));
         });
 
-        let endpoint = Request::builder().name("foo").build().unwrap();
+        let endpoint = Request::builder()
+            .role(RoleBuilder::default().build().unwrap())
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -213,18 +208,17 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "role": {} }));
         });
 
         let endpoint = Request::builder()
-            .name("foo")
+            .role(RoleBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
                     HeaderValue::from_static("bar"),
                 )]
-                .iter()
-                .cloned(),
+                .into_iter(),
             )
             .header("not_foo", "not_bar")
             .build()

@@ -145,13 +145,13 @@ impl EndpointsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.service_id {
-            ep_builder.service_id(val.clone());
+            ep_builder.service_id(val);
         }
         if let Some(val) = &self.query.region {
-            ep_builder.region(val.clone());
+            ep_builder.region(val);
         }
         if let Some(val) = &self.query.interface {
-            ep_builder.interface(val.clone());
+            ep_builder.interface(val);
         }
         // Set body parameters
 

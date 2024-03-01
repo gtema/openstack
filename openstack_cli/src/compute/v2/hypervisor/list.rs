@@ -80,7 +80,7 @@ struct QueryParameters {
     #[arg(long)]
     hypervisor_hostname_pattern: Option<String>,
 
-    #[arg(long)]
+    #[arg(action=clap::ArgAction::Set, long)]
     with_servers: Option<bool>,
 }
 
@@ -350,10 +350,10 @@ impl HypervisorsCommand {
             ep_builder.limit(*val);
         }
         if let Some(val) = &self.query.marker {
-            ep_builder.marker(val.clone());
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.hypervisor_hostname_pattern {
-            ep_builder.hypervisor_hostname_pattern(val.clone());
+            ep_builder.hypervisor_hostname_pattern(val);
         }
         if let Some(val) = &self.query.with_servers {
             ep_builder.with_servers(*val);

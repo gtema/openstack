@@ -90,37 +90,36 @@ struct Project {
     #[arg(long)]
     description: Option<String>,
 
-    /// The ID of the new domain for the project. The ability to change the
-    /// domain of a project is now deprecated, and will be removed in subequent
-    /// release. It is already disabled by default in most Identity service
-    /// implementations.
+    /// The ID of the domain for the project.
     ///
     #[arg(long)]
     domain_id: Option<String>,
 
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
 
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     is_domain: Option<bool>,
 
+    /// The ID of the parent for the project.
+    ///
+    /// **New in version 3.4**
+    ///
     #[arg(long)]
     parent_id: Option<String>,
 
-    /// The name of the project, which must be unique within the owning domain.
-    /// A project can have the same name as its domain.
+    /// The name of the project.
     ///
     #[arg(long)]
     name: Option<String>,
 
-    /// A list of simple strings assigned to a project. Tags can be used to
-    /// classify projects into groups.
+    /// A list of simple strings assigned to a project.
     ///
     #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
@@ -281,7 +280,7 @@ impl ProjectCommand {
         }
 
         if let Some(val) = &args.name {
-            project_builder.name(val.clone());
+            project_builder.name(val);
         }
 
         if let Some(val) = &args.tags {

@@ -141,16 +141,16 @@ impl ConntrackHelpersCommand {
         ep_builder.router_id(&self.path.router_id);
         // Set query parameters
         if let Some(val) = &self.query.id {
-            ep_builder.id(val.clone());
+            ep_builder.id(val);
         }
         if let Some(val) = &self.query.protocol {
-            ep_builder.protocol(val.clone());
+            ep_builder.protocol(val);
         }
         if let Some(val) = &self.query.port {
             ep_builder.port(*val);
         }
         if let Some(val) = &self.query.helper {
-            ep_builder.helper(val.clone());
+            ep_builder.helper(val);
         }
         // Set body parameters
 
