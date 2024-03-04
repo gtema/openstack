@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::list;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// GET operation on /v3/OS-FEDERATION/identity_providers
@@ -105,24 +105,8 @@ struct ResponseData {
     /// List of the unique Identity Provider’s remote IDs
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    remote_ids: Option<VecString>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    #[structable(optional, pretty, wide)]
+    remote_ids: Option<Value>,
 }
 
 impl IdentityProvidersCommand {

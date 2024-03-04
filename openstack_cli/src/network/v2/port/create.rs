@@ -40,8 +40,6 @@ use clap::ValueEnum;
 use openstack_sdk::api::network::v2::port::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Creates a port on a network.
@@ -373,8 +371,8 @@ struct ResponseData {
     /// of an option value and name.
     ///
     #[serde()]
-    #[structable(optional)]
-    extra_dhcp_opts: Option<VecHashMapStringValue>,
+    #[structable(optional, pretty)]
+    extra_dhcp_opts: Option<Value>,
 
     /// Indicates when ports use either `deferred`, `immediate` or no IP
     /// allocation (`none`).
@@ -394,7 +392,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    hints: Option<HashMapStringValue>,
+    hints: Option<Value>,
 
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
@@ -444,8 +442,8 @@ struct ResponseData {
     /// be used.
     ///
     #[serde(rename = "binding:vif_details")]
-    #[structable(optional, title = "binding:vif_details")]
-    binding_vif_details: Option<HashMapStringValue>,
+    #[structable(optional, pretty, title = "binding:vif_details")]
+    binding_vif_details: Option<Value>,
 
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port. The
@@ -471,7 +469,7 @@ struct ResponseData {
     ///
     #[serde(rename = "binding:profile")]
     #[structable(optional, title = "binding:profile")]
-    binding_profile: Option<HashMapStringValue>,
+    binding_profile: Option<Value>,
 
     /// The port security status. A valid value is enabled (`true`) or disabled
     /// (`false`). If port security is enabled for the port, security group
@@ -503,8 +501,8 @@ struct ResponseData {
     /// The list of tags on the resource.
     ///
     #[serde()]
-    #[structable(optional)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
@@ -553,56 +551,8 @@ struct ResponseData {
     /// The IDs of security groups applied to the port.
     ///
     #[serde()]
-    #[structable(optional)]
-    security_groups: Option<VecString>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// Vector of `HashMapStringValue` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecHashMapStringValue(Vec<HashMapStringValue>);
-impl fmt::Display for VecHashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    #[structable(optional, pretty)]
+    security_groups: Option<Value>,
 }
 
 impl PortCommand {

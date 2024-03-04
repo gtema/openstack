@@ -35,6 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::project::group::role::list;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -98,8 +99,8 @@ struct ResponseData {
     /// The link to the resources in question.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    links: Option<ResponseLinks>,
+    #[structable(optional, pretty, wide)]
+    links: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

@@ -40,6 +40,10 @@ pub(crate) struct TableStructFieldReceiver {
     /// Whether option is returned is optional or not
     #[darling(default)]
     optional: bool,
+
+    /// apply `to_string_pretty` instead of `to_string` for the value
+    #[darling(default)]
+    pretty: bool,
 }
 
 impl ToTokens for TableStructInputReceiver {

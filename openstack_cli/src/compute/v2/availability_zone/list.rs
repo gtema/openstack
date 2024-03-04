@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::compute::v2::availability_zone::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -79,8 +78,8 @@ struct ResponseData {
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
-    #[structable(optional, title = "zoneState", wide)]
-    zone_state: Option<ResponseZoneState>,
+    #[structable(optional, pretty, title = "zoneState", wide)]
+    zone_state: Option<Value>,
 
     /// An object containing a list of host information. The host information
     /// is comprised of host and service objects. The service object returns
@@ -88,8 +87,8 @@ struct ResponseData {
     /// `available`, and `updated_at`.
     ///
     #[serde()]
-    #[structable(optional)]
-    hosts: Option<HashMapStringValue>,
+    #[structable(optional, pretty)]
+    hosts: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -106,22 +105,6 @@ impl fmt::Display for ResponseZoneState {
                 .unwrap_or("".to_string())
         )]);
         write!(f, "{}", data.join(";"))
-    }
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
     }
 }
 

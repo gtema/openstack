@@ -36,8 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::compute::v2::server::diagnostic::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Shows basic usage data for a server.
@@ -87,8 +85,8 @@ struct ResponseData {
     /// **New in version 2.48**
     ///
     #[serde()]
-    #[structable(optional)]
-    cpu_details: Option<VecHashMapStringValue>,
+    #[structable(optional, pretty)]
+    cpu_details: Option<Value>,
 
     /// The list of dictionaries with detailed information about VM disks.
     /// Following fields are presented in each dictionary:
@@ -102,8 +100,8 @@ struct ResponseData {
     /// **New in version 2.48**
     ///
     #[serde()]
-    #[structable(optional)]
-    disk_details: Option<VecHashMapStringValue>,
+    #[structable(optional, pretty)]
+    disk_details: Option<Value>,
 
     /// The driver on which the VM is running. Possible values are:
     ///
@@ -160,8 +158,8 @@ struct ResponseData {
     /// **New in version 2.48**
     ///
     #[serde()]
-    #[structable(optional)]
-    memory_details: Option<VecHashMapStringValue>,
+    #[structable(optional, pretty)]
+    memory_details: Option<Value>,
 
     /// Name
     ///
@@ -237,38 +235,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     uptime: Option<i32>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// Vector of `HashMapStringValue` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecHashMapStringValue(Vec<HashMapStringValue>);
-impl fmt::Display for VecHashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl DiagnosticCommand {

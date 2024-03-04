@@ -39,7 +39,6 @@ use openstack_sdk::api::compute::v2::server::set_20;
 use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -144,16 +143,16 @@ struct ResponseData {
     /// addresses information.
     ///
     #[serde()]
-    #[structable(optional)]
-    addresses: Option<HashMapStringValue>,
+    #[structable(optional, pretty)]
+    addresses: Option<Value>,
 
     /// The attached volumes, if any.
     ///
     /// **New in version 2.75**
     ///
     #[serde(rename = "os-extended-volumes:volumes_attached")]
-    #[structable(optional, title = "os-extended-volumes:volumes_attached")]
-    os_extended_volumes_volumes_attached: Option<VecHashMapStringValue>,
+    #[structable(optional, pretty, title = "os-extended-volumes:volumes_attached")]
+    os_extended_volumes_volumes_attached: Option<Value>,
 
     /// The availability zone name.
     ///
@@ -223,8 +222,8 @@ struct ResponseData {
     /// `DELETED` and a fault occurred.
     ///
     #[serde()]
-    #[structable(optional)]
-    fault: Option<ResponseFault>,
+    #[structable(optional, pretty)]
+    fault: Option<Value>,
 
     /// Before microversion 2.47 this contains the ID and links for the flavor
     /// used to boot the server instance. This can be an empty object in case
@@ -235,8 +234,8 @@ struct ResponseData {
     /// dictionary.
     ///
     #[serde()]
-    #[structable(optional)]
-    flavor: Option<ResponseFlavor>,
+    #[structable(optional, pretty)]
+    flavor: Option<Value>,
 
     /// An ID string representing the host. This is a hashed value so will not
     /// actually look like a hostname, and is hashed with data from the
@@ -304,8 +303,8 @@ struct ResponseData {
     /// object will be an empty string when you boot the server from a volume.
     ///
     #[serde()]
-    #[structable(optional)]
-    image: Option<ResponseImage>,
+    #[structable(optional, pretty)]
+    image: Option<Value>,
 
     /// The instance name. The Compute API generates the instance name from the
     /// instance name template. Appears in the response for administrative
@@ -386,8 +385,8 @@ struct ResponseData {
     /// backward compatibility.
     ///
     #[serde()]
-    #[structable(optional)]
-    metadata: Option<HashMapStringString>,
+    #[structable(optional, pretty)]
+    metadata: Option<Value>,
 
     /// The server name.
     ///
@@ -471,8 +470,8 @@ struct ResponseData {
     /// **New in version 2.71**
     ///
     #[serde()]
-    #[structable(optional)]
-    server_groups: Option<VecString>,
+    #[structable(optional, pretty)]
+    server_groups: Option<Value>,
 
     /// The server status.
     ///
@@ -485,8 +484,8 @@ struct ResponseData {
     /// **New in version 2.26**
     ///
     #[serde()]
-    #[structable(optional)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
 
     /// The task state of the instance.
     ///
@@ -525,7 +524,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    trusted_image_certificates: Option<VecString>,
+    trusted_image_certificates: Option<Value>,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -565,38 +564,6 @@ struct ResponseData {
     #[serde(rename = "OS-EXT-STS:vm_state")]
     #[structable(optional, title = "OS-EXT-STS:vm_state")]
     os_ext_sts_vm_state: Option<String>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// Vector of `HashMapStringValue` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecHashMapStringValue(Vec<HashMapStringValue>);
-impl fmt::Display for VecHashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -639,22 +606,6 @@ impl fmt::Display for ResponseFault {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringString(HashMap<String, String>);
-impl fmt::Display for HashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseFlavor {
@@ -666,7 +617,7 @@ struct ResponseFlavor {
     ephemeral: Option<i32>,
     swap: Option<i32>,
     original_name: Option<String>,
-    extra_specs: Option<HashMapStringString>,
+    extra_specs: Option<Value>,
 }
 
 impl fmt::Display for ResponseFlavor {
@@ -752,22 +703,6 @@ impl fmt::Display for ResponseImage {
             ),
         ]);
         write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
     }
 }
 

@@ -523,14 +523,14 @@ impl ServerCommand {
                 .collect();
             server_builder.networks(create_252::NetworksEnum::F1(networks_builder));
         }
-        if args.networks.none_networks {
-            server_builder.networks(create_252::NetworksEnum::F2(
-                create_252::NetworksStringEnum::None,
-            ));
-        }
         if args.networks.auto_networks {
             server_builder.networks(create_252::NetworksEnum::F2(
                 create_252::NetworksStringEnum::Auto,
+            ));
+        }
+        if args.networks.none_networks {
+            server_builder.networks(create_252::NetworksEnum::F2(
+                create_252::NetworksStringEnum::None,
             ));
         }
 
