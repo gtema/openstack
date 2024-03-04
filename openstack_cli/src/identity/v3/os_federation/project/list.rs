@@ -87,12 +87,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
-
-    /// The links for the `project` resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    links: Option<Value>,
 }
 
 impl ProjectsCommand {

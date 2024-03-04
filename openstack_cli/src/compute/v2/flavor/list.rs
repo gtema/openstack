@@ -173,14 +173,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty, wide)]
     extra_specs: Option<Value>,
-
-    /// Links to the resources in question. See
-    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-    /// for more info.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    links: Option<Value>,
 }
 
 impl FlavorsCommand {

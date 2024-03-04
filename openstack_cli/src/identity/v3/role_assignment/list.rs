@@ -214,10 +214,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     group: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
