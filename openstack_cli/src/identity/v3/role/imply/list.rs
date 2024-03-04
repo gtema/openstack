@@ -81,7 +81,7 @@ struct ResponseData {
     /// An array of implied role objects.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     implies: Option<Value>,
 }
 /// `struct` response type

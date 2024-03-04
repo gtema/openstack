@@ -89,7 +89,7 @@ struct ResponseData {
     /// A list of objects, each with the keys `flavor_id` and `tenant_id`.
     ///
     #[serde()]
-    #[structable()]
+    #[structable(pretty)]
     flavor_access: Value,
 }
 

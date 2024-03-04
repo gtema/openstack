@@ -79,7 +79,7 @@ struct ResponseData {
     /// Fixed IP addresses with subnet IDs.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     fixed_ips: Option<Value>,
 
     /// The MAC address.

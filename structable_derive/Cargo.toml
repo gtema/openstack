@@ -21,3 +21,7 @@ quote = "^1.0"
 
 [lib]
 proc-macro = true
+
+[dev-dependencies]
+serde_json = { workspace = true }
+serde = { workspace = true }

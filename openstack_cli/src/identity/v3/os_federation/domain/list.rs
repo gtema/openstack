@@ -87,12 +87,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
-
-    /// The links to the `domain` resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    links: Option<Value>,
 }
 
 impl DomainsCommand {

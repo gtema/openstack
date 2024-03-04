@@ -484,14 +484,6 @@ struct ResponseData {
     #[structable(optional, title = "OS-SRV-USG:launched_at", wide)]
     os_srv_usg_launched_at: Option<String>,
 
-    /// Links to the resources in question. See
-    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
-    /// for more info.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    links: Option<Value>,
-
     /// A dictionary of metadata key-and-value pairs, which is maintained for
     /// backward compatibility.
     ///
@@ -568,7 +560,7 @@ struct ResponseData {
     /// One or more security groups objects.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     security_groups: Option<Value>,
 
     /// The UUIDs of the server groups to which the server belongs. Currently
@@ -624,7 +616,7 @@ struct ResponseData {
     /// **New in version 2.63**
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     trusted_image_certificates: Option<Value>,
 
     /// The date and time when the resource was updated. The date and time

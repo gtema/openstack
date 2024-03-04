@@ -68,7 +68,7 @@ struct ResponseData {
     id: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     rules: Option<Value>,
 }
 

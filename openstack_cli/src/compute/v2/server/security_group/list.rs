@@ -98,7 +98,7 @@ struct ResponseData {
     /// The list of security group rules.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     rules: Option<Value>,
 }
 

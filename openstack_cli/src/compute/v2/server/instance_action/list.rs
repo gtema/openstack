@@ -112,7 +112,7 @@ struct ResponseData {
     /// **New in version 2.51**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     events: Option<Value>,
 
     /// The related error message for when an action fails.

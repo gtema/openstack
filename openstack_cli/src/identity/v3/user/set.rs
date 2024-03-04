@@ -217,7 +217,7 @@ struct ResponseData {
     /// ```
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     federated: Option<Value>,
 
     /// The user name. Must be unique within the owning domain.

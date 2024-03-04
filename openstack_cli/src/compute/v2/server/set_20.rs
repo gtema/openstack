@@ -378,7 +378,7 @@ struct ResponseData {
     /// for more info.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     links: Option<Value>,
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
@@ -461,7 +461,7 @@ struct ResponseData {
     /// **New in version 2.75**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     security_groups: Option<Value>,
 
     /// The UUIDs of the server groups to which the server belongs. Currently
@@ -523,7 +523,7 @@ struct ResponseData {
     /// **New in version 2.63**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     trusted_image_certificates: Option<Value>,
 
     /// The date and time when the resource was updated. The date and time

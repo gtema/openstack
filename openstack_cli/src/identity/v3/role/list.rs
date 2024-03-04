@@ -77,12 +77,6 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The link to the resources in question.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    links: Option<Value>,
-
     /// The role name.
     ///
     #[serde()]

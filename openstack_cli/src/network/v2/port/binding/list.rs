@@ -138,7 +138,7 @@ struct ResponseData {
     /// field. If the update request is null this response field will be {}.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     profile: Option<Value>,
 
     #[serde()]

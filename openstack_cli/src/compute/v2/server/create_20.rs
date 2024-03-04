@@ -430,7 +430,7 @@ struct ResponseData {
     /// One or more security groups objects.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     security_groups: Option<Value>,
 
     /// Links pertaining to usage. See
@@ -440,7 +440,7 @@ struct ResponseData {
     /// **New in version 2.40**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     links: Option<Value>,
 }
 

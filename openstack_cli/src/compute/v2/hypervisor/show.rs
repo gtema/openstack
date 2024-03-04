@@ -265,7 +265,7 @@ struct ResponseData {
     /// **New in version 2.53**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     servers: Option<Value>,
 }
 /// `struct` response type

@@ -277,7 +277,7 @@ struct ResponseData {
     /// `extraroute` extension is enabled.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     routes: Option<Value>,
 
     /// A human-readable description for the resource.

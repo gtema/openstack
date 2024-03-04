@@ -95,7 +95,7 @@ struct ResponseData {
     /// A catalog object.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     catalog: Option<Value>,
 
     /// The date and time when the token expires.

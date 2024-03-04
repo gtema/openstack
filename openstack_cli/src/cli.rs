@@ -73,6 +73,10 @@ pub struct GlobalOpts {
     /// Verbosity level. Repeat to increase level.
     #[arg(short, long, global=true, action = clap::ArgAction::Count)]
     pub verbose: u8,
+
+    /// Pretty print the output
+    #[arg(short, long, global=true, action = clap::ArgAction::SetTrue)]
+    pub pretty: bool,
 }
 
 /// Output format

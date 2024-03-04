@@ -426,6 +426,10 @@ OpenStack client rewritten in Rust
 
 * `-f`, `--fields <FIELDS>` — Fields to return in the output (only in normal and wide mode)
 * `-v`, `--verbose` — Verbosity level. Repeat to increase level
+* `-p`, `--pretty` — Pretty print the output
+
+  Possible values: `true`, `false`
+
 
 
 

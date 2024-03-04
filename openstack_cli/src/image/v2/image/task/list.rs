@@ -97,13 +97,13 @@ struct ResponseData {
     /// The parameters required by task, JSON blob
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     input: Option<Value>,
 
     /// The result of current task, JSON blob
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     result: Option<Value>,
 
     /// An identifier for the owner of this task

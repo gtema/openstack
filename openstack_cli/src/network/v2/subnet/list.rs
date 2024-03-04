@@ -218,7 +218,7 @@ struct ResponseData {
     /// Allocation pools with `start` and `end` IP addresses for this subnet.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     allocation_pools: Option<Value>,
 
     /// List of dns name servers associated with the subnet.
@@ -231,7 +231,7 @@ struct ResponseData {
     /// `destination` and `nexthop` parameters.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     host_routes: Option<Value>,
 
     /// The ID of the project.

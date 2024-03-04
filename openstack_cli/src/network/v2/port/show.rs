@@ -117,7 +117,7 @@ struct ResponseData {
     /// (`subnet_id`).
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     fixed_ips: Option<Value>,
 
     /// The ID of the device that uses this port. For example, a server
@@ -156,7 +156,7 @@ struct ResponseData {
     /// matches one of the specified allowed address pairs.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     allowed_address_pairs: Option<Value>,
 
     /// Status of the underlying data plane of a port.
@@ -189,7 +189,7 @@ struct ResponseData {
     /// - `{"openvswitch": {"other_config": {"tx-steering": "hash|thread"}}}`
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     hints: Option<Value>,
 
     /// The port NUMA affinity policy requested during the virtual machine
@@ -266,7 +266,7 @@ struct ResponseData {
     /// field. If the update request is null this response field will be {}.
     ///
     #[serde(rename = "binding:profile")]
-    #[structable(optional, title = "binding:profile")]
+    #[structable(optional, pretty, title = "binding:profile")]
     binding_profile: Option<Value>,
 
     /// The port security status. A valid value is enabled (`true`) or disabled

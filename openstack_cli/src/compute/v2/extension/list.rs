@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::extension::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+
 use structable_derive::StructTable;
 
 /// Lists all extensions to the API.
@@ -77,13 +77,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
-
-    /// Links pertaining to this extension. This is a list of dictionaries,
-    /// each including keys `href` and `rel`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    links: Option<Value>,
 
     /// Name of the extension.
     ///
