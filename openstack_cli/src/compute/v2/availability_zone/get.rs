@@ -76,8 +76,8 @@ struct ResponseData {
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
-    #[structable(optional, title = "zoneState")]
-    zone_state: Option<ResponseZoneState>,
+    #[structable(optional, pretty, title = "zoneState")]
+    zone_state: Option<Value>,
 
     /// It is always `null`.
     ///

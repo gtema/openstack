@@ -239,40 +239,8 @@ struct ResponseData {
     /// `ignore_user_inactivity`.
     ///
     #[serde()]
-    #[structable(optional)]
-    options: Option<ResponseOptions>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
-}
-/// Vector of `VecString` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecVecString(Vec<VecString>);
-impl fmt::Display for VecVecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    #[structable(optional, pretty)]
+    options: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -282,7 +250,7 @@ struct ResponseOptions {
     ignore_lockout_failure_attempts: Option<bool>,
     lock_password: Option<bool>,
     ignore_user_inactivity: Option<bool>,
-    multi_factor_auth_rules: Option<VecVecString>,
+    multi_factor_auth_rules: Option<Value>,
     multi_factor_auth_enabled: Option<bool>,
 }
 

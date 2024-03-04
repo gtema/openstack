@@ -35,8 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::topology::list;
 use openstack_sdk::api::QueryAsync;
-use std::collections::HashMap;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Shows NUMA topology information for a server.
@@ -79,20 +78,20 @@ struct ResponseData {
     /// The mapping of server cores to host physical CPU
     ///
     #[serde()]
-    #[structable(optional)]
-    cpu_pinning: Option<HashMapStringi32>,
+    #[structable(optional, pretty)]
+    cpu_pinning: Option<Value>,
 
     /// A list of IDs of the virtual CPU assigned to this NUMA node.
     ///
     #[serde()]
-    #[structable(optional)]
-    vcpu_set: Option<Veci32>,
+    #[structable(optional, pretty)]
+    vcpu_set: Option<Value>,
 
     /// A mapping of host cpus thread sibling.
     ///
     #[serde()]
-    #[structable(optional)]
-    siblings: Option<Veci32>,
+    #[structable(optional, pretty)]
+    siblings: Option<Value>,
 
     /// The amount of memory assigned to this NUMA node in MB.
     ///
@@ -112,38 +111,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     pagesize_kb: Option<i32>,
-}
-/// HashMap of `i32` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringi32(HashMap<String, i32>);
-impl fmt::Display for HashMapStringi32 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// Vector of `i32` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct Veci32(Vec<i32>);
-impl fmt::Display for Veci32 {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl TopologiesCommand {

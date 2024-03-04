@@ -165,8 +165,8 @@ struct ResponseData {
     /// this would be `null`.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    external_gateway_info: Option<ResponseExternalGatewayInfo>,
+    #[structable(optional, pretty, wide)]
+    external_gateway_info: Option<Value>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
@@ -202,21 +202,21 @@ struct ResponseData {
     /// `router_availability_zone` extension is enabled.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    availability_zones: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    availability_zones: Option<Value>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    availability_zone_hints: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    availability_zone_hints: Option<Value>,
 
     /// The list of tags on the resource.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    tags: Option<Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
@@ -287,22 +287,6 @@ impl fmt::Display for ResponseExternalGatewayInfo {
             ),
         ]);
         write!(f, "{}", data.join(";"))
-    }
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
     }
 }
 

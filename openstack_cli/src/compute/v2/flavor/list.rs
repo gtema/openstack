@@ -39,8 +39,6 @@ use openstack_sdk::api::compute::v2::flavor::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists flavors with details.
@@ -173,8 +171,8 @@ struct ResponseData {
     /// **New in version 2.61**
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    extra_specs: Option<HashMapStringNumString>,
+    #[structable(optional, pretty, wide)]
+    extra_specs: Option<Value>,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
@@ -183,22 +181,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     links: Option<Value>,
-}
-/// HashMap of `NumString` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringNumString(HashMap<String, NumString>);
-impl fmt::Display for HashMapStringNumString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
 }
 
 impl FlavorsCommand {

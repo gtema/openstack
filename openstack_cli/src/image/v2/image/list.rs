@@ -37,7 +37,6 @@ use openstack_sdk::api::image::v2::image::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists public virtual machine (VM) images. *(Since Image API v2.0)*
@@ -383,8 +382,8 @@ struct ResponseData {
     /// List of strings related to the image
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    tags: Option<Value>,
 
     /// URL to access the image file kept in external store
     ///
@@ -435,22 +434,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     locations: Option<Value>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl ImagesCommand {

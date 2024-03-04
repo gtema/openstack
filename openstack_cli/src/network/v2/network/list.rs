@@ -38,7 +38,6 @@ use crate::common::IntString;
 use openstack_sdk::api::network::v2::network::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists networks to which the project has access.
@@ -188,8 +187,8 @@ struct ResponseData {
     /// The associated subnets.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    subnets: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    subnets: Option<Value>,
 
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
@@ -263,14 +262,14 @@ struct ResponseData {
     /// The availability zone for the network.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    availability_zones: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    availability_zones: Option<Value>,
 
     /// The availability zone candidate for the network.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    availability_zone_hints: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    availability_zone_hints: Option<Value>,
 
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
@@ -307,8 +306,8 @@ struct ResponseData {
     /// The list of tags on the resource.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty, wide)]
+    tags: Option<Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
@@ -339,22 +338,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl NetworksCommand {

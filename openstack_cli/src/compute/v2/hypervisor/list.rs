@@ -38,7 +38,6 @@ use openstack_sdk::api::compute::v2::hypervisor::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -102,8 +101,8 @@ struct ResponseData {
     /// **Available until version 2.87**
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    cpu_info: Option<HashMapStringValue>,
+    #[structable(optional, pretty, wide)]
+    cpu_info: Option<Value>,
 
     /// The current_workload is the number of tasks the hypervisor is
     /// responsible for. This will be equal or greater than the number of
@@ -218,8 +217,8 @@ struct ResponseData {
     /// The hypervisor service object.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    service: Option<ResponseService>,
+    #[structable(optional, pretty, wide)]
+    service: Option<Value>,
 
     /// The total uptime of the hypervisor and information about average load.
     /// Only reported for active hosts where the virt driver supports this
@@ -276,22 +275,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     servers: Option<Value>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

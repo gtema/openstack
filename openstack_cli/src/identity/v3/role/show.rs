@@ -36,7 +36,7 @@ use crate::StructTable;
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::role::find;
 use openstack_sdk::api::QueryAsync;
-use std::collections::HashMap;
+use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -81,8 +81,8 @@ struct ResponseData {
     /// The link to the resources in question.
     ///
     #[serde()]
-    #[structable(optional)]
-    links: Option<HashMapStringOptionString>,
+    #[structable(optional, pretty)]
+    links: Option<Value>,
 
     /// The role name.
     ///
@@ -100,24 +100,8 @@ struct ResponseData {
     /// `immutable`.
     ///
     #[serde()]
-    #[structable(optional)]
-    options: Option<ResponseOptions>,
-}
-/// HashMap of `Option<String>` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringOptionString(HashMap<String, Option<String>>);
-impl fmt::Display for HashMapStringOptionString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1.clone().unwrap_or("".to_string())))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
+    #[structable(optional, pretty)]
+    options: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

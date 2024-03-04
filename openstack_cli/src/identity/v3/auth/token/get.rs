@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::auth::token::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -84,8 +83,8 @@ struct ResponseData {
     /// non-privileged users.
     ///
     #[serde()]
-    #[structable(optional)]
-    audit_ids: Option<VecString>,
+    #[structable(optional, pretty)]
+    audit_ids: Option<Value>,
 
     /// A `catalog` object.
     ///
@@ -130,14 +129,14 @@ struct ResponseData {
     /// authentication factors.
     ///
     #[serde()]
-    #[structable(optional)]
-    methods: Option<VecString>,
+    #[structable(optional, pretty)]
+    methods: Option<Value>,
 
     /// A `user` object.
     ///
     #[serde()]
-    #[structable(optional)]
-    user: Option<ResponseUser>,
+    #[structable(optional, pretty)]
+    user: Option<Value>,
 
     #[serde()]
     #[structable(optional)]
@@ -148,16 +147,16 @@ struct ResponseData {
     /// a domain.
     ///
     #[serde()]
-    #[structable(optional)]
-    domain: Option<ResponseDomainStructResponse>,
+    #[structable(optional, pretty)]
+    domain: Option<Value>,
 
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
     /// in tokens that are scoped to a project.
     ///
     #[serde()]
-    #[structable(optional)]
-    project: Option<ResponseProject>,
+    #[structable(optional, pretty)]
+    project: Option<Value>,
 
     /// A list of `role` objects
     ///
@@ -171,24 +170,8 @@ struct ResponseData {
     /// This is only included in tokens that are scoped to the system.
     ///
     #[serde()]
-    #[structable(optional)]
-    system: Option<HashMapStringbool>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
+    #[structable(optional, pretty)]
+    system: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -218,30 +201,14 @@ impl fmt::Display for ResponseDomain {
         write!(f, "{}", data.join(";"))
     }
 }
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseUser {
     id: Option<String>,
     name: Option<String>,
-    domain: Option<ResponseDomain>,
+    domain: Option<Value>,
     password_expires_at: Option<String>,
-    os_federation: Option<HashMapStringValue>,
+    os_federation: Option<Value>,
 }
 
 impl fmt::Display for ResponseUser {
@@ -340,22 +307,6 @@ impl fmt::Display for ResponseProject {
             ),
         ]);
         write!(f, "{}", data.join(";"))
-    }
-}
-/// HashMap of `bool` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringbool(HashMap<String, bool>);
-impl fmt::Display for HashMapStringbool {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
     }
 }
 

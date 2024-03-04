@@ -39,8 +39,6 @@ use openstack_sdk::api::block_storage::v3::volume::set_353;
 use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Update a volume.
@@ -115,8 +113,8 @@ struct ResponseData {
     /// that are associated with the volume.
     ///
     #[serde()]
-    #[structable(optional)]
-    metadata: Option<HashMapStringString>,
+    #[structable(optional, pretty)]
+    metadata: Option<Value>,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
@@ -315,22 +313,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     consumes_quota: Option<bool>,
-}
-/// HashMap of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringString(HashMap<String, String>);
-impl fmt::Display for HashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
 }
 
 impl VolumeCommand {

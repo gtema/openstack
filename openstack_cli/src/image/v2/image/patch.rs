@@ -42,9 +42,7 @@ use openstack_sdk::api::image::v2::image::find;
 use openstack_sdk::api::image::v2::image::patch;
 use openstack_sdk::api::QueryAsync;
 use serde_json::json;
-
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Updates an image. *(Since Image API v2.0)*
@@ -351,8 +349,8 @@ struct ResponseData {
     /// List of tags for this image, possibly an empty list.
     ///
     #[serde()]
-    #[structable(optional)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
 
     /// The URL to access the image file kept in external store. *It is present
     /// only if the* `show_image_direct_url` *option is* `true` *in the Image
@@ -415,22 +413,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     locations: Option<Value>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl ImageCommand {
@@ -515,7 +497,7 @@ impl ImageCommand {
             new.disk_format = Some(tmp.to_string());
         }
         if let Some(val) = &self.tags {
-            new.tags = Some(VecString(val.clone()));
+            new.tags = Some(serde_json::from_value(val.to_owned().into())?);
         }
         if let Some(val) = &self.min_ram {
             new.min_ram = Some(*val);
@@ -524,9 +506,7 @@ impl ImageCommand {
             new.min_disk = Some(*val);
         }
         if let Some(val) = &self.locations {
-            new.locations = Some(serde_json::from_value(serde_json::Value::from(
-                val.clone(),
-            ))?);
+            new.locations = Some(serde_json::from_value(val.to_owned().into())?);
         }
 
         let curr_json = serde_json::to_value(&data).unwrap();

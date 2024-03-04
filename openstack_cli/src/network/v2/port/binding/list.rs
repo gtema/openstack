@@ -36,8 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::network::v2::port::binding::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Normal response codes: 200
@@ -141,7 +139,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    profile: Option<HashMapStringValue>,
+    profile: Option<Value>,
 
     #[serde()]
     #[structable(optional)]
@@ -150,22 +148,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     project_id: Option<String>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
 }
 
 impl BindingsCommand {

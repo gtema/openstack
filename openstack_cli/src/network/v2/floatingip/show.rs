@@ -35,7 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::network::v2::floatingip::get;
 use openstack_sdk::api::QueryAsync;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Shows details for a floating IP.
@@ -142,8 +142,8 @@ struct ResponseData {
     /// The list of tags on the resource.
     ///
     #[serde()]
-    #[structable(optional)]
-    tags: Option<VecString>,
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
@@ -198,22 +198,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl FloatingipCommand {

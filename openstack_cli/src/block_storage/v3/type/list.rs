@@ -35,8 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::block_storage::v3::r#type::list;
 use openstack_sdk::api::QueryAsync;
-use std::collections::HashMap;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Returns the list of volume types.
@@ -74,8 +73,8 @@ struct ResponseData {
     /// use.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    extra_specs: Option<HashMapStringOptionString>,
+    #[structable(optional, pretty, wide)]
+    extra_specs: Option<Value>,
 
     /// The UUID of the volume type.
     ///
@@ -106,22 +105,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     qos_specs_id: Option<String>,
-}
-/// HashMap of `Option<String>` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringOptionString(HashMap<String, Option<String>>);
-impl fmt::Display for HashMapStringOptionString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1.clone().unwrap_or("".to_string())))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
 }
 
 impl TypesCommand {

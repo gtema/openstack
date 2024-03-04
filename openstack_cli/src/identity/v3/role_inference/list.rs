@@ -69,8 +69,8 @@ struct ResponseData {
     /// A prior role object.
     ///
     #[serde()]
-    #[structable(optional)]
-    prior_role: Option<ResponsePriorRole>,
+    #[structable(optional, pretty)]
+    prior_role: Option<Value>,
 
     /// An implied role object.
     ///
@@ -102,7 +102,7 @@ struct ResponsePriorRole {
     id: Option<String>,
     name: Option<String>,
     description: Option<String>,
-    links: Option<ResponseLinks>,
+    links: Option<Value>,
 }
 
 impl fmt::Display for ResponsePriorRole {

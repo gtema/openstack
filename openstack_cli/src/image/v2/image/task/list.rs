@@ -36,8 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::image::v2::image::task::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Shows tasks associated with an image. *(Since Image API v2.12)*
@@ -100,13 +98,13 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, wide)]
-    input: Option<HashMapStringValue>,
+    input: Option<Value>,
 
     /// The result of current task, JSON blob
     ///
     #[serde()]
     #[structable(optional, wide)]
-    result: Option<HashMapStringValue>,
+    result: Option<Value>,
 
     /// An identifier for the owner of this task
     ///
@@ -164,22 +162,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     schema: Option<String>,
-}
-/// HashMap of `Value` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringValue(HashMap<String, Value>);
-impl fmt::Display for HashMapStringValue {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
 }
 
 impl TasksCommand {

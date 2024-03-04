@@ -35,6 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::role::imply::get;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -80,14 +81,14 @@ struct ResponseData {
     /// A prior role object.
     ///
     #[serde()]
-    #[structable(optional)]
-    prior_role: Option<ResponsePriorRole>,
+    #[structable(optional, pretty)]
+    prior_role: Option<Value>,
 
     /// A prior role object.
     ///
     #[serde()]
-    #[structable(optional)]
-    implies: Option<ResponseImplies>,
+    #[structable(optional, pretty)]
+    implies: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -113,7 +114,7 @@ struct ResponsePriorRole {
     id: Option<String>,
     name: Option<String>,
     description: Option<String>,
-    links: Option<ResponseLinks>,
+    links: Option<Value>,
 }
 
 impl fmt::Display for ResponsePriorRole {
@@ -175,7 +176,7 @@ struct ResponseImplies {
     id: Option<String>,
     name: Option<String>,
     description: Option<String>,
-    links: Option<ResponseImpliesLinks>,
+    links: Option<Value>,
 }
 
 impl fmt::Display for ResponseImplies {

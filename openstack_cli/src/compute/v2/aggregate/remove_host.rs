@@ -35,8 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::aggregate::remove_host;
 use openstack_sdk::api::QueryAsync;
-use std::collections::HashMap;
-use std::fmt;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
@@ -132,14 +131,14 @@ struct ResponseData {
     /// Metadata key and value pairs associated with the aggregate.
     ///
     #[serde()]
-    #[structable(optional)]
-    metadata: Option<HashMapStringString>,
+    #[structable(optional, pretty)]
+    metadata: Option<Value>,
 
     /// An array of host information.
     ///
     #[serde()]
-    #[structable(optional)]
-    hosts: Option<VecString>,
+    #[structable(optional, pretty)]
+    hosts: Option<Value>,
 
     /// The date and time when the resource was updated, if the resource has
     /// not been updated, this field will show as `null`. The date and time
@@ -165,38 +164,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     uuid: Option<String>,
-}
-/// HashMap of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct HashMapStringString(HashMap<String, String>);
-impl fmt::Display for HashMapStringString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{{{}}}",
-            self.0
-                .iter()
-                .map(|v| format!("{}={}", v.0, v.1))
-                .collect::<Vec<String>>()
-                .join("\n")
-        )
-    }
-}
-/// Vector of `String` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct VecString(Vec<String>);
-impl fmt::Display for VecString {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "[{}]",
-            self.0
-                .iter()
-                .map(|v| v.to_string())
-                .collect::<Vec<String>>()
-                .join(",")
-        )
-    }
 }
 
 impl AggregateCommand {

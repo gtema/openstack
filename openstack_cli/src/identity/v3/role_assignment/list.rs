@@ -35,6 +35,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::role_assignment::list;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
@@ -187,8 +188,8 @@ struct ResponseData {
     /// A prior role object.
     ///
     #[serde()]
-    #[structable(optional)]
-    role: Option<ResponseRole>,
+    #[structable(optional, pretty)]
+    role: Option<Value>,
 
     /// The authorization scope, including the system (Since v3.10), a project,
     /// or a domain (Since v3.4). If multiple scopes are specified in the same
@@ -201,22 +202,22 @@ struct ResponseData {
     /// the domain’s ID or name with equivalent results.
     ///
     #[serde()]
-    #[structable(optional)]
-    scope: Option<ResponseScope>,
+    #[structable(optional, pretty)]
+    scope: Option<Value>,
 
     /// A user object
     ///
     #[serde()]
-    #[structable(optional)]
-    user: Option<ResponseUser>,
+    #[structable(optional, pretty)]
+    user: Option<Value>,
 
     #[serde()]
-    #[structable(optional)]
-    group: Option<ResponseGroup>,
+    #[structable(optional, pretty)]
+    group: Option<Value>,
 
     #[serde()]
-    #[structable(optional)]
-    links: Option<ResponseLinksStructResponse>,
+    #[structable(optional, pretty)]
+    links: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -242,7 +243,7 @@ struct ResponseRole {
     id: Option<String>,
     name: Option<String>,
     description: Option<String>,
-    links: Option<ResponseLinks>,
+    links: Option<Value>,
 }
 
 impl fmt::Display for ResponseRole {
@@ -313,7 +314,7 @@ impl fmt::Display for ResponseDomain {
 struct ResponseProject {
     name: Option<String>,
     id: Option<String>,
-    domain: Option<ResponseDomain>,
+    domain: Option<Value>,
 }
 
 impl fmt::Display for ResponseProject {
@@ -408,10 +409,10 @@ impl fmt::Display for ResponseSystem {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseScope {
-    project: Option<ResponseProject>,
-    domain: Option<ResponseScopeDomain>,
-    os_trust_trust: Option<ResponseOsTrustTrust>,
-    system: Option<ResponseSystem>,
+    project: Option<Value>,
+    domain: Option<Value>,
+    os_trust_trust: Option<Value>,
+    system: Option<Value>,
 }
 
 impl fmt::Display for ResponseScope {
@@ -482,7 +483,7 @@ impl fmt::Display for ResponseUserDomain {
 struct ResponseUser {
     id: Option<String>,
     name: Option<String>,
-    domain: Option<ResponseUserDomain>,
+    domain: Option<Value>,
 }
 
 impl fmt::Display for ResponseUser {
