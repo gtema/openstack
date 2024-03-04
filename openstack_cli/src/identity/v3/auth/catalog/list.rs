@@ -75,7 +75,7 @@ struct ResponseData {
     /// A list of `endpoint` objects.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     endpoints: Option<Value>,
 
     /// The UUID of the service to which the endpoint belongs.

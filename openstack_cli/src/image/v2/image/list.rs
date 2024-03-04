@@ -432,7 +432,7 @@ struct ResponseData {
     /// A set of URLs to access the image file kept in external store
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     locations: Option<Value>,
 }
 

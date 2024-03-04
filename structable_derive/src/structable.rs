@@ -69,60 +69,102 @@ impl ToTokens for TableStructInputReceiver {
             let field_ident = field.ident.as_ref().unwrap();
             let field_title = field.title.clone().unwrap_or(field_ident.to_string());
 
+            // Determine how to get the data based in `optional` and `pretty`
+            let field_value = match field.optional {
+                false => match field.pretty {
+                    false => quote!(
+                        self. #field_ident .to_string()
+                    ),
+                    true => quote!(
+                        if options.pretty {
+                            serde_json::to_string_pretty(&self. #field_ident)
+                                .unwrap_or(self. #field_ident .to_string())
+                        } else { self. #field_ident .to_string() }
+                    ),
+                },
+                true => match field.pretty {
+                    false => quote!(
+                        self. #field_ident .clone().unwrap().to_string()
+                    ),
+                    true => quote!(
+                        self. #field_ident
+                            .clone()
+                            .map_or_else(
+                                || "".to_string(),
+                                |v| if options.pretty {serde_json::to_string_pretty(&v).unwrap_or(v.to_string())} else { v.to_string() }
+                            )
+                    ),
+                },
+            };
+
+            // Determine how to get the data based in `optional` and `pretty`
+            let field_vec_value = match field.optional {
+                false => match field.pretty {
+                    false => quote!(
+                        x. #field_ident .to_string()
+                    ),
+                    true => quote!(
+                        serde_json::to_string_pretty(&x. #field_ident)
+                            .unwrap_or(x. #field_ident .to_string())
+                    ),
+                },
+                true => match field.pretty {
+                    false => quote!(
+                        x. #field_ident .clone().unwrap().to_string()
+                    ),
+                    true => quote!(
+                        x. #field_ident
+                            .clone()
+                            .map_or_else(
+                                || "".to_string(),
+                                |v| serde_json::to_string_pretty(&v).unwrap_or(v.to_string())
+                            )
+                    ),
+                },
+            };
+
             // Build field rows for <T> impl
             let struct_row = match field.wide {
                 false => match field.optional {
                     false => quote!(
-                      if options.fields.is_empty() || options.fields.contains(#field_title) {
-                          res.push(Vec::from([#field_title.to_string(), self. #field_ident .to_string()]));
-                      }
+                        if options.fields.is_empty() || options.fields.contains(#field_title) {
+                            res.push(Vec::from([
+                                #field_title .to_string(),
+                                #field_value
+                            ]));
+                        }
                     ),
                     true => quote!(
-                      if self. #field_ident .is_some() && (options.fields.is_empty() || options.fields.contains(#field_title)) {
-                          res.push(Vec::from([#field_title.to_string(), self. #field_ident .clone().unwrap().to_string()]));
-                      }
+                        if self. #field_ident .is_some() && (options.fields.is_empty() || options.fields.contains(#field_title)) {
+                            res.push(Vec::from([
+                                #field_title.to_string(),
+                                #field_value
+                            ]));
+                        }
                     ),
                 },
 
-                true => match field.optional {
-                    false => quote!(
-                        if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
-                            res.push(Vec::from([#field_title.to_string(), self. #field_ident .to_string()]));
-                        }
-                    ),
-                    true => quote!(
-                        if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
-                            res.push(Vec::from([#field_title.to_string(), self. #field_ident .as_ref().map(|x| x.to_string()).unwrap_or("".to_string())]));
-                        }
-                    ),
-                },
+                true => quote!(
+                    if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
+                        res.push(Vec::from([
+                            #field_title.to_string(),
+                            #field_value
+                        ]));
+                    }
+                ),
             };
             // Build field values processing for Vec<T> impl
             let vec_struct_row = match field.wide {
-                false => match field.optional {
-                    false => quote!(
-                        if options.fields.is_empty() || options.fields.contains(#field_title) {
-                            row.push(x. #field_ident .to_string());
-                        }
-                    ),
-                    true => quote!(
-                        if options.fields.is_empty() || options.fields.contains(#field_title) {
-                            row.push(x. #field_ident .as_ref().map(|x| x.to_string()).unwrap_or("".to_string()));
-                        }
-                    ),
-                },
-                true => match field.optional {
-                    false => quote!(
-                        if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
-                            row.push(x. #field_ident .to_string());
-                        }
-                    ),
-                    true => quote!(
-                        if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
-                          row.push(x. #field_ident .as_ref().map(|v| v.to_string()).unwrap_or("".to_string()));
-                        }
-                    ),
-                },
+                false => quote!(
+                    if options.fields.is_empty() || options.fields.contains(#field_title) {
+                        row.push(#field_vec_value);
+                    }
+                ),
+                true => quote!(
+                    if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
+                        row.push(#field_vec_value);
+                    }
+                ),
             };
             // Build field headers processing for the Vec<T> impl
             let vec_struct_header_row = match field.wide {
@@ -175,7 +217,6 @@ impl ToTokens for TableStructInputReceiver {
 #[cfg(test)]
 mod tests {
     use super::*;
-    // TODO Unit test `derive`
 
     #[test]
     fn test_parse_default() {
@@ -186,6 +227,21 @@ mod tests {
                 foo: String,
                 #[structable(wide)]
                 bar: String,
+            }
+        };
+        let input = syn::parse2(input).unwrap();
+        TableStructInputReceiver::from_derive_input(&input).unwrap();
+    }
+
+    #[test]
+    fn test_parse_pretty() {
+        let input = quote! {
+            #[derive(StructTable)]
+            struct FooSpec {
+                #[structable(pretty)]
+                foo: Value,
+                #[structable(optional, pretty)]
+                bar: Option<Value>,
             }
         };
         let input = syn::parse2(input).unwrap();

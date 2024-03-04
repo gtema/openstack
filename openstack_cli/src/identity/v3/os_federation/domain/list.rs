@@ -91,7 +91,7 @@ struct ResponseData {
     /// The links to the `domain` resource.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     links: Option<Value>,
 }
 

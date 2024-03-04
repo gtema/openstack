@@ -89,7 +89,7 @@ struct ResponseData {
     /// A `catalog` object.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     catalog: Option<Value>,
 
     /// The date and time when the token expires.
@@ -161,7 +161,7 @@ struct ResponseData {
     /// A list of `role` objects
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     roles: Option<Value>,
 
     /// A `system` object containing information about which parts of the

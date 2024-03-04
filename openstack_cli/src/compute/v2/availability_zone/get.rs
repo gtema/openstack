@@ -82,7 +82,7 @@ struct ResponseData {
     /// It is always `null`.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     hosts: Option<Value>,
 }
 /// `struct` response type

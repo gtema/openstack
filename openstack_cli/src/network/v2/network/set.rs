@@ -231,7 +231,7 @@ struct ResponseData {
     /// A list of provider `segment` objects.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     segments: Option<Value>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.

@@ -103,7 +103,7 @@ struct ResponseData {
     expires_at: Option<String>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     roles: Option<Value>,
 
     #[serde()]
@@ -111,7 +111,7 @@ struct ResponseData {
     unrestricted: Option<bool>,
 
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     access_rules: Option<Value>,
 }
 

@@ -32,6 +32,8 @@ pub struct OutputConfig {
     pub fields: BTreeSet<String>,
     /// Flag whether to include additional attributes in the output
     pub wide: bool,
+    /// Flag to pretty-print complex objects in the output
+    pub pretty: bool,
 }
 
 /// Trait for structures that should be represented as a table in the human output mode
@@ -66,6 +68,7 @@ impl OutputProcessor {
             config: OutputConfig {
                 fields: BTreeSet::from_iter(args.global_opts.fields.iter().cloned()),
                 wide: matches!(args.global_opts.output, Some(OutputFormat::Wide)),
+                pretty: args.global_opts.pretty,
             },
             target,
         }
@@ -128,7 +131,11 @@ impl OutputProcessor {
     /// Produce output for machine
     /// Return machine readable output with the API side names
     pub(crate) fn output_machine(&self, data: serde_json::Value) -> Result<(), OpenStackCliError> {
-        serde_json::to_writer(io::stdout(), &data)?;
+        if self.config.pretty {
+            serde_json::to_writer_pretty(io::stdout(), &data)?;
+        } else {
+            serde_json::to_writer(io::stdout(), &data)?;
+        }
         io::stdout().write_all(b"\n")?;
         Ok(())
     }

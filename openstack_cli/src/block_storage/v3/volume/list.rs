@@ -238,13 +238,13 @@ struct ResponseData {
     /// ```
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     attachments: Option<Value>,
 
     /// The volume links.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     links: Option<Value>,
 
     /// If true, this volume is encrypted.

@@ -326,7 +326,7 @@ struct ResponseData {
     /// this option is disabled by default.**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     locations: Option<Value>,
 }
 

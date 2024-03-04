@@ -75,7 +75,7 @@ struct ResponseData {
     /// List of the interface attachments.
     ///
     #[serde(rename = "interfaceAttachments")]
-    #[structable(title = "interfaceAttachments", wide)]
+    #[structable(pretty, title = "interfaceAttachments", wide)]
     interface_attachments: Value,
 }
 

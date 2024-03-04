@@ -464,7 +464,7 @@ struct ResponseData {
     /// One or more security groups objects.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     security_groups: Option<Value>,
 
     /// Links pertaining to usage. See
@@ -474,7 +474,7 @@ struct ResponseData {
     /// **New in version 2.40**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     links: Option<Value>,
 }
 
@@ -523,14 +523,14 @@ impl ServerCommand {
                 .collect();
             server_builder.networks(create_252::NetworksEnum::F1(networks_builder));
         }
-        if args.networks.auto_networks {
-            server_builder.networks(create_252::NetworksEnum::F2(
-                create_252::NetworksStringEnum::Auto,
-            ));
-        }
         if args.networks.none_networks {
             server_builder.networks(create_252::NetworksEnum::F2(
                 create_252::NetworksStringEnum::None,
+            ));
+        }
+        if args.networks.auto_networks {
+            server_builder.networks(create_252::NetworksEnum::F2(
+                create_252::NetworksStringEnum::Auto,
             ));
         }
 

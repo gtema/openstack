@@ -82,7 +82,7 @@ struct ResponseData {
     /// each including keys `href` and `rel`.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     links: Option<Value>,
 
     /// Name of the extension.

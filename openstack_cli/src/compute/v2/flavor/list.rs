@@ -179,7 +179,7 @@ struct ResponseData {
     /// for more info.
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, pretty, wide)]
     links: Option<Value>,
 }
 

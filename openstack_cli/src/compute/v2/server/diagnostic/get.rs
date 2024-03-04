@@ -185,7 +185,7 @@ struct ResponseData {
     /// **New in version 2.48**
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     nic_details: Option<Value>,
 
     /// The number of vCPUs.

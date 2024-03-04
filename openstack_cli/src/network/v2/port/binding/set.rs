@@ -124,7 +124,7 @@ struct ResponseData {
     vnic_type: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, pretty)]
     profile: Option<Value>,
 
     #[serde()]
