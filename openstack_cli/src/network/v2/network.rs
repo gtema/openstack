@@ -24,6 +24,7 @@ mod create;
 mod delete;
 mod list;
 mod show;
+mod tag;
 
 /// Network commands
 #[derive(Parser)]
@@ -41,6 +42,7 @@ pub enum NetworkCommands {
     Delete(Box<delete::NetworkCommand>),
     List(Box<list::NetworksCommand>),
     Show(Box<show::NetworkCommand>),
+    Tag(Box<tag::TagCommand>),
 }
 
 impl NetworkCommand {
@@ -55,6 +57,7 @@ impl NetworkCommand {
             NetworkCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

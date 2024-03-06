@@ -355,27 +355,51 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network floating-ip tag delete`↴](#osc-network-floating-ip-tag-delete)
 * [`osc network floating-ip tag list`↴](#osc-network-floating-ip-tag-list)
 * [`osc network floating-ip tag purge`↴](#osc-network-floating-ip-tag-purge)
-* [`osc network floating-ip tag replace`↴](#osc-network-floating-ip-tag-replace)
 * [`osc network network`↴](#osc-network-network)
 * [`osc network network create`↴](#osc-network-network-create)
 * [`osc network network delete`↴](#osc-network-network-delete)
 * [`osc network network list`↴](#osc-network-network-list)
 * [`osc network network show`↴](#osc-network-network-show)
+* [`osc network network tag`↴](#osc-network-network-tag)
+* [`osc network network tag add`↴](#osc-network-network-tag-add)
+* [`osc network network tag check`↴](#osc-network-network-tag-check)
+* [`osc network network tag delete`↴](#osc-network-network-tag-delete)
+* [`osc network network tag list`↴](#osc-network-network-tag-list)
+* [`osc network network tag purge`↴](#osc-network-network-tag-purge)
 * [`osc network port`↴](#osc-network-port)
 * [`osc network port create`↴](#osc-network-port-create)
 * [`osc network port delete`↴](#osc-network-port-delete)
 * [`osc network port list`↴](#osc-network-port-list)
 * [`osc network port show`↴](#osc-network-port-show)
+* [`osc network port tag`↴](#osc-network-port-tag)
+* [`osc network port tag add`↴](#osc-network-port-tag-add)
+* [`osc network port tag check`↴](#osc-network-port-tag-check)
+* [`osc network port tag delete`↴](#osc-network-port-tag-delete)
+* [`osc network port tag list`↴](#osc-network-port-tag-list)
+* [`osc network port tag purge`↴](#osc-network-port-tag-purge)
 * [`osc network router`↴](#osc-network-router)
 * [`osc network router create`↴](#osc-network-router-create)
 * [`osc network router delete`↴](#osc-network-router-delete)
 * [`osc network router list`↴](#osc-network-router-list)
 * [`osc network router show`↴](#osc-network-router-show)
+* [`osc network router tag`↴](#osc-network-router-tag)
+* [`osc network router tag add`↴](#osc-network-router-tag-add)
+* [`osc network router tag check`↴](#osc-network-router-tag-check)
+* [`osc network router tag delete`↴](#osc-network-router-tag-delete)
+* [`osc network router tag list`↴](#osc-network-router-tag-list)
+* [`osc network router tag purge`↴](#osc-network-router-tag-purge)
 * [`osc network subnet`↴](#osc-network-subnet)
 * [`osc network subnet create`↴](#osc-network-subnet-create)
 * [`osc network subnet delete`↴](#osc-network-subnet-delete)
 * [`osc network subnet list`↴](#osc-network-subnet-list)
+* [`osc network subnet set`↴](#osc-network-subnet-set)
 * [`osc network subnet show`↴](#osc-network-subnet-show)
+* [`osc network subnet tag`↴](#osc-network-subnet-tag)
+* [`osc network subnet tag add`↴](#osc-network-subnet-tag-add)
+* [`osc network subnet tag check`↴](#osc-network-subnet-tag-check)
+* [`osc network subnet tag delete`↴](#osc-network-subnet-tag-delete)
+* [`osc network subnet tag list`↴](#osc-network-subnet-tag-list)
+* [`osc network subnet tag purge`↴](#osc-network-subnet-tag-purge)
 * [`osc object-store`↴](#osc-object-store)
 * [`osc object-store account`↴](#osc-object-store-account)
 * [`osc object-store account show`↴](#osc-object-store-account-show)
@@ -8241,7 +8265,7 @@ Floating IP commands
 * `list` — List floating IPs
 * `set` — Update floating IP
 * `show` — Show floating IP details
-* `tag` — Resource tag operations
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
 
 
 
@@ -8391,7 +8415,7 @@ Error response codes: 401, 403, 404
 
 ## `osc network floating-ip tag`
 
-Resource tag operations
+Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
 
 **Usage:** `osc network floating-ip tag <COMMAND>`
 
@@ -8402,7 +8426,6 @@ Resource tag operations
 * `delete` — Command without description in OpenAPI
 * `list` — Command without description in OpenAPI
 * `purge` — Command without description in OpenAPI
-* `replace` — Command without description in OpenAPI
 
 
 
@@ -8469,22 +8492,6 @@ Command without description in OpenAPI
 
 
 
-## `osc network floating-ip tag replace`
-
-Command without description in OpenAPI
-
-**Usage:** `osc network floating-ip tag replace [OPTIONS] <FLOATINGIP_ID>`
-
-###### **Arguments:**
-
-* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
-
-###### **Options:**
-
-* `--tags <TAGS>`
-
-
-
 ## `osc network network`
 
 Network commands
@@ -8497,6 +8504,7 @@ Network commands
 * `delete` — Delete network
 * `list` — List networks
 * `show` — Show network details
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
 
 
 
@@ -8637,6 +8645,85 @@ Error response codes: 401, 404
 
 
 
+## `osc network network tag`
+
+Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+**Usage:** `osc network network tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Command without description in OpenAPI
+* `check` — Command without description in OpenAPI
+* `delete` — Command without description in OpenAPI
+* `list` — Command without description in OpenAPI
+* `purge` — Command without description in OpenAPI
+
+
+
+## `osc network network tag add`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network network tag add <NETWORK_ID> <ID>`
+
+###### **Arguments:**
+
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<ID>` — id parameter for /v2.0/networks/{network_id}/tags/{id} API
+
+
+
+## `osc network network tag check`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network network tag check <NETWORK_ID> <ID>`
+
+###### **Arguments:**
+
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<ID>` — id parameter for /v2.0/networks/{network_id}/tags/{id} API
+
+
+
+## `osc network network tag delete`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network network tag delete <NETWORK_ID> <ID>`
+
+###### **Arguments:**
+
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<ID>` — id parameter for /v2.0/networks/{network_id}/tags/{id} API
+
+
+
+## `osc network network tag list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network network tag list <NETWORK_ID>`
+
+###### **Arguments:**
+
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+
+
+
+## `osc network network tag purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network network tag purge <NETWORK_ID>`
+
+###### **Arguments:**
+
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+
+
+
 ## `osc network port`
 
 Port commands
@@ -8649,6 +8736,7 @@ Port commands
 * `delete` — Delete port
 * `list` — List ports
 * `show` — Show port details
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
 
 
 
@@ -8787,6 +8875,85 @@ Error response codes: 401, 404
 
 
 
+## `osc network port tag`
+
+Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+**Usage:** `osc network port tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Command without description in OpenAPI
+* `check` — Command without description in OpenAPI
+* `delete` — Command without description in OpenAPI
+* `list` — Command without description in OpenAPI
+* `purge` — Command without description in OpenAPI
+
+
+
+## `osc network port tag add`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network port tag add <PORT_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<ID>` — id parameter for /v2.0/ports/{port_id}/tags/{id} API
+
+
+
+## `osc network port tag check`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network port tag check <PORT_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<ID>` — id parameter for /v2.0/ports/{port_id}/tags/{id} API
+
+
+
+## `osc network port tag delete`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network port tag delete <PORT_ID> <ID>`
+
+###### **Arguments:**
+
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<ID>` — id parameter for /v2.0/ports/{port_id}/tags/{id} API
+
+
+
+## `osc network port tag list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network port tag list <PORT_ID>`
+
+###### **Arguments:**
+
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+
+
+
+## `osc network port tag purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network port tag purge <PORT_ID>`
+
+###### **Arguments:**
+
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+
+
+
 ## `osc network router`
 
 Router commands
@@ -8799,6 +8966,7 @@ Router commands
 * `delete` — Delete router
 * `list` — List routers
 * `show` — Show router details
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
 
 
 
@@ -8917,6 +9085,85 @@ Error response codes: 401, 403, 404
 
 
 
+## `osc network router tag`
+
+Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+**Usage:** `osc network router tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Command without description in OpenAPI
+* `check` — Command without description in OpenAPI
+* `delete` — Command without description in OpenAPI
+* `list` — Command without description in OpenAPI
+* `purge` — Command without description in OpenAPI
+
+
+
+## `osc network router tag add`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network router tag add <ROUTER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+
+
+## `osc network router tag check`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network router tag check <ROUTER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+
+
+## `osc network router tag delete`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network router tag delete <ROUTER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+
+
+## `osc network router tag list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network router tag list <ROUTER_ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+
+
+## `osc network router tag purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network router tag purge <ROUTER_ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+
+
 ## `osc network subnet`
 
 Subnet commands
@@ -8928,7 +9175,9 @@ Subnet commands
 * `create` — Create subnet
 * `delete` — Delete subnet
 * `list` — List subnets
+* `set` — Update subnet
 * `show` — Show subnet details
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
 
 
 
@@ -9061,6 +9310,43 @@ Error response codes: 401
 
 
 
+## `osc network subnet set`
+
+Updates a subnet.
+
+Some attributes, such as IP version (ip_version), CIDR (cidr), and segment (segment_id) cannot be updated. Attempting to update these attributes results in a `400 Bad Request` error.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 412
+
+**Usage:** `osc network subnet set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+
+###### **Options:**
+
+* `--name <NAME>` — Human-readable name of the resource
+* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
+* `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
+* `--dns-nameservers <DNS_NAMESERVERS>` — List of dns name servers associated with the subnet. Default is an empty list
+* `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
+* `--enable-dhcp <ENABLE_DHCP>` — Indicates whether dhcp is enabled or disabled for the subnet. Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--service-types <SERVICE_TYPES>` — The service types associated with the subnet
+* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for IPs from this subnet. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--segment-id <SEGMENT_ID>` — The ID of a network segment the subnet is associated with. It is available when `segment` extension is enabled
+
+
+
 ## `osc network subnet show`
 
 Shows details for a subnet.
@@ -9076,6 +9362,85 @@ Error response codes: 401, 404
 ###### **Arguments:**
 
 * `<ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+
+
+
+## `osc network subnet tag`
+
+Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+**Usage:** `osc network subnet tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Command without description in OpenAPI
+* `check` — Command without description in OpenAPI
+* `delete` — Command without description in OpenAPI
+* `list` — Command without description in OpenAPI
+* `purge` — Command without description in OpenAPI
+
+
+
+## `osc network subnet tag add`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnet tag add <SUBNET_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<ID>` — id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
+
+
+
+## `osc network subnet tag check`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnet tag check <SUBNET_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<ID>` — id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
+
+
+
+## `osc network subnet tag delete`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnet tag delete <SUBNET_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<ID>` — id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
+
+
+
+## `osc network subnet tag list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnet tag list <SUBNET_ID>`
+
+###### **Arguments:**
+
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+
+
+
+## `osc network subnet tag purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnet tag purge <SUBNET_ID>`
+
+###### **Arguments:**
+
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
 
 
 
