@@ -23,6 +23,7 @@ use crate::{Cli, OpenStackCliError};
 mod create;
 mod delete;
 mod list;
+mod port_forwarding;
 mod set;
 mod show;
 mod tag;
@@ -42,6 +43,7 @@ pub enum FloatingIPCommands {
     Create(create::FloatingipCommand),
     Delete(delete::FloatingipCommand),
     List(list::FloatingipsCommand),
+    PortForwarding(port_forwarding::PortForwardingCommand),
     Set(set::FloatingipCommand),
     Show(show::FloatingipCommand),
     Tag(tag::TagCommand),
@@ -58,6 +60,7 @@ impl FloatingIPCommand {
             FloatingIPCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             FloatingIPCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             FloatingIPCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            FloatingIPCommands::PortForwarding(cmd) => cmd.take_action(parsed_args, session).await,
             FloatingIPCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             FloatingIPCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
             FloatingIPCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
