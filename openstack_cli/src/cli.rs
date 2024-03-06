@@ -84,9 +84,7 @@ pub struct GlobalOpts {
 pub enum OutputFormat {
     /// Json output
     Json,
-    /// YAML output
-    Yaml,
-    /// Wide (Human readable table with extra attributes. Note: this has
+    /// Wide (Human readable table with extra attributes). Note: this has
     /// effect only in list operations)
     Wide,
 }
