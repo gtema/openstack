@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Network resource commands
+//! Network DHCP agent
 
 use clap::{Parser, Subcommand};
 
@@ -20,34 +20,28 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod dhcp_agent;
 mod list;
-mod show;
-mod tag;
 
-/// Network commands
+/// DHCP agent scheduler
+///
+/// The DHCP agent scheduler extension (dhcp_agent_scheduler) enables administrators to assign DHCP
+/// servers for Neutron networks to given Neutron DHCP agents, and retrieve mappings between
+/// Neutron networks and DHCP agents.
 #[derive(Parser)]
-pub struct NetworkCommand {
+pub struct DhcpAgentCommand {
     /// subcommand
     #[command(subcommand)]
-    command: NetworkCommands,
+    command: DhcpAgentCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum NetworkCommands {
-    Create(Box<create::NetworkCommand>),
-    Delete(Box<delete::NetworkCommand>),
-    DhcpAgent(Box<dhcp_agent::DhcpAgentCommand>),
-    List(Box<list::NetworksCommand>),
-    Show(Box<show::NetworkCommand>),
-    Tag(Box<tag::TagCommand>),
+pub enum DhcpAgentCommands {
+    List(list::DhcpAgentsCommand),
 }
 
-impl NetworkCommand {
+impl DhcpAgentCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -55,12 +49,7 @@ impl NetworkCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            NetworkCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            NetworkCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            NetworkCommands::DhcpAgent(cmd) => cmd.take_action(parsed_args, session).await,
-            NetworkCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            NetworkCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
-            NetworkCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
+            DhcpAgentCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
