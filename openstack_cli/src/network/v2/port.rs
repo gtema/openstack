@@ -24,6 +24,7 @@ mod create;
 mod delete;
 mod list;
 mod show;
+mod tag;
 
 /// Port commands
 #[derive(Parser)]
@@ -41,6 +42,7 @@ pub enum PortCommands {
     Delete(delete::PortCommand),
     List(Box<list::PortsCommand>),
     Show(Box<show::PortCommand>),
+    Tag(Box<tag::TagCommand>),
 }
 
 impl PortCommand {
@@ -55,6 +57,7 @@ impl PortCommand {
             PortCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             PortCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             PortCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            PortCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

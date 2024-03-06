@@ -23,7 +23,9 @@ use crate::{Cli, OpenStackCliError};
 mod create;
 mod delete;
 mod list;
+mod set;
 mod show;
+mod tag;
 
 /// Subnet commands
 #[derive(Parser)]
@@ -40,7 +42,9 @@ pub enum SubnetCommands {
     Create(Box<create::SubnetCommand>),
     Delete(delete::SubnetCommand),
     List(Box<list::SubnetsCommand>),
+    Set(Box<set::SubnetCommand>),
     Show(Box<show::SubnetCommand>),
+    Tag(Box<tag::TagCommand>),
 }
 
 impl SubnetCommand {
@@ -54,7 +58,9 @@ impl SubnetCommand {
             SubnetCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            SubnetCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            SubnetCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

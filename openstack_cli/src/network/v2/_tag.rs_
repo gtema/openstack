@@ -12,40 +12,43 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Router commands
-
+//! Resource Tag module
+//!
+//! This module is defined once and symlinked into individual resources. This way code is
+//! de-duplicated while also ensuring the same command interface is being maintained.
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
 mod delete;
+mod delete_all;
 mod list;
+mod set;
 mod show;
-mod tag;
 
-/// Router commands
+/// Lists tags, creates, replaces or deletes one or more tags for a
+/// resource, checks the existence of a tag for a resource.
 #[derive(Parser)]
-pub struct RouterCommand {
+pub struct TagCommand {
     /// subcommand
     #[command(subcommand)]
-    command: RouterCommands,
+    command: TagCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum RouterCommands {
-    Create(create::RouterCommand),
-    Delete(delete::RouterCommand),
-    List(list::RoutersCommand),
-    Show(show::RouterCommand),
-    Tag(tag::TagCommand),
+pub enum TagCommands {
+    Add(set::TagCommand),
+    Check(show::TagCommand),
+    Delete(delete::TagCommand),
+    List(list::TagsCommand),
+    Purge(delete_all::TagCommand),
 }
 
-impl RouterCommand {
+impl TagCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -53,11 +56,11 @@ impl RouterCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            RouterCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Add(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Check(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
