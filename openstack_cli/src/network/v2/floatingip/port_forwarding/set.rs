@@ -225,11 +225,11 @@ impl PortForwardingCommand {
         let args = &self.port_forwarding;
         let mut port_forwarding_builder = set::PortForwardingBuilder::default();
         if let Some(val) = &args.external_port {
-            port_forwarding_builder.external_port(val.clone().map(|v| v.into()));
+            port_forwarding_builder.external_port(*val);
         }
 
         if let Some(val) = &args.internal_port {
-            port_forwarding_builder.internal_port(val.clone().map(|v| v.into()));
+            port_forwarding_builder.internal_port(*val);
         }
 
         if let Some(val) = &args.internal_ip_address {

@@ -347,6 +347,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network floating-ip create`↴](#osc-network-floating-ip-create)
 * [`osc network floating-ip delete`↴](#osc-network-floating-ip-delete)
 * [`osc network floating-ip list`↴](#osc-network-floating-ip-list)
+* [`osc network floating-ip port-forwarding`↴](#osc-network-floating-ip-port-forwarding)
+* [`osc network floating-ip port-forwarding create`↴](#osc-network-floating-ip-port-forwarding-create)
+* [`osc network floating-ip port-forwarding delete`↴](#osc-network-floating-ip-port-forwarding-delete)
+* [`osc network floating-ip port-forwarding list`↴](#osc-network-floating-ip-port-forwarding-list)
+* [`osc network floating-ip port-forwarding set`↴](#osc-network-floating-ip-port-forwarding-set)
+* [`osc network floating-ip port-forwarding show`↴](#osc-network-floating-ip-port-forwarding-show)
 * [`osc network floating-ip set`↴](#osc-network-floating-ip-set)
 * [`osc network floating-ip show`↴](#osc-network-floating-ip-show)
 * [`osc network floating-ip tag`↴](#osc-network-floating-ip-tag)
@@ -8271,6 +8277,7 @@ Floating IP commands
 * `create` — Create floating IP
 * `delete` — Delete floating IP
 * `list` — List floating IPs
+* `port-forwarding` — Floating IPs port forwarding
 * `set` — Update floating IP
 * `show` — Show floating IP details
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
@@ -8367,6 +8374,162 @@ Error response codes: 401
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/floatingips API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/floatingips API
 * `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips API
+
+
+
+## `osc network floating-ip port-forwarding`
+
+Floating IPs port forwarding
+
+Lists, creates, shows details for, updates, and deletes floating IPs port forwardings.
+
+## Port forwarding with port ranges
+
+The floating-ip-port-forwarding-port-ranges extension adds the new attributes internal_port_range and external_port_range to the floating IP port forwardings. The value of these new attributes should be a string that represents a colon separated port range. You can not use the attributes internal_port_range and external_port_range with the attributes internal_port and external_port in the same request.
+
+## Port forwarding rule description
+
+The floating-ip-port-forwarding-description extension adds the description attribute to the floating IP port forwardings. The value of the description attribute contains a text describing the rule, which helps users to manage/find easily theirs rules.
+
+**Usage:** `osc network floating-ip port-forwarding <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create port forwarding
+* `delete` — Delete a floating IP port forwarding
+* `list` — List floating IP port forwardings
+* `set` — Update a port forwarding
+* `show` — Show port forwarding
+
+
+
+## `osc network floating-ip port-forwarding create`
+
+Creates a floating IP port forwarding.
+
+Normal response codes: 201
+
+Error response codes: 400, 404
+
+**Usage:** `osc network floating-ip port-forwarding create [OPTIONS] <FLOATINGIP_ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+###### **Options:**
+
+* `--project-id <PROJECT_ID>`
+* `--external-port <EXTERNAL_PORT>` — The TCP/UDP/other protocol port number of the port forwarding’s floating IP address
+* `--internal-port <INTERNAL_PORT>` — The TCP/UDP/other protocol port number of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--internal-ip-address <INTERNAL_IP_ADDRESS>` — The fixed IPv4 address of the Neutron port associated to the floating IP port forwarding
+* `--protocol <PROTOCOL>` — The IP protocol used in the floating IP port forwarding
+
+  Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
+
+* `--internal-port-id <INTERNAL_PORT_ID>` — The ID of the Neutron port associated to the floating IP port forwarding
+* `--description <DESCRIPTION>` — A text describing the rule, which helps users to manage/find easily theirs rules
+* `--external-port-range <EXTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the port forwarding’s floating IP address
+* `--internal-port-range <INTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the Neutron port fixed IP address associated to the floating ip port forwarding
+
+
+
+## `osc network floating-ip port-forwarding delete`
+
+Deletes a floating IP port forwarding.
+
+Normal response codes: 204
+
+Error response codes: 404
+
+**Usage:** `osc network floating-ip port-forwarding delete <FLOATINGIP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
+
+
+
+## `osc network floating-ip port-forwarding list`
+
+Lists floating IP port forwardings that the project has access to.
+
+Default policy settings return only the port forwardings associated to floating IPs owned by the project of the user submitting the request, unless the user has administrative role.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 400, 404
+
+**Usage:** `osc network floating-ip port-forwarding list [OPTIONS] <FLOATINGIP_ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+###### **Options:**
+
+* `--id <ID>` — id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--external-port <EXTERNAL_PORT>` — external_port query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+
+  Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
+
+* `--internal-port-id <INTERNAL_PORT_ID>` — internal_port_id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--external-port-range <EXTERNAL_PORT_RANGE>` — external_port_range query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+
+
+
+## `osc network floating-ip port-forwarding set`
+
+Updates a floating IP port forwarding.
+
+Normal response codes: 200
+
+Error response codes: 400, 404
+
+**Usage:** `osc network floating-ip port-forwarding set [OPTIONS] <FLOATINGIP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
+
+###### **Options:**
+
+* `--external-port <EXTERNAL_PORT>` — The TCP/UDP/other protocol port number of the port forwarding’s floating IP address
+* `--internal-port <INTERNAL_PORT>` — The TCP/UDP/other protocol port number of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--internal-ip-address <INTERNAL_IP_ADDRESS>` — The fixed IPv4 address of the Neutron port associated to the floating IP port forwarding
+* `--protocol <PROTOCOL>` — The IP protocol used in the floating IP port forwarding
+
+  Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
+
+* `--internal-port-id <INTERNAL_PORT_ID>` — The ID of the Neutron port associated to the floating IP port forwarding
+* `--description <DESCRIPTION>`
+* `--external-port-range <EXTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the port forwarding’s floating IP address
+* `--internal-port-range <INTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the Neutron port fixed IP address associated to the floating ip port forwarding
+
+
+
+## `osc network floating-ip port-forwarding show`
+
+Shows information for a floating IP port forwarding.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 400, 404
+
+**Usage:** `osc network floating-ip port-forwarding show <FLOATINGIP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 
 
 
