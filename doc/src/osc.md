@@ -364,6 +364,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network network`↴](#osc-network-network)
 * [`osc network network create`↴](#osc-network-network-create)
 * [`osc network network delete`↴](#osc-network-network-delete)
+* [`osc network network dhcp-agent`↴](#osc-network-network-dhcp-agent)
+* [`osc network network dhcp-agent list`↴](#osc-network-network-dhcp-agent-list)
 * [`osc network network list`↴](#osc-network-network-list)
 * [`osc network network show`↴](#osc-network-network-show)
 * [`osc network network tag`↴](#osc-network-network-tag)
@@ -8673,6 +8675,7 @@ Network commands
 
 * `create` — Create network
 * `delete` — Delete network
+* `dhcp-agent` — DHCP agent scheduler
 * `list` — List networks
 * `show` — Show network details
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
@@ -8744,6 +8747,36 @@ Error response codes: 401, 404, 409, 412
 ###### **Arguments:**
 
 * `<ID>` — network_id parameter for /v2.0/networks/{network_id} API
+
+
+
+## `osc network network dhcp-agent`
+
+DHCP agent scheduler
+
+The DHCP agent scheduler extension (dhcp_agent_scheduler) enables administrators to assign DHCP servers for Neutron networks to given Neutron DHCP agents, and retrieve mappings between Neutron networks and DHCP agents.
+
+**Usage:** `osc network network dhcp-agent <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List DHCP agents hosting a network
+
+
+
+## `osc network network dhcp-agent list`
+
+Lists DHCP agents hosting a network.
+
+Normal response codes: 200
+
+Error response codes: 401, 403
+
+**Usage:** `osc network network dhcp-agent list <NETWORK_ID>`
+
+###### **Arguments:**
+
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
 
 
 
