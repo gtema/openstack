@@ -28,7 +28,7 @@ mod hypervisor;
 mod keypair;
 mod server;
 
-/// Compute service (Nova) arguments
+/// Compute service (Nova) operations
 #[derive(Parser)]
 pub struct ComputeCommand {
     /// Compute service resource

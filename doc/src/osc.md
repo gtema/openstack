@@ -457,10 +457,8 @@ OpenStack client rewritten in Rust
   Possible values:
   - `json`:
     Json output
-  - `yaml`:
-    YAML output
   - `wide`:
-    Wide (Human readable table with extra attributes. Note: this has effect only in list operations)
+    Wide (Human readable table with extra attributes). Note: this has effect only in list operations)
 
 * `-f`, `--fields <FIELDS>` — Fields to return in the output (only in normal and wide mode)
 * `-v`, `--verbose` — Verbosity level. Repeat to increase level
