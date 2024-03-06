@@ -12,44 +12,41 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Router commands
-
+//! Conntrack Helper (CT) module
+//!
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod conntrack_helper;
 mod create;
 mod delete;
-mod l3_agent;
 mod list;
+mod set;
 mod show;
-mod tag;
 
-/// Router commands
+/// Lists, creates, shows details for, updates, and deletes router conntrack helper (CT) target
+/// rules.
 #[derive(Parser)]
-pub struct RouterCommand {
+pub struct ConntrackHelperCommand {
     /// subcommand
     #[command(subcommand)]
-    command: RouterCommands,
+    command: ConntrackHelperCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum RouterCommands {
-    ConntrackHelper(Box<conntrack_helper::ConntrackHelperCommand>),
-    Create(create::RouterCommand),
-    Delete(delete::RouterCommand),
-    L3Agent(l3_agent::L3AgentCommand),
-    List(list::RoutersCommand),
-    Show(show::RouterCommand),
-    Tag(tag::TagCommand),
+pub enum ConntrackHelperCommands {
+    Create(create::ConntrackHelperCommand),
+    Delete(delete::ConntrackHelperCommand),
+    List(list::ConntrackHelpersCommand),
+    Set(set::ConntrackHelperCommand),
+    Show(show::ConntrackHelperCommand),
 }
 
-impl RouterCommand {
+impl ConntrackHelperCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -57,13 +54,11 @@ impl RouterCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            RouterCommands::ConntrackHelper(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::L3Agent(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
-            RouterCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
+            ConntrackHelperCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ConntrackHelperCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ConntrackHelperCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ConntrackHelperCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            ConntrackHelperCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

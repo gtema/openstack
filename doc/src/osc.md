@@ -378,8 +378,16 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network port tag list`↴](#osc-network-port-tag-list)
 * [`osc network port tag purge`↴](#osc-network-port-tag-purge)
 * [`osc network router`↴](#osc-network-router)
+* [`osc network router conntrack-helper`↴](#osc-network-router-conntrack-helper)
+* [`osc network router conntrack-helper create`↴](#osc-network-router-conntrack-helper-create)
+* [`osc network router conntrack-helper delete`↴](#osc-network-router-conntrack-helper-delete)
+* [`osc network router conntrack-helper list`↴](#osc-network-router-conntrack-helper-list)
+* [`osc network router conntrack-helper set`↴](#osc-network-router-conntrack-helper-set)
+* [`osc network router conntrack-helper show`↴](#osc-network-router-conntrack-helper-show)
 * [`osc network router create`↴](#osc-network-router-create)
 * [`osc network router delete`↴](#osc-network-router-delete)
+* [`osc network router l3-agent`↴](#osc-network-router-l3-agent)
+* [`osc network router l3-agent list`↴](#osc-network-router-l3-agent-list)
 * [`osc network router list`↴](#osc-network-router-list)
 * [`osc network router show`↴](#osc-network-router-show)
 * [`osc network router tag`↴](#osc-network-router-tag)
@@ -8962,11 +8970,145 @@ Router commands
 
 ###### **Subcommands:**
 
+* `conntrack-helper` — Lists, creates, shows details for, updates, and deletes router conntrack helper (CT) target rules
 * `create` — Create router
 * `delete` — Delete router
+* `l3-agent` — L3 agent scheduler
 * `list` — List routers
 * `show` — Show router details
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+
+
+## `osc network router conntrack-helper`
+
+Lists, creates, shows details for, updates, and deletes router conntrack helper (CT) target rules
+
+**Usage:** `osc network router conntrack-helper <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create conntrack helper
+* `delete` — Delete a conntrack helper
+* `list` — List router conntrack helpers
+* `set` — Update a conntrack helper
+* `show` — Show conntrack helper
+
+
+
+## `osc network router conntrack-helper create`
+
+Creates a router conntrack helper.
+
+Normal response codes: 201
+
+Error response codes: 400, 404
+
+**Usage:** `osc network router conntrack-helper create [OPTIONS] <ROUTER_ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+###### **Options:**
+
+* `--project-id <PROJECT_ID>`
+* `--protocol <PROTOCOL>` — The network protocol for the netfilter conntrack target rule
+
+  Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
+
+* `--port <PORT>` — The network port for the netfilter conntrack target rule
+* `--helper <HELPER>` — The netfilter conntrack helper module
+
+
+
+## `osc network router conntrack-helper delete`
+
+Deletes a router conntrack helper.
+
+Normal response codes: 204
+
+Error response codes: 404
+
+**Usage:** `osc network router conntrack-helper delete <ROUTER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
+
+
+
+## `osc network router conntrack-helper list`
+
+Lists router conntrack helpers associated with a router.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 400, 404
+
+**Usage:** `osc network router conntrack-helper list [OPTIONS] <ROUTER_ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+###### **Options:**
+
+* `--id <ID>` — id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+* `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+
+  Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
+
+* `--port <PORT>` — port query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+* `--helper <HELPER>` — helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+
+
+
+## `osc network router conntrack-helper set`
+
+Updates a router conntrack helper.
+
+Normal response codes: 200
+
+Error response codes: 400, 404
+
+**Usage:** `osc network router conntrack-helper set [OPTIONS] <ROUTER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
+
+###### **Options:**
+
+* `--protocol <PROTOCOL>` — The network protocol for the netfilter conntrack target rule
+
+  Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
+
+* `--port <PORT>` — The network port for the netfilter conntrack target rule
+* `--helper <HELPER>` — The netfilter conntrack helper module
+
+
+
+## `osc network router conntrack-helper show`
+
+Shows information for a router conntrack helper.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 400, 404
+
+**Usage:** `osc network router conntrack-helper show <ROUTER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 
 
 
@@ -9029,6 +9171,36 @@ Error response codes: 401, 404, 409, 412
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.0/routers/{id} API
+
+
+
+## `osc network router l3-agent`
+
+L3 agent scheduler
+
+The L3 agent scheduler extension (l3_agent_scheduler) allows administrators to assign Neutron routers to Neutron L3 agents, and retrieve mappings between Neutron routers and L3 agents.
+
+**Usage:** `osc network router l3-agent <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List L3 agents hosting a router
+
+
+
+## `osc network router l3-agent list`
+
+Lists l3 agents hosting a specific router.
+
+Normal response codes: 200
+
+Error response codes: 401, 404
+
+**Usage:** `osc network router l3-agent list <ROUTER_ID>`
+
+###### **Arguments:**
+
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
 
 
 
