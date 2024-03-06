@@ -16,6 +16,8 @@
 //!
 //! This module is defined once and symlinked into individual resources. This way code is
 //! de-duplicated while also ensuring the same command interface is being maintained.
+#![allow(clippy::duplicate_mod)]
+
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
