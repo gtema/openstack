@@ -44,33 +44,6 @@ pub enum OsDcfDiskConfig {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Server<'a> {
-    /// The server name.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
-    /// Controls how the API partitions the disk when you create, rebuild, or
-    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
-    /// the image from which it was created, and an image inherits the
-    /// `OS-DCF:diskConfig` value from the server from which it was created. To
-    /// override the inherited setting, you can include this attribute in the
-    /// request body of a server create, rebuild, or resize request. If the
-    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
-    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
-    /// A valid value is:
-    ///
-    /// - `AUTO`. The API builds the server with a single partition the size of
-    ///   the target flavor disk. The API automatically adjusts the file system
-    ///   to fit the entire partition.
-    /// - `MANUAL`. The API builds the server by using whatever partition
-    ///   scheme and file system is in the source image. If the target flavor
-    ///   disk is larger, the API does not partition the remaining disk space.
-    ///
-    #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
-
     /// IPv4 address that should be used to access this server.
     ///
     #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
@@ -108,6 +81,33 @@ pub struct Server<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) hostname: Option<Cow<'a, str>>,
+
+    /// The server name.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    /// Controls how the API partitions the disk when you create, rebuild, or
+    /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
+    /// the image from which it was created, and an image inherits the
+    /// `OS-DCF:diskConfig` value from the server from which it was created. To
+    /// override the inherited setting, you can include this attribute in the
+    /// request body of a server create, rebuild, or resize request. If the
+    /// `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a
+    /// server from that image and set its `OS-DCF:diskConfig` value to `AUTO`.
+    /// A valid value is:
+    ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using whatever partition
+    ///   scheme and file system is in the source image. If the target flavor
+    ///   disk is larger, the API does not partition the remaining disk space.
+    ///
+    #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
 }
 
 #[derive(Builder, Debug, Clone)]

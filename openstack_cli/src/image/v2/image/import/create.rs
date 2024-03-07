@@ -119,14 +119,14 @@ pub struct ImportCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[command(flatten)]
-    method: Option<Method>,
-    #[arg(action=clap::ArgAction::Append, long)]
-    stores: Option<Vec<String>>,
     #[arg(action=clap::ArgAction::Set, long)]
     all_stores: Option<bool>,
     #[arg(action=clap::ArgAction::Set, long)]
     all_stores_must_success: Option<bool>,
+    #[command(flatten)]
+    method: Option<Method>,
+    #[arg(action=clap::ArgAction::Append, long)]
+    stores: Option<Vec<String>>,
 }
 
 /// Query parameters
@@ -145,12 +145,6 @@ struct PathParameters {
 #[derive(Args)]
 struct Method {
     #[arg(long)]
-    name: Option<String>,
-
-    #[arg(long)]
-    uri: Option<String>,
-
-    #[arg(long)]
     glance_image_id: Option<String>,
 
     #[arg(long)]
@@ -158,6 +152,12 @@ struct Method {
 
     #[arg(long)]
     glance_service_interface: Option<String>,
+
+    #[arg(long)]
+    name: Option<String>,
+
+    #[arg(long)]
+    uri: Option<String>,
 }
 
 /// Import response representation
@@ -182,6 +182,16 @@ impl ImportCommand {
         ep_builder.image_id(&self.path.image_id);
         // Set query parameters
         // Set body parameters
+        // Set Request.all_stores data
+        if let Some(args) = &self.all_stores {
+            ep_builder.all_stores(*args);
+        }
+
+        // Set Request.all_stores_must_success data
+        if let Some(args) = &self.all_stores_must_success {
+            ep_builder.all_stores_must_success(*args);
+        }
+
         // Set Request.method data
         if let Some(args) = &self.method {
             let mut method_builder = create::MethodBuilder::default();
@@ -211,16 +221,6 @@ impl ImportCommand {
         // Set Request.stores data
         if let Some(args) = &self.stores {
             ep_builder.stores(args.iter().map(|v| v.into()).collect::<Vec<_>>());
-        }
-
-        // Set Request.all_stores data
-        if let Some(args) = &self.all_stores {
-            ep_builder.all_stores(*args);
-        }
-
-        // Set Request.all_stores_must_success data
-        if let Some(args) = &self.all_stores_must_success {
-            ep_builder.all_stores_must_success(*args);
         }
 
         let ep = ep_builder

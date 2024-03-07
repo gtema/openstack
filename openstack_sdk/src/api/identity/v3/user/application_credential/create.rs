@@ -51,7 +51,7 @@ pub struct Roles<'a> {
 pub struct AccessRules<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) path: Option<Cow<'a, str>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -59,11 +59,11 @@ pub struct AccessRules<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) service: Option<Cow<'a, str>>,
+    pub(crate) path: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) id: Option<Cow<'a, str>>,
+    pub(crate) service: Option<Cow<'a, str>>,
 }
 
 /// An application credential object.
@@ -71,11 +71,11 @@ pub struct AccessRules<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ApplicationCredential<'a> {
-    /// The name of the application credential. Must be unique to a user.
+    /// A list of `access_rules` objects
     ///
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_rules: Option<Vec<AccessRules<'a>>>,
 
     /// A description of the application credential’s purpose.
     ///
@@ -83,19 +83,18 @@ pub struct ApplicationCredential<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The secret that the application credential will be created with. If not
-    /// provided, one will be generated.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) secret: Option<Option<Cow<'a, str>>>,
-
     /// An optional expiry time for the application credential. If unset, the
     /// application credential does not expire.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) expires_at: Option<Option<Cow<'a, str>>>,
+
+    /// The name of the application credential. Must be unique to a user.
+    ///
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
 
     /// An optional list of role objects, identified by ID or name. The list
     /// may only contain roles that the user has assigned on the project. If
@@ -106,6 +105,13 @@ pub struct ApplicationCredential<'a> {
     #[builder(default, setter(into))]
     pub(crate) roles: Option<Vec<Roles<'a>>>,
 
+    /// The secret that the application credential will be created with. If not
+    /// provided, one will be generated.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) secret: Option<Option<Cow<'a, str>>>,
+
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
     /// or trusts. Defaults to false.
@@ -113,12 +119,6 @@ pub struct ApplicationCredential<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) unrestricted: Option<bool>,
-
-    /// A list of `access_rules` objects
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_rules: Option<Vec<AccessRules<'a>>>,
 
     #[builder(setter(name = "_properties"), default, private)]
     #[serde(flatten)]

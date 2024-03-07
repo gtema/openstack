@@ -67,25 +67,25 @@ pub struct FlavorsCommand {
 #[derive(Args)]
 struct QueryParameters {
     #[arg(long)]
+    is_public: Option<String>,
+
+    #[arg(long)]
     limit: Option<i32>,
 
     #[arg(long)]
     marker: Option<String>,
 
     #[arg(long)]
-    is_public: Option<String>,
+    min_disk: Option<String>,
 
     #[arg(long)]
     min_ram: Option<String>,
 
-    #[arg(long)]
-    min_disk: Option<String>,
+    #[arg(long, value_parser = ["asc","desc"])]
+    sort_dir: Option<String>,
 
     #[arg(long, value_parser = ["created_at","description","disabled","ephemeral_gb","flavorid","id","is_public","memory_mb","name","root_gb","rxtx_factor","swap","updated_at","vcpu_weight","vcpus"])]
     sort_key: Option<String>,
-
-    #[arg(long, value_parser = ["asc","desc"])]
-    sort_dir: Option<String>,
 }
 
 /// Path parameters
@@ -94,31 +94,6 @@ struct PathParameters {}
 /// Flavors response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The display name of a flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the flavor. While people often make this look like an int,
-    /// this is really a string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The amount of RAM a flavor has, in MiB.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ram: Option<IntString>,
-
-    /// The number of virtual CPUs that will be allocated to the server.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    vcpus: Option<IntString>,
-
     /// The size of the root disk that will be created in GiB. If 0 the root
     /// disk will be set to exactly the size of the image used to deploy the
     /// instance. However, in this case the scheduler cannot select the compute
@@ -131,6 +106,36 @@ struct ResponseData {
     #[structable(optional, wide)]
     disk: Option<IntString>,
 
+    /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
+    /// only be included if the user is allowed by policy to index flavor
+    /// extra_specs.
+    ///
+    /// **New in version 2.61**
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    extra_specs: Option<Value>,
+
+    /// The ID of the flavor. While people often make this look like an int,
+    /// this is really a string.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The display name of a flavor.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// Whether the flavor is public (available to all projects) or scoped to a
+    /// set of projects. Default is True if not specified.
+    ///
+    #[serde(rename = "os-flavor-access:is_public")]
+    #[structable(optional, title = "os-flavor-access:is_public", wide)]
+    os_flavor_access_is_public: Option<bool>,
+
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
     /// used as a scratch space for applications that are aware of its
@@ -139,6 +144,20 @@ struct ResponseData {
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
     #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral", wide)]
     os_flv_ext_data_ephemeral: Option<IntString>,
+
+    /// The amount of RAM a flavor has, in MiB.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    ram: Option<IntString>,
+
+    /// The receive / transmit factor (as a float) that will be set on ports if
+    /// the network backend supports the QOS extension. Otherwise it will be
+    /// ignored. It defaults to 1.0.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    rxtx_factor: Option<NumString>,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the
@@ -149,30 +168,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     swap: Option<IntString>,
 
-    /// The receive / transmit factor (as a float) that will be set on ports if
-    /// the network backend supports the QOS extension. Otherwise it will be
-    /// ignored. It defaults to 1.0.
+    /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    rxtx_factor: Option<NumString>,
-
-    /// Whether the flavor is public (available to all projects) or scoped to a
-    /// set of projects. Default is True if not specified.
-    ///
-    #[serde(rename = "os-flavor-access:is_public")]
-    #[structable(optional, title = "os-flavor-access:is_public", wide)]
-    os_flavor_access_is_public: Option<bool>,
-
-    /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
-    /// only be included if the user is allowed by policy to index flavor
-    /// extra_specs.
-    ///
-    /// **New in version 2.61**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    extra_specs: Option<Value>,
+    vcpus: Option<IntString>,
 }
 
 impl FlavorsCommand {

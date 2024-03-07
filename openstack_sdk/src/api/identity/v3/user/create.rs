@@ -70,11 +70,15 @@ pub struct Options<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
+    pub(crate) ignore_lockout_failure_attempts: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
     pub(crate) ignore_password_expiry: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) ignore_lockout_failure_attempts: Option<bool>,
+    pub(crate) ignore_user_inactivity: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
@@ -82,15 +86,11 @@ pub struct Options<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) ignore_user_inactivity: Option<bool>,
+    pub(crate) multi_factor_auth_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) multi_factor_auth_rules: Option<Vec<Vec<Cow<'a, str>>>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) multi_factor_auth_enabled: Option<bool>,
 }
 
 /// A `user` object
@@ -148,12 +148,6 @@ pub struct User<'a> {
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
-    /// The new password for the user.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) password: Option<Option<Cow<'a, str>>>,
-
     /// The resource options for the user. Available resource options are
     /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
     /// `ignore_lockout_failure_attempts`, `lock_password`,
@@ -163,6 +157,12 @@ pub struct User<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options<'a>>,
+
+    /// The new password for the user.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) password: Option<Option<Cow<'a, str>>>,
 
     #[builder(setter(name = "_properties"), default, private)]
     #[serde(flatten)]

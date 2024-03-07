@@ -67,6 +67,12 @@ struct PathParameters {}
 /// AvailabilityZone response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// It is always `null`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    hosts: Option<Value>,
+
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
@@ -78,12 +84,6 @@ struct ResponseData {
     #[serde(rename = "zoneState")]
     #[structable(optional, pretty, title = "zoneState")]
     zone_state: Option<Value>,
-
-    /// It is always `null`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

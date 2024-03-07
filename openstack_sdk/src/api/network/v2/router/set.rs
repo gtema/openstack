@@ -53,10 +53,6 @@ pub struct ExternalFixedIps<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ExternalGatewayInfo<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) network_id: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enable_snat: Option<bool>,
@@ -64,6 +60,10 @@ pub struct ExternalGatewayInfo<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_fixed_ips: Option<Vec<ExternalFixedIps<'a>>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) network_id: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -83,18 +83,35 @@ pub struct Routes<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Router<'a> {
-    /// Human-readable name of the resource.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) admin_state_up: Option<bool>,
+
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// `true` indicates a distributed router. It is available when `dvr`
+    /// extension is enabled.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) distributed: Option<Option<bool>>,
+
+    /// Enable NDP proxy attribute. Default is `false`, To persist this
+    /// attribute value, set the `enable_ndp_proxy_by_default` option in the
+    /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
+    /// extension is enabled.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) enable_ndp_proxy: Option<Option<bool>>,
 
     /// The external gateway information of the router. If the router has an
     /// external gateway, this would be a dict with `network_id`,
@@ -112,21 +129,11 @@ pub struct Router<'a> {
     #[builder(default, setter(into))]
     pub(crate) ha: Option<Option<bool>>,
 
-    /// Enable NDP proxy attribute. Default is `false`, To persist this
-    /// attribute value, set the `enable_ndp_proxy_by_default` option in the
-    /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
-    /// extension is enabled.
+    /// Human-readable name of the resource.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) enable_ndp_proxy: Option<Option<bool>>,
-
-    /// `true` indicates a distributed router. It is available when `dvr`
-    /// extension is enabled.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) distributed: Option<Option<bool>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
@@ -135,13 +142,6 @@ pub struct Router<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) routes: Option<Vec<Routes<'a>>>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

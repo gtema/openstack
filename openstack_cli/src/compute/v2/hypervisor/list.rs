@@ -71,13 +71,13 @@ pub struct HypervisorsCommand {
 #[derive(Args)]
 struct QueryParameters {
     #[arg(long)]
+    hypervisor_hostname_pattern: Option<String>,
+
+    #[arg(long)]
     limit: Option<i32>,
 
     #[arg(long)]
     marker: Option<String>,
-
-    #[arg(long)]
-    hypervisor_hostname_pattern: Option<String>,
 
     #[arg(action=clap::ArgAction::Set, long)]
     with_servers: Option<bool>,
@@ -126,12 +126,6 @@ struct ResponseData {
     #[structable(optional, wide)]
     disk_available_least: Option<i32>,
 
-    /// The IP address of the hypervisor’s host.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    host_ip: Option<String>,
-
     /// The free disk remaining on this hypervisor(in GiB). This does not take
     /// allocation ratios used for overcommit into account so this value may be
     /// negative.
@@ -151,6 +145,12 @@ struct ResponseData {
     #[structable(optional, wide)]
     free_ram_mb: Option<i32>,
 
+    /// The IP address of the hypervisor’s host.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    host_ip: Option<String>,
+
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
     ///
@@ -169,6 +169,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     hypervisor_version: Option<i32>,
+
+    /// The id of the hypervisor. From version 2.53 it is a string as UUID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// The disk in this hypervisor (in GiB). This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -214,11 +220,33 @@ struct ResponseData {
     #[structable(optional, wide)]
     running_vms: Option<i32>,
 
+    /// A list of `server` objects. This field has become mandatory in
+    /// microversion 2.75. If no servers is on hypervisor then empty list is
+    /// returned.
+    ///
+    /// **New in version 2.53**
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    servers: Option<Value>,
+
     /// The hypervisor service object.
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
     service: Option<Value>,
+
+    /// The state of the hypervisor. One of `up` or `down`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    state: Option<String>,
+
+    /// The status of the hypervisor. One of `enabled` or `disabled`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
 
     /// The total uptime of the hypervisor and information about average load.
     /// Only reported for active hosts where the virt driver supports this
@@ -247,46 +275,25 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     vcpus_used: Option<i32>,
-
-    /// The id of the hypervisor. From version 2.53 it is a string as UUID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The state of the hypervisor. One of `up` or `down`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    state: Option<String>,
-
-    /// The status of the hypervisor. One of `enabled` or `disabled`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// A list of `server` objects. This field has become mandatory in
-    /// microversion 2.75. If no servers is on hypervisor then empty list is
-    /// returned.
-    ///
-    /// **New in version 2.53**
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    servers: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseService {
+    disabled_reason: Option<String>,
     host: Option<String>,
     id: Option<IntString>,
-    disabled_reason: Option<String>,
 }
 
 impl fmt::Display for ResponseService {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
+            format!(
+                "disabled_reason={}",
+                self.disabled_reason
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
             format!(
                 "host={}",
                 self.host
@@ -297,13 +304,6 @@ impl fmt::Display for ResponseService {
             format!(
                 "id={}",
                 self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "disabled_reason={}",
-                self.disabled_reason
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())

@@ -445,7 +445,7 @@ OpenStack client rewritten in Rust
 * `auth` — Cloud Authentication operations
 * `block-storage` — Block Storage (Volume) service (Cinder) commands
 * `catalog` — Catalog commands args
-* `compute` — Compute service (Nova) arguments
+* `compute` — Compute service (Nova) operations
 * `identity` — Identity (Keystone) commands
 * `image` — Image service operations
 * `network` — Network (Neutron) commands
@@ -600,26 +600,26 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--name <NAME>` — The volume name
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
-* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
-* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
-* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--os-sch-hnt-scheduler-hints <key=value>`
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--backup-id <BACKUP_ID>` — The UUID of the backup
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--description <DESCRIPTION>` — The volume description
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--group-id <GROUP_ID>`
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
 
   Possible values: `true`, `false`
 
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
-* `--group-id <GROUP_ID>`
-* `--backup-id <BACKUP_ID>` — The UUID of the backup
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--name <NAME>` — The volume name
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 
 
 
@@ -633,26 +633,26 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--name <NAME>` — The volume name
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
-* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
-* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
-* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--os-sch-hnt-scheduler-hints <key=value>`
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--backup-id <BACKUP_ID>` — The UUID of the backup
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--description <DESCRIPTION>` — The volume description
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--group-id <GROUP_ID>`
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
 
   Possible values: `true`, `false`
 
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
-* `--group-id <GROUP_ID>`
-* `--backup-id <BACKUP_ID>` — The UUID of the backup
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--name <NAME>` — The volume name
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 
 
 
@@ -666,25 +666,25 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--name <NAME>` — The volume name
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
-* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
-* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
-* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--os-sch-hnt-scheduler-hints <key=value>`
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--description <DESCRIPTION>` — The volume description
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--group-id <GROUP_ID>`
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
 
   Possible values: `true`, `false`
 
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
-* `--group-id <GROUP_ID>`
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--name <NAME>` — The volume name
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 
 
 
@@ -698,24 +698,24 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--name <NAME>` — The volume name
-* `--description <DESCRIPTION>` — The volume description
-* `--display-name <DISPLAY_NAME>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
-* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
-* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
-* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
-* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--os-sch-hnt-scheduler-hints <key=value>`
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
+* `--description <DESCRIPTION>` — The volume description
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--image-id <IMAGE_ID>`
+* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
+* `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
 * `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
 
   Possible values: `true`, `false`
 
-* `--image-id <IMAGE_ID>`
-* `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--name <NAME>` — The volume name
+* `--size <SIZE>` — The size of the volume, in gibibytes (GiB)
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the consistency group
+* `--source-volid <SOURCE_VOLID>` — The UUID of the consistency group
+* `--volume-type <VOLUME_TYPE>` — The volume type (either name or ID). To create an environment with multiple-storage back ends, you must specify a volume type. Block Storage volume back ends are spawned as children to `cinder- volume`, and they are keyed from a unique queue. They are named `cinder- volume.HOST.BACKEND`. For example, `cinder- volume.ubuntu.lvmdriver`. When a volume is created, the scheduler chooses an appropriate back end to handle the request based on the volume type. Default is `None`. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
 
 
 
@@ -759,22 +759,22 @@ Returns a detailed list of volumes
 
   Possible values: `true`, `false`
 
-* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
-* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
-* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
-
-  Possible values: `asc`, `desc`
-
-* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
-* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
-* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
-* `--with-count <WITH_COUNT>` — Whether to show count in API response or not, default is False
+* `--consumes-quota <CONSUMES_QUOTA>` — Filters results by consumes_quota field. Resources that don’t use quotas are usually temporary internal resources created to perform an operation. Default is to not filter by it. Filtering by this option may not be always possible in a cloud, see List Resource Filters to determine whether this filter is available in your cloud
 
   Possible values: `true`, `false`
 
 * `--created-at <CREATED_AT>` — Filters reuslts by a time that resources are created at with time comparison operators: gt/gte/eq/neq/lt/lte
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
 * `--updated-at <UPDATED_AT>` — Filters reuslts by a time that resources are updated at with time comparison operators: gt/gte/eq/neq/lt/lte
-* `--consumes-quota <CONSUMES_QUOTA>` — Filters results by consumes_quota field. Resources that don’t use quotas are usually temporary internal resources created to perform an operation. Default is to not filter by it. Filtering by this option may not be always possible in a cloud, see List Resource Filters to determine whether this filter is available in your cloud
+* `--with-count <WITH_COUNT>` — Whether to show count in API response or not, default is False
 
   Possible values: `true`, `false`
 
@@ -902,11 +902,11 @@ Update a volume
 
 ###### **Options:**
 
-* `--name <NAME>`
 * `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
 * `--metadata <key=value>`
+* `--name <NAME>`
 
 
 
@@ -922,11 +922,11 @@ Update a volume
 
 ###### **Options:**
 
-* `--name <NAME>`
 * `--description <DESCRIPTION>`
-* `--display-name <DISPLAY_NAME>`
 * `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
 * `--metadata <key=value>`
+* `--name <NAME>`
 
 
 
@@ -993,9 +993,9 @@ Command without description in OpenAPI
 
 ###### **Options:**
 
-* `--name <NAME>`
 * `--description <DESCRIPTION>`
 * `--extra-specs <key=value>`
+* `--name <NAME>`
 * `--os-volume-type-access-is-public <OS_VOLUME_TYPE_ACCESS_IS_PUBLIC>`
 
   Possible values: `true`, `false`
@@ -1138,12 +1138,12 @@ Command without description in OpenAPI
 
 ###### **Options:**
 
-* `--name <NAME>`
 * `--description <DESCRIPTION>`
 * `--is-public <IS_PUBLIC>`
 
   Possible values: `true`, `false`
 
+* `--name <NAME>`
 
 
 
@@ -1181,7 +1181,7 @@ Shows current catalog information
 
 ## `osc compute`
 
-Compute service (Nova) arguments
+Compute service (Nova) operations
 
 **Usage:** `osc compute <COMMAND>`
 
@@ -1247,8 +1247,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
 
 ###### **Options:**
 
-* `--name <NAME>` — The name of the host aggregate
 * `--availability-zone <AVAILABILITY_ZONE>` — The availability zone of the host aggregate. You should use a custom availability zone rather than the default returned by the os-availability-zone API. The availability zone must not include ‘:’ in its name
+* `--name <NAME>` — The name of the host aggregate
 
 
 
@@ -1350,8 +1350,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--name <NAME>` — The name of the host aggregate
 * `--availability-zone <AVAILABILITY_ZONE>` — The availability zone of the host aggregate. You should use a custom availability zone rather than the default returned by the os-availability-zone API. The availability zone must not include ‘:’ in its name
+* `--name <NAME>` — The name of the host aggregate
 
 
 
@@ -1528,23 +1528,23 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
-**Usage:** `osc compute flavor create255 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+**Usage:** `osc compute flavor create255 [OPTIONS] --disk <DISK> --name <NAME> --ram <RAM> --vcpus <VCPUS>`
 
 ###### **Options:**
 
-* `--name <NAME>` — The display name of a flavor
-* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
-* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
-* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
+* `--description <DESCRIPTION>` — A free form description of the flavor. Limited to 65535 characters in length. Only printable characters are allowed
 * `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--name <NAME>` — The display name of a flavor
 * `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
 
   Possible values: `true`, `false`
 
-* `--description <DESCRIPTION>` — A free form description of the flavor. Limited to 65535 characters in length. Only printable characters are allowed
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
 
 
 
@@ -1558,22 +1558,22 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
-**Usage:** `osc compute flavor create21 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+**Usage:** `osc compute flavor create21 [OPTIONS] --disk <DISK> --name <NAME> --ram <RAM> --vcpus <VCPUS>`
 
 ###### **Options:**
 
-* `--name <NAME>` — The display name of a flavor
-* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
-* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
-* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
 * `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--name <NAME>` — The display name of a flavor
 * `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
 
   Possible values: `true`, `false`
 
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
 
 
 
@@ -1587,22 +1587,22 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
-**Usage:** `osc compute flavor create20 [OPTIONS] --name <NAME> --ram <RAM> --vcpus <VCPUS> --disk <DISK>`
+**Usage:** `osc compute flavor create20 [OPTIONS] --disk <DISK> --name <NAME> --ram <RAM> --vcpus <VCPUS>`
 
 ###### **Options:**
 
-* `--name <NAME>` — The display name of a flavor
-* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
-* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
-* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
 * `--disk <DISK>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
-* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--id <ID>` — Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces and dots ‘.’ are permitted. If an ID is not provided, then a default UUID will be assigned
+* `--name <NAME>` — The display name of a flavor
 * `--os-flavor-access-is-public <OS_FLAVOR_ACCESS_IS_PUBLIC>` — Whether the flavor is public (available to all projects) or scoped to a set of projects. Default is True if not specified
 
   Possible values: `true`, `false`
 
+* `--os-flv-ext-data-ephemeral <OS_FLV_EXT_DATA_EPHEMERAL>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--ram <RAM>` — The number of virtual CPUs that will be allocated to the server
+* `--rxtx-factor <RXTX_FACTOR>` — The receive / transmit factor (as a float) that will be set on ports if the network backend supports the QOS extension. Otherwise it will be ignored. It defaults to 1.0
+* `--swap <SWAP>` — The size of a dedicated swap disk that will be allocated, in MiB. If 0 (the default), no dedicated swap disk will be created
+* `--vcpus <VCPUS>` — The number of virtual CPUs that will be allocated to the server
 
 
 
@@ -1725,18 +1725,18 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
 ###### **Options:**
 
+* `--is-public <IS_PUBLIC>`
 * `--limit <LIMIT>`
 * `--marker <MARKER>`
-* `--is-public <IS_PUBLIC>`
-* `--min-ram <MIN_RAM>`
 * `--min-disk <MIN_DISK>`
-* `--sort-key <SORT_KEY>`
-
-  Possible values: `created_at`, `description`, `disabled`, `ephemeral_gb`, `flavorid`, `id`, `is_public`, `memory_mb`, `name`, `root_gb`, `rxtx_factor`, `swap`, `updated_at`, `vcpu_weight`, `vcpus`
-
+* `--min-ram <MIN_RAM>`
 * `--sort-dir <SORT_DIR>`
 
   Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>`
+
+  Possible values: `created_at`, `description`, `disabled`, `ephemeral_gb`, `flavorid`, `id`, `is_public`, `memory_mb`, `name`, `root_gb`, `rxtx_factor`, `swap`, `updated_at`, `vcpu_weight`, `vcpus`
 
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
@@ -1811,9 +1811,9 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
 ###### **Options:**
 
+* `--hypervisor-hostname-pattern <HYPERVISOR_HOSTNAME_PATTERN>`
 * `--limit <LIMIT>`
 * `--marker <MARKER>`
-* `--hypervisor-hostname-pattern <HYPERVISOR_HOSTNAME_PATTERN>`
 * `--with-servers <WITH_SERVERS>`
 
   Possible values: `true`, `false`
@@ -1883,11 +1883,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
 ###### **Options:**
 
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
   Possible values: `ssh`, `x509`
 
-* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--user-id <USER_ID>` — The user_id for a keypair. This allows administrative users to upload keys for other users than themselves
 
 
@@ -1905,11 +1905,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
 ###### **Options:**
 
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
   Possible values: `ssh`, `x509`
 
-* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--user-id <USER_ID>` — The user_id for a keypair. This allows administrative users to upload keys for other users than themselves
 
 
@@ -1927,11 +1927,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), confli
 ###### **Options:**
 
 * `--name <NAME>` — A name for the keypair which will be used to reference it later
+* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 * `--type <TYPE>` — The type of the keypair. Allowed values are `ssh` or `x509`
 
   Possible values: `ssh`, `x509`
 
-* `--public-key <PUBLIC_KEY>` — The public ssh key to import. Was optional before microversion 2.92 : if you were omitting this value, a keypair was generated for you
 
 
 
@@ -2001,9 +2001,9 @@ Error response codes: unauthorized(401), forbidden(403)
 
 ###### **Options:**
 
-* `--user-id <USER_ID>`
 * `--limit <LIMIT>`
 * `--marker <MARKER>`
+* `--user-id <USER_ID>`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -2290,15 +2290,39 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create294 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create294 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2312,38 +2336,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
-* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
-* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
-* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2373,15 +2373,39 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create290 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create290 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2395,38 +2419,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
-* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
-* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
-* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2456,15 +2456,38 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create274 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create274 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2478,37 +2501,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
-* `--host <HOST>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
-* `--hypervisor-hostname <HYPERVISOR_HOSTNAME>` — The hostname of the hypervisor on which the server is to be created. The API will return 400 if no hypervisors are found with the given hostname. By default, it can be specified by administrators only
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2538,15 +2538,36 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create267 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create267 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2560,35 +2581,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2618,15 +2618,36 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create263 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create263 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2640,35 +2661,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server create requests if allowed by policy, and is not supported for volume-backed instances
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2698,15 +2698,36 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create257 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create257 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2720,34 +2741,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2777,15 +2777,36 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create252 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create252 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2799,35 +2820,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--tags <TAGS>` — A list of tags. Tags have the following restrictions:
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
 
 
 
@@ -2857,15 +2857,36 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create242 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create242 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2879,34 +2900,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -2936,15 +2936,36 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create237 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF> <--auto-networks|--networks <JSON>|--none-networks>`
+**Usage:** `osc compute server create237 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME> <--auto-networks|--networks <JSON>|--none-networks>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--block-device-mapping <JSON>`
+* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
+* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
+* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--max-count <MAX_COUNT>`
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--auto-networks`
 
   Possible values: `true`, `false`
@@ -2958,34 +2979,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
-* `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--block-device-mapping <JSON>`
-* `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
-* `--config-drive <CONFIG_DRIVE>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
-
-  Possible values: `true`, `false`
-
-* `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
-* `--max-count <MAX_COUNT>`
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3015,23 +3015,21 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create233 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+**Usage:** `osc compute server create233 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
-* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
-* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
-* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
-
-  Possible values: `auto`, `manual`
-
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
@@ -3039,24 +3037,26 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `true`, `false`
 
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3086,23 +3086,21 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create232 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+**Usage:** `osc compute server create232 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
-* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
-* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
-* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
-
-  Possible values: `auto`, `manual`
-
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
@@ -3110,24 +3108,26 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `true`, `false`
 
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3157,23 +3157,21 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create219 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+**Usage:** `osc compute server create219 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
-* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
-* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
-* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
-
-  Possible values: `auto`, `manual`
-
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
@@ -3181,24 +3179,26 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `true`, `false`
 
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3228,23 +3228,21 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server create21 [OPTIONS] --name <NAME> --flavor-ref <FLAVOR_REF>`
+**Usage:** `osc compute server create21 [OPTIONS] --flavor-ref <FLAVOR_REF> --name <NAME>`
 
 ###### **Options:**
 
-* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
-* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
-* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
-* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
-* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
-
-  Possible values: `auto`, `manual`
-
+* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
+* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
+* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
+* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
+* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
+* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
+* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
 * `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
 * `--availability-zone <AVAILABILITY_ZONE>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
 * `--block-device-mapping <JSON>`
 * `--block-device-mapping-v2 <JSON>` — Enables fine grained control of the block device mapping for an instance. This is typically used for booting servers from volumes. An example format would look as follows:
@@ -3252,23 +3250,25 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
   Possible values: `true`, `false`
 
+* `--flavor-ref <FLAVOR_REF>` — The flavor reference, as an ID (including a UUID) or full URL, for the flavor for your server instance
+* `--image-ref <IMAGE_REF>` — The UUID of the image to use for your server instance. This is not required in case of boot from volume. In all other cases it is required and must be a valid UUID otherwise API will return 400
 * `--key-name <KEY_NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--min-count <MIN_COUNT>`
 * `--max-count <MAX_COUNT>`
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--min-count <MIN_COUNT>`
+* `--name <NAME>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
+* `--networks <JSON>` — A list of `network` object. Required parameter when there are multiple networks defined for the tenant. When you do not specify the networks parameter, the server attaches to the only network created for the current tenant. Optionally, you can create one or more NICs on the server. To provision the server instance with a NIC for a network, specify the UUID of the network in the `uuid` attribute in a `networks` object. To provision the server instance with a NIC for an already existing port, specify the port-id in the `port` attribute in a `networks` object
+* `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
+
+  Possible values: `auto`, `manual`
+
+* `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
 * `--return-reservation-id <RETURN_RESERVATION_ID>` — Indicates whether a config drive enables metadata injection. The config_drive setting provides information about a drive that the instance can mount at boot time. The instance reads files from the drive to get information that is normally available through the metadata service. This metadata is different from the user data. Not all cloud providers enable the `config_drive`. Read more in the [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html)
 
   Possible values: `true`, `false`
 
 * `--security-groups <SECURITY_GROUPS>` — One or more security groups. Specify the name of the security group in the `name` attribute. If you omit this attribute, the API creates the server in the `default` security group. Requested security groups are not applied to pre-existing ports
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon launch. Must be Base64 encoded. Restricted to 65535 bytes
-* `--group <GROUP>` — The server group UUID. Schedule the server according to a policy of the server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or `soft-affinity`). It is available when `ServerGroupAffinityFilter`, `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`, `ServerGroupSoftAffinityWeigher` are available on cloud side
-* `--different-host <DIFFERENT_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on a different host from a set of servers. It is available when `DifferentHostFilter` is available on cloud side
-* `--same-host <SAME_HOST>` — A list of server UUIDs or a server UUID. Schedule the server on the same host as another server in a set of servers. It is available when `SameHostFilter` is available on cloud side
-* `--query <JSON>` — Schedule the server by using a custom filter in JSON format. For example:
-* `--target-cell <TARGET_CELL>` — A target cell name. Schedule the server in a host in the cell specified. It is available when `TargetCellFilter` is available on cloud side that is cell v1 environment
-* `--different-cell <DIFFERENT_CELL>` — A list of cell routes or a cell route (string). Schedule the server in a cell that is not specified. It is available when `DifferentCellFilter` is available on cloud side that is cell v1 environment
-* `--build-near-host-ip <BUILD_NEAR_HOST_IP>` — Schedule the server on a host in the network specified with this parameter and a cidr (`os:scheduler_hints.cidr`). It is available when `SimpleCIDRAffinityFilter` is available on cloud side
-* `--cidr <CIDR>` — Schedule the server on a host in the network specified with an IP address (`os:scheduler_hints:build_near_host_ip`) and this parameter. If `os:scheduler_hints:build_near_host_ip` is specified and this parameter is omitted, `/24` is used. It is available when `SimpleCIDRAffinityFilter` is available on cloud side
 
 
 
@@ -3276,7 +3276,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 Create Server Back Up (createBackup Action) (microversion = 2.1)
 
-**Usage:** `osc compute server create-backup [OPTIONS] --name <NAME> --backup-type <BACKUP_TYPE> --rotation <ROTATION> <ID>`
+**Usage:** `osc compute server create-backup [OPTIONS] --backup-type <BACKUP_TYPE> --name <NAME> --rotation <ROTATION> <ID>`
 
 ###### **Arguments:**
 
@@ -3284,10 +3284,10 @@ Create Server Back Up (createBackup Action) (microversion = 2.1)
 
 ###### **Options:**
 
-* `--name <NAME>` — The name of the image to be backed up
 * `--backup-type <BACKUP_TYPE>` — The type of the backup, for example, `daily`
-* `--rotation <ROTATION>` — The rotation of the back up image, the oldest image will be removed when image count exceed the rotation count
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
+* `--name <NAME>` — The name of the image to be backed up
+* `--rotation <ROTATION>` — The rotation of the back up image, the oldest image will be removed when image count exceed the rotation count
 
 
 
@@ -3303,8 +3303,8 @@ Create Image (createImage Action) (microversion = 2.1)
 
 ###### **Options:**
 
-* `--name <NAME>` — The display name of an Image
 * `--metadata <key=value>` — Metadata key and value pairs for the image. The maximum size for each metadata key and value pair is 255 bytes
+* `--name <NAME>` — The display name of an Image
 
 
 
@@ -3362,8 +3362,8 @@ Evacuate Server (evacuate Action) (microversion = 2.14)
 
 ###### **Options:**
 
-* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 * `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 
 
 
@@ -3379,12 +3379,12 @@ Evacuate Server (evacuate Action) (microversion = 2.29)
 
 ###### **Options:**
 
-* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 * `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
 * `--force <FORCE>` — Force an evacuation by not verifying the provided destination host by the scheduler
 
   Possible values: `true`, `false`
 
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 
 
 
@@ -3400,8 +3400,8 @@ Evacuate Server (evacuate Action) (microversion = 2.68)
 
 ###### **Options:**
 
-* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 * `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 
 
 
@@ -3417,8 +3417,8 @@ Evacuate Server (evacuate Action) (microversion = 2.95)
 
 ###### **Options:**
 
-* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 * `--admin-pass <ADMIN_PASS>` — An administrative password to access the evacuated server. If you omit this parameter, the operation generates a new password. Up to API version 2.13, if `onSharedStorage` is set to `True` and this parameter is specified, an error is raised
+* `--host <HOST>` — The name or ID of the host to which the server is evacuated. If you omit this parameter, the scheduler chooses a host
 
 
 
@@ -3501,10 +3501,10 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
+* `--changes-before <CHANGES_BEFORE>`
+* `--changes-since <CHANGES_SINCE>`
 * `--limit <LIMIT>`
 * `--marker <MARKER>`
-* `--changes-since <CHANGES_SINCE>`
-* `--changes-before <CHANGES_BEFORE>`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -3565,9 +3565,9 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
+* `--fixed-ips <FIXED_IPS>` — Fixed IP addresses. If you request a specific fixed IP address without a `net_id`, the request returns a `Bad Request (400)` response code
 * `--net-id <NET_ID>` — The ID of the network for which you want to create a port interface. The `net_id` and `port_id` parameters are mutually exclusive. If you do not specify the `net_id` parameter, the OpenStack Networking API v2.0 uses the network information cache that is associated with the instance
 * `--port-id <PORT_ID>` — The ID of the port for which you want to create an interface. The `net_id` and `port_id` parameters are mutually exclusive. If you do not specify the `port_id` parameter, the OpenStack Networking API v2.0 allocates a port and creates an interface for it on the network
-* `--fixed-ips <FIXED_IPS>` — Fixed IP addresses. If you request a specific fixed IP address without a `net_id`, the request returns a `Bad Request (400)` response code
 * `--tag <TAG>` — A device role tag that can be applied to a network interface when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
 
 
@@ -3712,66 +3712,66 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
 ###### **Options:**
 
-* `--user-id <USER_ID>`
-* `--project-id <PROJECT_ID>`
-* `--tenant-id <TENANT_ID>`
-* `--launch-index <LAUNCH_INDEX>`
-* `--image-ref <IMAGE_REF>`
-* `--image <IMAGE>`
-* `--kernel-id <KERNEL_ID>`
-* `--ramdisk-id <RAMDISK_ID>`
-* `--hostname <HOSTNAME>`
-* `--key-name <KEY_NAME>`
-* `--power-state <POWER_STATE>`
-* `--vm-state <VM_STATE>`
-* `--task-state <TASK_STATE>`
-* `--host <HOST>`
-* `--node <NODE>`
-* `--flavor <FLAVOR>`
-* `--reservation-id <RESERVATION_ID>`
-* `--launched-at <LAUNCHED_AT>`
-* `--terminated-at <TERMINATED_AT>`
-* `--availability-zone <AVAILABILITY_ZONE>`
-* `--name <NAME>`
-* `--display-name <DISPLAY_NAME>`
-* `--description <DESCRIPTION>`
-* `--display-description <DISPLAY_DESCRIPTION>`
-* `--locked-by <LOCKED_BY>`
-* `--uuid <UUID>`
-* `--root-device-name <ROOT_DEVICE_NAME>`
-* `--config-drive <CONFIG_DRIVE>`
 * `--access-ip-v4 <ACCESS_IP_V4>`
 * `--access-ip-v6 <ACCESS_IP_V6>`
+* `--all-tenants <ALL_TENANTS>`
 * `--auto-disk-config <AUTO_DISK_CONFIG>`
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--block-device-mapping <BLOCK_DEVICE_MAPPING>`
+* `--changes-before <CHANGES_BEFORE>`
+* `--changes-since <CHANGES_SINCE>`
+* `--config-drive <CONFIG_DRIVE>`
+* `--created-at <CREATED_AT>`
+* `--deleted <DELETED>`
+* `--description <DESCRIPTION>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--flavor <FLAVOR>`
+* `--host <HOST>`
+* `--hostname <HOSTNAME>`
+* `--image <IMAGE>`
+* `--image-ref <IMAGE_REF>`
+* `--info-cache <INFO_CACHE>`
+* `--ip <IP>`
+* `--ip6 <IP6>`
+* `--kernel-id <KERNEL_ID>`
+* `--key-name <KEY_NAME>`
+* `--launch-index <LAUNCH_INDEX>`
+* `--launched-at <LAUNCHED_AT>`
+* `--limit <LIMIT>`
+* `--locked <LOCKED>`
+* `--locked-by <LOCKED_BY>`
+* `--marker <MARKER>`
+* `--metadata <METADATA>`
+* `--name <NAME>`
+* `--node <NODE>`
+* `--not-tags <NOT_TAGS>`
+* `--not-tags-any <NOT_TAGS_ANY>`
+* `--pci-devices <PCI_DEVICES>`
+* `--power-state <POWER_STATE>`
 * `--progress <PROGRESS>`
+* `--project-id <PROJECT_ID>`
+* `--ramdisk-id <RAMDISK_ID>`
+* `--reservation-id <RESERVATION_ID>`
+* `--root-device-name <ROOT_DEVICE_NAME>`
+* `--security-groups <SECURITY_GROUPS>`
+* `--services <SERVICES>`
+* `--soft-deleted <SOFT_DELETED>`
+* `--sort-dir <SORT_DIR>`
 * `--sort-key <SORT_KEY>`
 
   Possible values: `access_ip_v4`, `access_ip_v6`, `auto_disk_config`, `availability_zone`, `config_drive`, `created_at`, `display_description`, `display_name`, `host`, `hostname`, `image_ref`, `instance_type_id`, `kernel_id`, `key_name`, `launch_index`, `launched_at`, `locked`, `locked_by`, `node`, `power_state`, `progress`, `project_id`, `ramdisk_id`, `root_device_name`, `task_state`, `terminated_at`, `updated_at`, `user_id`, `uuid`, `vm_state`
 
-* `--sort-dir <SORT_DIR>`
-* `--all-tenants <ALL_TENANTS>`
-* `--soft-deleted <SOFT_DELETED>`
-* `--deleted <DELETED>`
 * `--status <STATUS>`
-* `--changes-since <CHANGES_SINCE>`
-* `--ip <IP>`
-* `--ip6 <IP6>`
-* `--created-at <CREATED_AT>`
-* `--block-device-mapping <BLOCK_DEVICE_MAPPING>`
-* `--services <SERVICES>`
-* `--metadata <METADATA>`
 * `--system-metadata <SYSTEM_METADATA>`
-* `--info-cache <INFO_CACHE>`
-* `--security-groups <SECURITY_GROUPS>`
-* `--pci-devices <PCI_DEVICES>`
-* `--limit <LIMIT>`
-* `--marker <MARKER>`
 * `--tags <TAGS>`
 * `--tags-any <TAGS_ANY>`
-* `--not-tags <NOT_TAGS>`
-* `--not-tags-any <NOT_TAGS_ANY>`
-* `--changes-before <CHANGES_BEFORE>`
-* `--locked <LOCKED>`
+* `--task-state <TASK_STATE>`
+* `--tenant-id <TENANT_ID>`
+* `--terminated-at <TERMINATED_AT>`
+* `--user-id <USER_ID>`
+* `--uuid <UUID>`
+* `--vm-state <VM_STATE>`
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -3838,11 +3838,11 @@ Live-Migrate Server (os-migrateLive Action) (microversion = 2.30)
 
   Possible values: `true`, `false`
 
-* `--host <HOST>` — The host to which to migrate the server. If this parameter is `None`, the scheduler chooses a host
 * `--force <FORCE>` — Force a live-migration by not verifying the provided destination host by the scheduler
 
   Possible values: `true`, `false`
 
+* `--host <HOST>` — The host to which to migrate the server. If this parameter is `None`, the scheduler chooses a host
 
 
 
@@ -4355,21 +4355,21 @@ Rebuild Server (rebuild Action) (microversion = 2.1)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 
 
 
@@ -4385,22 +4385,22 @@ Rebuild Server (rebuild Action) (microversion = 2.19)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 
 
 
@@ -4416,23 +4416,23 @@ Rebuild Server (rebuild Action) (microversion = 2.54)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--personality <JSON>` — The file path and contents, text only, to inject into the server at launch. The maximum size of the file path data is 255 bytes. The maximum limit is the number of allowed bytes in the decoded, rather than encoded, data
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 
 
 
@@ -4448,22 +4448,22 @@ Rebuild Server (rebuild Action) (microversion = 2.57)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 * `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 
 
@@ -4480,24 +4480,24 @@ Rebuild Server (rebuild Action) (microversion = 2.63)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 
 
 
@@ -4513,25 +4513,25 @@ Rebuild Server (rebuild Action) (microversion = 2.90)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
-* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 
 
 
@@ -4547,25 +4547,25 @@ Rebuild Server (rebuild Action) (microversion = 2.94)
 
 ###### **Options:**
 
-* `--name <NAME>` — The server name
-* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--admin-pass <ADMIN_PASS>` — The administrative password of the server. If you omit this parameter, the operation generates a new password
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--image-ref <IMAGE_REF>` — The UUID of the image to rebuild for your server instance. It must be a valid UUID otherwise API will return 400. To rebuild a volume-backed server with a new image, at least microversion 2.93 needs to be provided in the request else the request will fall back to old behaviour i.e. the API will return 400 (for an image different from the image used when creating the volume). For non-volume-backed servers, specifying a new image will result in validating that the image is acceptable for the current compute host on which the server exists. If the new image is not valid, the server will go into `ERROR` status
+* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
 * `--metadata <key=value>` — Metadata key and value pairs. The maximum size of the metadata key and value is 255 bytes each
-* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
-
-  Possible values: `true`, `false`
-
+* `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--key-name <KEY_NAME>` — Key pair name for rebuild API. If `null` is specified, the existing keypair is unset
-* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
+* `--preserve-ephemeral <PRESERVE_EPHEMERAL>` — Indicates whether the server is rebuilt with the preservation of the ephemeral partition (`true`)
+
+  Possible values: `true`, `false`
+
 * `--trusted-image-certificates <TRUSTED_IMAGE_CERTIFICATES>` — A list of trusted certificate IDs, which are used during image signature verification to verify the signing certificate. The list is restricted to a maximum of 50 IDs. This parameter is optional in server rebuild requests if allowed by policy, and is not supported for volume-backed instances
-* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
+* `--user-data <USER_DATA>` — Configuration information or scripts to use upon rebuild. Must be Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the existing user_data is unset
 
 
 
@@ -4895,13 +4895,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 * `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
 
 
 
@@ -4921,14 +4921,14 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 * `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
 
 
 
@@ -4948,15 +4948,15 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 * `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 
 
 
@@ -4976,15 +4976,15 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
+* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
+* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
+* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
+* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 * `--name <NAME>` — The server name
 * `--os-dcf-disk-config <OS_DCF_DISK_CONFIG>` — Controls how the API partitions the disk when you create, rebuild, or resize servers. A server inherits the `OS-DCF:diskConfig` value from the image from which it was created, and an image inherits the `OS-DCF:diskConfig` value from the server from which it was created. To override the inherited setting, you can include this attribute in the request body of a server create, rebuild, or resize request. If the `OS-DCF:diskConfig` value for an image is `MANUAL`, you cannot create a server from that image and set its `OS-DCF:diskConfig` value to `AUTO`. A valid value is:
 
   Possible values: `auto`, `manual`
 
-* `--access-ipv4 <ACCESS_IPV4>` — IPv4 address that should be used to access this server
-* `--access-ipv6 <ACCESS_IPV6>` — IPv6 address that should be used to access this server
-* `--description <DESCRIPTION>` — A free form description of the server. Limited to 255 characters in length. Before microversion 2.19 this was set to the server name
-* `--hostname <HOSTNAME>` — The hostname to configure for the instance in the metadata service
 
 
 
@@ -5476,8 +5476,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
 * `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
 
 
 
@@ -5497,9 +5497,9 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
 * `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
 * `--tag <TAG>` — A device role tag that can be applied to a volume when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
 
 
 
@@ -5519,13 +5519,13 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
-* `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
-* `--tag <TAG>` — A device role tag that can be applied to a volume when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
 * `--delete-on-termination <DELETE_ON_TERMINATION>` — To delete the attached volume when the server is destroyed, specify `true`. Otherwise, specify `false`. Default: `false`
 
   Possible values: `true`, `false`
 
+* `--device <DEVICE>` — Name of the device such as, `/dev/vdb`. Omit or set this parameter to null for auto-assignment, if supported. If you specify this parameter, the device must not exist in the guest operating system. Note that as of the 12.0.0 Liberty release, the Nova libvirt driver no longer honors a user-supplied device name. This is the same behavior as if the device name parameter is not supplied on the request
+* `--tag <TAG>` — A device role tag that can be applied to a volume when attaching it to the VM. The guest OS of a server that has devices tagged in this manner can access hardware metadata about the tagged devices from the metadata API and on the config drive, if enabled
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach
 
 
 
@@ -5616,15 +5616,15 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach instead of the attached volume
-* `--device <DEVICE>` — Name of the device in the attachment object, such as, `/dev/vdb`
-* `--tag <TAG>` — The device tag applied to the volume block device or `null`
 * `--delete-on-termination <DELETE_ON_TERMINATION>` — A flag indicating if the attached volume will be deleted when the server is deleted
 
   Possible values: `true`, `false`
 
-* `--server-id <SERVER_ID>` — The UUID of the server
+* `--device <DEVICE>` — Name of the device in the attachment object, such as, `/dev/vdb`
 * `--id <ID>` — The UUID of the attachment
+* `--server-id <SERVER_ID>` — The UUID of the server
+* `--tag <TAG>` — The device tag applied to the volume block device or `null`
+* `--volume-id <VOLUME_ID>` — The UUID of the volume to attach instead of the attached volume
 
 
 
@@ -5809,16 +5809,16 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/applicati
 
 ###### **Options:**
 
-* `--name <NAME>` — The name of the application credential. Must be unique to a user
+* `--access-rules <JSON>` — A list of `access_rules` objects
 * `--description <DESCRIPTION>` — A description of the application credential’s purpose
-* `--secret <SECRET>` — The secret that the application credential will be created with. If not provided, one will be generated
 * `--expires-at <EXPIRES_AT>` — An optional expiry time for the application credential. If unset, the application credential does not expire
+* `--name <NAME>` — The name of the application credential. Must be unique to a user
 * `--roles <JSON>` — An optional list of role objects, identified by ID or name. The list may only contain roles that the user has assigned on the project. If not provided, the roles assigned to the application credential will be the same as the roles in the current token
+* `--secret <SECRET>` — The secret that the application credential will be created with. If not provided, one will be generated
 * `--unrestricted <UNRESTRICTED>` — An optional flag to restrict whether the application credential may be used for the creation or destruction of other application credentials or trusts. Defaults to false
 
   Possible values: `true`, `false`
 
-* `--access-rules <JSON>` — A list of `access_rules` objects
 
 
 
@@ -5935,12 +5935,12 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints
 
 ###### **Options:**
 
-* `--service-id <SERVICE_ID>` — Filters the response by a service ID
-* `--region <REGION>` — Filters the response by a region ID
 * `--interface <INTERFACE>` — Filters the response by an interface
 
   Possible values: `admin`, `internal`, `public`
 
+* `--region <REGION>` — Filters the response by a region ID
+* `--service-id <SERVICE_ID>` — Filters the response by a service ID
 
 
 
@@ -6026,13 +6026,13 @@ PUT /OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Options:**
 
+* `--authorization-ttl <AUTHORIZATION_TTL>`
+* `--description <DESCRIPTION>`
+* `--domain-id <DOMAIN_ID>`
 * `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
-* `--description <DESCRIPTION>`
-* `--domain-id <DOMAIN_ID>`
-* `--authorization-ttl <AUTHORIZATION_TTL>`
 * `--remote-ids <REMOTE_IDS>`
 
 
@@ -6057,11 +6057,11 @@ GET operation on /v3/OS-FEDERATION/identity_providers
 
 ###### **Options:**
 
-* `--id <ID>` — Filter for Identity Providers’ ID attribute
 * `--enabled <ENABLED>` — Filter for Identity Providers’ enabled attribute
 
   Possible values: `true`, `false`
 
+* `--id <ID>` — Filter for Identity Providers’ ID attribute
 
 
 
@@ -6187,12 +6187,12 @@ PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Options:**
 
+* `--authorization-ttl <AUTHORIZATION_TTL>`
+* `--description <DESCRIPTION>`
 * `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
-* `--description <DESCRIPTION>`
-* `--authorization-ttl <AUTHORIZATION_TTL>`
 * `--remote-ids <REMOTE_IDS>`
 
 
@@ -6330,13 +6330,13 @@ PUT /OS-FEDERATION/service_providers/{sp_id}
 ###### **Options:**
 
 * `--auth-url <AUTH_URL>`
-* `--sp-url <SP_URL>`
 * `--description <DESCRIPTION>`
 * `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
 * `--relay-state-prefix <RELAY_STATE_PREFIX>`
+* `--sp-url <SP_URL>`
 
 
 
@@ -6377,13 +6377,13 @@ PATCH /OS-FEDERATION/service_providers/{sp_id}
 ###### **Options:**
 
 * `--auth-url <AUTH_URL>`
-* `--sp-url <SP_URL>`
 * `--description <DESCRIPTION>`
 * `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
 
   Possible values: `true`, `false`
 
 * `--relay-state-prefix <RELAY_STATE_PREFIX>`
+* `--sp-url <SP_URL>`
 
 
 
@@ -6565,13 +6565,13 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
   Possible values: `true`, `false`
 
-* `--parent-id <PARENT_ID>` — The ID of the parent for the project
 * `--name <NAME>` — The name of the project
-* `--tags <TAGS>` — A list of simple strings assigned to a project
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
 
+* `--parent-id <PARENT_ID>` — The ID of the parent for the project
+* `--tags <TAGS>` — A list of simple strings assigned to a project
 
 
 
@@ -6731,13 +6731,13 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
   Possible values: `true`, `false`
 
-* `--parent-id <PARENT_ID>` — The ID of the parent for the project
 * `--name <NAME>` — The name of the project
-* `--tags <TAGS>` — A list of simple strings assigned to a project
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
 
+* `--parent-id <PARENT_ID>` — The ID of the parent for the project
+* `--tags <TAGS>` — A list of simple strings assigned to a project
 
 
 
@@ -7034,16 +7034,11 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assi
 
 ###### **Options:**
 
-* `--group-id <GROUP_ID>` — Filters the response by a group ID
-* `--role-id <ROLE_ID>` — Filters the response by a role ID
-* `--user-id <USER_ID>` — Filters the response by a user ID
-* `--scope-domain-id <SCOPE_DOMAIN_ID>` — Filters the response by a domain ID
-* `--scope-project-id <SCOPE_PROJECT_ID>` — Filters the response by a project ID
-* `--scope-os-inherit-inherited-to <SCOPE_OS_INHERIT_INHERITED_TO>` — Filters based on role assignments that are inherited. The only value of inherited_to that is currently supported is projects
 * `--effective` — Returns the effective assignments, including any assignments gained by virtue of group membership
 
   Possible values: `true`, `false`
 
+* `--group-id <GROUP_ID>` — Filters the response by a group ID
 * `--include-names` — If set, then the names of any entities returned will be include as well as their IDs. Any value other than 0 (including no value) will be interpreted as true
 
   Possible values: `true`, `false`
@@ -7052,6 +7047,11 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assi
 
   Possible values: `true`, `false`
 
+* `--role-id <ROLE_ID>` — Filters the response by a role ID
+* `--scope-domain-id <SCOPE_DOMAIN_ID>` — Filters the response by a domain ID
+* `--scope-os-inherit-inherited-to <SCOPE_OS_INHERIT_INHERITED_TO>` — Filters based on role assignments that are inherited. The only value of inherited_to that is currently supported is projects
+* `--scope-project-id <SCOPE_PROJECT_ID>` — Filters the response by a project ID
+* `--user-id <USER_ID>` — Filters the response by a user ID
 
 
 
@@ -7065,8 +7065,8 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/roles`
 
 ###### **Options:**
 
-* `--name <NAME>` — The role name
 * `--description <DESCRIPTION>` — The role description
+* `--name <NAME>` — The role name
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
@@ -7218,8 +7218,8 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role`
 
 ###### **Options:**
 
-* `--name <NAME>` — The role name
 * `--description <DESCRIPTION>` — The role description
+* `--name <NAME>` — The role name
 * `--immutable <IMMUTABLE>`
 
   Possible values: `true`, `false`
@@ -7295,16 +7295,11 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assi
 
 ###### **Options:**
 
-* `--group-id <GROUP_ID>` — Filters the response by a group ID
-* `--role-id <ROLE_ID>` — Filters the response by a role ID
-* `--user-id <USER_ID>` — Filters the response by a user ID
-* `--scope-domain-id <SCOPE_DOMAIN_ID>` — Filters the response by a domain ID
-* `--scope-project-id <SCOPE_PROJECT_ID>` — Filters the response by a project ID
-* `--scope-os-inherit-inherited-to <SCOPE_OS_INHERIT_INHERITED_TO>` — Filters based on role assignments that are inherited. The only value of inherited_to that is currently supported is projects
 * `--effective` — Returns the effective assignments, including any assignments gained by virtue of group membership
 
   Possible values: `true`, `false`
 
+* `--group-id <GROUP_ID>` — Filters the response by a group ID
 * `--include-names` — If set, then the names of any entities returned will be include as well as their IDs. Any value other than 0 (including no value) will be interpreted as true
 
   Possible values: `true`, `false`
@@ -7313,6 +7308,11 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/role_assi
 
   Possible values: `true`, `false`
 
+* `--role-id <ROLE_ID>` — Filters the response by a role ID
+* `--scope-domain-id <SCOPE_DOMAIN_ID>` — Filters the response by a domain ID
+* `--scope-os-inherit-inherited-to <SCOPE_OS_INHERIT_INHERITED_TO>` — Filters based on role assignments that are inherited. The only value of inherited_to that is currently supported is projects
+* `--scope-project-id <SCOPE_PROJECT_ID>` — Filters the response by a project ID
+* `--user-id <USER_ID>` — Filters the response by a user ID
 
 
 
@@ -7492,7 +7492,6 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 
 * `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol_id` and `unique_id` of the protocol and user respectively. For example:
 * `--name <NAME>` — The user name. Must be unique within the owning domain
-* `--password <PASSWORD>` — The new password for the user
 * `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
 
   Possible values: `true`, `false`
@@ -7518,6 +7517,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
   Possible values: `true`, `false`
 
 * `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--password <PASSWORD>` — The new password for the user
 
 
 
@@ -7644,7 +7644,6 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 * `--federated <JSON>` — List of federated objects associated with a user. Each object in the list contains the `idp_id` and `protocols`. `protocols` is a list of objects, each of which contains `protocol_id` and `unique_id` of the protocol and user respectively. For example:
 * `--name <NAME>` — The user name. Must be unique within the owning domain
-* `--password <PASSWORD>` — The new password for the user
 * `--ignore-change-password-upon-first-use <IGNORE_CHANGE_PASSWORD_UPON_FIRST_USE>`
 
   Possible values: `true`, `false`
@@ -7670,6 +7669,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
   Possible values: `true`, `false`
 
 * `--multi-factor-auth-rules <MULTI_FACTOR_AUTH_RULES>`
+* `--password <PASSWORD>` — The new password for the user
 
 
 
@@ -7740,21 +7740,6 @@ Error response codes: 400, 401, 403, 409, 413, 415
 
 ###### **Options:**
 
-* `--id <ID>`
-* `--name <NAME>`
-* `--visibility <VISIBILITY>`
-
-  Possible values: `community`, `private`, `public`, `shared`
-
-* `--protected <PROTECTED>`
-
-  Possible values: `true`, `false`
-
-* `--os-hidden <OS_HIDDEN>`
-
-  Possible values: `true`, `false`
-
-* `--owner <OWNER>`
 * `--container-format <CONTAINER_FORMAT>`
 
   Possible values: `aki`, `ami`, `ari`, `bare`, `compressed`, `docker`, `ova`, `ovf`
@@ -7763,10 +7748,25 @@ Error response codes: 400, 401, 403, 409, 413, 415
 
   Possible values: `aki`, `ami`, `ari`, `iso`, `ploop`, `qcow2`, `raw`, `vdi`, `vhd`, `vhdx`, `vmdk`
 
-* `--tags <TAGS>`
-* `--min-ram <MIN_RAM>`
-* `--min-disk <MIN_DISK>`
+* `--id <ID>`
 * `--locations <JSON>`
+* `--min-disk <MIN_DISK>`
+* `--min-ram <MIN_RAM>`
+* `--name <NAME>`
+* `--os-hidden <OS_HIDDEN>`
+
+  Possible values: `true`, `false`
+
+* `--owner <OWNER>`
+* `--protected <PROTECTED>`
+
+  Possible values: `true`, `false`
+
+* `--tags <TAGS>`
+* `--visibility <VISIBILITY>`
+
+  Possible values: `community`, `private`, `public`, `shared`
+
 * `--property <key=value>` — Additional properties to be sent with the request
 
 
@@ -7909,39 +7909,39 @@ Error response codes: 400, 401, 403
 
 ###### **Options:**
 
+* `--created-at <CREATED_AT>` — Specify a comparison filter based on the date and time when the resource was created
+* `--id <ID>` — id filter parameter
 * `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--member-status <MEMBER_STATUS>` — Filters the response by a member status. A valid value is accepted, pending, rejected, or all. Default is accepted
+
+  Possible values: `accepted`, `all`, `pending`, `rejected`
+
 * `--name <NAME>` — Filters the response by a name, as a string. A valid value is the name of an image
-* `--id <ID>` — id filter parameter
+* `--os-hidden <OS_HIDDEN>` — When true, filters the response to display only "hidden" images. By default, "hidden" images are not included in the image-list response. (Since Image API v2.7)
+
+  Possible values: `true`, `false`
+
 * `--owner <OWNER>` — Filters the response by a project (also called a “tenant”) ID. Shows only images that are shared with you by the specified owner
 * `--protected <PROTECTED>` — Filters the response by the ‘protected’ image property. A valid value is one of ‘true’, ‘false’ (must be all lowercase). Any other value will result in a 400 response
 
   Possible values: `true`, `false`
 
-* `--status <STATUS>` — Filters the response by an image status
-* `--tag <TAG>` — Filters the response by the specified tag value. May be repeated, but keep in mind that you're making a conjunctive query, so only images containing all the tags specified will appear in the response
-* `--visibility <VISIBILITY>` — Filters the response by an image visibility value. A valid value is public, private, community, shared, or all. (Note that if you filter on shared, the images included in the response will only be those where your member status is accepted unless you explicitly include a member_status filter in the request.) If you omit this parameter, the response shows public, private, and those shared images with a member status of accepted
-
-  Possible values: `all`, `community`, `private`, `public`, `shared`
-
-* `--os-hidden <OS_HIDDEN>` — When true, filters the response to display only "hidden" images. By default, "hidden" images are not included in the image-list response. (Since Image API v2.7)
-
-  Possible values: `true`, `false`
-
-* `--member-status <MEMBER_STATUS>` — Filters the response by a member status. A valid value is accepted, pending, rejected, or all. Default is accepted
-
-  Possible values: `accepted`, `all`, `pending`, `rejected`
-
 * `--size-max <SIZE_MAX>` — Filters the response by a maximum image size, in bytes
 * `--size-min <SIZE_MIN>` — Filters the response by a minimum image size, in bytes
-* `--created-at <CREATED_AT>` — Specify a comparison filter based on the date and time when the resource was created
-* `--updated-at <UPDATED_AT>` — Specify a comparison filter based on the date and time when the resource was most recently modified
+* `--sort <SORT>` — Sorts the response by one or more attribute and sort direction combinations. You can also set multiple sort keys and directions. Default direction is desc. Use the comma (,) character to separate multiple values. For example: `sort=name:asc,status:desc`
 * `--sort-dir <SORT_DIR>` — Sorts the response by a set of one or more sort direction and attribute (sort_key) combinations. A valid value for the sort direction is asc (ascending) or desc (descending). If you omit the sort direction in a set, the default is desc
 
   Possible values: `asc`, `desc`
 
 * `--sort-key <SORT_KEY>` — Sorts the response by an attribute, such as name, id, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key image attribute
-* `--sort <SORT>` — Sorts the response by one or more attribute and sort direction combinations. You can also set multiple sort keys and directions. Default direction is desc. Use the comma (,) character to separate multiple values. For example: `sort=name:asc,status:desc`
+* `--status <STATUS>` — Filters the response by an image status
+* `--tag <TAG>` — Filters the response by the specified tag value. May be repeated, but keep in mind that you're making a conjunctive query, so only images containing all the tags specified will appear in the response
+* `--updated-at <UPDATED_AT>` — Specify a comparison filter based on the date and time when the resource was most recently modified
+* `--visibility <VISIBILITY>` — Filters the response by an image visibility value. A valid value is public, private, community, shared, or all. (Note that if you filter on shared, the images included in the response will only be those where your member status is accepted unless you explicitly include a member_status filter in the request.) If you omit this parameter, the response shows public, private, and those shared images with a member status of accepted
+
+  Possible values: `all`, `community`, `private`, `public`, `shared`
+
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
@@ -7994,20 +7994,6 @@ Error response codes: 400, 401, 403, 404, 409, 413, 415
 
 ###### **Options:**
 
-* `--name <NAME>`
-* `--visibility <VISIBILITY>`
-
-  Possible values: `community`, `private`, `public`, `shared`
-
-* `--protected <PROTECTED>`
-
-  Possible values: `true`, `false`
-
-* `--os-hidden <OS_HIDDEN>`
-
-  Possible values: `true`, `false`
-
-* `--owner <OWNER>`
 * `--container-format <CONTAINER_FORMAT>`
 
   Possible values: `aki`, `ami`, `ari`, `bare`, `compressed`, `docker`, `ova`, `ovf`
@@ -8016,10 +8002,24 @@ Error response codes: 400, 401, 403, 404, 409, 413, 415
 
   Possible values: `aki`, `ami`, `ari`, `iso`, `ploop`, `qcow2`, `raw`, `vdi`, `vhd`, `vhdx`, `vmdk`
 
-* `--tags <TAGS>`
-* `--min-ram <MIN_RAM>`
-* `--min-disk <MIN_DISK>`
 * `--locations <JSON>`
+* `--min-disk <MIN_DISK>`
+* `--min-ram <MIN_RAM>`
+* `--name <NAME>`
+* `--os-hidden <OS_HIDDEN>`
+
+  Possible values: `true`, `false`
+
+* `--owner <OWNER>`
+* `--protected <PROTECTED>`
+
+  Possible values: `true`, `false`
+
+* `--tags <TAGS>`
+* `--visibility <VISIBILITY>`
+
+  Possible values: `community`, `private`, `public`, `shared`
+
 * `--property <key=value>` — Additional properties to be sent with the request
 
 
@@ -8312,16 +8312,16 @@ Error response codes: 400, 401, 404, 409
 
 ###### **Options:**
 
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
+* `--dns-name <DNS_NAME>` — A valid DNS name
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed_ip_address` parameter
 * `--floating-ip-address <FLOATING_IP_ADDRESS>` — The floating IP address
-* `--subnet-id <SUBNET_ID>` — The subnet ID on which you want to create the floating IP
 * `--floating-network-id <FLOATING_NETWORK_ID>` — The ID of the network associated with the floating IP
 * `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP at creation time, you must specify the identifier of the internal port
-* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed_ip_address` parameter
-* `--tenant-id <TENANT_ID>` — The ID of the project
 * `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy associated with the floating IP
-* `--dns-name <DNS_NAME>` — A valid DNS name
-* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
-* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--subnet-id <SUBNET_ID>` — The subnet ID on which you want to create the floating IP
+* `--tenant-id <TENANT_ID>` — The ID of the project
 
 
 
@@ -8361,19 +8361,19 @@ Error response codes: 401
 
 ###### **Options:**
 
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips API
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — fixed_ip_address query parameter for /v2.0/floatingips API
 * `--floating-ip-address <FLOATING_IP_ADDRESS>` — floating_ip_address query parameter for /v2.0/floatingips API
 * `--floating-network-id <FLOATING_NETWORK_ID>` — floating_network_id query parameter for /v2.0/floatingips API
-* `--router-id <ROUTER_ID>` — router_id query parameter for /v2.0/floatingips API
-* `--port-id <PORT_ID>` — port_id query parameter for /v2.0/floatingips API
-* `--fixed-ip-address <FIXED_IP_ADDRESS>` — fixed_ip_address query parameter for /v2.0/floatingips API
-* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/floatingips API
-* `--status <STATUS>` — status query parameter for /v2.0/floatingips API
-* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/floatingips API
-* `--tags <TAGS>` — tags query parameter for /v2.0/floatingips API
-* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/floatingips API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/floatingips API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/floatingips API
-* `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips API
+* `--port-id <PORT_ID>` — port_id query parameter for /v2.0/floatingips API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/floatingips API
+* `--router-id <ROUTER_ID>` — router_id query parameter for /v2.0/floatingips API
+* `--status <STATUS>` — status query parameter for /v2.0/floatingips API
+* `--tags <TAGS>` — tags query parameter for /v2.0/floatingips API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/floatingips API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/floatingips API
 
 
 
@@ -8419,18 +8419,18 @@ Error response codes: 400, 404
 
 ###### **Options:**
 
-* `--project-id <PROJECT_ID>`
+* `--description <DESCRIPTION>` — A text describing the rule, which helps users to manage/find easily theirs rules
 * `--external-port <EXTERNAL_PORT>` — The TCP/UDP/other protocol port number of the port forwarding’s floating IP address
-* `--internal-port <INTERNAL_PORT>` — The TCP/UDP/other protocol port number of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--external-port-range <EXTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the port forwarding’s floating IP address
 * `--internal-ip-address <INTERNAL_IP_ADDRESS>` — The fixed IPv4 address of the Neutron port associated to the floating IP port forwarding
+* `--internal-port <INTERNAL_PORT>` — The TCP/UDP/other protocol port number of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--internal-port-id <INTERNAL_PORT_ID>` — The ID of the Neutron port associated to the floating IP port forwarding
+* `--internal-port-range <INTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--project-id <PROJECT_ID>`
 * `--protocol <PROTOCOL>` — The IP protocol used in the floating IP port forwarding
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
-* `--internal-port-id <INTERNAL_PORT_ID>` — The ID of the Neutron port associated to the floating IP port forwarding
-* `--description <DESCRIPTION>` — A text describing the rule, which helps users to manage/find easily theirs rules
-* `--external-port-range <EXTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the port forwarding’s floating IP address
-* `--internal-port-range <INTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the Neutron port fixed IP address associated to the floating ip port forwarding
 
 
 
@@ -8471,15 +8471,15 @@ Error response codes: 400, 404
 
 ###### **Options:**
 
-* `--id <ID>` — id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 * `--external-port <EXTERNAL_PORT>` — external_port query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--external-port-range <EXTERNAL_PORT_RANGE>` — external_port_range query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--id <ID>` — id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--internal-port-id <INTERNAL_PORT_ID>` — internal_port_id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 * `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
-* `--internal-port-id <INTERNAL_PORT_ID>` — internal_port_id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
-* `--description <DESCRIPTION>` — description query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
-* `--external-port-range <EXTERNAL_PORT_RANGE>` — external_port_range query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 
 
 
@@ -8500,17 +8500,17 @@ Error response codes: 400, 404
 
 ###### **Options:**
 
+* `--description <DESCRIPTION>`
 * `--external-port <EXTERNAL_PORT>` — The TCP/UDP/other protocol port number of the port forwarding’s floating IP address
-* `--internal-port <INTERNAL_PORT>` — The TCP/UDP/other protocol port number of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--external-port-range <EXTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the port forwarding’s floating IP address
 * `--internal-ip-address <INTERNAL_IP_ADDRESS>` — The fixed IPv4 address of the Neutron port associated to the floating IP port forwarding
+* `--internal-port <INTERNAL_PORT>` — The TCP/UDP/other protocol port number of the Neutron port fixed IP address associated to the floating ip port forwarding
+* `--internal-port-id <INTERNAL_PORT_ID>` — The ID of the Neutron port associated to the floating IP port forwarding
+* `--internal-port-range <INTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the Neutron port fixed IP address associated to the floating ip port forwarding
 * `--protocol <PROTOCOL>` — The IP protocol used in the floating IP port forwarding
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
-* `--internal-port-id <INTERNAL_PORT_ID>` — The ID of the Neutron port associated to the floating IP port forwarding
-* `--description <DESCRIPTION>`
-* `--external-port-range <EXTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the port forwarding’s floating IP address
-* `--internal-port-range <INTERNAL_PORT_RANGE>` — The TCP/UDP/other protocol port range of the Neutron port fixed IP address associated to the floating ip port forwarding
 
 
 
@@ -8557,10 +8557,10 @@ Error response codes: 400, 401, 404, 409, 412
 
 ###### **Options:**
 
-* `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP, you must specify the ID of the internal port. To disassociate the floating IP, `null` should be specified
-* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed_ip_address` parameter
-* `--qos-policy-id <QOS_POLICY_ID>`
 * `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--fixed-ip-address <FIXED_IP_ADDRESS>` — The fixed IP address that is associated with the floating IP. If an internal port has multiple associated IP addresses, the service chooses the first IP address unless you explicitly define a fixed IP address in the `fixed_ip_address` parameter
+* `--port-id <PORT_ID>` — The ID of a port associated with the floating IP. To associate the floating IP with a fixed IP, you must specify the ID of the internal port. To disassociate the floating IP, `null` should be specified
+* `--qos-policy-id <QOS_POLICY_ID>`
 
 
 
@@ -8694,27 +8694,23 @@ Error response codes: 400, 401
 
 ###### **Options:**
 
-* `--name <NAME>` — Human-readable name of the network
 * `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the network, which is up (`true`) or down (`false`)
 
   Possible values: `true`, `false`
 
-* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
-* `--shared <SHARED>` — Indicates whether this resource is shared across all projects. By default, only administrative users can change this value
-
-  Possible values: `true`, `false`
-
-* `--router-external <ROUTER_EXTERNAL>` — Indicates whether the network has an external routing facility that’s not managed by the networking service
-
-  Possible values: `true`, `false`
-
-* `--segments <JSON>` — A list of provider `segment` objects
-* `--mtu <MTU>` — The maximum transmission unit (MTU) value to address fragmentation. Minimum value is 68 for IPv4, and 1280 for IPv6
 * `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidate for the network
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
 * `--ha <HA>`
 
   Possible values: `true`, `false`
 
+* `--is-default <IS_DEFAULT>` — The network is default or not
+
+  Possible values: `true`, `false`
+
+* `--mtu <MTU>` — The maximum transmission unit (MTU) value to address fragmentation. Minimum value is 68 for IPv4, and 1280 for IPv6
+* `--name <NAME>` — Human-readable name of the network
 * `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status of the network. Valid values are enabled (`true`) and disabled (`false`). This value is used as the default value of `port_security_enabled` field of a newly created port
 
   Possible values: `true`, `false`
@@ -8723,12 +8719,16 @@ Error response codes: 400, 401
 * `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>`
 * `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>`
 * `--qos-policy-id <QOS_POLICY_ID>` — The ID of the QoS policy associated with the network
-* `--is-default <IS_DEFAULT>` — The network is default or not
+* `--router-external <ROUTER_EXTERNAL>` — Indicates whether the network has an external routing facility that’s not managed by the networking service
 
   Possible values: `true`, `false`
 
-* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
-* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--segments <JSON>` — A list of provider `segment` objects
+* `--shared <SHARED>` — Indicates whether this resource is shared across all projects. By default, only administrative users can change this value
+
+  Possible values: `true`, `false`
+
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
 
 
 
@@ -8796,36 +8796,36 @@ Error response codes: 401
 
 ###### **Options:**
 
-* `--id <ID>` — id query parameter for /v2.0/networks API
-* `--name <NAME>` — name query parameter for /v2.0/networks API
 * `--admin-state-up <ADMIN_STATE_UP>` — admin_state_up query parameter for /v2.0/networks API
 
   Possible values: `true`, `false`
 
-* `--status <STATUS>` — status query parameter for /v2.0/networks API
-* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/networks API
-* `--shared <SHARED>` — shared query parameter for /v2.0/networks API
-
-  Possible values: `true`, `false`
-
-* `--router-external <ROUTER_EXTERNAL>` — router:external query parameter for /v2.0/networks API
-
-  Possible values: `true`, `false`
-
-* `--mtu <MTU>` — mtu query parameter for /v2.0/networks API
-* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — provider:network_type query parameter for /v2.0/networks API
-* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — provider:physical_network query parameter for /v2.0/networks API
-* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — provider:segmentation_id query parameter for /v2.0/networks API
-* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/networks API
-* `--tags <TAGS>` — tags query parameter for /v2.0/networks API
-* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/networks API
-* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/networks API
-* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/networks API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/networks API
+* `--id <ID>` — id query parameter for /v2.0/networks API
 * `--is-default <IS_DEFAULT>` — is_default query parameter for /v2.0/networks API
 
   Possible values: `true`, `false`
 
-* `--description <DESCRIPTION>` — description query parameter for /v2.0/networks API
+* `--mtu <MTU>` — mtu query parameter for /v2.0/networks API
+* `--name <NAME>` — name query parameter for /v2.0/networks API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/networks API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/networks API
+* `--provider-network-type <PROVIDER_NETWORK_TYPE>` — provider:network_type query parameter for /v2.0/networks API
+* `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — provider:physical_network query parameter for /v2.0/networks API
+* `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — provider:segmentation_id query parameter for /v2.0/networks API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/networks API
+* `--router-external <ROUTER_EXTERNAL>` — router:external query parameter for /v2.0/networks API
+
+  Possible values: `true`, `false`
+
+* `--shared <SHARED>` — shared query parameter for /v2.0/networks API
+
+  Possible values: `true`, `false`
+
+* `--status <STATUS>` — status query parameter for /v2.0/networks API
+* `--tags <TAGS>` — tags query parameter for /v2.0/networks API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/networks API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/networks API
 
 
 
@@ -8956,45 +8956,45 @@ Error response codes: 400, 401, 403, 404
 
 ###### **Options:**
 
-* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
-* `--network-id <NETWORK_ID>` — The ID of the attached network
 * `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
 
   Possible values: `true`, `false`
 
-* `--mac-address <MAC_ADDRESS>` — The MAC address of the port. If unspecified, a MAC address is automatically generated
-* `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip_address`) and the subnet ID from which the IP address is assigned (`subnet_id`)
-* `--device-id <DEVICE_ID>` — The ID of the device that uses this port. For example, a server instance or a logical router
-* `--device-owner <DEVICE_OWNER>` — The entity type that uses this port. For example, `compute:nova` (server instance), `network:dhcp` (DHCP agent) or `network:router_interface` (router interface)
-* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
 * `--allowed-address-pairs <JSON>` — A set of zero or more allowed address pair objects each where address pair object contains an `ip_address` and `mac_address`. While the `ip_address` is required, the `mac_address` will be taken from the port if not specified. The value of `ip_address` can be an IP Address or a CIDR (if supported by the underlying extension plugin). A server connected to the port can send a packet with source address which matches one of the specified allowed address pairs
-* `--extra-dhcp-opts <JSON>` — A set of zero or more extra DHCP option pairs. An option pair consists of an option value and name
-* `--device-profile <DEVICE_PROFILE>`
-* `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
-* `--numa-affinity-policy <NUMA_AFFINITY_POLICY>` — The port NUMA affinity policy requested during the virtual machine scheduling. Values: `None`, `required`, `preferred` or `legacy`
-
-  Possible values: `legacy`, `preferred`, `required`
-
+* `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port resides. The default is an empty string
+* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back-end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device_mac_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac_address` field of the port resource will be updated to the MAC from the active binding
 * `--binding-vnic-type <BINDING_VNIC_TYPE>` — The type of vNIC which this port should be attached to. This is used to determine which mechanism driver(s) to be used to bind the port. The valid values are `normal`, `macvtap`, `direct`, `baremetal`, `direct-physical`, `virtio-forwarder`, `smart-nic` and `remote-managed`. What type of vNIC is actually available depends on deployments. The default is `normal`
 
   Possible values: `accelerator-direct`, `accelerator-direct-physical`, `baremetal`, `direct`, `direct-physical`, `macvtap`, `normal`, `remote-managed`, `smart-nic`, `vdpa`, `virtio-forwarder`
 
-* `--binding-host-id <BINDING_HOST_ID>` — The ID of the host where the port resides. The default is an empty string
-* `--binding-profile <key=value>` — A dictionary that enables the application running on the specific host to pass and receive vif port information specific to the networking back-end. This field is only meant for machine-machine communication for compute services like Nova, Ironic or Zun to pass information to a Neutron back-end. It should not be used by multiple services concurrently or by cloud end users. The existing counterexamples (`capabilities: [switchdev]` for Open vSwitch hardware offload and `trusted=true` for Trusted Virtual Functions) are due to be cleaned up. The networking API does not define a specific format of this field. The default is an empty dictionary. If you update it with null then it is treated like {} in the response. Since the port-mac-address-override extension the `device_mac_address` field of the binding:profile can be used to provide the MAC address of the physical device a direct-physical port is being bound to. If provided, then the `mac_address` field of the port resource will be updated to the MAC from the active binding
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--device-id <DEVICE_ID>` — The ID of the device that uses this port. For example, a server instance or a logical router
+* `--device-owner <DEVICE_OWNER>` — The entity type that uses this port. For example, `compute:nova` (server instance), `network:dhcp` (DHCP agent) or `network:router_interface` (router interface)
+* `--device-profile <DEVICE_PROFILE>`
+* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
+* `--dns-name <DNS_NAME>` — A valid DNS name
+* `--extra-dhcp-opts <JSON>` — A set of zero or more extra DHCP option pairs. An option pair consists of an option value and name
+* `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip_address`) and the subnet ID from which the IP address is assigned (`subnet_id`)
+* `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
+* `--mac-address <MAC_ADDRESS>` — The MAC address of the port. If unspecified, a MAC address is automatically generated
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--network-id <NETWORK_ID>` — The ID of the attached network
+* `--numa-affinity-policy <NUMA_AFFINITY_POLICY>` — The port NUMA affinity policy requested during the virtual machine scheduling. Values: `None`, `required`, `preferred` or `legacy`
+
+  Possible values: `legacy`, `preferred`, `required`
+
 * `--port-security-enabled <PORT_SECURITY_ENABLED>` — The port security status. A valid value is enabled (`true`) or disabled (`false`). If port security is enabled for the port, security group rules and anti-spoofing rules are applied to the traffic on the port. If disabled, no such rules are applied
 
   Possible values: `true`, `false`
 
-* `--qos-policy-id <QOS_POLICY_ID>` — QoS policy associated with the port
-* `--tags <TAGS>`
 * `--propagate-uplink-status <PROPAGATE_UPLINK_STATUS>` — The uplink status propagation of the port. Valid values are enabled (`true`) and disabled (`false`)
 
   Possible values: `true`, `false`
 
-* `--dns-name <DNS_NAME>` — A valid DNS name
-* `--dns-domain <DNS_DOMAIN>` — A valid DNS domain
-* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--qos-policy-id <QOS_POLICY_ID>` — QoS policy associated with the port
 * `--security-groups <SECURITY_GROUPS>` — The IDs of security groups applied to the port
+* `--tags <TAGS>`
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
 
 
 
@@ -9034,28 +9034,28 @@ Error response codes: 401
 
 ###### **Options:**
 
-* `--id <ID>` — id query parameter for /v2.0/ports API
-* `--name <NAME>` — name query parameter for /v2.0/ports API
-* `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/ports API
 * `--admin-state-up <ADMIN_STATE_UP>` — admin_state_up query parameter for /v2.0/ports API
 
   Possible values: `true`, `false`
 
-* `--mac-address <MAC_ADDRESS>` — mac_address query parameter for /v2.0/ports API
-* `--fixed-ips <FIXED_IPS>` — fixed_ips query parameter for /v2.0/ports API
+* `--binding-host-id <BINDING_HOST_ID>` — binding:host_id query parameter for /v2.0/ports API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/ports API
 * `--device-id <DEVICE_ID>` — device_id query parameter for /v2.0/ports API
 * `--device-owner <DEVICE_OWNER>` — device_owner query parameter for /v2.0/ports API
-* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/ports API
-* `--status <STATUS>` — status query parameter for /v2.0/ports API
+* `--fixed-ips <FIXED_IPS>` — fixed_ips query parameter for /v2.0/ports API
+* `--id <ID>` — id query parameter for /v2.0/ports API
 * `--ip-allocation <IP_ALLOCATION>` — ip_allocation query parameter for /v2.0/ports API
-* `--binding-host-id <BINDING_HOST_ID>` — binding:host_id query parameter for /v2.0/ports API
-* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/ports API
-* `--tags <TAGS>` — tags query parameter for /v2.0/ports API
-* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/ports API
+* `--mac-address <MAC_ADDRESS>` — mac_address query parameter for /v2.0/ports API
+* `--name <NAME>` — name query parameter for /v2.0/ports API
+* `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/ports API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/ports API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/ports API
-* `--description <DESCRIPTION>` — description query parameter for /v2.0/ports API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/ports API
 * `--security-groups <SECURITY_GROUPS>` — security_groups query parameter for /v2.0/ports API
+* `--status <STATUS>` — status query parameter for /v2.0/ports API
+* `--tags <TAGS>` — tags query parameter for /v2.0/ports API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/ports API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/ports API
 
 
 
@@ -9206,13 +9206,13 @@ Error response codes: 400, 404
 
 ###### **Options:**
 
+* `--helper <HELPER>` — The netfilter conntrack helper module
+* `--port <PORT>` — The network port for the netfilter conntrack target rule
 * `--project-id <PROJECT_ID>`
 * `--protocol <PROTOCOL>` — The network protocol for the netfilter conntrack target rule
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
-* `--port <PORT>` — The network port for the netfilter conntrack target rule
-* `--helper <HELPER>` — The netfilter conntrack helper module
 
 
 
@@ -9251,13 +9251,13 @@ Error response codes: 400, 404
 
 ###### **Options:**
 
+* `--helper <HELPER>` — helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 * `--id <ID>` — id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+* `--port <PORT>` — port query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 * `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
-* `--port <PORT>` — port query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
-* `--helper <HELPER>` — helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 
 
 
@@ -9278,12 +9278,12 @@ Error response codes: 400, 404
 
 ###### **Options:**
 
+* `--helper <HELPER>` — The netfilter conntrack helper module
+* `--port <PORT>` — The network port for the netfilter conntrack target rule
 * `--protocol <PROTOCOL>` — The network protocol for the netfilter conntrack target rule
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
-* `--port <PORT>` — The network port for the netfilter conntrack target rule
-* `--helper <HELPER>` — The netfilter conntrack helper module
 
 
 
@@ -9320,19 +9320,13 @@ Error response codes: 400, 401
 
 ###### **Options:**
 
-* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
 * `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
 
   Possible values: `true`, `false`
 
-* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
-* `--enable-snat <ENABLE_SNAT>`
-
-  Possible values: `true`, `false`
-
-* `--external-fixed-ips <JSON>`
-* `--network-id <NETWORK_ID>`
-* `--ha <HA>` — `true` indicates a highly-available router. It is available when `l3-ha` extension is enabled
+* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidates for the router. It is available when `router_availability_zone` extension is enabled
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--distributed <DISTRIBUTED>` — `true` indicates a distributed router. It is available when `dvr` extension is enabled
 
   Possible values: `true`, `false`
 
@@ -9340,13 +9334,19 @@ Error response codes: 400, 401
 
   Possible values: `true`, `false`
 
-* `--flavor-id <FLAVOR_ID>` — The ID of the flavor associated with the router
-* `--availability-zone-hints <AVAILABILITY_ZONE_HINTS>` — The availability zone candidates for the router. It is available when `router_availability_zone` extension is enabled
-* `--distributed <DISTRIBUTED>` — `true` indicates a distributed router. It is available when `dvr` extension is enabled
+* `--enable-snat <ENABLE_SNAT>`
 
   Possible values: `true`, `false`
 
-* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--external-fixed-ips <JSON>`
+* `--network-id <NETWORK_ID>`
+* `--flavor-id <FLAVOR_ID>` — The ID of the flavor associated with the router
+* `--ha <HA>` — `true` indicates a highly-available router. It is available when `l3-ha` extension is enabled
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
 
 
 
@@ -9414,22 +9414,22 @@ Error response codes: 401
 
 ###### **Options:**
 
-* `--name <NAME>` — name query parameter for /v2.0/routers API
 * `--admin-state-up <ADMIN_STATE_UP>` — admin_state_up query parameter for /v2.0/routers API
 
   Possible values: `true`, `false`
 
-* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/routers API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/routers API
 * `--enable-ndp-proxy <ENABLE_NDP_PROXY>` — enable_ndp_proxy query parameter for /v2.0/routers API
 
   Possible values: `true`, `false`
 
+* `--name <NAME>` — name query parameter for /v2.0/routers API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/routers API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/routers API
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/routers API
 * `--tags <TAGS>` — tags query parameter for /v2.0/routers API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/routers API
-* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/routers API
-* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/routers API
-* `--description <DESCRIPTION>` — description query parameter for /v2.0/routers API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/routers API
 
 
 
@@ -9571,40 +9571,40 @@ Error response codes: 400, 401, 403, 404, 409
 
 ###### **Options:**
 
-* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
-* `--ip-version <IP_VERSION>` — The IP protocol version. Value is `4` or `6`
-* `--network-id <NETWORK_ID>` — The ID of the network to which the subnet belongs
-* `--subnetpool-id <SUBNETPOOL_ID>` — The ID of the subnet pool associated with the subnet
-* `--prefixlen <PREFIXLEN>` — The prefix length to use for subnet allocation from a subnet pool. If not specified, the `default_prefixlen` value of the subnet pool will be used
-* `--cidr <CIDR>` — The CIDR of the subnet
-* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
 * `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
+* `--cidr <CIDR>` — The CIDR of the subnet
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
 * `--dns-nameservers <DNS_NAMESERVERS>` — List of dns name servers associated with the subnet. Default is an empty list
-* `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
-* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
+* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for IPs from this subnet. Default is `false`
+
+  Possible values: `true`, `false`
+
 * `--enable-dhcp <ENABLE_DHCP>` — Indicates whether dhcp is enabled or disabled for the subnet. Default is `true`
 
   Possible values: `true`, `false`
+
+* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
+* `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
+* `--ip-version <IP_VERSION>` — The IP protocol version. Value is `4` or `6`
+* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — The IPv6 address modes specifies mechanisms for assigning IP addresses. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
+
+  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
 * `--ipv6-ra-mode <IPV6_RA_MODE>` — The IPv6 router advertisement specifies whether the networking service should transmit ICMPv6 packets, for a subnet. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
 
   Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
-* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — The IPv6 address modes specifies mechanisms for assigning IP addresses. Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`
-
-  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
-
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--network-id <NETWORK_ID>` — The ID of the network to which the subnet belongs
+* `--prefixlen <PREFIXLEN>` — The prefix length to use for subnet allocation from a subnet pool. If not specified, the `default_prefixlen` value of the subnet pool will be used
+* `--segment-id <SEGMENT_ID>` — The ID of a network segment the subnet is associated with. It is available when `segment` extension is enabled
 * `--service-types <SERVICE_TYPES>` — The service types associated with the subnet
+* `--subnetpool-id <SUBNETPOOL_ID>` — The ID of the subnet pool associated with the subnet
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
 * `--use-default-subnetpool <USE_DEFAULT_SUBNETPOOL>` — Whether to allocate this subnet from the default subnet pool
 
   Possible values: `true`, `false`
 
-* `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for IPs from this subnet. Default is `false`
-
-  Possible values: `true`, `false`
-
-* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
-* `--segment-id <SEGMENT_ID>` — The ID of a network segment the subnet is associated with. It is available when `segment` extension is enabled
 
 
 
@@ -9642,37 +9642,37 @@ Error response codes: 401
 
 ###### **Options:**
 
-* `--id <ID>` — id query parameter for /v2.0/subnets API
-* `--name <NAME>` — name query parameter for /v2.0/subnets API
-* `--ip-version <IP_VERSION>` — ip_version query parameter for /v2.0/subnets API
-* `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/subnets API
-* `--subnetpool-id <SUBNETPOOL_ID>` — subnetpool_id query parameter for /v2.0/subnets API
 * `--cidr <CIDR>` — cidr query parameter for /v2.0/subnets API
-* `--gateway-ip <GATEWAY_IP>` — gateway_ip query parameter for /v2.0/subnets API
-* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnets API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/subnets API
 * `--enable-dhcp <ENABLE_DHCP>` — enable_dhcp query parameter for /v2.0/subnets API
 
   Possible values: `true`, `false`
+
+* `--gateway-ip <GATEWAY_IP>` — gateway_ip query parameter for /v2.0/subnets API
+* `--id <ID>` — id query parameter for /v2.0/subnets API
+* `--ip-version <IP_VERSION>` — ip_version query parameter for /v2.0/subnets API
+* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — ipv6_address_mode query parameter for /v2.0/subnets API
+
+  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
 * `--ipv6-ra-mode <IPV6_RA_MODE>` — ipv6_ra_mode query parameter for /v2.0/subnets API
 
   Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
-* `--ipv6-address-mode <IPV6_ADDRESS_MODE>` — ipv6_address_mode query parameter for /v2.0/subnets API
-
-  Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
-
+* `--name <NAME>` — name query parameter for /v2.0/subnets API
+* `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/subnets API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/subnets API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/subnets API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/subnets API
+* `--segment-id <SEGMENT_ID>` — segment_id query parameter for /v2.0/subnets API
 * `--shared <SHARED>` — shared query parameter for /v2.0/subnets API
 
   Possible values: `true`, `false`
 
-* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/subnets API
+* `--subnetpool-id <SUBNETPOOL_ID>` — subnetpool_id query parameter for /v2.0/subnets API
 * `--tags <TAGS>` — tags query parameter for /v2.0/subnets API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/subnets API
-* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/subnets API
-* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/subnets API
-* `--description <DESCRIPTION>` — description query parameter for /v2.0/subnets API
-* `--segment-id <SEGMENT_ID>` — segment_id query parameter for /v2.0/subnets API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnets API
 
 
 
@@ -9694,22 +9694,22 @@ Error response codes: 400, 401, 403, 404, 412
 
 ###### **Options:**
 
-* `--name <NAME>` — Human-readable name of the resource
-* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
 * `--allocation-pools <JSON>` — Allocation pools with `start` and `end` IP addresses for this subnet. If allocation_pools are not specified, OpenStack Networking automatically allocates pools for covering all IP addresses in the CIDR, excluding the address reserved for the subnet gateway by default
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
 * `--dns-nameservers <DNS_NAMESERVERS>` — List of dns name servers associated with the subnet. Default is an empty list
-* `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
-* `--enable-dhcp <ENABLE_DHCP>` — Indicates whether dhcp is enabled or disabled for the subnet. Default is `true`
-
-  Possible values: `true`, `false`
-
-* `--service-types <SERVICE_TYPES>` — The service types associated with the subnet
 * `--dns-publish-fixed-ip <DNS_PUBLISH_FIXED_IP>` — Whether to publish DNS records for IPs from this subnet. Default is `false`
 
   Possible values: `true`, `false`
 
-* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--enable-dhcp <ENABLE_DHCP>` — Indicates whether dhcp is enabled or disabled for the subnet. Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--gateway-ip <GATEWAY_IP>` — Gateway IP of this subnet. If the value is `null` that implies no gateway is associated with the subnet. If the gateway_ip is not specified, OpenStack Networking allocates an address from the CIDR for the gateway for the subnet by default
+* `--host-routes <JSON>` — Additional routes for the subnet. A list of dictionaries with `destination` and `nexthop` parameters. Default value is an empty list
+* `--name <NAME>` — Human-readable name of the resource
 * `--segment-id <SEGMENT_ID>` — The ID of a network segment the subnet is associated with. It is available when `segment` extension is enabled
+* `--service-types <SERVICE_TYPES>` — The service types associated with the subnet
 
 
 

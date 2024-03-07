@@ -90,25 +90,6 @@ struct PathParameters {
 /// VolumeAttachment Body data
 #[derive(Args)]
 struct VolumeAttachment {
-    /// The UUID of the volume to attach instead of the attached volume.
-    ///
-    #[arg(long)]
-    volume_id: String,
-
-    /// Name of the device in the attachment object, such as, `/dev/vdb`.
-    ///
-    /// **New in version 2.85**
-    ///
-    #[arg(long)]
-    device: Option<String>,
-
-    /// The device tag applied to the volume block device or `null`.
-    ///
-    /// **New in version 2.85**
-    ///
-    #[arg(long)]
-    tag: Option<String>,
-
     /// A flag indicating if the attached volume will be deleted when the
     /// server is deleted.
     ///
@@ -117,12 +98,12 @@ struct VolumeAttachment {
     #[arg(action=clap::ArgAction::Set, long)]
     delete_on_termination: Option<bool>,
 
-    /// The UUID of the server.
+    /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     /// **New in version 2.85**
     ///
     #[arg(long)]
-    server_id: Option<String>,
+    device: Option<String>,
 
     /// The UUID of the attachment.
     ///
@@ -130,11 +111,55 @@ struct VolumeAttachment {
     ///
     #[arg(long)]
     id: Option<String>,
+
+    /// The UUID of the server.
+    ///
+    /// **New in version 2.85**
+    ///
+    #[arg(long)]
+    server_id: Option<String>,
+
+    /// The device tag applied to the volume block device or `null`.
+    ///
+    /// **New in version 2.85**
+    ///
+    #[arg(long)]
+    tag: Option<String>,
+
+    /// The UUID of the volume to attach instead of the attached volume.
+    ///
+    #[arg(long)]
+    volume_id: String,
 }
 
 /// VolumeAttachment response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The UUID of the associated volume attachment in Cinder.
+    ///
+    /// **New in version 2.89**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    attachment_id: Option<String>,
+
+    /// The UUID of the block device mapping record in Nova for the attachment.
+    ///
+    /// **New in version 2.89**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    bdm_uuid: Option<String>,
+
+    /// A flag indicating if the attached volume will be deleted when the
+    /// server is deleted.
+    ///
+    /// **New in version 2.79**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    delete_on_termination: Option<bool>,
+
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     #[serde()]
@@ -155,12 +180,6 @@ struct ResponseData {
     #[structable(optional, title = "serverId")]
     server_id: Option<String>,
 
-    /// The UUID of the attached volume.
-    ///
-    #[serde(rename = "volumeId")]
-    #[structable(optional, title = "volumeId")]
-    volume_id: Option<String>,
-
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.70**
@@ -169,30 +188,11 @@ struct ResponseData {
     #[structable(optional)]
     tag: Option<String>,
 
-    /// A flag indicating if the attached volume will be deleted when the
-    /// server is deleted.
+    /// The UUID of the attached volume.
     ///
-    /// **New in version 2.79**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    delete_on_termination: Option<bool>,
-
-    /// The UUID of the associated volume attachment in Cinder.
-    ///
-    /// **New in version 2.89**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    attachment_id: Option<String>,
-
-    /// The UUID of the block device mapping record in Nova for the attachment.
-    ///
-    /// **New in version 2.89**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    bdm_uuid: Option<String>,
+    #[serde(rename = "volumeId")]
+    #[structable(optional, title = "volumeId")]
+    volume_id: Option<String>,
 }
 
 impl VolumeAttachmentCommand {

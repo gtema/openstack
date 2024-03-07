@@ -383,6 +383,14 @@ struct ResponseData {
     #[structable(optional, pretty)]
     catalog: Option<Value>,
 
+    /// A domain object including the id and name representing the domain the
+    /// token is scoped to. This is only included in tokens that are scoped to
+    /// a domain.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    domain: Option<Value>,
+
     /// The date and time when the token expires.
     ///
     /// The date and time stamp format is
@@ -400,6 +408,10 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     expires_at: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    is_domain: Option<bool>,
 
     /// The date and time when the token was issued.
     ///
@@ -423,24 +435,6 @@ struct ResponseData {
     #[structable(optional, pretty)]
     methods: Option<Value>,
 
-    /// A `user` object.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    user: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    is_domain: Option<bool>,
-
-    /// A domain object including the id and name representing the domain the
-    /// token is scoped to. This is only included in tokens that are scoped to
-    /// a domain.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    domain: Option<Value>,
-
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
     /// in tokens that are scoped to a project.
@@ -463,6 +457,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     system: Option<Value>,
+
+    /// A `user` object.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    user: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -495,16 +495,23 @@ impl fmt::Display for ResponseDomain {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseUser {
+    domain: Option<Value>,
     id: Option<String>,
     name: Option<String>,
-    domain: Option<Value>,
-    password_expires_at: Option<String>,
     os_federation: Option<Value>,
+    password_expires_at: Option<String>,
 }
 
 impl fmt::Display for ResponseUser {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
+            format!(
+                "domain={}",
+                self.domain
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
             format!(
                 "id={}",
                 self.id
@@ -520,8 +527,8 @@ impl fmt::Display for ResponseUser {
                     .unwrap_or("".to_string())
             ),
             format!(
-                "domain={}",
-                self.domain
+                "os_federation={}",
+                self.os_federation
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -529,13 +536,6 @@ impl fmt::Display for ResponseUser {
             format!(
                 "password_expires_at={}",
                 self.password_expires_at
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "os_federation={}",
-                self.os_federation
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())

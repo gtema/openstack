@@ -84,18 +84,18 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
+    /// The service name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type", wide)]
     _type: Option<String>,
-
-    /// The service name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
 }
 
 impl CatalogsCommand {

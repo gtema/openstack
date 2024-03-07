@@ -40,6 +40,24 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// description query parameter for
+    /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// external_port query parameter for
+    /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
+    #[builder(default)]
+    external_port: Option<f32>,
+
+    /// external_port_range query parameter for
+    /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
+    ///
+    #[builder(default)]
+    external_port_range: Option<f32>,
+
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
     ///
@@ -52,35 +70,17 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
-    /// external_port query parameter for
-    /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
-    #[builder(default)]
-    external_port: Option<f32>,
-
-    /// protocol query parameter for
-    /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
-    #[builder(default, setter(into))]
-    protocol: Option<Cow<'a, str>>,
-
     /// internal_port_id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
     #[builder(default, setter(into))]
     internal_port_id: Option<Cow<'a, str>>,
 
-    /// description query parameter for
+    /// protocol query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
-
-    /// external_port_range query parameter for
-    /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
-    ///
-    #[builder(default)]
-    external_port_range: Option<f32>,
+    protocol: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

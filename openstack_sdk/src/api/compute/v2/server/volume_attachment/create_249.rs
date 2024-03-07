@@ -37,12 +37,6 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
-    /// The UUID of the volume to attach.
-    ///
-    #[serde(rename = "volumeId")]
-    #[builder(setter(into))]
-    pub(crate) volume_id: Cow<'a, str>,
-
     /// Name of the device such as, `/dev/vdb`. Omit or set this parameter to
     /// null for auto-assignment, if supported. If you specify this parameter,
     /// the device must not exist in the guest operating system. Note that as
@@ -69,6 +63,12 @@ pub struct VolumeAttachment<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
+
+    /// The UUID of the volume to attach.
+    ///
+    #[serde(rename = "volumeId")]
+    #[builder(setter(into))]
+    pub(crate) volume_id: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]

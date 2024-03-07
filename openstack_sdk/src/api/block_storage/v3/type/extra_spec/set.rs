@@ -26,15 +26,15 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
-    ///
-    #[builder(default, setter(into))]
-    type_id: Cow<'a, str>,
-
     /// id parameter for /v3/types/{type_id}/extra_specs/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
+
+    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
+    #[builder(default, setter(into))]
+    type_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

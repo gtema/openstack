@@ -131,52 +131,11 @@ enum BindingVnicType {
 /// Port Body data
 #[derive(Args)]
 struct Port {
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[arg(long)]
-    name: Option<String>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     admin_state_up: Option<bool>,
-
-    /// The MAC address of the port. By default, only administrative users and
-    /// users with advsvc role can change this value.
-    ///
-    #[arg(long)]
-    mac_address: Option<String>,
-
-    /// The IP addresses for the port. If you would like to assign multiple IP
-    /// addresses for the port, specify multiple entries in this field. Each
-    /// entry consists of IP address (`ip_address`) and the subnet ID from
-    /// which the IP address is assigned (`subnet_id`).
-    ///
-    /// - If you specify both a subnet ID and an IP address, OpenStack
-    ///   Networking tries to allocate the IP address on that subnet to the
-    ///   port.
-    /// - If you specify only a subnet ID, OpenStack Networking allocates an
-    ///   available IP from that subnet to the port.
-    /// - If you specify only an IP address, OpenStack Networking tries to
-    ///   allocate the IP address if the address is a valid IP for any of the
-    ///   subnets on the specified network.
-    ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
-    fixed_ips: Option<Vec<Value>>,
-
-    /// The ID of the device that uses this port. For example, a server
-    /// instance or a logical router.
-    ///
-    #[arg(long)]
-    device_id: Option<String>,
-
-    /// The entity type that uses this port. For example, `compute:nova`
-    /// (server instance), `network:dhcp` (DHCP agent) or
-    /// `network:router_interface` (router interface).
-    ///
-    #[arg(long)]
-    device_owner: Option<String>,
 
     /// A set of zero or more allowed address pair objects each where address
     /// pair object contains an `ip_address` and `mac_address`. While the
@@ -188,46 +147,6 @@ struct Port {
     ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     allowed_address_pairs: Option<Vec<Value>>,
-
-    /// Status of the underlying data plane of a port.
-    ///
-    #[arg(long)]
-    data_plane_status: Option<DataPlaneStatus>,
-
-    /// A set of zero or more extra DHCP option pairs. An option pair consists
-    /// of an option value and name.
-    ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
-    extra_dhcp_opts: Option<Vec<Value>>,
-
-    /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
-    /// (as defined in setup.cfg). To following values can be used to control
-    /// Open vSwitch’s Userspace Tx packet steering feature:
-    ///
-    /// - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}`
-    /// - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`
-    ///
-    /// If omitted the default is defined by Open vSwitch. The field cannot be
-    /// longer than 4095 characters.
-    ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    hints: Option<Vec<(String, Value)>>,
-
-    /// The port NUMA affinity policy requested during the virtual machine
-    /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
-    ///
-    #[arg(long)]
-    numa_affinity_policy: Option<NumaAffinityPolicy>,
-
-    /// The type of vNIC which this port should be attached to. This is used to
-    /// determine which mechanism driver(s) to be used to bind the port. The
-    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
-    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
-    /// `remote-managed`. What type of vNIC is actually available depends on
-    /// deployments. The default is `normal`.
-    ///
-    #[arg(long)]
-    binding_vnic_type: Option<BindingVnicType>,
 
     /// The ID of the host where the port resides. The default is an empty
     /// string.
@@ -255,6 +174,103 @@ struct Port {
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     binding_profile: Option<Vec<(String, Value)>>,
 
+    /// The type of vNIC which this port should be attached to. This is used to
+    /// determine which mechanism driver(s) to be used to bind the port. The
+    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
+    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
+    /// `remote-managed`. What type of vNIC is actually available depends on
+    /// deployments. The default is `normal`.
+    ///
+    #[arg(long)]
+    binding_vnic_type: Option<BindingVnicType>,
+
+    /// Status of the underlying data plane of a port.
+    ///
+    #[arg(long)]
+    data_plane_status: Option<DataPlaneStatus>,
+
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
+    #[arg(long)]
+    description: Option<String>,
+
+    /// The ID of the device that uses this port. For example, a server
+    /// instance or a logical router.
+    ///
+    #[arg(long)]
+    device_id: Option<String>,
+
+    /// The entity type that uses this port. For example, `compute:nova`
+    /// (server instance), `network:dhcp` (DHCP agent) or
+    /// `network:router_interface` (router interface).
+    ///
+    #[arg(long)]
+    device_owner: Option<String>,
+
+    /// A valid DNS domain.
+    ///
+    #[arg(long)]
+    dns_domain: Option<String>,
+
+    /// A valid DNS name.
+    ///
+    #[arg(long)]
+    dns_name: Option<String>,
+
+    /// A set of zero or more extra DHCP option pairs. An option pair consists
+    /// of an option value and name.
+    ///
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    extra_dhcp_opts: Option<Vec<Value>>,
+
+    /// The IP addresses for the port. If you would like to assign multiple IP
+    /// addresses for the port, specify multiple entries in this field. Each
+    /// entry consists of IP address (`ip_address`) and the subnet ID from
+    /// which the IP address is assigned (`subnet_id`).
+    ///
+    /// - If you specify both a subnet ID and an IP address, OpenStack
+    ///   Networking tries to allocate the IP address on that subnet to the
+    ///   port.
+    /// - If you specify only a subnet ID, OpenStack Networking allocates an
+    ///   available IP from that subnet to the port.
+    /// - If you specify only an IP address, OpenStack Networking tries to
+    ///   allocate the IP address if the address is a valid IP for any of the
+    ///   subnets on the specified network.
+    ///
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    fixed_ips: Option<Vec<Value>>,
+
+    /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
+    /// (as defined in setup.cfg). To following values can be used to control
+    /// Open vSwitch’s Userspace Tx packet steering feature:
+    ///
+    /// - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}`
+    /// - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`
+    ///
+    /// If omitted the default is defined by Open vSwitch. The field cannot be
+    /// longer than 4095 characters.
+    ///
+    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    hints: Option<Vec<(String, Value)>>,
+
+    /// The MAC address of the port. By default, only administrative users and
+    /// users with advsvc role can change this value.
+    ///
+    #[arg(long)]
+    mac_address: Option<String>,
+
+    /// Human-readable name of the resource. Default is an empty string.
+    ///
+    #[arg(long)]
+    name: Option<String>,
+
+    /// The port NUMA affinity policy requested during the virtual machine
+    /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
+    ///
+    #[arg(long)]
+    numa_affinity_policy: Option<NumaAffinityPolicy>,
+
     /// The port security status. A valid value is enabled (`true`) or disabled
     /// (`false`). If port security is enabled for the port, security group
     /// rules and anti-spoofing rules are applied to the traffic on the port.
@@ -268,22 +284,6 @@ struct Port {
     #[arg(long)]
     qos_policy_id: Option<String>,
 
-    /// A valid DNS name.
-    ///
-    #[arg(long)]
-    dns_name: Option<String>,
-
-    /// A valid DNS domain.
-    ///
-    #[arg(long)]
-    dns_domain: Option<String>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[arg(long)]
-    description: Option<String>,
-
     /// The IDs of security groups applied to the port.
     ///
     #[arg(action=clap::ArgAction::Append, long)]
@@ -293,24 +293,6 @@ struct Port {
 /// Port response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the attached network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
@@ -318,22 +300,86 @@ struct ResponseData {
     #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
-    /// The MAC address of the port. If the port uses the `direct-physical`
-    /// `vnic_type` then the value of this field is overwritten with the MAC
-    /// address provided in the active binding:profile if any.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    mac_address: Option<String>,
-
-    /// The IP addresses for the port. If the port has multiple IP addresses,
-    /// this field has multiple entries. Each entry consists of IP address
-    /// (`ip_address`) and the subnet ID from which the IP address is assigned
-    /// (`subnet_id`).
+    /// A set of zero or more allowed address pair objects each where address
+    /// pair object contains an `ip_address` and `mac_address`. While the
+    /// `ip_address` is required, the `mac_address` will be taken from the port
+    /// if not specified. The value of `ip_address` can be an IP Address or a
+    /// CIDR (if supported by the underlying extension plugin). A server
+    /// connected to the port can send a packet with source address which
+    /// matches one of the specified allowed address pairs.
     ///
     #[serde()]
     #[structable(optional, pretty)]
-    fixed_ips: Option<Value>,
+    allowed_address_pairs: Option<Value>,
+
+    /// The ID of the host where the port resides.
+    ///
+    #[serde(rename = "binding:host_id")]
+    #[structable(optional, title = "binding:host_id")]
+    binding_host_id: Option<String>,
+
+    /// A dictionary that enables the application running on the specific host
+    /// to pass and receive vif port information specific to the networking
+    /// back-end. The networking API does not define a specific format of this
+    /// field. If the update request is null this response field will be {}.
+    ///
+    #[serde(rename = "binding:profile")]
+    #[structable(optional, pretty, title = "binding:profile")]
+    binding_profile: Option<Value>,
+
+    /// A dictionary which contains additional information on the port.
+    /// Currently the following fields are defined: `port_filter` and
+    /// `ovs_hybrid_plug`. `port_filter` is a boolean indicating the networking
+    /// service provides port filtering features such as security group and/or
+    /// anti MAC/IP spoofing. `ovs_hybrid_plug` is a boolean used to inform an
+    /// API consumer like nova that the hybrid plugging strategy for OVS should
+    /// be used.
+    ///
+    #[serde(rename = "binding:vif_details")]
+    #[structable(optional, pretty, title = "binding:vif_details")]
+    binding_vif_details: Option<Value>,
+
+    /// The type of which mechanism is used for the port. An API consumer like
+    /// nova can use this to determine an appropriate way to attach a device
+    /// (for example an interface of a virtual server) to the port. Available
+    /// values currently defined includes `ovs`, `bridge`, `macvtap`, `hw_veb`,
+    /// `hostdev_physical`, `vhostuser`, `distributed` and `other`. There are
+    /// also special values: `unbound` and `binding_failed`. `unbound` means
+    /// the port is not bound to a networking back-end. `binding_failed` means
+    /// an error that the port failed to be bound to a networking back-end.
+    ///
+    #[serde(rename = "binding:vif_type")]
+    #[structable(optional, title = "binding:vif_type")]
+    binding_vif_type: Option<String>,
+
+    /// The type of vNIC which this port should be attached to. This is used to
+    /// determine which mechanism driver(s) to be used to bind the port. The
+    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
+    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
+    /// `remote-managed`. What type of vNIC is actually available depends on
+    /// deployments.
+    ///
+    #[serde(rename = "binding:vnic_type")]
+    #[structable(optional, title = "binding:vnic_type")]
+    binding_vnic_type: Option<String>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// Status of the underlying data plane of a port.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    data_plane_status: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
 
     /// The ID of the device that uses this port. For example, a server
     /// instance or a logical router.
@@ -350,35 +396,28 @@ struct ResponseData {
     #[structable(optional)]
     device_owner: Option<String>,
 
-    /// The ID of the project.
+    #[serde()]
+    #[structable(optional)]
+    device_profile: Option<String>,
+
+    /// Data assigned to a port by the Networking internal DNS including the
+    /// `hostname`, `ip_address` and `fqdn`.
     ///
     #[serde()]
     #[structable(optional)]
-    tenant_id: Option<String>,
+    dns_assignment: Option<String>,
 
-    /// The port status. Values are `ACTIVE`, `DOWN`, `BUILD` and `ERROR`.
+    /// A valid DNS domain.
     ///
     #[serde()]
     #[structable(optional)]
-    status: Option<String>,
+    dns_domain: Option<String>,
 
-    /// A set of zero or more allowed address pair objects each where address
-    /// pair object contains an `ip_address` and `mac_address`. While the
-    /// `ip_address` is required, the `mac_address` will be taken from the port
-    /// if not specified. The value of `ip_address` can be an IP Address or a
-    /// CIDR (if supported by the underlying extension plugin). A server
-    /// connected to the port can send a packet with source address which
-    /// matches one of the specified allowed address pairs.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    allowed_address_pairs: Option<Value>,
-
-    /// Status of the underlying data plane of a port.
+    /// A valid DNS name.
     ///
     #[serde()]
     #[structable(optional)]
-    data_plane_status: Option<String>,
+    dns_name: Option<String>,
 
     /// A set of zero or more extra DHCP option pairs. An option pair consists
     /// of an option value and name.
@@ -387,16 +426,14 @@ struct ResponseData {
     #[structable(optional, pretty)]
     extra_dhcp_opts: Option<Value>,
 
-    /// Indicates when ports use either `deferred`, `immediate` or no IP
-    /// allocation (`none`).
+    /// The IP addresses for the port. If the port has multiple IP addresses,
+    /// this field has multiple entries. Each entry consists of IP address
+    /// (`ip_address`) and the subnet ID from which the IP address is assigned
+    /// (`subnet_id`).
     ///
     #[serde()]
-    #[structable(optional)]
-    ip_allocation: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    device_profile: Option<String>,
+    #[structable(optional, pretty)]
+    fixed_ips: Option<Value>,
 
     /// Admin-only. The following values control Open vSwitch’s Userspace Tx
     /// packet steering feature:
@@ -407,12 +444,73 @@ struct ResponseData {
     #[structable(optional, pretty)]
     hints: Option<Value>,
 
+    /// The ID of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// Indicates when ports use either `deferred`, `immediate` or no IP
+    /// allocation (`none`).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ip_allocation: Option<String>,
+
+    /// The MAC address of the port. If the port uses the `direct-physical`
+    /// `vnic_type` then the value of this field is overwritten with the MAC
+    /// address provided in the active binding:profile if any.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    mac_address: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The ID of the attached network.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    network_id: Option<String>,
+
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
     ///
     #[serde()]
     #[structable(optional)]
     numa_affinity_policy: Option<String>,
+
+    /// The port security status. A valid value is enabled (`true`) or disabled
+    /// (`false`). If port security is enabled for the port, security group
+    /// rules and anti-spoofing rules are applied to the traffic on the port.
+    /// If disabled, no such rules are applied.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    port_security_enabled: Option<BoolString>,
+
+    /// The uplink status propagation of the port. Valid values are enabled
+    /// (`true`) and disabled (`false`).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    propagate_uplink_status: Option<BoolString>,
+
+    /// The ID of the QoS policy of the network where this port is plugged.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    qos_network_policy_id: Option<String>,
+
+    /// The ID of the QoS policy associated with the port.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    qos_policy_id: Option<String>,
 
     /// Expose Placement resources (i.e.: `minimum-bandwidth`) and traits
     /// (i.e.: `vnic-type`, `physnet`) requested by a port to Nova and
@@ -433,83 +531,23 @@ struct ResponseData {
     #[structable(optional)]
     resource_request: Option<String>,
 
-    /// The type of which mechanism is used for the port. An API consumer like
-    /// nova can use this to determine an appropriate way to attach a device
-    /// (for example an interface of a virtual server) to the port. Available
-    /// values currently defined includes `ovs`, `bridge`, `macvtap`, `hw_veb`,
-    /// `hostdev_physical`, `vhostuser`, `distributed` and `other`. There are
-    /// also special values: `unbound` and `binding_failed`. `unbound` means
-    /// the port is not bound to a networking back-end. `binding_failed` means
-    /// an error that the port failed to be bound to a networking back-end.
-    ///
-    #[serde(rename = "binding:vif_type")]
-    #[structable(optional, title = "binding:vif_type")]
-    binding_vif_type: Option<String>,
-
-    /// A dictionary which contains additional information on the port.
-    /// Currently the following fields are defined: `port_filter` and
-    /// `ovs_hybrid_plug`. `port_filter` is a boolean indicating the networking
-    /// service provides port filtering features such as security group and/or
-    /// anti MAC/IP spoofing. `ovs_hybrid_plug` is a boolean used to inform an
-    /// API consumer like nova that the hybrid plugging strategy for OVS should
-    /// be used.
-    ///
-    #[serde(rename = "binding:vif_details")]
-    #[structable(optional, pretty, title = "binding:vif_details")]
-    binding_vif_details: Option<Value>,
-
-    /// The type of vNIC which this port should be attached to. This is used to
-    /// determine which mechanism driver(s) to be used to bind the port. The
-    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
-    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
-    /// `remote-managed`. What type of vNIC is actually available depends on
-    /// deployments.
-    ///
-    #[serde(rename = "binding:vnic_type")]
-    #[structable(optional, title = "binding:vnic_type")]
-    binding_vnic_type: Option<String>,
-
-    /// The ID of the host where the port resides.
-    ///
-    #[serde(rename = "binding:host_id")]
-    #[structable(optional, title = "binding:host_id")]
-    binding_host_id: Option<String>,
-
-    /// A dictionary that enables the application running on the specific host
-    /// to pass and receive vif port information specific to the networking
-    /// back-end. The networking API does not define a specific format of this
-    /// field. If the update request is null this response field will be {}.
-    ///
-    #[serde(rename = "binding:profile")]
-    #[structable(optional, pretty, title = "binding:profile")]
-    binding_profile: Option<Value>,
-
-    /// The port security status. A valid value is enabled (`true`) or disabled
-    /// (`false`). If port security is enabled for the port, security group
-    /// rules and anti-spoofing rules are applied to the traffic on the port.
-    /// If disabled, no such rules are applied.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_security_enabled: Option<BoolString>,
-
-    /// The ID of the QoS policy associated with the port.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    qos_policy_id: Option<String>,
-
-    /// The ID of the QoS policy of the network where this port is plugged.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    qos_network_policy_id: Option<String>,
-
     /// The revision number of the resource.
     ///
     #[serde()]
     #[structable(optional)]
     revision_number: Option<i32>,
+
+    /// The IDs of security groups applied to the port.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    security_groups: Option<Value>,
+
+    /// The port status. Values are `ACTIVE`, `DOWN`, `BUILD` and `ERROR`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
 
     /// The list of tags on the resource.
     ///
@@ -517,55 +555,17 @@ struct ResponseData {
     #[structable(optional, pretty)]
     tags: Option<Value>,
 
-    /// Time at which the resource has been created (in UTC ISO8601 format).
+    /// The ID of the project.
     ///
     #[serde()]
     #[structable(optional)]
-    created_at: Option<String>,
+    tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-
-    /// The uplink status propagation of the port. Valid values are enabled
-    /// (`true`) and disabled (`false`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    propagate_uplink_status: Option<BoolString>,
-
-    /// A valid DNS name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_name: Option<String>,
-
-    /// Data assigned to a port by the Networking internal DNS including the
-    /// `hostname`, `ip_address` and `fqdn`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_assignment: Option<String>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_domain: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The IDs of security groups applied to the port.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_groups: Option<Value>,
 }
 
 impl PortCommand {

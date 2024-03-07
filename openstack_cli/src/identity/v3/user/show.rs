@@ -73,12 +73,6 @@ struct PathParameters {
 /// User response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The user ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
     /// The ID of the default project for the user.
     ///
     #[serde()]
@@ -123,17 +117,17 @@ struct ResponseData {
     #[structable(optional, pretty)]
     federated: Option<Value>,
 
+    /// The user ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
     /// The user name. Must be unique within the owning domain.
     ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
-
-    /// The new password for the user.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    password: Option<String>,
 
     /// The resource options for the user. Available resource options are
     /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
@@ -144,17 +138,23 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     options: Option<Value>,
+
+    /// The new password for the user.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    password: Option<String>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseOptions {
     ignore_change_password_upon_first_use: Option<bool>,
-    ignore_password_expiry: Option<bool>,
     ignore_lockout_failure_attempts: Option<bool>,
-    lock_password: Option<bool>,
+    ignore_password_expiry: Option<bool>,
     ignore_user_inactivity: Option<bool>,
-    multi_factor_auth_rules: Option<Value>,
+    lock_password: Option<bool>,
     multi_factor_auth_enabled: Option<bool>,
+    multi_factor_auth_rules: Option<Value>,
 }
 
 impl fmt::Display for ResponseOptions {
@@ -167,20 +167,14 @@ impl fmt::Display for ResponseOptions {
                     .unwrap_or("".to_string())
             ),
             format!(
-                "ignore_password_expiry={}",
-                self.ignore_password_expiry
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
                 "ignore_lockout_failure_attempts={}",
                 self.ignore_lockout_failure_attempts
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
-                "lock_password={}",
-                self.lock_password
+                "ignore_password_expiry={}",
+                self.ignore_password_expiry
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
@@ -191,15 +185,21 @@ impl fmt::Display for ResponseOptions {
                     .unwrap_or("".to_string())
             ),
             format!(
-                "multi_factor_auth_rules={}",
-                self.multi_factor_auth_rules
-                    .clone()
+                "lock_password={}",
+                self.lock_password
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
             format!(
                 "multi_factor_auth_enabled={}",
                 self.multi_factor_auth_enabled
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "multi_factor_auth_rules={}",
+                self.multi_factor_auth_rules
+                    .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),

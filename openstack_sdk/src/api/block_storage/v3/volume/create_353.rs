@@ -36,11 +36,25 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Volume<'a> {
-    /// The volume name.
+    /// The name of the availability zone.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) name: Option<Option<Cow<'a, str>>>,
+    pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
+
+    /// The UUID of the backup.
+    ///
+    /// **New in version 3.47**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) backup_id: Option<Option<Cow<'a, str>>>,
+
+    /// The UUID of the consistency group.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) consistencygroup_id: Option<Option<Cow<'a, str>>>,
 
     /// The volume description.
     ///
@@ -50,11 +64,66 @@ pub struct Volume<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
+    pub(crate) display_description: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
     pub(crate) display_name: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) display_description: Option<Option<Cow<'a, str>>>,
+    pub(crate) group_id: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) image_id: Option<Option<Cow<'a, str>>>,
+
+    /// The UUID of the image from which you want to create the volume.
+    /// Required to create a bootable volume.
+    ///
+    #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) image_ref: Option<Option<Cow<'a, str>>>,
+
+    /// One or more metadata key and value pairs to be associated with the new
+    /// volume.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, private, setter(name = "_metadata"))]
+    pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
+
+    /// To enable this volume to attach to more than one server, set this value
+    /// to `true`. Default is `false`. Note that support for multiattach
+    /// volumes depends on the volume type being used. See
+    /// [valid boolean values](#valid-boolean-values)
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) multiattach: Option<Option<bool>>,
+
+    /// The volume name.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Option<Cow<'a, str>>>,
+
+    /// The size of the volume, in gibibytes (GiB).
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) size: Option<Option<i32>>,
+
+    /// The UUID of the consistency group.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) snapshot_id: Option<Option<Cow<'a, str>>>,
+
+    /// The UUID of the consistency group.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) source_volid: Option<Option<Cow<'a, str>>>,
 
     /// The volume type (either name or ID). To create an environment with
     /// multiple-storage back ends, you must specify a volume type. Block
@@ -70,75 +139,6 @@ pub struct Volume<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) volume_type: Option<Option<Cow<'a, str>>>,
-
-    /// One or more metadata key and value pairs to be associated with the new
-    /// volume.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_metadata"))]
-    pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
-
-    /// The UUID of the consistency group.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) snapshot_id: Option<Option<Cow<'a, str>>>,
-
-    /// The UUID of the consistency group.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) source_volid: Option<Option<Cow<'a, str>>>,
-
-    /// The UUID of the consistency group.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) consistencygroup_id: Option<Option<Cow<'a, str>>>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) size: Option<Option<i32>>,
-
-    /// The name of the availability zone.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) availability_zone: Option<Option<Cow<'a, str>>>,
-
-    /// To enable this volume to attach to more than one server, set this value
-    /// to `true`. Default is `false`. Note that support for multiattach
-    /// volumes depends on the volume type being used. See
-    /// [valid boolean values](#valid-boolean-values)
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) multiattach: Option<Option<bool>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) image_id: Option<Option<Cow<'a, str>>>,
-
-    /// The UUID of the image from which you want to create the volume.
-    /// Required to create a bootable volume.
-    ///
-    #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) image_ref: Option<Option<Cow<'a, str>>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) group_id: Option<Option<Cow<'a, str>>>,
-
-    /// The UUID of the backup.
-    ///
-    /// **New in version 3.47**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) backup_id: Option<Option<Cow<'a, str>>>,
 }
 
 impl<'a> VolumeBuilder<'a> {
@@ -163,15 +163,15 @@ impl<'a> VolumeBuilder<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// A `volume` object.
-    ///
-    #[builder(setter(into))]
-    pub(crate) volume: Volume<'a>,
-
     /// The dictionary of data to send to the scheduler.
     ///
     #[builder(default, private, setter(name = "_os_sch_hnt_scheduler_hints"))]
     pub(crate) os_sch_hnt_scheduler_hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+
+    /// A `volume` object.
+    ///
+    #[builder(setter(into))]
+    pub(crate) volume: Volume<'a>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

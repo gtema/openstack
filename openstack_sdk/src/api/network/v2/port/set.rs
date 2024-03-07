@@ -130,58 +130,12 @@ pub enum BindingVnicType {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Port<'a> {
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) admin_state_up: Option<bool>,
-
-    /// The MAC address of the port. By default, only administrative users and
-    /// users with advsvc role can change this value.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) mac_address: Option<Cow<'a, str>>,
-
-    /// The IP addresses for the port. If you would like to assign multiple IP
-    /// addresses for the port, specify multiple entries in this field. Each
-    /// entry consists of IP address (`ip_address`) and the subnet ID from
-    /// which the IP address is assigned (`subnet_id`).
-    ///
-    /// - If you specify both a subnet ID and an IP address, OpenStack
-    ///   Networking tries to allocate the IP address on that subnet to the
-    ///   port.
-    /// - If you specify only a subnet ID, OpenStack Networking allocates an
-    ///   available IP from that subnet to the port.
-    /// - If you specify only an IP address, OpenStack Networking tries to
-    ///   allocate the IP address if the address is a valid IP for any of the
-    ///   subnets on the specified network.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
-
-    /// The ID of the device that uses this port. For example, a server
-    /// instance or a logical router.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) device_id: Option<Cow<'a, str>>,
-
-    /// The entity type that uses this port. For example, `compute:nova`
-    /// (server instance), `network:dhcp` (DHCP agent) or
-    /// `network:router_interface` (router interface).
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) device_owner: Option<Cow<'a, str>>,
 
     /// A set of zero or more allowed address pair objects each where address
     /// pair object contains an `ip_address` and `mac_address`. While the
@@ -194,51 +148,6 @@ pub struct Port<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) allowed_address_pairs: Option<Vec<AllowedAddressPairs<'a>>>,
-
-    /// Status of the underlying data plane of a port.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) data_plane_status: Option<DataPlaneStatus>,
-
-    /// A set of zero or more extra DHCP option pairs. An option pair consists
-    /// of an option value and name.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) extra_dhcp_opts: Option<Vec<BTreeMap<Cow<'a, str>, Value>>>,
-
-    /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
-    /// (as defined in setup.cfg). To following values can be used to control
-    /// Open vSwitch’s Userspace Tx packet steering feature:
-    ///
-    /// - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}`
-    /// - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`
-    ///
-    /// If omitted the default is defined by Open vSwitch. The field cannot be
-    /// longer than 4095 characters.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, private, setter(name = "_hints"))]
-    pub(crate) hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
-
-    /// The port NUMA affinity policy requested during the virtual machine
-    /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) numa_affinity_policy: Option<NumaAffinityPolicy>,
-
-    /// The type of vNIC which this port should be attached to. This is used to
-    /// determine which mechanism driver(s) to be used to bind the port. The
-    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
-    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
-    /// `remote-managed`. What type of vNIC is actually available depends on
-    /// deployments. The default is `normal`.
-    ///
-    #[serde(rename = "binding:vnic_type", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) binding_vnic_type: Option<BindingVnicType>,
 
     /// The ID of the host where the port resides. The default is an empty
     /// string.
@@ -268,6 +177,116 @@ pub struct Port<'a> {
     #[builder(default, private, setter(name = "_binding_profile"))]
     pub(crate) binding_profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
+    /// The type of vNIC which this port should be attached to. This is used to
+    /// determine which mechanism driver(s) to be used to bind the port. The
+    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
+    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
+    /// `remote-managed`. What type of vNIC is actually available depends on
+    /// deployments. The default is `normal`.
+    ///
+    #[serde(rename = "binding:vnic_type", skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) binding_vnic_type: Option<BindingVnicType>,
+
+    /// Status of the underlying data plane of a port.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) data_plane_status: Option<DataPlaneStatus>,
+
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// The ID of the device that uses this port. For example, a server
+    /// instance or a logical router.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) device_id: Option<Cow<'a, str>>,
+
+    /// The entity type that uses this port. For example, `compute:nova`
+    /// (server instance), `network:dhcp` (DHCP agent) or
+    /// `network:router_interface` (router interface).
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) device_owner: Option<Cow<'a, str>>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) dns_domain: Option<Cow<'a, str>>,
+
+    /// A valid DNS name.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) dns_name: Option<Cow<'a, str>>,
+
+    /// A set of zero or more extra DHCP option pairs. An option pair consists
+    /// of an option value and name.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) extra_dhcp_opts: Option<Vec<BTreeMap<Cow<'a, str>, Value>>>,
+
+    /// The IP addresses for the port. If you would like to assign multiple IP
+    /// addresses for the port, specify multiple entries in this field. Each
+    /// entry consists of IP address (`ip_address`) and the subnet ID from
+    /// which the IP address is assigned (`subnet_id`).
+    ///
+    /// - If you specify both a subnet ID and an IP address, OpenStack
+    ///   Networking tries to allocate the IP address on that subnet to the
+    ///   port.
+    /// - If you specify only a subnet ID, OpenStack Networking allocates an
+    ///   available IP from that subnet to the port.
+    /// - If you specify only an IP address, OpenStack Networking tries to
+    ///   allocate the IP address if the address is a valid IP for any of the
+    ///   subnets on the specified network.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
+
+    /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
+    /// (as defined in setup.cfg). To following values can be used to control
+    /// Open vSwitch’s Userspace Tx packet steering feature:
+    ///
+    /// - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}`
+    /// - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`
+    ///
+    /// If omitted the default is defined by Open vSwitch. The field cannot be
+    /// longer than 4095 characters.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, private, setter(name = "_hints"))]
+    pub(crate) hints: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+
+    /// The MAC address of the port. By default, only administrative users and
+    /// users with advsvc role can change this value.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) mac_address: Option<Cow<'a, str>>,
+
+    /// Human-readable name of the resource. Default is an empty string.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    /// The port NUMA affinity policy requested during the virtual machine
+    /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) numa_affinity_policy: Option<NumaAffinityPolicy>,
+
     /// The port security status. A valid value is enabled (`true`) or disabled
     /// (`false`). If port security is enabled for the port, security group
     /// rules and anti-spoofing rules are applied to the traffic on the port.
@@ -283,25 +302,6 @@ pub struct Port<'a> {
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
-    /// A valid DNS name.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) dns_name: Option<Cow<'a, str>>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) dns_domain: Option<Cow<'a, str>>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
-
     /// The IDs of security groups applied to the port.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -310,30 +310,6 @@ pub struct Port<'a> {
 }
 
 impl<'a> PortBuilder<'a> {
-    /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
-    /// (as defined in setup.cfg). To following values can be used to control
-    /// Open vSwitch’s Userspace Tx packet steering feature:
-    ///
-    /// - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}`
-    /// - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`
-    ///
-    /// If omitted the default is defined by Open vSwitch. The field cannot be
-    /// longer than 4095 characters.
-    ///
-    pub fn hints<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self.hints
-            .get_or_insert(None)
-            .get_or_insert(None)
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-
     /// A dictionary that enables the application running on the specific host
     /// to pass and receive vif port information specific to the networking
     /// back-end. This field is only meant for machine-machine communication
@@ -358,6 +334,30 @@ impl<'a> PortBuilder<'a> {
         V: Into<Value>,
     {
         self.binding_profile
+            .get_or_insert(None)
+            .get_or_insert(None)
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+
+    /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
+    /// (as defined in setup.cfg). To following values can be used to control
+    /// Open vSwitch’s Userspace Tx packet steering feature:
+    ///
+    /// - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}`
+    /// - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`
+    ///
+    /// If omitted the default is defined by Open vSwitch. The field cannot be
+    /// longer than 4095 characters.
+    ///
+    pub fn hints<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self.hints
             .get_or_insert(None)
             .get_or_insert(None)
             .get_or_insert_with(BTreeMap::new)

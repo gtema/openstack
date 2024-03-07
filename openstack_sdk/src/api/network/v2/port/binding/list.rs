@@ -29,16 +29,21 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// host query parameter for /v2.0/ports/{port_id}/bindings API
+    ///
+    #[builder(default, setter(into))]
+    host: Option<Cow<'a, str>>,
+
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
     ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
 
-    /// host query parameter for /v2.0/ports/{port_id}/bindings API
+    /// status query parameter for /v2.0/ports/{port_id}/bindings API
     ///
     #[builder(default, setter(into))]
-    host: Option<Cow<'a, str>>,
+    status: Option<Cow<'a, str>>,
 
     /// vif_type query parameter for /v2.0/ports/{port_id}/bindings API
     ///
@@ -49,11 +54,6 @@ pub struct Request<'a> {
     ///
     #[builder(default, setter(into))]
     vnic_type: Option<Cow<'a, str>>,
-
-    /// status query parameter for /v2.0/ports/{port_id}/bindings API
-    ///
-    #[builder(default, setter(into))]
-    status: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

@@ -88,28 +88,28 @@ struct Keypair {
     #[arg(long)]
     name: String,
 
+    /// The public ssh key to import. Was optional before microversion 2.92 :
+    /// if you were omitting this value, a keypair was generated for you.
+    ///
+    #[arg(long)]
+    public_key: Option<String>,
+
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
     ///
     #[arg(long)]
     _type: Option<Type>,
-
-    /// The public ssh key to import. Was optional before microversion 2.92 :
-    /// if you were omitting this value, a keypair was generated for you.
-    ///
-    #[arg(long)]
-    public_key: Option<String>,
 }
 
 /// Keypair response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The user_id for a keypair.
+    /// The date and time when the resource was created.
     ///
     #[serde()]
     #[structable(optional)]
-    user_id: Option<String>,
+    created_at: Option<String>,
 
     /// A boolean indicates whether this keypair is deleted or not. The value
     /// is always false (not deleted).
@@ -118,23 +118,17 @@ struct ResponseData {
     #[structable(optional)]
     deleted: Option<bool>,
 
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
     /// It is always null.
     ///
     #[serde()]
     #[structable(optional)]
     deleted_at: Option<String>,
 
-    /// It is always null.
+    /// The fingerprint for the keypair.
     ///
     #[serde()]
     #[structable(optional)]
-    updated_at: Option<String>,
+    fingerprint: Option<String>,
 
     /// The keypair ID.
     ///
@@ -148,26 +142,6 @@ struct ResponseData {
     #[structable(optional)]
     name: Option<String>,
 
-    /// The keypair public key.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    public_key: Option<String>,
-
-    /// The fingerprint for the keypair.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fingerprint: Option<String>,
-
-    /// The type of the keypair. Allowed values are `ssh` or `x509`.
-    ///
-    /// **New in version 2.2**
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
-
     /// If you do not provide a public key on create, a new keypair will be
     /// built for you, and the private key will be returned during the initial
     /// create call. Make sure to save this, as there is no way to get this
@@ -178,6 +152,32 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     private_key: Option<String>,
+
+    /// The keypair public key.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    public_key: Option<String>,
+
+    /// The type of the keypair. Allowed values are `ssh` or `x509`.
+    ///
+    /// **New in version 2.2**
+    ///
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
+    _type: Option<String>,
+
+    /// It is always null.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// The user_id for a keypair.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    user_id: Option<String>,
 }
 
 impl KeypairCommand {

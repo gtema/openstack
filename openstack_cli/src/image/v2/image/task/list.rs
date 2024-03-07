@@ -76,41 +76,35 @@ struct PathParameters {
 /// Tasks response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// Datetime when this resource was created
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// Datetime when this resource would be subject to removal
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    expires_at: Option<String>,
+
     /// An identifier for the task
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The type of task represented by this content
-    ///
-    #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
-
-    /// The current status of this task
+    /// Image associated with the task
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable(optional, wide)]
+    image_id: Option<String>,
 
     /// The parameters required by task, JSON blob
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
     input: Option<Value>,
-
-    /// The result of current task, JSON blob
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    result: Option<Value>,
-
-    /// An identifier for the owner of this task
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    owner: Option<String>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
@@ -119,11 +113,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     message: Option<String>,
 
-    /// Image associated with the task
+    /// An identifier for the owner of this task
     ///
     #[serde()]
     #[structable(optional, wide)]
-    image_id: Option<String>,
+    owner: Option<String>,
 
     /// Human-readable informative request-id
     ///
@@ -131,23 +125,31 @@ struct ResponseData {
     #[structable(optional, wide)]
     request_id: Option<String>,
 
-    /// User associated with the task
+    /// The result of current task, JSON blob
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    user_id: Option<String>,
+    #[structable(optional, pretty, wide)]
+    result: Option<Value>,
 
-    /// Datetime when this resource would be subject to removal
-    ///
     #[serde()]
     #[structable(optional, wide)]
-    expires_at: Option<String>,
+    schema: Option<String>,
 
-    /// Datetime when this resource was created
+    #[serde(rename = "self")]
+    #[structable(optional, title = "self", wide)]
+    _self: Option<String>,
+
+    /// The current status of this task
     ///
     #[serde()]
     #[structable(optional)]
-    created_at: Option<String>,
+    status: Option<String>,
+
+    /// The type of task represented by this content
+    ///
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type", wide)]
+    _type: Option<String>,
 
     /// Datetime when this resource was updated
     ///
@@ -155,13 +157,11 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 
-    #[serde(rename = "self")]
-    #[structable(optional, title = "self", wide)]
-    _self: Option<String>,
-
+    /// User associated with the task
+    ///
     #[serde()]
     #[structable(optional, wide)]
-    schema: Option<String>,
+    user_id: Option<String>,
 }
 
 impl TasksCommand {

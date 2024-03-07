@@ -28,10 +28,6 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeType<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -39,6 +35,10 @@ pub struct VolumeType<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_extra_specs"))]
     pub(crate) extra_specs: Option<BTreeMap<Cow<'a, str>, Option<Cow<'a, str>>>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
 
     #[serde(
         rename = "os-volume-type-access:is_public",

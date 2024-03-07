@@ -102,14 +102,6 @@ use std::borrow::Cow;
 pub struct Method<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) uri: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
     pub(crate) glance_image_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -119,11 +111,31 @@ pub struct Method<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) glance_service_interface: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) uri: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// When set to True the data will be imported to the set of stores you may
+    /// consume from this particular deployment of Glance (ie: the same set of
+    /// stores returned to a call to /v2/info/stores on the glance-api the
+    /// request hits). This can’t be used simultaneously with the `stores`
+    /// parameter.
+    ///
+    #[builder(default)]
+    pub(crate) all_stores: Option<bool>,
+
+    #[builder(default)]
+    pub(crate) all_stores_must_success: Option<bool>,
+
     /// A JSON object indicating what import method you wish to use to import
     /// your image. The content of this JSON object is another JSON object with
     /// a `name` field whose value is the identifier for the import method.
@@ -136,18 +148,6 @@ pub struct Request<'a> {
     ///
     #[builder(default, setter(into))]
     pub(crate) stores: Option<Vec<Cow<'a, str>>>,
-
-    /// When set to True the data will be imported to the set of stores you may
-    /// consume from this particular deployment of Glance (ie: the same set of
-    /// stores returned to a call to /v2/info/stores on the glance-api the
-    /// request hits). This can’t be used simultaneously with the `stores`
-    /// parameter.
-    ///
-    #[builder(default)]
-    pub(crate) all_stores: Option<bool>,
-
-    #[builder(default)]
-    pub(crate) all_stores_must_success: Option<bool>,
 
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///

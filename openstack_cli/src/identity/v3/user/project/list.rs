@@ -88,17 +88,17 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The parent id of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    parent_id: Option<String>,
-
     /// The name of the project.
     ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
+
+    /// The parent id of the project.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    parent_id: Option<String>,
 }
 
 impl ProjectsCommand {

@@ -51,6 +51,18 @@ pub enum Protocol {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ConntrackHelper<'a> {
+    /// The netfilter conntrack helper module.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) helper: Option<Cow<'a, str>>,
+
+    /// The network port for the netfilter conntrack target rule.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) port: Option<f32>,
+
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
@@ -60,18 +72,6 @@ pub struct ConntrackHelper<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) protocol: Option<Protocol>,
-
-    /// The network port for the netfilter conntrack target rule.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) port: Option<f32>,
-
-    /// The netfilter conntrack helper module.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) helper: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

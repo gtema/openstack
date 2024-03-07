@@ -73,6 +73,19 @@ pub struct Project<'a> {
     #[builder(default)]
     pub(crate) is_domain: Option<bool>,
 
+    /// The name of the project.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
+
+    /// The resource options for the project. Available resource options are
+    /// `immutable`.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) options: Option<Options>,
+
     /// The ID of the parent for the project.
     ///
     /// **New in version 3.4**
@@ -81,24 +94,11 @@ pub struct Project<'a> {
     #[builder(default, setter(into))]
     pub(crate) parent_id: Option<Option<Cow<'a, str>>>,
 
-    /// The name of the project.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
     /// A list of simple strings assigned to a project.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
-
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) options: Option<Options>,
 
     #[builder(setter(name = "_properties"), default, private)]
     #[serde(flatten)]

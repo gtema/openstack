@@ -54,15 +54,15 @@ pub struct IdentityProvidersCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// Filter for Identity Providers’ ID attribute
-    ///
-    #[arg(long)]
-    id: Option<String>,
-
     /// Filter for Identity Providers’ enabled attribute
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     enabled: Option<bool>,
+
+    /// Filter for Identity Providers’ ID attribute
+    ///
+    #[arg(long)]
+    id: Option<String>,
 }
 
 /// Path parameters
@@ -71,11 +71,12 @@ struct PathParameters {}
 /// IdentityProviders response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The Identity Provider unique ID
+    /// The length of validity in minutes for group memberships carried over
+    /// through mapping and persisted in the database.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable(optional, wide)]
+    authorization_ttl: Option<i32>,
 
     /// The Identity Provider description
     ///
@@ -89,18 +90,17 @@ struct ResponseData {
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
-    /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    authorization_ttl: Option<i32>,
-
     /// Whether the Identity Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
+
+    /// The Identity Provider unique ID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// List of the unique Identity Provider’s remote IDs
     ///

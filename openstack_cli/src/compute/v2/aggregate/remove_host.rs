@@ -122,6 +122,12 @@ struct ResponseData {
     #[structable(optional)]
     deleted_at: Option<String>,
 
+    /// An array of host information.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    hosts: Option<Value>,
+
     /// The ID of the host aggregate.
     ///
     #[serde()]
@@ -133,12 +139,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     metadata: Option<Value>,
-
-    /// An array of host information.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
 
     /// The date and time when the resource was updated, if the resource has
     /// not been updated, this field will show as `null`. The date and time

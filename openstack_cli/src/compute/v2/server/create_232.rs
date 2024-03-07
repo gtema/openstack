@@ -88,9 +88,9 @@ pub struct ServerCommand {
     path: PathParameters,
 
     #[command(flatten)]
-    server: Server,
-    #[command(flatten)]
     os_scheduler_hints: Option<OsSchedulerHints>,
+    #[command(flatten)]
+    server: Server,
 }
 
 /// Query parameters
@@ -110,12 +110,85 @@ enum OsDcfDiskConfig {
 /// Server Body data
 #[derive(Args)]
 struct Server {
+    /// IPv4 address that should be used to access this server.
+    ///
+    #[arg(long)]
+    access_ipv4: Option<String>,
+
+    /// IPv6 address that should be used to access this server.
+    ///
+    #[arg(long)]
+    access_ipv6: Option<String>,
+
+    /// The administrative password of the server. If you omit this parameter,
+    /// the operation generates a new password.
+    ///
+    #[arg(long)]
+    admin_pass: Option<String>,
+
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
     ///
     #[arg(long)]
-    name: String,
+    availability_zone: Option<String>,
+
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    block_device_mapping: Option<Vec<Value>>,
+
+    /// Enables fine grained control of the block device mapping for an
+    /// instance. This is typically used for booting servers from volumes. An
+    /// example format would look as follows:
+    ///
+    /// > ```text
+    /// > "block_device_mapping_v2": [{
+    /// >  "boot_index": "0",
+    /// >  "uuid": "ac408821-c95a-448f-9292-73986c790911",
+    /// >  "source_type": "image",
+    /// >  "volume_size": "25",
+    /// >  "destination_type": "volume",
+    /// >  "delete_on_termination": true,
+    /// >  "tag": "disk1",
+    /// >  "disk_bus": "scsi"}]
+    /// >
+    /// > ```
+    ///
+    /// In microversion 2.32, `tag` is an optional string attribute that can be
+    /// used to assign a tag to the block device. This tag is then exposed to
+    /// the guest in the metadata API and the config drive and is associated to
+    /// hardware metadata for that block device, such as bus (ex: SCSI), bus
+    /// address (ex: 1:0:2:0), and serial.
+    ///
+    /// A bug has caused the `tag` attribute to no longer be accepted starting
+    /// with version 2.33. It has been restored in version 2.42.
+    ///
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    block_device_mapping_v2: Option<Vec<Value>>,
+
+    /// Indicates whether a config drive enables metadata injection. The
+    /// config_drive setting provides information about a drive that the
+    /// instance can mount at boot time. The instance reads files from the
+    /// drive to get information that is normally available through the
+    /// metadata service. This metadata is different from the user data. Not
+    /// all cloud providers enable the `config_drive`. Read more in the
+    /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    config_drive: Option<bool>,
+
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
+    ///
+    /// **New in version 2.19**
+    ///
+    #[arg(long)]
+    description: Option<String>,
+
+    /// The flavor reference, as an ID (including a UUID) or full URL, for the
+    /// flavor for your server instance.
+    ///
+    #[arg(long)]
+    flavor_ref: String,
 
     /// The UUID of the image to use for your server instance. This is not
     /// required in case of boot from volume. In all other cases it is required
@@ -124,23 +197,31 @@ struct Server {
     #[arg(long)]
     image_ref: Option<String>,
 
-    /// The flavor reference, as an ID (including a UUID) or full URL, for the
-    /// flavor for your server instance.
+    /// A target cell name. Schedule the server in a host in the cell
+    /// specified. It is available when `TargetCellFilter` is available on
+    /// cloud side that is cell v1 environment.
     ///
     #[arg(long)]
-    flavor_ref: String,
+    key_name: Option<String>,
 
-    /// The administrative password of the server. If you omit this parameter,
-    /// the operation generates a new password.
-    ///
     #[arg(long)]
-    admin_pass: Option<String>,
+    max_count: Option<i32>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
     ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
+
+    #[arg(long)]
+    min_count: Option<i32>,
+
+    /// A target cell name. Schedule the server in a host in the cell
+    /// specified. It is available when `TargetCellFilter` is available on
+    /// cloud side that is cell v1 environment.
+    ///
+    #[arg(long)]
+    name: String,
 
     /// A list of `network` object. Required parameter when there are multiple
     /// networks defined for the tenant. When you do not specify the networks
@@ -203,16 +284,6 @@ struct Server {
     #[arg(long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
-    /// IPv4 address that should be used to access this server.
-    ///
-    #[arg(long)]
-    access_ipv4: Option<String>,
-
-    /// IPv6 address that should be used to access this server.
-    ///
-    #[arg(long)]
-    access_ipv6: Option<String>,
-
     /// The file path and contents, text only, to inject into the server at
     /// launch. The maximum size of the file path data is 255 bytes. The
     /// maximum limit is the number of allowed bytes in the decoded, rather
@@ -222,69 +293,6 @@ struct Server {
     ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     personality: Option<Vec<Value>>,
-
-    /// A target cell name. Schedule the server in a host in the cell
-    /// specified. It is available when `TargetCellFilter` is available on
-    /// cloud side that is cell v1 environment.
-    ///
-    #[arg(long)]
-    availability_zone: Option<String>,
-
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
-    block_device_mapping: Option<Vec<Value>>,
-
-    /// Enables fine grained control of the block device mapping for an
-    /// instance. This is typically used for booting servers from volumes. An
-    /// example format would look as follows:
-    ///
-    /// > ```text
-    /// > "block_device_mapping_v2": [{
-    /// >  "boot_index": "0",
-    /// >  "uuid": "ac408821-c95a-448f-9292-73986c790911",
-    /// >  "source_type": "image",
-    /// >  "volume_size": "25",
-    /// >  "destination_type": "volume",
-    /// >  "delete_on_termination": true,
-    /// >  "tag": "disk1",
-    /// >  "disk_bus": "scsi"}]
-    /// >
-    /// > ```
-    ///
-    /// In microversion 2.32, `tag` is an optional string attribute that can be
-    /// used to assign a tag to the block device. This tag is then exposed to
-    /// the guest in the metadata API and the config drive and is associated to
-    /// hardware metadata for that block device, such as bus (ex: SCSI), bus
-    /// address (ex: 1:0:2:0), and serial.
-    ///
-    /// A bug has caused the `tag` attribute to no longer be accepted starting
-    /// with version 2.33. It has been restored in version 2.42.
-    ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
-    block_device_mapping_v2: Option<Vec<Value>>,
-
-    /// Indicates whether a config drive enables metadata injection. The
-    /// config_drive setting provides information about a drive that the
-    /// instance can mount at boot time. The instance reads files from the
-    /// drive to get information that is normally available through the
-    /// metadata service. This metadata is different from the user data. Not
-    /// all cloud providers enable the `config_drive`. Read more in the
-    /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    config_drive: Option<bool>,
-
-    /// A target cell name. Schedule the server in a host in the cell
-    /// specified. It is available when `TargetCellFilter` is available on
-    /// cloud side that is cell v1 environment.
-    ///
-    #[arg(long)]
-    key_name: Option<String>,
-
-    #[arg(long)]
-    min_count: Option<i32>,
-
-    #[arg(long)]
-    max_count: Option<i32>,
 
     /// Indicates whether a config drive enables metadata injection. The
     /// config_drive setting provides information about a drive that the
@@ -315,70 +323,11 @@ struct Server {
     ///
     #[arg(long)]
     user_data: Option<String>,
-
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
-    ///
-    /// **New in version 2.19**
-    ///
-    #[arg(long)]
-    description: Option<String>,
 }
 
 /// OsSchedulerHints Body data
 #[derive(Args)]
 struct OsSchedulerHints {
-    /// The server group UUID. Schedule the server according to a policy of the
-    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
-    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
-    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
-    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
-    ///
-    #[arg(long)]
-    group: Option<String>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on a
-    /// different host from a set of servers. It is available when
-    /// `DifferentHostFilter` is available on cloud side.
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    different_host: Option<Vec<String>>,
-
-    /// A list of server UUIDs or a server UUID. Schedule the server on the
-    /// same host as another server in a set of servers. It is available when
-    /// `SameHostFilter` is available on cloud side.
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    same_host: Option<Vec<String>>,
-
-    /// Schedule the server by using a custom filter in JSON format. For
-    /// example:
-    ///
-    /// ```text
-    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
-    ///
-    /// ```
-    ///
-    /// It is available when `JsonFilter` is available on cloud side.
-    ///
-    #[arg(long, value_name="JSON", value_parser=parse_json)]
-    query: Option<Value>,
-
-    /// A target cell name. Schedule the server in a host in the cell
-    /// specified. It is available when `TargetCellFilter` is available on
-    /// cloud side that is cell v1 environment.
-    ///
-    #[arg(long)]
-    target_cell: Option<String>,
-
-    /// A list of cell routes or a cell route (string). Schedule the server in
-    /// a cell that is not specified. It is available when
-    /// `DifferentCellFilter` is available on cloud side that is cell v1
-    /// environment.
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    different_cell: Option<Vec<String>>,
-
     /// Schedule the server on a host in the network specified with this
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
@@ -394,24 +343,62 @@ struct OsSchedulerHints {
     ///
     #[arg(long)]
     cidr: Option<String>,
+
+    /// A list of cell routes or a cell route (string). Schedule the server in
+    /// a cell that is not specified. It is available when
+    /// `DifferentCellFilter` is available on cloud side that is cell v1
+    /// environment.
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    different_cell: Option<Vec<String>>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on a
+    /// different host from a set of servers. It is available when
+    /// `DifferentHostFilter` is available on cloud side.
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    different_host: Option<Vec<String>>,
+
+    /// The server group UUID. Schedule the server according to a policy of the
+    /// server group (`anti-affinity`, `affinity`, `soft-anti-affinity` or
+    /// `soft-affinity`). It is available when `ServerGroupAffinityFilter`,
+    /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
+    /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
+    ///
+    #[arg(long)]
+    group: Option<String>,
+
+    /// Schedule the server by using a custom filter in JSON format. For
+    /// example:
+    ///
+    /// ```text
+    /// "query": "[\">=\",\"$free_ram_mb\",1024]"
+    ///
+    /// ```
+    ///
+    /// It is available when `JsonFilter` is available on cloud side.
+    ///
+    #[arg(long, value_name="JSON", value_parser=parse_json)]
+    query: Option<Value>,
+
+    /// A list of server UUIDs or a server UUID. Schedule the server on the
+    /// same host as another server in a set of servers. It is available when
+    /// `SameHostFilter` is available on cloud side.
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    same_host: Option<Vec<String>>,
+
+    /// A target cell name. Schedule the server in a host in the cell
+    /// specified. It is available when `TargetCellFilter` is available on
+    /// cloud side that is cell v1 environment.
+    ///
+    #[arg(long)]
+    target_cell: Option<String>,
 }
 
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// Disk configuration. The value is either:
-    ///
-    /// - `AUTO`. The API builds the server with a single partition the size of
-    ///   the target flavor disk. The API automatically adjusts the file system
-    ///   to fit the entire partition.
-    /// - `MANUAL`. The API builds the server by using the partition scheme and
-    ///   file system that is in the source image. If the target flavor disk is
-    ///   larger, The API does not partition the remaining disk space.
-    ///
-    #[serde(rename = "OS-DCF:diskConfig")]
-    #[structable(optional, title = "OS-DCF:diskConfig")]
-    os_dcf_disk_config: Option<String>,
-
     /// The administrative password for the server. If you set
     /// `enable_instance_password` configuration option to `False`, the API
     /// wouldn’t return the `adminPass` field in response.
@@ -426,12 +413,6 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// One or more security groups objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    security_groups: Option<Value>,
-
     /// Links pertaining to usage. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
@@ -441,6 +422,25 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     links: Option<Value>,
+
+    /// Disk configuration. The value is either:
+    ///
+    /// - `AUTO`. The API builds the server with a single partition the size of
+    ///   the target flavor disk. The API automatically adjusts the file system
+    ///   to fit the entire partition.
+    /// - `MANUAL`. The API builds the server by using the partition scheme and
+    ///   file system that is in the source image. If the target flavor disk is
+    ///   larger, The API does not partition the remaining disk space.
+    ///
+    #[serde(rename = "OS-DCF:diskConfig")]
+    #[structable(optional, title = "OS-DCF:diskConfig")]
+    os_dcf_disk_config: Option<String>,
+
+    /// One or more security groups objects.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    security_groups: Option<Value>,
 }
 
 impl ServerCommand {
@@ -461,6 +461,47 @@ impl ServerCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
+        // Set Request.os_scheduler_hints data
+        if let Some(args) = &self.os_scheduler_hints {
+            let mut os_scheduler_hints_builder = create_232::OsSchedulerHintsBuilder::default();
+            if let Some(val) = &args.group {
+                os_scheduler_hints_builder.group(val);
+            }
+
+            if let Some(val) = &args.different_host {
+                os_scheduler_hints_builder
+                    .different_host(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            }
+
+            if let Some(val) = &args.same_host {
+                os_scheduler_hints_builder
+                    .same_host(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            }
+
+            if let Some(val) = &args.query {
+                os_scheduler_hints_builder.query(val.clone());
+            }
+
+            if let Some(val) = &args.target_cell {
+                os_scheduler_hints_builder.target_cell(val);
+            }
+
+            if let Some(val) = &args.different_cell {
+                os_scheduler_hints_builder
+                    .different_cell(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            }
+
+            if let Some(val) = &args.build_near_host_ip {
+                os_scheduler_hints_builder.build_near_host_ip(val);
+            }
+
+            if let Some(val) = &args.cidr {
+                os_scheduler_hints_builder.cidr(val);
+            }
+
+            ep_builder.os_scheduler_hints(os_scheduler_hints_builder.build().unwrap());
+        }
+
         // Set Request.server data
         let args = &self.server;
         let mut server_builder = create_232::ServerBuilder::default();
@@ -574,47 +615,6 @@ impl ServerCommand {
         }
 
         ep_builder.server(server_builder.build().unwrap());
-
-        // Set Request.os_scheduler_hints data
-        if let Some(args) = &self.os_scheduler_hints {
-            let mut os_scheduler_hints_builder = create_232::OsSchedulerHintsBuilder::default();
-            if let Some(val) = &args.group {
-                os_scheduler_hints_builder.group(val);
-            }
-
-            if let Some(val) = &args.different_host {
-                os_scheduler_hints_builder
-                    .different_host(val.iter().map(|v| v.into()).collect::<Vec<_>>());
-            }
-
-            if let Some(val) = &args.same_host {
-                os_scheduler_hints_builder
-                    .same_host(val.iter().map(|v| v.into()).collect::<Vec<_>>());
-            }
-
-            if let Some(val) = &args.query {
-                os_scheduler_hints_builder.query(val.clone());
-            }
-
-            if let Some(val) = &args.target_cell {
-                os_scheduler_hints_builder.target_cell(val);
-            }
-
-            if let Some(val) = &args.different_cell {
-                os_scheduler_hints_builder
-                    .different_cell(val.iter().map(|v| v.into()).collect::<Vec<_>>());
-            }
-
-            if let Some(val) = &args.build_near_host_ip {
-                os_scheduler_hints_builder.build_near_host_ip(val);
-            }
-
-            if let Some(val) = &args.cidr {
-                os_scheduler_hints_builder.cidr(val);
-            }
-
-            ep_builder.os_scheduler_hints(os_scheduler_hints_builder.build().unwrap());
-        }
 
         let ep = ep_builder
             .build()

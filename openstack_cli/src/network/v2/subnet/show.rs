@@ -75,41 +75,47 @@ struct PathParameters {
 /// Subnet response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the subnet.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The IP protocol version. Value is `4` or `6`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ip_version: Option<i32>,
-
-    /// The ID of the network to which the subnet belongs.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    network_id: Option<String>,
-
-    /// The ID of the subnet pool associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    subnetpool_id: Option<String>,
+    #[structable(optional, pretty)]
+    allocation_pools: Option<Value>,
 
     /// The CIDR of the subnet.
     ///
     #[serde()]
     #[structable(optional)]
     cidr: Option<String>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// List of dns name servers associated with the subnet.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    dns_nameservers: Option<Value>,
+
+    /// Whether to publish DNS records for IPs from this subnet.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    dns_publish_fixed_ip: Option<BoolString>,
+
+    /// Indicates whether dhcp is enabled or disabled for the subnet.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    enable_dhcp: Option<BoolString>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
@@ -118,18 +124,6 @@ struct ResponseData {
     #[structable(optional)]
     gateway_ip: Option<String>,
 
-    /// Allocation pools with `start` and `end` IP addresses for this subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    allocation_pools: Option<Value>,
-
-    /// List of dns name servers associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    dns_nameservers: Option<Value>,
-
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
     ///
@@ -137,17 +131,24 @@ struct ResponseData {
     #[structable(optional, pretty)]
     host_routes: Option<Value>,
 
-    /// The ID of the project.
+    /// The ID of the subnet.
     ///
     #[serde()]
     #[structable(optional)]
-    tenant_id: Option<String>,
+    id: Option<String>,
 
-    /// Indicates whether dhcp is enabled or disabled for the subnet.
+    /// The IP protocol version. Value is `4` or `6`.
     ///
     #[serde()]
     #[structable(optional)]
-    enable_dhcp: Option<BoolString>,
+    ip_version: Option<i32>,
+
+    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
+    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ipv6_address_mode: Option<String>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
@@ -157,12 +158,17 @@ struct ResponseData {
     #[structable(optional)]
     ipv6_ra_mode: Option<String>,
 
-    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
-    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    /// Human-readable name of the resource.
     ///
     #[serde()]
     #[structable(optional)]
-    ipv6_address_mode: Option<String>,
+    name: Option<String>,
+
+    /// The ID of the network to which the subnet belongs.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    network_id: Option<String>,
 
     /// The revision number of the resource.
     ///
@@ -170,11 +176,24 @@ struct ResponseData {
     #[structable(optional)]
     revision_number: Option<i32>,
 
+    /// The ID of a network segment the subnet is associated with. It is
+    /// available when `segment` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    segment_id: Option<String>,
+
     /// The service types associated with the subnet.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     service_types: Option<Value>,
+
+    /// The ID of the subnet pool associated with the subnet.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    subnetpool_id: Option<String>,
 
     /// The list of tags on the resource.
     ///
@@ -182,36 +201,17 @@ struct ResponseData {
     #[structable(optional, pretty)]
     tags: Option<Value>,
 
-    /// Time at which the resource has been created (in UTC ISO8601 format).
+    /// The ID of the project.
     ///
     #[serde()]
     #[structable(optional)]
-    created_at: Option<String>,
+    tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-
-    /// Whether to publish DNS records for IPs from this subnet.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_publish_fixed_ip: Option<BoolString>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of a network segment the subnet is associated with. It is
-    /// available when `segment` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    segment_id: Option<String>,
 }
 
 impl SubnetCommand {

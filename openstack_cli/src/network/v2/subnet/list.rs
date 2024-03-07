@@ -70,80 +70,55 @@ pub struct SubnetsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// id query parameter for /v2.0/subnets API
-    ///
-    #[arg(long)]
-    id: Option<String>,
-
-    /// name query parameter for /v2.0/subnets API
-    ///
-    #[arg(long)]
-    name: Option<String>,
-
-    /// ip_version query parameter for /v2.0/subnets API
-    ///
-    #[arg(long)]
-    ip_version: Option<i32>,
-
-    /// network_id query parameter for /v2.0/subnets API
-    ///
-    #[arg(long)]
-    network_id: Option<String>,
-
-    /// subnetpool_id query parameter for /v2.0/subnets API
-    ///
-    #[arg(long)]
-    subnetpool_id: Option<String>,
-
     /// cidr query parameter for /v2.0/subnets API
     ///
     #[arg(long)]
     cidr: Option<String>,
 
-    /// gateway_ip query parameter for /v2.0/subnets API
+    /// description query parameter for /v2.0/subnets API
     ///
     #[arg(long)]
-    gateway_ip: Option<String>,
-
-    /// tenant_id query parameter for /v2.0/subnets API
-    ///
-    #[arg(long)]
-    tenant_id: Option<String>,
+    description: Option<String>,
 
     /// enable_dhcp query parameter for /v2.0/subnets API
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     enable_dhcp: Option<bool>,
 
-    /// ipv6_ra_mode query parameter for /v2.0/subnets API
+    /// gateway_ip query parameter for /v2.0/subnets API
     ///
-    #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
-    ipv6_ra_mode: Option<String>,
+    #[arg(long)]
+    gateway_ip: Option<String>,
+
+    /// id query parameter for /v2.0/subnets API
+    ///
+    #[arg(long)]
+    id: Option<String>,
+
+    /// ip_version query parameter for /v2.0/subnets API
+    ///
+    #[arg(long)]
+    ip_version: Option<i32>,
 
     /// ipv6_address_mode query parameter for /v2.0/subnets API
     ///
     #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_address_mode: Option<String>,
 
-    /// shared query parameter for /v2.0/subnets API
+    /// ipv6_ra_mode query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    shared: Option<bool>,
+    #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
+    ipv6_ra_mode: Option<String>,
 
-    /// revision_number query parameter for /v2.0/subnets API
+    /// name query parameter for /v2.0/subnets API
     ///
     #[arg(long)]
-    revision_number: Option<String>,
+    name: Option<String>,
 
-    /// tags query parameter for /v2.0/subnets API
+    /// network_id query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    tags: Option<Vec<String>>,
-
-    /// tags-any query parameter for /v2.0/subnets API
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    tags_any: Option<Vec<String>>,
+    #[arg(long)]
+    network_id: Option<String>,
 
     /// not-tags query parameter for /v2.0/subnets API
     ///
@@ -155,15 +130,40 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
-    /// description query parameter for /v2.0/subnets API
+    /// revision_number query parameter for /v2.0/subnets API
     ///
     #[arg(long)]
-    description: Option<String>,
+    revision_number: Option<String>,
 
     /// segment_id query parameter for /v2.0/subnets API
     ///
     #[arg(long)]
     segment_id: Option<String>,
+
+    /// shared query parameter for /v2.0/subnets API
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    shared: Option<bool>,
+
+    /// subnetpool_id query parameter for /v2.0/subnets API
+    ///
+    #[arg(long)]
+    subnetpool_id: Option<String>,
+
+    /// tags query parameter for /v2.0/subnets API
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    tags: Option<Vec<String>>,
+
+    /// tags-any query parameter for /v2.0/subnets API
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    tags_any: Option<Vec<String>>,
+
+    /// tenant_id query parameter for /v2.0/subnets API
+    ///
+    #[arg(long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -172,41 +172,47 @@ struct PathParameters {}
 /// Subnets response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the subnet.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The IP protocol version. Value is `4` or `6`.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    ip_version: Option<i32>,
-
-    /// The ID of the network to which the subnet belongs.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    network_id: Option<String>,
-
-    /// The ID of the subnet pool associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    subnetpool_id: Option<String>,
+    #[structable(optional, pretty, wide)]
+    allocation_pools: Option<Value>,
 
     /// The CIDR of the subnet.
     ///
     #[serde()]
     #[structable(optional, wide)]
     cidr: Option<String>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// List of dns name servers associated with the subnet.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    dns_nameservers: Option<Value>,
+
+    /// Whether to publish DNS records for IPs from this subnet.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    dns_publish_fixed_ip: Option<BoolString>,
+
+    /// Indicates whether dhcp is enabled or disabled for the subnet.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    enable_dhcp: Option<BoolString>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
@@ -215,18 +221,6 @@ struct ResponseData {
     #[structable(optional, wide)]
     gateway_ip: Option<String>,
 
-    /// Allocation pools with `start` and `end` IP addresses for this subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    allocation_pools: Option<Value>,
-
-    /// List of dns name servers associated with the subnet.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    dns_nameservers: Option<Value>,
-
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
     ///
@@ -234,17 +228,24 @@ struct ResponseData {
     #[structable(optional, pretty, wide)]
     host_routes: Option<Value>,
 
-    /// The ID of the project.
+    /// The ID of the subnet.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
+    #[structable(optional)]
+    id: Option<String>,
 
-    /// Indicates whether dhcp is enabled or disabled for the subnet.
+    /// The IP protocol version. Value is `4` or `6`.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    enable_dhcp: Option<BoolString>,
+    ip_version: Option<i32>,
+
+    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
+    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    ipv6_address_mode: Option<String>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
@@ -254,12 +255,17 @@ struct ResponseData {
     #[structable(optional, wide)]
     ipv6_ra_mode: Option<String>,
 
-    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
-    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
+    /// Human-readable name of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The ID of the network to which the subnet belongs.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    ipv6_address_mode: Option<String>,
+    network_id: Option<String>,
 
     /// The revision number of the resource.
     ///
@@ -267,11 +273,24 @@ struct ResponseData {
     #[structable(optional, wide)]
     revision_number: Option<i32>,
 
+    /// The ID of a network segment the subnet is associated with. It is
+    /// available when `segment` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    segment_id: Option<String>,
+
     /// The service types associated with the subnet.
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
     service_types: Option<Value>,
+
+    /// The ID of the subnet pool associated with the subnet.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    subnetpool_id: Option<String>,
 
     /// The list of tags on the resource.
     ///
@@ -279,36 +298,17 @@ struct ResponseData {
     #[structable(optional, pretty, wide)]
     tags: Option<Value>,
 
-    /// Time at which the resource has been created (in UTC ISO8601 format).
+    /// The ID of the project.
     ///
     #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
+    #[structable(optional, wide)]
+    tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-
-    /// Whether to publish DNS records for IPs from this subnet.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    dns_publish_fixed_ip: Option<BoolString>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The ID of a network segment the subnet is associated with. It is
-    /// available when `segment` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    segment_id: Option<String>,
 }
 
 impl SubnetsCommand {

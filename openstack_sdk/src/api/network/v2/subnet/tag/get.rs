@@ -25,15 +25,15 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
-    ///
-    #[builder(default, setter(into))]
-    subnet_id: Cow<'a, str>,
-
     /// id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
+
+    /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
+    ///
+    #[builder(default, setter(into))]
+    subnet_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

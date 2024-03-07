@@ -37,19 +37,19 @@ pub enum Mode {
 pub struct OsAttach<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) instance_uuid: Option<Cow<'a, str>>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) mountpoint: Cow<'a, str>,
+    pub(crate) host_name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) host_name: Option<Cow<'a, str>>,
+    pub(crate) instance_uuid: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) mode: Option<Mode>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) mountpoint: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]

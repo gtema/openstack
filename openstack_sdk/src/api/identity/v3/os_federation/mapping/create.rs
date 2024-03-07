@@ -53,11 +53,7 @@ pub enum Type {
 pub struct User<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) id: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
+    pub(crate) domain: Option<Domain<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -65,7 +61,11 @@ pub struct User<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<Domain<'a>>,
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
@@ -117,11 +117,11 @@ pub struct GroupDomain<'a> {
 pub struct GroupStruct<'a> {
     #[serde()]
     #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
+    pub(crate) domain: GroupDomain<'a>,
 
     #[serde()]
     #[builder(setter(into))]
-    pub(crate) domain: GroupDomain<'a>,
+    pub(crate) name: Cow<'a, str>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -148,11 +148,7 @@ pub struct LocalDomain<'a> {
 pub struct Local<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) user: Option<User<'a>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) projects: Option<Vec<Projects<'a>>>,
+    pub(crate) domain: Option<LocalDomain<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -160,15 +156,19 @@ pub struct Local<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) groups: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
     pub(crate) group_ids: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<LocalDomain<'a>>,
+    pub(crate) groups: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) projects: Option<Vec<Projects<'a>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) user: Option<User<'a>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -182,10 +182,6 @@ pub struct RemoteType<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoteTypeAnyOneOfRegex<'a> {
-    #[serde(rename = "type")]
-    #[builder(setter(into))]
-    pub(crate) _type: Cow<'a, str>,
-
     #[serde()]
     #[builder(setter(into))]
     pub(crate) any_one_of: Vec<Cow<'a, str>>,
@@ -193,15 +189,15 @@ pub struct RemoteTypeAnyOneOfRegex<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) regex: Option<bool>,
+
+    #[serde(rename = "type")]
+    #[builder(setter(into))]
+    pub(crate) _type: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoteTypeNotAnyOfRegex<'a> {
-    #[serde(rename = "type")]
-    #[builder(setter(into))]
-    pub(crate) _type: Cow<'a, str>,
-
     #[serde()]
     #[builder(setter(into))]
     pub(crate) not_any_of: Vec<Cow<'a, str>>,
@@ -209,15 +205,15 @@ pub struct RemoteTypeNotAnyOfRegex<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) regex: Option<bool>,
+
+    #[serde(rename = "type")]
+    #[builder(setter(into))]
+    pub(crate) _type: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoteTypeBlacklistRegex<'a> {
-    #[serde(rename = "type")]
-    #[builder(setter(into))]
-    pub(crate) _type: Cow<'a, str>,
-
     #[serde()]
     #[builder(setter(into))]
     pub(crate) blacklist: Vec<Cow<'a, str>>,
@@ -225,11 +221,19 @@ pub struct RemoteTypeBlacklistRegex<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) regex: Option<bool>,
+
+    #[serde(rename = "type")]
+    #[builder(setter(into))]
+    pub(crate) _type: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct RemoteTypeWhitelistRegex<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) regex: Option<bool>,
+
     #[serde(rename = "type")]
     #[builder(setter(into))]
     pub(crate) _type: Cow<'a, str>,
@@ -237,10 +241,6 @@ pub struct RemoteTypeWhitelistRegex<'a> {
     #[serde()]
     #[builder(setter(into))]
     pub(crate) whitelist: Vec<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) regex: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

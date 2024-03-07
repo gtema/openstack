@@ -48,28 +48,6 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
-    /// The UUID of the volume to attach instead of the attached volume.
-    ///
-    #[serde(rename = "volumeId")]
-    #[builder(setter(into))]
-    pub(crate) volume_id: Cow<'a, str>,
-
-    /// Name of the device in the attachment object, such as, `/dev/vdb`.
-    ///
-    /// **New in version 2.85**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) device: Option<Option<Cow<'a, str>>>,
-
-    /// The device tag applied to the volume block device or `null`.
-    ///
-    /// **New in version 2.85**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) tag: Option<Cow<'a, str>>,
-
     /// A flag indicating if the attached volume will be deleted when the
     /// server is deleted.
     ///
@@ -79,13 +57,13 @@ pub struct VolumeAttachment<'a> {
     #[builder(default)]
     pub(crate) delete_on_termination: Option<bool>,
 
-    /// The UUID of the server.
+    /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     /// **New in version 2.85**
     ///
-    #[serde(rename = "serverId", skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) server_id: Option<Cow<'a, str>>,
+    pub(crate) device: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the attachment.
     ///
@@ -94,6 +72,28 @@ pub struct VolumeAttachment<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
+
+    /// The UUID of the server.
+    ///
+    /// **New in version 2.85**
+    ///
+    #[serde(rename = "serverId", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) server_id: Option<Cow<'a, str>>,
+
+    /// The device tag applied to the volume block device or `null`.
+    ///
+    /// **New in version 2.85**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) tag: Option<Cow<'a, str>>,
+
+    /// The UUID of the volume to attach instead of the attached volume.
+    ///
+    #[serde(rename = "volumeId")]
+    #[builder(setter(into))]
+    pub(crate) volume_id: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -106,16 +106,16 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) volume_attachment: VolumeAttachment<'a>,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    ///
-    #[builder(default, setter(into))]
-    server_id: Cow<'a, str>,
-
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
+
+    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
+    #[builder(default, setter(into))]
+    server_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

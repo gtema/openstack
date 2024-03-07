@@ -74,29 +74,29 @@ pub struct ImageCommand {
     path: PathParameters,
 
     #[arg(long)]
+    container_format: Option<ContainerFormat>,
+    #[arg(long)]
+    disk_format: Option<DiskFormat>,
+    #[arg(long)]
     id: Option<String>,
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    locations: Option<Vec<Value>>,
+    #[arg(long)]
+    min_disk: Option<i32>,
+    #[arg(long)]
+    min_ram: Option<i32>,
     #[arg(long)]
     name: Option<String>,
-    #[arg(long)]
-    visibility: Option<Visibility>,
-    #[arg(action=clap::ArgAction::Set, long)]
-    protected: Option<bool>,
     #[arg(action=clap::ArgAction::Set, long)]
     os_hidden: Option<bool>,
     #[arg(long)]
     owner: Option<String>,
-    #[arg(long)]
-    container_format: Option<ContainerFormat>,
-    #[arg(long)]
-    disk_format: Option<DiskFormat>,
+    #[arg(action=clap::ArgAction::Set, long)]
+    protected: Option<bool>,
     #[arg(action=clap::ArgAction::Append, long)]
     tags: Option<Vec<String>>,
     #[arg(long)]
-    min_ram: Option<i32>,
-    #[arg(long)]
-    min_disk: Option<i32>,
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
-    locations: Option<Vec<Value>>,
+    visibility: Option<Visibility>,
     /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, String>)]
     properties: Option<Vec<(String, String)>>,
@@ -166,42 +166,6 @@ impl ImageCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        // Set Request.id data
-        if let Some(args) = &self.id {
-            ep_builder.id(args);
-        }
-
-        // Set Request.name data
-        if let Some(args) = &self.name {
-            ep_builder.name(Some(args.into()));
-        }
-
-        // Set Request.visibility data
-        if let Some(args) = &self.visibility {
-            let tmp = match args {
-                Visibility::Community => create::Visibility::Community,
-                Visibility::Private => create::Visibility::Private,
-                Visibility::Public => create::Visibility::Public,
-                Visibility::Shared => create::Visibility::Shared,
-            };
-            ep_builder.visibility(tmp);
-        }
-
-        // Set Request.protected data
-        if let Some(args) = &self.protected {
-            ep_builder.protected(*args);
-        }
-
-        // Set Request.os_hidden data
-        if let Some(args) = &self.os_hidden {
-            ep_builder.os_hidden(*args);
-        }
-
-        // Set Request.owner data
-        if let Some(args) = &self.owner {
-            ep_builder.owner(Some(args.into()));
-        }
-
         // Set Request.container_format data
         if let Some(args) = &self.container_format {
             let tmp = match args {
@@ -235,19 +199,9 @@ impl ImageCommand {
             ep_builder.disk_format(tmp);
         }
 
-        // Set Request.tags data
-        if let Some(args) = &self.tags {
-            ep_builder.tags(args.iter().map(|v| v.into()).collect::<Vec<_>>());
-        }
-
-        // Set Request.min_ram data
-        if let Some(args) = &self.min_ram {
-            ep_builder.min_ram(*args);
-        }
-
-        // Set Request.min_disk data
-        if let Some(args) = &self.min_disk {
-            ep_builder.min_disk(*args);
+        // Set Request.id data
+        if let Some(args) = &self.id {
+            ep_builder.id(args);
         }
 
         // Set Request.locations data
@@ -257,6 +211,52 @@ impl ImageCommand {
                 .flat_map(|v| serde_json::from_value::<create::Locations>(v.to_owned()))
                 .collect::<Vec<create::Locations>>();
             ep_builder.locations(locations_builder);
+        }
+
+        // Set Request.min_disk data
+        if let Some(args) = &self.min_disk {
+            ep_builder.min_disk(*args);
+        }
+
+        // Set Request.min_ram data
+        if let Some(args) = &self.min_ram {
+            ep_builder.min_ram(*args);
+        }
+
+        // Set Request.name data
+        if let Some(args) = &self.name {
+            ep_builder.name(Some(args.into()));
+        }
+
+        // Set Request.os_hidden data
+        if let Some(args) = &self.os_hidden {
+            ep_builder.os_hidden(*args);
+        }
+
+        // Set Request.owner data
+        if let Some(args) = &self.owner {
+            ep_builder.owner(Some(args.into()));
+        }
+
+        // Set Request.protected data
+        if let Some(args) = &self.protected {
+            ep_builder.protected(*args);
+        }
+
+        // Set Request.tags data
+        if let Some(args) = &self.tags {
+            ep_builder.tags(args.iter().map(|v| v.into()).collect::<Vec<_>>());
+        }
+
+        // Set Request.visibility data
+        if let Some(args) = &self.visibility {
+            let tmp = match args {
+                Visibility::Community => create::Visibility::Community,
+                Visibility::Private => create::Visibility::Private,
+                Visibility::Public => create::Visibility::Public,
+                Visibility::Shared => create::Visibility::Shared,
+            };
+            ep_builder.visibility(tmp);
         }
 
         if let Some(properties) = &self.properties {

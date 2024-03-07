@@ -67,11 +67,11 @@ use std::borrow::Cow;
 pub struct AllocationPools<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) start: Option<Cow<'a, str>>,
+    pub(crate) end: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) end: Option<Cow<'a, str>>,
+    pub(crate) start: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -111,43 +111,48 @@ pub enum Ipv6AddressMode {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Subnet<'a> {
-    /// Human-readable name of the resource. Default is an empty string.
+    /// Allocation pools with `start` and `end` IP addresses for this subnet.
+    /// If allocation_pools are not specified, OpenStack Networking
+    /// automatically allocates pools for covering all IP addresses in the
+    /// CIDR, excluding the address reserved for the subnet gateway by default.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
-    /// The IP protocol version. Value is `4` or `6`.
-    ///
-    #[serde()]
-    #[builder()]
-    pub(crate) ip_version: i32,
-
-    /// The ID of the network to which the subnet belongs.
-    ///
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) network_id: Cow<'a, str>,
-
-    /// The ID of the subnet pool associated with the subnet.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) subnetpool_id: Option<Option<Cow<'a, str>>>,
-
-    /// The prefix length to use for subnet allocation from a subnet pool. If
-    /// not specified, the `default_prefixlen` value of the subnet pool will be
-    /// used.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) prefixlen: Option<i32>,
+    pub(crate) allocation_pools: Option<Vec<AllocationPools<'a>>>,
 
     /// The CIDR of the subnet.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) cidr: Option<Option<Cow<'a, str>>>,
+
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// List of dns name servers associated with the subnet. Default is an
+    /// empty list.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) dns_nameservers: Option<Vec<Cow<'a, str>>>,
+
+    /// Whether to publish DNS records for IPs from this subnet. Default is
+    /// `false`.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) dns_publish_fixed_ip: Option<bool>,
+
+    /// Indicates whether dhcp is enabled or disabled for the subnet. Default
+    /// is `true`.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) enable_dhcp: Option<bool>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet. If the gateway_ip is not
@@ -158,22 +163,6 @@ pub struct Subnet<'a> {
     #[builder(default, setter(into))]
     pub(crate) gateway_ip: Option<Cow<'a, str>>,
 
-    /// Allocation pools with `start` and `end` IP addresses for this subnet.
-    /// If allocation_pools are not specified, OpenStack Networking
-    /// automatically allocates pools for covering all IP addresses in the
-    /// CIDR, excluding the address reserved for the subnet gateway by default.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) allocation_pools: Option<Vec<AllocationPools<'a>>>,
-
-    /// List of dns name servers associated with the subnet. Default is an
-    /// empty list.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) dns_nameservers: Option<Vec<Cow<'a, str>>>,
-
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.
     ///
@@ -181,20 +170,18 @@ pub struct Subnet<'a> {
     #[builder(default, setter(into))]
     pub(crate) host_routes: Option<Vec<HostRoutes<'a>>>,
 
-    /// The ID of the project that owns the resource. Only administrative and
-    /// users with advsvc role can specify a project ID other than their own.
-    /// You cannot change this value through authorization policies.
+    /// The IP protocol version. Value is `4` or `6`.
     ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) tenant_id: Option<Cow<'a, str>>,
+    #[serde()]
+    #[builder()]
+    pub(crate) ip_version: i32,
 
-    /// Indicates whether dhcp is enabled or disabled for the subnet. Default
-    /// is `true`.
+    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
+    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) enable_dhcp: Option<bool>,
+    pub(crate) ipv6_address_mode: Option<Ipv6AddressMode>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
@@ -204,38 +191,25 @@ pub struct Subnet<'a> {
     #[builder(default)]
     pub(crate) ipv6_ra_mode: Option<Ipv6RaMode>,
 
-    /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
-    /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) ipv6_address_mode: Option<Ipv6AddressMode>,
-
-    /// The service types associated with the subnet.
+    /// Human-readable name of the resource. Default is an empty string.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) service_types: Option<Vec<Cow<'a, str>>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
-    /// Whether to allocate this subnet from the default subnet pool.
+    /// The ID of the network to which the subnet belongs.
+    ///
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) network_id: Cow<'a, str>,
+
+    /// The prefix length to use for subnet allocation from a subnet pool. If
+    /// not specified, the `default_prefixlen` value of the subnet pool will be
+    /// used.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) use_default_subnetpool: Option<bool>,
-
-    /// Whether to publish DNS records for IPs from this subnet. Default is
-    /// `false`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) dns_publish_fixed_ip: Option<bool>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) prefixlen: Option<i32>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
@@ -243,6 +217,32 @@ pub struct Subnet<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) segment_id: Option<Option<Cow<'a, str>>>,
+
+    /// The service types associated with the subnet.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) service_types: Option<Vec<Cow<'a, str>>>,
+
+    /// The ID of the subnet pool associated with the subnet.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) subnetpool_id: Option<Option<Cow<'a, str>>>,
+
+    /// The ID of the project that owns the resource. Only administrative and
+    /// users with advsvc role can specify a project ID other than their own.
+    /// You cannot change this value through authorization policies.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) tenant_id: Option<Cow<'a, str>>,
+
+    /// Whether to allocate this subnet from the default subnet pool.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) use_default_subnetpool: Option<bool>,
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -74,19 +74,6 @@ struct PathParameters {
 /// Keypair response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The user_id for a keypair.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
-
-    /// A boolean indicates whether this keypair is deleted or not. The value
-    /// is always `false` (not deleted).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    deleted: Option<bool>,
-
     /// The date and time when the resource was created. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
     ///
@@ -103,17 +90,24 @@ struct ResponseData {
     #[structable(optional)]
     created_at: Option<String>,
 
+    /// A boolean indicates whether this keypair is deleted or not. The value
+    /// is always `false` (not deleted).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    deleted: Option<bool>,
+
     /// It is always `null`.
     ///
     #[serde()]
     #[structable(optional)]
     deleted_at: Option<String>,
 
-    /// It is always `null`.
+    /// The fingerprint for the keypair.
     ///
     #[serde()]
     #[structable(optional)]
-    updated_at: Option<String>,
+    fingerprint: Option<String>,
 
     /// The keypair ID.
     ///
@@ -133,12 +127,6 @@ struct ResponseData {
     #[structable(optional)]
     public_key: Option<String>,
 
-    /// The fingerprint for the keypair.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fingerprint: Option<String>,
-
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
@@ -146,6 +134,18 @@ struct ResponseData {
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
     _type: Option<String>,
+
+    /// It is always `null`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// The user_id for a keypair.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    user_id: Option<String>,
 }
 
 impl KeypairCommand {

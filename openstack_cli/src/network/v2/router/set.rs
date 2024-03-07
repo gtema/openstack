@@ -97,16 +97,31 @@ struct ExternalGatewayInfo {
 /// Router Body data
 #[derive(Args)]
 struct Router {
-    /// Human-readable name of the resource.
-    ///
-    #[arg(long)]
-    name: Option<String>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     admin_state_up: Option<bool>,
+
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
+    #[arg(long)]
+    description: Option<String>,
+
+    /// `true` indicates a distributed router. It is available when `dvr`
+    /// extension is enabled.
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    distributed: Option<Option<bool>>,
+
+    /// Enable NDP proxy attribute. Default is `false`, To persist this
+    /// attribute value, set the `enable_ndp_proxy_by_default` option in the
+    /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
+    /// extension is enabled.
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    enable_ndp_proxy: Option<Option<bool>>,
 
     /// The external gateway information of the router. If the router has an
     /// external gateway, this would be a dict with `network_id`,
@@ -122,19 +137,10 @@ struct Router {
     #[arg(action=clap::ArgAction::Set, long)]
     ha: Option<Option<bool>>,
 
-    /// Enable NDP proxy attribute. Default is `false`, To persist this
-    /// attribute value, set the `enable_ndp_proxy_by_default` option in the
-    /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
-    /// extension is enabled.
+    /// Human-readable name of the resource.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    enable_ndp_proxy: Option<Option<bool>>,
-
-    /// `true` indicates a distributed router. It is available when `dvr`
-    /// extension is enabled.
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    distributed: Option<Option<bool>>,
+    #[arg(long)]
+    name: Option<String>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
@@ -142,29 +148,11 @@ struct Router {
     ///
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     routes: Option<Vec<Value>>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[arg(long)]
-    description: Option<String>,
 }
 
 /// Router response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the router.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
@@ -172,34 +160,47 @@ struct ResponseData {
     #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
-    /// The router status.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The external gateway information of the router. If the router has an
-    /// external gateway, this would be a dict with `network_id`,
-    /// `enable_snat`, `external_fixed_ips`, `qos_policy_id`,
-    /// `enable_default_route_ecmp` and `enable_default_route_bfd`. Otherwise,
-    /// this would be `null`.
+    /// The availability zone candidates for the router. It is available when
+    /// `router_availability_zone` extension is enabled.
     ///
     #[serde()]
     #[structable(optional, pretty)]
-    external_gateway_info: Option<Value>,
+    availability_zone_hints: Option<Value>,
 
-    /// `true` indicates a highly-available router. It is available when
-    /// `l3-ha` extension is enabled.
+    /// The availability zone(s) for the router. It is available when
+    /// `router_availability_zone` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    availability_zones: Option<Value>,
+
+    /// The associated conntrack helper resources for the roter. If the router
+    /// has multiple conntrack helper resources, this field has multiple
+    /// entries. Each entry consists of netfilter conntrack helper (`helper`),
+    /// the network protocol (`protocol`), the network port (`port`).
     ///
     #[serde()]
     #[structable(optional)]
-    ha: Option<BoolString>,
+    conntrack_helpers: Option<String>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// `true` indicates a distributed router. It is available when `dvr`
+    /// extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    distributed: Option<BoolString>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
     /// router, the IPv6 address of internal subnets attached to the router can
@@ -212,65 +213,46 @@ struct ResponseData {
     #[structable(optional)]
     enable_ndp_proxy: Option<BoolString>,
 
+    /// The external gateway information of the router. If the router has an
+    /// external gateway, this would be a dict with `network_id`,
+    /// `enable_snat`, `external_fixed_ips`, `qos_policy_id`,
+    /// `enable_default_route_ecmp` and `enable_default_route_bfd`. Otherwise,
+    /// this would be `null`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    external_gateway_info: Option<Value>,
+
     /// The ID of the flavor associated with the router.
     ///
     #[serde()]
     #[structable(optional)]
     flavor_id: Option<String>,
 
+    /// `true` indicates a highly-available router. It is available when
+    /// `l3-ha` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ha: Option<BoolString>,
+
+    /// The ID of the router.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
     /// The revision number of the resource.
     ///
     #[serde()]
     #[structable(optional)]
     revision_number: Option<i32>,
-
-    /// The availability zone(s) for the router. It is available when
-    /// `router_availability_zone` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    availability_zones: Option<Value>,
-
-    /// The availability zone candidates for the router. It is available when
-    /// `router_availability_zone` extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    availability_zone_hints: Option<Value>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// `true` indicates a distributed router. It is available when `dvr`
-    /// extension is enabled.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    distributed: Option<BoolString>,
-
-    /// The associated conntrack helper resources for the roter. If the router
-    /// has multiple conntrack helper resources, this field has multiple
-    /// entries. Each entry consists of netfilter conntrack helper (`helper`),
-    /// the network protocol (`protocol`), the network port (`port`).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    conntrack_helpers: Option<String>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
@@ -280,24 +262,41 @@ struct ResponseData {
     #[structable(optional, pretty)]
     routes: Option<Value>,
 
-    /// A human-readable description for the resource.
+    /// The router status.
     ///
     #[serde()]
     #[structable(optional)]
-    description: Option<String>,
+    status: Option<String>,
+
+    /// The list of tags on the resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
+
+    /// The ID of the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    tenant_id: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseExternalGatewayInfo {
-    network_id: String,
     enable_snat: Option<bool>,
     external_fixed_ips: Option<Value>,
+    network_id: String,
 }
 
 impl fmt::Display for ResponseExternalGatewayInfo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
-            format!("network_id={}", self.network_id),
             format!(
                 "enable_snat={}",
                 self.enable_snat
@@ -311,6 +310,7 @@ impl fmt::Display for ResponseExternalGatewayInfo {
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
             ),
+            format!("network_id={}", self.network_id),
         ]);
         write!(f, "{}", data.join(";"))
     }

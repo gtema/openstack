@@ -33,6 +33,26 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Segments<'a> {
+    /// The type of physical network that this network is mapped to. For
+    /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
+    /// networking back-end.
+    ///
+    #[serde(
+        rename = "provider:network_type",
+        skip_serializing_if = "Option::is_none"
+    )]
+    #[builder(default, setter(into))]
+    pub(crate) provider_network_type: Option<Cow<'a, str>>,
+
+    /// The physical network where this network/segment is implemented.
+    ///
+    #[serde(
+        rename = "provider:physical_network",
+        skip_serializing_if = "Option::is_none"
+    )]
+    #[builder(default, setter(into))]
+    pub(crate) provider_physical_network: Option<Cow<'a, str>>,
+
     /// The ID of the isolated segment on the physical network. The
     /// `network_type` attribute defines the segmentation model. For example,
     /// if the `network_type` value is vlan, this ID is a vlan identifier. If
@@ -45,26 +65,6 @@ pub struct Segments<'a> {
     )]
     #[builder(default)]
     pub(crate) provider_segmentation_id: Option<i32>,
-
-    /// The physical network where this network/segment is implemented.
-    ///
-    #[serde(
-        rename = "provider:physical_network",
-        skip_serializing_if = "Option::is_none"
-    )]
-    #[builder(default, setter(into))]
-    pub(crate) provider_physical_network: Option<Cow<'a, str>>,
-
-    /// The type of physical network that this network is mapped to. For
-    /// example, `flat`, `vlan`, `vxlan`, or `gre`. Valid values depend on a
-    /// networking back-end.
-    ///
-    #[serde(
-        rename = "provider:network_type",
-        skip_serializing_if = "Option::is_none"
-    )]
-    #[builder(default, setter(into))]
-    pub(crate) provider_network_type: Option<Cow<'a, str>>,
 }
 
 /// A `network` object.
@@ -72,12 +72,6 @@ pub struct Segments<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Network<'a> {
-    /// Human-readable name of the network.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
     ///
@@ -85,25 +79,24 @@ pub struct Network<'a> {
     #[builder(default)]
     pub(crate) admin_state_up: Option<bool>,
 
-    /// Indicates whether this resource is shared across all projects. By
-    /// default, only administrative users can change this value.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) shared: Option<bool>,
-
-    /// Indicates whether the network has an external routing facility that’s
-    /// not managed by the networking service.
-    ///
-    #[serde(rename = "router:external", skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) router_external: Option<bool>,
-
-    /// A list of provider `segment` objects.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) segments: Option<Vec<Segments<'a>>>,
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) dns_domain: Option<Cow<'a, str>>,
+
+    /// The network is default or not.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) is_default: Option<bool>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
@@ -111,6 +104,12 @@ pub struct Network<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) mtu: Option<i32>,
+
+    /// Human-readable name of the network.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
@@ -147,24 +146,25 @@ pub struct Network<'a> {
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
-    /// The network is default or not.
+    /// Indicates whether the network has an external routing facility that’s
+    /// not managed by the networking service.
+    ///
+    #[serde(rename = "router:external", skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) router_external: Option<bool>,
+
+    /// A list of provider `segment` objects.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) segments: Option<Vec<Segments<'a>>>,
+
+    /// Indicates whether this resource is shared across all projects. By
+    /// default, only administrative users can change this value.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) is_default: Option<bool>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) dns_domain: Option<Cow<'a, str>>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) shared: Option<bool>,
 }
 
 #[derive(Builder, Debug, Clone)]

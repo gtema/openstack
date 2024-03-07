@@ -30,20 +30,20 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a service ID.
+    /// Filters the response by an interface.
     ///
     #[builder(default, setter(into))]
-    service_id: Option<Cow<'a, str>>,
+    interface: Option<Cow<'a, str>>,
 
     /// Filters the response by a region ID.
     ///
     #[builder(default, setter(into))]
     region: Option<Cow<'a, str>>,
 
-    /// Filters the response by an interface.
+    /// Filters the response by a service ID.
     ///
     #[builder(default, setter(into))]
-    interface: Option<Cow<'a, str>>,
+    service_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

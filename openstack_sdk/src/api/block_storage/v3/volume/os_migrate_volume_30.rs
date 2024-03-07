@@ -27,13 +27,13 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsMigrateVolume<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) host: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) force_host_copy: Option<bool>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) host: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]

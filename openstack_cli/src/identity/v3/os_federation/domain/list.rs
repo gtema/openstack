@@ -63,18 +63,6 @@ struct PathParameters {}
 /// Domains response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The name of the domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
     /// The description of the domain.
     ///
     #[serde()]
@@ -87,6 +75,18 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
+
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The name of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
 }
 
 impl DomainsCommand {

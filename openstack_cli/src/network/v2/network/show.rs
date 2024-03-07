@@ -78,24 +78,6 @@ struct PathParameters {
 /// Network response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Human-readable name of the network.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The associated subnets.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    subnets: Option<Value>,
-
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
     ///
@@ -103,24 +85,41 @@ struct ResponseData {
     #[structable(optional)]
     admin_state_up: Option<BoolString>,
 
-    /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
+    /// The availability zone candidate for the network.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable(optional, pretty)]
+    availability_zone_hints: Option<Value>,
 
-    /// The ID of the project.
+    /// The availability zone for the network.
     ///
     #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
+    #[structable(optional, pretty)]
+    availability_zones: Option<Value>,
 
-    /// Indicates whether this network is shared across all tenants. By
-    /// default, only administrative users can change this value.
+    /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
-    shared: Option<BoolString>,
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    dns_domain: Option<String>,
+
+    /// The ID of the network.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
     ///
@@ -134,16 +133,11 @@ struct ResponseData {
     #[structable(optional)]
     ipv6_address_scope: Option<String>,
 
-    /// Defines whether the network may be used for creation of floating IPs.
-    /// Only networks with this flag may be an external gateway for routers.
-    /// The network must have an external routing facility that is not managed
-    /// by the networking service. If the network is updated from external to
-    /// internal the unused floating IPs of this network are automatically
-    /// deleted when extension `floatingip-autodelete-internal` is present.
+    /// The network is default pool or not.
     ///
-    #[serde(rename = "router:external")]
-    #[structable(optional, title = "router:external")]
-    router_external: Option<BoolString>,
+    #[serde()]
+    #[structable(optional)]
+    is_default: Option<BoolString>,
 
     /// Indicates whether L2 connectivity is available throughout the
     /// `network`.
@@ -152,12 +146,6 @@ struct ResponseData {
     #[structable(optional)]
     l2_adjacency: Option<String>,
 
-    /// A list of provider `segment` objects.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    segments: Option<Value>,
-
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     ///
@@ -165,17 +153,11 @@ struct ResponseData {
     #[structable(optional)]
     mtu: Option<i32>,
 
-    /// The availability zone for the network.
+    /// Human-readable name of the network.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    availability_zones: Option<Value>,
-
-    /// The availability zone candidate for the network.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    availability_zone_hints: Option<Value>,
+    #[structable(optional)]
+    name: Option<String>,
 
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
@@ -209,41 +191,59 @@ struct ResponseData {
     #[structable(optional)]
     revision_number: Option<i32>,
 
+    /// Defines whether the network may be used for creation of floating IPs.
+    /// Only networks with this flag may be an external gateway for routers.
+    /// The network must have an external routing facility that is not managed
+    /// by the networking service. If the network is updated from external to
+    /// internal the unused floating IPs of this network are automatically
+    /// deleted when extension `floatingip-autodelete-internal` is present.
+    ///
+    #[serde(rename = "router:external")]
+    #[structable(optional, title = "router:external")]
+    router_external: Option<BoolString>,
+
+    /// A list of provider `segment` objects.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    segments: Option<Value>,
+
+    /// Indicates whether this network is shared across all tenants. By
+    /// default, only administrative users can change this value.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    shared: Option<BoolString>,
+
+    /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// The associated subnets.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    subnets: Option<Value>,
+
     /// The list of tags on the resource.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     tags: Option<Value>,
 
-    /// Time at which the resource has been created (in UTC ISO8601 format).
+    /// The ID of the project.
     ///
     #[serde()]
     #[structable(optional)]
-    created_at: Option<String>,
+    tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-
-    /// The network is default pool or not.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_default: Option<BoolString>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_domain: Option<String>,
-
-    /// A human-readable description for the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
 }
 
 impl NetworkCommand {

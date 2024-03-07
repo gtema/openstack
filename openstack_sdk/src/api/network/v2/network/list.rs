@@ -46,45 +46,45 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// admin_state_up query parameter for /v2.0/networks API
+    ///
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    /// description query parameter for /v2.0/networks API
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
     /// id query parameter for /v2.0/networks API
     ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
+
+    /// is_default query parameter for /v2.0/networks API
+    ///
+    #[builder(default)]
+    is_default: Option<bool>,
+
+    /// mtu query parameter for /v2.0/networks API
+    ///
+    #[builder(default)]
+    mtu: Option<i32>,
 
     /// name query parameter for /v2.0/networks API
     ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
-    /// admin_state_up query parameter for /v2.0/networks API
+    /// not-tags query parameter for /v2.0/networks API
     ///
-    #[builder(default)]
-    admin_state_up: Option<bool>,
+    #[builder(default, private, setter(name = "_not_tags"))]
+    not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
 
-    /// status query parameter for /v2.0/networks API
+    /// not-tags-any query parameter for /v2.0/networks API
     ///
-    #[builder(default, setter(into))]
-    status: Option<Cow<'a, str>>,
-
-    /// tenant_id query parameter for /v2.0/networks API
-    ///
-    #[builder(default, setter(into))]
-    tenant_id: Option<Cow<'a, str>>,
-
-    /// shared query parameter for /v2.0/networks API
-    ///
-    #[builder(default)]
-    shared: Option<bool>,
-
-    /// router:external query parameter for /v2.0/networks API
-    ///
-    #[builder(default)]
-    router_external: Option<bool>,
-
-    /// mtu query parameter for /v2.0/networks API
-    ///
-    #[builder(default)]
-    mtu: Option<i32>,
+    #[builder(default, private, setter(name = "_not_tags_any"))]
+    not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// provider:network_type query parameter for /v2.0/networks API
     ///
@@ -106,6 +106,21 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
+    /// router:external query parameter for /v2.0/networks API
+    ///
+    #[builder(default)]
+    router_external: Option<bool>,
+
+    /// shared query parameter for /v2.0/networks API
+    ///
+    #[builder(default)]
+    shared: Option<bool>,
+
+    /// status query parameter for /v2.0/networks API
+    ///
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
     /// tags query parameter for /v2.0/networks API
     ///
     #[builder(default, private, setter(name = "_tags"))]
@@ -116,25 +131,10 @@ pub struct Request<'a> {
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
-    /// not-tags query parameter for /v2.0/networks API
-    ///
-    #[builder(default, private, setter(name = "_not_tags"))]
-    not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
-
-    /// not-tags-any query parameter for /v2.0/networks API
-    ///
-    #[builder(default, private, setter(name = "_not_tags_any"))]
-    not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
-
-    /// is_default query parameter for /v2.0/networks API
-    ///
-    #[builder(default)]
-    is_default: Option<bool>,
-
-    /// description query parameter for /v2.0/networks API
+    /// tenant_id query parameter for /v2.0/networks API
     ///
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    tenant_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

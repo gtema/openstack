@@ -72,11 +72,8 @@ struct PathParameters {
 /// IdentityProvider Body data
 #[derive(Args)]
 struct IdentityProvider {
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    enabled: Option<bool>,
+    #[arg(long)]
+    authorization_ttl: Option<Option<i32>>,
 
     #[arg(long)]
     description: Option<String>,
@@ -84,8 +81,11 @@ struct IdentityProvider {
     #[arg(long)]
     domain_id: Option<String>,
 
-    #[arg(long)]
-    authorization_ttl: Option<Option<i32>>,
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    enabled: Option<bool>,
 
     #[arg(action=clap::ArgAction::Append, long)]
     remote_ids: Option<Vec<String>>,
@@ -94,11 +94,12 @@ struct IdentityProvider {
 /// IdentityProvider response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The Identity Provider unique ID
+    /// The length of validity in minutes for group memberships carried over
+    /// through mapping and persisted in the database.
     ///
     #[serde()]
     #[structable(optional)]
-    id: Option<String>,
+    authorization_ttl: Option<i32>,
 
     /// The Identity Provider description
     ///
@@ -112,18 +113,17 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    authorization_ttl: Option<i32>,
-
     /// Whether the Identity Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
+
+    /// The Identity Provider unique ID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// List of the unique Identity Provider’s remote IDs
     ///

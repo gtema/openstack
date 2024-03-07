@@ -70,16 +70,16 @@ struct PathParameters {
 /// CreateImage Body data
 #[derive(Args)]
 struct CreateImage {
-    /// The display name of an Image.
-    ///
-    #[arg(long)]
-    name: String,
-
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.
     ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
+
+    /// The display name of an Image.
+    ///
+    #[arg(long)]
+    name: String,
 }
 
 /// Server response representation

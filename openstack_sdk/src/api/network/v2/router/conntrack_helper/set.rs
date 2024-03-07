@@ -49,11 +49,11 @@ pub enum Protocol {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ConntrackHelper<'a> {
-    /// The network protocol for the netfilter conntrack target rule.
+    /// The netfilter conntrack helper module.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) protocol: Option<Protocol>,
+    #[builder(default, setter(into))]
+    pub(crate) helper: Option<Cow<'a, str>>,
 
     /// The network port for the netfilter conntrack target rule.
     ///
@@ -61,11 +61,11 @@ pub struct ConntrackHelper<'a> {
     #[builder(default)]
     pub(crate) port: Option<f32>,
 
-    /// The netfilter conntrack helper module.
+    /// The network protocol for the netfilter conntrack target rule.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) helper: Option<Cow<'a, str>>,
+    #[builder(default)]
+    pub(crate) protocol: Option<Protocol>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -74,15 +74,15 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) conntrack_helper: ConntrackHelper<'a>,
 
-    /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
-    ///
-    #[builder(default, setter(into))]
-    router_id: Cow<'a, str>,
-
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
+
+    /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
+    #[builder(default, setter(into))]
+    router_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

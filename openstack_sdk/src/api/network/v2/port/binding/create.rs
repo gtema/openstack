@@ -60,16 +60,16 @@ pub struct Binding<'a> {
     pub(crate) host: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) vnic_type: Option<VnicType>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_profile"))]
     pub(crate) profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) project_id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) vnic_type: Option<VnicType>,
 }
 
 impl<'a> BindingBuilder<'a> {

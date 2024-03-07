@@ -62,6 +62,11 @@ struct QueryParameters {
     #[arg(long)]
     host: Option<String>,
 
+    /// status query parameter for /v2.0/ports/{port_id}/bindings API
+    ///
+    #[arg(long)]
+    status: Option<String>,
+
     /// vif_type query parameter for /v2.0/ports/{port_id}/bindings API
     ///
     #[arg(long)]
@@ -71,11 +76,6 @@ struct QueryParameters {
     ///
     #[arg(long, value_parser = ["accelerator-direct","accelerator-direct-physical","baremetal","direct","direct-physical","macvtap","normal","remote-managed","smart-nic","vdpa","virtio-forwarder"])]
     vnic_type: Option<String>,
-
-    /// status query parameter for /v2.0/ports/{port_id}/bindings API
-    ///
-    #[arg(long)]
-    status: Option<String>,
 }
 
 /// Path parameters
@@ -96,18 +96,22 @@ struct ResponseData {
     #[structable(optional)]
     host: Option<String>,
 
-    /// The type of which mechanism is used for the port. An API consumer like
-    /// nova can use this to determine an appropriate way to attach a device
-    /// (for example an interface of a virtual server) to the port. Available
-    /// values currently defined includes `ovs`, `bridge`, `macvtap`, `hw_veb`,
-    /// `hostdev_physical`, `vhostuser`, `distributed` and `other`. There are
-    /// also special values: `unbound` and `binding_failed`. `unbound` means
-    /// the port is not bound to a networking back-end. `binding_failed` means
-    /// an error that the port failed to be bound to a networking back-end.
+    /// A dictionary that enables the application running on the specific host
+    /// to pass and receive vif port information specific to the networking
+    /// back-end. The networking API does not define a specific format of this
+    /// field. If the update request is null this response field will be {}.
     ///
     #[serde()]
+    #[structable(optional, pretty)]
+    profile: Option<Value>,
+
+    #[serde()]
     #[structable(optional)]
-    vif_type: Option<String>,
+    project_id: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
 
     /// A dictionary which contains additional information on the port.
     /// Currently the following fields are defined: `port_filter` and
@@ -121,6 +125,19 @@ struct ResponseData {
     #[structable(optional)]
     vif_details: Option<String>,
 
+    /// The type of which mechanism is used for the port. An API consumer like
+    /// nova can use this to determine an appropriate way to attach a device
+    /// (for example an interface of a virtual server) to the port. Available
+    /// values currently defined includes `ovs`, `bridge`, `macvtap`, `hw_veb`,
+    /// `hostdev_physical`, `vhostuser`, `distributed` and `other`. There are
+    /// also special values: `unbound` and `binding_failed`. `unbound` means
+    /// the port is not bound to a networking back-end. `binding_failed` means
+    /// an error that the port failed to be bound to a networking back-end.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vif_type: Option<String>,
+
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port. The
     /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
@@ -131,23 +148,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     vnic_type: Option<String>,
-
-    /// A dictionary that enables the application running on the specific host
-    /// to pass and receive vif port information specific to the networking
-    /// back-end. The networking API does not define a specific format of this
-    /// field. If the update request is null this response field will be {}.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    profile: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
 }
 
 impl BindingsCommand {

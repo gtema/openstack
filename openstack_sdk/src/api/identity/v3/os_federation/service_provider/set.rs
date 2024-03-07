@@ -37,10 +37,6 @@ pub struct ServiceProvider<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) sp_url: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
@@ -53,6 +49,10 @@ pub struct ServiceProvider<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) relay_state_prefix: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) sp_url: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -76,6 +76,12 @@ struct PathParameters {
 /// InterfaceAttachment Body data
 #[derive(Args)]
 struct InterfaceAttachment {
+    /// Fixed IP addresses. If you request a specific fixed IP address without
+    /// a `net_id`, the request returns a `Bad Request (400)` response code.
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    fixed_ips: Option<Vec<String>>,
+
     /// The ID of the network for which you want to create a port interface.
     /// The `net_id` and `port_id` parameters are mutually exclusive. If you do
     /// not specify the `net_id` parameter, the OpenStack Networking API v2.0
@@ -92,12 +98,6 @@ struct InterfaceAttachment {
     ///
     #[arg(long)]
     port_id: Option<String>,
-
-    /// Fixed IP addresses. If you request a specific fixed IP address without
-    /// a `net_id`, the request returns a `Bad Request (400)` response code.
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    fixed_ips: Option<Vec<String>>,
 
     /// A device role tag that can be applied to a network interface when
     /// attaching it to the VM. The guest OS of a server that has devices

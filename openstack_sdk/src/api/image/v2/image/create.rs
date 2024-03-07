@@ -127,12 +127,12 @@ pub struct ValidationData<'a> {
 #[builder(setter(strip_option))]
 pub struct Locations<'a> {
     #[serde()]
-    #[builder(setter(into))]
-    pub(crate) url: Cow<'a, str>,
-
-    #[serde()]
     #[builder(private, setter(name = "_metadata"))]
     pub(crate) metadata: BTreeMap<Cow<'a, str>, Value>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) url: Cow<'a, str>,
 
     /// Values to be used to populate the corresponding image properties. If
     /// the image status is not 'queued', values must exactly match those
@@ -160,60 +160,6 @@ impl<'a> LocationsBuilder<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// A unique, user-defined image UUID, in the format:
-    ///
-    /// ```text
-    /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
-    ///
-    /// ```
-    ///
-    /// Where **n** is a hexadecimal digit from 0 to f, or F.
-    ///
-    /// For example:
-    ///
-    /// ```text
-    /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
-    ///
-    /// ```
-    ///
-    /// If you omit this value, the API generates a UUID for the image. If you
-    /// specify a value that has already been assigned, the request fails with
-    /// a `409` response code.
-    ///
-    #[builder(default, setter(into))]
-    pub(crate) id: Option<Cow<'a, str>>,
-
-    /// The name of the image.
-    ///
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Option<Cow<'a, str>>>,
-
-    /// Visibility for this image. Valid value is one of: `public`, `private`,
-    /// `shared`, or `community`. At most sites, only an administrator can make
-    /// an image `public`. Some sites may restrict what users can make an image
-    /// `community`. Some sites may restrict what users can perform member
-    /// operations on a `shared` image. *Since the Image API v2.5, the default
-    /// value is `shared`.*
-    ///
-    #[builder(default)]
-    pub(crate) visibility: Option<Visibility>,
-
-    /// Image protection for deletion. Valid value is `true` or `false`.
-    /// Default is `false`.
-    ///
-    #[builder(default)]
-    pub(crate) protected: Option<bool>,
-
-    /// If true, image will not appear in default image list response.
-    ///
-    #[builder(default)]
-    pub(crate) os_hidden: Option<bool>,
-
-    /// Owner of the image
-    ///
-    #[builder(default, setter(into))]
-    pub(crate) owner: Option<Option<Cow<'a, str>>>,
-
     /// Format of the image container.
     ///
     /// Values may vary based on the configuration available in a particular
@@ -246,26 +192,80 @@ pub struct Request<'a> {
     #[builder(default)]
     pub(crate) disk_format: Option<DiskFormat>,
 
-    /// List of tags for this image. Each tag is a string of at most 255 chars.
-    /// The maximum number of tags allowed on an image is set by the operator.
+    /// A unique, user-defined image UUID, in the format:
+    ///
+    /// ```text
+    /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
+    ///
+    /// ```
+    ///
+    /// Where **n** is a hexadecimal digit from 0 to f, or F.
+    ///
+    /// For example:
+    ///
+    /// ```text
+    /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
+    ///
+    /// ```
+    ///
+    /// If you omit this value, the API generates a UUID for the image. If you
+    /// specify a value that has already been assigned, the request fails with
+    /// a `409` response code.
     ///
     #[builder(default, setter(into))]
-    pub(crate) tags: Option<Vec<Cow<'a, str>>>,
+    pub(crate) id: Option<Cow<'a, str>>,
 
-    /// Amount of RAM in MB that is required to boot the image.
+    /// A set of URLs to access the image file kept in external store
     ///
-    #[builder(default)]
-    pub(crate) min_ram: Option<i32>,
+    #[builder(default, setter(into))]
+    pub(crate) locations: Option<Vec<Locations<'a>>>,
 
     /// Amount of disk space in GB that is required to boot the image.
     ///
     #[builder(default)]
     pub(crate) min_disk: Option<i32>,
 
-    /// A set of URLs to access the image file kept in external store
+    /// Amount of RAM in MB that is required to boot the image.
+    ///
+    #[builder(default)]
+    pub(crate) min_ram: Option<i32>,
+
+    /// The name of the image.
     ///
     #[builder(default, setter(into))]
-    pub(crate) locations: Option<Vec<Locations<'a>>>,
+    pub(crate) name: Option<Option<Cow<'a, str>>>,
+
+    /// If true, image will not appear in default image list response.
+    ///
+    #[builder(default)]
+    pub(crate) os_hidden: Option<bool>,
+
+    /// Owner of the image
+    ///
+    #[builder(default, setter(into))]
+    pub(crate) owner: Option<Option<Cow<'a, str>>>,
+
+    /// Image protection for deletion. Valid value is `true` or `false`.
+    /// Default is `false`.
+    ///
+    #[builder(default)]
+    pub(crate) protected: Option<bool>,
+
+    /// List of tags for this image. Each tag is a string of at most 255 chars.
+    /// The maximum number of tags allowed on an image is set by the operator.
+    ///
+    #[builder(default, setter(into))]
+    pub(crate) tags: Option<Vec<Cow<'a, str>>>,
+
+    /// Visibility for this image. Valid value is one of: `public`, `private`,
+    /// `shared`, or `community`. At most sites, only an administrator can make
+    /// an image `public`. Some sites may restrict what users can make an image
+    /// `community`. Some sites may restrict what users can perform member
+    /// operations on a `shared` image. *Since the Image API v2.5, the default
+    /// value is `shared`.*
+    ///
+    #[builder(default)]
+    pub(crate) visibility: Option<Visibility>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

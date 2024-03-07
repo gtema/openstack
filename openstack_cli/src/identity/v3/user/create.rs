@@ -142,11 +142,6 @@ struct User {
     #[arg(long)]
     name: String,
 
-    /// The new password for the user.
-    ///
-    #[arg(long)]
-    password: Option<String>,
-
     /// The resource options for the user. Available resource options are
     /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
     /// `ignore_lockout_failure_attempts`, `lock_password`,
@@ -155,6 +150,11 @@ struct User {
     ///
     #[command(flatten)]
     options: Option<Options>,
+
+    /// The new password for the user.
+    ///
+    #[arg(long)]
+    password: Option<String>,
 }
 
 /// User response representation

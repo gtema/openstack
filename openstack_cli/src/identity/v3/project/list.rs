@@ -94,12 +94,6 @@ struct PathParameters {}
 /// Projects response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID for the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
     /// The description of the project.
     ///
     #[serde()]
@@ -119,12 +113,31 @@ struct ResponseData {
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
     #[serde()]
     #[structable(optional, wide)]
     is_domain: Option<bool>,
+
+    /// The name of the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The resource options for the project. Available resource options are
+    /// `immutable`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    options: Option<Value>,
 
     /// The ID of the parent for the project.
     ///
@@ -134,24 +147,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     parent_id: Option<String>,
 
-    /// The name of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
     /// A list of simple strings assigned to a project.
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
     tags: Option<Value>,
-
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    options: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

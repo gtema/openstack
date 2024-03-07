@@ -36,21 +36,16 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
+    /// API
     ///
     #[builder(default, setter(into))]
-    router_id: Cow<'a, str>,
+    helper: Option<Cow<'a, str>>,
 
     /// id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
     ///
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
-
-    /// protocol query parameter for
-    /// /v2.0/routers/{router_id}/conntrack_helpers API
-    ///
-    #[builder(default, setter(into))]
-    protocol: Option<Cow<'a, str>>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
@@ -58,11 +53,16 @@ pub struct Request<'a> {
     #[builder(default)]
     port: Option<f32>,
 
-    /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
-    /// API
+    /// protocol query parameter for
+    /// /v2.0/routers/{router_id}/conntrack_helpers API
     ///
     #[builder(default, setter(into))]
-    helper: Option<Cow<'a, str>>,
+    protocol: Option<Cow<'a, str>>,
+
+    /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    ///
+    #[builder(default, setter(into))]
+    router_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

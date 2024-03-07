@@ -79,19 +79,6 @@ struct PathParameters {
 /// Member response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the image member. An image member is usually a project (also
-    /// called the “tenant”) with whom the image is shared.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    member_id: Option<String>,
-
-    /// The UUID of the image.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    image_id: Option<String>,
-
     /// The date and time when the resource was created.
     ///
     /// The date and time stamp format is
@@ -110,6 +97,32 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
+
+    /// The UUID of the image.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    image_id: Option<String>,
+
+    /// The ID of the image member. An image member is usually a project (also
+    /// called the “tenant”) with whom the image is shared.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    member_id: Option<String>,
+
+    /// The URL for the schema describing an image member.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    schema: Option<String>,
+
+    /// The status of this image member. Value is one of `pending`, `accepted`,
+    /// `rejected`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
 
     /// The date and time when the resource was updated.
     ///
@@ -132,19 +145,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-
-    /// The status of this image member. Value is one of `pending`, `accepted`,
-    /// `rejected`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The URL for the schema describing an image member.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    schema: Option<String>,
 }
 
 impl MemberCommand {

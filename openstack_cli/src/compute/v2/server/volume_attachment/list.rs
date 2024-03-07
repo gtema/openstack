@@ -81,6 +81,31 @@ struct PathParameters {
 /// VolumeAttachments response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The UUID of the associated volume attachment in Cinder.
+    ///
+    /// **New in version 2.89**
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    attachment_id: Option<String>,
+
+    /// The UUID of the block device mapping record in Nova for the attachment.
+    ///
+    /// **New in version 2.89**
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    bdm_uuid: Option<String>,
+
+    /// A flag indicating if the attached volume will be deleted when the
+    /// server is deleted.
+    ///
+    /// **New in version 2.79**
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    delete_on_termination: Option<bool>,
+
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     #[serde()]
@@ -101,12 +126,6 @@ struct ResponseData {
     #[structable(optional, title = "serverId", wide)]
     server_id: Option<String>,
 
-    /// The UUID of the attached volume.
-    ///
-    #[serde(rename = "volumeId")]
-    #[structable(optional, title = "volumeId", wide)]
-    volume_id: Option<String>,
-
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.70**
@@ -115,30 +134,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     tag: Option<String>,
 
-    /// A flag indicating if the attached volume will be deleted when the
-    /// server is deleted.
+    /// The UUID of the attached volume.
     ///
-    /// **New in version 2.79**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    delete_on_termination: Option<bool>,
-
-    /// The UUID of the associated volume attachment in Cinder.
-    ///
-    /// **New in version 2.89**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    attachment_id: Option<String>,
-
-    /// The UUID of the block device mapping record in Nova for the attachment.
-    ///
-    /// **New in version 2.89**
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    bdm_uuid: Option<String>,
+    #[serde(rename = "volumeId")]
+    #[structable(optional, title = "volumeId", wide)]
+    volume_id: Option<String>,
 }
 
 impl VolumeAttachmentsCommand {

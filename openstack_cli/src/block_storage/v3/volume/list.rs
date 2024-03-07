@@ -64,27 +64,20 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, long)]
     all_tenans: Option<bool>,
 
-    /// Comma-separated list of sort keys and optional sort directions in the
-    /// form of \< key > \[: \< direction > \]. A valid direction is asc
-    /// (ascending) or desc (descending).
+    /// Filters results by consumes_quota field. Resources that don’t use
+    /// quotas are usually temporary internal resources created to perform an
+    /// operation. Default is to not filter by it. Filtering by this option may
+    /// not be always possible in a cloud, see List Resource Filters to
+    /// determine whether this filter is available in your cloud.
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    consumes_quota: Option<bool>,
+
+    /// Filters reuslts by a time that resources are created at with time
+    /// comparison operators: gt/gte/eq/neq/lt/lte.
     ///
     #[arg(long)]
-    sort: Option<String>,
-
-    /// Sorts by an attribute. A valid value is name, status, container_format,
-    /// disk_format, size, id, created_at, or updated_at. Default is
-    /// created_at. The API uses the natural sorting direction of the sort_key
-    /// attribute value. Deprecated in favour of the combined sort parameter.
-    ///
-    #[arg(long)]
-    sort_key: Option<String>,
-
-    /// Sorts by one or more sets of attribute and sort direction combinations.
-    /// If you omit the sort direction in a set, default is desc. Deprecated in
-    /// favour of the combined sort parameter.
-    ///
-    #[arg(long, value_parser = ["asc","desc"])]
-    sort_dir: Option<String>,
+    created_at: Option<String>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
@@ -94,12 +87,6 @@ struct QueryParameters {
     #[arg(long)]
     limit: Option<i32>,
 
-    /// Used in conjunction with limit to return a slice of items. offset is
-    /// where to start in the list.
-    ///
-    #[arg(long)]
-    offset: Option<i32>,
-
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
@@ -107,16 +94,33 @@ struct QueryParameters {
     #[arg(long)]
     marker: Option<String>,
 
-    /// Whether to show count in API response or not, default is False.
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    with_count: Option<bool>,
-
-    /// Filters reuslts by a time that resources are created at with time
-    /// comparison operators: gt/gte/eq/neq/lt/lte.
+    /// Used in conjunction with limit to return a slice of items. offset is
+    /// where to start in the list.
     ///
     #[arg(long)]
-    created_at: Option<String>,
+    offset: Option<i32>,
+
+    /// Comma-separated list of sort keys and optional sort directions in the
+    /// form of \< key > \[: \< direction > \]. A valid direction is asc
+    /// (ascending) or desc (descending).
+    ///
+    #[arg(long)]
+    sort: Option<String>,
+
+    /// Sorts by one or more sets of attribute and sort direction combinations.
+    /// If you omit the sort direction in a set, default is desc. Deprecated in
+    /// favour of the combined sort parameter.
+    ///
+    #[arg(long, value_parser = ["asc","desc"])]
+    sort_dir: Option<String>,
+
+    /// Sorts by an attribute. A valid value is name, status, container_format,
+    /// disk_format, size, id, created_at, or updated_at. Default is
+    /// created_at. The API uses the natural sorting direction of the sort_key
+    /// attribute value. Deprecated in favour of the combined sort parameter.
+    ///
+    #[arg(long)]
+    sort_key: Option<String>,
 
     /// Filters reuslts by a time that resources are updated at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
@@ -124,14 +128,10 @@ struct QueryParameters {
     #[arg(long)]
     updated_at: Option<String>,
 
-    /// Filters results by consumes_quota field. Resources that don’t use
-    /// quotas are usually temporary internal resources created to perform an
-    /// operation. Default is to not filter by it. Filtering by this option may
-    /// not be always possible in a cloud, see List Resource Filters to
-    /// determine whether this filter is available in your cloud.
+    /// Whether to show count in API response or not, default is False.
     ///
     #[arg(action=clap::ArgAction::Set, long)]
-    consumes_quota: Option<bool>,
+    with_count: Option<bool>,
 }
 
 /// Path parameters
@@ -140,82 +140,6 @@ struct PathParameters {}
 /// Volumes response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The volume name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The volume description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    /// The associated volume type name for the volume.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    volume_type: Option<String>,
-
-    /// A `metadata` object. Contains one or more metadata key and value pairs
-    /// that are associated with the volume.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    metadata: Option<Value>,
-
-    /// To create a volume from an existing snapshot, specify the UUID of the
-    /// volume snapshot. The volume is created in same availability zone and
-    /// with same size as the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    snapshot_id: Option<String>,
-
-    /// The UUID of the source volume. The API creates a new volume with the
-    /// same size as the source volume unless a larger size is requested.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    source_volid: Option<String>,
-
-    /// The UUID of the consistency group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    consistencygroup_id: Option<String>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    size: Option<i64>,
-
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    availability_zone: Option<String>,
-
-    /// If true, this volume can attach to more than one instance.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    multiattach: Option<bool>,
-
-    /// The volume status.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The volume migration status. Admin only.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    migration_status: Option<String>,
-
     /// Instance attachment information. If this volume is attached to a server
     /// instance, the attachments list includes the UUID of the attached
     /// server, an attachment UUID, the name of the attached host, if any, the
@@ -241,11 +165,31 @@ struct ResponseData {
     #[structable(optional, pretty, wide)]
     attachments: Option<Value>,
 
-    /// If true, this volume is encrypted.
+    /// The name of the availability zone.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    encrypted: Option<bool>,
+    availability_zone: Option<String>,
+
+    /// The cluster name of volume backend.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    cluster_name: Option<String>,
+
+    /// The UUID of the consistency group.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    consistencygroup_id: Option<String>,
+
+    /// Whether this resource consumes quota or not. Resources that not counted
+    /// for quota usage are usually temporary internal resources created to
+    /// perform an operation.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    consumes_quota: Option<bool>,
 
     /// The date and time when the resource was created.
     ///
@@ -265,6 +209,113 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
+
+    /// The volume description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// If true, this volume is encrypted.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    encrypted: Option<bool>,
+
+    /// The ID of the group.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    group_id: Option<String>,
+
+    /// The UUID of the volume.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// A `metadata` object. Contains one or more metadata key and value pairs
+    /// that are associated with the volume.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    metadata: Option<Value>,
+
+    /// The volume migration status. Admin only.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    migration_status: Option<String>,
+
+    /// If true, this volume can attach to more than one instance.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    multiattach: Option<bool>,
+
+    /// The volume name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The provider ID for the volume. The value is either a string set by the
+    /// driver or null if the driver doesn’t use the field or if it hasn’t
+    /// created it yet. Only returned for administrators.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    provider_id: Option<String>,
+
+    /// The volume replication status.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    replication_status: Option<String>,
+
+    /// A unique identifier that’s used to indicate what node the
+    /// volume-service for a particular volume is being serviced by.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    service_uuid: Option<String>,
+
+    /// An indicator whether the host connecting the volume should lock for the
+    /// whole attach/detach process or not. true means only is iSCSI initiator
+    /// running on host doesn’t support manual scans, false means never use
+    /// locks, and null means to always use locks. Look at os-brick’s
+    /// guard_connection context manager. Default=True.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    shared_targets: Option<bool>,
+
+    /// The size of the volume, in gibibytes (GiB).
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    size: Option<i64>,
+
+    /// To create a volume from an existing snapshot, specify the UUID of the
+    /// volume snapshot. The volume is created in same availability zone and
+    /// with same size as the snapshot.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    snapshot_id: Option<String>,
+
+    /// The UUID of the source volume. The API creates a new volume with the
+    /// same size as the source volume unless a larger size is requested.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    source_volid: Option<String>,
+
+    /// The volume status.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
 
     /// The date and time when the resource was updated.
     ///
@@ -288,23 +339,17 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// The volume replication status.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    replication_status: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
     /// The UUID of the user.
     ///
     #[serde()]
     #[structable(optional, wide)]
     user_id: Option<String>,
+
+    /// The associated volume type name for the volume.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
     ///
@@ -313,51 +358,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     volume_type_id: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    group_id: Option<String>,
-
-    /// The provider ID for the volume. The value is either a string set by the
-    /// driver or null if the driver doesn’t use the field or if it hasn’t
-    /// created it yet. Only returned for administrators.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    provider_id: Option<String>,
-
-    /// A unique identifier that’s used to indicate what node the
-    /// volume-service for a particular volume is being serviced by.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    service_uuid: Option<String>,
-
-    /// An indicator whether the host connecting the volume should lock for the
-    /// whole attach/detach process or not. true means only is iSCSI initiator
-    /// running on host doesn’t support manual scans, false means never use
-    /// locks, and null means to always use locks. Look at os-brick’s
-    /// guard_connection context manager. Default=True.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    shared_targets: Option<bool>,
-
-    /// The cluster name of volume backend.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    cluster_name: Option<String>,
-
-    /// Whether this resource consumes quota or not. Resources that not counted
-    /// for quota usage are usually temporary internal resources created to
-    /// perform an operation.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    consumes_quota: Option<bool>,
 }
 
 impl VolumesCommand {
