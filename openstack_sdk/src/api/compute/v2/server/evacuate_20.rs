@@ -29,6 +29,15 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Evacuate<'a> {
+    /// An administrative password to access the evacuated server. If you omit
+    /// this parameter, the operation generates a new password. Up to API
+    /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
+    /// is specified, an error is raised.
+    ///
+    #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) admin_pass: Option<Cow<'a, str>>,
+
     /// The name or ID of the host to which the server is evacuated. If you
     /// omit this parameter, the scheduler chooses a host.
     ///
@@ -58,15 +67,6 @@ pub struct Evacuate<'a> {
     #[serde(rename = "onSharedStorage")]
     #[builder()]
     pub(crate) on_shared_storage: bool,
-
-    /// An administrative password to access the evacuated server. If you omit
-    /// this parameter, the operation generates a new password. Up to API
-    /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
-    /// is specified, an error is raised.
-    ///
-    #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) admin_pass: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

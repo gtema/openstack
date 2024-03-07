@@ -69,6 +69,15 @@ struct PathParameters {}
 /// AvailabilityZones response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// An object containing a list of host information. The host information
+    /// is comprised of host and service objects. The service object returns
+    /// three parameters representing the states of the service: `active`,
+    /// `available`, and `updated_at`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    hosts: Option<Value>,
+
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
@@ -80,15 +89,6 @@ struct ResponseData {
     #[serde(rename = "zoneState")]
     #[structable(optional, pretty, title = "zoneState", wide)]
     zone_state: Option<Value>,
-
-    /// An object containing a list of host information. The host information
-    /// is comprised of host and service objects. The service object returns
-    /// three parameters representing the states of the service: `active`,
-    /// `available`, and `updated_at`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

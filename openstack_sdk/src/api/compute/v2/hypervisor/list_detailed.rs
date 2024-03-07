@@ -36,14 +36,14 @@ use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(default, setter(into))]
+    hypervisor_hostname_pattern: Option<Cow<'a, str>>,
+
     #[builder(default)]
     limit: Option<i32>,
 
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    hypervisor_hostname_pattern: Option<Cow<'a, str>>,
 
     #[builder(default)]
     with_servers: Option<bool>,

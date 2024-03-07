@@ -54,15 +54,15 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    ///
-    #[builder(default, setter(into))]
-    image_id: Cow<'a, str>,
-
     /// The media type descriptor of the body, namely application/octet-stream
     ///
     #[builder(default, setter(into))]
     content_type: Option<Cow<'a, str>>,
+
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
+    #[builder(default, setter(into))]
+    image_id: Cow<'a, str>,
 
     /// A store identifier to upload or import image data. Should only be
     /// included when making a request to a cloud that supports multiple

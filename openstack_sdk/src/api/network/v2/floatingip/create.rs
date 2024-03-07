@@ -71,17 +71,39 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Floatingip<'a> {
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) dns_domain: Option<Cow<'a, str>>,
+
+    /// A valid DNS name.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) dns_name: Option<Cow<'a, str>>,
+
+    /// The fixed IP address that is associated with the floating IP. If an
+    /// internal port has multiple associated IP addresses, the service chooses
+    /// the first IP address unless you explicitly define a fixed IP address in
+    /// the `fixed_ip_address` parameter.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
+
     /// The floating IP address.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) floating_ip_address: Option<Cow<'a, str>>,
-
-    /// The subnet ID on which you want to create the floating IP.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) subnet_id: Option<Option<Cow<'a, str>>>,
 
     /// The ID of the network associated with the floating IP.
     ///
@@ -97,45 +119,23 @@ pub struct Floatingip<'a> {
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Option<Cow<'a, str>>>,
 
-    /// The fixed IP address that is associated with the floating IP. If an
-    /// internal port has multiple associated IP addresses, the service chooses
-    /// the first IP address unless you explicitly define a fixed IP address in
-    /// the `fixed_ip_address` parameter.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) fixed_ip_address: Option<Cow<'a, str>>,
-
-    /// The ID of the project.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) tenant_id: Option<Cow<'a, str>>,
-
     /// The ID of the QoS policy associated with the floating IP.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 
-    /// A valid DNS name.
+    /// The subnet ID on which you want to create the floating IP.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) dns_name: Option<Cow<'a, str>>,
+    pub(crate) subnet_id: Option<Option<Cow<'a, str>>>,
 
-    /// A valid DNS domain.
+    /// The ID of the project.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) dns_domain: Option<Cow<'a, str>>,
-
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) tenant_id: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

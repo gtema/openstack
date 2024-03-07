@@ -41,11 +41,7 @@ pub enum ControlLocation {
 pub struct Encryption<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) key_size: Option<Option<i32>>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) provider: Cow<'a, str>,
+    pub(crate) cipher: Option<Option<Cow<'a, str>>>,
 
     #[serde()]
     #[builder()]
@@ -53,7 +49,11 @@ pub struct Encryption<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) cipher: Option<Option<Cow<'a, str>>>,
+    pub(crate) key_size: Option<Option<i32>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) provider: Cow<'a, str>,
 
     #[builder(setter(name = "_properties"), default, private)]
     #[serde(flatten)]

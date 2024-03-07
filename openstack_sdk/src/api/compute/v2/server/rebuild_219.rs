@@ -38,11 +38,11 @@ pub enum OsDcfDiskConfig {
 pub struct Personality<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) path: Option<Cow<'a, str>>,
+    pub(crate) contents: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) contents: Option<Cow<'a, str>>,
+    pub(crate) path: Option<Cow<'a, str>>,
 }
 
 /// The action to rebuild a server.
@@ -50,11 +50,33 @@ pub struct Personality<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rebuild<'a> {
-    /// The server name.
+    /// IPv4 address that should be used to access this server.
+    ///
+    #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_ipv4: Option<Cow<'a, str>>,
+
+    /// IPv6 address that should be used to access this server.
+    ///
+    #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_ipv6: Option<Cow<'a, str>>,
+
+    /// The administrative password of the server. If you omit this parameter,
+    /// the operation generates a new password.
+    ///
+    #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) admin_pass: Option<Cow<'a, str>>,
+
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
+    ///
+    /// **New in version 2.19**
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the image to rebuild for your server instance. It must be a
     /// valid UUID otherwise API will return 400. To rebuild a volume-backed
@@ -70,13 +92,6 @@ pub struct Rebuild<'a> {
     #[builder(setter(into))]
     pub(crate) image_ref: Cow<'a, str>,
 
-    /// The administrative password of the server. If you omit this parameter,
-    /// the operation generates a new password.
-    ///
-    #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) admin_pass: Option<Cow<'a, str>>,
-
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
     ///
@@ -84,18 +99,11 @@ pub struct Rebuild<'a> {
     #[builder(default, private, setter(name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    /// Indicates whether the server is rebuilt with the preservation of the
-    /// ephemeral partition (`true`).
-    ///
-    /// Note
-    ///
-    /// This only works with baremetal servers provided by Ironic. Passing it
-    /// to any other server instance results in a fault and will prevent the
-    /// rebuild from happening.
+    /// The server name.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) preserve_ephemeral: Option<bool>,
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
     /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
@@ -118,18 +126,6 @@ pub struct Rebuild<'a> {
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
-    /// IPv4 address that should be used to access this server.
-    ///
-    #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_ipv4: Option<Cow<'a, str>>,
-
-    /// IPv6 address that should be used to access this server.
-    ///
-    #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_ipv6: Option<Cow<'a, str>>,
-
     /// The file path and contents, text only, to inject into the server at
     /// launch. The maximum size of the file path data is 255 bytes. The
     /// maximum limit is the number of allowed bytes in the decoded, rather
@@ -141,14 +137,18 @@ pub struct Rebuild<'a> {
     #[builder(default, setter(into))]
     pub(crate) personality: Option<Vec<Personality<'a>>>,
 
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
+    /// Indicates whether the server is rebuilt with the preservation of the
+    /// ephemeral partition (`true`).
     ///
-    /// **New in version 2.19**
+    /// Note
+    ///
+    /// This only works with baremetal servers provided by Ironic. Passing it
+    /// to any other server instance results in a fault and will prevent the
+    /// rebuild from happening.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Option<Cow<'a, str>>>,
+    #[builder(default)]
+    pub(crate) preserve_ephemeral: Option<bool>,
 }
 
 impl<'a> RebuildBuilder<'a> {

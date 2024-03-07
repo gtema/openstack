@@ -35,13 +35,13 @@ pub enum MigrationPolicy {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsRetype<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) new_type: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) migration_policy: Option<MigrationPolicy>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) new_type: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]

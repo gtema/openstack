@@ -72,11 +72,11 @@ struct PathParameters {
 /// OsForceDetach Body data
 #[derive(Args)]
 struct OsForceDetach {
-    #[arg(long, value_name="JSON", value_parser=parse_json)]
-    connector: Option<Option<Value>>,
-
     #[arg(long)]
     attachment_id: Option<String>,
+
+    #[arg(long, value_name="JSON", value_parser=parse_json)]
+    connector: Option<Option<Value>>,
 }
 
 /// Volume response representation

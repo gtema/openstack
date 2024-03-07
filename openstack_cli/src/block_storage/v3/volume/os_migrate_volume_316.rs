@@ -71,16 +71,16 @@ struct PathParameters {
 #[derive(Args)]
 struct OsMigrateVolume {
     #[arg(long)]
-    host: Option<String>,
+    cluster: Option<String>,
 
     #[arg(action=clap::ArgAction::Set, long)]
     force_host_copy: Option<bool>,
 
+    #[arg(long)]
+    host: Option<String>,
+
     #[arg(action=clap::ArgAction::Set, long)]
     lock_volume: Option<bool>,
-
-    #[arg(long)]
-    cluster: Option<String>,
 }
 
 /// Volume response representation

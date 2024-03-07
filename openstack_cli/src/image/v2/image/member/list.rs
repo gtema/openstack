@@ -80,11 +80,11 @@ struct PathParameters {
 /// Members response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// An identifier for the image member (tenantId)
+    /// Date and time of image member creation
     ///
     #[serde()]
     #[structable(optional)]
-    member_id: Option<String>,
+    created_at: Option<String>,
 
     /// An identifier for the image
     ///
@@ -92,17 +92,15 @@ struct ResponseData {
     #[structable(optional)]
     image_id: Option<String>,
 
-    /// Date and time of image member creation
+    /// An identifier for the image member (tenantId)
     ///
     #[serde()]
     #[structable(optional)]
-    created_at: Option<String>,
+    member_id: Option<String>,
 
-    /// Date and time of last modification of image member
-    ///
     #[serde()]
     #[structable(optional)]
-    updated_at: Option<String>,
+    schema: Option<String>,
 
     /// The status of this image member
     ///
@@ -110,9 +108,11 @@ struct ResponseData {
     #[structable(optional)]
     status: Option<String>,
 
+    /// Date and time of last modification of image member
+    ///
     #[serde()]
     #[structable(optional)]
-    schema: Option<String>,
+    updated_at: Option<String>,
 }
 
 impl MembersCommand {

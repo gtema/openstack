@@ -37,11 +37,14 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct VolumeAttachment<'a> {
-    /// The UUID of the volume to attach.
+    /// To delete the attached volume when the server is destroyed, specify
+    /// `true`. Otherwise, specify `false`. Default: `false`
     ///
-    #[serde(rename = "volumeId")]
-    #[builder(setter(into))]
-    pub(crate) volume_id: Cow<'a, str>,
+    /// **New in version 2.79**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) delete_on_termination: Option<bool>,
 
     /// Name of the device such as, `/dev/vdb`. Omit or set this parameter to
     /// null for auto-assignment, if supported. If you specify this parameter,
@@ -70,14 +73,11 @@ pub struct VolumeAttachment<'a> {
     #[builder(default, setter(into))]
     pub(crate) tag: Option<Cow<'a, str>>,
 
-    /// To delete the attached volume when the server is destroyed, specify
-    /// `true`. Otherwise, specify `false`. Default: `false`
+    /// The UUID of the volume to attach.
     ///
-    /// **New in version 2.79**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) delete_on_termination: Option<bool>,
+    #[serde(rename = "volumeId")]
+    #[builder(setter(into))]
+    pub(crate) volume_id: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]

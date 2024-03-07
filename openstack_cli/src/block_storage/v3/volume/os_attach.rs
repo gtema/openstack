@@ -79,16 +79,16 @@ enum Mode {
 #[derive(Args)]
 struct OsAttach {
     #[arg(long)]
-    instance_uuid: Option<String>,
-
-    #[arg(long)]
-    mountpoint: String,
-
-    #[arg(long)]
     host_name: Option<String>,
 
     #[arg(long)]
+    instance_uuid: Option<String>,
+
+    #[arg(long)]
     mode: Option<Mode>,
+
+    #[arg(long)]
+    mountpoint: String,
 }
 
 /// Volume response representation

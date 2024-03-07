@@ -29,19 +29,19 @@ use std::borrow::Cow;
 pub struct OsMigrateVolume<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) host: Option<Option<Cow<'a, str>>>,
+    pub(crate) cluster: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) force_host_copy: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) lock_volume: Option<bool>,
+    #[builder(default, setter(into))]
+    pub(crate) host: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) cluster: Option<Option<Cow<'a, str>>>,
+    #[builder(default)]
+    pub(crate) lock_volume: Option<bool>,
 }
 
 #[derive(Builder, Debug, Clone)]

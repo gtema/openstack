@@ -77,20 +77,12 @@ struct ResponseData {
     host: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
-    vif_type: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vif_details: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vnic_type: Option<String>,
-
-    #[serde()]
     #[structable(optional, pretty)]
     profile: Option<Value>,
+
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
 
     #[serde()]
     #[structable(optional)]
@@ -98,7 +90,15 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    project_id: Option<String>,
+    vif_details: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    vif_type: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    vnic_type: Option<String>,
 }
 
 impl BindingCommand {

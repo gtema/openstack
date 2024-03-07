@@ -30,16 +30,16 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// The name of the application credential. Must be unique to a user.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
     ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,
-
-    /// The name of the application credential. Must be unique to a user.
-    ///
-    #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

@@ -97,11 +97,11 @@ struct Binding {
     #[arg(long)]
     host: Option<String>,
 
-    #[arg(long)]
-    vnic_type: Option<VnicType>,
-
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     profile: Option<Vec<(String, Value)>>,
+
+    #[arg(long)]
+    vnic_type: Option<VnicType>,
 }
 
 /// Binding response representation
@@ -112,20 +112,12 @@ struct ResponseData {
     host: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
-    vif_type: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vif_details: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    vnic_type: Option<String>,
-
-    #[serde()]
     #[structable(optional, pretty)]
     profile: Option<Value>,
+
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
 
     #[serde()]
     #[structable(optional)]
@@ -133,7 +125,15 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    project_id: Option<String>,
+    vif_details: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    vif_type: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    vnic_type: Option<String>,
 }
 
 impl BindingCommand {

@@ -72,13 +72,13 @@ struct PathParameters {
 #[derive(Args)]
 struct VolumeType {
     #[arg(long)]
-    name: Option<String>,
-
-    #[arg(long)]
     description: Option<String>,
 
     #[arg(action=clap::ArgAction::Set, long)]
     is_public: Option<bool>,
+
+    #[arg(long)]
+    name: Option<String>,
 }
 
 /// Type response representation

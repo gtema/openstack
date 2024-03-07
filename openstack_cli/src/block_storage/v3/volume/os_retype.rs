@@ -79,10 +79,10 @@ enum MigrationPolicy {
 #[derive(Args)]
 struct OsRetype {
     #[arg(long)]
-    new_type: String,
+    migration_policy: Option<MigrationPolicy>,
 
     #[arg(long)]
-    migration_policy: Option<MigrationPolicy>,
+    new_type: String,
 }
 
 /// Volume response representation

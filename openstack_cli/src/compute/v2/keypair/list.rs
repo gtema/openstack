@@ -64,13 +64,13 @@ pub struct KeypairsCommand {
 #[derive(Args)]
 struct QueryParameters {
     #[arg(long)]
-    user_id: Option<String>,
-
-    #[arg(long)]
     limit: Option<i32>,
 
     #[arg(long)]
     marker: Option<String>,
+
+    #[arg(long)]
+    user_id: Option<String>,
 }
 
 /// Path parameters
@@ -79,6 +79,12 @@ struct PathParameters {}
 /// Keypairs response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The fingerprint for the keypair.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    fingerprint: Option<String>,
+
     /// The name for the keypair.
     ///
     #[serde()]
@@ -90,12 +96,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     public_key: Option<String>,
-
-    /// The fingerprint for the keypair.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fingerprint: Option<String>,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///

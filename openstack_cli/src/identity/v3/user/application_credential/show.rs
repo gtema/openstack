@@ -79,11 +79,27 @@ struct PathParameters {
 /// ApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    #[serde()]
+    #[structable(optional, pretty)]
+    access_rules: Option<Value>,
+
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    expires_at: Option<String>,
+
     /// The ID of the application credential.
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
 
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
@@ -94,28 +110,12 @@ struct ResponseData {
     project_id: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    expires_at: Option<String>,
-
-    #[serde()]
     #[structable(optional, pretty)]
     roles: Option<Value>,
 
     #[serde()]
     #[structable(optional)]
     unrestricted: Option<bool>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    access_rules: Option<Value>,
 }
 
 impl ApplicationCredentialCommand {

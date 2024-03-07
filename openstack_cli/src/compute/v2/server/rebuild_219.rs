@@ -82,10 +82,29 @@ enum OsDcfDiskConfig {
 /// Rebuild Body data
 #[derive(Args)]
 struct Rebuild {
-    /// The server name.
+    /// IPv4 address that should be used to access this server.
     ///
     #[arg(long)]
-    name: Option<String>,
+    access_ipv4: Option<String>,
+
+    /// IPv6 address that should be used to access this server.
+    ///
+    #[arg(long)]
+    access_ipv6: Option<String>,
+
+    /// The administrative password of the server. If you omit this parameter,
+    /// the operation generates a new password.
+    ///
+    #[arg(long)]
+    admin_pass: Option<String>,
+
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
+    ///
+    /// **New in version 2.19**
+    ///
+    #[arg(long)]
+    description: Option<String>,
 
     /// The UUID of the image to rebuild for your server instance. It must be a
     /// valid UUID otherwise API will return 400. To rebuild a volume-backed
@@ -100,29 +119,16 @@ struct Rebuild {
     #[arg(long)]
     image_ref: String,
 
-    /// The administrative password of the server. If you omit this parameter,
-    /// the operation generates a new password.
-    ///
-    #[arg(long)]
-    admin_pass: Option<String>,
-
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
     ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
-    /// Indicates whether the server is rebuilt with the preservation of the
-    /// ephemeral partition (`true`).
+    /// The server name.
     ///
-    /// Note
-    ///
-    /// This only works with baremetal servers provided by Ironic. Passing it
-    /// to any other server instance results in a fault and will prevent the
-    /// rebuild from happening.
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    preserve_ephemeral: Option<bool>,
+    #[arg(long)]
+    name: Option<String>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
     /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
@@ -144,16 +150,6 @@ struct Rebuild {
     #[arg(long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
-    /// IPv4 address that should be used to access this server.
-    ///
-    #[arg(long)]
-    access_ipv4: Option<String>,
-
-    /// IPv6 address that should be used to access this server.
-    ///
-    #[arg(long)]
-    access_ipv6: Option<String>,
-
     /// The file path and contents, text only, to inject into the server at
     /// launch. The maximum size of the file path data is 255 bytes. The
     /// maximum limit is the number of allowed bytes in the decoded, rather
@@ -164,13 +160,17 @@ struct Rebuild {
     #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
     personality: Option<Vec<Value>>,
 
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
+    /// Indicates whether the server is rebuilt with the preservation of the
+    /// ephemeral partition (`true`).
     ///
-    /// **New in version 2.19**
+    /// Note
     ///
-    #[arg(long)]
-    description: Option<String>,
+    /// This only works with baremetal servers provided by Ironic. Passing it
+    /// to any other server instance results in a fault and will prevent the
+    /// rebuild from happening.
+    ///
+    #[arg(action=clap::ArgAction::Set, long)]
+    preserve_ephemeral: Option<bool>,
 }
 
 /// Server response representation

@@ -44,70 +44,37 @@ use crate::api::Pageable;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(default, setter(into))]
-    user_id: Option<Cow<'a, str>>,
+    access_ip_v4: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    project_id: Option<Cow<'a, str>>,
+    access_ip_v6: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    tenant_id: Option<Cow<'a, str>>,
+    all_tenants: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    launch_index: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    image_ref: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    image: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    kernel_id: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    ramdisk_id: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    hostname: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    key_name: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    power_state: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    vm_state: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    task_state: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    host: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    node: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    flavor: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    reservation_id: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    launched_at: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    terminated_at: Option<Cow<'a, str>>,
+    auto_disk_config: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     availability_zone: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
+    block_device_mapping: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    display_name: Option<Cow<'a, str>>,
+    changes_before: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    changes_since: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    config_drive: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    deleted: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
@@ -116,49 +83,25 @@ pub struct Request<'a> {
     display_description: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    locked_by: Option<Cow<'a, str>>,
+    display_name: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    uuid: Option<Cow<'a, str>>,
+    flavor: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    root_device_name: Option<Cow<'a, str>>,
+    host: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    config_drive: Option<Cow<'a, str>>,
+    hostname: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    access_ip_v4: Option<Cow<'a, str>>,
+    image: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    access_ip_v6: Option<Cow<'a, str>>,
+    image_ref: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    auto_disk_config: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    progress: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    sort_key: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    sort_dir: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    all_tenants: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    soft_deleted: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    deleted: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    status: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    changes_since: Option<Cow<'a, str>>,
+    info_cache: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     ip: Option<Cow<'a, str>>,
@@ -167,40 +110,37 @@ pub struct Request<'a> {
     ip6: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    created_at: Option<Cow<'a, str>>,
+    kernel_id: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    block_device_mapping: Option<Cow<'a, str>>,
+    key_name: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    services: Option<Cow<'a, str>>,
+    launch_index: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    metadata: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    system_metadata: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    info_cache: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    security_groups: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    pci_devices: Option<Cow<'a, str>>,
+    launched_at: Option<Cow<'a, str>>,
 
     #[builder(default)]
     limit: Option<i32>,
 
     #[builder(default, setter(into))]
+    locked: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    locked_by: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    tags: Option<Cow<'a, str>>,
+    metadata: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    tags_any: Option<Cow<'a, str>>,
+    name: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    node: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     not_tags: Option<Cow<'a, str>>,
@@ -209,10 +149,70 @@ pub struct Request<'a> {
     not_tags_any: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    changes_before: Option<Cow<'a, str>>,
+    pci_devices: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    locked: Option<Cow<'a, str>>,
+    power_state: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    progress: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    ramdisk_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    reservation_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    root_device_name: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    security_groups: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    services: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    soft_deleted: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    system_metadata: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    tags: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    tags_any: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    task_state: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    tenant_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    terminated_at: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    user_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    uuid: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    vm_state: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

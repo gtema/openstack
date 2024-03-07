@@ -70,27 +70,27 @@ struct PathParameters {
 /// CreateBackup Body data
 #[derive(Args)]
 struct CreateBackup {
-    /// The name of the image to be backed up.
-    ///
-    #[arg(long)]
-    name: String,
-
     /// The type of the backup, for example, `daily`.
     ///
     #[arg(long)]
     backup_type: String,
-
-    /// The rotation of the back up image, the oldest image will be removed
-    /// when image count exceed the rotation count.
-    ///
-    #[arg(long)]
-    rotation: String,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
     ///
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
+
+    /// The name of the image to be backed up.
+    ///
+    #[arg(long)]
+    name: String,
+
+    /// The rotation of the back up image, the oldest image will be removed
+    /// when image count exceed the rotation count.
+    ///
+    #[arg(long)]
+    rotation: String,
 }
 
 /// Server response representation

@@ -63,16 +63,16 @@ pub struct ConntrackHelpersCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
+    /// API
+    ///
+    #[arg(long)]
+    helper: Option<String>,
+
     /// id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
     ///
     #[arg(long)]
     id: Option<String>,
-
-    /// protocol query parameter for
-    /// /v2.0/routers/{router_id}/conntrack_helpers API
-    ///
-    #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
-    protocol: Option<String>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
@@ -80,11 +80,11 @@ struct QueryParameters {
     #[arg(long)]
     port: Option<f32>,
 
-    /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
-    /// API
+    /// protocol query parameter for
+    /// /v2.0/routers/{router_id}/conntrack_helpers API
     ///
-    #[arg(long)]
-    helper: Option<String>,
+    #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
+    protocol: Option<String>,
 }
 
 /// Path parameters
@@ -98,17 +98,17 @@ struct PathParameters {
 /// ConntrackHelpers response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The netfilter conntrack helper module.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    helper: Option<String>,
+
     /// The ID of the conntrack helper.
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
-
-    /// The network protocol for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     ///
@@ -116,11 +116,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     port: Option<f32>,
 
-    /// The netfilter conntrack helper module.
+    /// The network protocol for the netfilter conntrack target rule.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    helper: Option<String>,
+    protocol: Option<String>,
 }
 
 impl ConntrackHelpersCommand {

@@ -27,15 +27,15 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filter for Identity Providers’ ID attribute
-    ///
-    #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
-
     /// Filter for Identity Providers’ enabled attribute
     ///
     #[builder(default)]
     enabled: Option<bool>,
+
+    /// Filter for Identity Providers’ ID attribute
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

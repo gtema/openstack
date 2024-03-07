@@ -42,6 +42,16 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// description query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// fixed_ip_address query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    fixed_ip_address: Option<Cow<'a, str>>,
+
     /// floating_ip_address query parameter for /v2.0/floatingips API
     ///
     #[builder(default, setter(into))]
@@ -51,46 +61,6 @@ pub struct Request<'a> {
     ///
     #[builder(default, setter(into))]
     floating_network_id: Option<Cow<'a, str>>,
-
-    /// router_id query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, setter(into))]
-    router_id: Option<Cow<'a, str>>,
-
-    /// port_id query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, setter(into))]
-    port_id: Option<Cow<'a, str>>,
-
-    /// fixed_ip_address query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, setter(into))]
-    fixed_ip_address: Option<Cow<'a, str>>,
-
-    /// tenant_id query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, setter(into))]
-    tenant_id: Option<Cow<'a, str>>,
-
-    /// status query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, setter(into))]
-    status: Option<Cow<'a, str>>,
-
-    /// revision_number query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, setter(into))]
-    revision_number: Option<Cow<'a, str>>,
-
-    /// tags query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, private, setter(name = "_tags"))]
-    tags: Option<CommaSeparatedList<Cow<'a, str>>>,
-
-    /// tags-any query parameter for /v2.0/floatingips API
-    ///
-    #[builder(default, private, setter(name = "_tags_any"))]
-    tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// not-tags query parameter for /v2.0/floatingips API
     ///
@@ -102,10 +72,40 @@ pub struct Request<'a> {
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
-    /// description query parameter for /v2.0/floatingips API
+    /// port_id query parameter for /v2.0/floatingips API
     ///
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    port_id: Option<Cow<'a, str>>,
+
+    /// revision_number query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    revision_number: Option<Cow<'a, str>>,
+
+    /// router_id query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    router_id: Option<Cow<'a, str>>,
+
+    /// status query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
+    /// tags query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, private, setter(name = "_tags"))]
+    tags: Option<CommaSeparatedList<Cow<'a, str>>>,
+
+    /// tags-any query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, private, setter(name = "_tags_any"))]
+    tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
+
+    /// tenant_id query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    tenant_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

@@ -85,16 +85,16 @@ enum ControlLocation {
 #[derive(Args)]
 struct Encryption {
     #[arg(long)]
-    key_size: Option<Option<i32>>,
-
-    #[arg(long)]
-    provider: Option<String>,
+    cipher: Option<String>,
 
     #[arg(long)]
     control_location: Option<ControlLocation>,
 
     #[arg(long)]
-    cipher: Option<String>,
+    key_size: Option<Option<i32>>,
+
+    #[arg(long)]
+    provider: Option<String>,
 }
 
 /// Encryption response representation

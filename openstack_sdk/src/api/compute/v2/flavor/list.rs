@@ -32,6 +32,9 @@ use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(default, setter(into))]
+    is_public: Option<Cow<'a, str>>,
+
     #[builder(default)]
     limit: Option<i32>,
 
@@ -39,19 +42,16 @@ pub struct Request<'a> {
     marker: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    is_public: Option<Cow<'a, str>>,
+    min_disk: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     min_ram: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
-    min_disk: Option<Cow<'a, str>>,
+    sort_dir: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    sort_dir: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

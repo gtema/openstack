@@ -40,10 +40,11 @@ use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
-    ///
     #[builder(default, setter(into))]
-    server_id: Cow<'a, str>,
+    changes_before: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    changes_since: Option<Cow<'a, str>>,
 
     #[builder(default)]
     limit: Option<i32>,
@@ -51,11 +52,10 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    ///
     #[builder(default, setter(into))]
-    changes_since: Option<Cow<'a, str>>,
-
-    #[builder(default, setter(into))]
-    changes_before: Option<Cow<'a, str>>,
+    server_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

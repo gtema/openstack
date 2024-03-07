@@ -41,25 +41,35 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// name query parameter for /v2.0/routers API
-    ///
-    #[builder(default, setter(into))]
-    name: Option<Cow<'a, str>>,
-
     /// admin_state_up query parameter for /v2.0/routers API
     ///
     #[builder(default)]
     admin_state_up: Option<bool>,
 
-    /// tenant_id query parameter for /v2.0/routers API
+    /// description query parameter for /v2.0/routers API
     ///
     #[builder(default, setter(into))]
-    tenant_id: Option<Cow<'a, str>>,
+    description: Option<Cow<'a, str>>,
 
     /// enable_ndp_proxy query parameter for /v2.0/routers API
     ///
     #[builder(default)]
     enable_ndp_proxy: Option<bool>,
+
+    /// name query parameter for /v2.0/routers API
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// not-tags query parameter for /v2.0/routers API
+    ///
+    #[builder(default, private, setter(name = "_not_tags"))]
+    not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
+
+    /// not-tags-any query parameter for /v2.0/routers API
+    ///
+    #[builder(default, private, setter(name = "_not_tags_any"))]
+    not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
     /// revision_number query parameter for /v2.0/routers API
     ///
@@ -76,20 +86,10 @@ pub struct Request<'a> {
     #[builder(default, private, setter(name = "_tags_any"))]
     tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
-    /// not-tags query parameter for /v2.0/routers API
-    ///
-    #[builder(default, private, setter(name = "_not_tags"))]
-    not_tags: Option<CommaSeparatedList<Cow<'a, str>>>,
-
-    /// not-tags-any query parameter for /v2.0/routers API
-    ///
-    #[builder(default, private, setter(name = "_not_tags_any"))]
-    not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
-
-    /// description query parameter for /v2.0/routers API
+    /// tenant_id query parameter for /v2.0/routers API
     ///
     #[builder(default, setter(into))]
-    description: Option<Cow<'a, str>>,
+    tenant_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

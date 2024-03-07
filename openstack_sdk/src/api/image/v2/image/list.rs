@@ -124,6 +124,17 @@ use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// Specify a comparison filter based on the date and time when the
+    /// resource was created.
+    ///
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    /// id filter parameter
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -139,16 +150,24 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     marker: Option<Cow<'a, str>>,
 
+    /// Filters the response by a member status. A valid value is accepted,
+    /// pending, rejected, or all. Default is accepted.
+    ///
+    #[builder(default, setter(into))]
+    member_status: Option<Cow<'a, str>>,
+
     /// Filters the response by a name, as a string. A valid value is the name
     /// of an image.
     ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
-    /// id filter parameter
+    /// When true, filters the response to display only "hidden" images. By
+    /// default, "hidden" images are not included in the image-list response.
+    /// (Since Image API v2.7)
     ///
-    #[builder(default, setter(into))]
-    id: Option<Cow<'a, str>>,
+    #[builder(default)]
+    os_hidden: Option<bool>,
 
     /// Filters the response by a project (also called a “tenant”) ID. Shows
     /// only images that are shared with you by the specified owner.
@@ -163,42 +182,6 @@ pub struct Request<'a> {
     #[builder(default)]
     protected: Option<bool>,
 
-    /// Filters the response by an image status.
-    ///
-    #[builder(default, setter(into))]
-    status: Option<Cow<'a, str>>,
-
-    /// Filters the response by the specified tag value. May be repeated, but
-    /// keep in mind that you're making a conjunctive query, so only images
-    /// containing all the tags specified will appear in the response.
-    ///
-    #[builder(default, private, setter(name = "_tag"))]
-    tag: BTreeSet<Cow<'a, str>>,
-
-    /// Filters the response by an image visibility value. A valid value is
-    /// public, private, community, shared, or all. (Note that if you filter on
-    /// shared, the images included in the response will only be those where
-    /// your member status is accepted unless you explicitly include a
-    /// member_status filter in the request.) If you omit this parameter, the
-    /// response shows public, private, and those shared images with a member
-    /// status of accepted.
-    ///
-    #[builder(default, setter(into))]
-    visibility: Option<Cow<'a, str>>,
-
-    /// When true, filters the response to display only "hidden" images. By
-    /// default, "hidden" images are not included in the image-list response.
-    /// (Since Image API v2.7)
-    ///
-    #[builder(default)]
-    os_hidden: Option<bool>,
-
-    /// Filters the response by a member status. A valid value is accepted,
-    /// pending, rejected, or all. Default is accepted.
-    ///
-    #[builder(default, setter(into))]
-    member_status: Option<Cow<'a, str>>,
-
     /// Filters the response by a maximum image size, in bytes.
     ///
     #[builder(default, setter(into))]
@@ -209,17 +192,13 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     size_min: Option<Cow<'a, str>>,
 
-    /// Specify a comparison filter based on the date and time when the
-    /// resource was created.
+    /// Sorts the response by one or more attribute and sort direction
+    /// combinations. You can also set multiple sort keys and directions.
+    /// Default direction is desc. Use the comma (,) character to separate
+    /// multiple values. For example: `sort=name:asc,status:desc`
     ///
     #[builder(default, setter(into))]
-    created_at: Option<Cow<'a, str>>,
-
-    /// Specify a comparison filter based on the date and time when the
-    /// resource was most recently modified.
-    ///
-    #[builder(default, setter(into))]
-    updated_at: Option<Cow<'a, str>>,
+    sort: Option<Cow<'a, str>>,
 
     /// Sorts the response by a set of one or more sort direction and attribute
     /// (sort_key) combinations. A valid value for the sort direction is asc
@@ -236,13 +215,34 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     sort_key: Option<Cow<'a, str>>,
 
-    /// Sorts the response by one or more attribute and sort direction
-    /// combinations. You can also set multiple sort keys and directions.
-    /// Default direction is desc. Use the comma (,) character to separate
-    /// multiple values. For example: `sort=name:asc,status:desc`
+    /// Filters the response by an image status.
     ///
     #[builder(default, setter(into))]
-    sort: Option<Cow<'a, str>>,
+    status: Option<Cow<'a, str>>,
+
+    /// Filters the response by the specified tag value. May be repeated, but
+    /// keep in mind that you're making a conjunctive query, so only images
+    /// containing all the tags specified will appear in the response.
+    ///
+    #[builder(default, private, setter(name = "_tag"))]
+    tag: BTreeSet<Cow<'a, str>>,
+
+    /// Specify a comparison filter based on the date and time when the
+    /// resource was most recently modified.
+    ///
+    #[builder(default, setter(into))]
+    updated_at: Option<Cow<'a, str>>,
+
+    /// Filters the response by an image visibility value. A valid value is
+    /// public, private, community, shared, or all. (Note that if you filter on
+    /// shared, the images included in the response will only be those where
+    /// your member status is accepted unless you explicitly include a
+    /// member_status filter in the request.) If you omit this parameter, the
+    /// response shows public, private, and those shared images with a member
+    /// status of accepted.
+    ///
+    #[builder(default, setter(into))]
+    visibility: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

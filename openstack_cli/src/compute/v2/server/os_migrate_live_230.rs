@@ -84,21 +84,6 @@ struct OsMigrateLive {
     #[arg(action=clap::ArgAction::Set, long)]
     block_migration: bool,
 
-    /// The host to which to migrate the server. If this parameter is `None`,
-    /// the scheduler chooses a host.
-    ///
-    /// Warning
-    ///
-    /// Prior to microversion 2.30, specifying a host will bypass validation by
-    /// the scheduler, which could result in failures to actually migrate the
-    /// instance to the specified host, or over-subscription of the host. It is
-    /// recommended to either not specify a host so that the scheduler will
-    /// pick one, or specify a host with microversion >= 2.30 and without
-    /// `force=True` set.
-    ///
-    #[arg(long)]
-    host: String,
-
     /// Force a live-migration by not verifying the provided destination host
     /// by the scheduler.
     ///
@@ -115,6 +100,21 @@ struct OsMigrateLive {
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     force: Option<bool>,
+
+    /// The host to which to migrate the server. If this parameter is `None`,
+    /// the scheduler chooses a host.
+    ///
+    /// Warning
+    ///
+    /// Prior to microversion 2.30, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually migrate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.30 and without
+    /// `force=True` set.
+    ///
+    #[arg(long)]
+    host: String,
 }
 
 /// Server response representation

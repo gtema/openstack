@@ -92,22 +92,22 @@ enum Visibility {
 #[derive(Args)]
 struct OsVolumeUploadImage {
     #[arg(long)]
-    image_name: String,
+    container_format: Option<String>,
+
+    #[arg(long)]
+    disk_format: Option<DiskFormat>,
 
     #[arg(action=clap::ArgAction::Set, long)]
     force: Option<bool>,
 
     #[arg(long)]
-    disk_format: Option<DiskFormat>,
-
-    #[arg(long)]
-    container_format: Option<String>,
-
-    #[arg(long)]
-    visibility: Option<Visibility>,
+    image_name: String,
 
     #[arg(action=clap::ArgAction::Set, long)]
     protected: Option<bool>,
+
+    #[arg(long)]
+    visibility: Option<Visibility>,
 }
 
 /// Volume response representation

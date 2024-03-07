@@ -69,21 +69,6 @@ struct PathParameters {
 /// Evacuate Body data
 #[derive(Args)]
 struct Evacuate {
-    /// The name or ID of the host to which the server is evacuated. If you
-    /// omit this parameter, the scheduler chooses a host.
-    ///
-    /// Warning
-    ///
-    /// Prior to microversion 2.29, specifying a host will bypass validation by
-    /// the scheduler, which could result in failures to actually evacuate the
-    /// instance to the specified host, or over-subscription of the host. It is
-    /// recommended to either not specify a host so that the scheduler will
-    /// pick one, or specify a host with microversion >= 2.29 and without
-    /// `force=True` set.
-    ///
-    #[arg(long)]
-    host: Option<String>,
-
     /// An administrative password to access the evacuated server. If you omit
     /// this parameter, the operation generates a new password. Up to API
     /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
@@ -113,6 +98,21 @@ struct Evacuate {
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     force: Option<bool>,
+
+    /// The name or ID of the host to which the server is evacuated. If you
+    /// omit this parameter, the scheduler chooses a host.
+    ///
+    /// Warning
+    ///
+    /// Prior to microversion 2.29, specifying a host will bypass validation by
+    /// the scheduler, which could result in failures to actually evacuate the
+    /// instance to the specified host, or over-subscription of the host. It is
+    /// recommended to either not specify a host so that the scheduler will
+    /// pick one, or specify a host with microversion >= 2.29 and without
+    /// `force=True` set.
+    ///
+    #[arg(long)]
+    host: Option<String>,
 }
 
 /// Server response representation

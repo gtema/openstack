@@ -41,11 +41,7 @@ pub enum ControlLocation {
 pub struct Encryption<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) key_size: Option<Option<i32>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) provider: Option<Cow<'a, str>>,
+    pub(crate) cipher: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
@@ -53,7 +49,11 @@ pub struct Encryption<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) cipher: Option<Option<Cow<'a, str>>>,
+    pub(crate) key_size: Option<Option<i32>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) provider: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_properties"), default, private)]
     #[serde(flatten)]
@@ -80,15 +80,15 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) encryption: Encryption<'a>,
 
-    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
-    ///
-    #[builder(default, setter(into))]
-    type_id: Cow<'a, str>,
-
     /// id parameter for /v3/types/{type_id}/encryption/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
+
+    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    ///
+    #[builder(default, setter(into))]
+    type_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

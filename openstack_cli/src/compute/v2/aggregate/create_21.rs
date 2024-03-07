@@ -72,11 +72,6 @@ struct PathParameters {}
 /// Aggregate Body data
 #[derive(Args)]
 struct Aggregate {
-    /// The name of the host aggregate.
-    ///
-    #[arg(long)]
-    name: String,
-
     /// The availability zone of the host aggregate. You should use a custom
     /// availability zone rather than the default returned by the
     /// os-availability-zone API. The availability zone must not include ‘:’ in
@@ -84,6 +79,11 @@ struct Aggregate {
     ///
     #[arg(long)]
     availability_zone: Option<String>,
+
+    /// The name of the host aggregate.
+    ///
+    #[arg(long)]
+    name: String,
 }
 
 /// Aggregate response representation
@@ -135,6 +135,12 @@ struct ResponseData {
     #[structable(optional)]
     deleted_at: Option<String>,
 
+    /// An array of host information.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    hosts: Option<Value>,
+
     /// The ID of the host aggregate.
     ///
     #[serde()]
@@ -146,12 +152,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     metadata: Option<Value>,
-
-    /// An array of host information.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
 
     /// The date and time when the resource was updated, if the resource has
     /// not been updated, this field will show as `null`. The date and time

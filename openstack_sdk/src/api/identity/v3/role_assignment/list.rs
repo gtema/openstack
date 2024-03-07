@@ -98,42 +98,16 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a group ID.
-    ///
-    #[builder(default, setter(into))]
-    group_id: Option<Cow<'a, str>>,
-
-    /// Filters the response by a role ID.
-    ///
-    #[builder(default, setter(into))]
-    role_id: Option<Cow<'a, str>>,
-
-    /// Filters the response by a user ID.
-    ///
-    #[builder(default, setter(into))]
-    user_id: Option<Cow<'a, str>>,
-
-    /// Filters the response by a domain ID.
-    ///
-    #[builder(default, setter(into))]
-    scope_domain_id: Option<Cow<'a, str>>,
-
-    /// Filters the response by a project ID.
-    ///
-    #[builder(default, setter(into))]
-    scope_project_id: Option<Cow<'a, str>>,
-
-    /// Filters based on role assignments that are inherited. The only value of
-    /// inherited_to that is currently supported is projects.
-    ///
-    #[builder(default, setter(into))]
-    scope_os_inherit_inherited_to: Option<Cow<'a, str>>,
-
     /// Returns the effective assignments, including any assignments gained by
     /// virtue of group membership.
     ///
     #[builder(default)]
     effective: Option<Value>,
+
+    /// Filters the response by a group ID.
+    ///
+    #[builder(default, setter(into))]
+    group_id: Option<Cow<'a, str>>,
 
     /// If set, then the names of any entities returned will be include as well
     /// as their IDs. Any value other than 0 (including no value) will be
@@ -149,6 +123,32 @@ pub struct Request<'a> {
     ///
     #[builder(default)]
     include_subtree: Option<Value>,
+
+    /// Filters the response by a role ID.
+    ///
+    #[builder(default, setter(into))]
+    role_id: Option<Cow<'a, str>>,
+
+    /// Filters the response by a domain ID.
+    ///
+    #[builder(default, setter(into))]
+    scope_domain_id: Option<Cow<'a, str>>,
+
+    /// Filters based on role assignments that are inherited. The only value of
+    /// inherited_to that is currently supported is projects.
+    ///
+    #[builder(default, setter(into))]
+    scope_os_inherit_inherited_to: Option<Cow<'a, str>>,
+
+    /// Filters the response by a project ID.
+    ///
+    #[builder(default, setter(into))]
+    scope_project_id: Option<Cow<'a, str>>,
+
+    /// Filters the response by a user ID.
+    ///
+    #[builder(default, setter(into))]
+    user_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

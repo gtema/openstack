@@ -58,10 +58,6 @@ pub struct ExternalFixedIps<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ExternalGatewayInfo<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) network_id: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enable_snat: Option<bool>,
@@ -69,6 +65,10 @@ pub struct ExternalGatewayInfo<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) external_fixed_ips: Option<Vec<ExternalFixedIps<'a>>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) network_id: Cow<'a, str>,
 }
 
 /// A `router` object.
@@ -76,12 +76,6 @@ pub struct ExternalGatewayInfo<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Router<'a> {
-    /// Human-readable name of the resource. Default is an empty string.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
     ///
@@ -89,29 +83,26 @@ pub struct Router<'a> {
     #[builder(default)]
     pub(crate) admin_state_up: Option<bool>,
 
-    /// The ID of the project that owns the resource. Only administrative and
-    /// users with advsvc role can specify a project ID other than their own.
-    /// You cannot change this value through authorization policies.
+    /// The availability zone candidates for the router. It is available when
+    /// `router_availability_zone` extension is enabled.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) tenant_id: Option<Cow<'a, str>>,
+    pub(crate) availability_zone_hints: Option<Vec<Cow<'a, str>>>,
 
-    /// The external gateway information of the router. If the router has an
-    /// external gateway, this would be a dict with `network_id`,
-    /// `enable_snat`, `external_fixed_ips` and `qos_policy_id`. Otherwise,
-    /// this would be `null`.
+    /// A human-readable description for the resource. Default is an empty
+    /// string.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) external_gateway_info: Option<ExternalGatewayInfo<'a>>,
+    pub(crate) description: Option<Cow<'a, str>>,
 
-    /// `true` indicates a highly-available router. It is available when
-    /// `l3-ha` extension is enabled.
+    /// `true` indicates a distributed router. It is available when `dvr`
+    /// extension is enabled.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) ha: Option<Option<bool>>,
+    pub(crate) distributed: Option<Option<bool>>,
 
     /// Enable NDP proxy attribute. Default is `false`, To persist this
     /// attribute value, set the `enable_ndp_proxy_by_default` option in the
@@ -122,32 +113,41 @@ pub struct Router<'a> {
     #[builder(default, setter(into))]
     pub(crate) enable_ndp_proxy: Option<Option<bool>>,
 
+    /// The external gateway information of the router. If the router has an
+    /// external gateway, this would be a dict with `network_id`,
+    /// `enable_snat`, `external_fixed_ips` and `qos_policy_id`. Otherwise,
+    /// this would be `null`.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) external_gateway_info: Option<ExternalGatewayInfo<'a>>,
+
     /// The ID of the flavor associated with the router.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) flavor_id: Option<Cow<'a, str>>,
 
-    /// The availability zone candidates for the router. It is available when
-    /// `router_availability_zone` extension is enabled.
+    /// `true` indicates a highly-available router. It is available when
+    /// `l3-ha` extension is enabled.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) availability_zone_hints: Option<Vec<Cow<'a, str>>>,
+    pub(crate) ha: Option<Option<bool>>,
 
-    /// `true` indicates a distributed router. It is available when `dvr`
-    /// extension is enabled.
+    /// Human-readable name of the resource. Default is an empty string.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) distributed: Option<Option<bool>>,
+    pub(crate) name: Option<Cow<'a, str>>,
 
-    /// A human-readable description for the resource. Default is an empty
-    /// string.
+    /// The ID of the project that owns the resource. Only administrative and
+    /// users with advsvc role can specify a project ID other than their own.
+    /// You cannot change this value through authorization policies.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) tenant_id: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

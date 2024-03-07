@@ -44,6 +44,27 @@ pub enum OsDcfDiskConfig {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Server<'a> {
+    /// IPv4 address that should be used to access this server.
+    ///
+    #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_ipv4: Option<Cow<'a, str>>,
+
+    /// IPv6 address that should be used to access this server.
+    ///
+    #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_ipv6: Option<Cow<'a, str>>,
+
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
+    ///
+    /// **New in version 2.19**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
+
     /// The server name.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -70,27 +91,6 @@ pub struct Server<'a> {
     #[serde(rename = "OS-DCF:diskConfig", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
-
-    /// IPv4 address that should be used to access this server.
-    ///
-    #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_ipv4: Option<Cow<'a, str>>,
-
-    /// IPv6 address that should be used to access this server.
-    ///
-    #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_ipv6: Option<Cow<'a, str>>,
-
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
-    ///
-    /// **New in version 2.19**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]

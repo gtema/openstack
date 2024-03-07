@@ -70,12 +70,6 @@ struct PathParameters {
 /// Group response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
     /// The description of the group.
     ///
     #[serde()]
@@ -87,6 +81,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     domain_id: Option<String>,
+
+    /// The ID of the group.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
     ///

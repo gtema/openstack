@@ -56,6 +56,13 @@ pub struct Keypair<'a> {
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
+    /// The public ssh key to import. Was optional before microversion 2.92 :
+    /// if you were omitting this value, a keypair was generated for you.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) public_key: Option<Cow<'a, str>>,
+
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
@@ -63,13 +70,6 @@ pub struct Keypair<'a> {
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) _type: Option<Type>,
-
-    /// The public ssh key to import. Was optional before microversion 2.92 :
-    /// if you were omitting this value, a keypair was generated for you.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) public_key: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]

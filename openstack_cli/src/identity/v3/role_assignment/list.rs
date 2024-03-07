@@ -126,42 +126,16 @@ pub struct RoleAssignmentsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// Filters the response by a group ID.
-    ///
-    #[arg(long)]
-    group_id: Option<String>,
-
-    /// Filters the response by a role ID.
-    ///
-    #[arg(long)]
-    role_id: Option<String>,
-
-    /// Filters the response by a user ID.
-    ///
-    #[arg(long)]
-    user_id: Option<String>,
-
-    /// Filters the response by a domain ID.
-    ///
-    #[arg(long)]
-    scope_domain_id: Option<String>,
-
-    /// Filters the response by a project ID.
-    ///
-    #[arg(long)]
-    scope_project_id: Option<String>,
-
-    /// Filters based on role assignments that are inherited. The only value of
-    /// inherited_to that is currently supported is projects.
-    ///
-    #[arg(long)]
-    scope_os_inherit_inherited_to: Option<String>,
-
     /// Returns the effective assignments, including any assignments gained by
     /// virtue of group membership.
     ///
     #[arg(action=clap::ArgAction::SetTrue, long)]
     effective: Option<bool>,
+
+    /// Filters the response by a group ID.
+    ///
+    #[arg(long)]
+    group_id: Option<String>,
 
     /// If set, then the names of any entities returned will be include as well
     /// as their IDs. Any value other than 0 (including no value) will be
@@ -177,6 +151,32 @@ struct QueryParameters {
     ///
     #[arg(action=clap::ArgAction::SetTrue, long)]
     include_subtree: Option<bool>,
+
+    /// Filters the response by a role ID.
+    ///
+    #[arg(long)]
+    role_id: Option<String>,
+
+    /// Filters the response by a domain ID.
+    ///
+    #[arg(long)]
+    scope_domain_id: Option<String>,
+
+    /// Filters based on role assignments that are inherited. The only value of
+    /// inherited_to that is currently supported is projects.
+    ///
+    #[arg(long)]
+    scope_os_inherit_inherited_to: Option<String>,
+
+    /// Filters the response by a project ID.
+    ///
+    #[arg(long)]
+    scope_project_id: Option<String>,
+
+    /// Filters the response by a user ID.
+    ///
+    #[arg(long)]
+    user_id: Option<String>,
 }
 
 /// Path parameters
@@ -185,6 +185,10 @@ struct PathParameters {}
 /// RoleAssignments response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    #[serde()]
+    #[structable(optional, pretty)]
+    group: Option<Value>,
+
     /// A prior role object.
     ///
     #[serde()]
@@ -210,10 +214,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    group: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -236,29 +236,15 @@ impl fmt::Display for ResponseLinks {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseRole {
-    id: Option<String>,
-    name: Option<String>,
     description: Option<String>,
+    id: Option<String>,
     links: Option<Value>,
+    name: Option<String>,
 }
 
 impl fmt::Display for ResponseRole {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
             format!(
                 "description={}",
                 self.description
@@ -267,8 +253,22 @@ impl fmt::Display for ResponseRole {
                     .unwrap_or("".to_string())
             ),
             format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
                 "links={}",
                 self.links
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "name={}",
+                self.name
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -308,17 +308,17 @@ impl fmt::Display for ResponseDomain {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseProject {
-    name: Option<String>,
-    id: Option<String>,
     domain: Option<Value>,
+    id: Option<String>,
+    name: Option<String>,
 }
 
 impl fmt::Display for ResponseProject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(
-                "name={}",
-                self.name
+                "domain={}",
+                self.domain
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -331,8 +331,8 @@ impl fmt::Display for ResponseProject {
                     .unwrap_or("".to_string())
             ),
             format!(
-                "domain={}",
-                self.domain
+                "name={}",
+                self.name
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -405,22 +405,15 @@ impl fmt::Display for ResponseSystem {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseScope {
-    project: Option<Value>,
     domain: Option<Value>,
     os_trust_trust: Option<Value>,
+    project: Option<Value>,
     system: Option<Value>,
 }
 
 impl fmt::Display for ResponseScope {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
-            format!(
-                "project={}",
-                self.project
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
             format!(
                 "domain={}",
                 self.domain
@@ -431,6 +424,13 @@ impl fmt::Display for ResponseScope {
             format!(
                 "os_trust_trust={}",
                 self.os_trust_trust
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "project={}",
+                self.project
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -477,14 +477,21 @@ impl fmt::Display for ResponseUserDomain {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseUser {
+    domain: Option<Value>,
     id: Option<String>,
     name: Option<String>,
-    domain: Option<Value>,
 }
 
 impl fmt::Display for ResponseUser {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
+            format!(
+                "domain={}",
+                self.domain
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
             format!(
                 "id={}",
                 self.id
@@ -495,13 +502,6 @@ impl fmt::Display for ResponseUser {
             format!(
                 "name={}",
                 self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "domain={}",
-                self.domain
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())

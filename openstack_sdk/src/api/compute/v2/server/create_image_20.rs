@@ -31,18 +31,18 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct CreateImage<'a> {
-    /// The display name of an Image.
-    ///
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
-
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
+
+    /// The display name of an Image.
+    ///
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
 }
 
 impl<'a> CreateImageBuilder<'a> {

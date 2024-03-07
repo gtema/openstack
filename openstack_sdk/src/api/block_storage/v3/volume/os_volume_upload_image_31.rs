@@ -57,29 +57,29 @@ pub enum Visibility {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsVolumeUploadImage<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) image_name: Cow<'a, str>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) force: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) disk_format: Option<DiskFormat>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) container_format: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) visibility: Option<Visibility>,
+    pub(crate) disk_format: Option<DiskFormat>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) force: Option<bool>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) image_name: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) protected: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) visibility: Option<Visibility>,
 }
 
 #[derive(Builder, Debug, Clone)]

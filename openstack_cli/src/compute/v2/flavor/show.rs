@@ -74,31 +74,6 @@ struct PathParameters {
 /// Flavor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The display name of a flavor.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The ID of the flavor. While people often make this look like an int,
-    /// this is really a string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The amount of RAM a flavor has, in MiB.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    ram: Option<IntString>,
-
-    /// The number of virtual CPUs that will be allocated to the server.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    vcpus: Option<IntString>,
-
     /// The size of the root disk that will be created in GiB. If 0 the root
     /// disk will be set to exactly the size of the image used to deploy the
     /// instance. However, in this case the scheduler cannot select the compute
@@ -111,39 +86,6 @@ struct ResponseData {
     #[structable(optional)]
     disk: Option<IntString>,
 
-    /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
-    /// disks may be written over on server state changes. So should only be
-    /// used as a scratch space for applications that are aware of its
-    /// limitations. Defaults to 0.
-    ///
-    #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
-    #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral")]
-    os_flv_ext_data_ephemeral: Option<IntString>,
-
-    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
-    /// (the default), no dedicated swap disk will be created. Currently, the
-    /// empty string (‘’) is used to represent 0. As of microversion 2.75
-    /// default return value of swap is 0 instead of empty string.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    swap: Option<IntString>,
-
-    /// The receive / transmit factor (as a float) that will be set on ports if
-    /// the network backend supports the QOS extension. Otherwise it will be
-    /// ignored. It defaults to 1.0.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    rxtx_factor: Option<NumString>,
-
-    /// Whether the flavor is public (available to all projects) or scoped to a
-    /// set of projects. Default is True if not specified.
-    ///
-    #[serde(rename = "os-flavor-access:is_public")]
-    #[structable(optional, title = "os-flavor-access:is_public")]
-    os_flavor_access_is_public: Option<bool>,
-
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
     /// only be included if the user is allowed by policy to index flavor
     /// extra_specs.
@@ -154,6 +96,13 @@ struct ResponseData {
     #[structable(optional, pretty)]
     extra_specs: Option<Value>,
 
+    /// The ID of the flavor. While people often make this look like an int,
+    /// this is really a string.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
@@ -161,6 +110,57 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     links: Option<Value>,
+
+    /// The display name of a flavor.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// Whether the flavor is public (available to all projects) or scoped to a
+    /// set of projects. Default is True if not specified.
+    ///
+    #[serde(rename = "os-flavor-access:is_public")]
+    #[structable(optional, title = "os-flavor-access:is_public")]
+    os_flavor_access_is_public: Option<bool>,
+
+    /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
+    /// disks may be written over on server state changes. So should only be
+    /// used as a scratch space for applications that are aware of its
+    /// limitations. Defaults to 0.
+    ///
+    #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
+    #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral")]
+    os_flv_ext_data_ephemeral: Option<IntString>,
+
+    /// The amount of RAM a flavor has, in MiB.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ram: Option<IntString>,
+
+    /// The receive / transmit factor (as a float) that will be set on ports if
+    /// the network backend supports the QOS extension. Otherwise it will be
+    /// ignored. It defaults to 1.0.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    rxtx_factor: Option<NumString>,
+
+    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
+    /// (the default), no dedicated swap disk will be created. Currently, the
+    /// empty string (‘’) is used to represent 0. As of microversion 2.75
+    /// default return value of swap is 0 instead of empty string.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    swap: Option<IntString>,
+
+    /// The number of virtual CPUs that will be allocated to the server.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vcpus: Option<IntString>,
 }
 
 impl FlavorCommand {

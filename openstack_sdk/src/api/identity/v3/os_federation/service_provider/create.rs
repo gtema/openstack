@@ -35,10 +35,6 @@ pub struct ServiceProvider<'a> {
     #[builder(setter(into))]
     pub(crate) auth_url: Cow<'a, str>,
 
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) sp_url: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
@@ -53,6 +49,10 @@ pub struct ServiceProvider<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) relay_state_prefix: Option<Option<Cow<'a, str>>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) sp_url: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]

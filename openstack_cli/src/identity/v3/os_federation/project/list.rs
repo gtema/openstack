@@ -69,6 +69,13 @@ struct ResponseData {
     #[structable(optional, wide)]
     domain_id: Option<String>,
 
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    enabled: Option<bool>,
+
     /// The ID for the project.
     ///
     #[serde()]
@@ -80,13 +87,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
-
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    enabled: Option<bool>,
 }
 
 impl ProjectsCommand {

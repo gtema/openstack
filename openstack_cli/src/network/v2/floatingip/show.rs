@@ -79,11 +79,35 @@ struct PathParameters {
 /// Floatingip response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the floating IP address.
+    /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
-    id: Option<String>,
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    dns_domain: Option<String>,
+
+    /// A valid DNS name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    dns_name: Option<String>,
+
+    /// The fixed IP address that is associated with the floating IP address.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    fixed_ip_address: Option<String>,
 
     /// The floating IP address.
     ///
@@ -97,77 +121,11 @@ struct ResponseData {
     #[structable(optional)]
     floating_network_id: Option<String>,
 
-    /// The ID of the router for the floating IP.
+    /// The ID of the floating IP address.
     ///
     #[serde()]
     #[structable(optional)]
-    router_id: Option<String>,
-
-    /// The ID of a port associated with the floating IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    port_id: Option<String>,
-
-    /// The fixed IP address that is associated with the floating IP address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fixed_ip_address: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
-
-    /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The ID of the QoS policy associated with the floating IP.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    qos_policy_id: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    revision_number: Option<i32>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    tags: Option<Value>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// A valid DNS name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_name: Option<String>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    dns_domain: Option<String>,
+    id: Option<String>,
 
     /// The information of the port that this floating IP associates with. In
     /// particular, if the floating IP is associated with a port, this field
@@ -193,11 +151,53 @@ struct ResponseData {
     #[structable(optional)]
     port_forwardings: Option<String>,
 
-    /// A human-readable description for the resource.
+    /// The ID of a port associated with the floating IP.
     ///
     #[serde()]
     #[structable(optional)]
-    description: Option<String>,
+    port_id: Option<String>,
+
+    /// The ID of the QoS policy associated with the floating IP.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    qos_policy_id: Option<String>,
+
+    /// The revision number of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    revision_number: Option<i32>,
+
+    /// The ID of the router for the floating IP.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    router_id: Option<String>,
+
+    /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// The list of tags on the resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
+
+    /// The ID of the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    tenant_id: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
 }
 
 impl FloatingipCommand {

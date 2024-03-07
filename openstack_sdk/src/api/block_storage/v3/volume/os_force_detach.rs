@@ -30,11 +30,11 @@ use std::borrow::Cow;
 pub struct OsForceDetach<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) connector: Option<Option<Value>>,
+    pub(crate) attachment_id: Option<Option<Cow<'a, str>>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) attachment_id: Option<Option<Cow<'a, str>>>,
+    pub(crate) connector: Option<Option<Value>>,
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -31,12 +31,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityProvider<'a> {
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) enabled: Option<bool>,
+    #[builder(default, setter(into))]
+    pub(crate) authorization_ttl: Option<Option<i32>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -46,9 +43,12 @@ pub struct IdentityProvider<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) authorization_ttl: Option<Option<i32>>,
+    #[builder(default)]
+    pub(crate) enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]

@@ -39,26 +39,26 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     role_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a user ID.
-    ///
-    #[builder(default, setter(into))]
-    user_id: Option<Cow<'a, str>>,
-
     /// Filters the response by a domain ID.
     ///
     #[builder(default, setter(into))]
     scope_domain_id: Option<Cow<'a, str>>,
-
-    /// Filters the response by a project ID.
-    ///
-    #[builder(default, setter(into))]
-    scope_project_id: Option<Cow<'a, str>>,
 
     /// Filters based on role assignments that are inherited. The only value of
     /// inherited_to that is currently supported is projects.
     ///
     #[builder(default, setter(into))]
     scope_os_inherit_inherited_to: Option<Cow<'a, str>>,
+
+    /// Filters the response by a project ID.
+    ///
+    #[builder(default, setter(into))]
+    scope_project_id: Option<Cow<'a, str>>,
+
+    /// Filters the response by a user ID.
+    ///
+    #[builder(default, setter(into))]
+    user_id: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

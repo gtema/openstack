@@ -69,6 +69,14 @@ struct PathParameters {
 /// Evacuate Body data
 #[derive(Args)]
 struct Evacuate {
+    /// An administrative password to access the evacuated server. If you omit
+    /// this parameter, the operation generates a new password. Up to API
+    /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
+    /// is specified, an error is raised.
+    ///
+    #[arg(long)]
+    admin_pass: Option<String>,
+
     /// The name or ID of the host to which the server is evacuated. If you
     /// omit this parameter, the scheduler chooses a host.
     ///
@@ -96,14 +104,6 @@ struct Evacuate {
     ///
     #[arg(action=clap::ArgAction::Set, long)]
     on_shared_storage: bool,
-
-    /// An administrative password to access the evacuated server. If you omit
-    /// this parameter, the operation generates a new password. Up to API
-    /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
-    /// is specified, an error is raised.
-    ///
-    #[arg(long)]
-    admin_pass: Option<String>,
 }
 
 /// Server response representation

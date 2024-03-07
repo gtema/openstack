@@ -32,17 +32,17 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// prior_role_id parameter for
-    /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
-    ///
-    #[builder(default, setter(into))]
-    prior_role_id: Cow<'a, str>,
-
     /// implied_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
     ///
     #[builder(default, setter(into))]
     implied_role_id: Cow<'a, str>,
+
+    /// prior_role_id parameter for
+    /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
+    ///
+    #[builder(default, setter(into))]
+    prior_role_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

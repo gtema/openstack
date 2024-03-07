@@ -155,6 +155,17 @@ pub struct ImagesCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// Specify a comparison filter based on the date and time when the
+    /// resource was created.
+    ///
+    #[arg(long)]
+    created_at: Option<String>,
+
+    /// id filter parameter
+    ///
+    #[arg(long)]
+    id: Option<String>,
+
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
     /// use the ID of the last-seen item from the response as the marker
@@ -170,16 +181,24 @@ struct QueryParameters {
     #[arg(long)]
     marker: Option<String>,
 
+    /// Filters the response by a member status. A valid value is accepted,
+    /// pending, rejected, or all. Default is accepted.
+    ///
+    #[arg(long, value_parser = ["accepted","all","pending","rejected"])]
+    member_status: Option<String>,
+
     /// Filters the response by a name, as a string. A valid value is the name
     /// of an image.
     ///
     #[arg(long)]
     name: Option<String>,
 
-    /// id filter parameter
+    /// When true, filters the response to display only "hidden" images. By
+    /// default, "hidden" images are not included in the image-list response.
+    /// (Since Image API v2.7)
     ///
-    #[arg(long)]
-    id: Option<String>,
+    #[arg(action=clap::ArgAction::Set, long)]
+    os_hidden: Option<bool>,
 
     /// Filters the response by a project (also called a “tenant”) ID. Shows
     /// only images that are shared with you by the specified owner.
@@ -194,42 +213,6 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, long)]
     protected: Option<bool>,
 
-    /// Filters the response by an image status.
-    ///
-    #[arg(long)]
-    status: Option<String>,
-
-    /// Filters the response by the specified tag value. May be repeated, but
-    /// keep in mind that you're making a conjunctive query, so only images
-    /// containing all the tags specified will appear in the response.
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    tag: Option<Vec<String>>,
-
-    /// Filters the response by an image visibility value. A valid value is
-    /// public, private, community, shared, or all. (Note that if you filter on
-    /// shared, the images included in the response will only be those where
-    /// your member status is accepted unless you explicitly include a
-    /// member_status filter in the request.) If you omit this parameter, the
-    /// response shows public, private, and those shared images with a member
-    /// status of accepted.
-    ///
-    #[arg(long, value_parser = ["all","community","private","public","shared"])]
-    visibility: Option<String>,
-
-    /// When true, filters the response to display only "hidden" images. By
-    /// default, "hidden" images are not included in the image-list response.
-    /// (Since Image API v2.7)
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    os_hidden: Option<bool>,
-
-    /// Filters the response by a member status. A valid value is accepted,
-    /// pending, rejected, or all. Default is accepted.
-    ///
-    #[arg(long, value_parser = ["accepted","all","pending","rejected"])]
-    member_status: Option<String>,
-
     /// Filters the response by a maximum image size, in bytes.
     ///
     #[arg(long)]
@@ -240,17 +223,13 @@ struct QueryParameters {
     #[arg(long)]
     size_min: Option<String>,
 
-    /// Specify a comparison filter based on the date and time when the
-    /// resource was created.
+    /// Sorts the response by one or more attribute and sort direction
+    /// combinations. You can also set multiple sort keys and directions.
+    /// Default direction is desc. Use the comma (,) character to separate
+    /// multiple values. For example: `sort=name:asc,status:desc`
     ///
     #[arg(long)]
-    created_at: Option<String>,
-
-    /// Specify a comparison filter based on the date and time when the
-    /// resource was most recently modified.
-    ///
-    #[arg(long)]
-    updated_at: Option<String>,
+    sort: Option<String>,
 
     /// Sorts the response by a set of one or more sort direction and attribute
     /// (sort_key) combinations. A valid value for the sort direction is asc
@@ -267,13 +246,34 @@ struct QueryParameters {
     #[arg(long)]
     sort_key: Option<String>,
 
-    /// Sorts the response by one or more attribute and sort direction
-    /// combinations. You can also set multiple sort keys and directions.
-    /// Default direction is desc. Use the comma (,) character to separate
-    /// multiple values. For example: `sort=name:asc,status:desc`
+    /// Filters the response by an image status.
     ///
     #[arg(long)]
-    sort: Option<String>,
+    status: Option<String>,
+
+    /// Filters the response by the specified tag value. May be repeated, but
+    /// keep in mind that you're making a conjunctive query, so only images
+    /// containing all the tags specified will appear in the response.
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    tag: Option<Vec<String>>,
+
+    /// Specify a comparison filter based on the date and time when the
+    /// resource was most recently modified.
+    ///
+    #[arg(long)]
+    updated_at: Option<String>,
+
+    /// Filters the response by an image visibility value. A valid value is
+    /// public, private, community, shared, or all. (Note that if you filter on
+    /// shared, the images included in the response will only be those where
+    /// your member status is accepted unless you explicitly include a
+    /// member_status filter in the request.) If you omit this parameter, the
+    /// response shows public, private, and those shared images with a member
+    /// status of accepted.
+    ///
+    #[arg(long, value_parser = ["all","community","private","public","shared"])]
+    visibility: Option<String>,
 }
 
 /// Path parameters
@@ -282,47 +282,71 @@ struct PathParameters {}
 /// Images response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// md5 hash of image contents.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    checksum: Option<String>,
+
+    /// Format of the container
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    container_format: Option<String>,
+
+    /// Date and time of image registration
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// URL to access the image file kept in external store
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    direct_url: Option<String>,
+
+    /// Format of the disk
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    disk_format: Option<String>,
+
+    /// An image file url
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    file: Option<String>,
+
     /// An identifier for the image
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
+    /// A set of URLs to access the image file kept in external store
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    locations: Option<Value>,
+
+    /// Amount of disk space (in GB) required to boot image.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    min_disk: Option<i32>,
+
+    /// Amount of ram (in MB) required to boot image.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    min_ram: Option<i32>,
+
     /// Descriptive name for the image
     ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
-
-    /// Status of the image
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// Scope of image accessibility
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    visibility: Option<String>,
-
-    /// If true, image will not be deletable.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    protected: Option<bool>,
-
-    /// If true, image will not appear in default image list response.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    os_hidden: Option<bool>,
-
-    /// md5 hash of image contents.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    checksum: Option<String>,
 
     /// Algorithm to calculate the os_hash_value
     ///
@@ -337,71 +361,29 @@ struct ResponseData {
     #[structable(optional, wide)]
     os_hash_value: Option<String>,
 
+    /// If true, image will not appear in default image list response.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    os_hidden: Option<bool>,
+
     /// Owner of the image
     ///
     #[serde()]
     #[structable(optional, wide)]
     owner: Option<String>,
 
-    /// Size of image file in bytes
+    /// If true, image will not be deletable.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    size: Option<i64>,
+    protected: Option<bool>,
 
-    /// Virtual size of image in bytes
+    /// An image schema url
     ///
     #[serde()]
     #[structable(optional, wide)]
-    virtual_size: Option<i64>,
-
-    /// Format of the container
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    container_format: Option<String>,
-
-    /// Format of the disk
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    disk_format: Option<String>,
-
-    /// Date and time of image registration
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Date and time of the last image modification
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// List of strings related to the image
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    /// URL to access the image file kept in external store
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    direct_url: Option<String>,
-
-    /// Amount of ram (in MB) required to boot image.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    min_ram: Option<i32>,
-
-    /// Amount of disk space (in GB) required to boot image.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    min_disk: Option<i32>,
+    schema: Option<String>,
 
     /// An image self url
     ///
@@ -409,11 +391,17 @@ struct ResponseData {
     #[structable(optional, title = "self", wide)]
     _self: Option<String>,
 
-    /// An image file url
+    /// Size of image file in bytes
     ///
     #[serde()]
     #[structable(optional, wide)]
-    file: Option<String>,
+    size: Option<i64>,
+
+    /// Status of the image
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
@@ -423,17 +411,29 @@ struct ResponseData {
     #[structable(optional, wide)]
     stores: Option<String>,
 
-    /// An image schema url
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    schema: Option<String>,
-
-    /// A set of URLs to access the image file kept in external store
+    /// List of strings related to the image
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
-    locations: Option<Value>,
+    tags: Option<Value>,
+
+    /// Date and time of the last image modification
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// Virtual size of image in bytes
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    virtual_size: Option<i64>,
+
+    /// Scope of image accessibility
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    visibility: Option<String>,
 }
 
 impl ImagesCommand {

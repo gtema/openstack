@@ -72,17 +72,17 @@ struct ResponseData {
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// The Service Provider unique ID
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
     /// Whether the Service Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
+
+    /// The Service Provider unique ID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// The prefix of the RelayState SAML attribute
     ///

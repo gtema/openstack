@@ -60,12 +60,12 @@ pub struct Binding<'a> {
     pub(crate) host: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) vnic_type: Option<VnicType>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, private, setter(name = "_profile"))]
     pub(crate) profile: Option<Option<BTreeMap<Cow<'a, str>, Value>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) vnic_type: Option<VnicType>,
 }
 
 impl<'a> BindingBuilder<'a> {
@@ -90,16 +90,16 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) binding: Binding<'a>,
 
+    /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
+    ///
+    #[builder(default, setter(into))]
+    id: Cow<'a, str>,
+
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
     ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,
-
-    /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
-    ///
-    #[builder(default, setter(into))]
-    id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

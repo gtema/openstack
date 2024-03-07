@@ -38,11 +38,33 @@ pub enum OsDcfDiskConfig {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Rebuild<'a> {
-    /// The server name.
+    /// IPv4 address that should be used to access this server.
+    ///
+    #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_ipv4: Option<Cow<'a, str>>,
+
+    /// IPv6 address that should be used to access this server.
+    ///
+    #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) access_ipv6: Option<Cow<'a, str>>,
+
+    /// The administrative password of the server. If you omit this parameter,
+    /// the operation generates a new password.
+    ///
+    #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) admin_pass: Option<Cow<'a, str>>,
+
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
+    ///
+    /// **New in version 2.19**
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the image to rebuild for your server instance. It must be a
     /// valid UUID otherwise API will return 400. To rebuild a volume-backed
@@ -58,12 +80,22 @@ pub struct Rebuild<'a> {
     #[builder(setter(into))]
     pub(crate) image_ref: Cow<'a, str>,
 
-    /// The administrative password of the server. If you omit this parameter,
-    /// the operation generates a new password.
+    /// Key pair name for rebuild API. If `null` is specified, the existing
+    /// keypair is unset.
     ///
-    #[serde(rename = "adminPass", skip_serializing_if = "Option::is_none")]
+    /// Note
+    ///
+    /// Users within the same project are able to rebuild other user’s
+    /// instances in that project with a new keypair. Keys are owned by users
+    /// (which is the only resource that’s true of). Servers are owned by
+    /// projects. Because of this a rebuild with a key_name is looking up the
+    /// keypair by the user calling rebuild.
+    ///
+    /// **New in version 2.54**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) admin_pass: Option<Cow<'a, str>>,
+    pub(crate) key_name: Option<Option<Cow<'a, str>>>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
@@ -72,18 +104,11 @@ pub struct Rebuild<'a> {
     #[builder(default, private, setter(name = "_metadata"))]
     pub(crate) metadata: Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>,
 
-    /// Indicates whether the server is rebuilt with the preservation of the
-    /// ephemeral partition (`true`).
-    ///
-    /// Note
-    ///
-    /// This only works with baremetal servers provided by Ironic. Passing it
-    /// to any other server instance results in a fault and will prevent the
-    /// rebuild from happening.
+    /// The server name.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) preserve_ephemeral: Option<bool>,
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
     /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
@@ -106,53 +131,18 @@ pub struct Rebuild<'a> {
     #[builder(default)]
     pub(crate) os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
-    /// IPv4 address that should be used to access this server.
-    ///
-    #[serde(rename = "accessIPv4", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_ipv4: Option<Cow<'a, str>>,
-
-    /// IPv6 address that should be used to access this server.
-    ///
-    #[serde(rename = "accessIPv6", skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) access_ipv6: Option<Cow<'a, str>>,
-
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
-    ///
-    /// **New in version 2.19**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Option<Cow<'a, str>>>,
-
-    /// Key pair name for rebuild API. If `null` is specified, the existing
-    /// keypair is unset.
+    /// Indicates whether the server is rebuilt with the preservation of the
+    /// ephemeral partition (`true`).
     ///
     /// Note
     ///
-    /// Users within the same project are able to rebuild other user’s
-    /// instances in that project with a new keypair. Keys are owned by users
-    /// (which is the only resource that’s true of). Servers are owned by
-    /// projects. Because of this a rebuild with a key_name is looking up the
-    /// keypair by the user calling rebuild.
-    ///
-    /// **New in version 2.54**
+    /// This only works with baremetal servers provided by Ironic. Passing it
+    /// to any other server instance results in a fault and will prevent the
+    /// rebuild from happening.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) key_name: Option<Option<Cow<'a, str>>>,
-
-    /// Configuration information or scripts to use upon rebuild. Must be
-    /// Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the
-    /// existing user_data is unset.
-    ///
-    /// **New in version 2.57**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) user_data: Option<Option<Cow<'a, str>>>,
+    #[builder(default)]
+    pub(crate) preserve_ephemeral: Option<bool>,
 
     /// A list of trusted certificate IDs, which are used during image
     /// signature verification to verify the signing certificate. The list is
@@ -168,6 +158,16 @@ pub struct Rebuild<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) trusted_image_certificates: Option<Vec<Cow<'a, str>>>,
+
+    /// Configuration information or scripts to use upon rebuild. Must be
+    /// Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the
+    /// existing user_data is unset.
+    ///
+    /// **New in version 2.57**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) user_data: Option<Option<Cow<'a, str>>>,
 }
 
 impl<'a> RebuildBuilder<'a> {

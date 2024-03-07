@@ -80,10 +80,29 @@ enum OsDcfDiskConfig {
 /// Rebuild Body data
 #[derive(Args)]
 struct Rebuild {
-    /// The server name.
+    /// IPv4 address that should be used to access this server.
     ///
     #[arg(long)]
-    name: Option<String>,
+    access_ipv4: Option<String>,
+
+    /// IPv6 address that should be used to access this server.
+    ///
+    #[arg(long)]
+    access_ipv6: Option<String>,
+
+    /// The administrative password of the server. If you omit this parameter,
+    /// the operation generates a new password.
+    ///
+    #[arg(long)]
+    admin_pass: Option<String>,
+
+    /// A free form description of the server. Limited to 255 characters in
+    /// length. Before microversion 2.19 this was set to the server name.
+    ///
+    /// **New in version 2.19**
+    ///
+    #[arg(long)]
+    description: Option<String>,
 
     /// The UUID of the image to rebuild for your server instance. It must be a
     /// valid UUID otherwise API will return 400. To rebuild a volume-backed
@@ -98,11 +117,21 @@ struct Rebuild {
     #[arg(long)]
     image_ref: String,
 
-    /// The administrative password of the server. If you omit this parameter,
-    /// the operation generates a new password.
+    /// Key pair name for rebuild API. If `null` is specified, the existing
+    /// keypair is unset.
+    ///
+    /// Note
+    ///
+    /// Users within the same project are able to rebuild other user’s
+    /// instances in that project with a new keypair. Keys are owned by users
+    /// (which is the only resource that’s true of). Servers are owned by
+    /// projects. Because of this a rebuild with a key_name is looking up the
+    /// keypair by the user calling rebuild.
+    ///
+    /// **New in version 2.54**
     ///
     #[arg(long)]
-    admin_pass: Option<String>,
+    key_name: Option<String>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
@@ -110,17 +139,10 @@ struct Rebuild {
     #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
-    /// Indicates whether the server is rebuilt with the preservation of the
-    /// ephemeral partition (`true`).
+    /// The server name.
     ///
-    /// Note
-    ///
-    /// This only works with baremetal servers provided by Ironic. Passing it
-    /// to any other server instance results in a fault and will prevent the
-    /// rebuild from happening.
-    ///
-    #[arg(action=clap::ArgAction::Set, long)]
-    preserve_ephemeral: Option<bool>,
+    #[arg(long)]
+    name: Option<String>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
     /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
@@ -142,39 +164,17 @@ struct Rebuild {
     #[arg(long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
-    /// IPv4 address that should be used to access this server.
-    ///
-    #[arg(long)]
-    access_ipv4: Option<String>,
-
-    /// IPv6 address that should be used to access this server.
-    ///
-    #[arg(long)]
-    access_ipv6: Option<String>,
-
-    /// A free form description of the server. Limited to 255 characters in
-    /// length. Before microversion 2.19 this was set to the server name.
-    ///
-    /// **New in version 2.19**
-    ///
-    #[arg(long)]
-    description: Option<String>,
-
-    /// Key pair name for rebuild API. If `null` is specified, the existing
-    /// keypair is unset.
+    /// Indicates whether the server is rebuilt with the preservation of the
+    /// ephemeral partition (`true`).
     ///
     /// Note
     ///
-    /// Users within the same project are able to rebuild other user’s
-    /// instances in that project with a new keypair. Keys are owned by users
-    /// (which is the only resource that’s true of). Servers are owned by
-    /// projects. Because of this a rebuild with a key_name is looking up the
-    /// keypair by the user calling rebuild.
+    /// This only works with baremetal servers provided by Ironic. Passing it
+    /// to any other server instance results in a fault and will prevent the
+    /// rebuild from happening.
     ///
-    /// **New in version 2.54**
-    ///
-    #[arg(long)]
-    key_name: Option<String>,
+    #[arg(action=clap::ArgAction::Set, long)]
+    preserve_ephemeral: Option<bool>,
 
     /// Configuration information or scripts to use upon rebuild. Must be
     /// Base64 encoded. Restricted to 65535 bytes. If `null` is specified, the

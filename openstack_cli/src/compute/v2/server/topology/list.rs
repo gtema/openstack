@@ -81,17 +81,11 @@ struct ResponseData {
     #[structable(optional, pretty)]
     cpu_pinning: Option<Value>,
 
-    /// A list of IDs of the virtual CPU assigned to this NUMA node.
+    /// The host NUMA node the virtual NUMA node is map to.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    vcpu_set: Option<Value>,
-
-    /// A mapping of host cpus thread sibling.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    siblings: Option<Value>,
+    #[structable(optional)]
+    host_node: Option<i32>,
 
     /// The amount of memory assigned to this NUMA node in MB.
     ///
@@ -99,18 +93,24 @@ struct ResponseData {
     #[structable(optional)]
     memory_mb: Option<i32>,
 
-    /// The host NUMA node the virtual NUMA node is map to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    host_node: Option<i32>,
-
     /// The page size in KB of a server. This field is `null` if the page size
     /// information is not available.
     ///
     #[serde()]
     #[structable(optional)]
     pagesize_kb: Option<i32>,
+
+    /// A mapping of host cpus thread sibling.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    siblings: Option<Value>,
+
+    /// A list of IDs of the virtual CPU assigned to this NUMA node.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    vcpu_set: Option<Value>,
 }
 
 impl TopologiesCommand {

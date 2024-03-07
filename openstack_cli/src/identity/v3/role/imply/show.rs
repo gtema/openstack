@@ -82,13 +82,13 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, pretty)]
-    prior_role: Option<Value>,
+    implies: Option<Value>,
 
     /// A prior role object.
     ///
     #[serde()]
     #[structable(optional, pretty)]
-    implies: Option<Value>,
+    prior_role: Option<Value>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
@@ -111,29 +111,15 @@ impl fmt::Display for ResponseLinks {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponsePriorRole {
-    id: Option<String>,
-    name: Option<String>,
     description: Option<String>,
+    id: Option<String>,
     links: Option<Value>,
+    name: Option<String>,
 }
 
 impl fmt::Display for ResponsePriorRole {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
             format!(
                 "description={}",
                 self.description
@@ -142,8 +128,22 @@ impl fmt::Display for ResponsePriorRole {
                     .unwrap_or("".to_string())
             ),
             format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
                 "links={}",
                 self.links
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "name={}",
+                self.name
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())
@@ -173,29 +173,15 @@ impl fmt::Display for ResponseImpliesLinks {
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
 struct ResponseImplies {
-    id: Option<String>,
-    name: Option<String>,
     description: Option<String>,
+    id: Option<String>,
     links: Option<Value>,
+    name: Option<String>,
 }
 
 impl fmt::Display for ResponseImplies {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
             format!(
                 "description={}",
                 self.description
@@ -204,8 +190,22 @@ impl fmt::Display for ResponseImplies {
                     .unwrap_or("".to_string())
             ),
             format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
                 "links={}",
                 self.links
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "name={}",
+                self.name
                     .clone()
                     .map(|v| v.to_string())
                     .unwrap_or("".to_string())

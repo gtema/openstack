@@ -67,11 +67,12 @@ struct PathParameters {
 /// IdentityProvider response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The Identity Provider unique ID
+    /// The length of validity in minutes for group memberships carried over
+    /// through mapping and persisted in the database.
     ///
     #[serde()]
     #[structable(optional)]
-    id: Option<String>,
+    authorization_ttl: Option<i32>,
 
     /// The Identity Provider description
     ///
@@ -85,18 +86,17 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    authorization_ttl: Option<i32>,
-
     /// Whether the Identity Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
+
+    /// The Identity Provider unique ID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// List of the unique Identity Provider’s remote IDs
     ///

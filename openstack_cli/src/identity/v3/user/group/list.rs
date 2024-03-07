@@ -88,12 +88,6 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The name of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
     /// The date and time when the group membership expires. A `null` value
     /// indicates that the membership never expires.
     ///
@@ -102,6 +96,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     membership_expires_at: Option<String>,
+
+    /// The name of the group.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
 }
 
 impl GroupsCommand {

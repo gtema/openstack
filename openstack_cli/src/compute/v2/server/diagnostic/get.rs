@@ -75,6 +75,14 @@ struct PathParameters {
 /// Diagnostic response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// Indicates whether or not a config drive was used for this server.
+    ///
+    /// **New in version 2.48**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    config_drive: Option<bool>,
+
     /// The list of dictionaries with detailed information about VM CPUs.
     /// Following fields are presented in each dictionary:
     ///
@@ -116,14 +124,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     driver: Option<String>,
-
-    /// Indicates whether or not a config drive was used for this server.
-    ///
-    /// **New in version 2.48**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    config_drive: Option<bool>,
 
     /// The hypervisor on which the VM is running. Examples for libvirt driver
     /// may be: `qemu`, `kvm` or `xen`.

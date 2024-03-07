@@ -35,15 +35,15 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
-    ///
-    #[builder(default, setter(into))]
-    image_id: Cow<'a, str>,
-
     /// member_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
+
+    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    ///
+    #[builder(default, setter(into))]
+    image_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

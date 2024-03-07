@@ -126,12 +126,6 @@ struct ResponseData {
     #[structable(optional)]
     start_time: Option<String>,
 
-    /// The ID of the user which initiated the server action.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
-
     /// The date and time when the instance action or the action event of
     /// instance action was updated. The date and time stamp format is
     /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -150,6 +144,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
+
+    /// The ID of the user which initiated the server action.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    user_id: Option<String>,
 }
 
 impl InstanceActionCommand {

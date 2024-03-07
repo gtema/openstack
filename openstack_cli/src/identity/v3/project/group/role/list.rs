@@ -78,6 +78,12 @@ struct PathParameters {
 /// Roles response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The role description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
     /// The role ID.
     ///
     #[serde()]
@@ -89,12 +95,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
-
-    /// The role description.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]

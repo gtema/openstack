@@ -69,6 +69,16 @@ pub struct FloatingipsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
+    /// description query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    description: Option<String>,
+
+    /// fixed_ip_address query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    fixed_ip_address: Option<String>,
+
     /// floating_ip_address query parameter for /v2.0/floatingips API
     ///
     #[arg(long)]
@@ -78,46 +88,6 @@ struct QueryParameters {
     ///
     #[arg(long)]
     floating_network_id: Option<String>,
-
-    /// router_id query parameter for /v2.0/floatingips API
-    ///
-    #[arg(long)]
-    router_id: Option<String>,
-
-    /// port_id query parameter for /v2.0/floatingips API
-    ///
-    #[arg(long)]
-    port_id: Option<String>,
-
-    /// fixed_ip_address query parameter for /v2.0/floatingips API
-    ///
-    #[arg(long)]
-    fixed_ip_address: Option<String>,
-
-    /// tenant_id query parameter for /v2.0/floatingips API
-    ///
-    #[arg(long)]
-    tenant_id: Option<String>,
-
-    /// status query parameter for /v2.0/floatingips API
-    ///
-    #[arg(long)]
-    status: Option<String>,
-
-    /// revision_number query parameter for /v2.0/floatingips API
-    ///
-    #[arg(long)]
-    revision_number: Option<String>,
-
-    /// tags query parameter for /v2.0/floatingips API
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    tags: Option<Vec<String>>,
-
-    /// tags-any query parameter for /v2.0/floatingips API
-    ///
-    #[arg(action=clap::ArgAction::Append, long)]
-    tags_any: Option<Vec<String>>,
 
     /// not-tags query parameter for /v2.0/floatingips API
     ///
@@ -129,10 +99,40 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Append, long)]
     not_tags_any: Option<Vec<String>>,
 
-    /// description query parameter for /v2.0/floatingips API
+    /// port_id query parameter for /v2.0/floatingips API
     ///
     #[arg(long)]
-    description: Option<String>,
+    port_id: Option<String>,
+
+    /// revision_number query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    revision_number: Option<String>,
+
+    /// router_id query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    router_id: Option<String>,
+
+    /// status query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    status: Option<String>,
+
+    /// tags query parameter for /v2.0/floatingips API
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    tags: Option<Vec<String>>,
+
+    /// tags-any query parameter for /v2.0/floatingips API
+    ///
+    #[arg(action=clap::ArgAction::Append, long)]
+    tags_any: Option<Vec<String>>,
+
+    /// tenant_id query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    tenant_id: Option<String>,
 }
 
 /// Path parameters
@@ -141,11 +141,35 @@ struct PathParameters {}
 /// Floatingips response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the floating IP address.
+    /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
     #[serde()]
     #[structable(optional)]
-    id: Option<String>,
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    dns_domain: Option<String>,
+
+    /// A valid DNS name.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    dns_name: Option<String>,
+
+    /// The fixed IP address that is associated with the floating IP address.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    fixed_ip_address: Option<String>,
 
     /// The floating IP address.
     ///
@@ -159,77 +183,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     floating_network_id: Option<String>,
 
-    /// The ID of the router for the floating IP.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    router_id: Option<String>,
-
-    /// The ID of a port associated with the floating IP.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    port_id: Option<String>,
-
-    /// The fixed IP address that is associated with the floating IP address.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    fixed_ip_address: Option<String>,
-
-    /// The ID of the project.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    tenant_id: Option<String>,
-
-    /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
+    /// The ID of the floating IP address.
     ///
     #[serde()]
     #[structable(optional)]
-    status: Option<String>,
-
-    /// The ID of the QoS policy associated with the floating IP.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    qos_policy_id: Option<String>,
-
-    /// The revision number of the resource.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    revision_number: Option<i32>,
-
-    /// The list of tags on the resource.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    tags: Option<Value>,
-
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// A valid DNS name.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    dns_name: Option<String>,
-
-    /// A valid DNS domain.
-    ///
-    #[serde()]
-    #[structable(optional, wide)]
-    dns_domain: Option<String>,
+    id: Option<String>,
 
     /// The information of the port that this floating IP associates with. In
     /// particular, if the floating IP is associated with a port, this field
@@ -255,11 +213,53 @@ struct ResponseData {
     #[structable(optional, wide)]
     port_forwardings: Option<String>,
 
-    /// A human-readable description for the resource.
+    /// The ID of a port associated with the floating IP.
     ///
     #[serde()]
     #[structable(optional, wide)]
-    description: Option<String>,
+    port_id: Option<String>,
+
+    /// The ID of the QoS policy associated with the floating IP.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    qos_policy_id: Option<String>,
+
+    /// The revision number of the resource.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    revision_number: Option<i32>,
+
+    /// The ID of the router for the floating IP.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    router_id: Option<String>,
+
+    /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// The list of tags on the resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    tags: Option<Value>,
+
+    /// The ID of the project.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    tenant_id: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
 }
 
 impl FloatingipsCommand {

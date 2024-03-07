@@ -70,11 +70,11 @@ struct PathParameters {
 /// OsMigrateVolume Body data
 #[derive(Args)]
 struct OsMigrateVolume {
-    #[arg(long)]
-    host: String,
-
     #[arg(action=clap::ArgAction::Set, long)]
     force_host_copy: Option<bool>,
+
+    #[arg(long)]
+    host: String,
 
     #[arg(action=clap::ArgAction::Set, long)]
     lock_volume: Option<bool>,

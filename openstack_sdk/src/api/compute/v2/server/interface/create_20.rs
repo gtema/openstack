@@ -46,6 +46,13 @@ pub struct FixedIps<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct InterfaceAttachment<'a> {
+    /// Fixed IP addresses. If you request a specific fixed IP address without
+    /// a `net_id`, the request returns a `Bad Request (400)` response code.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
+
     /// The ID of the network for which you want to create a port interface.
     /// The `net_id` and `port_id` parameters are mutually exclusive. If you do
     /// not specify the `net_id` parameter, the OpenStack Networking API v2.0
@@ -64,13 +71,6 @@ pub struct InterfaceAttachment<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) port_id: Option<Cow<'a, str>>,
-
-    /// Fixed IP addresses. If you request a specific fixed IP address without
-    /// a `net_id`, the request returns a `Bad Request (400)` response code.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
 }
 
 #[derive(Builder, Debug, Clone)]

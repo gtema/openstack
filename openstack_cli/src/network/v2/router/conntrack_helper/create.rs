@@ -85,6 +85,16 @@ enum Protocol {
 /// ConntrackHelper Body data
 #[derive(Args)]
 struct ConntrackHelper {
+    /// The netfilter conntrack helper module.
+    ///
+    #[arg(long)]
+    helper: Option<String>,
+
+    /// The network port for the netfilter conntrack target rule.
+    ///
+    #[arg(long)]
+    port: Option<f32>,
+
     #[arg(long)]
     project_id: Option<String>,
 
@@ -92,44 +102,34 @@ struct ConntrackHelper {
     ///
     #[arg(long)]
     protocol: Option<Protocol>,
-
-    /// The network port for the netfilter conntrack target rule.
-    ///
-    #[arg(long)]
-    port: Option<f32>,
-
-    /// The netfilter conntrack helper module.
-    ///
-    #[arg(long)]
-    helper: Option<String>,
 }
 
 /// ConntrackHelper response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The netfilter conntrack helper module.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    helper: Option<String>,
+
     /// The ID of the conntrack helper.
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// The network protocol for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
-
     /// The network port for the netfilter conntrack target rule.
     ///
     #[serde()]
     #[structable(optional)]
     port: Option<f32>,
 
-    /// The netfilter conntrack helper module.
+    /// The network protocol for the netfilter conntrack target rule.
     ///
     #[serde()]
     #[structable(optional)]
-    helper: Option<String>,
+    protocol: Option<String>,
 }
 
 impl ConntrackHelperCommand {

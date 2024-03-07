@@ -78,7 +78,7 @@ struct PathParameters {
 struct ResponseData {
     #[serde()]
     #[structable(optional)]
-    path: Option<String>,
+    id: Option<String>,
 
     #[serde()]
     #[structable(optional)]
@@ -86,11 +86,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    service: Option<String>,
+    path: Option<String>,
 
     #[serde()]
     #[structable(optional)]
-    id: Option<String>,
+    service: Option<String>,
 }
 
 impl AccessRuleCommand {

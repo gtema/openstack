@@ -70,11 +70,11 @@ struct PathParameters {
 /// OsMigrateVolumeCompletion Body data
 #[derive(Args)]
 struct OsMigrateVolumeCompletion {
-    #[arg(long)]
-    new_volume: String,
-
     #[arg(action=clap::ArgAction::Set, long)]
     error: Option<Option<bool>>,
+
+    #[arg(long)]
+    new_volume: String,
 }
 
 /// Volume response representation

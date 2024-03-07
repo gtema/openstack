@@ -79,17 +79,17 @@ struct PathParameters {
 /// ConntrackHelper response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The netfilter conntrack helper module.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    helper: Option<String>,
+
     /// The ID of the conntrack helper.
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
-
-    /// The network protocol for the netfilter conntrack target rule.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     ///
@@ -97,11 +97,11 @@ struct ResponseData {
     #[structable(optional)]
     port: Option<f32>,
 
-    /// The netfilter conntrack helper module.
+    /// The network protocol for the netfilter conntrack target rule.
     ///
     #[serde()]
     #[structable(optional)]
-    helper: Option<String>,
+    protocol: Option<String>,
 }
 
 impl ConntrackHelperCommand {

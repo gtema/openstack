@@ -27,13 +27,13 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct OsMigrateVolumeCompletion<'a> {
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) new_volume: Cow<'a, str>,
-
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) error: Option<Option<bool>>,
+
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) new_volume: Cow<'a, str>,
 }
 
 #[derive(Builder, Debug, Clone)]

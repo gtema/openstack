@@ -81,11 +81,12 @@ struct PathParameters {
 /// PortForwarding response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The ID of the floating IP port forwarding.
+    /// A text describing the rule, which helps users to manage/find easily
+    /// theirs rules.
     ///
     #[serde()]
     #[structable(optional)]
-    id: Option<String>,
+    description: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
     /// floating IP address.
@@ -94,12 +95,18 @@ struct ResponseData {
     #[structable(optional)]
     external_port: Option<f32>,
 
-    /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
-    /// address associated to the floating ip port forwarding.
+    /// The TCP/UDP/other protocol port range of the port forwarding’s floating
+    /// IP address.
     ///
     #[serde()]
     #[structable(optional)]
-    internal_port: Option<f32>,
+    external_port_range: Option<f32>,
+
+    /// The ID of the floating IP port forwarding.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP port forwarding.
@@ -108,11 +115,12 @@ struct ResponseData {
     #[structable(optional)]
     internal_ip_address: Option<String>,
 
-    /// The IP protocol used in the floating IP port forwarding.
+    /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
+    /// address associated to the floating ip port forwarding.
     ///
     #[serde()]
     #[structable(optional)]
-    protocol: Option<String>,
+    internal_port: Option<f32>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
@@ -121,26 +129,18 @@ struct ResponseData {
     #[structable(optional)]
     internal_port_id: Option<String>,
 
-    /// A text describing the rule, which helps users to manage/find easily
-    /// theirs rules.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The TCP/UDP/other protocol port range of the port forwarding’s floating
-    /// IP address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    external_port_range: Option<f32>,
-
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
     #[serde()]
     #[structable(optional)]
     internal_port_range: Option<f32>,
+
+    /// The IP protocol used in the floating IP port forwarding.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    protocol: Option<String>,
 }
 
 impl PortForwardingCommand {

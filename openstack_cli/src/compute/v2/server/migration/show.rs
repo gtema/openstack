@@ -95,22 +95,6 @@ struct ResponseData {
     #[structable(optional)]
     created_at: Option<String>,
 
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
     /// The target compute for a migration.
     ///
     #[serde()]
@@ -128,56 +112,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     dest_node: Option<String>,
-
-    /// The ID of the server migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
-
-    /// The source compute for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_compute: Option<String>,
-
-    /// The source node for a migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_node: Option<String>,
-
-    /// The current status of the migration.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The ID of the project which initiated the server migration. The value
-    /// may be `null` for older migration records.
-    ///
-    /// **New in version 2.80**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The ID of the user which initiated the server migration. The value may
-    /// be `null` for older migration records.
-    ///
-    /// **New in version 2.80**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
-
-    /// The UUID of the migration.
-    ///
-    /// **New in version 2.59**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
 
     /// The amount of disk, in bytes, that has been processed during the
     /// migration.
@@ -198,6 +132,12 @@ struct ResponseData {
     #[structable(optional)]
     disk_total_bytes: Option<i32>,
 
+    /// The ID of the server migration.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<i32>,
+
     /// The amount of memory, in bytes, that has been processed during the
     /// migration.
     ///
@@ -217,11 +157,71 @@ struct ResponseData {
     #[structable(optional)]
     memory_total_bytes: Option<i32>,
 
+    /// The ID of the project which initiated the server migration. The value
+    /// may be `null` for older migration records.
+    ///
+    /// **New in version 2.80**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
     /// The UUID of the server.
     ///
     #[serde()]
     #[structable(optional)]
     server_uuid: Option<String>,
+
+    /// The source compute for a migration.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    source_compute: Option<String>,
+
+    /// The source node for a migration.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    source_node: Option<String>,
+
+    /// The current status of the migration.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// The date and time when the resource was updated. The date and time
+    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// The ID of the user which initiated the server migration. The value may
+    /// be `null` for older migration records.
+    ///
+    /// **New in version 2.80**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    user_id: Option<String>,
+
+    /// The UUID of the migration.
+    ///
+    /// **New in version 2.59**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    uuid: Option<String>,
 }
 
 impl MigrationCommand {

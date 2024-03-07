@@ -72,13 +72,13 @@ struct PathParameters {
 #[derive(Args)]
 struct VolumeType {
     #[arg(long)]
-    name: String,
-
-    #[arg(long)]
     description: Option<String>,
 
     #[arg(long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
     extra_specs: Option<Vec<(String, Option<String>)>>,
+
+    #[arg(long)]
+    name: String,
 
     #[arg(action=clap::ArgAction::Set, long)]
     os_volume_type_access_is_public: Option<bool>,

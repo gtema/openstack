@@ -71,6 +71,12 @@ struct PathParameters {
 /// SecurityGroups response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// Security group description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
     /// The ID of the security group.
     ///
     #[serde()]
@@ -83,23 +89,17 @@ struct ResponseData {
     #[structable(optional)]
     name: Option<String>,
 
-    /// Security group description.
+    /// The list of security group rules.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
+    #[structable(optional, pretty, wide)]
+    rules: Option<Value>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
     #[serde()]
     #[structable(optional, wide)]
     tenant_id: Option<String>,
-
-    /// The list of security group rules.
-    ///
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    rules: Option<Value>,
 }
 
 impl SecurityGroupsCommand {

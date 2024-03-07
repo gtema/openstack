@@ -71,8 +71,8 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     #[serde()]
-    #[structable(optional, wide)]
-    path: Option<String>,
+    #[structable(optional)]
+    id: Option<String>,
 
     #[serde()]
     #[structable(optional, wide)]
@@ -80,11 +80,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional, wide)]
-    service: Option<String>,
+    path: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable(optional, wide)]
+    service: Option<String>,
 }
 
 impl AccessRulesCommand {
