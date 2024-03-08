@@ -587,6 +587,7 @@ impl PortCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters
@@ -651,8 +652,8 @@ impl PortCommand {
                     .map(|v| {
                         v.as_object()
                             .expect("Is a valid Json object")
-                            .iter()
-                            .map(|(k, v)| (k.clone().into(), v.clone().into()))
+                            .into_iter()
+                            .map(|(k, v)| (k.into(), v.clone().into()))
                             .collect::<BTreeMap<_, Value>>()
                     })
                     .collect::<Vec<_>>(),
