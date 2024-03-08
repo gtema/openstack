@@ -386,6 +386,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network port tag list`↴](#osc-network-port-tag-list)
 * [`osc network port tag purge`↴](#osc-network-port-tag-purge)
 * [`osc network router`↴](#osc-network-router)
+* [`osc network router add-external-gateway`↴](#osc-network-router-add-external-gateway)
+* [`osc network router add-extraroute`↴](#osc-network-router-add-extraroute)
+* [`osc network router add-router-interface`↴](#osc-network-router-add-router-interface)
 * [`osc network router conntrack-helper`↴](#osc-network-router-conntrack-helper)
 * [`osc network router conntrack-helper create`↴](#osc-network-router-conntrack-helper-create)
 * [`osc network router conntrack-helper delete`↴](#osc-network-router-conntrack-helper-delete)
@@ -397,6 +400,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network router l3-agent`↴](#osc-network-router-l3-agent)
 * [`osc network router l3-agent list`↴](#osc-network-router-l3-agent-list)
 * [`osc network router list`↴](#osc-network-router-list)
+* [`osc network router remove-external-gateway`↴](#osc-network-router-remove-external-gateway)
+* [`osc network router remove-extraroute`↴](#osc-network-router-remove-extraroute)
+* [`osc network router remove-router-interface`↴](#osc-network-router-remove-router-interface)
 * [`osc network router show`↴](#osc-network-router-show)
 * [`osc network router tag`↴](#osc-network-router-tag)
 * [`osc network router tag add`↴](#osc-network-router-tag-add)
@@ -8365,6 +8371,7 @@ Error response codes: 401
 * `--fixed-ip-address <FIXED_IP_ADDRESS>` — fixed_ip_address query parameter for /v2.0/floatingips API
 * `--floating-ip-address <FLOATING_IP_ADDRESS>` — floating_ip_address query parameter for /v2.0/floatingips API
 * `--floating-network-id <FLOATING_NETWORK_ID>` — floating_network_id query parameter for /v2.0/floatingips API
+* `--id <ID>` — id query parameter for /v2.0/floatingips API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/floatingips API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/floatingips API
 * `--port-id <PORT_ID>` — port_id query parameter for /v2.0/floatingips API
@@ -8415,7 +8422,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 
 ###### **Options:**
 
@@ -8446,7 +8453,7 @@ Error response codes: 404
 
 ###### **Arguments:**
 
-* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 * `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 
 
@@ -8467,7 +8474,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 
 ###### **Options:**
 
@@ -8495,7 +8502,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 * `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 
 ###### **Options:**
@@ -8528,7 +8535,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+* `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 * `<ID>` — id parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
 
 
@@ -8774,7 +8781,7 @@ Error response codes: 401, 403
 
 ###### **Arguments:**
 
-* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
 
 
 
@@ -8871,7 +8878,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/networks/{network_id}/tags/{id} API
 
 
@@ -8884,7 +8891,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/networks/{network_id}/tags/{id} API
 
 
@@ -8897,7 +8904,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/networks/{network_id}/tags/{id} API
 
 
@@ -8910,7 +8917,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
 
 
 
@@ -8922,7 +8929,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id} API
+* `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
 
 
 
@@ -9101,7 +9108,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/ports/{port_id}/tags/{id} API
 
 
@@ -9114,7 +9121,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/ports/{port_id}/tags/{id} API
 
 
@@ -9127,7 +9134,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/ports/{port_id}/tags/{id} API
 
 
@@ -9140,7 +9147,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
 
 
 
@@ -9152,7 +9159,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs API
+* `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
 
 
 
@@ -9164,13 +9171,68 @@ Router commands
 
 ###### **Subcommands:**
 
+* `add-external-gateway` — Add external gateways to router
+* `add-extraroute` — Add extra routes to router
+* `add-router-interface` — Add interface to router
 * `conntrack-helper` — Lists, creates, shows details for, updates, and deletes router conntrack helper (CT) target rules
 * `create` — Create router
 * `delete` — Delete router
 * `l3-agent` — L3 agent scheduler
 * `list` — List routers
+* `remove-external-gateway` — Remove external gateways from router
+* `remove-extraroute` — Remove extra routes from router
+* `remove-router-interface` — Remove interface from router
 * `show` — Show router details
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+
+
+## `osc network router add-external-gateway`
+
+Add external gateways to router
+
+**Usage:** `osc network router add-external-gateway [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/routers/{id} API
+
+###### **Options:**
+
+* `--external-gateways <JSON>` — The list of external gateways of the router
+
+
+
+## `osc network router add-extraroute`
+
+Add extra routes to router
+
+**Usage:** `osc network router add-extraroute [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/routers/{id} API
+
+###### **Options:**
+
+* `--routes <JSON>` — The extra routes configuration for L3 router. A list of dictionaries with `destination` and `nexthop` parameters. It is available when `extraroute` extension is enabled
+
+
+
+## `osc network router add-router-interface`
+
+Add interface to router
+
+**Usage:** `osc network router add-router-interface [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/routers/{id} API
+
+###### **Options:**
+
+* `--port-id <PORT_ID>` — The ID of the port. One of subnet_id or port_id must be specified
+* `--subnet-id <SUBNET_ID>` — The ID of the subnet. One of subnet_id or port_id must be specified
 
 
 
@@ -9202,7 +9264,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 
 ###### **Options:**
 
@@ -9228,7 +9290,7 @@ Error response codes: 404
 
 ###### **Arguments:**
 
-* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 * `<ID>` — id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 
 
@@ -9247,7 +9309,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 
 ###### **Options:**
 
@@ -9273,7 +9335,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 * `<ID>` — id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 
 ###### **Options:**
@@ -9301,7 +9363,7 @@ Error response codes: 400, 404
 
 ###### **Arguments:**
 
-* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 * `<ID>` — id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
 
 
@@ -9394,7 +9456,7 @@ Error response codes: 401, 404
 
 ###### **Arguments:**
 
-* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+* `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
 
 
 
@@ -9423,6 +9485,7 @@ Error response codes: 401
 
   Possible values: `true`, `false`
 
+* `--id <ID>` — id query parameter for /v2.0/routers API
 * `--name <NAME>` — name query parameter for /v2.0/routers API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/routers API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/routers API
@@ -9430,6 +9493,55 @@ Error response codes: 401
 * `--tags <TAGS>` — tags query parameter for /v2.0/routers API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/routers API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/routers API
+
+
+
+## `osc network router remove-external-gateway`
+
+Remove external gateways from router
+
+**Usage:** `osc network router remove-external-gateway [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/routers/{id} API
+
+###### **Options:**
+
+* `--external-gateways <JSON>` — The list of external gateways of the router
+
+
+
+## `osc network router remove-extraroute`
+
+Remove extra routes from router
+
+**Usage:** `osc network router remove-extraroute [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/routers/{id} API
+
+###### **Options:**
+
+* `--routes <JSON>` — The extra routes configuration for L3 router. A list of dictionaries with `destination` and `nexthop` parameters. It is available when `extraroute` extension is enabled
+
+
+
+## `osc network router remove-router-interface`
+
+Remove interface from router
+
+**Usage:** `osc network router remove-router-interface [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/routers/{id} API
+
+###### **Options:**
+
+* `--port-id <PORT_ID>` — The ID of the port. One of subnet_id or port_id must be specified
+* `--subnet-id <SUBNET_ID>` — The ID of the subnet. One of subnet_id or port_id must be specified
 
 
 
@@ -9755,7 +9867,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 
 
@@ -9768,7 +9880,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 
 
@@ -9781,7 +9893,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 
 
@@ -9794,7 +9906,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 
 
 
@@ -9806,7 +9918,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id} API
+* `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
 
 
 

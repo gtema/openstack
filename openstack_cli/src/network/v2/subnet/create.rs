@@ -90,6 +90,8 @@ pub struct SubnetCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `subnet` object.
+    ///
     #[command(flatten)]
     subnet: Subnet,
 }

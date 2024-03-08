@@ -58,8 +58,8 @@ pub struct Request<'a> {
     #[builder(default)]
     external_port_range: Option<f32>,
 
-    /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
-    /// API
+    /// floatingip_id parameter for
+    /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
     ///
     #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,

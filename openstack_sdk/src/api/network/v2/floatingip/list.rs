@@ -62,6 +62,11 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     floating_network_id: Option<Cow<'a, str>>,
 
+    /// id query parameter for /v2.0/floatingips API
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
     /// not-tags query parameter for /v2.0/floatingips API
     ///
     #[builder(default, private, setter(name = "_not_tags"))]
@@ -209,6 +214,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("id", self.id.as_ref());
         params.push_opt("floating_ip_address", self.floating_ip_address.as_ref());
         params.push_opt("floating_network_id", self.floating_network_id.as_ref());
         params.push_opt("router_id", self.router_id.as_ref());

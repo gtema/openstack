@@ -56,6 +56,11 @@ pub struct Request<'a> {
     #[builder(default)]
     enable_ndp_proxy: Option<bool>,
 
+    /// id query parameter for /v2.0/routers API
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
     /// name query parameter for /v2.0/routers API
     ///
     #[builder(default, setter(into))]
@@ -193,6 +198,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("id", self.id.as_ref());
         params.push_opt("name", self.name.as_ref());
         params.push_opt("admin_state_up", self.admin_state_up);
         params.push_opt("tenant_id", self.tenant_id.as_ref());

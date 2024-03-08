@@ -64,6 +64,8 @@ pub struct RouterCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `router` object.
+    ///
     #[command(flatten)]
     router: Router,
 }
@@ -335,6 +337,7 @@ impl RouterCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters

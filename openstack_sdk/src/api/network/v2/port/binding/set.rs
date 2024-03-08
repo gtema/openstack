@@ -95,8 +95,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
-    /// API
+    /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     ///
     #[builder(default, setter(into))]
     port_id: Cow<'a, str>,

@@ -45,13 +45,40 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde_json::Value;
+use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Routes<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) destination: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) nexthop: Option<Cow<'a, str>>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Router<'a> {
+    /// The extra routes configuration for L3 router. A list of dictionaries
+    /// with `destination` and `nexthop` parameters. It is available when
+    /// `extraroute` extension is enabled.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) routes: Option<Vec<Routes<'a>>>,
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(setter(into))]
+    pub(crate) router: Router<'a>,
+
     /// id parameter for /v2.0/routers/{id} API
     ///
     #[builder(default, setter(into))]
@@ -59,9 +86,6 @@ pub struct Request<'a> {
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -93,18 +117,6 @@ where {
             .extend(iter.map(Into::into));
         self
     }
-
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 impl<'a> RestEndpoint for Request<'a> {
@@ -123,9 +135,7 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        for (key, val) in &self._properties {
-            params.push(key.clone(), val.clone());
-        }
+        params.push("router", serde_json::to_value(&self.router)?);
 
         params.into_body()
     }
@@ -135,7 +145,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("router".into())
     }
 
     /// Returns headers to be set into the request
@@ -157,14 +167,26 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .router(RouterBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Network
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder()
+                .router(RouterBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "router"
+        );
     }
 
     #[test]
@@ -176,10 +198,14 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "router": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .router(RouterBuilder::default().build().unwrap())
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -194,11 +220,12 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "router": {} }));
         });
 
         let endpoint = Request::builder()
             .id("id")
+            .router(RouterBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

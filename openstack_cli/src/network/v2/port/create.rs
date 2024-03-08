@@ -62,6 +62,8 @@ pub struct PortCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `port` object.
+    ///
     #[command(flatten)]
     port: Port,
 }
@@ -626,8 +628,8 @@ impl PortCommand {
                     .map(|v| {
                         v.as_object()
                             .expect("Is a valid Json object")
-                            .iter()
-                            .map(|(k, v)| (k.clone().into(), v.clone()))
+                            .into_iter()
+                            .map(|(k, v)| (k.into(), v.clone()))
                             .collect::<BTreeMap<_, Value>>()
                     })
                     .collect::<Vec<_>>(),
