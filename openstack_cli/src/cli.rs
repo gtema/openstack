@@ -57,26 +57,27 @@ pub struct Cli {
 
 /// Global CLI options
 #[derive(Args)]
+#[command(next_display_order = 900, next_help_heading = "Global options")]
 pub struct GlobalOpts {
     /// Name reference to the clouds.yaml entry for the cloud configuration
-    #[arg(long, env = "OS_CLOUD", global = true)]
+    #[arg(long, env = "OS_CLOUD", global = true, display_order = 900)]
     pub os_cloud: Option<String>,
 
     /// Output format
-    #[arg(short, long, global = true, value_enum)]
+    #[arg(short, long, global = true, value_enum, display_order = 910)]
     pub output: Option<OutputFormat>,
 
     /// Fields to return in the output (only in normal and wide mode)
-    #[arg(short, long, global=true, action=clap::ArgAction::Append)]
+    #[arg(short, long, global=true, action=clap::ArgAction::Append, display_order = 910)]
     pub fields: Vec<String>,
 
-    /// Verbosity level. Repeat to increase level.
-    #[arg(short, long, global=true, action = clap::ArgAction::Count)]
-    pub verbose: u8,
-
     /// Pretty print the output
-    #[arg(short, long, global=true, action = clap::ArgAction::SetTrue)]
+    #[arg(short, long, global=true, action = clap::ArgAction::SetTrue, display_order = 910)]
     pub pretty: bool,
+
+    /// Verbosity level. Repeat to increase level.
+    #[arg(short, long, global=true, action = clap::ArgAction::Count, display_order = 920)]
+    pub verbose: u8,
 }
 
 /// Output format
@@ -85,7 +86,7 @@ pub enum OutputFormat {
     /// Json output
     Json,
     /// Wide (Human readable table with extra attributes). Note: this has
-    /// effect only in list operations)
+    /// effect only in list operations
     Wide,
 }
 
