@@ -89,6 +89,11 @@ struct QueryParameters {
     #[arg(long)]
     floating_network_id: Option<String>,
 
+    /// id query parameter for /v2.0/floatingips API
+    ///
+    #[arg(long)]
+    id: Option<String>,
+
     /// not-tags query parameter for /v2.0/floatingips API
     ///
     #[arg(action=clap::ArgAction::Append, long)]
@@ -278,6 +283,9 @@ impl FloatingipsCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
         if let Some(val) = &self.query.floating_ip_address {
             ep_builder.floating_ip_address(val);
         }

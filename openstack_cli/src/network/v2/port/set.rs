@@ -82,6 +82,8 @@ pub struct PortCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `port` object.
+    ///
     #[command(flatten)]
     port: Port,
 }

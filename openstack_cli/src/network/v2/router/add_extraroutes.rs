@@ -34,15 +34,12 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
-use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::network::v2::router::add_extraroutes;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Request of the routers/id/add_extraroutes:put operation
+/// Request body
 ///
 #[derive(Args)]
 #[command(about = "Add extra routes to router")]
@@ -55,8 +52,8 @@ pub struct RouterCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    properties: Option<Vec<(String, Value)>>,
+    #[command(flatten)]
+    router: Router,
 }
 
 /// Query parameters
@@ -71,9 +68,40 @@ struct PathParameters {
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
+/// Router Body data
+#[derive(Args)]
+struct Router {
+    /// The extra routes configuration for L3 router. A list of dictionaries
+    /// with `destination` and `nexthop` parameters. It is available when
+    /// `extraroute` extension is enabled.
+    ///
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    routes: Option<Vec<Value>>,
+}
+
 /// Router response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// The ID of the router.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The name of the router.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The extra routes configuration for L3 router. A list of dictionaries
+    /// with `destination` and `nexthop` parameters. It is available when
+    /// `extraroute` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    routes: Option<Value>,
+}
 
 impl RouterCommand {
     /// Perform command action
@@ -93,18 +121,25 @@ impl RouterCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.router data
+        let args = &self.router;
+        let mut router_builder = add_extraroutes::RouterBuilder::default();
+        if let Some(val) = &args.routes {
+            let routes_builder: Vec<add_extraroutes::Routes> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<add_extraroutes::Routes>(v.to_owned()))
+                .collect::<Vec<add_extraroutes::Routes>>();
+            router_builder.routes(routes_builder);
         }
+
+        ep_builder.router(router_builder.build().unwrap());
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

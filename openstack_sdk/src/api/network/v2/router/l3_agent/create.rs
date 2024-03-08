@@ -27,7 +27,7 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
     ///
     #[builder(default, setter(into))]
     router_id: Cow<'a, str>,

@@ -119,8 +119,8 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) port_forwarding: PortForwarding<'a>,
 
-    /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
-    /// API
+    /// floatingip_id parameter for
+    /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
     ///
     #[builder(default, setter(into))]
     floatingip_id: Cow<'a, str>,

@@ -55,6 +55,8 @@ pub struct PortForwardingCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `floating IP port forwarding` object.
+    ///
     #[command(flatten)]
     port_forwarding: PortForwarding,
 }
@@ -66,8 +68,8 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
-    /// API
+    /// floatingip_id parameter for
+    /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
     ///
     #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
     floatingip_id: String,

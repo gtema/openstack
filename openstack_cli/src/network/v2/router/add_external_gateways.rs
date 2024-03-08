@@ -34,15 +34,14 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
-use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
+use crate::common::BoolString;
 use openstack_sdk::api::network::v2::router::add_external_gateways;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
+use std::fmt;
 use structable_derive::StructTable;
 
-/// Request of the routers/id/add_external_gateways:put operation
+/// Request body
 ///
 #[derive(Args)]
 #[command(about = "Add external gateways to router")]
@@ -55,8 +54,8 @@ pub struct RouterCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    properties: Option<Vec<(String, Value)>>,
+    #[command(flatten)]
+    router: Router,
 }
 
 /// Query parameters
@@ -71,9 +70,180 @@ struct PathParameters {
     #[arg(id = "path_param_id", value_name = "ID")]
     id: String,
 }
+/// Router Body data
+#[derive(Args)]
+struct Router {
+    /// The list of external gateways of the router.
+    ///
+    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    external_gateways: Option<Vec<Value>>,
+}
+
 /// Router response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// The administrative state of the resource, which is up (`true`) or down
+    /// (`false`).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    admin_state_up: Option<BoolString>,
+
+    /// The availability zone candidates for the router. It is available when
+    /// `router_availability_zone` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    availability_zone_hints: Option<Value>,
+
+    /// The availability zone(s) for the router. It is available when
+    /// `router_availability_zone` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    availability_zones: Option<Value>,
+
+    /// The associated conntrack helper resources for the roter. If the router
+    /// has multiple conntrack helper resources, this field has multiple
+    /// entries. Each entry consists of netfilter conntrack helper (`helper`),
+    /// the network protocol (`protocol`), the network port (`port`).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    conntrack_helpers: Option<String>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// `true` indicates a distributed router. It is available when `dvr`
+    /// extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    distributed: Option<BoolString>,
+
+    /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
+    /// router, the IPv6 address of internal subnets attached to the router can
+    /// be published to external by create `ndp_proxy`. `false` means NDP proxy
+    /// is disabled, the IPv6 address of internal subnets attached to the
+    /// router can not be published to external by `ndp_proxy`. It is available
+    /// when `router-extend-ndp-proxy` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    enable_ndp_proxy: Option<BoolString>,
+
+    /// The external gateway information of the router. If the router has an
+    /// external gateway, this would be a dict with `network_id`,
+    /// `enable_snat`, `external_fixed_ips`, `qos_policy_id`,
+    /// `enable_default_route_ecmp` and `enable_default_route_bfd`. Otherwise,
+    /// this would be `null`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    external_gateway_info: Option<Value>,
+
+    /// The ID of the flavor associated with the router.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    flavor_id: Option<String>,
+
+    /// `true` indicates a highly-available router. It is available when
+    /// `l3-ha` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ha: Option<BoolString>,
+
+    /// The ID of the router.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The revision number of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    revision_number: Option<i32>,
+
+    /// The extra routes configuration for L3 router. A list of dictionaries
+    /// with `destination` and `nexthop` parameters. It is available when
+    /// `extraroute` extension is enabled.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    routes: Option<Value>,
+
+    /// The router status.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// The list of tags on the resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
+
+    /// The ID of the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    tenant_id: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseExternalGatewayInfo {
+    enable_snat: Option<bool>,
+    external_fixed_ips: Option<Value>,
+    network_id: String,
+}
+
+impl fmt::Display for ResponseExternalGatewayInfo {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "enable_snat={}",
+                self.enable_snat
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "external_fixed_ips={}",
+                self.external_fixed_ips
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!("network_id={}", self.network_id),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
 
 impl RouterCommand {
     /// Perform command action
@@ -93,18 +263,27 @@ impl RouterCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.router data
+        let args = &self.router;
+        let mut router_builder = add_external_gateways::RouterBuilder::default();
+        if let Some(val) = &args.external_gateways {
+            let external_gateways_builder: Vec<add_external_gateways::ExternalGateways> = val
+                .iter()
+                .flat_map(|v| {
+                    serde_json::from_value::<add_external_gateways::ExternalGateways>(v.to_owned())
+                })
+                .collect::<Vec<add_external_gateways::ExternalGateways>>();
+            router_builder.external_gateways(external_gateways_builder);
         }
+
+        ep_builder.router(router_builder.build().unwrap());
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

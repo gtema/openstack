@@ -66,6 +66,11 @@ pub struct FloatingipCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `floatingip` object. When you associate a floating IP address with a
+    /// VM, the instance has the same public IP address each time that it
+    /// boots, basically to maintain a consistent IP address for maintaining
+    /// DNS assignment.
+    ///
     #[command(flatten)]
     floatingip: Floatingip,
 }

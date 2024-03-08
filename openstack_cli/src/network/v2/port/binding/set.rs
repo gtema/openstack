@@ -64,8 +64,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
-    /// API
+    /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     ///
     #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
     port_id: String,

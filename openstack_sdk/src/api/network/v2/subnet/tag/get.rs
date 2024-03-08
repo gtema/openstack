@@ -30,7 +30,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
+    /// subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
     ///
     #[builder(default, setter(into))]
     subnet_id: Cow<'a, str>,

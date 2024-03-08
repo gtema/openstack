@@ -85,6 +85,11 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, long)]
     enable_ndp_proxy: Option<bool>,
 
+    /// id query parameter for /v2.0/routers API
+    ///
+    #[arg(long)]
+    id: Option<String>,
+
     /// name query parameter for /v2.0/routers API
     ///
     #[arg(long)]
@@ -306,6 +311,9 @@ impl RoutersCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }

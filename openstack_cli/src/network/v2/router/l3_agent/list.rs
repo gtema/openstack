@@ -64,7 +64,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+    /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
     ///
     #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
     router_id: String,

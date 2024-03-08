@@ -67,6 +67,8 @@ pub struct RouterCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `router` object.
+    ///
     #[command(flatten)]
     router: Router,
 }

@@ -20,11 +20,17 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod add_external_gateways;
+mod add_extraroutes;
+mod add_router_interface;
 mod conntrack_helper;
 mod create;
 mod delete;
 mod l3_agent;
 mod list;
+mod remove_external_gateways;
+mod remove_extraroutes;
+mod remove_router_interface;
 mod show;
 mod tag;
 
@@ -40,11 +46,17 @@ pub struct RouterCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum RouterCommands {
+    AddExternalGateway(Box<add_external_gateways::RouterCommand>),
+    AddExtraroute(Box<add_extraroutes::RouterCommand>),
+    AddRouterInterface(Box<add_router_interface::RouterCommand>),
     ConntrackHelper(Box<conntrack_helper::ConntrackHelperCommand>),
     Create(create::RouterCommand),
     Delete(delete::RouterCommand),
     L3Agent(l3_agent::L3AgentCommand),
     List(list::RoutersCommand),
+    RemoveExternalGateway(Box<remove_external_gateways::RouterCommand>),
+    RemoveExtraroute(Box<remove_extraroutes::RouterCommand>),
+    RemoveRouterInterface(Box<remove_router_interface::RouterCommand>),
     Show(show::RouterCommand),
     Tag(tag::TagCommand),
 }
@@ -57,11 +69,21 @@ impl RouterCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
+            RouterCommands::AddExternalGateway(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::AddExtraroute(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::AddRouterInterface(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::ConntrackHelper(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::L3Agent(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::RemoveExternalGateway(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            RouterCommands::RemoveExtraroute(cmd) => cmd.take_action(parsed_args, session).await,
+            RouterCommands::RemoveRouterInterface(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             RouterCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
             RouterCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
         }

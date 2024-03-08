@@ -60,6 +60,8 @@ pub struct NetworkCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `network` object.
+    ///
     #[command(flatten)]
     network: Network,
 }

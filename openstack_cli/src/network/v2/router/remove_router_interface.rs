@@ -51,8 +51,13 @@ pub struct RouterCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The ID of the port. One of subnet_id or port_id must be specified.
+    ///
     #[arg(long)]
     port_id: Option<String>,
+
+    /// The ID of the subnet. One of subnet_id or port_id must be specified.
+    ///
     #[arg(long)]
     subnet_id: Option<String>,
 }
