@@ -109,7 +109,7 @@ impl ProjectsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = list::Request::builder();
+        let ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters

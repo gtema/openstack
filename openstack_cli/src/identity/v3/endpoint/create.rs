@@ -54,6 +54,8 @@ pub struct EndpointCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// An `endpoint` object.
+    ///
     #[command(flatten)]
     endpoint: Endpoint,
 }
@@ -80,7 +82,7 @@ struct Endpoint {
     /// `false`. The endpoint does not appear in the service catalog. - `true`.
     /// The endpoint appears in the service catalog.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// The interface type, which describes the visibility of the endpoint.
@@ -89,27 +91,27 @@ struct Endpoint {
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     interface: Option<Interface>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     region: Option<String>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     region_id: Option<String>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     service_id: Option<String>,
 
     /// The endpoint URL.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     url: Option<String>,
 }
 

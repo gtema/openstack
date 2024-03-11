@@ -58,6 +58,8 @@ pub struct GroupCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `group` object
+    ///
     #[command(flatten)]
     group: Group,
 }
@@ -71,7 +73,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Group Body data
@@ -79,17 +85,17 @@ struct PathParameters {
 struct Group {
     /// The description of the group.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -140,6 +146,7 @@ impl GroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters

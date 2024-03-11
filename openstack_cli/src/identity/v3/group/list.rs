@@ -59,7 +59,7 @@ pub struct GroupsCommand {
 struct QueryParameters {
     /// Filters the response by a domain ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     domain_id: Option<String>,
 }
 

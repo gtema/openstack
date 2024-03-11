@@ -63,13 +63,13 @@ pub struct KeypairsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     user_id: Option<String>,
 }
 

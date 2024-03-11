@@ -61,7 +61,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
     ///
-    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_volume_id",
+        value_name = "VOLUME_ID"
+    )]
     volume_id: String,
 }
 /// Metadatas response representation

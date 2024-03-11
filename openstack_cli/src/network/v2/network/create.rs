@@ -81,87 +81,87 @@ struct Network {
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// The availability zone candidate for the network.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     availability_zone_hints: Option<Vec<String>>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// A valid DNS domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     dns_domain: Option<String>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     ha: Option<bool>,
 
     /// The network is default or not.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     is_default: Option<bool>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     mtu: Option<i32>,
 
     /// Human-readable name of the network.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
     /// value of `port_security_enabled` field of a newly created port.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     port_security_enabled: Option<bool>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     provider_network_type: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     provider_physical_network: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     provider_segmentation_id: Option<String>,
 
     /// The ID of the QoS policy associated with the network.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 
     /// Indicates whether the network has an external routing facility that’s
     /// not managed by the networking service.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     router_external: Option<bool>,
 
     /// A list of provider `segment` objects.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     segments: Option<Vec<Value>>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     shared: Option<bool>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
 }
 

@@ -129,19 +129,19 @@ struct QueryParameters {
     /// Returns the effective assignments, including any assignments gained by
     /// virtue of group membership.
     ///
-    #[arg(action=clap::ArgAction::SetTrue, long)]
+    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Query parameters", long)]
     effective: Option<bool>,
 
     /// Filters the response by a group ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     group_id: Option<String>,
 
     /// If set, then the names of any entities returned will be include as well
     /// as their IDs. Any value other than 0 (including no value) will be
     /// interpreted as true.
     ///
-    #[arg(action=clap::ArgAction::SetTrue, long)]
+    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Query parameters", long)]
     include_names: Option<bool>,
 
     /// If set, then relevant assignments in the project hierarchy below the
@@ -149,33 +149,33 @@ struct QueryParameters {
     /// included in the response. Any value other than 0 (including no value)
     /// for include_subtree will be interpreted as true.
     ///
-    #[arg(action=clap::ArgAction::SetTrue, long)]
+    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Query parameters", long)]
     include_subtree: Option<bool>,
 
     /// Filters the response by a role ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     role_id: Option<String>,
 
     /// Filters the response by a domain ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     scope_domain_id: Option<String>,
 
     /// Filters based on role assignments that are inherited. The only value of
     /// inherited_to that is currently supported is projects.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     scope_os_inherit_inherited_to: Option<String>,
 
     /// Filters the response by a project ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     scope_project_id: Option<String>,
 
     /// Filters the response by a user ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     user_id: Option<String>,
 }
 

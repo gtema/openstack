@@ -83,7 +83,7 @@ impl TokenCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = delete::Request::builder();
+        let ep_builder = delete::Request::builder();
 
         // Set path parameters
         // Set query parameters

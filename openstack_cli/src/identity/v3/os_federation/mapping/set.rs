@@ -66,13 +66,17 @@ struct QueryParameters {}
 struct PathParameters {
     /// mapping_id parameter for /v3/OS-FEDERATION/mappings/{mapping_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Mapping Body data
 #[derive(Args)]
 struct Mapping {
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     rules: Vec<Value>,
 }
 

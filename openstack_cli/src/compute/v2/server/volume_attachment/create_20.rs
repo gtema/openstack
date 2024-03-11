@@ -55,6 +55,9 @@ pub struct VolumeAttachmentCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A dictionary representation of a volume attachment containing the
+    /// fields `device` and `volumeId`.
+    ///
     #[command(flatten)]
     volume_attachment: VolumeAttachment,
 }
@@ -68,7 +71,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 }
 /// VolumeAttachment Body data
@@ -81,12 +88,12 @@ struct VolumeAttachment {
     /// a user-supplied device name. This is the same behavior as if the device
     /// name parameter is not supplied on the request.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     device: Option<String>,
 
     /// The UUID of the volume to attach.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
 }
 

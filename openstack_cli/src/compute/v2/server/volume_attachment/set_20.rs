@@ -65,6 +65,10 @@ pub struct VolumeAttachmentCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A dictionary representation of a volume attachment containing the field
+    /// `volumeId` which is the UUID of the replacement volume, and other
+    /// fields to update in the attachment.
+    ///
     #[command(flatten)]
     volume_attachment: VolumeAttachment,
 }
@@ -78,13 +82,21 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// VolumeAttachment Body data
@@ -92,7 +104,7 @@ struct PathParameters {
 struct VolumeAttachment {
     /// The UUID of the volume to attach instead of the attached volume.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
 }
 

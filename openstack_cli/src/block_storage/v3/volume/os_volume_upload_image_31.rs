@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -91,22 +95,22 @@ enum Visibility {
 /// OsVolumeUploadImage Body data
 #[derive(Args)]
 struct OsVolumeUploadImage {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     container_format: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     disk_format: Option<DiskFormat>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     force: Option<bool>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     image_name: String,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     protected: Option<bool>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     visibility: Option<Visibility>,
 }
 

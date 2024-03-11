@@ -53,12 +53,12 @@ pub struct RouterCommand {
 
     /// The ID of the port. One of subnet_id or port_id must be specified.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
     /// The ID of the subnet. One of subnet_id or port_id must be specified.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
 }
 
@@ -71,7 +71,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Router response representation

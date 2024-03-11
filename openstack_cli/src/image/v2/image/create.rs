@@ -73,32 +73,115 @@ pub struct ImageCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long)]
+    /// Format of the image container.
+    ///
+    /// Values may vary based on the configuration available in a particular
+    /// OpenStack cloud. See the [Image Schema](#image-schema) response from
+    /// the cloud itself for the valid values available.
+    ///
+    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`, or
+    /// `docker`.
+    ///
+    /// The value might be `null` (JSON null data type).
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     container_format: Option<ContainerFormat>,
-    #[arg(long)]
+
+    /// The format of the disk.
+    ///
+    /// Values may vary based on the configuration available in a particular
+    /// OpenStack cloud. See the [Image Schema](#image-schema) response from
+    /// the cloud itself for the valid values available.
+    ///
+    /// Example formats are: `ami`, `ari`, `aki`, `vhd`, `vhdx`, `vmdk`, `raw`,
+    /// `qcow2`, `vdi`, `ploop` or `iso`.
+    ///
+    /// The value might be `null` (JSON null data type).
+    ///
+    /// **Newton changes**: The `vhdx` disk format is a supported value.
+    ///
+    /// **Ocata changes**: The `ploop` disk format is a supported value.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     disk_format: Option<DiskFormat>,
-    #[arg(long)]
+
+    /// A unique, user-defined image UUID, in the format:
+    ///
+    /// ```text
+    /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
+    ///
+    /// ```
+    ///
+    /// Where **n** is a hexadecimal digit from 0 to f, or F.
+    ///
+    /// For example:
+    ///
+    /// ```text
+    /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
+    ///
+    /// ```
+    ///
+    /// If you omit this value, the API generates a UUID for the image. If you
+    /// specify a value that has already been assigned, the request fails with
+    /// a `409` response code.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+
+    /// A set of URLs to access the image file kept in external store
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     locations: Option<Vec<Value>>,
-    #[arg(long)]
+
+    /// Amount of disk space in GB that is required to boot the image.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     min_disk: Option<i32>,
-    #[arg(long)]
+
+    /// Amount of RAM in MB that is required to boot the image.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     min_ram: Option<i32>,
-    #[arg(long)]
+
+    /// The name of the image.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
-    #[arg(action=clap::ArgAction::Set, long)]
+
+    /// If true, image will not appear in default image list response.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     os_hidden: Option<bool>,
-    #[arg(long)]
+
+    /// Owner of the image
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     owner: Option<String>,
-    #[arg(action=clap::ArgAction::Set, long)]
+
+    /// Image protection for deletion. Valid value is `true` or `false`.
+    /// Default is `false`.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     protected: Option<bool>,
-    #[arg(action=clap::ArgAction::Append, long)]
+
+    /// List of tags for this image. Each tag is a string of at most 255 chars.
+    /// The maximum number of tags allowed on an image is set by the operator.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
-    #[arg(long)]
+
+    /// Visibility for this image. Valid value is one of: `public`, `private`,
+    /// `shared`, or `community`. At most sites, only an administrator can make
+    /// an image `public`. Some sites may restrict what users can make an image
+    /// `community`. Some sites may restrict what users can perform member
+    /// operations on a `shared` image. *Since the Image API v2.5, the default
+    /// value is `shared`.*
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     visibility: Option<Visibility>,
     /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, String)>>,
 }
 

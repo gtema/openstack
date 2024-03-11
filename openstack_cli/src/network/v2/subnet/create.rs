@@ -126,36 +126,36 @@ struct Subnet {
     /// automatically allocates pools for covering all IP addresses in the
     /// CIDR, excluding the address reserved for the subnet gateway by default.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     allocation_pools: Option<Vec<Value>>,
 
     /// The CIDR of the subnet.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     cidr: Option<String>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// List of dns name servers associated with the subnet. Default is an
     /// empty list.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     dns_nameservers: Option<Vec<String>>,
 
     /// Whether to publish DNS records for IPs from this subnet. Default is
     /// `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     dns_publish_fixed_ip: Option<bool>,
 
     /// Indicates whether dhcp is enabled or disabled for the subnet. Default
     /// is `true`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enable_dhcp: Option<bool>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
@@ -163,76 +163,76 @@ struct Subnet {
     /// specified, OpenStack Networking allocates an address from the CIDR for
     /// the gateway for the subnet by default.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     gateway_ip: Option<String>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     host_routes: Option<Vec<Value>>,
 
     /// The IP protocol version. Value is `4` or `6`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     ip_version: i32,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     ipv6_address_mode: Option<Ipv6AddressMode>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     ipv6_ra_mode: Option<Ipv6RaMode>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The ID of the network to which the subnet belongs.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     network_id: String,
 
     /// The prefix length to use for subnet allocation from a subnet pool. If
     /// not specified, the `default_prefixlen` value of the subnet pool will be
     /// used.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     prefixlen: Option<i32>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     segment_id: Option<String>,
 
     /// The service types associated with the subnet.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     service_types: Option<Vec<String>>,
 
     /// The ID of the subnet pool associated with the subnet.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     subnetpool_id: Option<String>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
 
     /// Whether to allocate this subnet from the default subnet pool.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     use_default_subnetpool: Option<bool>,
 }
 

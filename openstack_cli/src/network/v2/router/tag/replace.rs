@@ -48,7 +48,7 @@ pub struct TagCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Vec<String>,
 }
 
@@ -61,7 +61,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
     ///
-    #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_router_id",
+        value_name = "ROUTER_ID"
+    )]
     router_id: String,
 }
 /// Tag response representation

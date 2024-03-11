@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Router Body data
@@ -75,7 +79,7 @@ struct Router {
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     routes: Option<Vec<Value>>,
 }
 

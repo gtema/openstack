@@ -71,72 +71,72 @@ pub struct FloatingipsCommand {
 struct QueryParameters {
     /// description query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// fixed_ip_address query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     fixed_ip_address: Option<String>,
 
     /// floating_ip_address query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     floating_ip_address: Option<String>,
 
     /// floating_network_id query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     floating_network_id: Option<String>,
 
     /// id query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// not-tags query parameter for /v2.0/floatingips API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/floatingips API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// port_id query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     port_id: Option<String>,
 
     /// revision_number query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// router_id query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     router_id: Option<String>,
 
     /// status query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
     /// tags query parameter for /v2.0/floatingips API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/floatingips API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/floatingips API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
 

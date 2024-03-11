@@ -62,7 +62,11 @@ struct PathParameters {
     /// protocol_id parameter for /v3/auth/OS-FEDERATION/websso/{protocol_id}
     /// API
     ///
-    #[arg(id = "path_param_protocol_id", value_name = "PROTOCOL_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_protocol_id",
+        value_name = "PROTOCOL_ID"
+    )]
     protocol_id: String,
 }
 /// Websso response representation

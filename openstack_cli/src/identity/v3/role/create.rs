@@ -55,6 +55,8 @@ pub struct RoleCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `role` object
+    ///
     #[command(flatten)]
     role: Role,
 }
@@ -70,7 +72,7 @@ struct PathParameters {}
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct Options {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     immutable: Option<bool>,
 }
 
@@ -79,12 +81,12 @@ struct Options {
 struct Role {
     /// The role description.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The role name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The resource options for the role. Available resource options are

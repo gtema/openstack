@@ -76,7 +76,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// subnet_id parameter for /v2.0/subnets/{subnet_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Subnet Body data
@@ -87,31 +91,31 @@ struct Subnet {
     /// automatically allocates pools for covering all IP addresses in the
     /// CIDR, excluding the address reserved for the subnet gateway by default.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     allocation_pools: Option<Vec<Value>>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// List of dns name servers associated with the subnet. Default is an
     /// empty list.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     dns_nameservers: Option<Vec<String>>,
 
     /// Whether to publish DNS records for IPs from this subnet. Default is
     /// `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     dns_publish_fixed_ip: Option<bool>,
 
     /// Indicates whether dhcp is enabled or disabled for the subnet. Default
     /// is `true`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enable_dhcp: Option<bool>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
@@ -119,29 +123,29 @@ struct Subnet {
     /// specified, OpenStack Networking allocates an address from the CIDR for
     /// the gateway for the subnet by default.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     gateway_ip: Option<String>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     host_routes: Option<Vec<Value>>,
 
     /// Human-readable name of the resource.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     segment_id: Option<String>,
 
     /// The service types associated with the subnet.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     service_types: Option<Vec<String>>,
 }
 

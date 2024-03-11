@@ -56,6 +56,7 @@ pub struct StageCommand {
     path: PathParameters,
 
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
 }
 
@@ -68,7 +69,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///
-    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_image_id",
+        value_name = "IMAGE_ID"
+    )]
     image_id: String,
 }
 /// Stage response representation

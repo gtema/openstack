@@ -66,24 +66,24 @@ struct QueryParameters {
     /// helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     helper: Option<String>,
 
     /// id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// port query parameter for /v2.0/routers/{router_id}/conntrack_helpers
     /// API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     port: Option<f32>,
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API
     ///
-    #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 }
 
@@ -93,7 +93,11 @@ struct PathParameters {
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
     ///
-    #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_router_id",
+        value_name = "ROUTER_ID"
+    )]
     router_id: String,
 }
 /// ConntrackHelpers response representation

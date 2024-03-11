@@ -61,6 +61,9 @@ pub struct FlavorCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The ID and links for the flavor for your server instance. A flavor is a
+    /// combination of memory, disk size, and CPUs.
+    ///
     #[command(flatten)]
     flavor: Flavor,
 }
@@ -80,60 +83,60 @@ struct Flavor {
     ///
     /// **New in version 2.55**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     disk: String,
 
     /// Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces
     /// and dots ‘.’ are permitted. If an ID is not provided, then a default
     /// UUID will be assigned.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The display name of a flavor.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// Whether the flavor is public (available to all projects) or scoped to a
     /// set of projects. Default is True if not specified.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     os_flavor_access_is_public: Option<bool>,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     os_flv_ext_data_ephemeral: Option<String>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     ram: String,
 
     /// The receive / transmit factor (as a float) that will be set on ports if
     /// the network backend supports the QOS extension. Otherwise it will be
     /// ignored. It defaults to 1.0.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     rxtx_factor: Option<String>,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     swap: Option<String>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     vcpus: String,
 }
 

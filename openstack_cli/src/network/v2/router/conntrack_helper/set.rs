@@ -69,12 +69,20 @@ struct PathParameters {
     /// router_id parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers/{id} API
     ///
-    #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_router_id",
+        value_name = "ROUTER_ID"
+    )]
     router_id: String,
 
     /// id parameter for /v2.0/routers/{router_id}/conntrack_helpers/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -93,17 +101,17 @@ enum Protocol {
 struct ConntrackHelper {
     /// The netfilter conntrack helper module.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     helper: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     port: Option<f32>,
 
     /// The network protocol for the netfilter conntrack target rule.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     protocol: Option<Protocol>,
 }
 

@@ -66,7 +66,11 @@ struct PathParameters {
     /// endpoint_id parameter for
     /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Endpoint response representation

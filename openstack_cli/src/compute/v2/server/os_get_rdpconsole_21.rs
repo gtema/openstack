@@ -62,6 +62,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action.
+    ///
     #[command(flatten)]
     os_get_rdpconsole: OsGetRdpconsole,
 }
@@ -75,7 +77,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -89,7 +95,7 @@ enum Type {
 struct OsGetRdpconsole {
     /// The type of RDP console. The only valid value is `rdp-html5`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 }
 

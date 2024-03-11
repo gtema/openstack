@@ -65,6 +65,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to add a fixed ip address to a server.
+    ///
     #[command(flatten)]
     add_fixed_ip: AddFixedIp,
 }
@@ -78,7 +80,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// AddFixedIp Body data
@@ -86,7 +92,7 @@ struct PathParameters {
 struct AddFixedIp {
     /// The network ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     network_id: String,
 }
 

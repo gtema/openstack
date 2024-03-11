@@ -79,6 +79,9 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action. Contains required floating IP `address` and optional
+    /// `fixed_address`.
+    ///
     #[command(flatten)]
     add_floating_ip: AddFloatingIp,
 }
@@ -92,7 +95,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// AddFloatingIp Body data
@@ -101,13 +108,13 @@ struct AddFloatingIp {
     /// The fixed IP address with which you want to associate the floating IP
     /// address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     address: String,
 
     /// The fixed IP address with which you want to associate the floating IP
     /// address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     fixed_address: Option<String>,
 }
 

@@ -52,6 +52,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action.
+    ///
     #[command(flatten)]
     os_migrate_live: OsMigrateLive,
 }
@@ -65,7 +67,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// OsMigrateLive Body data
@@ -81,7 +87,7 @@ struct OsMigrateLive {
     ///
     /// **New in version 2.25**
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     block_migration: bool,
 
     /// The host to which to migrate the server. If this parameter is `None`,
@@ -96,7 +102,7 @@ struct OsMigrateLive {
     /// pick one, or specify a host with microversion >= 2.30 and without
     /// `force=True` set.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     host: String,
 }
 

@@ -158,12 +158,12 @@ struct QueryParameters {
     /// Specify a comparison filter based on the date and time when the
     /// resource was created.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
     /// id filter parameter
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
@@ -171,56 +171,56 @@ struct QueryParameters {
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Filters the response by a member status. A valid value is accepted,
     /// pending, rejected, or all. Default is accepted.
     ///
-    #[arg(long, value_parser = ["accepted","all","pending","rejected"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["accepted","all","pending","rejected"])]
     member_status: Option<String>,
 
     /// Filters the response by a name, as a string. A valid value is the name
     /// of an image.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// When true, filters the response to display only "hidden" images. By
     /// default, "hidden" images are not included in the image-list response.
     /// (Since Image API v2.7)
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     os_hidden: Option<bool>,
 
     /// Filters the response by a project (also called a “tenant”) ID. Shows
     /// only images that are shared with you by the specified owner.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     owner: Option<String>,
 
     /// Filters the response by the ‘protected’ image property. A valid value
     /// is one of ‘true’, ‘false’ (must be all lowercase). Any other value will
     /// result in a 400 response.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     protected: Option<bool>,
 
     /// Filters the response by a maximum image size, in bytes.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     size_max: Option<String>,
 
     /// Filters the response by a minimum image size, in bytes.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     size_min: Option<String>,
 
     /// Sorts the response by one or more attribute and sort direction
@@ -228,7 +228,7 @@ struct QueryParameters {
     /// Default direction is desc. Use the comma (,) character to separate
     /// multiple values. For example: `sort=name:asc,status:desc`
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts the response by a set of one or more sort direction and attribute
@@ -236,32 +236,32 @@ struct QueryParameters {
     /// (ascending) or desc (descending). If you omit the sort direction in a
     /// set, the default is desc.
     ///
-    #[arg(long, value_parser = ["asc","desc"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts the response by an attribute, such as name, id, or updated_at.
     /// Default is created_at. The API uses the natural sorting direction of
     /// the sort_key image attribute.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
     /// Filters the response by an image status.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
     /// Filters the response by the specified tag value. May be repeated, but
     /// keep in mind that you're making a conjunctive query, so only images
     /// containing all the tags specified will appear in the response.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tag: Option<Vec<String>>,
 
     /// Specify a comparison filter based on the date and time when the
     /// resource was most recently modified.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,
 
     /// Filters the response by an image visibility value. A valid value is
@@ -272,7 +272,7 @@ struct QueryParameters {
     /// response shows public, private, and those shared images with a member
     /// status of accepted.
     ///
-    #[arg(long, value_parser = ["all","community","private","public","shared"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["all","community","private","public","shared"])]
     visibility: Option<String>,
 }
 

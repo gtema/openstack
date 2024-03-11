@@ -57,6 +57,7 @@ pub struct AuthCommand {
     path: PathParameters,
 
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
 }
 
@@ -70,14 +71,22 @@ struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
     ///
-    #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_idp_id",
+        value_name = "IDP_ID"
+    )]
     idp_id: String,
 
     /// protocol_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
     /// API
     ///
-    #[arg(id = "path_param_protocol_id", value_name = "PROTOCOL_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_protocol_id",
+        value_name = "PROTOCOL_ID"
+    )]
     protocol_id: String,
 }
 /// Auth response representation

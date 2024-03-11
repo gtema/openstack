@@ -64,19 +64,23 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// OsMigrateVolume Body data
 #[derive(Args)]
 struct OsMigrateVolume {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     force_host_copy: Option<bool>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     host: String,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     lock_volume: Option<bool>,
 }
 

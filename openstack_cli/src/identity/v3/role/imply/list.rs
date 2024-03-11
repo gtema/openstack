@@ -66,7 +66,11 @@ struct PathParameters {
     /// prior_role_id parameter for
     /// /v3/roles/{prior_role_id}/implies/{implied_role_id} API
     ///
-    #[arg(id = "path_param_prior_role_id", value_name = "PRIOR_ROLE_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_prior_role_id",
+        value_name = "PRIOR_ROLE_ID"
+    )]
     prior_role_id: String,
 }
 /// Implies response representation

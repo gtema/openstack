@@ -61,23 +61,23 @@ pub struct UsersCommand {
 struct QueryParameters {
     /// Filters the response by a domain ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     domain_id: Option<String>,
 
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// Filter for Identity Providers’ ID attribute
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// Filters the response by a resource name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Filter results based on which user passwords have expired. The query
@@ -86,17 +86,17 @@ struct QueryParameters {
     /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
     /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     password_expires_at: Option<String>,
 
     /// Filters the response by a protocol ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     protocol_id: Option<String>,
 
     /// Filters the response by a unique ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     unique_id: Option<String>,
 }
 

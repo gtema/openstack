@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// role_id parameter for /v3/roles/{role_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Role response representation

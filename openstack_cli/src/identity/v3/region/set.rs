@@ -58,6 +58,8 @@ pub struct RegionCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `region` object
+    ///
     #[command(flatten)]
     region: Region,
 }
@@ -71,7 +73,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// region_id parameter for /v3/regions/{region_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Region Body data
@@ -79,13 +85,13 @@ struct PathParameters {
 struct Region {
     /// The region description.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     parent_id: Option<String>,
 }
 

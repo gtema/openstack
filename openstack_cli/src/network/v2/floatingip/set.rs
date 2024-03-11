@@ -84,7 +84,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.0/floatingips/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Floatingip Body data
@@ -93,7 +97,7 @@ struct Floatingip {
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The fixed IP address that is associated with the floating IP. If an
@@ -101,17 +105,17 @@ struct Floatingip {
     /// the first IP address unless you explicitly define a fixed IP address in
     /// the `fixed_ip_address` parameter.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     fixed_ip_address: Option<String>,
 
     /// The ID of a port associated with the floating IP. To associate the
     /// floating IP with a fixed IP, you must specify the ID of the internal
     /// port. To disassociate the floating IP, `null` should be specified.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 }
 

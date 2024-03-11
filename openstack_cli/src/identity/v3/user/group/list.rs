@@ -64,7 +64,11 @@ struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
     ///
-    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_user_id",
+        value_name = "USER_ID"
+    )]
     user_id: String,
 }
 /// Groups response representation

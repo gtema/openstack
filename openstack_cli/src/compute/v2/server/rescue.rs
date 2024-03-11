@@ -66,6 +66,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to rescue a server.
+    ///
     #[command(flatten)]
     rescue: Option<Rescue>,
 }
@@ -79,16 +81,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Rescue Body data
 #[derive(Args)]
 struct Rescue {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     rescue_image_ref: Option<String>,
 }
 

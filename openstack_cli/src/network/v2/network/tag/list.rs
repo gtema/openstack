@@ -58,7 +58,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
     ///
-    #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_network_id",
+        value_name = "NETWORK_ID"
+    )]
     network_id: String,
 }
 /// Tags response representation

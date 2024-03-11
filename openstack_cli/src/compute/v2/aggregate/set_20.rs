@@ -58,6 +58,8 @@ pub struct AggregateCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The host aggregate object.
+    ///
     #[command(flatten)]
     aggregate: Aggregate,
 }
@@ -71,7 +73,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/os-aggregates/{id}/images API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Aggregate Body data
@@ -88,12 +94,12 @@ struct Aggregate {
     /// when that aggregate has hosts which contain servers in it since that
     /// may impact the ability for those servers to move to another host.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// The name of the host aggregate.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 

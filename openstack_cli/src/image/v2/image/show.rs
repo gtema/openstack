@@ -70,7 +70,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Image response representation

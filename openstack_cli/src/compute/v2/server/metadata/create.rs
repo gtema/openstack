@@ -66,7 +66,10 @@ pub struct MetadataCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    /// Metadata key and value pairs. The maximum size for each metadata key
+    /// and value pair is 255 bytes.
+    ///
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Vec<(String, String)>,
 }
 
@@ -79,7 +82,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 }
 /// Metadata response representation

@@ -65,6 +65,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to remove a fixed ip address from a server.
+    ///
     #[command(flatten)]
     remove_fixed_ip: RemoveFixedIp,
 }
@@ -78,7 +80,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// RemoveFixedIp Body data
@@ -86,7 +92,7 @@ struct PathParameters {
 struct RemoveFixedIp {
     /// The IP address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     address: String,
 }
 

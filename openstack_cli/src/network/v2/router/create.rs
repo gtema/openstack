@@ -84,13 +84,13 @@ struct PathParameters {}
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct ExternalGatewayInfo {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enable_snat: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     external_fixed_ips: Option<Vec<Value>>,
 
-    #[arg(long, required = false)]
+    #[arg(help_heading = "Body parameters", long, required = false)]
     network_id: String,
 }
 
@@ -100,25 +100,25 @@ struct Router {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     availability_zone_hints: Option<Vec<String>>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     distributed: Option<Option<bool>>,
 
     /// Enable NDP proxy attribute. Default is `false`, To persist this
@@ -126,7 +126,7 @@ struct Router {
     /// `neutron.conf` file. It is available when `router-extend-ndp-proxy`
     /// extension is enabled.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enable_ndp_proxy: Option<Option<bool>>,
 
     /// The external gateway information of the router. If the router has an
@@ -139,25 +139,25 @@ struct Router {
 
     /// The ID of the flavor associated with the router.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     flavor_id: Option<String>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     ha: Option<Option<bool>>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The ID of the project that owns the resource. Only administrative and
     /// users with advsvc role can specify a project ID other than their own.
     /// You cannot change this value through authorization policies.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
 }
 

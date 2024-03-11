@@ -57,6 +57,8 @@ pub struct RoleCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `role` object
+    ///
     #[command(flatten)]
     role: Role,
 }
@@ -70,14 +72,18 @@ struct QueryParameters {}
 struct PathParameters {
     /// role_id parameter for /v3/roles/{role_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Options Body data
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct Options {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     immutable: Option<bool>,
 }
 
@@ -86,12 +92,12 @@ struct Options {
 struct Role {
     /// The role description.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The role name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The resource options for the role. Available resource options are
@@ -172,6 +178,7 @@ impl RoleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters

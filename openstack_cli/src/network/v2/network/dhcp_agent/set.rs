@@ -55,6 +55,7 @@ pub struct DhcpAgentCommand {
     path: PathParameters,
 
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
 }
 
@@ -68,12 +69,20 @@ struct PathParameters {
     /// network_id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id}
     /// API
     ///
-    #[arg(id = "path_param_network_id", value_name = "NETWORK_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_network_id",
+        value_name = "NETWORK_ID"
+    )]
     network_id: String,
 
     /// id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// DhcpAgent response representation

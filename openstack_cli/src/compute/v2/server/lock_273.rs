@@ -82,6 +82,9 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to lock a server. This parameter can be `null`. Up to
+    /// microversion 2.73, this parameter should be `null`.
+    ///
     #[command(flatten)]
     lock: Option<Lock>,
 }
@@ -95,13 +98,17 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Lock Body data
 #[derive(Args)]
 struct Lock {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     locked_reason: Option<String>,
 }
 

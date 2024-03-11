@@ -58,6 +58,8 @@ pub struct AggregateCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The host aggregate object.
+    ///
     #[command(flatten)]
     aggregate: Aggregate,
 }
@@ -77,12 +79,12 @@ struct Aggregate {
     /// os-availability-zone API. The availability zone must not include ‘:’ in
     /// its name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// The name of the host aggregate.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 }
 

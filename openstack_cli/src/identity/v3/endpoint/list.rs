@@ -59,17 +59,17 @@ pub struct EndpointsCommand {
 struct QueryParameters {
     /// Filters the response by an interface.
     ///
-    #[arg(long, value_parser = ["admin","internal","public"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["admin","internal","public"])]
     interface: Option<String>,
 
     /// Filters the response by a region ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     region: Option<String>,
 
     /// Filters the response by a service ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     service_id: Option<String>,
 }
 

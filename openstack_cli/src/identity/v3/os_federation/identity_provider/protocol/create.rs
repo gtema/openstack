@@ -65,23 +65,31 @@ struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
     ///
-    #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_idp_id",
+        value_name = "IDP_ID"
+    )]
     idp_id: String,
 
     /// protocol_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
     /// API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Protocol Body data
 #[derive(Args)]
 struct Protocol {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     mapping_id: String,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     remote_id_attribute: Option<String>,
 }
 

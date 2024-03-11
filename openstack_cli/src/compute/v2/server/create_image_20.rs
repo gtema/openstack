@@ -51,6 +51,9 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to create a snapshot of the image or the volume(s) of the
+    /// server.
+    ///
     #[command(flatten)]
     create_image: CreateImage,
 }
@@ -64,7 +67,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// CreateImage Body data
@@ -73,12 +80,12 @@ struct CreateImage {
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.
     ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// The display name of an Image.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 }
 

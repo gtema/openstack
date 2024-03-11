@@ -84,30 +84,102 @@ pub struct ImageCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long)]
+    /// Format of the image container.
+    ///
+    /// Values may vary based on the configuration available in a particular
+    /// OpenStack cloud. See the [Image Schema](#image-schema) response from
+    /// the cloud itself for the valid values available.
+    ///
+    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`, or
+    /// `docker`.
+    ///
+    /// The value might be `null` (JSON null data type).
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     container_format: Option<ContainerFormat>,
-    #[arg(long)]
+
+    /// The format of the disk.
+    ///
+    /// Values may vary based on the configuration available in a particular
+    /// OpenStack cloud. See the [Image Schema](#image-schema) response from
+    /// the cloud itself for the valid values available.
+    ///
+    /// Example formats are: `ami`, `ari`, `aki`, `vhd`, `vhdx`, `vmdk`, `raw`,
+    /// `qcow2`, `vdi`, `ploop` or `iso`.
+    ///
+    /// The value might be `null` (JSON null data type).
+    ///
+    /// **Newton changes**: The `vhdx` disk format is a supported value.
+    ///
+    /// **Ocata changes**: The `ploop` disk format is a supported value.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     disk_format: Option<DiskFormat>,
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+
+    /// A list of objects, each of which describes an image location. Each
+    /// object contains a `url` key, whose value is a URL specifying a
+    /// location, and a `metadata` key, whose value is a dict of key:value
+    /// pairs containing information appropriate to the use of whatever
+    /// external store is indicated by the URL. *This list appears only if the*
+    /// `show_multiple_locations` *option is set to* `true` *in the Image
+    /// service’s configuration file.* **Because it presents a security risk,
+    /// this option is disabled by default.**
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     locations: Option<Vec<Value>>,
-    #[arg(long)]
+
+    /// Amount of disk space in GB that is required to boot the image. The
+    /// value might be `null` (JSON null data type).
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     min_disk: Option<i32>,
-    #[arg(long)]
+
+    /// Amount of RAM in MB that is required to boot the image. The value might
+    /// be `null` (JSON null data type).
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     min_ram: Option<i32>,
-    #[arg(long)]
+
+    /// The name of the image. Value might be `null` (JSON null data type).
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
-    #[arg(action=clap::ArgAction::Set, long)]
+
+    /// This field controls whether an image is displayed in the default
+    /// image-list response. A “hidden” image is out of date somehow (for
+    /// example, it may not have the latest updates applied) and hence should
+    /// not be a user’s first choice, but it’s not deleted because it may be
+    /// needed for server rebuilds. By hiding it from the default image list,
+    /// it’s easier for end users to find and use a more up-to-date version of
+    /// this image. *(Since Image API v2.7)*
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     os_hidden: Option<bool>,
-    #[arg(long)]
+
+    /// An identifier for the owner of the image, usually the project (also
+    /// called the “tenant”) ID. The value might be `null` (JSON null data
+    /// type).
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     owner: Option<String>,
-    #[arg(action=clap::ArgAction::Set, long)]
+
+    /// A boolean value that must be `false` or the image cannot be deleted.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     protected: Option<bool>,
-    #[arg(action=clap::ArgAction::Append, long)]
+
+    /// List of tags for this image, possibly an empty list.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
-    #[arg(long)]
+
+    /// Image visibility, that is, the access permission for the image.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
     visibility: Option<Visibility>,
     /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, String)>>,
 }
 
@@ -120,7 +192,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 

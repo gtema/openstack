@@ -61,7 +61,7 @@ pub struct VolumesCommand {
 struct QueryParameters {
     /// Shows details for all project. Admin only.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     all_tenans: Option<bool>,
 
     /// Filters results by consumes_quota field. Resources that don’t use
@@ -70,13 +70,13 @@ struct QueryParameters {
     /// not be always possible in a cloud, see List Resource Filters to
     /// determine whether this filter is available in your cloud.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     consumes_quota: Option<bool>,
 
     /// Filters reuslts by a time that resources are created at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
@@ -84,34 +84,34 @@ struct QueryParameters {
     /// use the ID of the last-seen item from the response as the marker
     /// parameter value in a subsequent limited request.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
     /// The ID of the last-seen item. Use the limit parameter to make an
     /// initial limited request and use the ID of the last-seen item from the
     /// response as the marker parameter value in a subsequent limited request.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
     /// Used in conjunction with limit to return a slice of items. offset is
     /// where to start in the list.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
     /// form of \< key > \[: \< direction > \]. A valid direction is asc
     /// (ascending) or desc (descending).
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     sort: Option<String>,
 
     /// Sorts by one or more sets of attribute and sort direction combinations.
     /// If you omit the sort direction in a set, default is desc. Deprecated in
     /// favour of the combined sort parameter.
     ///
-    #[arg(long, value_parser = ["asc","desc"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
     /// Sorts by an attribute. A valid value is name, status, container_format,
@@ -119,18 +119,18 @@ struct QueryParameters {
     /// created_at. The API uses the natural sorting direction of the sort_key
     /// attribute value. Deprecated in favour of the combined sort parameter.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     sort_key: Option<String>,
 
     /// Filters reuslts by a time that resources are updated at with time
     /// comparison operators: gt/gte/eq/neq/lt/lte.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     updated_at: Option<String>,
 
     /// Whether to show count in API response or not, default is False.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     with_count: Option<bool>,
 }
 

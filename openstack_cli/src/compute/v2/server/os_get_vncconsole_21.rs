@@ -58,6 +58,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action.
+    ///
     #[command(flatten)]
     os_get_vncconsole: OsGetVncconsole,
 }
@@ -71,7 +73,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -86,7 +92,7 @@ enum Type {
 struct OsGetVncconsole {
     /// The type of VNC console. The only valid value is `novnc`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 }
 

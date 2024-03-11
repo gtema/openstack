@@ -54,6 +54,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to rebuild a server.
+    ///
     #[command(flatten)]
     rebuild: Rebuild,
 }
@@ -67,7 +69,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -82,18 +88,18 @@ enum OsDcfDiskConfig {
 struct Rebuild {
     /// IPv4 address that should be used to access this server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     access_ipv6: Option<String>,
 
     /// The administrative password of the server. If you omit this parameter,
     /// the operation generates a new password.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
     /// A free form description of the server. Limited to 255 characters in
@@ -101,7 +107,7 @@ struct Rebuild {
     ///
     /// **New in version 2.19**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The hostname to configure for the instance in the metadata service.
@@ -117,7 +123,7 @@ struct Rebuild {
     ///
     /// **New in version 2.90**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     hostname: Option<String>,
 
     /// The UUID of the image to rebuild for your server instance. It must be a
@@ -130,7 +136,7 @@ struct Rebuild {
     /// acceptable for the current compute host on which the server exists. If
     /// the new image is not valid, the server will go into `ERROR` status.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     image_ref: String,
 
     /// Key pair name for rebuild API. If `null` is specified, the existing
@@ -146,18 +152,18 @@ struct Rebuild {
     ///
     /// **New in version 2.54**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     key_name: Option<String>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
     ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// The server name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
@@ -177,7 +183,7 @@ struct Rebuild {
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// Indicates whether the server is rebuilt with the preservation of the
@@ -189,7 +195,7 @@ struct Rebuild {
     /// to any other server instance results in a fault and will prevent the
     /// rebuild from happening.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     preserve_ephemeral: Option<bool>,
 
     /// A list of trusted certificate IDs, which are used during image
@@ -203,7 +209,7 @@ struct Rebuild {
     ///
     /// **New in version 2.63**
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     trusted_image_certificates: Option<Vec<String>>,
 
     /// Configuration information or scripts to use upon rebuild. Must be
@@ -212,7 +218,7 @@ struct Rebuild {
     ///
     /// **New in version 2.57**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     user_data: Option<String>,
 }
 

@@ -58,7 +58,11 @@ pub struct ExtraSpecCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    /// A dictionary of the flavor’s extra-specs key-and-value pairs. It
+    /// appears in the os-extra-specs’ “create” REQUEST body, as well as the
+    /// os-extra-specs’ “create” and “list” RESPONSE body.
+    ///
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     extra_specs: Vec<(String, String)>,
 }
 
@@ -71,7 +75,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
     ///
-    #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_flavor_id",
+        value_name = "FLAVOR_ID"
+    )]
     flavor_id: String,
 }
 /// ExtraSpec response representation

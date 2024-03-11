@@ -65,22 +65,26 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/types/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// VolumeType Body data
 #[derive(Args)]
 struct VolumeType {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
     extra_specs: Option<Vec<(String, Option<String>)>>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     os_volume_type_access_is_public: Option<bool>,
 }
 

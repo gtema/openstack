@@ -48,7 +48,7 @@ pub struct TagCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Vec<String>,
 }
 
@@ -62,7 +62,11 @@ struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
     ///
-    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_floatingip_id",
+        value_name = "FLOATINGIP_ID"
+    )]
     floatingip_id: String,
 }
 /// Tag response representation

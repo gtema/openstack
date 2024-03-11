@@ -66,7 +66,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
     ///
-    #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_type_id",
+        value_name = "TYPE_ID"
+    )]
     type_id: String,
 }
 
@@ -79,16 +83,16 @@ enum ControlLocation {
 /// Encryption Body data
 #[derive(Args)]
 struct Encryption {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     cipher: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     control_location: ControlLocation,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     key_size: Option<Option<i32>>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     provider: String,
 }
 

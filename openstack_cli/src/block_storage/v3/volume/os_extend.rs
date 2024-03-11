@@ -64,13 +64,17 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// OsExtend Body data
 #[derive(Args)]
 struct OsExtend {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     new_size: i32,
 }
 

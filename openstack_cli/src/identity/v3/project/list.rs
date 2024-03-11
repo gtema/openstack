@@ -61,30 +61,30 @@ pub struct ProjectsCommand {
 struct QueryParameters {
     /// Filters the response by a domain ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     domain_id: Option<String>,
 
     /// If set to true, then only enabled projects will be returned. Any value
     /// other than 0 (including no value) will be interpreted as true.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// If this is specified as true, then only projects acting as a domain are
     /// included. Otherwise, only projects that are not acting as a domain are
     /// included.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     is_domain: Option<bool>,
 
     /// Filters the response by a resource name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// Filters the response by a parent ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     parent_id: Option<String>,
 }
 

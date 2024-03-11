@@ -56,6 +56,8 @@ pub struct KeypairCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// Keypair object
+    ///
     #[command(flatten)]
     keypair: Keypair,
 }
@@ -85,20 +87,20 @@ struct Keypair {
     /// `[a-zA-Z]`, digits `[0-9]` and the following special characters:
     /// `[@._- ]`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// The public ssh key to import. Was optional before microversion 2.92 :
     /// if you were omitting this value, a keypair was generated for you.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     public_key: Option<String>,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     _type: Option<Type>,
 
     /// The user_id for a keypair. This allows administrative users to upload
@@ -106,7 +108,7 @@ struct Keypair {
     ///
     /// **New in version 2.10**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     user_id: Option<String>,
 }
 
