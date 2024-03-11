@@ -72,97 +72,97 @@ pub struct SubnetsCommand {
 struct QueryParameters {
     /// cidr query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     cidr: Option<String>,
 
     /// description query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// enable_dhcp query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enable_dhcp: Option<bool>,
 
     /// gateway_ip query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     gateway_ip: Option<String>,
 
     /// id query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// ip_version query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     ip_version: Option<i32>,
 
     /// ipv6_address_mode query parameter for /v2.0/subnets API
     ///
-    #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_address_mode: Option<String>,
 
     /// ipv6_ra_mode query parameter for /v2.0/subnets API
     ///
-    #[arg(long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["dhcpv6-stateful","dhcpv6-stateless","slaac"])]
     ipv6_ra_mode: Option<String>,
 
     /// name query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// network_id query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     network_id: Option<String>,
 
     /// not-tags query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// revision_number query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// segment_id query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     segment_id: Option<String>,
 
     /// shared query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
 
     /// subnetpool_id query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     subnetpool_id: Option<String>,
 
     /// tags query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/subnets API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/subnets API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
 

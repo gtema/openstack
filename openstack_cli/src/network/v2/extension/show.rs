@@ -66,7 +66,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.0/extensions/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Extension response representation

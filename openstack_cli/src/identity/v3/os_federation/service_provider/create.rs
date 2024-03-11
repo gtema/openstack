@@ -64,28 +64,32 @@ struct QueryParameters {}
 struct PathParameters {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
     ///
-    #[arg(id = "path_param_sp_id", value_name = "SP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_sp_id",
+        value_name = "SP_ID"
+    )]
     sp_id: String,
 }
 /// ServiceProvider Body data
 #[derive(Args)]
 struct ServiceProvider {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     auth_url: String,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     relay_state_prefix: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     sp_url: String,
 }
 

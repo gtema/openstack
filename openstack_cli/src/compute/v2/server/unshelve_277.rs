@@ -52,6 +52,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action.
+    ///
     #[command(flatten)]
     unshelve: Option<Unshelve>,
 }
@@ -65,13 +67,17 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Unshelve Body data
 #[derive(Args)]
 struct Unshelve {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     availability_zone: String,
 }
 

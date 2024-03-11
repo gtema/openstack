@@ -57,6 +57,8 @@ pub struct InterfaceCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// Specify the `interfaceAttachment` action in the request body.
+    ///
     #[command(flatten)]
     interface_attachment: InterfaceAttachment,
 }
@@ -70,7 +72,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 }
 /// InterfaceAttachment Body data
@@ -79,7 +85,7 @@ struct InterfaceAttachment {
     /// Fixed IP addresses. If you request a specific fixed IP address without
     /// a `net_id`, the request returns a `Bad Request (400)` response code.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     fixed_ips: Option<Vec<String>>,
 
     /// The ID of the network for which you want to create a port interface.
@@ -88,7 +94,7 @@ struct InterfaceAttachment {
     /// uses the network information cache that is associated with the
     /// instance.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     net_id: Option<String>,
 
     /// The ID of the port for which you want to create an interface. The
@@ -96,7 +102,7 @@ struct InterfaceAttachment {
     /// specify the `port_id` parameter, the OpenStack Networking API v2.0
     /// allocates a port and creates an interface for it on the network.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 }
 

@@ -52,7 +52,7 @@ pub struct ExtraSpecCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
     extra_specs: Vec<(String, Option<String>)>,
 }
 
@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
     ///
-    #[arg(id = "path_param_type_id", value_name = "TYPE_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_type_id",
+        value_name = "TYPE_ID"
+    )]
     type_id: String,
 }
 /// ExtraSpec response representation

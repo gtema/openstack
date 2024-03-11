@@ -68,7 +68,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Flavor response representation

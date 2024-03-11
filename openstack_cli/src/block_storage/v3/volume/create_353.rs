@@ -54,8 +54,13 @@ pub struct VolumeCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    /// The dictionary of data to send to the scheduler.
+    ///
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     os_sch_hnt_scheduler_hints: Option<Vec<(String, Value)>>,
+
+    /// A `volume` object.
+    ///
     #[command(flatten)]
     volume: Volume,
 }
@@ -72,48 +77,48 @@ struct PathParameters {}
 struct Volume {
     /// The name of the availability zone.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
     /// The UUID of the backup.
     ///
     /// **New in version 3.47**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     backup_id: Option<String>,
 
     /// The UUID of the consistency group.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     consistencygroup_id: Option<String>,
 
     /// The volume description.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     display_description: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     display_name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     group_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     image_id: Option<String>,
 
     /// The UUID of the image from which you want to create the volume.
     /// Required to create a bootable volume.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     image_ref: Option<String>,
 
     /// One or more metadata key and value pairs to be associated with the new
     /// volume.
     ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
     /// To enable this volume to attach to more than one server, set this value
@@ -121,27 +126,27 @@ struct Volume {
     /// volumes depends on the volume type being used. See
     /// [valid boolean values](#valid-boolean-values)
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     multiattach: Option<Option<bool>>,
 
     /// The volume name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     size: Option<Option<i32>>,
 
     /// The UUID of the consistency group.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     snapshot_id: Option<String>,
 
     /// The UUID of the consistency group.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     source_volid: Option<String>,
 
     /// The volume type (either name or ID). To create an environment with
@@ -155,7 +160,7 @@ struct Volume {
     /// volume types to create multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     volume_type: Option<String>,
 }
 

@@ -57,6 +57,8 @@ pub struct ProjectCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `project` object
+    ///
     #[command(flatten)]
     project: Project,
 }
@@ -71,14 +73,18 @@ struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Options Body data
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct Options {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     immutable: Option<bool>,
 }
 
@@ -87,29 +93,29 @@ struct Options {
 struct Project {
     /// The description of the project.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the domain for the project.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     is_domain: Option<bool>,
 
     /// The name of the project.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The resource options for the project. Available resource options are
@@ -122,12 +128,12 @@ struct Project {
     ///
     /// **New in version 3.4**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     parent_id: Option<String>,
 
     /// A list of simple strings assigned to a project.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 }
 
@@ -230,6 +236,7 @@ impl ProjectCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters

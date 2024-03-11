@@ -59,7 +59,7 @@ pub struct ServicesCommand {
 struct QueryParameters {
     /// Filters the response by a domain ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     service: Option<String>,
 }
 

@@ -66,7 +66,7 @@ pub struct HypervisorCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     with_servers: Option<bool>,
 }
 
@@ -75,7 +75,11 @@ struct QueryParameters {
 struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Hypervisor response representation

@@ -65,7 +65,7 @@ struct QueryParameters {
     /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
     /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     password_expires_at: Option<String>,
 }
 
@@ -74,7 +74,11 @@ struct QueryParameters {
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
     ///
-    #[arg(id = "path_param_group_id", value_name = "GROUP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_group_id",
+        value_name = "GROUP_ID"
+    )]
     group_id: String,
 }
 /// Users response representation

@@ -52,7 +52,7 @@ pub struct MetadataCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     meta: Vec<(String, String)>,
 }
 
@@ -65,12 +65,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
     ///
-    #[arg(id = "path_param_volume_id", value_name = "VOLUME_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_volume_id",
+        value_name = "VOLUME_ID"
+    )]
     volume_id: String,
 
     /// id parameter for /v3/volumes/{volume_id}/metadata/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Metadata response representation

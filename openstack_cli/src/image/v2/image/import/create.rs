@@ -119,13 +119,29 @@ pub struct ImportCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    /// When set to True the data will be imported to the set of stores you may
+    /// consume from this particular deployment of Glance (ie: the same set of
+    /// stores returned to a call to /v2/info/stores on the glance-api the
+    /// request hits). This can’t be used simultaneously with the `stores`
+    /// parameter.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     all_stores: Option<bool>,
-    #[arg(action=clap::ArgAction::Set, long)]
+
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     all_stores_must_success: Option<bool>,
+
+    /// A JSON object indicating what import method you wish to use to import
+    /// your image. The content of this JSON object is another JSON object with
+    /// a `name` field whose value is the identifier for the import method.
+    ///
     #[command(flatten)]
     method: Option<Method>,
-    #[arg(action=clap::ArgAction::Append, long)]
+
+    /// If present contains the list of store id to import the image binary
+    /// data to.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     stores: Option<Vec<String>>,
 }
 
@@ -138,25 +154,29 @@ struct QueryParameters {}
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///
-    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_image_id",
+        value_name = "IMAGE_ID"
+    )]
     image_id: String,
 }
 /// Method Body data
 #[derive(Args)]
 struct Method {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     glance_image_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     glance_region: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     glance_service_interface: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     uri: Option<String>,
 }
 

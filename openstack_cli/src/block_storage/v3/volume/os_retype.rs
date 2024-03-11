@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -78,10 +82,10 @@ enum MigrationPolicy {
 /// OsRetype Body data
 #[derive(Args)]
 struct OsRetype {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     migration_policy: Option<MigrationPolicy>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     new_type: String,
 }
 

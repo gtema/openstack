@@ -87,8 +87,31 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The dictionary of data to send to the scheduler. Alternatively, you can
+    /// specify `OS-SCH-HNT:scheduler_hints` as the key in the request body.
+    ///
+    /// Note
+    ///
+    /// This is a top-level key in the request body, not part of the server
+    /// portion of the request body.
+    ///
+    /// There are a few caveats with scheduler hints:
+    ///
+    /// - The request validation schema is per hint. For example, some require
+    ///   a single string value, and some accept a list of values.
+    /// - Hints are only used based on the cloud scheduler configuration, which
+    ///   varies per deployment.
+    /// - Hints are pluggable per deployment, meaning that a cloud can have
+    ///   custom hints which may not be available in another cloud.
+    ///
+    /// For these reasons, it is important to consult each cloud’s user
+    /// documentation to know what is available for scheduler hints.
+    ///
     #[command(flatten)]
     os_scheduler_hints: Option<OsSchedulerHints>,
+
+    /// A `server` object.
+    ///
     #[command(flatten)]
     server: Server,
 }
@@ -111,13 +134,13 @@ enum NetworksStringEnum {
 #[derive(Args)]
 #[group(required = true, multiple = false)]
 struct NetworksEnumGroupStruct {
-    #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
+    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Body parameters", long, required=false)]
     auto_networks: bool,
 
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     networks: Option<Vec<Value>>,
 
-    #[arg(action=clap::ArgAction::SetTrue, long, required=false)]
+    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Body parameters", long, required=false)]
     none_networks: bool,
 }
 
@@ -132,28 +155,28 @@ enum OsDcfDiskConfig {
 struct Server {
     /// IPv4 address that should be used to access this server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     access_ipv6: Option<String>,
 
     /// The administrative password of the server. If you omit this parameter,
     /// the operation generates a new password.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     block_device_mapping: Option<Vec<Value>>,
 
     /// Enables fine grained control of the block device mapping for an
@@ -182,7 +205,7 @@ struct Server {
     /// A bug has caused the `tag` attribute to no longer be accepted starting
     /// with version 2.33. It has been restored in version 2.42.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     block_device_mapping_v2: Option<Vec<Value>>,
 
     /// Indicates whether a config drive enables metadata injection. The
@@ -193,7 +216,7 @@ struct Server {
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     config_drive: Option<bool>,
 
     /// A free form description of the server. Limited to 255 characters in
@@ -201,46 +224,46 @@ struct Server {
     ///
     /// **New in version 2.19**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The flavor reference, as an ID (including a UUID) or full URL, for the
     /// flavor for your server instance.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     flavor_ref: String,
 
     /// The UUID of the image to use for your server instance. This is not
     /// required in case of boot from volume. In all other cases it is required
     /// and must be a valid UUID otherwise API will return 400.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     image_ref: Option<String>,
 
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     key_name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     max_count: Option<i32>,
 
     /// Metadata key and value pairs. The maximum size of the metadata key and
     /// value is 255 bytes each.
     ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     min_count: Option<i32>,
 
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// A list of `network` object. Required parameter when there are multiple
@@ -301,7 +324,7 @@ struct Server {
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// Indicates whether a config drive enables metadata injection. The
@@ -312,7 +335,7 @@ struct Server {
     /// all cloud providers enable the `config_drive`. Read more in the
     /// [OpenStack End User Guide](https://docs.openstack.org/nova/latest/user/config-drive.html).
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     return_reservation_id: Option<bool>,
 
     /// One or more security groups. Specify the name of the security group in
@@ -320,7 +343,7 @@ struct Server {
     /// server in the `default` security group. Requested security groups are
     /// not applied to pre-existing ports.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     security_groups: Option<Vec<String>>,
 
     /// A list of tags. Tags have the following restrictions:
@@ -335,7 +358,7 @@ struct Server {
     ///
     /// **New in version 2.52**
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
     /// Configuration information or scripts to use upon launch. Must be Base64
@@ -346,7 +369,7 @@ struct Server {
     /// The `null` value allowed in Nova legacy v2 API, but due to the strict
     /// input validation, it isn’t allowed in Nova v2.1 API.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     user_data: Option<String>,
 }
 
@@ -357,7 +380,7 @@ struct OsSchedulerHints {
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     build_near_host_ip: Option<String>,
 
     /// Schedule the server on a host in the network specified with an IP
@@ -366,7 +389,7 @@ struct OsSchedulerHints {
     /// parameter is omitted, `/24` is used. It is available when
     /// `SimpleCIDRAffinityFilter` is available on cloud side.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     cidr: Option<String>,
 
     /// A list of cell routes or a cell route (string). Schedule the server in
@@ -374,14 +397,14 @@ struct OsSchedulerHints {
     /// `DifferentCellFilter` is available on cloud side that is cell v1
     /// environment.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     different_cell: Option<Vec<String>>,
 
     /// A list of server UUIDs or a server UUID. Schedule the server on a
     /// different host from a set of servers. It is available when
     /// `DifferentHostFilter` is available on cloud side.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     different_host: Option<Vec<String>>,
 
     /// The server group UUID. Schedule the server according to a policy of the
@@ -390,7 +413,7 @@ struct OsSchedulerHints {
     /// `ServerGroupAntiAffinityFilter`, `ServerGroupSoftAntiAffinityWeigher`,
     /// `ServerGroupSoftAffinityWeigher` are available on cloud side.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     group: Option<String>,
 
     /// Schedule the server by using a custom filter in JSON format. For
@@ -403,21 +426,21 @@ struct OsSchedulerHints {
     ///
     /// It is available when `JsonFilter` is available on cloud side.
     ///
-    #[arg(long, value_name="JSON", value_parser=parse_json)]
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     query: Option<Value>,
 
     /// A list of server UUIDs or a server UUID. Schedule the server on the
     /// same host as another server in a set of servers. It is available when
     /// `SameHostFilter` is available on cloud side.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     same_host: Option<Vec<String>>,
 
     /// A target cell name. Schedule the server in a host in the cell
     /// specified. It is available when `TargetCellFilter` is available on
     /// cloud side that is cell v1 environment.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     target_cell: Option<String>,
 }
 
@@ -554,14 +577,14 @@ impl ServerCommand {
                 .collect();
             server_builder.networks(create_257::NetworksEnum::F1(networks_builder));
         }
-        if args.networks.auto_networks {
-            server_builder.networks(create_257::NetworksEnum::F2(
-                create_257::NetworksStringEnum::Auto,
-            ));
-        }
         if args.networks.none_networks {
             server_builder.networks(create_257::NetworksEnum::F2(
                 create_257::NetworksStringEnum::None,
+            ));
+        }
+        if args.networks.auto_networks {
+            server_builder.networks(create_257::NetworksEnum::F2(
+                create_257::NetworksStringEnum::Auto,
             ));
         }
 

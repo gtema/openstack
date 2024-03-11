@@ -77,97 +77,97 @@ pub struct PortsCommand {
 struct QueryParameters {
     /// admin_state_up query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     admin_state_up: Option<bool>,
 
     /// binding:host_id query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     binding_host_id: Option<String>,
 
     /// description query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// device_id query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     device_id: Option<String>,
 
     /// device_owner query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     device_owner: Option<String>,
 
     /// fixed_ips query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     fixed_ips: Option<Vec<String>>,
 
     /// id query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// ip_allocation query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     ip_allocation: Option<String>,
 
     /// mac_address query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     mac_address: Option<String>,
 
     /// name query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// network_id query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     network_id: Option<String>,
 
     /// not-tags query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// revision_number query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// security_groups query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     security_groups: Option<Vec<String>>,
 
     /// status query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
     /// tags query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/ports API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/ports API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
 

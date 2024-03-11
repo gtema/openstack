@@ -59,7 +59,7 @@ pub struct RegionsCommand {
 struct QueryParameters {
     /// Filters the response by a parent region, by ID.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     parent_region_id: Option<String>,
 }
 

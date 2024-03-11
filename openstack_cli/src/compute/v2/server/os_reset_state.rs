@@ -63,6 +63,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action.
+    ///
     #[command(flatten)]
     os_reset_state: OsResetState,
 }
@@ -76,7 +78,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -91,7 +97,7 @@ enum State {
 struct OsResetState {
     /// The state of the server to be set, `active` or `error` are valid.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     state: State,
 }
 

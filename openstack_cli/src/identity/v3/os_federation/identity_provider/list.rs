@@ -56,12 +56,12 @@ pub struct IdentityProvidersCommand {
 struct QueryParameters {
     /// Filter for Identity Providers’ enabled attribute
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
     /// Filter for Identity Providers’ ID attribute
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 }
 

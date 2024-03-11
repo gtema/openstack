@@ -61,12 +61,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
     ///
-    #[arg(id = "path_param_image_id", value_name = "IMAGE_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_image_id",
+        value_name = "IMAGE_ID"
+    )]
     image_id: String,
 
     /// tag_value parameter for /v2/images/{image_id}/tags/{tag_value} API
     ///
-    #[arg(id = "path_param_tag_value", value_name = "TAG_VALUE")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_tag_value",
+        value_name = "TAG_VALUE"
+    )]
     tag_value: String,
 }
 /// Tag response representation

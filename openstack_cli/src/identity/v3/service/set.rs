@@ -58,6 +58,8 @@ pub struct ServiceCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `service` object.
+    ///
     #[command(flatten)]
     service: Service,
 }
@@ -71,7 +73,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// service_id parameter for /v3/services/{service_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Service Body data
@@ -79,7 +85,7 @@ struct PathParameters {
 struct Service {
     /// The service description.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// Defines whether the service and its endpoints appear in the service
@@ -87,18 +93,18 @@ struct Service {
     /// service catalog. - `true`. The service and its endpoints appear in the
     /// service catalog. Default is `true`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// The service name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     _type: Option<String>,
 }
 
@@ -159,6 +165,7 @@ impl ServiceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters

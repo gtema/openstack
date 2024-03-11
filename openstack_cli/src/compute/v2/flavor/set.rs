@@ -66,6 +66,9 @@ pub struct FlavorCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The ID and links for the flavor for your server instance. A flavor is a
+    /// combination of memory, disk size, and CPUs.
+    ///
     #[command(flatten)]
     flavor: Flavor,
 }
@@ -79,7 +82,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/flavors/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Flavor Body data
@@ -88,7 +95,7 @@ struct Flavor {
     /// A free form description of the flavor. Limited to 65535 characters in
     /// length. Only printable characters are allowed.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: String,
 }
 
@@ -203,6 +210,7 @@ impl FlavorCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set::Request::builder();
 
         // Set path parameters

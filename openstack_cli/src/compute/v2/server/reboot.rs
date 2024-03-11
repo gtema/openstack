@@ -75,6 +75,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to reboot a server.
+    ///
     #[command(flatten)]
     reboot: Reboot,
 }
@@ -88,7 +90,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -106,7 +112,7 @@ struct Reboot {
     /// A `HARD` reboot attempts a forced shutdown and restart of the server.
     /// The `HARD` reboot corresponds to the power cycles of the server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 }
 

@@ -98,7 +98,11 @@ struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/add_allowed_address_pairs
     /// API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -136,7 +140,7 @@ struct Port {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     admin_state_up: Option<bool>,
 
     /// A set of zero or more allowed address pair objects each where address
@@ -147,13 +151,13 @@ struct Port {
     /// connected to the port can send a packet with source address which
     /// matches one of the specified allowed address pairs.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     allowed_address_pairs: Option<Vec<Value>>,
 
     /// The ID of the host where the port resides. The default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     binding_host_id: Option<String>,
 
     /// A dictionary that enables the application running on the specific host
@@ -173,7 +177,7 @@ struct Port {
     /// `mac_address` field of the port resource will be updated to the MAC
     /// from the active binding.
     ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     binding_profile: Option<Vec<(String, Value)>>,
 
     /// The type of vNIC which this port should be attached to. This is used to
@@ -183,47 +187,47 @@ struct Port {
     /// `remote-managed`. What type of vNIC is actually available depends on
     /// deployments. The default is `normal`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     binding_vnic_type: Option<BindingVnicType>,
 
     /// Status of the underlying data plane of a port.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     data_plane_status: Option<DataPlaneStatus>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the device that uses this port. For example, a server
     /// instance or a logical router.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     device_id: Option<String>,
 
     /// The entity type that uses this port. For example, `compute:nova`
     /// (server instance), `network:dhcp` (DHCP agent) or
     /// `network:router_interface` (router interface).
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     device_owner: Option<String>,
 
     /// A valid DNS domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     dns_domain: Option<String>,
 
     /// A valid DNS name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     dns_name: Option<String>,
 
     /// A set of zero or more extra DHCP option pairs. An option pair consists
     /// of an option value and name.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     extra_dhcp_opts: Option<Vec<Value>>,
 
     /// The IP addresses for the port. If you would like to assign multiple IP
@@ -240,7 +244,7 @@ struct Port {
     ///   allocate the IP address if the address is a valid IP for any of the
     ///   subnets on the specified network.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     fixed_ips: Option<Vec<Value>>,
 
     /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
@@ -253,24 +257,24 @@ struct Port {
     /// If omitted the default is defined by Open vSwitch. The field cannot be
     /// longer than 4095 characters.
     ///
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     hints: Option<Vec<(String, Value)>>,
 
     /// The MAC address of the port. By default, only administrative users and
     /// users with advsvc role can change this value.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     mac_address: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     numa_affinity_policy: Option<NumaAffinityPolicy>,
 
     /// The port security status. A valid value is enabled (`true`) or disabled
@@ -278,17 +282,17 @@ struct Port {
     /// rules and anti-spoofing rules are applied to the traffic on the port.
     /// If disabled, no such rules are applied.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     port_security_enabled: Option<bool>,
 
     /// QoS policy associated with the port.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 
     /// The IDs of security groups applied to the port.
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     security_groups: Option<Vec<String>>,
 }
 

@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -78,16 +82,16 @@ enum Mode {
 /// OsAttach Body data
 #[derive(Args)]
 struct OsAttach {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     host_name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     instance_uuid: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     mode: Option<Mode>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     mountpoint: String,
 }
 

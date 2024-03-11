@@ -67,7 +67,11 @@ struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Project response representation

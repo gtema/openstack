@@ -65,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Group response representation

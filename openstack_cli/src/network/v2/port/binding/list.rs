@@ -59,22 +59,22 @@ pub struct BindingsCommand {
 struct QueryParameters {
     /// host query parameter for /v2.0/ports/{port_id}/bindings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     host: Option<String>,
 
     /// status query parameter for /v2.0/ports/{port_id}/bindings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
     /// vif_type query parameter for /v2.0/ports/{port_id}/bindings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     vif_type: Option<String>,
 
     /// vnic_type query parameter for /v2.0/ports/{port_id}/bindings API
     ///
-    #[arg(long, value_parser = ["accelerator-direct","accelerator-direct-physical","baremetal","direct","direct-physical","macvtap","normal","remote-managed","smart-nic","vdpa","virtio-forwarder"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["accelerator-direct","accelerator-direct-physical","baremetal","direct","direct-physical","macvtap","normal","remote-managed","smart-nic","vdpa","virtio-forwarder"])]
     vnic_type: Option<String>,
 }
 
@@ -83,7 +83,11 @@ struct QueryParameters {
 struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     ///
-    #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_port_id",
+        value_name = "PORT_ID"
+    )]
     port_id: String,
 }
 /// Bindings response representation

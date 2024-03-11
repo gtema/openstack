@@ -62,12 +62,20 @@ struct PathParameters {
     /// floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id}
     /// API
     ///
-    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_floatingip_id",
+        value_name = "FLOATINGIP_ID"
+    )]
     floatingip_id: String,
 
     /// id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Tag response representation

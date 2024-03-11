@@ -70,37 +70,37 @@ struct QueryParameters {
     /// description query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// external_port query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     external_port: Option<f32>,
 
     /// external_port_range query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     external_port_range: Option<f32>,
 
     /// id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// internal_port_id query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     internal_port_id: Option<String>,
 
     /// protocol query parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings API
     ///
-    #[arg(long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["dccp","icmp","ipv6-icmp","sctp","tcp","udp"])]
     protocol: Option<String>,
 }
 
@@ -110,7 +110,11 @@ struct PathParameters {
     /// floatingip_id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
     ///
-    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_floatingip_id",
+        value_name = "FLOATINGIP_ID"
+    )]
     floatingip_id: String,
 }
 /// PortForwardings response representation

@@ -66,28 +66,32 @@ struct PathParameters {
     /// idp_id parameter for
     /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
     ///
-    #[arg(id = "path_param_idp_id", value_name = "IDP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_idp_id",
+        value_name = "IDP_ID"
+    )]
     idp_id: String,
 }
 /// IdentityProvider Body data
 #[derive(Args)]
 struct IdentityProvider {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     authorization_ttl: Option<Option<i32>>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     remote_ids: Option<Vec<String>>,
 }
 

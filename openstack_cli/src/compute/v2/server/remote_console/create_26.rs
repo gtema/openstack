@@ -60,6 +60,8 @@ pub struct RemoteConsoleCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The remote console object.
+    ///
     #[command(flatten)]
     remote_console: RemoteConsole,
 }
@@ -73,7 +75,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 }
 
@@ -101,14 +107,14 @@ struct RemoteConsole {
     /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
     /// Microversion `2.8`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     protocol: Protocol,
 
     /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
     /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
     /// Microversion `2.8`.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 }
 

@@ -66,12 +66,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// port_id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     ///
-    #[arg(id = "path_param_port_id", value_name = "PORT_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_port_id",
+        value_name = "PORT_ID"
+    )]
     port_id: String,
 
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -93,13 +101,13 @@ enum VnicType {
 /// Binding Body data
 #[derive(Args)]
 struct Binding {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
 
-    #[arg(long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     profile: Option<Vec<(String, Value)>>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     vnic_type: Option<VnicType>,
 }
 

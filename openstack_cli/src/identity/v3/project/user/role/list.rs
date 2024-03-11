@@ -66,13 +66,21 @@ struct PathParameters {
     /// project_id parameter for
     /// /v3/projects/{project_id}/groups/{group_id}/roles API
     ///
-    #[arg(id = "path_param_project_id", value_name = "PROJECT_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_project_id",
+        value_name = "PROJECT_ID"
+    )]
     project_id: String,
 
     /// user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles
     /// API
     ///
-    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_user_id",
+        value_name = "USER_ID"
+    )]
     user_id: String,
 }
 /// Roles response representation

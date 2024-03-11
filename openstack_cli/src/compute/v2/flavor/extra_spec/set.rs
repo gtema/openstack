@@ -59,6 +59,7 @@ pub struct ExtraSpecCommand {
     path: PathParameters,
 
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, String>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, String)>>,
 }
 
@@ -71,12 +72,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
     ///
-    #[arg(id = "path_param_flavor_id", value_name = "FLAVOR_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_flavor_id",
+        value_name = "FLAVOR_ID"
+    )]
     flavor_id: String,
 
     /// id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// ExtraSpec response representation

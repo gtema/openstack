@@ -67,7 +67,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// region_id parameter for /v3/regions/{region_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Region response representation

@@ -60,17 +60,17 @@ pub struct AvailabilityZonesCommand {
 struct QueryParameters {
     /// name query parameter for /v2.0/availability_zones API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// resource query parameter for /v2.0/availability_zones API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     resource: Option<String>,
 
     /// state query parameter for /v2.0/availability_zones API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     state: Option<String>,
 }
 

@@ -72,57 +72,57 @@ pub struct RoutersCommand {
 struct QueryParameters {
     /// admin_state_up query parameter for /v2.0/routers API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     admin_state_up: Option<bool>,
 
     /// description query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// enable_ndp_proxy query parameter for /v2.0/routers API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enable_ndp_proxy: Option<bool>,
 
     /// id query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// name query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// not-tags query parameter for /v2.0/routers API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/routers API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// revision_number query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// tags query parameter for /v2.0/routers API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/routers API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/routers API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
 

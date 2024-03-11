@@ -60,7 +60,7 @@ pub struct KeypairCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     user_id: Option<String>,
 }
 
@@ -69,7 +69,11 @@ struct QueryParameters {
 struct PathParameters {
     /// id parameter for /v2.1/os-keypairs/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Keypair response representation

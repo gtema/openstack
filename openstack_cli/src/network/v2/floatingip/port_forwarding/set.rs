@@ -71,13 +71,21 @@ struct PathParameters {
     /// floatingip_id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
     ///
-    #[arg(id = "path_param_floatingip_id", value_name = "FLOATINGIP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_floatingip_id",
+        value_name = "FLOATINGIP_ID"
+    )]
     floatingip_id: String,
 
     /// id parameter for
     /// /v2.0/floatingips/{floatingip_id}/port_forwardings/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -94,48 +102,48 @@ enum Protocol {
 /// PortForwarding Body data
 #[derive(Args)]
 struct PortForwarding {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
     /// floating IP address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     external_port: Option<Option<f32>>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
     /// IP address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     external_port_range: Option<f32>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP port forwarding.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     internal_ip_address: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     internal_port: Option<Option<f32>>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     internal_port_id: Option<String>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     internal_port_range: Option<f32>,
 
     /// The IP protocol used in the floating IP port forwarding.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     protocol: Option<Protocol>,
 }
 

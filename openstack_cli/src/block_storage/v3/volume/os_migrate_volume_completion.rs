@@ -64,16 +64,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v3/volumes/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// OsMigrateVolumeCompletion Body data
 #[derive(Args)]
 struct OsMigrateVolumeCompletion {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     error: Option<Option<bool>>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     new_volume: String,
 }
 

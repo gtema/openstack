@@ -54,7 +54,9 @@ pub struct TagCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(action=clap::ArgAction::Append, long)]
+    /// A list of tags. The maximum count of tags in this list is 50.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Vec<String>,
 }
 
@@ -67,7 +69,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 }
 /// Tag response representation

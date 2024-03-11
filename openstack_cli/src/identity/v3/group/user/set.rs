@@ -65,12 +65,20 @@ struct QueryParameters {}
 struct PathParameters {
     /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
     ///
-    #[arg(id = "path_param_group_id", value_name = "GROUP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_group_id",
+        value_name = "GROUP_ID"
+    )]
     group_id: String,
 
     /// user_id parameter for /v3/groups/{group_id}/users/{user_id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// User response representation

@@ -60,6 +60,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `server` object.
+    ///
     #[command(flatten)]
     server: Server,
 }
@@ -73,7 +75,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -88,12 +94,12 @@ enum OsDcfDiskConfig {
 struct Server {
     /// IPv4 address that should be used to access this server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     access_ipv6: Option<String>,
 
     /// A free form description of the server. Limited to 255 characters in
@@ -101,7 +107,7 @@ struct Server {
     ///
     /// **New in version 2.19**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The hostname to configure for the instance in the metadata service.
@@ -117,12 +123,12 @@ struct Server {
     ///
     /// **New in version 2.90**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     hostname: Option<String>,
 
     /// The server name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
@@ -142,7 +148,7 @@ struct Server {
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 }
 
@@ -750,6 +756,7 @@ impl ServerCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
         let find_data: serde_json::Value = find(find_ep).query_async(client).await?;
+
         let mut ep_builder = set_294::Request::builder();
         ep_builder.header("OpenStack-API-Version", "compute 2.94");
 

@@ -62,6 +62,8 @@ pub struct TokenCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// An `auth` object.
+    ///
     #[command(flatten)]
     auth: Auth,
 }
@@ -88,12 +90,12 @@ enum Methods {
 struct Domain {
     /// User Domain ID
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// User Domain Name
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -108,19 +110,19 @@ struct User {
 
     /// The ID of the user. Required if you do not specify the user name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name. Required if you do not specify the ID of the user. If
     /// you specify the user name, you must also specify the domain, by ID or
     /// name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// User Password
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
 }
 
@@ -140,7 +142,7 @@ struct Password {
 struct Token {
     /// Authorization Token value
     ///
-    #[arg(long, required = false)]
+    #[arg(help_heading = "Body parameters", long, required = false)]
     id: Option<String>,
 }
 
@@ -148,10 +150,10 @@ struct Token {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct UserDomainStructInput {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -164,17 +166,17 @@ struct TotpUser {
 
     /// The user ID
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// MFA passcode
     ///
-    #[arg(long, required = false)]
+    #[arg(help_heading = "Body parameters", long, required = false)]
     passcode: Option<String>,
 }
 
@@ -195,12 +197,12 @@ struct ApplicationCredentialUser {
 
     /// The user ID
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The user name
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -208,15 +210,15 @@ struct ApplicationCredentialUser {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct ApplicationCredential {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
     /// The secret for authenticating the application credential.
     ///
-    #[arg(long, required = false)]
+    #[arg(help_heading = "Body parameters", long, required = false)]
     secret: Option<String>,
 
     /// A user object, required if an application credential is identified by
@@ -238,7 +240,7 @@ struct Identity {
     /// The authentication method. For password authentication, specify
     /// `password`.
     ///
-    #[arg(action=clap::ArgAction::Append, long, required=false)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, required=false)]
     methods: Vec<Methods>,
 
     /// The `password` object, contains the authentication information.
@@ -263,12 +265,12 @@ struct Identity {
 struct ProjectDomain {
     /// Project domain Id
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// Project domain name
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -281,12 +283,12 @@ struct Project {
 
     /// Project Id
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// Project Name
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -296,12 +298,12 @@ struct Project {
 struct ScopeDomain {
     /// Domain id
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// Domain name
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 }
 
@@ -309,7 +311,7 @@ struct ScopeDomain {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct OsTrustTrust {
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 }
 
@@ -317,7 +319,7 @@ struct OsTrustTrust {
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct System {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     all: Option<bool>,
 }
 

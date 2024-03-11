@@ -60,7 +60,7 @@ pub struct ApplicationCredentialsCommand {
 struct QueryParameters {
     /// The name of the application credential. Must be unique to a user.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 }
 
@@ -70,7 +70,11 @@ struct PathParameters {
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
     ///
-    #[arg(id = "path_param_user_id", value_name = "USER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_user_id",
+        value_name = "USER_ID"
+    )]
     user_id: String,
 }
 /// ApplicationCredentials response representation

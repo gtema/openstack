@@ -74,175 +74,175 @@ pub struct ServersCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     access_ip_v4: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     access_ip_v6: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     all_tenants: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     auto_disk_config: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     availability_zone: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     block_device_mapping: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     changes_before: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     changes_since: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     config_drive: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     created_at: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     deleted: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     display_description: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     display_name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     flavor: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     host: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     hostname: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     image: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     image_ref: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     info_cache: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     ip: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     ip6: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     kernel_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     key_name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     launch_index: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     launched_at: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     locked: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     locked_by: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     metadata: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     node: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     not_tags: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     not_tags_any: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     pci_devices: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     power_state: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     progress: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     project_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     ramdisk_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     reservation_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     root_device_name: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     security_groups: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     services: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     soft_deleted: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     sort_dir: Option<String>,
 
-    #[arg(long, value_parser = ["access_ip_v4","access_ip_v6","auto_disk_config","availability_zone","config_drive","created_at","display_description","display_name","host","hostname","image_ref","instance_type_id","kernel_id","key_name","launch_index","launched_at","locked","locked_by","node","power_state","progress","project_id","ramdisk_id","root_device_name","task_state","terminated_at","updated_at","user_id","uuid","vm_state"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["access_ip_v4","access_ip_v6","auto_disk_config","availability_zone","config_drive","created_at","display_description","display_name","host","hostname","image_ref","instance_type_id","kernel_id","key_name","launch_index","launched_at","locked","locked_by","node","power_state","progress","project_id","ramdisk_id","root_device_name","task_state","terminated_at","updated_at","user_id","uuid","vm_state"])]
     sort_key: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     system_metadata: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tags: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tags_any: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     task_state: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     terminated_at: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     user_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     uuid: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     vm_state: Option<String>,
 }
 

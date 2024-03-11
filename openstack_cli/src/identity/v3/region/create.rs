@@ -59,6 +59,8 @@ pub struct RegionCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `region` object
+    ///
     #[command(flatten)]
     region: Region,
 }
@@ -75,13 +77,13 @@ struct PathParameters {}
 struct Region {
     /// The region description.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     parent_id: Option<String>,
 }
 

@@ -70,16 +70,16 @@ pub struct HypervisorsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     hypervisor_hostname_pattern: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     with_servers: Option<bool>,
 }
 

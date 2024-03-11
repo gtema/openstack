@@ -56,6 +56,7 @@ pub struct EndpointCommand {
     path: PathParameters,
 
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
     properties: Option<Vec<(String, Value)>>,
 }
 
@@ -69,7 +70,11 @@ struct PathParameters {
     /// endpoint_id parameter for
     /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Endpoint response representation

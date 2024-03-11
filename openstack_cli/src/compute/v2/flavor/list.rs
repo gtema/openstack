@@ -66,25 +66,25 @@ pub struct FlavorsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     is_public: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     limit: Option<i32>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     min_disk: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     min_ram: Option<String>,
 
-    #[arg(long, value_parser = ["asc","desc"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
     sort_dir: Option<String>,
 
-    #[arg(long, value_parser = ["created_at","description","disabled","ephemeral_gb","flavorid","id","is_public","memory_mb","name","root_gb","rxtx_factor","swap","updated_at","vcpu_weight","vcpus"])]
+    #[arg(help_heading = "Query parameters", long, value_parser = ["created_at","description","disabled","ephemeral_gb","flavorid","id","is_public","memory_mb","name","root_gb","rxtx_factor","swap","updated_at","vcpu_weight","vcpus"])]
     sort_key: Option<String>,
 }
 

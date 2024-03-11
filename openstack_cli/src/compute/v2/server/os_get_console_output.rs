@@ -62,6 +62,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to get console output of the server.
+    ///
     #[command(flatten)]
     os_get_console_output: OsGetConsoleOutput,
 }
@@ -75,7 +77,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// OsGetConsoleOutput Body data
@@ -89,7 +95,7 @@ struct OsGetConsoleOutput {
     /// This parameter can be specified as not only ‘integer’ but also
     /// ‘string’.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     length: Option<String>,
 }
 

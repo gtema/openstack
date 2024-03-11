@@ -110,17 +110,17 @@ struct Floatingip {
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// A valid DNS domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     dns_domain: Option<String>,
 
     /// A valid DNS name.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     dns_name: Option<String>,
 
     /// The fixed IP address that is associated with the floating IP. If an
@@ -128,39 +128,39 @@ struct Floatingip {
     /// the first IP address unless you explicitly define a fixed IP address in
     /// the `fixed_ip_address` parameter.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     fixed_ip_address: Option<String>,
 
     /// The floating IP address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     floating_ip_address: Option<String>,
 
     /// The ID of the network associated with the floating IP.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     floating_network_id: String,
 
     /// The ID of a port associated with the floating IP. To associate the
     /// floating IP with a fixed IP at creation time, you must specify the
     /// identifier of the internal port.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     port_id: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     qos_policy_id: Option<String>,
 
     /// The subnet ID on which you want to create the floating IP.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     subnet_id: Option<String>,
 
     /// The ID of the project.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     tenant_id: Option<String>,
 }
 

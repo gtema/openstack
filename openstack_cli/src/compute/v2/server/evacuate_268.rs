@@ -50,6 +50,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to evacuate a server to another host.
+    ///
     #[command(flatten)]
     evacuate: Evacuate,
 }
@@ -63,7 +65,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Evacuate Body data
@@ -74,7 +80,7 @@ struct Evacuate {
     /// version 2.13, if `onSharedStorage` is set to `True` and this parameter
     /// is specified, an error is raised.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
 
     /// The name or ID of the host to which the server is evacuated. If you
@@ -89,7 +95,7 @@ struct Evacuate {
     /// pick one, or specify a host with microversion >= 2.29 and without
     /// `force=True` set.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
 }
 

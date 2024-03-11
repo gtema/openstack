@@ -67,7 +67,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.0/routers/{id} API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Router Body data
@@ -75,7 +79,7 @@ struct PathParameters {
 struct Router {
     /// The list of external gateways of the router.
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     external_gateways: Option<Vec<Value>>,
 }
 

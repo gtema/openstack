@@ -77,92 +77,92 @@ pub struct NetworksCommand {
 struct QueryParameters {
     /// admin_state_up query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     admin_state_up: Option<bool>,
 
     /// description query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     description: Option<String>,
 
     /// id query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
     /// is_default query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     is_default: Option<bool>,
 
     /// mtu query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     mtu: Option<i32>,
 
     /// name query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
 
     /// not-tags query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags: Option<Vec<String>>,
 
     /// not-tags-any query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     not_tags_any: Option<Vec<String>>,
 
     /// provider:network_type query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     provider_network_type: Option<String>,
 
     /// provider:physical_network query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     provider_physical_network: Option<String>,
 
     /// provider:segmentation_id query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     provider_segmentation_id: Option<i32>,
 
     /// revision_number query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
     /// router:external query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     router_external: Option<bool>,
 
     /// shared query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     shared: Option<bool>,
 
     /// status query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     status: Option<String>,
 
     /// tags query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags: Option<Vec<String>>,
 
     /// tags-any query parameter for /v2.0/networks API
     ///
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
     tags_any: Option<Vec<String>>,
 
     /// tenant_id query parameter for /v2.0/networks API
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Query parameters", long)]
     tenant_id: Option<String>,
 }
 

@@ -63,6 +63,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to change an administrative password of the server.
+    ///
     #[command(flatten)]
     change_password: ChangePassword,
 }
@@ -76,7 +78,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// ChangePassword Body data
@@ -84,7 +90,7 @@ struct PathParameters {
 struct ChangePassword {
     /// The administrative password for the server.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     admin_pass: String,
 }
 

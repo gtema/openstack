@@ -75,6 +75,8 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to resize a server.
+    ///
     #[command(flatten)]
     resize: Resize,
 }
@@ -88,7 +90,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 
@@ -108,7 +114,7 @@ struct Resize {
     /// If a specified flavor ID is the same as the current one of the server,
     /// the request returns a `Bad Request (400)` response code.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     flavor_ref: String,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
@@ -128,7 +134,7 @@ struct Resize {
     ///   scheme and file system is in the source image. If the target flavor
     ///   disk is larger, the API does not partition the remaining disk space.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     os_dcf_disk_config: Option<OsDcfDiskConfig>,
 }
 

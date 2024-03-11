@@ -65,6 +65,10 @@ pub struct VolumeAttachmentCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A dictionary representation of a volume attachment containing the field
+    /// `volumeId` which is the UUID of the replacement volume, and other
+    /// fields to update in the attachment.
+    ///
     #[command(flatten)]
     volume_attachment: VolumeAttachment,
 }
@@ -78,13 +82,21 @@ struct QueryParameters {}
 struct PathParameters {
     /// server_id parameter for /v2.1/servers/{server_id}/topology API
     ///
-    #[arg(id = "path_param_server_id", value_name = "SERVER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_server_id",
+        value_name = "SERVER_ID"
+    )]
     server_id: String,
 
     /// id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id}
     /// API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// VolumeAttachment Body data
@@ -95,40 +107,40 @@ struct VolumeAttachment {
     ///
     /// **New in version 2.85**
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     delete_on_termination: Option<bool>,
 
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     /// **New in version 2.85**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     device: Option<String>,
 
     /// The UUID of the attachment.
     ///
     /// **New in version 2.85**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     id: Option<String>,
 
     /// The UUID of the server.
     ///
     /// **New in version 2.85**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     server_id: Option<String>,
 
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.85**
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     tag: Option<String>,
 
     /// The UUID of the volume to attach instead of the attached volume.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     volume_id: String,
 }
 

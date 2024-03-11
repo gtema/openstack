@@ -63,7 +63,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
     ///
-    #[arg(id = "path_param_sp_id", value_name = "SP_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_sp_id",
+        value_name = "SP_ID"
+    )]
     sp_id: String,
 }
 /// ServiceProvider response representation

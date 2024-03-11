@@ -58,6 +58,8 @@ pub struct UserCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// A `user` object
+    ///
     #[command(flatten)]
     user: User,
 }
@@ -73,25 +75,25 @@ struct PathParameters {}
 #[derive(Args)]
 #[group(required = false, multiple = true)]
 struct Options {
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     ignore_change_password_upon_first_use: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     ignore_lockout_failure_attempts: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     ignore_password_expiry: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     ignore_user_inactivity: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     lock_password: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     multi_factor_auth_enabled: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Append, long)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     multi_factor_auth_rules: Option<Vec<String>>,
 }
 
@@ -100,21 +102,21 @@ struct Options {
 struct User {
     /// The ID of the default project for the user.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     default_project_id: Option<String>,
 
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
     /// The ID of the domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    #[arg(action=clap::ArgAction::Set, long)]
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
@@ -134,12 +136,12 @@ struct User {
     ///
     /// ```
     ///
-    #[arg(action=clap::ArgAction::Append, long, value_name="JSON", value_parser=parse_json)]
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     federated: Option<Vec<Value>>,
 
     /// The user name. Must be unique within the owning domain.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     name: String,
 
     /// The resource options for the user. Available resource options are
@@ -153,7 +155,7 @@ struct User {
 
     /// The new password for the user.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
 }
 

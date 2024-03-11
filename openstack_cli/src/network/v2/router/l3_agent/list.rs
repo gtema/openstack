@@ -66,7 +66,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
     ///
-    #[arg(id = "path_param_router_id", value_name = "ROUTER_ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_router_id",
+        value_name = "ROUTER_ID"
+    )]
     router_id: String,
 }
 /// L3Agents response representation

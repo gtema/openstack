@@ -66,6 +66,9 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// The action to remove or disassociate a floating IP address from the
+    /// server.
+    ///
     #[command(flatten)]
     remove_floating_ip: RemoveFloatingIp,
 }
@@ -79,7 +82,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/servers/{id}/action API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// RemoveFloatingIp Body data
@@ -87,7 +94,7 @@ struct PathParameters {
 struct RemoveFloatingIp {
     /// The floating IP address.
     ///
-    #[arg(long)]
+    #[arg(help_heading = "Body parameters", long)]
     address: String,
 }
 

@@ -71,7 +71,11 @@ struct QueryParameters {}
 struct PathParameters {
     /// id parameter for /v2.1/os-hypervisors/{id}/uptime API
     ///
-    #[arg(id = "path_param_id", value_name = "ID")]
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_id",
+        value_name = "ID"
+    )]
     id: String,
 }
 /// Uptime response representation
