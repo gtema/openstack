@@ -32,6 +32,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage type add-project-access`↴](#osc-block-storage-type-add-project-access)
 * [`osc block-storage type create`↴](#osc-block-storage-type-create)
 * [`osc block-storage type delete`↴](#osc-block-storage-type-delete)
+* [`osc block-storage type encryption`↴](#osc-block-storage-type-encryption)
+* [`osc block-storage type encryption create`↴](#osc-block-storage-type-encryption-create)
+* [`osc block-storage type encryption delete`↴](#osc-block-storage-type-encryption-delete)
+* [`osc block-storage type encryption list`↴](#osc-block-storage-type-encryption-list)
+* [`osc block-storage type encryption set`↴](#osc-block-storage-type-encryption-set)
+* [`osc block-storage type encryption show`↴](#osc-block-storage-type-encryption-show)
 * [`osc block-storage type extraspecs`↴](#osc-block-storage-type-extraspecs)
 * [`osc block-storage type extraspecs create`↴](#osc-block-storage-type-extraspecs-create)
 * [`osc block-storage type extraspecs delete`↴](#osc-block-storage-type-extraspecs-delete)
@@ -606,7 +612,7 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--os-sch-hnt-scheduler-hints <key=value>` — The dictionary of data to send to the scheduler
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
 * `--backup-id <BACKUP_ID>` — The UUID of the backup
 * `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
@@ -639,7 +645,7 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--os-sch-hnt-scheduler-hints <key=value>` — The dictionary of data to send to the scheduler
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
 * `--backup-id <BACKUP_ID>` — The UUID of the backup
 * `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
@@ -672,7 +678,7 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--os-sch-hnt-scheduler-hints <key=value>` — The dictionary of data to send to the scheduler
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
 * `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
 * `--description <DESCRIPTION>` — The volume description
@@ -704,7 +710,7 @@ Creates a new volume.
 
 ###### **Options:**
 
-* `--os-sch-hnt-scheduler-hints <key=value>`
+* `--os-sch-hnt-scheduler-hints <key=value>` — The dictionary of data to send to the scheduler
 * `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
 * `--consistencygroup-id <CONSISTENCYGROUP_ID>` — The UUID of the consistency group
 * `--description <DESCRIPTION>` — The volume description
@@ -745,7 +751,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v3/volumes/{id} API
+* `<ID>` — id parameter for /v3/volumes/{id}/action API
 
 ###### **Options:**
 
@@ -817,11 +823,11 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/metadata API
 
 ###### **Options:**
 
-* `--metadata <key=value>`
+* `--metadata <key=value>` — One or more metadata key and value pairs that are associated with the volume
 
 
 
@@ -833,7 +839,7 @@ Deletes an existing metadata
 
 ###### **Arguments:**
 
-* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/metadata API
 * `<ID>` — id parameter for /v3/volumes/{volume_id}/metadata/{id} API
 
 
@@ -846,7 +852,7 @@ Returns the list of metadata for a given volume
 
 ###### **Arguments:**
 
-* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/metadata API
 
 
 
@@ -858,11 +864,11 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/metadata API
 
 ###### **Options:**
 
-* `--metadata <key=value>`
+* `--metadata <key=value>` — One or more metadata key and value pairs that are associated with the volume
 
 
 
@@ -874,7 +880,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/metadata API
 * `<ID>` — id parameter for /v3/volumes/{volume_id}/metadata/{id} API
 
 ###### **Options:**
@@ -891,7 +897,7 @@ Return a single metadata item
 
 ###### **Arguments:**
 
-* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+* `<VOLUME_ID>` — volume_id parameter for /v3/volumes/{volume_id}/metadata API
 * `<ID>` — id parameter for /v3/volumes/{volume_id}/metadata/{id} API
 
 
@@ -963,6 +969,7 @@ For information about how to use volume types to create multiple- storage back e
 * `add-project-access` — Command without description in OpenAPI
 * `create` — Command without description in OpenAPI
 * `delete` — Deletes an existing volume type
+* `encryption` — Volume Type Encryption commands
 * `extraspecs` — Type extra specs
 * `list` — Returns the list of volume types
 * `remove-project-access` — Command without description in OpenAPI
@@ -979,7 +986,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v3/types/{id} API
+* `<ID>` — id parameter for /v3/types/{id}/action API
 
 ###### **Options:**
 
@@ -995,7 +1002,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v3/types/{id} API
+* `<ID>` — id parameter for /v3/types/{id}/action API
 
 ###### **Options:**
 
@@ -1018,6 +1025,107 @@ Deletes an existing volume type
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/types/{id} API
+
+
+
+## `osc block-storage type encryption`
+
+Volume Type Encryption commands
+
+Block Storage volume type assignment provides scheduling to a specific back-end, and can be used to specify actionable information for a back-end storage device.
+
+**Usage:** `osc block-storage type encryption <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create encryption specs for an existing volume type
+* `delete` — Delete encryption specs for a given volume type
+* `list` — Returns the encryption specs for a given volume type
+* `set` — Update encryption specs for a given volume type
+* `show` — Return a single encryption item
+
+
+
+## `osc block-storage type encryption create`
+
+Create encryption specs for an existing volume type
+
+**Usage:** `osc block-storage type encryption create [OPTIONS] --control-location <CONTROL_LOCATION> --provider <PROVIDER> <TYPE_ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+
+###### **Options:**
+
+* `--cipher <CIPHER>`
+* `--control-location <CONTROL_LOCATION>`
+
+  Possible values: `back-end`, `front-end`
+
+* `--key-size <KEY_SIZE>`
+* `--provider <PROVIDER>`
+
+
+
+## `osc block-storage type encryption delete`
+
+Delete encryption specs for a given volume type
+
+**Usage:** `osc block-storage type encryption delete <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
+
+
+
+## `osc block-storage type encryption list`
+
+Returns the encryption specs for a given volume type
+
+**Usage:** `osc block-storage type encryption list <TYPE_ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+
+
+
+## `osc block-storage type encryption set`
+
+Update encryption specs for a given volume type
+
+**Usage:** `osc block-storage type encryption set [OPTIONS] <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
+
+###### **Options:**
+
+* `--cipher <CIPHER>`
+* `--control-location <CONTROL_LOCATION>`
+
+  Possible values: `back-end`, `front-end`
+
+* `--key-size <KEY_SIZE>`
+* `--provider <PROVIDER>`
+
+
+
+## `osc block-storage type encryption show`
+
+Return a single encryption item
+
+**Usage:** `osc block-storage type encryption show <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
 
 
 
@@ -1045,7 +1153,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
 
 ###### **Options:**
 
@@ -1061,7 +1169,7 @@ Deletes an existing extra spec
 
 ###### **Arguments:**
 
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
 * `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
 
 
@@ -1074,7 +1182,7 @@ Returns the list of extra specs for a given volume type
 
 ###### **Arguments:**
 
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
 
 
 
@@ -1086,7 +1194,7 @@ Return a single extra spec item
 
 ###### **Arguments:**
 
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
 * `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
 
 
@@ -1099,7 +1207,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
 * `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
 
 ###### **Options:**
@@ -1124,7 +1232,7 @@ Command without description in OpenAPI
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v3/types/{id} API
+* `<ID>` — id parameter for /v3/types/{id}/action API
 
 ###### **Options:**
 
@@ -1276,7 +1384,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--cache <CACHE>`
+* `--cache <CACHE>` — A list of image objects to cache
 
 
 
@@ -1659,7 +1767,7 @@ Create Extra Specs For A Flavor
 
 ###### **Options:**
 
-* `--extra-specs <key=value>`
+* `--extra-specs <key=value>` — A dictionary of the flavor’s extra-specs key-and-value pairs. It appears in the os-extra-specs’ “create” REQUEST body, as well as the os-extra-specs’ “create” and “list” RESPONSE body
 
 
 
@@ -3941,7 +4049,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--metadata <key=value>`
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size for each metadata key and value pair is 255 bytes
 
 
 
@@ -4002,7 +4110,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--metadata <key=value>`
+* `--metadata <key=value>` — Metadata key and value pairs. The maximum size for each metadata key and value pair is 255 bytes
 
 
 
@@ -5310,7 +5418,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Options:**
 
-* `--tags <TAGS>`
+* `--tags <TAGS>` — A list of tags. The maximum count of tags in this list is 50
 
 
 
@@ -7746,30 +7854,30 @@ Error response codes: 400, 401, 403, 409, 413, 415
 
 ###### **Options:**
 
-* `--container-format <CONTAINER_FORMAT>`
+* `--container-format <CONTAINER_FORMAT>` — Format of the image container
 
   Possible values: `aki`, `ami`, `ari`, `bare`, `compressed`, `docker`, `ova`, `ovf`
 
-* `--disk-format <DISK_FORMAT>`
+* `--disk-format <DISK_FORMAT>` — The format of the disk
 
   Possible values: `aki`, `ami`, `ari`, `iso`, `ploop`, `qcow2`, `raw`, `vdi`, `vhd`, `vhdx`, `vmdk`
 
-* `--id <ID>`
-* `--locations <JSON>`
-* `--min-disk <MIN_DISK>`
-* `--min-ram <MIN_RAM>`
-* `--name <NAME>`
-* `--os-hidden <OS_HIDDEN>`
+* `--id <ID>` — A unique, user-defined image UUID, in the format:
+* `--locations <JSON>` — A set of URLs to access the image file kept in external store
+* `--min-disk <MIN_DISK>` — Amount of disk space in GB that is required to boot the image
+* `--min-ram <MIN_RAM>` — Amount of RAM in MB that is required to boot the image
+* `--name <NAME>` — The name of the image
+* `--os-hidden <OS_HIDDEN>` — If true, image will not appear in default image list response
 
   Possible values: `true`, `false`
 
-* `--owner <OWNER>`
-* `--protected <PROTECTED>`
+* `--owner <OWNER>` — Owner of the image
+* `--protected <PROTECTED>` — Image protection for deletion. Valid value is `true` or `false`. Default is `false`
 
   Possible values: `true`, `false`
 
-* `--tags <TAGS>`
-* `--visibility <VISIBILITY>`
+* `--tags <TAGS>` — List of tags for this image. Each tag is a string of at most 255 chars. The maximum number of tags allowed on an image is set by the operator
+* `--visibility <VISIBILITY>` — Visibility for this image. Valid value is one of: `public`, `private`, `shared`, or `community`. At most sites, only an administrator can make an image `public`. Some sites may restrict what users can make an image `community`. Some sites may restrict what users can perform member operations on a `shared` image. *Since the Image API v2.5, the default value is `shared`.*
 
   Possible values: `community`, `private`, `public`, `shared`
 
@@ -8000,29 +8108,29 @@ Error response codes: 400, 401, 403, 404, 409, 413, 415
 
 ###### **Options:**
 
-* `--container-format <CONTAINER_FORMAT>`
+* `--container-format <CONTAINER_FORMAT>` — Format of the image container
 
   Possible values: `aki`, `ami`, `ari`, `bare`, `compressed`, `docker`, `ova`, `ovf`
 
-* `--disk-format <DISK_FORMAT>`
+* `--disk-format <DISK_FORMAT>` — The format of the disk
 
   Possible values: `aki`, `ami`, `ari`, `iso`, `ploop`, `qcow2`, `raw`, `vdi`, `vhd`, `vhdx`, `vmdk`
 
-* `--locations <JSON>`
-* `--min-disk <MIN_DISK>`
-* `--min-ram <MIN_RAM>`
-* `--name <NAME>`
-* `--os-hidden <OS_HIDDEN>`
+* `--locations <JSON>` — A list of objects, each of which describes an image location. Each object contains a `url` key, whose value is a URL specifying a location, and a `metadata` key, whose value is a dict of key:value pairs containing information appropriate to the use of whatever external store is indicated by the URL. *This list appears only if the* `show_multiple_locations` *option is set to* `true` *in the Image service’s configuration file.* **Because it presents a security risk, this option is disabled by default.**
+* `--min-disk <MIN_DISK>` — Amount of disk space in GB that is required to boot the image. The value might be `null` (JSON null data type)
+* `--min-ram <MIN_RAM>` — Amount of RAM in MB that is required to boot the image. The value might be `null` (JSON null data type)
+* `--name <NAME>` — The name of the image. Value might be `null` (JSON null data type)
+* `--os-hidden <OS_HIDDEN>` — This field controls whether an image is displayed in the default image-list response. A “hidden” image is out of date somehow (for example, it may not have the latest updates applied) and hence should not be a user’s first choice, but it’s not deleted because it may be needed for server rebuilds. By hiding it from the default image list, it’s easier for end users to find and use a more up-to-date version of this image. *(Since Image API v2.7)*
 
   Possible values: `true`, `false`
 
-* `--owner <OWNER>`
-* `--protected <PROTECTED>`
+* `--owner <OWNER>` — An identifier for the owner of the image, usually the project (also called the “tenant”) ID. The value might be `null` (JSON null data type)
+* `--protected <PROTECTED>` — A boolean value that must be `false` or the image cannot be deleted
 
   Possible values: `true`, `false`
 
-* `--tags <TAGS>`
-* `--visibility <VISIBILITY>`
+* `--tags <TAGS>` — List of tags for this image, possibly an empty list
+* `--visibility <VISIBILITY>` — Image visibility, that is, the access permission for the image
 
   Possible values: `community`, `private`, `public`, `shared`
 

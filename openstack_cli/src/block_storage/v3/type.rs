@@ -24,6 +24,7 @@ use openstack_sdk::AsyncOpenStack;
 mod add_project_access;
 mod create;
 mod delete;
+mod encryption;
 mod extra_spec;
 mod list;
 mod remove_project_access;
@@ -55,6 +56,7 @@ pub enum VolumeTypeCommands {
     AddProjectAccess(add_project_access::TypeCommand),
     Create(create::TypeCommand),
     Delete(delete::TypeCommand),
+    Encryption(encryption::EncryptionCommand),
     Extraspecs(extra_spec::ExtraSpecsCommand),
     List(list::TypesCommand),
     RemoveProjectAccess(remove_project_access::TypeCommand),
@@ -75,6 +77,7 @@ impl VolumeTypeCommand {
             }
             VolumeTypeCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeTypeCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            VolumeTypeCommands::Encryption(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeTypeCommands::Extraspecs(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeTypeCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             VolumeTypeCommands::RemoveProjectAccess(cmd) => {

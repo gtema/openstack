@@ -38,7 +38,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) add_project_access: AddProjectAccess<'a>,
 
-    /// id parameter for /v3/types/{id} API
+    /// id parameter for /v3/types/{id}/action API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

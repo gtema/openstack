@@ -34,7 +34,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+    /// volume_id parameter for /v3/volumes/{volume_id}/metadata API
     ///
     #[builder(default, setter(into))]
     volume_id: Cow<'a, str>,

@@ -63,7 +63,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// volume_id parameter for /v3/volumes/{volume_id}/encryption/{id} API
+    /// volume_id parameter for /v3/volumes/{volume_id}/metadata API
     ///
     #[arg(
         help_heading = "Path parameters",

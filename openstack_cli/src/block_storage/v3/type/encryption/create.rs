@@ -33,12 +33,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
-use crate::common::parse_key_val;
 use clap::ValueEnum;
 use openstack_sdk::api::block_storage::v3::r#type::encryption::create;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+
 use structable_derive::StructTable;
 
 /// Create encryption specs for an existing volume type.

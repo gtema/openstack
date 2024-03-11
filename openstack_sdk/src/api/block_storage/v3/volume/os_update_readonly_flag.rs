@@ -38,7 +38,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) os_update_readonly_flag: OsUpdateReadonlyFlag,
 
-    /// id parameter for /v3/volumes/{id} API
+    /// id parameter for /v3/volumes/{id}/action API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

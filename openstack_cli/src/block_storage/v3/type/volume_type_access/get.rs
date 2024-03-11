@@ -57,7 +57,8 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// type_id parameter for /v3/types/{type_id}/encryption/{id} API
+    /// type_id parameter for /v3/types/{type_id}/os-volume-type-access/{id}
+    /// API
     ///
     #[arg(
         help_heading = "Path parameters",
