@@ -84,7 +84,7 @@ impl ToTokens for TableStructInputReceiver {
                 },
                 true => match field.pretty {
                     false => quote!(
-                        self. #field_ident .clone().unwrap().to_string()
+                        self. #field_ident .clone().map_or_else(|| "".to_string(), |v| v.to_string())
                     ),
                     true => quote!(
                         self. #field_ident
@@ -110,7 +110,7 @@ impl ToTokens for TableStructInputReceiver {
                 },
                 true => match field.pretty {
                     false => quote!(
-                        x. #field_ident .clone().unwrap().to_string()
+                        x. #field_ident .clone().map_or_else(|| "".to_string(), |v| v.to_string())
                     ),
                     true => quote!(
                         x. #field_ident
