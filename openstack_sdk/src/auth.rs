@@ -130,7 +130,8 @@ mod tests {
             token: "".to_string(),
             auth_info: Some(AuthResponse {
                 token: AuthToken {
-                    expires_at: chrono::offset::Local::now() - chrono::Duration::days(1),
+                    expires_at: chrono::offset::Local::now()
+                        - chrono::Duration::try_days(1).unwrap(),
                     ..Default::default()
                 },
             }),
@@ -144,7 +145,8 @@ mod tests {
             token: "".to_string(),
             auth_info: Some(AuthResponse {
                 token: AuthToken {
-                    expires_at: chrono::offset::Local::now() + chrono::Duration::days(1),
+                    expires_at: chrono::offset::Local::now()
+                        + chrono::Duration::try_days(1).unwrap(),
                     ..Default::default()
                 },
             }),
