@@ -149,7 +149,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) stores: Option<Vec<Cow<'a, str>>>,
 
-    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    /// image_id parameter for /v2/images/{image_id}/import API
     ///
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,

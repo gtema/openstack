@@ -38,7 +38,7 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    /// image_id parameter for /v2/images/{image_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

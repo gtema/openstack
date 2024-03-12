@@ -35,10 +35,8 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::image::v2::image::member::create;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
@@ -88,7 +86,74 @@ struct PathParameters {
 }
 /// Member response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// The date and time when the resource was created.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// The UUID of the image.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    image_id: Option<String>,
+
+    /// The ID of the image member. An image member is usually a project (also
+    /// called the “tenant”) with whom the image is shared.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    member_id: Option<String>,
+
+    /// The URL for the schema describing an image member.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    schema: Option<String>,
+
+    /// The status of this image member. Value is one of `pending`, `accepted`,
+    /// `rejected`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// The date and time when the resource was updated.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC. In the previous example, the offset value is `-05:00`.
+    ///
+    /// If the `updated_at` date and time stamp is not set, its value is
+    /// `null`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+}
 
 impl MemberCommand {
     /// Perform command action
@@ -116,10 +181,8 @@ impl MemberCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

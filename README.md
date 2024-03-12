@@ -37,3 +37,14 @@ osc --os-cloud devstack compute flavor list
 Project [Documentation](https://gtema.github.io/openstack) is part of this
 repository as well. It follows "code as a documentation" approach to keep
 document matching the real code.
+
+## Integration testing
+
+SDK and CLI are coming with a set of basic integration tests that are not
+executed by default since that requires access to the real cloud. In addition to that some tests require extended privileges so those are additionally ignored.
+
+To trigger functional tests invoke:
+
+```console
+OS_CLOUD=devstack cargo t --test integration
+```

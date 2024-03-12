@@ -48,3 +48,8 @@ log = "^0.4"
 reserve-port = "^2.0"
 simple_logger="^4.3"
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[[test]]
+name = "integration"
+path = "tests/main.rs"
+test = false
