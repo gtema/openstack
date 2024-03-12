@@ -59,7 +59,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     content_type: Option<Cow<'a, str>>,
 
-    /// image_id parameter for /v2/images/{image_id}/members/{member_id} API
+    /// image_id parameter for /v2/images/{image_id}/file API
     ///
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,

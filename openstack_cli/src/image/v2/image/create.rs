@@ -35,11 +35,9 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
-use bytes::Bytes;
 use clap::ValueEnum;
-use http::Response;
 use openstack_sdk::api::image::v2::image::create;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
@@ -230,7 +228,260 @@ enum DiskFormat {
 
 /// Image response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// An MD5 hash over the image data. The value might be `null` (JSON null
+    /// data type), as this field is no longer populated by the Image Service
+    /// beginning with the Victoria release. It remains present for backward
+    /// compatibility with legacy images. To validate image data, instead use
+    /// the secure multihash fields `os_hash_algo` and `os_hash_value`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    checksum: Option<String>,
+
+    /// Format of the image container.
+    ///
+    /// Values may vary based on the configuration available in a particular
+    /// OpenStack cloud. See the [Image Schema](#image-schema) response from
+    /// the cloud itself for the valid values available.
+    ///
+    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`, or
+    /// `docker`.
+    ///
+    /// The value might be `null` (JSON null data type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    container_format: Option<String>,
+
+    /// The date and time when the resource was created.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// The URL to access the image file kept in external store. *It is present
+    /// only if the* `show_image_direct_url` *option is* `true` *in the Image
+    /// service’s configuration file.* **Because it presents a security risk,
+    /// this option is disabled by default.**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    direct_url: Option<String>,
+
+    /// The format of the disk.
+    ///
+    /// Values may vary based on the configuration available in a particular
+    /// OpenStack cloud. See the [Image Schema](#image-schema) response from
+    /// the cloud itself for the valid values available.
+    ///
+    /// Example formats are: `ami`, `ari`, `aki`, `vhd`, `vhdx`, `vmdk`, `raw`,
+    /// `qcow2`, `vdi`, `ploop` or `iso`.
+    ///
+    /// The value might be `null` (JSON null data type).
+    ///
+    /// **Newton changes**: The `vhdx` disk format is a supported value.
+    ///
+    /// **Ocata changes**: The `ploop` disk format is a supported value.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    disk_format: Option<String>,
+
+    /// The URL for the virtual machine image file.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    file: Option<String>,
+
+    /// A unique, user-defined image UUID, in the format:
+    ///
+    /// ```text
+    /// nnnnnnnn-nnnn-nnnn-nnnn-nnnnnnnnnnnn
+    ///
+    /// ```
+    ///
+    /// Where **n** is a hexadecimal digit from 0 to f, or F.
+    ///
+    /// For example:
+    ///
+    /// ```text
+    /// b2173dd3-7ad6-4362-baa6-a68bce3565cb
+    ///
+    /// ```
+    ///
+    /// If you omit this value, the API generates a UUID for the image.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// A list of objects, each of which describes an image location. Each
+    /// object contains a `url` key, whose value is a URL specifying a
+    /// location, and a `metadata` key, whose value is a dict of key:value
+    /// pairs containing information appropriate to the use of whatever
+    /// external store is indicated by the URL. *This list appears only if the*
+    /// `show_multiple_locations` *option is set to* `true` *in the Image
+    /// service’s configuration file.* **Because it presents a security risk,
+    /// this option is disabled by default.**
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    locations: Option<Value>,
+
+    /// Amount of disk space in GB that is required to boot the image. The
+    /// value might be `null` (JSON null data type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    min_disk: Option<i32>,
+
+    /// Amount of RAM in MB that is required to boot the image. The value might
+    /// be `null` (JSON null data type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    min_ram: Option<i32>,
+
+    /// The name of the image. Value might be `null` (JSON null data type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The algorithm used to compute a secure hash of the image data for this
+    /// image. The result of the computation is displayed as the value of the
+    /// `os_hash_value` property. The value might be `null` (JSON null data
+    /// type). The algorithm used is chosen by the cloud operator; it may not
+    /// be configured by end users. *(Since Image API v2.7)*
+    ///
+    #[serde()]
+    #[structable(optional)]
+    os_hash_algo: Option<String>,
+
+    /// The hexdigest of the secure hash of the image data computed using the
+    /// algorithm whose name is the value of the `os_hash_algo` property. The
+    /// value might be `null` (JSON null data type) if data has not yet been
+    /// associated with this image, or if the image was created using a version
+    /// of the Image Service API prior to version 2.7. *(Since Image API v2.7)*
+    ///
+    #[serde()]
+    #[structable(optional)]
+    os_hash_value: Option<String>,
+
+    /// This field controls whether an image is displayed in the default
+    /// image-list response. A “hidden” image is out of date somehow (for
+    /// example, it may not have the latest updates applied) and hence should
+    /// not be a user’s first choice, but it’s not deleted because it may be
+    /// needed for server rebuilds. By hiding it from the default image list,
+    /// it’s easier for end users to find and use a more up-to-date version of
+    /// this image. *(Since Image API v2.7)*
+    ///
+    #[serde()]
+    #[structable(optional)]
+    os_hidden: Option<bool>,
+
+    /// An identifier for the owner of the image, usually the project (also
+    /// called the “tenant”) ID. The value might be `null` (JSON null data
+    /// type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    owner: Option<String>,
+
+    /// A boolean value that must be `false` or the image cannot be deleted.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    protected: Option<bool>,
+
+    /// The URL for the schema describing a virtual machine image.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    schema: Option<String>,
+
+    /// The URL for the virtual machine image.
+    ///
+    #[serde(rename = "self")]
+    #[structable(optional, title = "self")]
+    _self: Option<String>,
+
+    /// The size of the image data, in bytes. The value might be `null` (JSON
+    /// null data type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    size: Option<i32>,
+
+    /// The image status.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// Store in which image data resides. Only present when the operator has
+    /// enabled multiple stores. May be a comma-separated list of store
+    /// identifiers.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    stores: Option<String>,
+
+    /// List of tags for this image, possibly an empty list.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    tags: Option<Value>,
+
+    /// The date and time when the resource was updated.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC. In the previous example, the offset value is `-05:00`.
+    ///
+    /// If the `updated_at` date and time stamp is not set, its value is
+    /// `null`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// The virtual size of the image. The value might be `null` (JSON null
+    /// data type).
+    ///
+    #[serde()]
+    #[structable(optional)]
+    virtual_size: Option<i32>,
+
+    /// Image visibility, that is, the access permission for the image.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    visibility: Option<String>,
+}
 
 impl ImageCommand {
     /// Perform command action
@@ -350,10 +601,8 @@ impl ImageCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }
