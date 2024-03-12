@@ -8348,7 +8348,13 @@ Metadef Namespace Schema operations
 
 ## `osc image schema metadef namespace show`
 
-Show metadata definition namespace schema
+Shows a JSON schema document that represents a metadata definition *namespace* entity.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef namespace show`
 
@@ -8368,7 +8374,15 @@ Metadef Namespaces Schema operations
 
 ## `osc image schema metadef namespaces show`
 
-Show metadata definition namespaces schema
+Shows a JSON schema document that represents a metadata definition *namespaces* entity.
+
+A namespaces entity is a container for *namespace* entities.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef namespaces show`
 
@@ -8388,7 +8402,13 @@ Metadef Object Schema operations
 
 ## `osc image schema metadef object show`
 
-Show metadata definition object schema
+Shows a JSON schema document that represents a metadata definition *object* entity.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef object show`
 
@@ -8408,7 +8428,15 @@ Metadef Objects Schema operations
 
 ## `osc image schema metadef objects show`
 
-Show metadata definition objects schema
+Shows a JSON schema document that represents a metadata definition *objects* entity.
+
+An objects entity is a container for *object* entities.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef objects show`
 
@@ -8428,7 +8456,13 @@ Metadef Properties Schema operations
 
 ## `osc image schema metadef properties show`
 
-Show metadata definition properties schema
+Shows a JSON schema document that represents a metadata definition *properties* entity.
+
+A properties entity is a container for *property* entities.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200 Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef properties show`
 
@@ -8448,7 +8482,13 @@ Metadef Property Schema operations
 
 ## `osc image schema metadef property show`
 
-Show metadata definition property schema
+Shows a JSON schema document that represents a metadata definition *property* entity.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef property show`
 
@@ -8468,7 +8508,13 @@ Metadef ResourceType Schema operations
 
 ## `osc image schema metadef resource-type show`
 
-Show metadata definition namespace resource type association schema
+Shows a JSON schema document that represents a metadata definition namespace *resource type association* entity.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef resource-type show`
 
@@ -8488,7 +8534,15 @@ Metadef ResourceTypes Schema operations
 
 ## `osc image schema metadef resource-types show`
 
-Show metadata definition namespace resource type associations schema
+Shows a JSON schema document that represents a metadata definition namespace *resource type associations* entity.
+
+A resource type associations entity is a container for *resource type association* entities.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef resource-types show`
 
@@ -8508,7 +8562,13 @@ Metadef Tag Schema operations
 
 ## `osc image schema metadef tag show`
 
-Show metadata definition tag schema
+Shows a JSON schema document that represents a metadata definition *tag* entity.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef tag show`
 
@@ -8528,7 +8588,15 @@ Metadef Tags Schema operations
 
 ## `osc image schema metadef tags show`
 
-Show metadata definition tags schema
+Shows a JSON schema document that represents a metadata definition *tags* entity.
+
+A tags entity is a container for *tag* entities.
+
+The following schema document is an example. The authoritative response is the actual response to the API call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef tags show`
 

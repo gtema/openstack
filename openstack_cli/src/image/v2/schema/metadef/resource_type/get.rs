@@ -39,9 +39,18 @@ use openstack_sdk::api::image::v2::schema::metadef::resource_type::get;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Command without description in OpenAPI
+/// Shows a JSON schema document that represents a metadata definition
+/// namespace *resource type association* entity.
+///
+/// The following schema document is an example. The authoritative response is
+/// the actual response to the API call.
+///
+/// Normal response codes: 200
+///
+/// Error response codes: 400, 401
 ///
 #[derive(Args)]
+#[command(about = "Show metadata definition namespace resource type association schema")]
 pub struct ResourceTypeCommand {
     /// Request Query parameters
     #[command(flatten)]

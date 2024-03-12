@@ -34,7 +34,6 @@ pub struct PropertyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PropertyCommands {
-    /// Show metadata definition property schema
     Show(get::PropertyCommand),
 }
 

@@ -34,7 +34,6 @@ pub struct ResourceTypesCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ResourceTypesCommands {
-    /// Show metadata definition namespace resource type associations schema
     Show(get::ResourceTypesCommand),
 }
 

@@ -34,7 +34,6 @@ pub struct TagsCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum TagsCommands {
-    /// Show metadata definition tags schema
     Show(get::TagsCommand),
 }
 

@@ -34,7 +34,6 @@ pub struct ObjectsCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ObjectsCommands {
-    /// Show metadata definition objects schema
     Show(get::ObjectsCommand),
 }
 
