@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Glance Schemas
+//! Metadef resource_types schema
 
 use clap::{Parser, Subcommand};
 
@@ -20,32 +20,25 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod image;
-mod images;
-mod member;
-mod members;
-mod metadef;
+mod get;
 
-/// Schemas
+/// Metadef ResourceTypes Schema operations
 #[derive(Parser)]
-pub struct SchemaCommand {
+pub struct ResourceTypesCommand {
     /// subcommand
     #[command(subcommand)]
-    command: SchemaCommands,
+    command: ResourceTypesCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum SchemaCommands {
-    Image(image::ImageCommand),
-    Images(images::ImagesCommand),
-    Member(member::MemberCommand),
-    Members(members::MembersCommand),
-    Metadef(metadef::MetadefCommand),
+pub enum ResourceTypesCommands {
+    /// Show metadata definition namespace resource type associations schema
+    Show(get::ResourceTypesCommand),
 }
 
-impl SchemaCommand {
+impl ResourceTypesCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -53,11 +46,7 @@ impl SchemaCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            SchemaCommands::Image(cmd) => cmd.take_action(parsed_args, session).await,
-            SchemaCommands::Images(cmd) => cmd.take_action(parsed_args, session).await,
-            SchemaCommands::Member(cmd) => cmd.take_action(parsed_args, session).await,
-            SchemaCommands::Members(cmd) => cmd.take_action(parsed_args, session).await,
-            SchemaCommands::Metadef(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceTypesCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

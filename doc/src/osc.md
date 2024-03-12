@@ -343,6 +343,27 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image schema member show`↴](#osc-image-schema-member-show)
 * [`osc image schema members`↴](#osc-image-schema-members)
 * [`osc image schema members show`↴](#osc-image-schema-members-show)
+* [`osc image schema metadef`↴](#osc-image-schema-metadef)
+* [`osc image schema metadef namespace`↴](#osc-image-schema-metadef-namespace)
+* [`osc image schema metadef namespace show`↴](#osc-image-schema-metadef-namespace-show)
+* [`osc image schema metadef namespaces`↴](#osc-image-schema-metadef-namespaces)
+* [`osc image schema metadef namespaces show`↴](#osc-image-schema-metadef-namespaces-show)
+* [`osc image schema metadef object`↴](#osc-image-schema-metadef-object)
+* [`osc image schema metadef object show`↴](#osc-image-schema-metadef-object-show)
+* [`osc image schema metadef objects`↴](#osc-image-schema-metadef-objects)
+* [`osc image schema metadef objects show`↴](#osc-image-schema-metadef-objects-show)
+* [`osc image schema metadef properties`↴](#osc-image-schema-metadef-properties)
+* [`osc image schema metadef properties show`↴](#osc-image-schema-metadef-properties-show)
+* [`osc image schema metadef property`↴](#osc-image-schema-metadef-property)
+* [`osc image schema metadef property show`↴](#osc-image-schema-metadef-property-show)
+* [`osc image schema metadef resource-type`↴](#osc-image-schema-metadef-resource-type)
+* [`osc image schema metadef resource-type show`↴](#osc-image-schema-metadef-resource-type-show)
+* [`osc image schema metadef resource-types`↴](#osc-image-schema-metadef-resource-types)
+* [`osc image schema metadef resource-types show`↴](#osc-image-schema-metadef-resource-types-show)
+* [`osc image schema metadef tag`↴](#osc-image-schema-metadef-tag)
+* [`osc image schema metadef tag show`↴](#osc-image-schema-metadef-tag-show)
+* [`osc image schema metadef tags`↴](#osc-image-schema-metadef-tags)
+* [`osc image schema metadef tags show`↴](#osc-image-schema-metadef-tags-show)
 * [`osc network`↴](#osc-network)
 * [`osc network availability-zone`↴](#osc-network-availability-zone)
 * [`osc network availability-zone list`↴](#osc-network-availability-zone-list)
@@ -7895,7 +7916,7 @@ By default, this operation is restricted to administrators only.
 
 ###### **Arguments:**
 
-* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<ID>` — image_id parameter for /v2/images/{image_id}/actions/deactivate API
 
 ###### **Options:**
 
@@ -7921,7 +7942,7 @@ Error response codes: 400, 401, 403, 404, 409
 
 ###### **Arguments:**
 
-* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<ID>` — image_id parameter for /v2/images/{image_id} API
 
 
 
@@ -7945,7 +7966,7 @@ Error response codes: 400, 403, 404, 416
 
 ###### **Arguments:**
 
-* `<IMAGE_ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<IMAGE_ID>` — image_id parameter for /v2/images/{image_id}/file API
 
 ###### **Options:**
 
@@ -8072,7 +8093,7 @@ By default, this operation is restricted to administrators only
 
 ###### **Arguments:**
 
-* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<ID>` — image_id parameter for /v2/images/{image_id}/actions/reactivate API
 
 ###### **Options:**
 
@@ -8104,7 +8125,7 @@ Error response codes: 400, 401, 403, 404, 409, 413, 415
 
 ###### **Arguments:**
 
-* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<ID>` — image_id parameter for /v2/images/{image_id} API
 
 ###### **Options:**
 
@@ -8154,7 +8175,7 @@ Error response codes: 400, 401, 403, 404
 
 ###### **Arguments:**
 
-* `<ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<ID>` — image_id parameter for /v2/images/{image_id} API
 
 
 
@@ -8186,7 +8207,7 @@ Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
 
 ###### **Arguments:**
 
-* `<IMAGE_ID>` — image_id parameter for /v2/images/{image_id}/members/{member_id} API
+* `<IMAGE_ID>` — image_id parameter for /v2/images/{image_id}/file API
 
 ###### **Options:**
 
@@ -8206,6 +8227,7 @@ Schema commands
 * `images` — Show Images Schema
 * `member` — Show Member Schema
 * `members` — Show Members Schema
+* `metadef` — Metadata definition schemas
 
 
 
@@ -8286,6 +8308,229 @@ Show Members Schema
 Show Members Schema
 
 **Usage:** `osc image schema members show`
+
+
+
+## `osc image schema metadef`
+
+Metadata definition schemas
+
+Gets a JSON-schema document that represents a metadata definition entity.
+
+**Usage:** `osc image schema metadef <COMMAND>`
+
+###### **Subcommands:**
+
+* `namespace` — Metadef Namespace Schema operations
+* `namespaces` — Metadef Namespaces Schema operations
+* `object` — Metadef Object Schema operations
+* `objects` — Metadef Objects Schema operations
+* `properties` — Metadef Properties Schema operations
+* `property` — Metadef Property Schema operations
+* `resource-type` — Metadef ResourceType Schema operations
+* `resource-types` — Metadef ResourceTypes Schema operations
+* `tag` — Metadef Tag Schema operations
+* `tags` — Metadef Tags Schema operations
+
+
+
+## `osc image schema metadef namespace`
+
+Metadef Namespace Schema operations
+
+**Usage:** `osc image schema metadef namespace <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition namespace schema
+
+
+
+## `osc image schema metadef namespace show`
+
+Show metadata definition namespace schema
+
+**Usage:** `osc image schema metadef namespace show`
+
+
+
+## `osc image schema metadef namespaces`
+
+Metadef Namespaces Schema operations
+
+**Usage:** `osc image schema metadef namespaces <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition namespaces schema
+
+
+
+## `osc image schema metadef namespaces show`
+
+Show metadata definition namespaces schema
+
+**Usage:** `osc image schema metadef namespaces show`
+
+
+
+## `osc image schema metadef object`
+
+Metadef Object Schema operations
+
+**Usage:** `osc image schema metadef object <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition object schema
+
+
+
+## `osc image schema metadef object show`
+
+Show metadata definition object schema
+
+**Usage:** `osc image schema metadef object show`
+
+
+
+## `osc image schema metadef objects`
+
+Metadef Objects Schema operations
+
+**Usage:** `osc image schema metadef objects <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition objects schema
+
+
+
+## `osc image schema metadef objects show`
+
+Show metadata definition objects schema
+
+**Usage:** `osc image schema metadef objects show`
+
+
+
+## `osc image schema metadef properties`
+
+Metadef Properties Schema operations
+
+**Usage:** `osc image schema metadef properties <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition properties schema
+
+
+
+## `osc image schema metadef properties show`
+
+Show metadata definition properties schema
+
+**Usage:** `osc image schema metadef properties show`
+
+
+
+## `osc image schema metadef property`
+
+Metadef Property Schema operations
+
+**Usage:** `osc image schema metadef property <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition property schema
+
+
+
+## `osc image schema metadef property show`
+
+Show metadata definition property schema
+
+**Usage:** `osc image schema metadef property show`
+
+
+
+## `osc image schema metadef resource-type`
+
+Metadef ResourceType Schema operations
+
+**Usage:** `osc image schema metadef resource-type <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition namespace resource type association schema
+
+
+
+## `osc image schema metadef resource-type show`
+
+Show metadata definition namespace resource type association schema
+
+**Usage:** `osc image schema metadef resource-type show`
+
+
+
+## `osc image schema metadef resource-types`
+
+Metadef ResourceTypes Schema operations
+
+**Usage:** `osc image schema metadef resource-types <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition namespace resource type associations schema
+
+
+
+## `osc image schema metadef resource-types show`
+
+Show metadata definition namespace resource type associations schema
+
+**Usage:** `osc image schema metadef resource-types show`
+
+
+
+## `osc image schema metadef tag`
+
+Metadef Tag Schema operations
+
+**Usage:** `osc image schema metadef tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition tag schema
+
+
+
+## `osc image schema metadef tag show`
+
+Show metadata definition tag schema
+
+**Usage:** `osc image schema metadef tag show`
+
+
+
+## `osc image schema metadef tags`
+
+Metadef Tags Schema operations
+
+**Usage:** `osc image schema metadef tags <COMMAND>`
+
+###### **Subcommands:**
+
+* `show` — Show metadata definition tags schema
+
+
+
+## `osc image schema metadef tags show`
+
+Show metadata definition tags schema
+
+**Usage:** `osc image schema metadef tags show`
 
 
 
