@@ -39,9 +39,18 @@ use openstack_sdk::api::image::v2::schema::metadef::property::get;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Command without description in OpenAPI
+/// Shows a JSON schema document that represents a metadata definition
+/// *property* entity.
+///
+/// The following schema document is an example. The authoritative response is
+/// the actual response to the API call.
+///
+/// Normal response codes: 200
+///
+/// Error response codes: 400, 401
 ///
 #[derive(Args)]
+#[command(about = "Show metadata definition property schema")]
 pub struct PropertyCommand {
     /// Request Query parameters
     #[command(flatten)]

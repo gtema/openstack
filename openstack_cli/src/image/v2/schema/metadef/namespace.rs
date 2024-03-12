@@ -34,7 +34,6 @@ pub struct NamespaceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum NamespaceCommands {
-    /// Show metadata definition namespace schema
     Show(get::NamespaceCommand),
 }
 
