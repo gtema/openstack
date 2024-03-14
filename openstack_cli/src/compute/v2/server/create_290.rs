@@ -131,7 +131,7 @@ enum NetworksStringEnum {
 }
 
 /// NetworksEnumGroupStruct Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = true, multiple = false)]
 struct NetworksEnumGroupStruct {
     #[arg(action=clap::ArgAction::SetTrue, help_heading = "Body parameters", long, required=false)]
@@ -151,7 +151,7 @@ enum OsDcfDiskConfig {
 }
 
 /// Server Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Server {
     /// IPv4 address that should be used to access this server.
     ///
@@ -419,7 +419,7 @@ struct Server {
 }
 
 /// OsSchedulerHints Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsSchedulerHints {
     /// Schedule the server on a host in the network specified with this
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when
@@ -615,6 +615,12 @@ impl ServerCommand {
             server_builder.metadata(val.iter().cloned());
         }
 
+        if args.networks.auto_networks {
+            server_builder.networks(create_290::NetworksEnum::F2(
+                create_290::NetworksStringEnum::Auto,
+            ));
+        }
+
         if let Some(data) = &args.networks.networks {
             let networks_builder: Vec<create_290::Networks> = data
                 .iter()
@@ -625,11 +631,6 @@ impl ServerCommand {
         if args.networks.none_networks {
             server_builder.networks(create_290::NetworksEnum::F2(
                 create_290::NetworksStringEnum::None,
-            ));
-        }
-        if args.networks.auto_networks {
-            server_builder.networks(create_290::NetworksEnum::F2(
-                create_290::NetworksStringEnum::Auto,
             ));
         }
 

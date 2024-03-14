@@ -37,7 +37,6 @@ use crate::common::BoolString;
 use openstack_sdk::api::network::v2::router::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists logical routers that the project who submits the request can access.
@@ -264,35 +263,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseExternalGatewayInfo {
-    enable_snat: Option<bool>,
-    external_fixed_ips: Option<Value>,
-    network_id: String,
-}
-
-impl fmt::Display for ResponseExternalGatewayInfo {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "enable_snat={}",
-                self.enable_snat
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "external_fixed_ips={}",
-                self.external_fixed_ips
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!("network_id={}", self.network_id),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RoutersCommand {

@@ -90,7 +90,7 @@ enum Protocol {
 }
 
 /// ConntrackHelper Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct ConntrackHelper {
     /// The netfilter conntrack helper module.
     ///

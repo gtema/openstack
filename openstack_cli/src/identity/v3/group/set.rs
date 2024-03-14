@@ -81,7 +81,7 @@ struct PathParameters {
     id: String,
 }
 /// Group Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Group {
     /// The description of the group.
     ///

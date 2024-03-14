@@ -33,12 +33,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::IntString;
 use openstack_sdk::api::compute::v2::hypervisor::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists hypervisors details.
@@ -275,42 +273,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     vcpus_used: Option<i32>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseService {
-    disabled_reason: Option<String>,
-    host: Option<String>,
-    id: Option<IntString>,
-}
-
-impl fmt::Display for ResponseService {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "disabled_reason={}",
-                self.disabled_reason
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "host={}",
-                self.host
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl HypervisorsCommand {

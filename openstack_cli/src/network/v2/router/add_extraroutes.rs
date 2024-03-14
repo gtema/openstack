@@ -73,7 +73,7 @@ struct PathParameters {
     id: String,
 }
 /// Router Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Router {
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when

@@ -92,7 +92,7 @@ enum Type {
 }
 
 /// OsGetSerialConsole Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsGetSerialConsole {
     /// The type of serial console. The only valid value is `serial`.
     ///

@@ -105,9 +105,8 @@ impl MetadataCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.meta data
-        let args = &self.meta;
 
-        ep_builder.meta(args.iter().cloned());
+        ep_builder.meta(self.meta.iter().cloned());
 
         let ep = ep_builder
             .build()

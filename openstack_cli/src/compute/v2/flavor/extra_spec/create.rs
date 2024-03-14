@@ -105,9 +105,8 @@ impl ExtraSpecCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.extra_specs data
-        let args = &self.extra_specs;
 
-        ep_builder.extra_specs(args.iter().cloned());
+        ep_builder.extra_specs(self.extra_specs.iter().cloned());
 
         let ep = ep_builder
             .build()

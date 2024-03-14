@@ -122,22 +122,12 @@ pub struct Token<'a> {
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct UserDomainStruct<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) id: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
 pub struct TotpUser<'a> {
+    /// A `domain` object
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<UserDomainStruct<'a>>,
+    pub(crate) domain: Option<Domain<'a>>,
 
     /// The user ID
     ///
@@ -174,9 +164,11 @@ pub struct Totp<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ApplicationCredentialUser<'a> {
+    /// A `domain` object
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) domain: Option<UserDomainStruct<'a>>,
+    pub(crate) domain: Option<Domain<'a>>,
 
     /// The user ID
     ///
@@ -264,7 +256,7 @@ pub struct ProjectDomain<'a> {
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
-    /// Project domain name
+    /// Project domain Name
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -353,7 +345,7 @@ pub struct Scope<'a> {
     pub(crate) system: Option<System>,
 }
 
-/// An `auth` object.
+/// Auth data with user’s identity and Service Provider scope information
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -382,7 +374,7 @@ pub struct Auth<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// An `auth` object.
+    /// Auth data with user’s identity and Service Provider scope information
     ///
     #[builder(setter(into))]
     pub(crate) auth: Auth<'a>,

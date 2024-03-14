@@ -76,7 +76,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Network Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Network {
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).

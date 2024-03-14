@@ -81,7 +81,7 @@ struct PathParameters {
     id: String,
 }
 /// Aggregate Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Aggregate {
     /// The availability zone of the host aggregate. You should use a custom
     /// availability zone rather than the default returned by the

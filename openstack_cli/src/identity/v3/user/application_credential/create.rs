@@ -81,7 +81,7 @@ struct PathParameters {
     user_id: String,
 }
 /// ApplicationCredential Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct ApplicationCredential {
     /// A list of `access_rules` objects
     ///

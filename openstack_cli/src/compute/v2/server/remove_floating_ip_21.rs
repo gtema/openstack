@@ -90,7 +90,7 @@ struct PathParameters {
     id: String,
 }
 /// RemoveFloatingIp Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct RemoveFloatingIp {
     /// The floating IP address.
     ///

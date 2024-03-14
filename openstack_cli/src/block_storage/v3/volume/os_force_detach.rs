@@ -74,7 +74,7 @@ struct PathParameters {
     id: String,
 }
 /// OsForceDetach Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsForceDetach {
     #[arg(help_heading = "Body parameters", long)]
     attachment_id: Option<String>,

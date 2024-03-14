@@ -17,7 +17,8 @@
 
 //! Delete a service provider.
 //!
-//! DELETE /OS-FEDERATION/service_providers/{sp_id}
+//! Relationship:
+//! `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

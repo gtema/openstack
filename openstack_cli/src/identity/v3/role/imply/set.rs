@@ -34,10 +34,8 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::identity::v3::role::imply::set;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
@@ -91,7 +89,19 @@ struct PathParameters {
 }
 /// Imply response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// A prior role object.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    implies: Option<Value>,
+
+    /// A prior role object.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    prior_role: Option<Value>,
+}
 
 impl ImplyCommand {
     /// Perform command action
@@ -120,10 +130,8 @@ impl ImplyCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

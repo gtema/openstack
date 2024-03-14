@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// RemoveProjectAccess Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct RemoveProjectAccess {
     #[arg(help_heading = "Body parameters", long)]
     project: String,

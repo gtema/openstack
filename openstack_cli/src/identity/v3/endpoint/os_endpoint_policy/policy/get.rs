@@ -39,9 +39,16 @@ use openstack_sdk::api::identity::v3::endpoint::os_endpoint_policy::policy::get;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// GET operation on /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy
+/// Returns the policy that is currently associated with the given endpoint, by
+/// working through the ordered sequence of methods of association. The first
+/// association that is found will be returned. If the region of the endpoint
+/// has a parent, then region associations will be examined up the region tree
+/// in ascending order.
+///
+/// A HEAD version of this API is also supported.
 ///
 #[derive(Args)]
+#[command(about = "Show the effective policy associated with an endpoint")]
 pub struct PolicyCommand {
     /// Request Query parameters
     #[command(flatten)]

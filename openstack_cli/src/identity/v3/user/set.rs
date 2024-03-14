@@ -40,7 +40,6 @@ use openstack_sdk::api::identity::v3::user::find;
 use openstack_sdk::api::identity::v3::user::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Updates a user.
@@ -86,7 +85,7 @@ struct PathParameters {
     id: String,
 }
 /// Options Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Options {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -112,7 +111,7 @@ struct Options {
 }
 
 /// User Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct User {
     /// The ID of the default project for the user.
     ///
@@ -127,8 +126,7 @@ struct User {
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
@@ -192,8 +190,7 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional)]
@@ -247,68 +244,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     password: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseOptions {
-    ignore_change_password_upon_first_use: Option<bool>,
-    ignore_lockout_failure_attempts: Option<bool>,
-    ignore_password_expiry: Option<bool>,
-    ignore_user_inactivity: Option<bool>,
-    lock_password: Option<bool>,
-    multi_factor_auth_enabled: Option<bool>,
-    multi_factor_auth_rules: Option<Value>,
-}
-
-impl fmt::Display for ResponseOptions {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "ignore_change_password_upon_first_use={}",
-                self.ignore_change_password_upon_first_use
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "ignore_lockout_failure_attempts={}",
-                self.ignore_lockout_failure_attempts
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "ignore_password_expiry={}",
-                self.ignore_password_expiry
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "ignore_user_inactivity={}",
-                self.ignore_user_inactivity
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "lock_password={}",
-                self.lock_password
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "multi_factor_auth_enabled={}",
-                self.multi_factor_auth_enabled
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "multi_factor_auth_rules={}",
-                self.multi_factor_auth_rules
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl UserCommand {

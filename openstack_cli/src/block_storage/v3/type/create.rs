@@ -73,7 +73,7 @@ struct PathParameters {
     id: String,
 }
 /// VolumeType Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct VolumeType {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,

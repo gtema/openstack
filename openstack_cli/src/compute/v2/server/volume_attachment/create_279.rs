@@ -79,7 +79,7 @@ struct PathParameters {
     server_id: String,
 }
 /// VolumeAttachment Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct VolumeAttachment {
     /// To delete the attached volume when the server is destroyed, specify
     /// `true`. Otherwise, specify `false`. Default: `false`

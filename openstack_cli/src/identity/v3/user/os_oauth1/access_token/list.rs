@@ -39,11 +39,13 @@ use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::list;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// List OAuth1 Access Tokens for user.
+/// Lists authorized access tokens.
 ///
-/// GET /v3/users/{user_id}/OS-OAUTH1/access_tokens
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-OAUTH1/1.0/rel/user_access_tokens`
 ///
 #[derive(Args)]
+#[command(about = "List access tokens")]
 pub struct AccessTokensCommand {
     /// Request Query parameters
     #[command(flatten)]

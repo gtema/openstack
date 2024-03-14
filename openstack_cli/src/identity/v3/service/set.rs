@@ -81,7 +81,7 @@ struct PathParameters {
     id: String,
 }
 /// Service Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Service {
     /// The service description.
     ///

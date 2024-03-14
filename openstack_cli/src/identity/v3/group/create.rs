@@ -67,7 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Group Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Group {
     /// The description of the group.
     ///

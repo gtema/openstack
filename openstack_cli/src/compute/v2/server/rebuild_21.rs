@@ -86,7 +86,7 @@ enum OsDcfDiskConfig {
 }
 
 /// Rebuild Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Rebuild {
     /// IPv4 address that should be used to access this server.
     ///

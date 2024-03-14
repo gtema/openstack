@@ -82,7 +82,7 @@ struct PathParameters {
     id: String,
 }
 /// RemoveTenantAccess Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct RemoveTenantAccess {
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///

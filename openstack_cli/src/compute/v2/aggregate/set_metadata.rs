@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// SetMetadata Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct SetMetadata {
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val_opt::<String, String>)]
     metadata: Vec<(String, Option<String>)>,

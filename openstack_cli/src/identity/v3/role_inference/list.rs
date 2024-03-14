@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::role_inference::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists all role inference rules.
@@ -77,68 +76,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     prior_role: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    _self: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "_self={}",
-            self._self
-                .clone()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponsePriorRole {
-    description: Option<String>,
-    id: Option<String>,
-    links: Option<Value>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponsePriorRole {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "description={}",
-                self.description
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "links={}",
-                self.links
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RoleInferencesCommand {

@@ -80,7 +80,7 @@ enum MigrationPolicy {
 }
 
 /// OsRetype Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsRetype {
     #[arg(help_heading = "Body parameters", long)]
     migration_policy: Option<MigrationPolicy>,

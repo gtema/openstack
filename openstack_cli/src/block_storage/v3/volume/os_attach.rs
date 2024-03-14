@@ -80,7 +80,7 @@ enum Mode {
 }
 
 /// OsAttach Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsAttach {
     #[arg(help_heading = "Body parameters", long)]
     host_name: Option<String>,

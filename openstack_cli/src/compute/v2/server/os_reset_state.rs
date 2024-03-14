@@ -93,7 +93,7 @@ enum State {
 }
 
 /// OsResetState Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsResetState {
     /// The state of the server to be set, `active` or `error` are valid.
     ///

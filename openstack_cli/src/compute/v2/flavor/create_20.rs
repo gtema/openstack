@@ -76,7 +76,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Flavor Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Flavor {
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created.

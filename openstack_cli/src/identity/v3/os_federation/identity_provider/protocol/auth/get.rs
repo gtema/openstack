@@ -36,15 +36,30 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::auth::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
-/// Authenticate from dedicated uri endpoint.
+/// A federated ephemeral user may request an unscoped token, which can be used
+/// to get a scoped token.
 ///
-/// GET/HEAD /OS-FEDERATION/identity_providers/
-/// {idp_id}/protocols/{protocol_id}/auth
+/// If the user is mapped directly (mapped to an existing user), a standard,
+/// unscoped token will be issued.
+///
+/// Due to the fact that this part of authentication is strictly connected with
+/// the SAML2 authentication workflow, a client should not send any data, as
+/// the content may be lost when a client is being redirected between Service
+/// Provider and Identity Provider. Both HTTP methods - GET and POST should be
+/// allowed as Web Single Sign-On (WebSSO) and Enhanced Client Proxy (ECP)
+/// mechanisms have different authentication workflows and use different HTTP
+/// methods while accessing protected endpoints.
+///
+/// The returned token will contain information about the groups to which the
+/// federated user belongs.
+///
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol_auth`
 ///
 #[derive(Args)]
+#[command(about = "Request an unscoped OS-FEDERATION token")]
 pub struct AuthCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -138,86 +153,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseDomain {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseDomain {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseUser {
-    domain: Option<Value>,
-    id: Option<String>,
-    name: Option<String>,
-    os_federation: Option<Value>,
-    password_expires_at: Option<String>,
-}
-
-impl fmt::Display for ResponseUser {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "domain={}",
-                self.domain
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "os_federation={}",
-                self.os_federation
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "password_expires_at={}",
-                self.password_expires_at
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl AuthCommand {

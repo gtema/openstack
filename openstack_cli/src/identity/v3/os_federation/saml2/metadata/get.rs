@@ -39,11 +39,17 @@ use openstack_sdk::api::identity::v3::os_federation::saml2::metadata::get;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Get SAML2 metadata.
+/// A user may retrieve Metadata about an Identity Service acting as an
+/// Identity Provider.
 ///
-/// GET/HEAD /OS-FEDERATION/saml2/metadata
+/// The response will be a full document with Metadata properties. Note that
+/// for readability, this example certificate has been truncated.
+///
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/metadata`
 ///
 #[derive(Args)]
+#[command(about = "Retrieve Metadata properties")]
 pub struct MetadataCommand {
     /// Request Query parameters
     #[command(flatten)]

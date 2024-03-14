@@ -75,7 +75,7 @@ struct PathParameters {
     id: String,
 }
 /// OsMigrateLive Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsMigrateLive {
     /// Migrates local disks by using block migration. Set to `auto` which
     /// means nova will detect whether source and destination hosts on shared

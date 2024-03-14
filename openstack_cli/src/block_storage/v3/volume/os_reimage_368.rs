@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsReimage Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsReimage {
     #[arg(help_heading = "Body parameters", long)]
     image_id: String,

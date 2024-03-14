@@ -72,7 +72,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Options Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Options {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -98,7 +98,7 @@ struct Options {
 }
 
 /// User Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct User {
     /// The ID of the default project for the user.
     ///
@@ -113,8 +113,7 @@ struct User {
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,

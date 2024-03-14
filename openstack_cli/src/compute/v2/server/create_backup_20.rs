@@ -74,7 +74,7 @@ struct PathParameters {
     id: String,
 }
 /// CreateBackup Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct CreateBackup {
     /// The type of the backup, for example, `daily`.
     ///

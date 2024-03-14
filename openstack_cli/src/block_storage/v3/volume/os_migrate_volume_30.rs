@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsMigrateVolume Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsMigrateVolume {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     force_host_copy: Option<bool>,

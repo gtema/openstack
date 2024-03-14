@@ -73,7 +73,7 @@ struct PathParameters {
     id: String,
 }
 /// OsSetImageMetadata Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsSetImageMetadata {
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Vec<(String, String)>,
@@ -106,7 +106,7 @@ impl VolumeCommand {
         let mut os_set_image_metadata_builder =
             os_set_image_metadata::OsSetImageMetadataBuilder::default();
 
-        os_set_image_metadata_builder.metadata(&args.metadata.iter().cloned());
+        os_set_image_metadata_builder.metadata(args.metadata.iter().cloned());
 
         ep_builder.os_set_image_metadata(os_set_image_metadata_builder.build().unwrap());
 

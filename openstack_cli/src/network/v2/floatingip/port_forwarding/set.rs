@@ -100,7 +100,7 @@ enum Protocol {
 }
 
 /// PortForwarding Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct PortForwarding {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,

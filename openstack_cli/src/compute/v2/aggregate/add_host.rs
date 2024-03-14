@@ -71,7 +71,7 @@ struct PathParameters {
     id: String,
 }
 /// AddHost Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct AddHost {
     #[arg(help_heading = "Body parameters", long)]
     host: String,

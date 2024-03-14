@@ -86,7 +86,7 @@ struct PathParameters {
     id: String,
 }
 /// ChangePassword Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct ChangePassword {
     /// The administrative password for the server.
     ///

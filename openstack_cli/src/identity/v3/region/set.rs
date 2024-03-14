@@ -81,7 +81,7 @@ struct PathParameters {
     id: String,
 }
 /// Region Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Region {
     /// The region description.
     ///

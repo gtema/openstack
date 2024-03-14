@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsDetach Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsDetach {
     #[arg(help_heading = "Body parameters", long)]
     attachment_id: Option<String>,
@@ -101,9 +101,7 @@ impl VolumeCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.os_detach data
-        let args = &self.os_detach;
-
-        if let Some(los_detach) = &args {
+        if let Some(los_detach) = &self.os_detach {
             let mut os_detach_builder = os_detach::OsDetachBuilder::default();
             if let Some(val) = &los_detach.attachment_id {
                 os_detach_builder.attachment_id(Some(val.into()));

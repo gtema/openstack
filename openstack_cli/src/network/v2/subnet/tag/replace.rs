@@ -111,9 +111,8 @@ impl TagCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.tags data
-        let args = &self.tags;
 
-        ep_builder.tags(args.iter().map(|v| v.into()).collect::<Vec<_>>());
+        ep_builder.tags(self.tags.iter().map(|v| v.into()).collect::<Vec<_>>());
 
         let ep = ep_builder
             .build()

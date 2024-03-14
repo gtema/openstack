@@ -129,7 +129,7 @@ pub struct BlockDeviceMapping<'a> {
     pub(crate) device_name: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) no_device: Option<Value>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -209,7 +209,7 @@ pub struct BlockDeviceMappingV2<'a> {
     pub(crate) image_id: Option<Cow<'a, str>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
+    #[builder(default, setter(into))]
     pub(crate) no_device: Option<Value>,
 
     #[serde(skip_serializing_if = "Option::is_none")]

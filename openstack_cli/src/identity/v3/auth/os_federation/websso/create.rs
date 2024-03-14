@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::auth::os_federation::websso::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// POST operation on /v3/auth/OS-FEDERATION/websso/{protocol_id}
@@ -124,86 +123,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseDomain {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseDomain {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseUser {
-    domain: Option<Value>,
-    id: Option<String>,
-    name: Option<String>,
-    os_federation: Option<Value>,
-    password_expires_at: Option<String>,
-}
-
-impl fmt::Display for ResponseUser {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "domain={}",
-                self.domain
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "os_federation={}",
-                self.os_federation
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "password_expires_at={}",
-                self.password_expires_at
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl WebssoCommand {

@@ -106,7 +106,7 @@ struct PathParameters {
     id: String,
 }
 /// Lock Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Lock {
     #[arg(help_heading = "Body parameters", long)]
     locked_reason: Option<String>,
@@ -136,9 +136,7 @@ impl ServerCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.lock data
-        let args = &self.lock;
-
-        if let Some(llock) = &args {
+        if let Some(llock) = &self.lock {
             let mut lock_builder = lock_273::LockBuilder::default();
             if let Some(val) = &llock.locked_reason {
                 lock_builder.locked_reason(val);

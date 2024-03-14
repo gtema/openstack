@@ -38,7 +38,6 @@ use openstack_sdk::api::identity::v3::role::find;
 use openstack_sdk::api::identity::v3::role::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Updates a role.
@@ -80,7 +79,7 @@ struct PathParameters {
     id: String,
 }
 /// Options Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Options {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -88,7 +87,7 @@ struct Options {
 }
 
 /// Role Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Role {
     /// The role description.
     ///
@@ -140,23 +139,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     options: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseOptions {
-    immutable: Option<bool>,
-}
-
-impl fmt::Display for ResponseOptions {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "immutable={}",
-            self.immutable
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RoleCommand {

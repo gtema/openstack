@@ -38,9 +38,13 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// GET operation on /v3/OS-FEDERATION/mappings
+/// List all federated mappings.
+///
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mappings`
 ///
 #[derive(Args)]
+#[command(about = "List mappings")]
 pub struct MappingsCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -67,6 +71,8 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
+    /// The list of rules used to map remote users into local users
+    ///
     #[serde()]
     #[structable(optional, pretty, wide)]
     rules: Option<Value>,

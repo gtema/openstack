@@ -67,7 +67,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Service Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Service {
     /// The service description.
     ///

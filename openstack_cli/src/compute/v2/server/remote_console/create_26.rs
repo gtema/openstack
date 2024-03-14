@@ -101,7 +101,7 @@ enum Type {
 }
 
 /// RemoteConsole Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
     /// `rdp`, `serial` and `mks`. The protocol `mks` is added since

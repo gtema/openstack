@@ -75,7 +75,7 @@ struct PathParameters {
     id: String,
 }
 /// OsMigrateLive Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsMigrateLive {
     /// Set to `True` to enable over commit when the destination host is
     /// checked for available disk space. Set to `False` to disable over
