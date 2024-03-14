@@ -64,7 +64,7 @@ pub enum TotpError {
     UserDomainBuilder {
         /// The error source
         #[from]
-        source: token_v3::UserDomainStructBuilderError,
+        source: token_v3::DomainBuilderError,
     },
 
     /// Totp builder
@@ -100,7 +100,7 @@ pub fn fill_identity(
     }
     // Process user domain information
     if auth_data.user_domain_id.is_some() || auth_data.user_domain_name.is_some() {
-        let mut user_domain = token_v3::UserDomainStructBuilder::default();
+        let mut user_domain = token_v3::DomainBuilder::default();
         if let Some(val) = &auth_data.user_domain_id {
             user_domain.id(val.clone());
         }

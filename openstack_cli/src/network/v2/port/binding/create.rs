@@ -90,7 +90,7 @@ enum VnicType {
 }
 
 /// Binding Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Binding {
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,

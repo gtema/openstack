@@ -91,7 +91,7 @@ enum Type {
 }
 
 /// OsGetRdpconsole Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsGetRdpconsole {
     /// The type of RDP console. The only valid value is `rdp-html5`.
     ///

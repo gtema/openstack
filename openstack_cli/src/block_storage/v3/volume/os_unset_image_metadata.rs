@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsUnsetImageMetadata Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsUnsetImageMetadata {
     #[arg(help_heading = "Body parameters", long)]
     key: String,

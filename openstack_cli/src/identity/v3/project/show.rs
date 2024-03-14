@@ -37,7 +37,6 @@ use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::project::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Shows details for a project.
@@ -89,8 +88,7 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional)]
@@ -102,8 +100,7 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[serde()]
     #[structable(optional)]
@@ -135,23 +132,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     tags: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseOptions {
-    immutable: Option<bool>,
-}
-
-impl fmt::Display for ResponseOptions {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "immutable={}",
-            self.immutable
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl ProjectCommand {

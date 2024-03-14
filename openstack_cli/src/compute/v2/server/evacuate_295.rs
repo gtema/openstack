@@ -73,7 +73,7 @@ struct PathParameters {
     id: String,
 }
 /// Evacuate Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Evacuate {
     /// An administrative password to access the evacuated server. If you omit
     /// this parameter, the operation generates a new password. Up to API

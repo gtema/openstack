@@ -33,10 +33,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::compute::v2::server::interface::create_249;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Creates a port interface and uses it to attach a port to a server.
@@ -80,7 +79,7 @@ struct PathParameters {
     server_id: String,
 }
 /// InterfaceAttachment Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct InterfaceAttachment {
     /// Fixed IP addresses. If you request a specific fixed IP address without
     /// a `net_id`, the request returns a `Bad Request (400)` response code.
@@ -118,7 +117,45 @@ struct InterfaceAttachment {
 
 /// Interface response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// Fixed IP addresses with subnet IDs.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    fixed_ips: Option<Value>,
+
+    /// The MAC address.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    mac_addr: Option<String>,
+
+    /// The network ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    net_id: Option<String>,
+
+    /// The port ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    port_id: Option<String>,
+
+    /// The port state.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    port_state: Option<String>,
+
+    /// The device tag applied to the virtual network interface or `null`.
+    ///
+    /// **New in version 2.70**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    tag: Option<String>,
+}
 
 impl InterfaceCommand {
     /// Perform command action
@@ -168,10 +205,8 @@ impl InterfaceCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

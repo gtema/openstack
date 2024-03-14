@@ -39,7 +39,6 @@ use openstack_sdk::api::compute::v2::server::set_294;
 use openstack_sdk::api::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Updates the editable attributes of an existing server.
@@ -90,7 +89,7 @@ enum OsDcfDiskConfig {
 }
 
 /// Server Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Server {
     /// IPv4 address that should be used to access this server.
     ///
@@ -594,146 +593,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     user_id: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseFault {
-    code: Option<i32>,
-    created: Option<String>,
-    details: Option<String>,
-    message: Option<String>,
-}
-
-impl fmt::Display for ResponseFault {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "code={}",
-                self.code.map(|v| v.to_string()).unwrap_or("".to_string())
-            ),
-            format!(
-                "created={}",
-                self.created
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "details={}",
-                self.details
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "message={}",
-                self.message
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseFlavor {
-    disk: Option<i32>,
-    ephemeral: Option<i32>,
-    extra_specs: Option<Value>,
-    id: Option<String>,
-    links: Option<Value>,
-    original_name: Option<String>,
-    ram: Option<i32>,
-    swap: Option<i32>,
-    vcpus: Option<i32>,
-}
-
-impl fmt::Display for ResponseFlavor {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "disk={}",
-                self.disk.map(|v| v.to_string()).unwrap_or("".to_string())
-            ),
-            format!(
-                "ephemeral={}",
-                self.ephemeral
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "extra_specs={}",
-                self.extra_specs
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "links={}",
-                self.links
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "original_name={}",
-                self.original_name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "ram={}",
-                self.ram.map(|v| v.to_string()).unwrap_or("".to_string())
-            ),
-            format!(
-                "swap={}",
-                self.swap.map(|v| v.to_string()).unwrap_or("".to_string())
-            ),
-            format!(
-                "vcpus={}",
-                self.vcpus.map(|v| v.to_string()).unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseImage {
-    id: Option<String>,
-    links: Option<Value>,
-}
-
-impl fmt::Display for ResponseImage {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "links={}",
-                self.links
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl ServerCommand {

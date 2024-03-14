@@ -105,7 +105,7 @@ enum Type {
 }
 
 /// Reboot Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Reboot {
     /// The type of the reboot action. The valid values are `HARD` and `SOFT`.
     /// A `SOFT` reboot attempts a graceful shutdown and restart of the server.

@@ -105,7 +105,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Floatingip Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Floatingip {
     /// A human-readable description for the resource. Default is an empty
     /// string.

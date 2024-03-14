@@ -79,7 +79,7 @@ enum ControlLocation {
 }
 
 /// Encryption Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Encryption {
     #[arg(help_heading = "Body parameters", long)]
     cipher: Option<String>,

@@ -95,9 +95,13 @@ impl ExtraSpecCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.extra_specs data
-        let args = &self.extra_specs;
 
-        ep_builder.extra_specs(args.iter().cloned().map(|(k, v)| (k, v.map(Into::into))));
+        ep_builder.extra_specs(
+            self.extra_specs
+                .iter()
+                .cloned()
+                .map(|(k, v)| (k, v.map(Into::into))),
+        );
 
         let ep = ep_builder
             .build()

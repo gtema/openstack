@@ -75,7 +75,7 @@ struct PathParameters {
     id: String,
 }
 /// CreateImage Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct CreateImage {
     /// Metadata key and value pairs for the image. The maximum size for each
     /// metadata key and value pair is 255 bytes.

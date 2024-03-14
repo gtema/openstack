@@ -79,7 +79,7 @@ struct PathParameters {
     server_id: String,
 }
 /// VolumeAttachment Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct VolumeAttachment {
     /// Name of the device such as, `/dev/vdb`. Omit or set this parameter to
     /// null for auto-assignment, if supported. If you specify this parameter,

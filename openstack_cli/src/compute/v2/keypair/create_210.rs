@@ -77,7 +77,7 @@ enum Type {
 }
 
 /// Keypair Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Keypair {
     /// A name for the keypair which will be used to reference it later.
     ///

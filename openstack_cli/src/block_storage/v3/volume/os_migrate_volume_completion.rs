@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsMigrateVolumeCompletion Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsMigrateVolumeCompletion {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     error: Option<Option<bool>>,

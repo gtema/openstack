@@ -73,7 +73,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Volume Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Volume {
     /// The name of the availability zone.
     ///
@@ -410,8 +410,8 @@ impl VolumeCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.os_sch_hnt_scheduler_hints data
-        if let Some(args) = &self.os_sch_hnt_scheduler_hints {
-            ep_builder.os_sch_hnt_scheduler_hints(args.iter().cloned());
+        if let Some(arg) = &self.os_sch_hnt_scheduler_hints {
+            ep_builder.os_sch_hnt_scheduler_hints(arg.iter().cloned());
         }
 
         // Set Request.volume data

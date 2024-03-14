@@ -99,7 +99,7 @@ enum BindingVnicType {
 }
 
 /// Port Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Port {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.

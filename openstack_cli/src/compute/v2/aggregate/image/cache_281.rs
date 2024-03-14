@@ -106,9 +106,9 @@ impl ImageCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.cache data
-        let args = &self.cache;
 
-        let cache_builder: Vec<cache_281::Cache> = args
+        let cache_builder: Vec<cache_281::Cache> = self
+            .cache
             .iter()
             .flat_map(|v| cache_281::CacheBuilder::default().id(v).build())
             .collect();

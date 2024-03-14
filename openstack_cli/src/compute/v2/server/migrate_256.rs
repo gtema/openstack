@@ -101,7 +101,7 @@ struct PathParameters {
     id: String,
 }
 /// Migrate Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Migrate {
     #[arg(help_heading = "Body parameters", long)]
     host: Option<String>,
@@ -131,9 +131,7 @@ impl ServerCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.migrate data
-        let args = &self.migrate;
-
-        if let Some(lmigrate) = &args {
+        if let Some(lmigrate) = &self.migrate {
             let mut migrate_builder = migrate_256::MigrateBuilder::default();
             if let Some(val) = &lmigrate.host {
                 migrate_builder.host(Some(val.into()));

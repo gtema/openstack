@@ -73,7 +73,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// Region Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Region {
     /// The region description.
     ///

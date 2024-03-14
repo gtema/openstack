@@ -59,15 +59,13 @@ pub struct Project<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the Service Provider is enabled or not
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]

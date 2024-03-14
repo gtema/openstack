@@ -88,7 +88,7 @@ enum Type {
 }
 
 /// OsGetVncconsole Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsGetVncconsole {
     /// The type of VNC console. The only valid value is `novnc`.
     ///

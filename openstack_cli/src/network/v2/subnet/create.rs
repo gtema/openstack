@@ -119,7 +119,7 @@ enum Ipv6AddressMode {
 }
 
 /// Subnet Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Subnet {
     /// Allocation pools with `start` and `end` IP addresses for this subnet.
     /// If allocation_pools are not specified, OpenStack Networking

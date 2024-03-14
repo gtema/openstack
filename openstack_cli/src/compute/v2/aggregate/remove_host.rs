@@ -71,7 +71,7 @@ struct PathParameters {
     id: String,
 }
 /// RemoveHost Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct RemoveHost {
     #[arg(help_heading = "Body parameters", long)]
     host: String,

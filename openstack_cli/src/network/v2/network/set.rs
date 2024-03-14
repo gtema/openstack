@@ -83,7 +83,7 @@ struct PathParameters {
     id: String,
 }
 /// Network Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Network {
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).

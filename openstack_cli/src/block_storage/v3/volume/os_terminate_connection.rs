@@ -74,7 +74,7 @@ struct PathParameters {
     id: String,
 }
 /// OsTerminateConnection Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsTerminateConnection {
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     connector: Option<Value>,

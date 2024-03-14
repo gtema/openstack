@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsUpdateReadonlyFlag Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsUpdateReadonlyFlag {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     readonly: bool,

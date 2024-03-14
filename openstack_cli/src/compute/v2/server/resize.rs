@@ -105,7 +105,7 @@ enum OsDcfDiskConfig {
 }
 
 /// Resize Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Resize {
     /// The flavor ID for resizing the server. The size of the disk in the
     /// flavor being resized to must be greater than or equal to the size of

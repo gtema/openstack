@@ -93,7 +93,7 @@ enum Visibility {
 }
 
 /// OsVolumeUploadImage Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsVolumeUploadImage {
     #[arg(help_heading = "Body parameters", long)]
     container_format: Option<String>,

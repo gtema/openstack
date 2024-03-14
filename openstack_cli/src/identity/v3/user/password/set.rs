@@ -80,7 +80,7 @@ struct PathParameters {
     user_id: String,
 }
 /// User Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct User {
     /// The original password for the user.
     ///

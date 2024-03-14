@@ -88,7 +88,7 @@ struct PathParameters {
     id: String,
 }
 /// RemoveFixedIp Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct RemoveFixedIp {
     /// The IP address.
     ///

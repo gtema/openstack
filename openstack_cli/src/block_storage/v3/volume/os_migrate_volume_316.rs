@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsMigrateVolume Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsMigrateVolume {
     #[arg(help_heading = "Body parameters", long)]
     cluster: Option<String>,

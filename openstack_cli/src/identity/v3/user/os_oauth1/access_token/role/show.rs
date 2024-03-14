@@ -39,12 +39,13 @@ use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::role::get;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Get role for access token.
+/// Shows details for a role for an access token.
 ///
-/// GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/
-/// {access_token_id}/roles/{role_id}
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-OAUTH1/1.0/rel/user_access_token_role`
 ///
 #[derive(Args)]
+#[command(about = "Show role details for an access token")]
 pub struct RoleCommand {
     /// Request Query parameters
     #[command(flatten)]

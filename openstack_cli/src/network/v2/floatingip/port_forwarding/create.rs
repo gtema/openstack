@@ -90,7 +90,7 @@ enum Protocol {
 }
 
 /// PortForwarding Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct PortForwarding {
     /// A text describing the rule, which helps users to manage/find easily
     /// theirs rules.

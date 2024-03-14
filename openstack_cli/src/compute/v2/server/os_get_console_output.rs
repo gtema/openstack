@@ -85,7 +85,7 @@ struct PathParameters {
     id: String,
 }
 /// OsGetConsoleOutput Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsGetConsoleOutput {
     /// The number of lines to fetch from the end of console log. All lines
     /// will be returned if this is not specified.

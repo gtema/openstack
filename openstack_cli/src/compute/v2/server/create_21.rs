@@ -131,7 +131,7 @@ enum OsDcfDiskConfig {
 }
 
 /// Server Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Server {
     /// IPv4 address that should be used to access this server.
     ///
@@ -341,7 +341,7 @@ struct Server {
 }
 
 /// OsSchedulerHints Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsSchedulerHints {
     /// Schedule the server on a host in the network specified with this
     /// parameter and a cidr (`os:scheduler_hints.cidr`). It is available when

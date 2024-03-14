@@ -89,7 +89,7 @@ struct PathParameters {
     id: String,
 }
 /// Rescue Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Rescue {
     #[arg(help_heading = "Body parameters", long)]
     admin_pass: Option<String>,
@@ -131,9 +131,7 @@ impl ServerCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.rescue data
-        let args = &self.rescue;
-
-        if let Some(lrescue) = &args {
+        if let Some(lrescue) = &self.rescue {
             let mut rescue_builder = rescue::RescueBuilder::default();
             if let Some(val) = &lrescue.admin_pass {
                 rescue_builder.admin_pass(val);

@@ -33,12 +33,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_json;
 use clap::ValueEnum;
 use dialoguer::Password;
 use openstack_sdk::api::identity::v3::auth::token::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Authenticates an identity and generates a token. Uses the password
@@ -62,7 +62,7 @@ pub struct TokenCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// An `auth` object.
+    /// Auth data with user’s identity and Service Provider scope information
     ///
     #[command(flatten)]
     auth: Auth,
@@ -84,29 +84,14 @@ enum Methods {
     Totp,
 }
 
-/// Domain Body data
-#[derive(Args)]
-#[group(required = false, multiple = true)]
-struct Domain {
-    /// User Domain ID
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
-
-    /// User Domain Name
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
 /// User Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct User {
     /// A `domain` object
     ///
-    #[command(flatten)]
-    domain: Option<Domain>,
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    domain: Option<Value>,
 
     /// The ID of the user. Required if you do not specify the user name.
     ///
@@ -127,7 +112,7 @@ struct User {
 }
 
 /// Password Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Password {
     /// A `user` object.
@@ -137,7 +122,7 @@ struct Password {
 }
 
 /// Token Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Token {
     /// Authorization Token value
@@ -146,23 +131,14 @@ struct Token {
     id: Option<String>,
 }
 
-/// UserDomainStructInput Body data
-#[derive(Args)]
-#[group(required = false, multiple = true)]
-struct UserDomainStructInput {
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
-
-    #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
 /// TotpUser Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = true, multiple = true)]
 struct TotpUser {
-    #[command(flatten)]
-    domain: Option<UserDomainStructInput>,
+    /// A `domain` object
+    ///
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    domain: Option<Value>,
 
     /// The user ID
     ///
@@ -181,33 +157,15 @@ struct TotpUser {
 }
 
 /// Totp Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Totp {
     #[command(flatten)]
     user: TotpUser,
 }
 
-/// ApplicationCredentialUser Body data
-#[derive(Args)]
-#[group(required = false, multiple = true)]
-struct ApplicationCredentialUser {
-    #[command(flatten)]
-    domain: Option<UserDomainStructInput>,
-
-    /// The user ID
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
-
-    /// The user name
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
 /// ApplicationCredential Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct ApplicationCredential {
     #[arg(help_heading = "Body parameters", long)]
@@ -224,12 +182,12 @@ struct ApplicationCredential {
     /// A user object, required if an application credential is identified by
     /// name and not ID.
     ///
-    #[command(flatten)]
-    user: Option<ApplicationCredentialUser>,
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    user: Option<Value>,
 }
 
 /// Identity Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = true, multiple = true)]
 struct Identity {
     /// An application credential object.
@@ -259,41 +217,8 @@ struct Identity {
     totp: Option<Totp>,
 }
 
-/// ProjectDomain Body data
-#[derive(Args)]
-#[group(required = false, multiple = true)]
-struct ProjectDomain {
-    /// Project domain Id
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
-
-    /// Project domain name
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
-/// Project Body data
-#[derive(Args)]
-#[group(required = false, multiple = true)]
-struct Project {
-    #[command(flatten)]
-    domain: Option<ProjectDomain>,
-
-    /// Project Id
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    id: Option<String>,
-
-    /// Project Name
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
-}
-
 /// ScopeDomain Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct ScopeDomain {
     /// Domain id
@@ -308,7 +233,7 @@ struct ScopeDomain {
 }
 
 /// OsTrustTrust Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct OsTrustTrust {
     #[arg(help_heading = "Body parameters", long)]
@@ -316,7 +241,7 @@ struct OsTrustTrust {
 }
 
 /// System Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct System {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -324,7 +249,7 @@ struct System {
 }
 
 /// Scope Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct Scope {
     #[command(flatten)]
@@ -333,15 +258,15 @@ struct Scope {
     #[command(flatten)]
     os_trust_trust: Option<OsTrustTrust>,
 
-    #[command(flatten)]
-    project: Option<Project>,
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    project: Option<Value>,
 
     #[command(flatten)]
     system: Option<System>,
 }
 
 /// Auth Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Auth {
     /// An `identity` object.
     ///
@@ -466,142 +391,6 @@ struct ResponseData {
     #[structable(optional, pretty)]
     user: Option<Value>,
 }
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseDomain {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseDomain {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseUser {
-    domain: Option<Value>,
-    id: Option<String>,
-    name: Option<String>,
-    os_federation: Option<Value>,
-    password_expires_at: Option<String>,
-}
-
-impl fmt::Display for ResponseUser {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "domain={}",
-                self.domain
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "os_federation={}",
-                self.os_federation
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "password_expires_at={}",
-                self.password_expires_at
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseDomainStructResponse {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseDomainStructResponse {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseProject {
-    id: Option<String>,
-    name: Option<String>,
-}
-
-impl fmt::Display for ResponseProject {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "id={}",
-                self.id
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
-}
 
 impl TokenCommand {
     /// Perform command action
@@ -647,14 +436,7 @@ impl TokenCommand {
                     user_builder.password(val);
                 }
                 if let Some(val) = &val.domain {
-                    let mut domain_builder = create::DomainBuilder::default();
-                    if let Some(val) = &val.id {
-                        domain_builder.id(val);
-                    }
-                    if let Some(val) = &val.name {
-                        domain_builder.name(val);
-                    }
-                    user_builder.domain(domain_builder.build().expect("A valid object"));
+                    user_builder.domain(serde_json::from_value::<create::Domain>(val.to_owned())?);
                 }
                 password_builder.user(user_builder.build().expect("A valid object"));
             }
@@ -677,14 +459,7 @@ impl TokenCommand {
                 user_builder.name(val);
             }
             if let Some(val) = &&val.user.domain {
-                let mut domain_builder = create::UserDomainStructInputBuilder::default();
-                if let Some(val) = &val.id {
-                    domain_builder.id(val);
-                }
-                if let Some(val) = &val.name {
-                    domain_builder.name(val);
-                }
-                user_builder.domain(domain_builder.build().expect("A valid object"));
+                user_builder.domain(serde_json::from_value::<create::Domain>(val.to_owned())?);
             }
 
             user_builder.passcode(&val.user.passcode);
@@ -703,24 +478,9 @@ impl TokenCommand {
 
             application_credential_builder.secret(&val.secret);
             if let Some(val) = &val.user {
-                let mut user_builder = create::ApplicationCredentialUserBuilder::default();
-                if let Some(val) = &val.id {
-                    user_builder.id(val);
-                }
-                if let Some(val) = &val.name {
-                    user_builder.name(val);
-                }
-                if let Some(val) = &val.domain {
-                    let mut domain_builder = create::UserDomainStructInputBuilder::default();
-                    if let Some(val) = &val.id {
-                        domain_builder.id(val);
-                    }
-                    if let Some(val) = &val.name {
-                        domain_builder.name(val);
-                    }
-                    user_builder.domain(domain_builder.build().expect("A valid object"));
-                }
-                application_credential_builder.user(user_builder.build().expect("A valid object"));
+                application_credential_builder.user(serde_json::from_value::<
+                    create::ApplicationCredentialUser,
+                >(val.to_owned())?);
             }
             identity_builder.application_credential(
                 application_credential_builder
@@ -733,24 +493,7 @@ impl TokenCommand {
         if let Some(val) = &args.scope {
             let mut scope_builder = create::ScopeBuilder::default();
             if let Some(val) = &val.project {
-                let mut project_builder = create::ProjectBuilder::default();
-                if let Some(val) = &val.name {
-                    project_builder.name(val);
-                }
-                if let Some(val) = &val.id {
-                    project_builder.id(val);
-                }
-                if let Some(val) = &val.domain {
-                    let mut domain_builder = create::ProjectDomainBuilder::default();
-                    if let Some(val) = &val.id {
-                        domain_builder.id(val);
-                    }
-                    if let Some(val) = &val.name {
-                        domain_builder.name(val);
-                    }
-                    project_builder.domain(domain_builder.build().expect("A valid object"));
-                }
-                scope_builder.project(project_builder.build().expect("A valid object"));
+                scope_builder.project(serde_json::from_value::<create::Project>(val.to_owned())?);
             }
             if let Some(val) = &val.domain {
                 let mut domain_builder = create::ScopeDomainBuilder::default();

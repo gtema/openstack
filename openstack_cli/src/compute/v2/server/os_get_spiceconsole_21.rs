@@ -92,7 +92,7 @@ enum Type {
 }
 
 /// OsGetSpiceconsole Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsGetSpiceconsole {
     /// The type of SPICE console. The only valid value is `spice-html5`.
     ///

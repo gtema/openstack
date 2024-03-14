@@ -39,11 +39,16 @@ use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Delete specific access token.
+/// Enables a user to revoke an access token, which prevents the consumer from
+/// requesting new Identity Service API tokens. Also, revokes any Identity
+/// Service API tokens that were issued to the consumer through that access
+/// token.
 ///
-/// DELETE /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}
+/// Relationship:
+/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-OAUTH1/1.0/rel/user_access_token`
 ///
 #[derive(Args)]
+#[command(about = "Revoke access token")]
 pub struct AccessTokenCommand {
     /// Request Query parameters
     #[command(flatten)]

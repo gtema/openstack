@@ -37,7 +37,6 @@ use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::role::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Shows details for a role.
@@ -106,23 +105,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     options: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseOptions {
-    immutable: Option<bool>,
-}
-
-impl fmt::Display for ResponseOptions {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "immutable={}",
-            self.immutable
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RoleCommand {

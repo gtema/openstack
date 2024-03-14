@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// AddProjectAccess Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct AddProjectAccess {
     #[arg(help_heading = "Body parameters", long)]
     project: String,

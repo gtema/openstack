@@ -81,7 +81,7 @@ struct PathParameters {
     id: String,
 }
 /// AddTenantAccess Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct AddTenantAccess {
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///

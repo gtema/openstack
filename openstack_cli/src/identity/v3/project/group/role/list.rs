@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::project::group::role::list;
 use openstack_sdk::api::QueryAsync;
 
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Lists role assignments for a group on a project.
@@ -103,24 +102,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    _self: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "_self={}",
-            self._self
-                .clone()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RolesCommand {

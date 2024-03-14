@@ -100,7 +100,7 @@ struct PathParameters {
     id: String,
 }
 /// VolumeAttachment Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct VolumeAttachment {
     /// The UUID of the volume to attach instead of the attached volume.
     ///

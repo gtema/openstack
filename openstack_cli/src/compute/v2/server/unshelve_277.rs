@@ -75,7 +75,7 @@ struct PathParameters {
     id: String,
 }
 /// Unshelve Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Unshelve {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: String,
@@ -105,9 +105,7 @@ impl ServerCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.unshelve data
-        let args = &self.unshelve;
-
-        if let Some(lunshelve) = &args {
+        if let Some(lunshelve) = &self.unshelve {
             let mut unshelve_builder = unshelve_277::UnshelveBuilder::default();
 
             unshelve_builder.availability_zone(&lunshelve.availability_zone);

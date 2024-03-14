@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsExtend Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsExtend {
     #[arg(help_heading = "Body parameters", long)]
     new_size: i32,

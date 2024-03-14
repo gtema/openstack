@@ -100,7 +100,7 @@ struct PathParameters {
     id: String,
 }
 /// VolumeAttachment Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct VolumeAttachment {
     /// A flag indicating if the attached volume will be deleted when the
     /// server is deleted.

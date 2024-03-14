@@ -150,13 +150,13 @@ impl RouterCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.port_id data
-        if let Some(args) = &self.port_id {
-            ep_builder.port_id(args);
+        if let Some(arg) = &self.port_id {
+            ep_builder.port_id(arg);
         }
 
         // Set Request.subnet_id data
-        if let Some(args) = &self.subnet_id {
-            ep_builder.subnet_id(args);
+        if let Some(arg) = &self.subnet_id {
+            ep_builder.subnet_id(arg);
         }
 
         let ep = ep_builder

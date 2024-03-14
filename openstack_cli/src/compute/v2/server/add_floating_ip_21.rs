@@ -103,7 +103,7 @@ struct PathParameters {
     id: String,
 }
 /// AddFloatingIp Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct AddFloatingIp {
     /// The fixed IP address with which you want to associate the floating IP
     /// address.

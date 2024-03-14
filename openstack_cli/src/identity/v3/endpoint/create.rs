@@ -76,7 +76,7 @@ enum Interface {
 }
 
 /// Endpoint Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Endpoint {
     /// Indicates whether the endpoint appears in the service catalog: -
     /// `false`. The endpoint does not appear in the service catalog. - `true`.

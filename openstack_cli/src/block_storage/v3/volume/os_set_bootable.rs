@@ -72,7 +72,7 @@ struct PathParameters {
     id: String,
 }
 /// OsSetBootable Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct OsSetBootable {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     bootable: bool,

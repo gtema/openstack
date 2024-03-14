@@ -38,7 +38,6 @@ use crate::common::BoolString;
 use openstack_sdk::api::network::v2::router::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Creates a logical router.
@@ -81,7 +80,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {}
 /// ExternalGatewayInfo Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 #[group(required = false, multiple = true)]
 struct ExternalGatewayInfo {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
@@ -95,7 +94,7 @@ struct ExternalGatewayInfo {
 }
 
 /// Router Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Router {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`). Default is `true`.
@@ -296,35 +295,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseExternalGatewayInfo {
-    enable_snat: Option<bool>,
-    external_fixed_ips: Option<Value>,
-    network_id: String,
-}
-
-impl fmt::Display for ResponseExternalGatewayInfo {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([
-            format!(
-                "enable_snat={}",
-                self.enable_snat
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!(
-                "external_fixed_ips={}",
-                self.external_fixed_ips
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
-            ),
-            format!("network_id={}", self.network_id),
-        ]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RouterCommand {

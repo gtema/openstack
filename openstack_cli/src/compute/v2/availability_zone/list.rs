@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::compute::v2::availability_zone::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Gets detailed availability zone information. Policy defaults enable only
@@ -89,23 +88,6 @@ struct ResponseData {
     #[serde(rename = "zoneState")]
     #[structable(optional, pretty, title = "zoneState", wide)]
     zone_state: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseZoneState {
-    available: Option<bool>,
-}
-
-impl fmt::Display for ResponseZoneState {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "available={}",
-            self.available
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl AvailabilityZonesCommand {
