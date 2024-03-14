@@ -501,8 +501,8 @@ impl ImageCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.container_format data
-        if let Some(args) = &self.container_format {
-            let tmp = match args {
+        if let Some(arg) = &self.container_format {
+            let tmp = match arg {
                 ContainerFormat::Aki => create::ContainerFormat::Aki,
                 ContainerFormat::Ami => create::ContainerFormat::Ami,
                 ContainerFormat::Ari => create::ContainerFormat::Ari,
@@ -516,8 +516,8 @@ impl ImageCommand {
         }
 
         // Set Request.disk_format data
-        if let Some(args) = &self.disk_format {
-            let tmp = match args {
+        if let Some(arg) = &self.disk_format {
+            let tmp = match arg {
                 DiskFormat::Aki => create::DiskFormat::Aki,
                 DiskFormat::Ami => create::DiskFormat::Ami,
                 DiskFormat::Ari => create::DiskFormat::Ari,
@@ -534,13 +534,13 @@ impl ImageCommand {
         }
 
         // Set Request.id data
-        if let Some(args) = &self.id {
-            ep_builder.id(args);
+        if let Some(arg) = &self.id {
+            ep_builder.id(arg);
         }
 
         // Set Request.locations data
-        if let Some(args) = &self.locations {
-            let locations_builder: Vec<create::Locations> = args
+        if let Some(arg) = &self.locations {
+            let locations_builder: Vec<create::Locations> = arg
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create::Locations>(v.to_owned()))
                 .collect::<Vec<create::Locations>>();
@@ -548,43 +548,43 @@ impl ImageCommand {
         }
 
         // Set Request.min_disk data
-        if let Some(args) = &self.min_disk {
-            ep_builder.min_disk(*args);
+        if let Some(arg) = &self.min_disk {
+            ep_builder.min_disk(*arg);
         }
 
         // Set Request.min_ram data
-        if let Some(args) = &self.min_ram {
-            ep_builder.min_ram(*args);
+        if let Some(arg) = &self.min_ram {
+            ep_builder.min_ram(*arg);
         }
 
         // Set Request.name data
-        if let Some(args) = &self.name {
-            ep_builder.name(Some(args.into()));
+        if let Some(arg) = &self.name {
+            ep_builder.name(Some(arg.into()));
         }
 
         // Set Request.os_hidden data
-        if let Some(args) = &self.os_hidden {
-            ep_builder.os_hidden(*args);
+        if let Some(arg) = &self.os_hidden {
+            ep_builder.os_hidden(*arg);
         }
 
         // Set Request.owner data
-        if let Some(args) = &self.owner {
-            ep_builder.owner(Some(args.into()));
+        if let Some(arg) = &self.owner {
+            ep_builder.owner(Some(arg.into()));
         }
 
         // Set Request.protected data
-        if let Some(args) = &self.protected {
-            ep_builder.protected(*args);
+        if let Some(arg) = &self.protected {
+            ep_builder.protected(*arg);
         }
 
         // Set Request.tags data
-        if let Some(args) = &self.tags {
-            ep_builder.tags(args.iter().map(|v| v.into()).collect::<Vec<_>>());
+        if let Some(arg) = &self.tags {
+            ep_builder.tags(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 
         // Set Request.visibility data
-        if let Some(args) = &self.visibility {
-            let tmp = match args {
+        if let Some(arg) = &self.visibility {
+            let tmp = match arg {
                 Visibility::Community => create::Visibility::Community,
                 Visibility::Private => create::Visibility::Private,
                 Visibility::Public => create::Visibility::Public,

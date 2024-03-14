@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Image v2 commands
+//! Glance Metadef namespace properties
 
 use clap::{Parser, Subcommand};
 
@@ -20,31 +20,36 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod image;
-mod metadef;
-mod schema;
+mod create;
+mod delete;
+mod delete_all;
+mod list;
+mod set;
+mod show;
 
-/// Image service operations
+/// Metadata definition tags
+///
+/// Creates, lists, shows details for, updates, and deletes metadata definition tags.
 #[derive(Parser)]
-pub struct ImageCommand {
+pub struct TagCommand {
     /// subcommand
     #[command(subcommand)]
-    command: ImageCommands,
+    command: TagCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum ImageCommands {
-    /// Image commands
-    Image(image::ImageCommand),
-    /// Metadef commands
-    Metadef(metadef::MetadefCommand),
-    /// Schema commands
-    Schema(schema::SchemaCommand),
+pub enum TagCommands {
+    Create(create::TagCommand),
+    Delete(delete::TagCommand),
+    List(list::TagsCommand),
+    Purge(delete_all::TagCommand),
+    Set(set::TagCommand),
+    Show(show::TagCommand),
 }
 
-impl ImageCommand {
+impl TagCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -52,9 +57,12 @@ impl ImageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ImageCommands::Image(cmd) => cmd.take_action(parsed_args, session).await,
-            ImageCommands::Metadef(cmd) => cmd.take_action(parsed_args, session).await,
-            ImageCommands::Schema(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -334,6 +334,40 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image image set`↴](#osc-image-image-set)
 * [`osc image image show`↴](#osc-image-image-show)
 * [`osc image image upload`↴](#osc-image-image-upload)
+* [`osc image metadef`↴](#osc-image-metadef)
+* [`osc image metadef namespace`↴](#osc-image-metadef-namespace)
+* [`osc image metadef namespace create`↴](#osc-image-metadef-namespace-create)
+* [`osc image metadef namespace delete`↴](#osc-image-metadef-namespace-delete)
+* [`osc image metadef namespace list`↴](#osc-image-metadef-namespace-list)
+* [`osc image metadef namespace object`↴](#osc-image-metadef-namespace-object)
+* [`osc image metadef namespace object create`↴](#osc-image-metadef-namespace-object-create)
+* [`osc image metadef namespace object delete`↴](#osc-image-metadef-namespace-object-delete)
+* [`osc image metadef namespace object list`↴](#osc-image-metadef-namespace-object-list)
+* [`osc image metadef namespace object purge`↴](#osc-image-metadef-namespace-object-purge)
+* [`osc image metadef namespace object set`↴](#osc-image-metadef-namespace-object-set)
+* [`osc image metadef namespace object show`↴](#osc-image-metadef-namespace-object-show)
+* [`osc image metadef namespace property`↴](#osc-image-metadef-namespace-property)
+* [`osc image metadef namespace property create`↴](#osc-image-metadef-namespace-property-create)
+* [`osc image metadef namespace property delete`↴](#osc-image-metadef-namespace-property-delete)
+* [`osc image metadef namespace property list`↴](#osc-image-metadef-namespace-property-list)
+* [`osc image metadef namespace property purge`↴](#osc-image-metadef-namespace-property-purge)
+* [`osc image metadef namespace property set`↴](#osc-image-metadef-namespace-property-set)
+* [`osc image metadef namespace property show`↴](#osc-image-metadef-namespace-property-show)
+* [`osc image metadef namespace resource-type-association`↴](#osc-image-metadef-namespace-resource-type-association)
+* [`osc image metadef namespace resource-type-association create`↴](#osc-image-metadef-namespace-resource-type-association-create)
+* [`osc image metadef namespace resource-type-association delete`↴](#osc-image-metadef-namespace-resource-type-association-delete)
+* [`osc image metadef namespace resource-type-association list`↴](#osc-image-metadef-namespace-resource-type-association-list)
+* [`osc image metadef namespace set`↴](#osc-image-metadef-namespace-set)
+* [`osc image metadef namespace show`↴](#osc-image-metadef-namespace-show)
+* [`osc image metadef namespace tag`↴](#osc-image-metadef-namespace-tag)
+* [`osc image metadef namespace tag create`↴](#osc-image-metadef-namespace-tag-create)
+* [`osc image metadef namespace tag delete`↴](#osc-image-metadef-namespace-tag-delete)
+* [`osc image metadef namespace tag list`↴](#osc-image-metadef-namespace-tag-list)
+* [`osc image metadef namespace tag purge`↴](#osc-image-metadef-namespace-tag-purge)
+* [`osc image metadef namespace tag set`↴](#osc-image-metadef-namespace-tag-set)
+* [`osc image metadef namespace tag show`↴](#osc-image-metadef-namespace-tag-show)
+* [`osc image metadef resource-type`↴](#osc-image-metadef-resource-type)
+* [`osc image metadef resource-type list`↴](#osc-image-metadef-resource-type-list)
 * [`osc image schema`↴](#osc-image-schema)
 * [`osc image schema image`↴](#osc-image-schema-image)
 * [`osc image schema image show`↴](#osc-image-schema-image-show)
@@ -6138,20 +6172,20 @@ An Identity Provider (IdP) is a third party service that is trusted by the Ident
 
 ###### **Subcommands:**
 
-* `create` — Create an idp resource for federated authentication
-* `delete` — DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
-* `list` — GET operation on /v3/OS-FEDERATION/identity_providers
+* `create` — Register an identity provider
+* `delete` — Delete identity provider
+* `list` — List identity providers
 * `protocol` — Identity provider protocols
-* `set` — PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
-* `show` — GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+* `set` — Update identity provider
+* `show` — Get identity provider
 
 
 
 ## `osc identity federation identity-provider create`
 
-Create an idp resource for federated authentication.
+Register an identity provider to be used to authenticate federated users.
 
-PUT /OS-FEDERATION/identity_providers/{idp_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider`
 
 **Usage:** `osc identity federation identity-provider create [OPTIONS] <IDP_ID>`
 
@@ -6161,20 +6195,22 @@ PUT /OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Options:**
 
-* `--authorization-ttl <AUTHORIZATION_TTL>`
-* `--description <DESCRIPTION>`
-* `--domain-id <DOMAIN_ID>`
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--authorization-ttl <AUTHORIZATION_TTL>` — The length of validity in minutes for group memberships carried over through mapping and persisted in the database. If left unset, the default value configured in keystone will be used, if enabled
+* `--description <DESCRIPTION>` — The Identity Provider description
+* `--domain-id <DOMAIN_ID>` — The ID of a domain that is associated with the Identity Provider. Federated users that authenticate with the Identity Provider will be created under the domain specified
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
-* `--remote-ids <REMOTE_IDS>`
+* `--remote-ids <REMOTE_IDS>` — List of the unique Identity Provider’s remote IDs
 
 
 
 ## `osc identity federation identity-provider delete`
 
-DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+When an identity provider is deleted, any tokens generated by that identity provider will be revoked.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider`
 
 **Usage:** `osc identity federation identity-provider delete <IDP_ID>`
 
@@ -6186,7 +6222,9 @@ DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ## `osc identity federation identity-provider list`
 
-GET operation on /v3/OS-FEDERATION/identity_providers
+List registered identity providers.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_providers`
 
 **Usage:** `osc identity federation identity-provider list [OPTIONS]`
 
@@ -6218,19 +6256,19 @@ Optional attributes:
 
 ###### **Subcommands:**
 
-* `create` — Create protocol for an IDP
-* `delete` — Delete a protocol from an IDP
-* `list` — List protocols for an IDP
-* `set` — Update protocol for an IDP
-* `show` — Get protocols for an IDP
+* `create` — Add protocol to identity provider
+* `delete` — Delete a protocol from identity provider
+* `list` — List protocols of identity provider
+* `set` — Update attribute mapping for identity provider
+* `show` — Get protocol for identity provider
 
 
 
 ## `osc identity federation identity-provider protocol create`
 
-Create protocol for an IDP.
+Add a protocol and attribute mapping to an identity provider.
 
-PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol`
 
 **Usage:** `osc identity federation identity-provider protocol create [OPTIONS] --mapping-id <MAPPING_ID> <IDP_ID> <ID>`
 
@@ -6248,9 +6286,9 @@ PUT /OS-Federation/identity_providers/{idp_id}/protocols/{protocol_id}
 
 ## `osc identity federation identity-provider protocol delete`
 
-Delete a protocol from an IDP.
+Delete a protocol and attribute mapping from an identity provider.
 
-DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol`
 
 **Usage:** `osc identity federation identity-provider protocol delete <IDP_ID> <ID>`
 
@@ -6263,9 +6301,9 @@ DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ## `osc identity federation identity-provider protocol list`
 
-List protocols for an IDP.
+List all protocol and attribute mappings of an identity provider.
 
-HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocols`
 
 **Usage:** `osc identity federation identity-provider protocol list <IDP_ID>`
 
@@ -6277,9 +6315,9 @@ HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
 
 ## `osc identity federation identity-provider protocol set`
 
-Update protocol for an IDP.
+Update the attribute mapping for an identity provider and protocol.
 
-PATCH /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol`
 
 **Usage:** `osc identity federation identity-provider protocol set [OPTIONS] <IDP_ID> <ID>`
 
@@ -6297,9 +6335,9 @@ PATCH /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ## `osc identity federation identity-provider protocol show`
 
-Get protocols for an IDP.
+Get a protocol and attribute mapping for an identity provider.
 
-HEAD/GET /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol`
 
 **Usage:** `osc identity federation identity-provider protocol show <IDP_ID> <ID>`
 
@@ -6312,7 +6350,9 @@ HEAD/GET /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 
 ## `osc identity federation identity-provider set`
 
-PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+When an identity provider is disabled, any tokens generated by that identity provider will be revoked.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider`
 
 **Usage:** `osc identity federation identity-provider set [OPTIONS] <IDP_ID>`
 
@@ -6324,7 +6364,7 @@ PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 * `--authorization-ttl <AUTHORIZATION_TTL>`
 * `--description <DESCRIPTION>`
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
@@ -6334,7 +6374,9 @@ PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ## `osc identity federation identity-provider show`
 
-GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+Get registered identity providers.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider`
 
 **Usage:** `osc identity federation identity-provider show <IDP_ID>`
 
@@ -6356,17 +6398,17 @@ A mapping is a set of rules to map federation protocol attributes to Identity AP
 
 * `create` — Create a mapping
 * `delete` — Delete a mapping
-* `list` — GET operation on /v3/OS-FEDERATION/mappings
+* `list` — List mappings
 * `set` — Update a mapping
-* `show` — GET operation on /v3/OS-FEDERATION/mappings/{mapping_id}
+* `show` — Get a mapping
 
 
 
 ## `osc identity federation mapping create`
 
-Create a mapping.
+Create a federated mapping.
 
-PUT /OS-FEDERATION/mappings/{mapping_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mapping`
 
 **Usage:** `osc identity federation mapping create [OPTIONS] <ID>`
 
@@ -6376,15 +6418,15 @@ PUT /OS-FEDERATION/mappings/{mapping_id}
 
 ###### **Options:**
 
-* `--rules <JSON>`
+* `--rules <JSON>` — The list of rules used to map remote users into local users
 
 
 
 ## `osc identity federation mapping delete`
 
-Delete a mapping.
+Remove a specific federated mapping.
 
-DELETE /OS-FEDERATION/mappings/{mapping_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mapping`
 
 **Usage:** `osc identity federation mapping delete <ID>`
 
@@ -6396,7 +6438,9 @@ DELETE /OS-FEDERATION/mappings/{mapping_id}
 
 ## `osc identity federation mapping list`
 
-GET operation on /v3/OS-FEDERATION/mappings
+List all federated mappings.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mappings`
 
 **Usage:** `osc identity federation mapping list`
 
@@ -6404,9 +6448,9 @@ GET operation on /v3/OS-FEDERATION/mappings
 
 ## `osc identity federation mapping set`
 
-Update a mapping.
+Update a federated mapping.
 
-PATCH /OS-FEDERATION/mappings/{mapping_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mapping`
 
 **Usage:** `osc identity federation mapping set [OPTIONS] <ID>`
 
@@ -6416,13 +6460,15 @@ PATCH /OS-FEDERATION/mappings/{mapping_id}
 
 ###### **Options:**
 
-* `--rules <JSON>`
+* `--rules <JSON>` — The list of rules used to map remote users into local users
 
 
 
 ## `osc identity federation mapping show`
 
-GET operation on /v3/OS-FEDERATION/mappings/{mapping_id}
+Get a specific federated mapping.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mapping`
 
 **Usage:** `osc identity federation mapping show <ID>`
 
@@ -6442,19 +6488,19 @@ A service provider is a third party service that is trusted by the Identity Serv
 
 ###### **Subcommands:**
 
-* `create` — Create a service provider
-* `delete` — Delete a service provider
-* `list` — GET operation on /v3/OS-FEDERATION/service_providers
-* `set` — Update a service provider
-* `show` — GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
+* `create` — Register a service provider
+* `delete` — Delete service provider
+* `list` — List service providers
+* `set` — Update service provider
+* `show` — Get service provider
 
 
 
 ## `osc identity federation service-provider create`
 
-Create a service provider.
+Create a service provider entity.
 
-PUT /OS-FEDERATION/service_providers/{sp_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
 
 **Usage:** `osc identity federation service-provider create [OPTIONS] --auth-url <AUTH_URL> --sp-url <SP_URL> <SP_ID>`
 
@@ -6464,14 +6510,14 @@ PUT /OS-FEDERATION/service_providers/{sp_id}
 
 ###### **Options:**
 
-* `--auth-url <AUTH_URL>`
-* `--description <DESCRIPTION>`
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--auth-url <AUTH_URL>` — The Service Provider’s URL
+* `--description <DESCRIPTION>` — The description of the Service Provider
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
 * `--relay-state-prefix <RELAY_STATE_PREFIX>`
-* `--sp-url <SP_URL>`
+* `--sp-url <SP_URL>` — The Service Provider’s URL
 
 
 
@@ -6479,7 +6525,7 @@ PUT /OS-FEDERATION/service_providers/{sp_id}
 
 Delete a service provider.
 
-DELETE /OS-FEDERATION/service_providers/{sp_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
 
 **Usage:** `osc identity federation service-provider delete <SP_ID>`
 
@@ -6491,7 +6537,9 @@ DELETE /OS-FEDERATION/service_providers/{sp_id}
 
 ## `osc identity federation service-provider list`
 
-GET operation on /v3/OS-FEDERATION/service_providers
+List all service providers.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_providers`
 
 **Usage:** `osc identity federation service-provider list`
 
@@ -6499,9 +6547,9 @@ GET operation on /v3/OS-FEDERATION/service_providers
 
 ## `osc identity federation service-provider set`
 
-Update a service provider.
+Update a service provider’s attributes.
 
-PATCH /OS-FEDERATION/service_providers/{sp_id}
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
 
 **Usage:** `osc identity federation service-provider set [OPTIONS] <SP_ID>`
 
@@ -6511,20 +6559,22 @@ PATCH /OS-FEDERATION/service_providers/{sp_id}
 
 ###### **Options:**
 
-* `--auth-url <AUTH_URL>`
-* `--description <DESCRIPTION>`
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--auth-url <AUTH_URL>` — The Service Provider’s URL
+* `--description <DESCRIPTION>` — The description of the Service Provider
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
 * `--relay-state-prefix <RELAY_STATE_PREFIX>`
-* `--sp-url <SP_URL>`
+* `--sp-url <SP_URL>` — The Service Provider’s URL
 
 
 
 ## `osc identity federation service-provider show`
 
-GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
+Get a specific service provider reference.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
 
 **Usage:** `osc identity federation service-provider show <SP_ID>`
 
@@ -6544,15 +6594,17 @@ The response will be a full document with Metadata properties. Note that for rea
 
 ###### **Subcommands:**
 
-* `show` — Get SAML2 metadata
+* `show` — Retrieve Metadata properties
 
 
 
 ## `osc identity federation saml2-metadata show`
 
-Get SAML2 metadata.
+A user may retrieve Metadata about an Identity Service acting as an Identity Provider.
 
-GET/HEAD /OS-FEDERATION/saml2/metadata
+The response will be a full document with Metadata properties. Note that for readability, this example certificate has been truncated.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/metadata`
 
 **Usage:** `osc identity federation saml2-metadata show`
 
@@ -6692,11 +6744,11 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/projects`
 
 * `--description <DESCRIPTION>` — The description of the project
 * `--domain-id <DOMAIN_ID>` — The ID of the domain for the project
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
-* `--is-domain <IS_DOMAIN>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--is-domain <IS_DOMAIN>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
@@ -6858,11 +6910,11 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 * `--description <DESCRIPTION>` — The description of the project
 * `--domain-id <DOMAIN_ID>` — The ID of the domain for the project
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
-* `--is-domain <IS_DOMAIN>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--is-domain <IS_DOMAIN>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
@@ -7621,7 +7673,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/users`
 * `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
 * `--description <DESCRIPTION>`
 * `--domain-id <DOMAIN_ID>` — The ID of the domain
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
@@ -7773,7 +7825,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 * `--default-project-id <DEFAULT_PROJECT_ID>` — The ID of the default project for the user
 * `--description <DESCRIPTION>`
 * `--domain-id <DOMAIN_ID>` — The ID of the domain
-* `--enabled <ENABLED>` — If the user is enabled, this value is `true`. If the user is disabled, this value is `false`
+* `--enabled <ENABLED>` — Whether the Service Provider is enabled or not
 
   Possible values: `true`, `false`
 
@@ -7831,6 +7883,7 @@ Image service operations
 ###### **Subcommands:**
 
 * `image` — Image commands
+* `metadef` — Metadef commands
 * `schema` — Schema commands
 
 
@@ -8212,6 +8265,735 @@ Error response codes: 400, 401, 403, 404, 409, 410, 413, 415, 503
 ###### **Options:**
 
 * `--file <FILE>` — Source filename (using "-" will read object from stdout)
+
+
+
+## `osc image metadef`
+
+Metadef commands
+
+**Usage:** `osc image metadef <COMMAND>`
+
+###### **Subcommands:**
+
+* `namespace` — Metadata definition namespaces
+* `resource-type` — Metadata definition namespaces
+
+
+
+## `osc image metadef namespace`
+
+Metadata definition namespaces
+
+Creates, lists, shows details for, updates, and deletes metadata definition namespaces. Defines namespaces that can contain property definitions, object definitions, and resource type associations.
+
+**Usage:** `osc image metadef namespace <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create namespace
+* `delete` — Delete namespace
+* `list` — List namespaces
+* `object` — Metadata definition objects
+* `property` — Metadata definition properties
+* `resource-type-association` — Metadata definition resource types
+* `set` — Update namespace
+* `show` — Get namespace details
+* `tag` — Metadata definition tags
+
+
+
+## `osc image metadef namespace create`
+
+Creates a namespace.
+
+A namespace must be unique across all users. Attempting to create an already existing namespace will result in a 409 (Conflict) response.
+
+The `Location` response header contains the newly-created URI for the namespace.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 409
+
+**Usage:** `osc image metadef namespace create [OPTIONS] --namespace <NAMESPACE>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the namespace
+* `--display-name <DISPLAY_NAME>` — User-friendly name to use in a UI to display the namespace name
+* `--namespace <NAMESPACE>` — An identifier (a name) for the namespace. The value must be unique across all users
+* `--objects <JSON>`
+* `--owner <OWNER>` — Owner of the namespace
+* `--properties <key=value>`
+* `--protected <PROTECTED>` — Namespace protection for deletion. A valid value is `true` or `false`. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--resource-type-associations <JSON>`
+* `--tags <TAGS>`
+* `--visibility <VISIBILITY>` — The namespace visibility. A valid value is `public` or `private`. Default is `private`
+
+  Possible values: `private`, `public`
+
+
+
+
+## `osc image metadef namespace delete`
+
+Deletes a namespace and its properties, objects, and any resource type associations.
+
+A successful operation returns the HTTP `204` (No Content) response code.
+
+Normal response codes: 204
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace delete <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name} API
+
+
+
+## `osc image metadef namespace list`
+
+Lists available namespaces.
+
+Returns a list of namespaces to which the authenticated user has access. If the list is too large to fit in a single response, either because of operator configuration or because you’ve included a `limit` query parameter in the request to restrict the response size, the response will contain a link that you can use to get the next page of namespaces. Check for the presence of a `next` link and use it as the URI in a subsequent HTTP GET request. Follow this pattern until a `next` link is no longer provided.
+
+The `next` link preserves any query parameters that you send in your initial request. You can use the `first` link to return to the first page in the collection. If you prefer to paginate through namespaces manually, use the `limit` and `marker` parameters.
+
+The list operation accepts the `resource_types` and `visibility` query parameters, which you can use to filter the response.
+
+To sort the results of this operation, use the `sort_key` and `sort_dir` parameters. The API uses the natural sorting order in the namespace attribute that you provide as the `sort_key` parameter.
+
+Normal response codes: 200
+
+Error response codes: 401, 403, 404
+
+**Usage:** `osc image metadef namespace list`
+
+
+
+## `osc image metadef namespace object`
+
+Metadata definition objects
+
+Creates, lists, shows details for, updates, and deletes metadata definition objects.
+
+**Usage:** `osc image metadef namespace object <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create object
+* `delete` — Delete object
+* `list` — List objects
+* `purge` — Command without description in OpenAPI
+* `set` — Update object
+* `show` — Show object
+
+
+
+## `osc image metadef namespace object create`
+
+Creates an object definition in a namespace.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace object create [OPTIONS] --name <NAME> <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — Detailed description of the object
+* `--name <NAME>` — The name of the object, suitable for use as an identifier. A Name is limited to 80 chars in length
+* `--properties <key=value>` — A set of key:value pairs, where each value is a *property* entity
+* `--required <REQUIRED>` — A list of the names of properties that are required on this object
+
+
+
+## `osc image metadef namespace object delete`
+
+Deletes an object definition from a namespace.
+
+When you successfully delete an object from a namespace, the response is empty and the response code is `204`.
+
+Normal response codes: 204
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace object delete <NAMESPACE_NAME> <OBJECT_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+* `<OBJECT_NAME>` — object_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+
+
+
+## `osc image metadef namespace object list`
+
+Lists object definitions in a namespace.
+
+Returns a subset of the larger collection of namespaces and a link that you can use to get the next set of namespaces. You should always check for the presence of a `next` link and use it as the URI in a subsequent HTTP GET request. You should follow this pattern until a `next` link is no longer provided. The next link preserves any query parameters that you send in your initial request. You can use the `first` link to jump back to the first page of the collection. If you prefer to paginate through namespaces manually, use the `limit` and `marker` parameters.
+
+Use the `resource_types` and `visibility` query parameters to filter the response.
+
+For example, set the `resource_types` query parameter to `OS::Glance::Image,OS::Nova::Flavor` to filter the response to include only namespaces that are associated with the given resource types.
+
+You can sort the results of this operation by using the `sort_key` and `sort_dir` parameters. The API uses the natural sorting of whatever namespace attribute is provided as the `sort_key`.
+
+Normal response codes: 200
+
+Error response codes: 401, 403, 404
+
+**Usage:** `osc image metadef namespace object list <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+
+
+
+## `osc image metadef namespace object purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc image metadef namespace object purge <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+
+
+
+## `osc image metadef namespace object set`
+
+Updates an object definition in a namespace.
+
+The object resource is completely replaced by what you specify in the request body. Thus, if you leave out any of the optional parameters, and they exist in the current object, they will be eliminated by this call.
+
+It is possible to change the name of the object with this call; if you do, note that the URL for the object (specified by the `self` field) will change.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace object set [OPTIONS] --name <NAME> <NAMESPACE_NAME> <OBJECT_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+* `<OBJECT_NAME>` — object_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — Detailed description of the object
+* `--name <NAME>` — The name of the object, suitable for use as an identifier. A Name is limited to 80 chars in length
+* `--properties <key=value>` — A set of key:value pairs, where each value is a *property* entity
+* `--required <REQUIRED>` — A list of the names of properties that are required on this object
+
+
+
+## `osc image metadef namespace object show`
+
+Shows the definition for an object.
+
+The response body shows a single object entity.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace object show <NAMESPACE_NAME> <OBJECT_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+* `<OBJECT_NAME>` — object_name parameter for /v2/metadefs/namespaces/{namespace_name}/objects/{object_name} API
+
+
+
+## `osc image metadef namespace property`
+
+Metadata definition properties
+
+Creates, lists, shows details for, updates, and deletes metadata definition properties.
+
+**Usage:** `osc image metadef namespace property <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create property
+* `delete` — Remove property definition
+* `list` — List properties
+* `purge` — Command without description in OpenAPI
+* `set` — Update property definition
+* `show` — Show property definition
+
+
+
+## `osc image metadef namespace property create`
+
+Creates a property definition in a namespace.
+
+The schema is a subset of the JSON property definition schema.
+
+Normal response codes: 201
+
+Error response codes: 400, 404
+
+**Usage:** `osc image metadef namespace property create [OPTIONS] --name <NAME> --title <TITLE> --type <TYPE> <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+
+###### **Options:**
+
+* `--additional-items <ADDITIONAL_ITEMS>` — Describes extra items, if you use tuple typing. If the value of `items` is an array (tuple typing) and the instance is longer than the list of schemas in `items`, the additional items are described by the schema in this property. If this value is `false`, the instance cannot be longer than the list of schemas in `items`. If this value is `true`, that is equivalent to the empty schema (anything goes)
+
+  Possible values: `true`, `false`
+
+* `--default <JSON>`
+* `--description <DESCRIPTION>` — Detailed description of the property
+* `--enum <ENUM>` — Enumerated list of property values
+* `--items <JSON>` — Schema for the items in an array
+* `--maximum <MAXIMUM>` — Maximum allowed numerical value
+* `--max-items <MAX_ITEMS>` — Maximum allowed string length
+* `--max-length <MAX_LENGTH>` — Maximum allowed string length
+* `--minimum <MINIMUM>` — Minimum allowed numerical value
+* `--min-items <MIN_ITEMS>` — Minimum allowed string length
+* `--min-length <MIN_LENGTH>` — Minimum allowed string length
+* `--name <NAME>`
+* `--operators <OPERATORS>` — Operators property description
+* `--pattern <PATTERN>` — A regular expression ( [ECMA 262](http://www.ecma-international.org/publications/standards/Ecma-262.htm) ) that a string value must match
+* `--readonly <READONLY>` — Indicates whether this is a read-only property
+
+  Possible values: `true`, `false`
+
+* `--required <REQUIRED>`
+* `--title <TITLE>` — The title of the property
+* `--type <TYPE>` — The property type
+
+  Possible values: `array`, `boolean`, `integer`, `number`, `object`, `string`
+
+* `--unique-items <UNIQUE_ITEMS>` — Indicates whether all values in the array must be distinct
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc image metadef namespace property delete`
+
+Removes a property definition from a namespace.
+
+When you successfully delete a property from a namespace, the response is empty and the response code is `204`.
+
+Normal response codes: 204
+
+Error response codes: 401, 403, 404
+
+**Usage:** `osc image metadef namespace property delete <NAMESPACE_NAME> <PROPERTY_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+* `<PROPERTY_NAME>` — property_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+
+
+
+## `osc image metadef namespace property list`
+
+Lists property definitions in a namespace.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace property list <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+
+
+
+## `osc image metadef namespace property purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc image metadef namespace property purge <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+
+
+
+## `osc image metadef namespace property set`
+
+Updates a property definition.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace property set [OPTIONS] --name <NAME> --title <TITLE> --type <TYPE> <NAMESPACE_NAME> <PROPERTY_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+* `<PROPERTY_NAME>` — property_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+
+###### **Options:**
+
+* `--additional-items <ADDITIONAL_ITEMS>` — Describes extra items, if you use tuple typing. If the value of `items` is an array (tuple typing) and the instance is longer than the list of schemas in `items`, the additional items are described by the schema in this property. If this value is `false`, the instance cannot be longer than the list of schemas in `items`. If this value is `true`, that is equivalent to the empty schema (anything goes)
+
+  Possible values: `true`, `false`
+
+* `--default <JSON>`
+* `--description <DESCRIPTION>` — The description of the namespace
+* `--enum <ENUM>` — Enumerated list of property values
+* `--items <JSON>` — Schema for the items in an array
+* `--maximum <MAXIMUM>` — Maximum allowed numerical value
+* `--max-items <MAX_ITEMS>` — Maximum allowed string length
+* `--max-length <MAX_LENGTH>` — Maximum allowed string length
+* `--minimum <MINIMUM>` — Minimum allowed numerical value
+* `--min-items <MIN_ITEMS>` — Minimum allowed string length
+* `--min-length <MIN_LENGTH>` — Minimum allowed string length
+* `--name <NAME>` — The name of the property. A Name is limited to 80 chars in length
+* `--operators <OPERATORS>` — Operators property description
+* `--pattern <PATTERN>` — A regular expression ( [ECMA 262](http://www.ecma-international.org/publications/standards/Ecma-262.htm) ) that a string value must match
+* `--readonly <READONLY>` — Indicates whether this is a read-only property
+
+  Possible values: `true`, `false`
+
+* `--required <REQUIRED>`
+* `--title <TITLE>` — The title of the property
+* `--type <TYPE>` — The property type
+
+  Possible values: `array`, `boolean`, `integer`, `number`, `object`, `string`
+
+* `--unique-items <UNIQUE_ITEMS>` — Indicates whether all values in the array must be distinct
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc image metadef namespace property show`
+
+Shows the definition for a property.
+
+If you use the `resource_type` query parameter, the API removes the prefix of the resource type from the property name before it submits the query. This enables you to look for a property name that starts with a prefix from an associated resource type.
+
+The response body shows a single property entity.
+
+Normal response codes: 200
+
+Error response codes: 401, 403, 404
+
+**Usage:** `osc image metadef namespace property show <NAMESPACE_NAME> <PROPERTY_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+* `<PROPERTY_NAME>` — property_name parameter for /v2/metadefs/namespaces/{namespace_name}/properties/{property_name} API
+
+
+
+## `osc image metadef namespace resource-type-association`
+
+Metadata definition resource types
+
+Lists resource types. Also, creates, lists, and removes resource type associations in a namespace.
+
+**Usage:** `osc image metadef namespace resource-type-association <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create resource type association
+* `delete` — Command without description in OpenAPI
+* `list` — List resource type associations
+
+
+
+## `osc image metadef namespace resource-type-association create`
+
+Creates a resource type association between a namespace and the resource type specified in the body of the request.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace resource-type-association create [OPTIONS] --name <NAME> <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type} API
+
+###### **Options:**
+
+* `--name <NAME>` — Resource type names should be aligned with Heat resource types whenever possible: https://docs.openstack.org/heat/latest/template_guide/openstack.html
+* `--prefix <PREFIX>` — Prefix for any properties in the namespace that you want to apply to the resource type. If you specify a prefix, you must append a prefix separator, such as the colon (`:`) character
+* `--properties-target <PROPERTIES_TARGET>` — Some resource types allow more than one key and value pair for each instance. For example, the Image service allows both user and image metadata on volumes. The `properties_target` parameter enables a namespace target to remove the ambiguity
+
+
+
+## `osc image metadef namespace resource-type-association delete`
+
+Command without description in OpenAPI
+
+**Usage:** `osc image metadef namespace resource-type-association delete <NAMESPACE_NAME> <RESOURCE_TYPE>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type} API
+* `<RESOURCE_TYPE>` — resource_type parameter for /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type} API
+
+
+
+## `osc image metadef namespace resource-type-association list`
+
+Lists resource type associations in a namespace.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace resource-type-association list <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/resource_types/{resource_type} API
+
+
+
+## `osc image metadef namespace set`
+
+Updates a namespace.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace set [OPTIONS] --namespace <NAMESPACE> <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the namespace
+* `--display-name <DISPLAY_NAME>` — User-friendly name to use in a UI to display the namespace name
+* `--namespace <NAMESPACE>` — An identifier (a name) for the namespace. The value must be unique across all users
+* `--objects <JSON>`
+* `--owner <OWNER>` — Owner of the namespace
+* `--properties <key=value>`
+* `--protected <PROTECTED>` — Namespace protection for deletion. A valid value is `true` or `false`. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--resource-type-associations <JSON>`
+* `--tags <TAGS>`
+* `--visibility <VISIBILITY>` — The namespace visibility. A valid value is `public` or `private`. Default is `private`
+
+  Possible values: `private`, `public`
+
+
+
+
+## `osc image metadef namespace show`
+
+Gets details for a namespace.
+
+The response body shows a single namespace entity with all details including properties, objects, and resource type associations.
+
+If the namespace contains a resource type association that specifies a prefix, you may optionally include the name of the resource type as a query parameter. In that case, the prefix will be applied to all property names in the response. (See below for an example.)
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace show <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name} API
+
+
+
+## `osc image metadef namespace tag`
+
+Metadata definition tags
+
+Creates, lists, shows details for, updates, and deletes metadata definition tags.
+
+**Usage:** `osc image metadef namespace tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create tag definition
+* `delete` — Delete tag definition
+* `list` — List tags
+* `purge` — Delete all tag definitions
+* `set` — Update tag definition
+* `show` — Get tag definition
+
+
+
+## `osc image metadef namespace tag create`
+
+Adds a tag to the list of namespace tag definitions.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace tag create --name <NAME> <NAMESPACE_NAME> <TAG_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+* `<TAG_NAME>` — tag_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+
+###### **Options:**
+
+* `--name <NAME>`
+
+
+
+## `osc image metadef namespace tag delete`
+
+Deletes a tag definition within a namespace.
+
+When you successfully delete a tag from a namespace, the response is empty and the response code is `204`.
+
+Normal response codes: 204
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace tag delete <NAMESPACE_NAME> <TAG_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+* `<TAG_NAME>` — tag_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+
+
+
+## `osc image metadef namespace tag list`
+
+Lists the tag definitions within a namespace.
+
+To manually paginate through the list of tags, use the `limit` and `marker` parameters.
+
+To sort the results of this operation use the `sort_key` and `sort_dir` parameters. The API uses the natural sort order of the tag attribute of the `sort_key` parameter.
+
+Normal response codes: 200
+
+Error response codes: 401, 403, 404
+
+**Usage:** `osc image metadef namespace tag list <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+
+
+
+## `osc image metadef namespace tag purge`
+
+Deletes all tag definitions within a namespace.
+
+When you successfully delete the tags from a namespace, the response is empty and the response code is `204`.
+
+Normal response codes: 204
+
+Error response codes: 403, 404
+
+**Usage:** `osc image metadef namespace tag purge <NAMESPACE_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+
+
+
+## `osc image metadef namespace tag set`
+
+Renames a tag definition.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 409
+
+**Usage:** `osc image metadef namespace tag set --name <NAME> <NAMESPACE_NAME> <TAG_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+* `<TAG_NAME>` — tag_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the tag. A Name is limited to 80 chars in length
+
+
+
+## `osc image metadef namespace tag show`
+
+Gets a definition for a tag.
+
+The response body shows a single tag entity.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc image metadef namespace tag show <NAMESPACE_NAME> <TAG_NAME>`
+
+###### **Arguments:**
+
+* `<NAMESPACE_NAME>` — namespace_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+* `<TAG_NAME>` — tag_name parameter for /v2/metadefs/namespaces/{namespace_name}/tags/{tag_name} API
+
+
+
+## `osc image metadef resource-type`
+
+Metadata definition namespaces
+
+Creates, lists, shows details for, updates, and deletes metadata definition namespaces. Defines namespaces that can contain property definitions, object definitions, and resource type associations.
+
+**Usage:** `osc image metadef resource-type <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List resource types
+
+
+
+## `osc image metadef resource-type list`
+
+Lists all available resource types.
+
+Using the other API calls in this section, you can create and maintain *resource type associations* between metadata definition namespaces and the resource types that are returned by this call.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 404
+
+**Usage:** `osc image metadef resource-type list`
 
 
 
