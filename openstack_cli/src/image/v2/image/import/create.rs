@@ -162,7 +162,7 @@ struct PathParameters {
     image_id: String,
 }
 /// Method Body data
-#[derive(Args)]
+#[derive(Args, Clone)]
 struct Method {
     #[arg(help_heading = "Body parameters", long)]
     glance_image_id: Option<String>,
@@ -203,13 +203,13 @@ impl ImportCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.all_stores data
-        if let Some(args) = &self.all_stores {
-            ep_builder.all_stores(*args);
+        if let Some(arg) = &self.all_stores {
+            ep_builder.all_stores(*arg);
         }
 
         // Set Request.all_stores_must_success data
-        if let Some(args) = &self.all_stores_must_success {
-            ep_builder.all_stores_must_success(*args);
+        if let Some(arg) = &self.all_stores_must_success {
+            ep_builder.all_stores_must_success(*arg);
         }
 
         // Set Request.method data
@@ -239,8 +239,8 @@ impl ImportCommand {
         }
 
         // Set Request.stores data
-        if let Some(args) = &self.stores {
-            ep_builder.stores(args.iter().map(|v| v.into()).collect::<Vec<_>>());
+        if let Some(arg) = &self.stores {
+            ep_builder.stores(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
         }
 
         let ep = ep_builder

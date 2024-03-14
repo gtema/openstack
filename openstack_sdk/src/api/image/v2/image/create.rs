@@ -369,7 +369,7 @@ impl<'a> RestEndpoint for Request<'a> {
             params.push("locations", serde_json::to_value(val)?);
         }
         for (key, val) in &self._properties {
-            params.push(key.clone(), serde_json::Value::from(val.clone()));
+            params.push(key.clone(), val.clone());
         }
 
         params.into_body()

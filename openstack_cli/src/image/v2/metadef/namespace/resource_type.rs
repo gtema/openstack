@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Image v2 commands
+//! Glance Metadef namespace properties
 
 use clap::{Parser, Subcommand};
 
@@ -20,31 +20,30 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod image;
-mod metadef;
-mod schema;
+mod create;
+mod delete;
+mod list;
 
-/// Image service operations
+/// Metadata definition resource types
+///
+/// Lists resource types. Also, creates, lists, and removes resource type associations in a namespace.
 #[derive(Parser)]
-pub struct ImageCommand {
+pub struct ResourceTypeCommand {
     /// subcommand
     #[command(subcommand)]
-    command: ImageCommands,
+    command: ResourceTypeCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum ImageCommands {
-    /// Image commands
-    Image(image::ImageCommand),
-    /// Metadef commands
-    Metadef(metadef::MetadefCommand),
-    /// Schema commands
-    Schema(schema::SchemaCommand),
+pub enum ResourceTypeCommands {
+    Create(create::ResourceTypeCommand),
+    Delete(delete::ResourceTypeCommand),
+    List(list::ResourceTypesCommand),
 }
 
-impl ImageCommand {
+impl ResourceTypeCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -52,9 +51,9 @@ impl ImageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ImageCommands::Image(cmd) => cmd.take_action(parsed_args, session).await,
-            ImageCommands::Metadef(cmd) => cmd.take_action(parsed_args, session).await,
-            ImageCommands::Schema(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceTypeCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceTypeCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceTypeCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
