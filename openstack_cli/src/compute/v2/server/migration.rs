@@ -40,7 +40,8 @@ pub struct MigrationCommand {
 #[derive(Subcommand)]
 pub enum MigrationCommands {
     Delete(delete::MigrationCommand),
-    ForceComplete(force_complete_222::MigrationCommand),
+    #[command(visible_alias = "force-complete")]
+    ForceComplete222(force_complete_222::MigrationCommand),
     List(list::MigrationsCommand),
     Show(show::MigrationCommand),
 }
@@ -54,7 +55,7 @@ impl MigrationCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             MigrationCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            MigrationCommands::ForceComplete(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::ForceComplete222(cmd) => cmd.take_action(parsed_args, session).await,
             MigrationCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             MigrationCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }

@@ -12,9 +12,14 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[lib]
+bench = false
+
 [[bin]]
 name = "osc"
 path = "src/bin/osc.rs"
+test = false
+bench = false
 
 [dependencies]
 anyhow = {workspace = true}
@@ -45,6 +50,6 @@ rand = "^0.8"
 tempfile = "^3.1"
 
 [[test]]
-name = "integration"
+name = "functional"
 path = "tests/main.rs"
 test = false

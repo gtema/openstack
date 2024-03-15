@@ -12,7 +12,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod endpoint;
-mod project;
-mod region;
-mod service;
+mod v3;

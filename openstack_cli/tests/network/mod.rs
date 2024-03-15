@@ -12,30 +12,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use assert_cmd::prelude::*;
-use std::process::Command;
-
-mod fip;
-mod network;
-mod port;
-mod subnet;
-
-#[test]
-fn extension_list() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("osc")?;
-
-    cmd.arg("network").arg("extension").arg("list");
-    cmd.assert().success();
-
-    Ok(())
-}
-
-#[test]
-fn az_list() -> Result<(), Box<dyn std::error::Error>> {
-    let mut cmd = Command::cargo_bin("osc")?;
-
-    cmd.arg("network").arg("availability-zone").arg("list");
-    cmd.assert().success();
-
-    Ok(())
-}
+mod v2;

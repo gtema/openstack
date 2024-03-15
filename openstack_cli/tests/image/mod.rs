@@ -12,5 +12,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod image;
-mod image_data;
+mod v2;

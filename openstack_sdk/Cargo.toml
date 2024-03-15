@@ -50,6 +50,6 @@ simple_logger="^4.3"
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
 [[test]]
-name = "integration"
+name = "functional"
 path = "tests/main.rs"
 test = false
