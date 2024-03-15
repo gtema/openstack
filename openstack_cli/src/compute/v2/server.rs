@@ -158,8 +158,10 @@ pub struct ServerCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ServerCommands {
-    AddFixedIP(Box<add_fixed_ip_21::ServerCommand>),
-    AddFloatingIP(Box<add_floating_ip_21::ServerCommand>),
+    #[command(visible_alias = "add-fixed-ip")]
+    AddFixedIP21(Box<add_fixed_ip_21::ServerCommand>),
+    #[command(visible_alias = "add-floating-ip")]
+    AddFloatingIP21(Box<add_floating_ip_21::ServerCommand>),
     AddSecurityGroup(Box<add_security_group::ServerCommand>),
     ChangePassword(Box<change_password::ServerCommand>),
     ConfirmResize(Box<confirm_resize::ServerCommand>),
@@ -177,8 +179,10 @@ pub enum ServerCommands {
     Create232(Box<create_232::ServerCommand>),
     Create219(Box<create_219::ServerCommand>),
     Create21(Box<create_21::ServerCommand>),
-    CreateBackup(Box<create_backup_21::ServerCommand>),
-    CreateImage(Box<create_image_21::ServerCommand>),
+    #[command(visible_alias = "create-backup")]
+    CreateBackup21(Box<create_backup_21::ServerCommand>),
+    #[command(visible_alias = "create-image")]
+    CreateImage21(Box<create_image_21::ServerCommand>),
     Delete(Box<delete::ServerCommand>),
     Diagnostic(Box<diagnostic::get::DiagnosticCommand>),
     Evacuate214(Box<evacuate_214::ServerCommand>),
@@ -198,9 +202,11 @@ pub enum ServerCommands {
     LiveMigrate230(Box<os_migrate_live_230::ServerCommand>),
     #[command(visible_alias = "live-migrate")]
     LiveMigrate268(Box<os_migrate_live_268::ServerCommand>),
-    Lock(Box<lock_273::ServerCommand>),
+    #[command(visible_alias = "lock")]
+    Lock273(Box<lock_273::ServerCommand>),
     Metadata(Box<metadata::MetadataCommand>),
-    Migrate(Box<migrate_256::ServerCommand>),
+    #[command(visible_alias = "migrate")]
+    Migrate256(Box<migrate_256::ServerCommand>),
     Migration(Box<migration::MigrationCommand>),
     Password(Box<server_password::PasswordCommand>),
     Pause(Box<pause::ServerCommand>),
@@ -215,8 +221,10 @@ pub enum ServerCommands {
     #[command(visible_alias = "rebuild")]
     Rebuild294(Box<rebuild_294::ServerCommand>),
     RemoteConsole(Box<remote_console::RemoteConsoleCommand>),
-    RemoveFixedIP(Box<remove_fixed_ip_21::ServerCommand>),
-    RemoveFloatingIP(Box<remove_floating_ip_21::ServerCommand>),
+    #[command(visible_alias = "remove-fixed-ip")]
+    RemoveFixedIP21(Box<remove_fixed_ip_21::ServerCommand>),
+    #[command(visible_alias = "remove-floating-ip")]
+    RemoveFloatingIP21(Box<remove_floating_ip_21::ServerCommand>),
     RemoveSecurityGroup(Box<remove_security_group::ServerCommand>),
     Rescue(Box<rescue::ServerCommand>),
     ResetNetwork(Box<reset_network::ServerCommand>),
@@ -238,7 +246,8 @@ pub enum ServerCommands {
     Suspend(Box<suspend::ServerCommand>),
     Tag(Box<tag::TagCommand>),
     Topology(Box<topology::list::TopologiesCommand>),
-    TriggerCrashDump(Box<trigger_crash_dump_217::ServerCommand>),
+    #[command(visible_alias = "trigger-crash-dump")]
+    TriggerCrashDump217(Box<trigger_crash_dump_217::ServerCommand>),
     Unlock(Box<unlock::ServerCommand>),
     Unpause(Box<unpause::ServerCommand>),
     Unrescue(Box<unrescue::ServerCommand>),
@@ -256,8 +265,8 @@ impl ServerCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            ServerCommands::AddFixedIP(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerCommands::AddFloatingIP(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::AddFixedIP21(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::AddFloatingIP21(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::AddSecurityGroup(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::ChangePassword(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::ConfirmResize(cmd) => cmd.take_action(parsed_args, session).await,
@@ -277,9 +286,9 @@ impl ServerCommand {
 
             ServerCommands::Create21(cmd) => cmd.take_action(parsed_args, session).await,
 
-            ServerCommands::CreateBackup(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::CreateBackup21(cmd) => cmd.take_action(parsed_args, session).await,
 
-            ServerCommands::CreateImage(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::CreateImage21(cmd) => cmd.take_action(parsed_args, session).await,
 
             ServerCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
 
@@ -312,10 +321,10 @@ impl ServerCommand {
 
             ServerCommands::LiveMigrate268(cmd) => cmd.take_action(parsed_args, session).await,
 
-            ServerCommands::Lock(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::Lock273(cmd) => cmd.take_action(parsed_args, session).await,
 
             ServerCommands::Metadata(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerCommands::Migrate(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::Migrate256(cmd) => cmd.take_action(parsed_args, session).await,
 
             ServerCommands::Migration(cmd) => cmd.take_action(parsed_args, session).await,
 
@@ -341,9 +350,9 @@ impl ServerCommand {
 
             ServerCommands::Rebuild294(cmd) => cmd.take_action(parsed_args, session).await,
 
-            ServerCommands::RemoveFixedIP(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::RemoveFixedIP21(cmd) => cmd.take_action(parsed_args, session).await,
 
-            ServerCommands::RemoveFloatingIP(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::RemoveFloatingIP21(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::RemoveSecurityGroup(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::RemoteConsole(cmd) => cmd.take_action(parsed_args, session).await,
 
@@ -383,7 +392,7 @@ impl ServerCommand {
             ServerCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
 
             ServerCommands::Topology(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerCommands::TriggerCrashDump(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::TriggerCrashDump217(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unlock(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unpause(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unrescue(cmd) => cmd.take_action(parsed_args, session).await,

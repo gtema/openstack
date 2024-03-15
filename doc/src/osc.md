@@ -53,16 +53,17 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute`↴](#osc-compute)
 * [`osc compute aggregate`↴](#osc-compute-aggregate)
 * [`osc compute aggregate add-host`↴](#osc-compute-aggregate-add-host)
-* [`osc compute aggregate create`↴](#osc-compute-aggregate-create)
+* [`osc compute aggregate create21`↴](#osc-compute-aggregate-create21)
 * [`osc compute aggregate cache-image`↴](#osc-compute-aggregate-cache-image)
 * [`osc compute aggregate delete`↴](#osc-compute-aggregate-delete)
 * [`osc compute aggregate list`↴](#osc-compute-aggregate-list)
 * [`osc compute aggregate remove-host`↴](#osc-compute-aggregate-remove-host)
 * [`osc compute aggregate show`↴](#osc-compute-aggregate-show)
-* [`osc compute aggregate set`↴](#osc-compute-aggregate-set)
+* [`osc compute aggregate set21`↴](#osc-compute-aggregate-set21)
 * [`osc compute aggregate set-metadata`↴](#osc-compute-aggregate-set-metadata)
 * [`osc compute availability-zone`↴](#osc-compute-availability-zone)
 * [`osc compute availability-zone list`↴](#osc-compute-availability-zone-list)
+* [`osc compute availability-zone list-detail`↴](#osc-compute-availability-zone-list-detail)
 * [`osc compute extension`↴](#osc-compute-extension)
 * [`osc compute extension list`↴](#osc-compute-extension-list)
 * [`osc compute extension show`↴](#osc-compute-extension-show)
@@ -97,8 +98,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute keypair list`↴](#osc-compute-keypair-list)
 * [`osc compute keypair show`↴](#osc-compute-keypair-show)
 * [`osc compute server`↴](#osc-compute-server)
-* [`osc compute server add-fixed-ip`↴](#osc-compute-server-add-fixed-ip)
-* [`osc compute server add-floating-ip`↴](#osc-compute-server-add-floating-ip)
+* [`osc compute server add-fixed-ip21`↴](#osc-compute-server-add-fixed-ip21)
+* [`osc compute server add-floating-ip21`↴](#osc-compute-server-add-floating-ip21)
 * [`osc compute server add-security-group`↴](#osc-compute-server-add-security-group)
 * [`osc compute server change-password`↴](#osc-compute-server-change-password)
 * [`osc compute server confirm-resize`↴](#osc-compute-server-confirm-resize)
@@ -115,8 +116,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server create232`↴](#osc-compute-server-create232)
 * [`osc compute server create219`↴](#osc-compute-server-create219)
 * [`osc compute server create21`↴](#osc-compute-server-create21)
-* [`osc compute server create-backup`↴](#osc-compute-server-create-backup)
-* [`osc compute server create-image`↴](#osc-compute-server-create-image)
+* [`osc compute server create-backup21`↴](#osc-compute-server-create-backup21)
+* [`osc compute server create-image21`↴](#osc-compute-server-create-image21)
 * [`osc compute server delete`↴](#osc-compute-server-delete)
 * [`osc compute server diagnostic`↴](#osc-compute-server-diagnostic)
 * [`osc compute server evacuate214`↴](#osc-compute-server-evacuate214)
@@ -129,7 +130,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server instance-action list`↴](#osc-compute-server-instance-action-list)
 * [`osc compute server instance-action show`↴](#osc-compute-server-instance-action-show)
 * [`osc compute server interface`↴](#osc-compute-server-interface)
-* [`osc compute server interface create`↴](#osc-compute-server-interface-create)
+* [`osc compute server interface create249`↴](#osc-compute-server-interface-create249)
 * [`osc compute server interface delete`↴](#osc-compute-server-interface-delete)
 * [`osc compute server interface list`↴](#osc-compute-server-interface-list)
 * [`osc compute server interface show`↴](#osc-compute-server-interface-show)
@@ -142,7 +143,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server live-migrate225`↴](#osc-compute-server-live-migrate225)
 * [`osc compute server live-migrate230`↴](#osc-compute-server-live-migrate230)
 * [`osc compute server live-migrate268`↴](#osc-compute-server-live-migrate268)
-* [`osc compute server lock`↴](#osc-compute-server-lock)
+* [`osc compute server lock273`↴](#osc-compute-server-lock273)
 * [`osc compute server metadata`↴](#osc-compute-server-metadata)
 * [`osc compute server metadata create`↴](#osc-compute-server-metadata-create)
 * [`osc compute server metadata delete`↴](#osc-compute-server-metadata-delete)
@@ -150,10 +151,10 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server metadata replace`↴](#osc-compute-server-metadata-replace)
 * [`osc compute server metadata set`↴](#osc-compute-server-metadata-set)
 * [`osc compute server metadata show`↴](#osc-compute-server-metadata-show)
-* [`osc compute server migrate`↴](#osc-compute-server-migrate)
+* [`osc compute server migrate256`↴](#osc-compute-server-migrate256)
 * [`osc compute server migration`↴](#osc-compute-server-migration)
 * [`osc compute server migration delete`↴](#osc-compute-server-migration-delete)
-* [`osc compute server migration force-complete`↴](#osc-compute-server-migration-force-complete)
+* [`osc compute server migration force-complete222`↴](#osc-compute-server-migration-force-complete222)
 * [`osc compute server migration list`↴](#osc-compute-server-migration-list)
 * [`osc compute server migration show`↴](#osc-compute-server-migration-show)
 * [`osc compute server password`↴](#osc-compute-server-password)
@@ -172,8 +173,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server remote-console`↴](#osc-compute-server-remote-console)
 * [`osc compute server remote-console create26`↴](#osc-compute-server-remote-console-create26)
 * [`osc compute server remote-console create28`↴](#osc-compute-server-remote-console-create28)
-* [`osc compute server remove-fixed-ip`↴](#osc-compute-server-remove-fixed-ip)
-* [`osc compute server remove-floating-ip`↴](#osc-compute-server-remove-floating-ip)
+* [`osc compute server remove-fixed-ip21`↴](#osc-compute-server-remove-fixed-ip21)
+* [`osc compute server remove-floating-ip21`↴](#osc-compute-server-remove-floating-ip21)
 * [`osc compute server remove-security-group`↴](#osc-compute-server-remove-security-group)
 * [`osc compute server rescue`↴](#osc-compute-server-rescue)
 * [`osc compute server reset-network`↴](#osc-compute-server-reset-network)
@@ -198,9 +199,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server tag delete`↴](#osc-compute-server-tag-delete)
 * [`osc compute server tag list`↴](#osc-compute-server-tag-list)
 * [`osc compute server tag purge`↴](#osc-compute-server-tag-purge)
-* [`osc compute server tag replace`↴](#osc-compute-server-tag-replace)
+* [`osc compute server tag replace226`↴](#osc-compute-server-tag-replace226)
 * [`osc compute server topology`↴](#osc-compute-server-topology)
-* [`osc compute server trigger-crash-dump`↴](#osc-compute-server-trigger-crash-dump)
+* [`osc compute server trigger-crash-dump217`↴](#osc-compute-server-trigger-crash-dump217)
 * [`osc compute server unlock`↴](#osc-compute-server-unlock)
 * [`osc compute server unpause`↴](#osc-compute-server-unpause)
 * [`osc compute server unrescue`↴](#osc-compute-server-unrescue)
@@ -1377,13 +1378,13 @@ Policy defaults enable only users with the administrative role to perform operat
 ###### **Subcommands:**
 
 * `add-host` — Add Host
-* `create` — Create Aggregate (microversion = 2.1)
+* `create21` — Create Aggregate (microversion = 2.1)
 * `cache-image` — Request Image Pre-caching for Aggregate (microversion = 2.81)
 * `delete` — Delete Aggregate
 * `list` — List Aggregates
 * `remove-host` — Remove Host
 * `show` — Show Aggregate Details
-* `set` — Update Aggregate (microversion = 2.1)
+* `set21` — Update Aggregate (microversion = 2.1)
 * `set-metadata` — Create Or Update Aggregate Metadata
 
 
@@ -1404,7 +1405,7 @@ Add Host
 
 
 
-## `osc compute aggregate create`
+## `osc compute aggregate create21`
 
 Creates an aggregate. If specifying an option availability_zone, the aggregate is created as an availability zone and the availability zone is visible to normal users.
 
@@ -1412,7 +1413,7 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), conflict(409)
 
-**Usage:** `osc compute aggregate create [OPTIONS] --name <NAME>`
+**Usage:** `osc compute aggregate create21 [OPTIONS] --name <NAME>`
 
 ###### **Options:**
 
@@ -1503,7 +1504,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 
 
-## `osc compute aggregate set`
+## `osc compute aggregate set21`
 
 Updates either or both the name and availability zone for an aggregate. If the aggregate to be updated has host that already in the given availability zone, the request will fail with 400 error.
 
@@ -1511,7 +1512,7 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute aggregate set [OPTIONS] <ID>`
+**Usage:** `osc compute aggregate set21 [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
@@ -1550,11 +1551,24 @@ An availability zone is created or updated by setting the availability_zone para
 
 ###### **Subcommands:**
 
-* `list` — Get Detailed Availability Zone Information
+* `list` — Get Availability Zone Information
+* `list-detail` — Get Detailed Availability Zone Information
 
 
 
 ## `osc compute availability-zone list`
+
+Lists availability zone information.
+
+Normal response codes: 200
+
+Error response codes: unauthorized(401), forbidden(403)
+
+**Usage:** `osc compute availability-zone list`
+
+
+
+## `osc compute availability-zone list-detail`
 
 Gets detailed availability zone information. Policy defaults enable only users with the administrative role to perform this operation. Cloud providers can change these permissions through the `policy.json` file.
 
@@ -1562,7 +1576,7 @@ Normal response codes: 200
 
 Error response codes: unauthorized(401), forbidden(403)
 
-**Usage:** `osc compute availability-zone list`
+**Usage:** `osc compute availability-zone list-detail`
 
 
 
@@ -2219,8 +2233,8 @@ You can specify custom server metadata at server launch time. The maximum size f
 
 ###### **Subcommands:**
 
-* `add-fixed-ip` — Add (Associate) Fixed Ip (addFixedIp Action) (DEPRECATED) (microversion = 2.1)
-* `add-floating-ip` — Add (Associate) Floating Ip (addFloatingIp Action) (DEPRECATED) (microversion = 2.1)
+* `add-fixed-ip21` — Add (Associate) Fixed Ip (addFixedIp Action) (DEPRECATED) (microversion = 2.1)
+* `add-floating-ip21` — Add (Associate) Floating Ip (addFloatingIp Action) (DEPRECATED) (microversion = 2.1)
 * `add-security-group` — Add Security Group To A Server (addSecurityGroup Action)
 * `change-password` — Change Administrative Password (changePassword Action)
 * `confirm-resize` — Confirm Resized Server (confirmResize Action)
@@ -2237,8 +2251,8 @@ You can specify custom server metadata at server launch time. The maximum size f
 * `create232` — Create Server (microversion = 2.32)
 * `create219` — Create Server (microversion = 2.19)
 * `create21` — Create Server (microversion = 2.1)
-* `create-backup` — Create Server Back Up (createBackup Action) (microversion = 2.1)
-* `create-image` — Create Image (createImage Action) (microversion = 2.1)
+* `create-backup21` — Create Server Back Up (createBackup Action) (microversion = 2.1)
+* `create-image21` — Create Image (createImage Action) (microversion = 2.1)
 * `delete` — Delete Server
 * `diagnostic` — Show Server Diagnostics
 * `evacuate214` — Evacuate Server (evacuate Action) (microversion = 2.14)
@@ -2256,9 +2270,9 @@ You can specify custom server metadata at server launch time. The maximum size f
 * `live-migrate225` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.25)
 * `live-migrate230` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.30)
 * `live-migrate268` — Live-Migrate Server (os-migrateLive Action) (microversion = 2.68)
-* `lock` — Lock Server (lock Action) (microversion = 2.73)
+* `lock273` — Lock Server (lock Action) (microversion = 2.73)
 * `metadata` — Server metadata
-* `migrate` — Migrate Server (migrate Action) (microversion = 2.56)
+* `migrate256` — Migrate Server (migrate Action) (microversion = 2.56)
 * `migration` — Server migrations (servers, migrations)
 * `password` — Servers password
 * `pause` — Pause Server (pause Action)
@@ -2272,8 +2286,8 @@ You can specify custom server metadata at server launch time. The maximum size f
 * `rebuild290` — Rebuild Server (rebuild Action) (microversion = 2.90)
 * `rebuild294` — Rebuild Server (rebuild Action) (microversion = 2.94)
 * `remote-console` — Server Consoles
-* `remove-fixed-ip` — Remove (Disassociate) Fixed Ip (removeFixedIp Action) (DEPRECATED) (microversion = 2.1)
-* `remove-floating-ip` — Remove (Disassociate) Floating Ip (removeFloatingIp Action) (DEPRECATED) (microversion = 2.1)
+* `remove-fixed-ip21` — Remove (Disassociate) Fixed Ip (removeFixedIp Action) (DEPRECATED) (microversion = 2.1)
+* `remove-floating-ip21` — Remove (Disassociate) Floating Ip (removeFloatingIp Action) (DEPRECATED) (microversion = 2.1)
 * `remove-security-group` — Remove Security Group From A Server (removeSecurityGroup Action)
 * `rescue` — Rescue Server (rescue Action)
 * `reset-network` — Reset Networking On A Server (resetNetwork Action) (DEPRECATED)
@@ -2294,7 +2308,7 @@ You can specify custom server metadata at server launch time. The maximum size f
 * `suspend` — Suspend Server (suspend Action)
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a server, checks the existence of a tag for a server
 * `topology` — Show Server Topology
-* `trigger-crash-dump` — Command without description in OpenAPI
+* `trigger-crash-dump217` — Command without description in OpenAPI
 * `unlock` — Unlock Server (unlock Action)
 * `unpause` — Unpause Server (unpause Action)
 * `unrescue` — Unrescue Server (unrescue Action)
@@ -2304,7 +2318,7 @@ You can specify custom server metadata at server launch time. The maximum size f
 
 
 
-## `osc compute server add-fixed-ip`
+## `osc compute server add-fixed-ip21`
 
 Adds a fixed IP address to a server instance, which associates that address with the server. The fixed IP address is retrieved from the network that you specify in the request.
 
@@ -2316,7 +2330,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute server add-fixed-ip --network-id <NETWORK_ID> <ID>`
+**Usage:** `osc compute server add-fixed-ip21 --network-id <NETWORK_ID> <ID>`
 
 ###### **Arguments:**
 
@@ -2328,7 +2342,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 
 
-## `osc compute server add-floating-ip`
+## `osc compute server add-floating-ip21`
 
 Adds a floating IP address to a server, which associates that address with the server.
 
@@ -2346,7 +2360,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute server add-floating-ip [OPTIONS] --address <ADDRESS> <ID>`
+**Usage:** `osc compute server add-floating-ip21 [OPTIONS] --address <ADDRESS> <ID>`
 
 ###### **Arguments:**
 
@@ -3441,11 +3455,11 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 
 
-## `osc compute server create-backup`
+## `osc compute server create-backup21`
 
 Create Server Back Up (createBackup Action) (microversion = 2.1)
 
-**Usage:** `osc compute server create-backup [OPTIONS] --backup-type <BACKUP_TYPE> --name <NAME> --rotation <ROTATION> <ID>`
+**Usage:** `osc compute server create-backup21 [OPTIONS] --backup-type <BACKUP_TYPE> --name <NAME> --rotation <ROTATION> <ID>`
 
 ###### **Arguments:**
 
@@ -3460,11 +3474,11 @@ Create Server Back Up (createBackup Action) (microversion = 2.1)
 
 
 
-## `osc compute server create-image`
+## `osc compute server create-image21`
 
 Create Image (createImage Action) (microversion = 2.1)
 
-**Usage:** `osc compute server create-image [OPTIONS] --name <NAME> <ID>`
+**Usage:** `osc compute server create-image21 [OPTIONS] --name <NAME> <ID>`
 
 ###### **Arguments:**
 
@@ -3711,14 +3725,14 @@ List port interfaces, show port interface details of the given server. Create a 
 
 ###### **Subcommands:**
 
-* `create` — Create Interface (microversion = 2.49)
+* `create249` — Create Interface (microversion = 2.49)
 * `delete` — Detach Interface
 * `list` — List Port Interfaces
 * `show` — Show Port Interface Details
 
 
 
-## `osc compute server interface create`
+## `osc compute server interface create249`
 
 Creates a port interface and uses it to attach a port to a server.
 
@@ -3726,7 +3740,7 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), computeFault(500), NotImplemented(501)
 
-**Usage:** `osc compute server interface create [OPTIONS] <SERVER_ID>`
+**Usage:** `osc compute server interface create249 [OPTIONS] <SERVER_ID>`
 
 ###### **Arguments:**
 
@@ -4035,7 +4049,7 @@ Live-Migrate Server (os-migrateLive Action) (microversion = 2.68)
 
 
 
-## `osc compute server lock`
+## `osc compute server lock273`
 
 Locks a server.
 
@@ -4053,7 +4067,7 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute server lock [OPTIONS] <ID>`
+**Usage:** `osc compute server lock273 [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
@@ -4213,7 +4227,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 
 
-## `osc compute server migrate`
+## `osc compute server migrate256`
 
 Migrates a server to a host.
 
@@ -4231,7 +4245,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403) itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server migrate [OPTIONS] <ID>`
+**Usage:** `osc compute server migrate256 [OPTIONS] <ID>`
 
 ###### **Arguments:**
 
@@ -4254,7 +4268,7 @@ List, show, perform actions on and delete server migrations.
 ###### **Subcommands:**
 
 * `delete` — Delete (Abort) Migration
-* `force-complete` — Force Migration Complete Action (force_complete Action) (microversion = 2.22)
+* `force-complete222` — Force Migration Complete Action (force_complete Action) (microversion = 2.22)
 * `list` — List Migrations
 * `show` — Show Migration Details
 
@@ -4295,7 +4309,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 
 
-## `osc compute server migration force-complete`
+## `osc compute server migration force-complete222`
 
 Force an in-progress live migration for a given server to complete.
 
@@ -4323,7 +4337,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server migration force-complete <SERVER_ID> <ID>`
+**Usage:** `osc compute server migration force-complete222 <SERVER_ID> <ID>`
 
 ###### **Arguments:**
 
@@ -4807,7 +4821,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 
 
-## `osc compute server remove-fixed-ip`
+## `osc compute server remove-fixed-ip21`
 
 Removes, or disassociates, a fixed IP address from a server.
 
@@ -4819,7 +4833,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute server remove-fixed-ip --address <ADDRESS> <ID>`
+**Usage:** `osc compute server remove-fixed-ip21 --address <ADDRESS> <ID>`
 
 ###### **Arguments:**
 
@@ -4831,7 +4845,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 
 
-## `osc compute server remove-floating-ip`
+## `osc compute server remove-floating-ip21`
 
 Removes, or disassociates, a floating IP address from a server.
 
@@ -4843,7 +4857,7 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server remove-floating-ip --address <ADDRESS> <ID>`
+**Usage:** `osc compute server remove-floating-ip21 --address <ADDRESS> <ID>`
 
 ###### **Arguments:**
 
@@ -5368,7 +5382,7 @@ Tags have the following restrictions:
 * `delete` — Delete a Single Tag
 * `list` — List Tags
 * `purge` — Delete All Tags
-* `replace` — Replace Tags (microversion = 2.26)
+* `replace226` — Replace Tags (microversion = 2.26)
 
 
 
@@ -5457,7 +5471,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 
 
-## `osc compute server tag replace`
+## `osc compute server tag replace226`
 
 Replaces all tags on specified server with the new set of tags.
 
@@ -5465,7 +5479,7 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute server tag replace [OPTIONS] <SERVER_ID>`
+**Usage:** `osc compute server tag replace226 [OPTIONS] <SERVER_ID>`
 
 ###### **Arguments:**
 
@@ -5495,11 +5509,11 @@ Error response codes: unauthorized(401), notfound(404), forbidden(403)
 
 
 
-## `osc compute server trigger-crash-dump`
+## `osc compute server trigger-crash-dump217`
 
 Command without description in OpenAPI
 
-**Usage:** `osc compute server trigger-crash-dump <ID>`
+**Usage:** `osc compute server trigger-crash-dump217 <ID>`
 
 ###### **Arguments:**
 

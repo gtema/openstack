@@ -41,7 +41,8 @@ pub struct InterfaceCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum InterfaceCommands {
-    Create(create_249::InterfaceCommand),
+    #[command(visible_alias = "create")]
+    Create249(create_249::InterfaceCommand),
     Delete(delete::InterfaceCommand),
     List(list::InterfacesCommand),
     Show(show::InterfaceCommand),
@@ -55,7 +56,7 @@ impl InterfaceCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            InterfaceCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            InterfaceCommands::Create249(cmd) => cmd.take_action(parsed_args, session).await,
             InterfaceCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             InterfaceCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             InterfaceCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,

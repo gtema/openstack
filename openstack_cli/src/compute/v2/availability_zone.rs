@@ -21,6 +21,7 @@ use openstack_sdk::AsyncOpenStack;
 use crate::{Cli, OpenStackCliError};
 
 mod list;
+mod list_detail;
 
 /// Availability zones
 ///
@@ -41,6 +42,7 @@ pub struct AvailabilityZoneCommand {
 #[derive(Subcommand)]
 pub enum AvailabilityZoneCommands {
     List(list::AvailabilityZonesCommand),
+    ListDetail(list_detail::AvailabilityZonesCommand),
 }
 
 impl AvailabilityZoneCommand {
@@ -52,6 +54,9 @@ impl AvailabilityZoneCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             AvailabilityZoneCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AvailabilityZoneCommands::ListDetail(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
         }
     }
 }

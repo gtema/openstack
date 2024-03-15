@@ -52,7 +52,8 @@ pub enum AggregateCommands {
     /// Adds a host to an aggregate.
     #[command(about = "Add Host")]
     AddHost(add_host::AggregateCommand),
-    Create(create_21::AggregateCommand),
+    #[command(visible_alias = "create")]
+    Create21(create_21::AggregateCommand),
     CacheImage(image::cache_281::ImageCommand),
     Delete(delete::AggregateCommand),
     List(list::AggregatesCommand),
@@ -60,7 +61,8 @@ pub enum AggregateCommands {
     #[command(about = "Remove Host")]
     RemoveHost(remove_host::AggregateCommand),
     Show(show::AggregateCommand),
-    Set(set_21::AggregateCommand),
+    #[command(visible_alias = "set")]
+    Set21(set_21::AggregateCommand),
     /// Creates or replaces metadata for an aggregate.
     #[command(about = "Create Or Update Aggregate Metadata")]
     SetMetadata(set_metadata::AggregateCommand),
@@ -75,13 +77,13 @@ impl AggregateCommand {
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
             AggregateCommands::AddHost(cmd) => cmd.take_action(parsed_args, session).await,
-            AggregateCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Create21(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::CacheImage(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::RemoveHost(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
-            AggregateCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            AggregateCommands::Set21(cmd) => cmd.take_action(parsed_args, session).await,
             AggregateCommands::SetMetadata(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

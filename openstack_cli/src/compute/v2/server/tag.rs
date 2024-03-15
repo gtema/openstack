@@ -62,7 +62,8 @@ pub enum TagCommands {
     Delete(delete::TagCommand),
     List(list::TagsCommand),
     Purge(delete_all::TagCommand),
-    Replace(replace_226::TagCommand),
+    #[command(visible_alias = "replace")]
+    Replace226(replace_226::TagCommand),
 }
 
 impl TagCommand {
@@ -78,7 +79,7 @@ impl TagCommand {
             TagCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             TagCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             TagCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
-            TagCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
+            TagCommands::Replace226(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

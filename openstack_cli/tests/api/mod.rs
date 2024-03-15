@@ -16,6 +16,16 @@ use assert_cmd::prelude::*;
 use std::process::Command;
 
 #[test]
+fn help() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("osc")?;
+
+    cmd.arg("api").arg("--help");
+    cmd.assert().success();
+
+    Ok(())
+}
+
+#[test]
 fn api() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
