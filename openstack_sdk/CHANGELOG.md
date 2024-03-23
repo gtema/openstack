@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.3.0...openstack_sdk-v0.4.0) - 2024-03-23
+
+### Other
+- Merge pull request [#113](https://github.com/gtema/openstack/pull/113) from gtema/deps
+- update http/reqwest/hyper lib
+
 ## [0.3.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.2.0...openstack_sdk-v0.3.0) - 2024-03-15
 
 ### Added
