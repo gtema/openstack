@@ -20,20 +20,30 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct AddressGroup<'a> {
+    /// A list of IP addresses.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) addresses: Option<Vec<Cow<'a, str>>>,
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
+    #[builder(setter(into))]
+    pub(crate) address_group: AddressGroup<'a>,
+
+    /// id parameter for /v2.0/address-groups/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
-
-    /// router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
-    ///
-    #[builder(default, setter(into))]
-    router_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -46,7 +56,7 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    /// Add a single header to the L3_Agent.
+    /// Add a single header to the Address_Group.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
         self._headers
@@ -77,8 +87,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2.0/routers/{router_id}/l3-agents/{id}",
-            router_id = self.router_id.as_ref(),
+            "v2.0/address-groups/{id}/add_addresses",
             id = self.id.as_ref(),
         )
         .into()
@@ -88,12 +97,20 @@ impl<'a> RestEndpoint for Request<'a> {
         QueryParams::default()
     }
 
+    fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let mut params = JsonBodyParams::default();
+
+        params.push("address_group", serde_json::to_value(&self.address_group)?);
+
+        params.into_body()
+    }
+
     fn service_type(&self) -> ServiceType {
         ServiceType::Network
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("address_group".into())
     }
 
     /// Returns headers to be set into the request
@@ -115,14 +132,26 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .address_group(AddressGroupBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Network
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder()
+                .address_group(AddressGroupBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "address_group"
+        );
     }
 
     #[test]
@@ -130,19 +159,18 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
-                "/v2.0/routers/{router_id}/l3-agents/{id}",
-                router_id = "router_id",
+                "/v2.0/address-groups/{id}/add_addresses",
                 id = "id",
             ));
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "address_group": {} }));
         });
 
         let endpoint = Request::builder()
-            .router_id("router_id")
             .id("id")
+            .address_group(AddressGroupBuilder::default().build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -155,20 +183,19 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
                 .path(format!(
-                    "/v2.0/routers/{router_id}/l3-agents/{id}",
-                    router_id = "router_id",
+                    "/v2.0/address-groups/{id}/add_addresses",
                     id = "id",
                 ))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "address_group": {} }));
         });
 
         let endpoint = Request::builder()
-            .router_id("router_id")
             .id("id")
+            .address_group(AddressGroupBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

@@ -12,13 +12,21 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! `Network` Service bindings
-pub mod address_group;
-pub mod address_scope;
-pub mod availability_zone;
-pub mod extension;
-pub mod floatingip;
-pub mod network;
-pub mod port;
-pub mod router;
-pub mod subnet;
+mod create_autogen;
+mod delete_autogen;
+mod list_autogen;
+mod set_autogen;
+mod show_autogen;
+
+use assert_cmd::prelude::*;
+use std::process::Command;
+
+#[test]
+fn help() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("osc")?;
+
+    cmd.arg("network").arg("address-scope").arg("--help");
+    cmd.assert().success();
+
+    Ok(())
+}

@@ -12,6 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+mod address_group;
+mod address_scope;
 mod availability_zone;
 mod extension;
 mod floatingip;

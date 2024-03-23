@@ -20,6 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod address_group;
+mod address_scope;
 mod availability_zone;
 mod extension;
 mod floatingip;
@@ -40,6 +42,8 @@ pub struct NetworkCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum NetworkCommands {
+    AddressGroup(Box<address_group::AddressGroupCommand>),
+    AddressScope(Box<address_scope::AddressScopeCommand>),
     AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
     Extension(Box<extension::ExtensionCommand>),
     FloatingIP(Box<floatingip::FloatingIPCommand>),
@@ -57,6 +61,8 @@ impl NetworkCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
+            NetworkCommands::AddressGroup(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::AddressScope(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::AvailabilityZone(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::FloatingIP(cmd) => cmd.take_action(parsed_args, session).await,

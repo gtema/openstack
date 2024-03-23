@@ -400,6 +400,20 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image schema metadef tags`↴](#osc-image-schema-metadef-tags)
 * [`osc image schema metadef tags show`↴](#osc-image-schema-metadef-tags-show)
 * [`osc network`↴](#osc-network)
+* [`osc network address-group`↴](#osc-network-address-group)
+* [`osc network address-group add-address`↴](#osc-network-address-group-add-address)
+* [`osc network address-group create`↴](#osc-network-address-group-create)
+* [`osc network address-group delete`↴](#osc-network-address-group-delete)
+* [`osc network address-group list`↴](#osc-network-address-group-list)
+* [`osc network address-group remove-address`↴](#osc-network-address-group-remove-address)
+* [`osc network address-group set`↴](#osc-network-address-group-set)
+* [`osc network address-group show`↴](#osc-network-address-group-show)
+* [`osc network address-scope`↴](#osc-network-address-scope)
+* [`osc network address-scope create`↴](#osc-network-address-scope-create)
+* [`osc network address-scope delete`↴](#osc-network-address-scope-delete)
+* [`osc network address-scope list`↴](#osc-network-address-scope-list)
+* [`osc network address-scope set`↴](#osc-network-address-scope-set)
+* [`osc network address-scope show`↴](#osc-network-address-scope-show)
 * [`osc network availability-zone`↴](#osc-network-availability-zone)
 * [`osc network availability-zone list`↴](#osc-network-availability-zone-list)
 * [`osc network extension`↴](#osc-network-extension)
@@ -9406,6 +9420,8 @@ Network (Neutron) commands
 
 ###### **Subcommands:**
 
+* `address-group` — Address groups
+* `address-scope` — Address scopes
 * `availability-zone` — Availability Zones commands
 * `extension` — Extensions commands
 * `floating-ip` — Floating IP commands
@@ -9413,6 +9429,280 @@ Network (Neutron) commands
 * `port` — Port commands
 * `router` — Router commands
 * `subnet` — Subnet commands
+
+
+
+## `osc network address-group`
+
+Address groups
+
+Lists, creates, shows details for, updates, and deletes address groups.
+
+**Usage:** `osc network address-group <COMMAND>`
+
+###### **Subcommands:**
+
+* `add-address` — Command without description in OpenAPI
+* `create` — Create address group
+* `delete` — Delete an address group
+* `list` — List address groups
+* `remove-address` — Command without description in OpenAPI
+* `set` — Update an address group
+* `show` — Show address group
+
+
+
+## `osc network address-group add-address`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network address-group add-address [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-groups/{id} API
+
+###### **Options:**
+
+* `--addresses <ADDRESSES>` — A list of IP addresses
+
+
+
+## `osc network address-group create`
+
+Creates an address group.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc network address-group create [OPTIONS]`
+
+###### **Options:**
+
+* `--addresses <ADDRESSES>` — A list of IP addresses
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--project-id <PROJECT_ID>`
+
+
+
+## `osc network address-group delete`
+
+Deletes an address group.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 412
+
+**Usage:** `osc network address-group delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-groups/{id} API
+
+
+
+## `osc network address-group list`
+
+Lists address groups that the project has access to.
+
+Default policy settings return only the address groups owned by the project of the user submitting the request, unless the user has administrative role.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401
+
+**Usage:** `osc network address-group list [OPTIONS]`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/address-groups API
+* `--id <ID>` — id query parameter for /v2.0/address-groups API
+* `--name <NAME>` — name query parameter for /v2.0/address-groups API
+* `--project-id <PROJECT_ID>` — project_id query parameter for /v2.0/address-groups API
+
+
+
+## `osc network address-group remove-address`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network address-group remove-address [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-groups/{id} API
+
+###### **Options:**
+
+* `--addresses <ADDRESSES>` — A list of IP addresses
+
+
+
+## `osc network address-group set`
+
+Updates an address group.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 412
+
+**Usage:** `osc network address-group set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-groups/{id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+
+
+
+## `osc network address-group show`
+
+Shows information for an address group.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401, 404
+
+**Usage:** `osc network address-group show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-groups/{id} API
+
+
+
+## `osc network address-scope`
+
+Address scopes
+
+Lists, creates, shows details for, updates, and deletes address scopes.
+
+**Usage:** `osc network address-scope <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create address scope
+* `delete` — Delete an address scope
+* `list` — List address scopes
+* `set` — Update an address scope
+* `show` — Show address scope
+
+
+
+## `osc network address-scope create`
+
+Creates an address scope.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc network address-scope create [OPTIONS]`
+
+###### **Options:**
+
+* `--ip-version <IP_VERSION>` — The IP protocol version. Valid value is `4` or `6`
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--shared <SHARED>` — Indicates whether this resource is shared across all projects. By default, only administrative users can change this value
+
+  Possible values: `true`, `false`
+
+* `--tenant-id <TENANT_ID>` — The ID of the project that owns the resource. Only administrative and users with advsvc role can specify a project ID other than their own. You cannot change this value through authorization policies
+
+
+
+## `osc network address-scope delete`
+
+Deletes an address scope.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 412
+
+**Usage:** `osc network address-scope delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-scopes/{id} API
+
+
+
+## `osc network address-scope list`
+
+Lists address scopes that the project has access to.
+
+Default policy settings return only the address scopes owned by the project of the user submitting the request, unless the user has administrative role.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401
+
+**Usage:** `osc network address-scope list [OPTIONS]`
+
+###### **Options:**
+
+* `--id <ID>` — id query parameter for /v2.0/address-scopes API
+* `--ip-version <IP_VERSION>` — ip_version query parameter for /v2.0/address-scopes API
+* `--name <NAME>` — name query parameter for /v2.0/address-scopes API
+* `--shared <SHARED>` — shared query parameter for /v2.0/address-scopes API
+
+  Possible values: `true`, `false`
+
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/address-scopes API
+
+
+
+## `osc network address-scope set`
+
+Updates an address scope.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 412
+
+**Usage:** `osc network address-scope set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-scopes/{id} API
+
+###### **Options:**
+
+* `--name <NAME>` — Human-readable name of the resource. Default is an empty string
+* `--shared <SHARED>` — Indicates whether this resource is shared across all projects. By default, only administrative users can change this value
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc network address-scope show`
+
+Shows information for an address scope.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+
+Normal response codes: 200
+
+Error response codes: 401, 404
+
+**Usage:** `osc network address-scope show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/address-scopes/{id} API
 
 
 
