@@ -64,6 +64,10 @@ use structable_derive::StructTable;
 /// When you update `binding:profile` of a port with null it is treated as {}
 /// in the response.
 ///
+/// The `binding:vnic_type` attribute can be updated on unbound ports only. If
+/// the port is already bound, the update operation of the attribute returns
+/// the `Conflict (409)` response code.
+///
 /// Only admins and users with a specific role can update the data plane status
 /// (default role: `data_plane_integrator`).
 ///
