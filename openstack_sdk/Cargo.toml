@@ -34,7 +34,6 @@ open = { version = "^5.1" }
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = {workspace = true}
-serde_yaml = {workspace = true}
 serde_urlencoded = "^0.7"
 thiserror = { workspace = true }
 tokio = {workspace = true }
