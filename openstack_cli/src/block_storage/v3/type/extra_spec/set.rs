@@ -108,7 +108,7 @@ impl ExtraSpecCommand {
         if let Some(properties) = &self.properties {
             ep_builder.properties(
                 properties
-                    .iter()
+                    .into_iter()
                     .map(|(k, v)| (k, v.as_ref().map(Into::into))),
             );
         }

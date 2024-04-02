@@ -84,11 +84,6 @@ pub struct Volume<'a> {
     #[builder(default, private, setter(name = "_metadata"))]
     pub(crate) metadata: Option<Option<BTreeMap<Cow<'a, str>, Cow<'a, str>>>>,
 
-    /// To enable this volume to attach to more than one server, set this value
-    /// to `true`. Default is `false`. Note that support for multiattach
-    /// volumes depends on the volume type being used. See
-    /// [valid boolean values](#valid-boolean-values)
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) multiattach: Option<Option<bool>>,

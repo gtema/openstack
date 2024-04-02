@@ -12,6 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+mod backup;
 mod r#type;
 mod volume;
 

@@ -36,7 +36,7 @@ mod show;
 /// Block Storage Volume commands
 #[derive(Parser)]
 pub struct VolumeCommand {
-    /// sumcommnd
+    /// subcommand
     #[command(subcommand)]
     command: VolumeCommands,
 }
