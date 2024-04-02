@@ -33,6 +33,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+
 use crate::common::parse_key_val;
 use openstack_sdk::api::block_storage::v3::volume::create_313;
 use openstack_sdk::api::QueryAsync;
@@ -114,11 +115,6 @@ struct Volume {
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     metadata: Option<Vec<(String, String)>>,
 
-    /// To enable this volume to attach to more than one server, set this value
-    /// to `true`. Default is `false`. Note that support for multiattach
-    /// volumes depends on the volume type being used. See
-    /// [valid boolean values](#valid-boolean-values)
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     multiattach: Option<Option<bool>>,
 
@@ -193,6 +189,8 @@ struct ResponseData {
 
     /// The cluster name of volume backend.
     ///
+    /// **New in version 3.61**
+    ///
     #[serde()]
     #[structable(optional)]
     cluster_name: Option<String>,
@@ -206,6 +204,8 @@ struct ResponseData {
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
+    ///
+    /// **New in version 3.65**
     ///
     #[serde()]
     #[structable(optional)]
@@ -243,6 +243,8 @@ struct ResponseData {
     encrypted: Option<bool>,
 
     /// The ID of the group.
+    ///
+    /// **New in version 3.13**
     ///
     #[serde()]
     #[structable(optional)]
@@ -286,8 +288,10 @@ struct ResponseData {
     name: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
-    /// driver or null if the driver doesn’t use the field or if it hasn’t
+    /// driver or `null` if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
+    ///
+    /// **New in version 3.21**
     ///
     #[serde()]
     #[structable(optional)]
@@ -302,15 +306,19 @@ struct ResponseData {
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
     ///
+    /// **New in version 3.48**
+    ///
     #[serde()]
     #[structable(optional)]
     service_uuid: Option<String>,
 
     /// An indicator whether the host connecting the volume should lock for the
-    /// whole attach/detach process or not. true means only is iSCSI initiator
-    /// running on host doesn’t support manual scans, false means never use
-    /// locks, and null means to always use locks. Look at os-brick’s
-    /// guard_connection context manager. Default=True.
+    /// whole attach/detach process or not. `true` means only is iSCSI
+    /// initiator running on host doesn’t support manual scans, `false` means
+    /// never use locks, and `null` means to always use locks. Look at
+    /// os-brick’s `guard_connection` context manager. Default=True.
+    ///
+    /// **New in version 3.69**
     ///
     #[serde()]
     #[structable(optional)]
@@ -378,6 +386,8 @@ struct ResponseData {
     volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
+    ///
+    /// **New in version 3.63**
     ///
     #[serde()]
     #[structable(optional)]

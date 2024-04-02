@@ -10,6 +10,19 @@ This document contains the help content for the `osc` command-line program.
 * [`osc auth login`↴](#osc-auth-login)
 * [`osc auth show`↴](#osc-auth-show)
 * [`osc block-storage`↴](#osc-block-storage)
+* [`osc block-storage backup`↴](#osc-block-storage-backup)
+* [`osc block-storage backup create351`↴](#osc-block-storage-backup-create351)
+* [`osc block-storage backup create343`↴](#osc-block-storage-backup-create343)
+* [`osc block-storage backup create30`↴](#osc-block-storage-backup-create30)
+* [`osc block-storage backup delete`↴](#osc-block-storage-backup-delete)
+* [`osc block-storage backup export`↴](#osc-block-storage-backup-export)
+* [`osc block-storage backup force-delete`↴](#osc-block-storage-backup-force-delete)
+* [`osc block-storage backup import`↴](#osc-block-storage-backup-import)
+* [`osc block-storage backup list`↴](#osc-block-storage-backup-list)
+* [`osc block-storage backup reset-status`↴](#osc-block-storage-backup-reset-status)
+* [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
+* [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
+* [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
 * [`osc block-storage volume`↴](#osc-block-storage-volume)
 * [`osc block-storage volume create353`↴](#osc-block-storage-volume-create353)
 * [`osc block-storage volume create347`↴](#osc-block-storage-volume-create347)
@@ -645,8 +658,249 @@ Block Storage (Volume) service (Cinder) commands
 
 ###### **Subcommands:**
 
+* `backup` — Backups
 * `volume` — Block Storage Volume commands
 * `type` — Block Storage VolumeType type commands
+
+
+
+## `osc block-storage backup`
+
+Backups
+
+A backup is a full copy of a volume stored in an external service. The service can be configured. The only supported service is Object Storage. A backup can subsequently be restored from the external service to either the same volume that the backup was originally taken from or to a new volume.
+
+**Usage:** `osc block-storage backup <COMMAND>`
+
+###### **Subcommands:**
+
+* `create351` — Create a new backup
+* `create343` — Create a new backup
+* `create30` — Create a new backup
+* `delete` — Delete a backup
+* `export` — Export a backup
+* `force-delete` — Empty body for os-force_delete action
+* `import` — Import a backup
+* `list` — Returns a detailed list of backups
+* `reset-status` — Command without description in OpenAPI
+* `set343` — Update a backup
+* `set39` — Update a backup
+* `show` — Return data about the given backup
+
+
+
+## `osc block-storage backup create351`
+
+Create a new backup
+
+**Usage:** `osc block-storage backup create351 [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--availability-zone <AVAILABILITY_ZONE>` — The backup availability zone key value pair
+* `--container <CONTAINER>` — The container name or null
+* `--description <DESCRIPTION>` — The backup description or null
+* `--force <FORCE>` — Indicates whether to backup, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--incremental <INCREMENTAL>` — Indicates whether to backup, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--metadata <key=value>` — The backup metadata key value pairs
+* `--name <NAME>` — The name of the Volume Backup
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the source snapshot that you want to back up
+* `--volume-id <VOLUME_ID>` — The UUID of the volume that you want to back up
+
+
+
+## `osc block-storage backup create343`
+
+Create a new backup
+
+**Usage:** `osc block-storage backup create343 [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--container <CONTAINER>` — The container name or null
+* `--description <DESCRIPTION>` — The backup description or null
+* `--force <FORCE>` — Indicates whether to backup, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--incremental <INCREMENTAL>` — Indicates whether to backup, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--metadata <key=value>` — The backup metadata key value pairs
+* `--name <NAME>` — The name of the Volume Backup
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the source snapshot that you want to back up
+* `--volume-id <VOLUME_ID>` — The UUID of the volume that you want to back up
+
+
+
+## `osc block-storage backup create30`
+
+Create a new backup
+
+**Usage:** `osc block-storage backup create30 [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--container <CONTAINER>` — The container name or null
+* `--description <DESCRIPTION>` — The backup description or null
+* `--force <FORCE>` — Indicates whether to backup, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--incremental <INCREMENTAL>` — Indicates whether to backup, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The name of the Volume Backup
+* `--snapshot-id <SNAPSHOT_ID>` — The UUID of the source snapshot that you want to back up
+* `--volume-id <VOLUME_ID>` — The UUID of the volume that you want to back up
+
+
+
+## `osc block-storage backup delete`
+
+Delete a backup
+
+**Usage:** `osc block-storage backup delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage backup export`
+
+Export a backup
+
+**Usage:** `osc block-storage backup export <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id}/export_record API
+
+
+
+## `osc block-storage backup force-delete`
+
+Empty body for os-force_delete action
+
+**Usage:** `osc block-storage backup force-delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id}/action API
+
+
+
+## `osc block-storage backup import`
+
+Import a backup
+
+**Usage:** `osc block-storage backup import --backup-service <BACKUP_SERVICE> --backup-url <BACKUP_URL>`
+
+###### **Options:**
+
+* `--backup-service <BACKUP_SERVICE>` — The service used to perform the backup
+* `--backup-url <BACKUP_URL>` — An identifier string to locate the backup
+
+
+
+## `osc block-storage backup list`
+
+Returns a detailed list of backups
+
+**Usage:** `osc block-storage backup list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--with-count <WITH_COUNT>` — Whether to show count in API response or not, default is False
+
+  Possible values: `true`, `false`
+
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage backup reset-status`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage backup reset-status --status <STATUS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id}/action API
+
+###### **Options:**
+
+* `--status <STATUS>`
+
+
+
+## `osc block-storage backup set343`
+
+Update a backup
+
+**Usage:** `osc block-storage backup set343 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--metadata <key=value>`
+* `--name <NAME>`
+
+
+
+## `osc block-storage backup set39`
+
+Update a backup
+
+**Usage:** `osc block-storage backup set39 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--name <NAME>`
+
+
+
+## `osc block-storage backup show`
+
+Return data about the given backup
+
+**Usage:** `osc block-storage backup show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/backups/{id} API
 
 
 
@@ -693,7 +947,7 @@ Creates a new volume.
 * `--image-id <IMAGE_ID>`
 * `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+* `--multiattach <MULTIATTACH>`
 
   Possible values: `true`, `false`
 
@@ -726,7 +980,7 @@ Creates a new volume.
 * `--image-id <IMAGE_ID>`
 * `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+* `--multiattach <MULTIATTACH>`
 
   Possible values: `true`, `false`
 
@@ -758,7 +1012,7 @@ Creates a new volume.
 * `--image-id <IMAGE_ID>`
 * `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+* `--multiattach <MULTIATTACH>`
 
   Possible values: `true`, `false`
 
@@ -789,7 +1043,7 @@ Creates a new volume.
 * `--image-id <IMAGE_ID>`
 * `--image-ref <IMAGE_REF>` — The UUID of the image from which you want to create the volume. Required to create a bootable volume
 * `--metadata <key=value>` — One or more metadata key and value pairs to be associated with the new volume
-* `--multiattach <MULTIATTACH>` — To enable this volume to attach to more than one server, set this value to `true`. Default is `false`. Note that support for multiattach volumes depends on the volume type being used. See [valid boolean values](#valid-boolean-values)
+* `--multiattach <MULTIATTACH>`
 
   Possible values: `true`, `false`
 

@@ -19,6 +19,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod backup;
 mod r#type;
 mod volume;
 
@@ -34,6 +35,7 @@ pub struct BlockStorageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum BlockStorageCommands {
+    Backup(backup::BackupCommand),
     Volume(volume::VolumeCommand),
     Type(r#type::VolumeTypeCommand),
 }
@@ -46,6 +48,7 @@ impl BlockStorageCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
+            BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Type(cmd) => cmd.take_action(parsed_args, session).await,
         }

@@ -44,7 +44,7 @@ mod show;
 /// ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
 #[derive(Parser)]
 pub struct VolumeTypeCommand {
-    /// sumcommnd
+    /// subcommand
     #[command(subcommand)]
     command: VolumeTypeCommands,
 }
