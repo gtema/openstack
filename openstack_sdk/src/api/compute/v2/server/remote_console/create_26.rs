@@ -19,7 +19,7 @@
 //! can get a URL to connect the console from this API. The URL includes the
 //! token which is used to get permission to access the console. Servers may
 //! support different console protocols. To return a remote console using a
-//! specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
+//! specific protocol, such as VNC, set the `protocol` parameter to `vnc`.
 //!
 //! Normal response codes: 200
 //!
@@ -37,8 +37,6 @@ use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Protocol {
-    #[serde(rename = "rdp")]
-    Rdp,
     #[serde(rename = "serial")]
     Serial,
     #[serde(rename = "spice")]
@@ -51,8 +49,6 @@ pub enum Protocol {
 pub enum Type {
     #[serde(rename = "novnc")]
     Novnc,
-    #[serde(rename = "rdp-html5")]
-    RdpHtml5,
     #[serde(rename = "serial")]
     Serial,
     #[serde(rename = "spice-html5")]
@@ -67,14 +63,14 @@ pub enum Type {
 #[builder(setter(strip_option))]
 pub struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
-    /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
-    /// Microversion `2.8`.
+    /// `serial` and `mks`. The protocol `mks` is added since Microversion
+    /// `2.8`.
     ///
     #[serde()]
     #[builder()]
     pub(crate) protocol: Protocol,
 
-    /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
+    /// The type of remote console. The valid values are `novnc`,
     /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
     /// Microversion `2.8`.
     ///
@@ -91,7 +87,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) remote_console: RemoteConsole,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for /v2.1/servers/{server_id}/remote-consoles API
     ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,
@@ -190,7 +186,7 @@ mod tests {
                 .remote_console(
                     RemoteConsoleBuilder::default()
                         ._type(Type::Novnc)
-                        .protocol(Protocol::Rdp)
+                        .protocol(Protocol::Serial)
                         .build()
                         .unwrap()
                 )
@@ -208,7 +204,7 @@ mod tests {
                 .remote_console(
                     RemoteConsoleBuilder::default()
                         ._type(Type::Novnc)
-                        .protocol(Protocol::Rdp)
+                        .protocol(Protocol::Serial)
                         .build()
                         .unwrap()
                 )
@@ -239,7 +235,7 @@ mod tests {
             .remote_console(
                 RemoteConsoleBuilder::default()
                     ._type(Type::Novnc)
-                    .protocol(Protocol::Rdp)
+                    .protocol(Protocol::Serial)
                     .build()
                     .unwrap(),
             )
@@ -270,7 +266,7 @@ mod tests {
             .remote_console(
                 RemoteConsoleBuilder::default()
                     ._type(Type::Novnc)
-                    .protocol(Protocol::Rdp)
+                    .protocol(Protocol::Serial)
                     .build()
                     .unwrap(),
             )

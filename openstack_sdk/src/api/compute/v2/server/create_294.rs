@@ -91,7 +91,7 @@ pub enum NetworksStringEnum {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
-pub enum NetworksEnum<'a> {
+pub enum ServerNetworks<'a> {
     F1(Vec<Networks<'a>>),
     F2(NetworksStringEnum),
 }
@@ -298,14 +298,14 @@ pub struct Server<'a> {
     ///
     /// > ```text
     /// > "block_device_mapping_v2": [{
-    /// >  "boot_index": "0",
-    /// >  "uuid": "ac408821-c95a-448f-9292-73986c790911",
-    /// >  "source_type": "image",
-    /// >  "volume_size": "25",
-    /// >  "destination_type": "volume",
-    /// >  "delete_on_termination": true,
-    /// >  "tag": "disk1",
-    /// >  "disk_bus": "scsi"}]
+    /// >     "boot_index": "0",
+    /// >     "uuid": "ac408821-c95a-448f-9292-73986c790911",
+    /// >     "source_type": "image",
+    /// >     "volume_size": "25",
+    /// >     "destination_type": "volume",
+    /// >     "delete_on_termination": true,
+    /// >     "tag": "disk1",
+    /// >     "disk_bus": "scsi"}]
     /// >
     /// > ```
     ///
@@ -466,7 +466,7 @@ pub struct Server<'a> {
     ///
     #[serde()]
     #[builder(setter(into))]
-    pub(crate) networks: NetworksEnum<'a>,
+    pub(crate) networks: ServerNetworks<'a>,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
     /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
@@ -911,7 +911,7 @@ mod tests {
                     ServerBuilder::default()
                         .flavor_ref("foo")
                         .name("foo")
-                        .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
+                        .networks(ServerNetworks::F1(Vec::from([NetworksBuilder::default()
                             .build()
                             .unwrap()])))
                         .build()
@@ -931,7 +931,7 @@ mod tests {
                 ServerBuilder::default()
                     .flavor_ref("foo")
                     .name("foo")
-                    .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
+                    .networks(ServerNetworks::F1(Vec::from([NetworksBuilder::default()
                         .build()
                         .unwrap()])))
                     .build()
@@ -960,7 +960,7 @@ mod tests {
                 ServerBuilder::default()
                     .flavor_ref("foo")
                     .name("foo")
-                    .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
+                    .networks(ServerNetworks::F1(Vec::from([NetworksBuilder::default()
                         .build()
                         .unwrap()])))
                     .build()
@@ -990,7 +990,7 @@ mod tests {
                 ServerBuilder::default()
                     .flavor_ref("foo")
                     .name("foo")
-                    .networks(NetworksEnum::F1(Vec::from([NetworksBuilder::default()
+                    .networks(ServerNetworks::F1(Vec::from([NetworksBuilder::default()
                         .build()
                         .unwrap()])))
                     .build()

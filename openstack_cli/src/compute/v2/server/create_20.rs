@@ -168,14 +168,14 @@ struct Server {
     ///
     /// > ```text
     /// > "block_device_mapping_v2": [{
-    /// >  "boot_index": "0",
-    /// >  "uuid": "ac408821-c95a-448f-9292-73986c790911",
-    /// >  "source_type": "image",
-    /// >  "volume_size": "25",
-    /// >  "destination_type": "volume",
-    /// >  "delete_on_termination": true,
-    /// >  "tag": "disk1",
-    /// >  "disk_bus": "scsi"}]
+    /// >     "boot_index": "0",
+    /// >     "uuid": "ac408821-c95a-448f-9292-73986c790911",
+    /// >     "source_type": "image",
+    /// >     "volume_size": "25",
+    /// >     "destination_type": "volume",
+    /// >     "delete_on_termination": true,
+    /// >     "tag": "disk1",
+    /// >     "disk_bus": "scsi"}]
     /// >
     /// > ```
     ///

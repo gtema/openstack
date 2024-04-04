@@ -103,13 +103,13 @@ struct OsGetSpiceconsole {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The type of VNC console. The only valid value is `novnc`.
+    /// The type of RDP console. The only valid value is `rdp-html5`.
     ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
     _type: Option<String>,
 
-    /// The URL used to connect to the VNC console.
+    /// The URL used to connect to the RDP console.
     ///
     #[serde()]
     #[structable(optional)]

@@ -24,13 +24,16 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde_json::Value;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// The hostname of the system the agent is running on.
+    ///
+    #[builder(setter(into))]
+    pub(crate) host: Cow<'a, str>,
+
     /// id parameter for /v2.0/ports/{port_id}/bindings/{id} API
     ///
     #[builder(default, setter(into))]
@@ -43,9 +46,6 @@ pub struct Request<'a> {
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -77,18 +77,6 @@ where {
             .extend(iter.map(Into::into));
         self
     }
-
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 impl<'a> RestEndpoint for Request<'a> {
@@ -112,9 +100,7 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        for (key, val) in &self._properties {
-            params.push(key.clone(), val.clone());
-        }
+        params.push("host", serde_json::to_value(&self.host)?);
 
         params.into_body()
     }
@@ -124,7 +110,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("binding".into())
     }
 
     /// Returns headers to be set into the request
@@ -146,14 +132,26 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .host("foo")
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Network
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder()
+                .host("foo")
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "binding"
+        );
     }
 
     #[test]
@@ -168,12 +166,13 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "binding": {} }));
         });
 
         let endpoint = Request::builder()
             .port_id("port_id")
             .id("id")
+            .host("foo")
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -194,12 +193,13 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "binding": {} }));
         });
 
         let endpoint = Request::builder()
             .port_id("port_id")
             .id("id")
+            .host("foo")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

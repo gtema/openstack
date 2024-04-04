@@ -81,7 +81,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) interface_attachment: InterfaceAttachment<'a>,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
     ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,

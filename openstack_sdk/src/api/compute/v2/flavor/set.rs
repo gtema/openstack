@@ -60,7 +60,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) flavor: Flavor<'a>,
 
-    /// id parameter for /v2.1/flavors/{id}/action API
+    /// id parameter for /v2.1/flavors/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

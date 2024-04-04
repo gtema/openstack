@@ -1665,7 +1665,7 @@ Add Host
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/action API
 
 ###### **Options:**
 
@@ -1724,7 +1724,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id} API
 
 
 
@@ -1748,7 +1748,7 @@ Remove Host
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/action API
 
 ###### **Options:**
 
@@ -1768,7 +1768,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id} API
 
 
 
@@ -1784,7 +1784,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id} API
 
 ###### **Options:**
 
@@ -1801,7 +1801,7 @@ Create Or Update Aggregate Metadata
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/images API
+* `<ID>` — id parameter for /v2.1/os-aggregates/{id}/action API
 
 ###### **Options:**
 
@@ -2071,7 +2071,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+* `<ID>` — id parameter for /v2.1/flavors/{id} API
 
 
 
@@ -2100,7 +2100,7 @@ Create Extra Specs For A Flavor
 
 ###### **Arguments:**
 
-* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 
 ###### **Options:**
 
@@ -2116,7 +2116,7 @@ Delete An Extra Spec For A Flavor
 
 ###### **Arguments:**
 
-* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 * `<ID>` — id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 
 
@@ -2129,7 +2129,7 @@ List Extra Specs For A Flavor
 
 ###### **Arguments:**
 
-* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 
 
 
@@ -2141,7 +2141,7 @@ Show An Extra Spec For A Flavor
 
 ###### **Arguments:**
 
-* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 * `<ID>` — id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 
 
@@ -2155,7 +2155,7 @@ Update An Extra Spec For A Flavor
 
 ###### **Arguments:**
 
-* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+* `<FLAVOR_ID>` — flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 * `<ID>` — id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id} API
 
 ###### **Options:**
@@ -2211,7 +2211,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+* `<ID>` — id parameter for /v2.1/flavors/{id} API
 
 ###### **Options:**
 
@@ -2231,7 +2231,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/flavors/{id}/action API
+* `<ID>` — id parameter for /v2.1/flavors/{id} API
 
 
 
@@ -2289,7 +2289,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/os-hypervisors/{id}/uptime API
+* `<ID>` — id parameter for /v2.1/os-hypervisors/{id} API
 
 ###### **Options:**
 
@@ -3779,7 +3779,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conf
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+* `<ID>` — id parameter for /v2.1/servers/{id} API
 
 
 
@@ -3797,7 +3797,7 @@ Error response codes: unauthorized(401), forbidden(403), notfound(404), conflict
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/diagnostics API
 
 
 
@@ -3948,7 +3948,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
 
 ###### **Options:**
 
@@ -3978,7 +3978,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-instance-actions/{id} API
 
 
@@ -4012,7 +4012,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
 
 ###### **Options:**
 
@@ -4035,7 +4035,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conf
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
 
 
@@ -4052,7 +4052,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), NotI
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
 
 
 
@@ -4068,7 +4068,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-interface/{id} API
 
 
@@ -4122,7 +4122,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/ips/{id} API
 
 
 
@@ -4140,7 +4140,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/ips/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/ips/{id} API
 
 
@@ -4382,7 +4382,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 
 ###### **Options:**
 
@@ -4404,7 +4404,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conf
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 
 
@@ -4423,7 +4423,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 
 
 
@@ -4443,7 +4443,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 
 ###### **Options:**
 
@@ -4467,7 +4467,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 
 ###### **Options:**
@@ -4490,7 +4490,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/metadata/{id} API
 
 
@@ -4572,8 +4572,8 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
-* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/migrations/{id} API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id} API
 
 
 
@@ -4609,7 +4609,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
 
 
@@ -4628,7 +4628,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/migrations/{id} API
 
 
 
@@ -4646,8 +4646,8 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
-* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/migrations/{id} API
+* `<ID>` — id parameter for /v2.1/servers/{server_id}/migrations/{id} API
 
 
 
@@ -4682,7 +4682,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-server-password API
 
 
 
@@ -4704,7 +4704,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-server-password API
 
 
 
@@ -5037,7 +5037,7 @@ Manage server consoles.
 
 ## `osc compute server remote-console create26`
 
-The API provides a unified request for creating a remote console. The user can get a URL to connect the console from this API. The URL includes the token which is used to get permission to access the console. Servers may support different console protocols. To return a remote console using a specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
+The API provides a unified request for creating a remote console. The user can get a URL to connect the console from this API. The URL includes the token which is used to get permission to access the console. Servers may support different console protocols. To return a remote console using a specific protocol, such as VNC, set the `protocol` parameter to `vnc`.
 
 Normal response codes: 200
 
@@ -5047,24 +5047,24 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/remote-consoles API
 
 ###### **Options:**
 
-* `--protocol <PROTOCOL>` — The protocol of remote console. The valid values are `vnc`, `spice`, `rdp`, `serial` and `mks`. The protocol `mks` is added since Microversion `2.8`
+* `--protocol <PROTOCOL>` — The protocol of remote console. The valid values are `vnc`, `spice`, `serial` and `mks`. The protocol `mks` is added since Microversion `2.8`
 
-  Possible values: `rdp`, `serial`, `spice`, `vnc`
+  Possible values: `serial`, `spice`, `vnc`
 
-* `--type <TYPE>` — The type of remote console. The valid values are `novnc`, `rdp-html5`, `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since Microversion `2.8`
+* `--type <TYPE>` — The type of remote console. The valid values are `novnc`, `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since Microversion `2.8`
 
-  Possible values: `novnc`, `rdp-html5`, `serial`, `spice-html5`, `xvpvnc`
+  Possible values: `novnc`, `serial`, `spice-html5`, `xvpvnc`
 
 
 
 
 ## `osc compute server remote-console create28`
 
-The API provides a unified request for creating a remote console. The user can get a URL to connect the console from this API. The URL includes the token which is used to get permission to access the console. Servers may support different console protocols. To return a remote console using a specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
+The API provides a unified request for creating a remote console. The user can get a URL to connect the console from this API. The URL includes the token which is used to get permission to access the console. Servers may support different console protocols. To return a remote console using a specific protocol, such as VNC, set the `protocol` parameter to `vnc`.
 
 Normal response codes: 200
 
@@ -5074,17 +5074,17 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/remote-consoles API
 
 ###### **Options:**
 
-* `--protocol <PROTOCOL>` — The protocol of remote console. The valid values are `vnc`, `spice`, `rdp`, `serial` and `mks`. The protocol `mks` is added since Microversion `2.8`
+* `--protocol <PROTOCOL>` — The protocol of remote console. The valid values are `vnc`, `spice`, `serial` and `mks`. The protocol `mks` is added since Microversion `2.8`
 
-  Possible values: `mks`, `rdp`, `serial`, `spice`, `vnc`
+  Possible values: `mks`, `serial`, `spice`, `vnc`
 
-* `--type <TYPE>` — The type of remote console. The valid values are `novnc`, `rdp-html5`, `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since Microversion `2.8`
+* `--type <TYPE>` — The type of remote console. The valid values are `novnc`, `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since Microversion `2.8`
 
-  Possible values: `novnc`, `rdp-html5`, `serial`, `spice-html5`, `webmks`, `xvpvnc`
+  Possible values: `novnc`, `serial`, `spice-html5`, `webmks`, `xvpvnc`
 
 
 
@@ -5326,7 +5326,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-security-groups API
 
 
 
@@ -5342,7 +5342,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+* `<ID>` — id parameter for /v2.1/servers/{id} API
 
 ###### **Options:**
 
@@ -5368,7 +5368,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+* `<ID>` — id parameter for /v2.1/servers/{id} API
 
 ###### **Options:**
 
@@ -5395,7 +5395,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+* `<ID>` — id parameter for /v2.1/servers/{id} API
 
 ###### **Options:**
 
@@ -5423,7 +5423,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+* `<ID>` — id parameter for /v2.1/servers/{id} API
 
 ###### **Options:**
 
@@ -5537,7 +5537,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<ID>` — id parameter for /v2.1/servers/{id}/action API
+* `<ID>` — id parameter for /v2.1/servers/{id} API
 
 
 
@@ -5668,7 +5668,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/tags/{id} API
 
 
@@ -5685,7 +5685,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/tags/{id} API
 
 
@@ -5702,7 +5702,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/tags/{id} API
 
 
@@ -5719,7 +5719,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
 
 
 
@@ -5735,7 +5735,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
 
 
 
@@ -5751,7 +5751,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/tags/{id} API
 
 ###### **Options:**
 
@@ -5923,7 +5923,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 ###### **Options:**
 
@@ -5944,7 +5944,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 ###### **Options:**
 
@@ -5966,7 +5966,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 ###### **Options:**
 
@@ -5992,7 +5992,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 
@@ -6009,7 +6009,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 ###### **Options:**
 
@@ -6037,7 +6037,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 ###### **Options:**
@@ -6062,7 +6062,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNo
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 ###### **Options:**
@@ -6091,7 +6091,7 @@ Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
 ###### **Arguments:**
 
-* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/topology API
+* `<SERVER_ID>` — server_id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 * `<ID>` — id parameter for /v2.1/servers/{server_id}/os-volume_attachments/{id} API
 
 
@@ -6701,6 +6701,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERA
 ###### **Options:**
 
 * `--rules <JSON>` — The list of rules used to map remote users into local users
+* `--schema-version <SCHEMA_VERSION>` — Mapping schema version
 
 
 
@@ -6743,6 +6744,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERA
 ###### **Options:**
 
 * `--rules <JSON>` — The list of rules used to map remote users into local users
+* `--schema-version <SCHEMA_VERSION>` — Mapping schema version
 
 
 
@@ -10743,6 +10745,10 @@ Error response codes: 400, 401, 403, 404
 * `--dns-name <DNS_NAME>` — A valid DNS name
 * `--extra-dhcp-opts <JSON>` — A set of zero or more extra DHCP option pairs. An option pair consists of an option value and name
 * `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip_address`) and the subnet ID from which the IP address is assigned (`subnet_id`)
+* `--hardware-offload-type <HARDWARE_OFFLOAD_TYPE>`
+
+  Possible values: `switchdev`
+
 * `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
 * `--mac-address <MAC_ADDRESS>` — The MAC address of the port. If unspecified, a MAC address is automatically generated
 * `--name <NAME>` — Human-readable name of the resource. Default is an empty string

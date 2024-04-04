@@ -130,10 +130,10 @@ enum NetworksStringEnum {
     None,
 }
 
-/// NetworksEnumGroupStruct Body data
+/// ServerNetworks Body data
 #[derive(Args, Clone)]
 #[group(required = true, multiple = false)]
-struct NetworksEnumGroupStruct {
+struct ServerNetworks {
     #[arg(action=clap::ArgAction::SetTrue, help_heading = "Body parameters", long, required=false)]
     auto_networks: bool,
 
@@ -185,14 +185,14 @@ struct Server {
     ///
     /// > ```text
     /// > "block_device_mapping_v2": [{
-    /// >  "boot_index": "0",
-    /// >  "uuid": "ac408821-c95a-448f-9292-73986c790911",
-    /// >  "source_type": "image",
-    /// >  "volume_size": "25",
-    /// >  "destination_type": "volume",
-    /// >  "delete_on_termination": true,
-    /// >  "tag": "disk1",
-    /// >  "disk_bus": "scsi"}]
+    /// >     "boot_index": "0",
+    /// >     "uuid": "ac408821-c95a-448f-9292-73986c790911",
+    /// >     "source_type": "image",
+    /// >     "volume_size": "25",
+    /// >     "destination_type": "volume",
+    /// >     "delete_on_termination": true,
+    /// >     "tag": "disk1",
+    /// >     "disk_bus": "scsi"}]
     /// >
     /// > ```
     ///
@@ -305,7 +305,7 @@ struct Server {
     /// not in a list. See the associated example.
     ///
     #[command(flatten)]
-    networks: NetworksEnumGroupStruct,
+    networks: ServerNetworks,
 
     /// Controls how the API partitions the disk when you create, rebuild, or
     /// resize servers. A server inherits the `OS-DCF:diskConfig` value from
@@ -582,7 +582,7 @@ impl ServerCommand {
         }
 
         if args.networks.auto_networks {
-            server_builder.networks(create_263::NetworksEnum::F2(
+            server_builder.networks(create_263::ServerNetworks::F2(
                 create_263::NetworksStringEnum::Auto,
             ));
         }
@@ -592,10 +592,10 @@ impl ServerCommand {
                 .iter()
                 .flat_map(|v| serde_json::from_value::<create_263::Networks>(v.to_owned()))
                 .collect();
-            server_builder.networks(create_263::NetworksEnum::F1(networks_builder));
+            server_builder.networks(create_263::ServerNetworks::F1(networks_builder));
         }
         if args.networks.none_networks {
-            server_builder.networks(create_263::NetworksEnum::F2(
+            server_builder.networks(create_263::ServerNetworks::F2(
                 create_263::NetworksStringEnum::None,
             ));
         }

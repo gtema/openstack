@@ -82,6 +82,11 @@ struct Mapping {
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     rules: Vec<Value>,
+
+    /// Mapping schema version
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    schema_version: Option<String>,
 }
 
 /// Mapping response representation
@@ -98,6 +103,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     rules: Option<Value>,
+
+    /// Mapping schema version
+    ///
+    #[serde()]
+    #[structable(optional)]
+    schema_version: Option<String>,
 }
 
 impl MappingCommand {
@@ -128,6 +139,10 @@ impl MappingCommand {
             .flat_map(|v| serde_json::from_value::<set::Rules>(v.to_owned()))
             .collect::<Vec<set::Rules>>();
         mapping_builder.rules(rules_builder);
+
+        if let Some(val) = &args.schema_version {
+            mapping_builder.schema_version(val);
+        }
 
         ep_builder.mapping(mapping_builder.build().unwrap());
 

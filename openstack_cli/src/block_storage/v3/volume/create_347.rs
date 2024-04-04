@@ -33,7 +33,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-
 use crate::common::parse_key_val;
 use openstack_sdk::api::block_storage::v3::volume::create_347;
 use openstack_sdk::api::QueryAsync;

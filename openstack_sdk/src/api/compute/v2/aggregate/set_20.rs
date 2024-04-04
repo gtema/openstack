@@ -68,7 +68,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) aggregate: Aggregate<'a>,
 
-    /// id parameter for /v2.1/os-aggregates/{id}/images API
+    /// id parameter for /v2.1/os-aggregates/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

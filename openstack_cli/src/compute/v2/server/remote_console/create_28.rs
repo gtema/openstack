@@ -42,7 +42,7 @@ use structable_derive::StructTable;
 /// can get a URL to connect the console from this API. The URL includes the
 /// token which is used to get permission to access the console. Servers may
 /// support different console protocols. To return a remote console using a
-/// specific protocol, such as RDP, set the `protocol` parameter to `rdp`.
+/// specific protocol, such as VNC, set the `protocol` parameter to `vnc`.
 ///
 /// Normal response codes: 200
 ///
@@ -73,7 +73,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for /v2.1/servers/{server_id}/remote-consoles API
     ///
     #[arg(
         help_heading = "Path parameters",
@@ -86,7 +86,6 @@ struct PathParameters {
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Protocol {
     Mks,
-    Rdp,
     Serial,
     Spice,
     Vnc,
@@ -95,7 +94,6 @@ enum Protocol {
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Type {
     Novnc,
-    RdpHtml5,
     Serial,
     SpiceHtml5,
     Webmks,
@@ -106,13 +104,13 @@ enum Type {
 #[derive(Args, Clone)]
 struct RemoteConsole {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
-    /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
-    /// Microversion `2.8`.
+    /// `serial` and `mks`. The protocol `mks` is added since Microversion
+    /// `2.8`.
     ///
     #[arg(help_heading = "Body parameters", long)]
     protocol: Protocol,
 
-    /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
+    /// The type of remote console. The valid values are `novnc`,
     /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
     /// Microversion `2.8`.
     ///
@@ -124,14 +122,14 @@ struct RemoteConsole {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
-    /// `rdp`, `serial` and `mks`. The protocol `mks` is added since
-    /// Microversion `2.8`.
+    /// `serial` and `mks`. The protocol `mks` is added since Microversion
+    /// `2.8`.
     ///
     #[serde()]
     #[structable(optional)]
     protocol: Option<String>,
 
-    /// The type of remote console. The valid values are `novnc`, `rdp-html5`,
+    /// The type of remote console. The valid values are `novnc`,
     /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
     /// Microversion `2.8`.
     ///
@@ -171,7 +169,6 @@ impl RemoteConsoleCommand {
 
         let tmp = match &args.protocol {
             Protocol::Mks => create_28::Protocol::Mks,
-            Protocol::Rdp => create_28::Protocol::Rdp,
             Protocol::Serial => create_28::Protocol::Serial,
             Protocol::Spice => create_28::Protocol::Spice,
             Protocol::Vnc => create_28::Protocol::Vnc,
@@ -180,7 +177,6 @@ impl RemoteConsoleCommand {
 
         let tmp = match &args._type {
             Type::Novnc => create_28::Type::Novnc,
-            Type::RdpHtml5 => create_28::Type::RdpHtml5,
             Type::Serial => create_28::Type::Serial,
             Type::SpiceHtml5 => create_28::Type::SpiceHtml5,
             Type::Webmks => create_28::Type::Webmks,

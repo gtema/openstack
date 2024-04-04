@@ -32,7 +32,7 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// id parameter for /v2.1/os-aggregates/{id}/images API
+    /// id parameter for /v2.1/os-aggregates/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
