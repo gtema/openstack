@@ -20,6 +20,7 @@ mod catalog;
 mod compute;
 mod identity;
 mod image;
+mod load_balancer;
 mod network;
 mod object_store;
 
