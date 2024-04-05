@@ -44,6 +44,7 @@ const COMPUTE_SERVICE_TYPES: &[&str] = &["compute"];
 const IDENTITY_SERVICE_TYPES: &[&str] = &["identity"];
 const IMAGE_SERVICE_TYPES: &[&str] = &["image"];
 const OBJECT_STORE_SERVICE_TYPES: &[&str] = &["object-store"];
+const LOAD_BALANCER_SERVICE_TYPES: &[&str] = &["load-balancer"];
 const NETWORK_SERVICE_TYPES: &[&str] = &["network"];
 
 /// Supported Service Types
@@ -53,6 +54,7 @@ pub enum ServiceType {
     Compute,
     Image,
     Identity,
+    LoadBalancer,
     Network,
     ObjectStore,
     Other(String),
@@ -69,6 +71,7 @@ impl SupportedServiceTypes for ServiceType {
             ServiceType::Compute => COMPUTE_SERVICE_TYPES.to_vec(),
             ServiceType::Image => IMAGE_SERVICE_TYPES.to_vec(),
             ServiceType::Identity => IDENTITY_SERVICE_TYPES.to_vec(),
+            ServiceType::LoadBalancer => LOAD_BALANCER_SERVICE_TYPES.to_vec(),
             ServiceType::Network => NETWORK_SERVICE_TYPES.to_vec(),
             ServiceType::ObjectStore => OBJECT_STORE_SERVICE_TYPES.to_vec(),
             ServiceType::Other(x) => Vec::from([x.as_str()]),
@@ -83,6 +86,7 @@ impl fmt::Display for ServiceType {
             ServiceType::Compute => write!(f, "compute"),
             ServiceType::Image => write!(f, "image"),
             ServiceType::Identity => write!(f, "identity"),
+            ServiceType::LoadBalancer => write!(f, "load-balancer"),
             ServiceType::Network => write!(f, "network"),
             ServiceType::ObjectStore => write!(f, "object-store"),
             ServiceType::Other(x) => write!(f, "{}", x),
@@ -97,6 +101,7 @@ impl From<&str> for ServiceType {
             "compute" => ServiceType::Compute,
             "identity" => ServiceType::Identity,
             "image" => ServiceType::Image,
+            "load-balancer" => ServiceType::LoadBalancer,
             "network" => ServiceType::Network,
             "object-store" => ServiceType::ObjectStore,
             _ => ServiceType::Other(val.to_string()),

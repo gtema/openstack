@@ -34,6 +34,7 @@ pub mod identity;
 #[allow(dead_code)]
 #[allow(clippy::module_inception)]
 pub mod image;
+pub mod load_balancer;
 pub mod network;
 pub mod object_store;
 

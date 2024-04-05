@@ -412,6 +412,97 @@ This document contains the help content for the `osc` command-line program.
 * [`osc image schema metadef tag show`↴](#osc-image-schema-metadef-tag-show)
 * [`osc image schema metadef tags`↴](#osc-image-schema-metadef-tags)
 * [`osc image schema metadef tags show`↴](#osc-image-schema-metadef-tags-show)
+* [`osc load-balancer`↴](#osc-load-balancer)
+* [`osc load-balancer amphorae`↴](#osc-load-balancer-amphorae)
+* [`osc load-balancer amphorae config`↴](#osc-load-balancer-amphorae-config)
+* [`osc load-balancer amphorae delete`↴](#osc-load-balancer-amphorae-delete)
+* [`osc load-balancer amphorae failover`↴](#osc-load-balancer-amphorae-failover)
+* [`osc load-balancer amphorae list`↴](#osc-load-balancer-amphorae-list)
+* [`osc load-balancer amphorae show`↴](#osc-load-balancer-amphorae-show)
+* [`osc load-balancer amphorae stats`↴](#osc-load-balancer-amphorae-stats)
+* [`osc load-balancer availability-zone`↴](#osc-load-balancer-availability-zone)
+* [`osc load-balancer availability-zone create`↴](#osc-load-balancer-availability-zone-create)
+* [`osc load-balancer availability-zone delete`↴](#osc-load-balancer-availability-zone-delete)
+* [`osc load-balancer availability-zone list`↴](#osc-load-balancer-availability-zone-list)
+* [`osc load-balancer availability-zone set`↴](#osc-load-balancer-availability-zone-set)
+* [`osc load-balancer availability-zone show`↴](#osc-load-balancer-availability-zone-show)
+* [`osc load-balancer availability-zone-profile`↴](#osc-load-balancer-availability-zone-profile)
+* [`osc load-balancer availability-zone-profile create`↴](#osc-load-balancer-availability-zone-profile-create)
+* [`osc load-balancer availability-zone-profile delete`↴](#osc-load-balancer-availability-zone-profile-delete)
+* [`osc load-balancer availability-zone-profile list`↴](#osc-load-balancer-availability-zone-profile-list)
+* [`osc load-balancer availability-zone-profile set`↴](#osc-load-balancer-availability-zone-profile-set)
+* [`osc load-balancer availability-zone-profile show`↴](#osc-load-balancer-availability-zone-profile-show)
+* [`osc load-balancer flavor`↴](#osc-load-balancer-flavor)
+* [`osc load-balancer flavor create`↴](#osc-load-balancer-flavor-create)
+* [`osc load-balancer flavor delete`↴](#osc-load-balancer-flavor-delete)
+* [`osc load-balancer flavor list`↴](#osc-load-balancer-flavor-list)
+* [`osc load-balancer flavor set`↴](#osc-load-balancer-flavor-set)
+* [`osc load-balancer flavor show`↴](#osc-load-balancer-flavor-show)
+* [`osc load-balancer flavor-profile`↴](#osc-load-balancer-flavor-profile)
+* [`osc load-balancer flavor-profile create`↴](#osc-load-balancer-flavor-profile-create)
+* [`osc load-balancer flavor-profile delete`↴](#osc-load-balancer-flavor-profile-delete)
+* [`osc load-balancer flavor-profile list`↴](#osc-load-balancer-flavor-profile-list)
+* [`osc load-balancer flavor-profile set`↴](#osc-load-balancer-flavor-profile-set)
+* [`osc load-balancer flavor-profile show`↴](#osc-load-balancer-flavor-profile-show)
+* [`osc load-balancer healthmonitor`↴](#osc-load-balancer-healthmonitor)
+* [`osc load-balancer healthmonitor create`↴](#osc-load-balancer-healthmonitor-create)
+* [`osc load-balancer healthmonitor delete`↴](#osc-load-balancer-healthmonitor-delete)
+* [`osc load-balancer healthmonitor list`↴](#osc-load-balancer-healthmonitor-list)
+* [`osc load-balancer healthmonitor set`↴](#osc-load-balancer-healthmonitor-set)
+* [`osc load-balancer healthmonitor show`↴](#osc-load-balancer-healthmonitor-show)
+* [`osc load-balancer l7policy`↴](#osc-load-balancer-l7policy)
+* [`osc load-balancer l7policy create`↴](#osc-load-balancer-l7policy-create)
+* [`osc load-balancer l7policy delete`↴](#osc-load-balancer-l7policy-delete)
+* [`osc load-balancer l7policy list`↴](#osc-load-balancer-l7policy-list)
+* [`osc load-balancer l7policy rule`↴](#osc-load-balancer-l7policy-rule)
+* [`osc load-balancer l7policy rule create`↴](#osc-load-balancer-l7policy-rule-create)
+* [`osc load-balancer l7policy rule delete`↴](#osc-load-balancer-l7policy-rule-delete)
+* [`osc load-balancer l7policy rule list`↴](#osc-load-balancer-l7policy-rule-list)
+* [`osc load-balancer l7policy rule set`↴](#osc-load-balancer-l7policy-rule-set)
+* [`osc load-balancer l7policy rule show`↴](#osc-load-balancer-l7policy-rule-show)
+* [`osc load-balancer l7policy set`↴](#osc-load-balancer-l7policy-set)
+* [`osc load-balancer l7policy show`↴](#osc-load-balancer-l7policy-show)
+* [`osc load-balancer listener`↴](#osc-load-balancer-listener)
+* [`osc load-balancer listener create`↴](#osc-load-balancer-listener-create)
+* [`osc load-balancer listener delete`↴](#osc-load-balancer-listener-delete)
+* [`osc load-balancer listener list`↴](#osc-load-balancer-listener-list)
+* [`osc load-balancer listener set`↴](#osc-load-balancer-listener-set)
+* [`osc load-balancer listener show`↴](#osc-load-balancer-listener-show)
+* [`osc load-balancer listener stats`↴](#osc-load-balancer-listener-stats)
+* [`osc load-balancer loadbalancer`↴](#osc-load-balancer-loadbalancer)
+* [`osc load-balancer loadbalancer create`↴](#osc-load-balancer-loadbalancer-create)
+* [`osc load-balancer loadbalancer delete`↴](#osc-load-balancer-loadbalancer-delete)
+* [`osc load-balancer loadbalancer failover`↴](#osc-load-balancer-loadbalancer-failover)
+* [`osc load-balancer loadbalancer list`↴](#osc-load-balancer-loadbalancer-list)
+* [`osc load-balancer loadbalancer set`↴](#osc-load-balancer-loadbalancer-set)
+* [`osc load-balancer loadbalancer show`↴](#osc-load-balancer-loadbalancer-show)
+* [`osc load-balancer loadbalancer stats`↴](#osc-load-balancer-loadbalancer-stats)
+* [`osc load-balancer loadbalancer status`↴](#osc-load-balancer-loadbalancer-status)
+* [`osc load-balancer pool`↴](#osc-load-balancer-pool)
+* [`osc load-balancer pool create`↴](#osc-load-balancer-pool-create)
+* [`osc load-balancer pool delete`↴](#osc-load-balancer-pool-delete)
+* [`osc load-balancer pool list`↴](#osc-load-balancer-pool-list)
+* [`osc load-balancer pool member`↴](#osc-load-balancer-pool-member)
+* [`osc load-balancer pool member create`↴](#osc-load-balancer-pool-member-create)
+* [`osc load-balancer pool member delete`↴](#osc-load-balancer-pool-member-delete)
+* [`osc load-balancer pool member list`↴](#osc-load-balancer-pool-member-list)
+* [`osc load-balancer pool member set`↴](#osc-load-balancer-pool-member-set)
+* [`osc load-balancer pool member show`↴](#osc-load-balancer-pool-member-show)
+* [`osc load-balancer pool set`↴](#osc-load-balancer-pool-set)
+* [`osc load-balancer pool show`↴](#osc-load-balancer-pool-show)
+* [`osc load-balancer provider`↴](#osc-load-balancer-provider)
+* [`osc load-balancer provider availability-zone-capability`↴](#osc-load-balancer-provider-availability-zone-capability)
+* [`osc load-balancer provider availability-zone-capability list`↴](#osc-load-balancer-provider-availability-zone-capability-list)
+* [`osc load-balancer provider flavor-capability`↴](#osc-load-balancer-provider-flavor-capability)
+* [`osc load-balancer provider flavor-capability list`↴](#osc-load-balancer-provider-flavor-capability-list)
+* [`osc load-balancer provider list`↴](#osc-load-balancer-provider-list)
+* [`osc load-balancer quota`↴](#osc-load-balancer-quota)
+* [`osc load-balancer quota delete`↴](#osc-load-balancer-quota-delete)
+* [`osc load-balancer quota list`↴](#osc-load-balancer-quota-list)
+* [`osc load-balancer quota set`↴](#osc-load-balancer-quota-set)
+* [`osc load-balancer quota show`↴](#osc-load-balancer-quota-show)
+* [`osc load-balancer version`↴](#osc-load-balancer-version)
+* [`osc load-balancer version get`↴](#osc-load-balancer-version-get)
 * [`osc network`↴](#osc-network)
 * [`osc network address-group`↴](#osc-network-address-group)
 * [`osc network address-group add-address`↴](#osc-network-address-group-add-address)
@@ -543,6 +634,7 @@ OpenStack client rewritten in Rust
 * `compute` — Compute service (Nova) operations
 * `identity` — Identity (Keystone) commands
 * `image` — Image service operations
+* `load-balancer` — Load Balancer service operations
 * `network` — Network (Neutron) commands
 * `object-store` — Object Store service (Swift) commands
 
@@ -9665,6 +9757,1863 @@ Normal response codes: 200
 Error response codes: 400, 401
 
 **Usage:** `osc image schema metadef tags show`
+
+
+
+## `osc load-balancer`
+
+Load Balancer service operations
+
+**Usage:** `osc load-balancer <COMMAND>`
+
+###### **Subcommands:**
+
+* `amphorae` — Amphorae (Octavia) commands
+* `availability-zone` — AvailabilityZone (Octavia) commands
+* `availability-zone-profile` — AvailabilityZoneProfile (Octavia) commands
+* `flavor` — Flavor (Octavia) commands
+* `flavor-profile` — FlavorProfile (Octavia) commands
+* `healthmonitor` — Healthmonitor (Octavia) commands
+* `l7policy` — L7Policy (Octavia) commands
+* `listener` — Listener (Octavia) commands
+* `loadbalancer` — Loadbalancer (Octavia) commands
+* `pool` — Pool (Octavia) commands
+* `provider` — Provider (Octavia) commands
+* `quota` — Quota commands
+* `version` — Version (Octavia) commands
+
+
+
+## `osc load-balancer amphorae`
+
+Amphorae (Octavia) commands
+
+**Usage:** `osc load-balancer amphorae <COMMAND>`
+
+###### **Subcommands:**
+
+* `config` — Configure Amphora
+* `delete` — Remove an Amphora
+* `failover` — Failover Amphora
+* `list` — List Amphora
+* `show` — Show Amphora details
+* `stats` — Show Amphora Statistics
+
+
+
+## `osc load-balancer amphorae config`
+
+Configure Amphora
+
+**Usage:** `osc load-balancer amphorae config [OPTIONS] <AMPHORA_ID>`
+
+###### **Arguments:**
+
+* `<AMPHORA_ID>` — amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/config API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc load-balancer amphorae delete`
+
+Removes an amphora and its associated configuration.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**New in version 2.20**
+
+**Usage:** `osc load-balancer amphorae delete <AMPHORA_ID>`
+
+###### **Arguments:**
+
+* `<AMPHORA_ID>` — amphora_id parameter for /v2/octavia/amphorae/{amphora_id} API
+
+
+
+## `osc load-balancer amphorae failover`
+
+Failover Amphora
+
+**Usage:** `osc load-balancer amphorae failover [OPTIONS] <AMPHORA_ID>`
+
+###### **Arguments:**
+
+* `<AMPHORA_ID>` — amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/failover API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc load-balancer amphorae list`
+
+Lists all amphora for the project.
+
+If you are not an administrative user, the service returns the HTTP `Forbidden (403)` response code.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+The list might be empty.
+
+**Usage:** `osc load-balancer amphorae list`
+
+
+
+## `osc load-balancer amphorae show`
+
+Shows the details of an amphora.
+
+If you are not an administrative user, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer amphorae show <AMPHORA_ID>`
+
+###### **Arguments:**
+
+* `<AMPHORA_ID>` — amphora_id parameter for /v2/octavia/amphorae/{amphora_id} API
+
+
+
+## `osc load-balancer amphorae stats`
+
+Show the statistics for an amphora.
+
+If you are not an administrative user, the service returns the HTTP `Forbidden (403)` response code.
+
+Use the `fields` query parameter to control which fields are returned in the response body.
+
+**New in version 2.3**
+
+**Usage:** `osc load-balancer amphorae stats <AMPHORA_ID>`
+
+###### **Arguments:**
+
+* `<AMPHORA_ID>` — amphora_id parameter for /v2/octavia/amphorae/{amphora_id}/stats API
+
+
+
+## `osc load-balancer availability-zone`
+
+AvailabilityZone (Octavia) commands
+
+**Usage:** `osc load-balancer availability-zone <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Creates an Availability Zone
+* `delete` — Deletes an Availability Zone
+* `list` — Lists all Availability Zones
+* `set` — Command without description in OpenAPI
+* `show` — Gets an Availability Zone's detail
+
+
+
+## `osc load-balancer availability-zone create`
+
+Creates an Availability Zone
+
+**Usage:** `osc load-balancer availability-zone create [OPTIONS] --availability-zone-profile-id <AVAILABILITY_ZONE_PROFILE_ID> --name <NAME>`
+
+###### **Options:**
+
+* `--availability-zone-profile-id <AVAILABILITY_ZONE_PROFILE_ID>`
+* `--description <DESCRIPTION>`
+* `--enabled <ENABLED>`
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>`
+
+
+
+## `osc load-balancer availability-zone delete`
+
+Deletes an Availability Zone
+
+**Usage:** `osc load-balancer availability-zone delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — availabilityzone_id parameter for /v2/lbaas/availabilityzones/{availabilityzone_id} API
+
+
+
+## `osc load-balancer availability-zone list`
+
+Lists all Availability Zones
+
+**Usage:** `osc load-balancer availability-zone list`
+
+
+
+## `osc load-balancer availability-zone set`
+
+Command without description in OpenAPI
+
+**Usage:** `osc load-balancer availability-zone set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — availabilityzone_id parameter for /v2/lbaas/availabilityzones/{availabilityzone_id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--enabled <ENABLED>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc load-balancer availability-zone show`
+
+Gets an Availability Zone's detail
+
+**Usage:** `osc load-balancer availability-zone show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — availabilityzone_id parameter for /v2/lbaas/availabilityzones/{availabilityzone_id} API
+
+
+
+## `osc load-balancer availability-zone-profile`
+
+AvailabilityZoneProfile (Octavia) commands
+
+**Usage:** `osc load-balancer availability-zone-profile <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Creates an Availability Zone Profile
+* `delete` — Deletes an Availability Zone Profile
+* `list` — Lists all Availability Zone Profiles
+* `set` — Updates an Availability Zone Profile
+* `show` — Gets an Availability Zone Profile's detail
+
+
+
+## `osc load-balancer availability-zone-profile create`
+
+Creates an Availability Zone Profile
+
+**Usage:** `osc load-balancer availability-zone-profile create --availability-zone-data <AVAILABILITY_ZONE_DATA> --name <NAME> --provider-name <PROVIDER_NAME>`
+
+###### **Options:**
+
+* `--availability-zone-data <AVAILABILITY_ZONE_DATA>`
+* `--name <NAME>`
+* `--provider-name <PROVIDER_NAME>`
+
+
+
+## `osc load-balancer availability-zone-profile delete`
+
+Deletes an Availability Zone Profile
+
+**Usage:** `osc load-balancer availability-zone-profile delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — availabilityzoneprofile_id parameter for /v2/lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id} API
+
+
+
+## `osc load-balancer availability-zone-profile list`
+
+Lists all Availability Zone Profiles
+
+**Usage:** `osc load-balancer availability-zone-profile list`
+
+
+
+## `osc load-balancer availability-zone-profile set`
+
+Updates an Availability Zone Profile
+
+**Usage:** `osc load-balancer availability-zone-profile set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — availabilityzoneprofile_id parameter for /v2/lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id} API
+
+###### **Options:**
+
+* `--availability-zone-data <AVAILABILITY_ZONE_DATA>`
+* `--name <NAME>`
+* `--provider-name <PROVIDER_NAME>`
+
+
+
+## `osc load-balancer availability-zone-profile show`
+
+Gets an Availability Zone Profile's detail
+
+**Usage:** `osc load-balancer availability-zone-profile show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — availabilityzoneprofile_id parameter for /v2/lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id} API
+
+
+
+## `osc load-balancer flavor`
+
+Flavor (Octavia) commands
+
+**Usage:** `osc load-balancer flavor <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Creates a flavor
+* `delete` — Deletes a Flavor
+* `list` — Lists all flavors
+* `set` — Command without description in OpenAPI
+* `show` — Gets a flavor's detail
+
+
+
+## `osc load-balancer flavor create`
+
+Creates a flavor
+
+**Usage:** `osc load-balancer flavor create [OPTIONS] --flavor-profile-id <FLAVOR_PROFILE_ID> --name <NAME>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--enabled <ENABLED>`
+
+  Possible values: `true`, `false`
+
+* `--flavor-profile-id <FLAVOR_PROFILE_ID>`
+* `--name <NAME>`
+
+
+
+## `osc load-balancer flavor delete`
+
+Deletes a Flavor
+
+**Usage:** `osc load-balancer flavor delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — flavor_id parameter for /v2/lbaas/flavors/{flavor_id} API
+
+
+
+## `osc load-balancer flavor list`
+
+Lists all flavors
+
+**Usage:** `osc load-balancer flavor list`
+
+
+
+## `osc load-balancer flavor set`
+
+Command without description in OpenAPI
+
+**Usage:** `osc load-balancer flavor set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — flavor_id parameter for /v2/lbaas/flavors/{flavor_id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--enabled <ENABLED>`
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>`
+
+
+
+## `osc load-balancer flavor show`
+
+Gets a flavor's detail
+
+**Usage:** `osc load-balancer flavor show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — flavor_id parameter for /v2/lbaas/flavors/{flavor_id} API
+
+
+
+## `osc load-balancer flavor-profile`
+
+FlavorProfile (Octavia) commands
+
+**Usage:** `osc load-balancer flavor-profile <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Creates a flavor Profile
+* `delete` — Deletes a Flavor Profile
+* `list` — Lists all flavor profiles
+* `set` — Updates a flavor Profile
+* `show` — Gets a flavor profile's detail
+
+
+
+## `osc load-balancer flavor-profile create`
+
+Creates a flavor Profile
+
+**Usage:** `osc load-balancer flavor-profile create --flavor-data <FLAVOR_DATA> --name <NAME> --provider-name <PROVIDER_NAME>`
+
+###### **Options:**
+
+* `--flavor-data <FLAVOR_DATA>`
+* `--name <NAME>`
+* `--provider-name <PROVIDER_NAME>`
+
+
+
+## `osc load-balancer flavor-profile delete`
+
+Deletes a Flavor Profile
+
+**Usage:** `osc load-balancer flavor-profile delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — flavorprofile_id parameter for /v2/lbaas/flavorprofiles/{flavorprofile_id} API
+
+
+
+## `osc load-balancer flavor-profile list`
+
+Lists all flavor profiles
+
+**Usage:** `osc load-balancer flavor-profile list`
+
+
+
+## `osc load-balancer flavor-profile set`
+
+Updates a flavor Profile
+
+**Usage:** `osc load-balancer flavor-profile set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — flavorprofile_id parameter for /v2/lbaas/flavorprofiles/{flavorprofile_id} API
+
+###### **Options:**
+
+* `--flavor-data <FLAVOR_DATA>`
+* `--name <NAME>`
+* `--provider-name <PROVIDER_NAME>`
+
+
+
+## `osc load-balancer flavor-profile show`
+
+Gets a flavor profile's detail
+
+**Usage:** `osc load-balancer flavor-profile show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — flavorprofile_id parameter for /v2/lbaas/flavorprofiles/{flavorprofile_id} API
+
+
+
+## `osc load-balancer healthmonitor`
+
+Healthmonitor (Octavia) commands
+
+**Usage:** `osc load-balancer healthmonitor <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Health Monitor
+* `delete` — Remove a Health Monitor
+* `list` — List Health Monitors
+* `set` — Update a Health Monitor
+* `show` — Show Health Monitor details
+
+
+
+## `osc load-balancer healthmonitor create`
+
+Creates a health monitor on a pool.
+
+Health monitors define how the load balancer monitors backend servers to determine if they are available to service requests.
+
+This operation provisions a new health monitor by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, the API returns a response object that contains a unique ID and the status of provisioning the health monitor.
+
+In the response, the health monitor [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/healthmonitors/{healthmonitor_id}` to view the progress of the provisioning operation. When the health monitor status changes to `ACTIVE`, the health monitor is successfully provisioned and is ready for further configuration.
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+Specifying a project_id is deprecated. The health monitor will inherit the project_id of the parent load balancer.
+
+At a minimum, you must specify these health monitor attributes:
+
+Some attributes receive default values if you omit them from the request:
+
+To create a health monitor, the parent load balancer must have an `ACTIVE` provisioning status.
+
+**Usage:** `osc load-balancer healthmonitor create [OPTIONS] --delay <DELAY> --max-retries <MAX_RETRIES> --pool-id <POOL_ID> --timeout <TIMEOUT> --type <TYPE>`
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--delay <DELAY>` — The time, in seconds, between sending probes to members
+* `--domain-name <DOMAIN_NAME>` — The domain name, which be injected into the HTTP Host Header to the backend server for HTTP health check
+* `--expected-codes <EXPECTED_CODES>` — The list of HTTP status codes expected in response from the member to declare it healthy. Specify one of the following values:
+* `--http-method <HTTP_METHOD>` — The HTTP method that the health monitor uses for requests. One of `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`, or `TRACE`. The default is `GET`
+
+  Possible values: `connect`, `delete`, `get`, `head`, `options`, `patch`, `post`, `put`, `trace`
+
+* `--http-version <HTTP_VERSION>` — The HTTP version. One of `1.0` or `1.1`. The default is `1.0`
+* `--max-retries <MAX_RETRIES>` — The number of successful checks before changing the `operating status` of the member to `ONLINE`. A valid value is from `1` to `10`
+* `--max-retries-down <MAX_RETRIES_DOWN>` — The number of allowed check failures before changing the `operating status` of the member to `ERROR`. A valid value is from `1` to `10`. The default is `3`
+* `--name <NAME>` — Human-readable name of the resource
+* `--pool-id <POOL_ID>` — The ID of the pool
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource. (deprecated)
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--tenant-id <TENANT_ID>`
+* `--timeout <TIMEOUT>` — The maximum time, in seconds, that a monitor waits to connect before it times out. This value must be less than the delay value
+* `--type <TYPE>` — The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`, `TCP`, `TLS-HELLO`, or `UDP-CONNECT`
+
+  Possible values: `http`, `https`, `ping`, `sctp`, `tcp`, `tls-hello`, `udp-connect`
+
+* `--url-path <URL_PATH>` — The HTTP URL path of the request sent by the monitor to test the health of a backend member. Must be a string that begins with a forward slash (`/`). The default URL path is `/`
+
+
+
+## `osc load-balancer healthmonitor delete`
+
+Removes a health monitor and its associated configuration from the project.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer healthmonitor delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — healthmonitor_id parameter for /v2/lbaas/healthmonitors/{healthmonitor_id} API
+
+
+
+## `osc load-balancer healthmonitor list`
+
+Lists all health monitors for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list health monitors for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer healthmonitor list`
+
+
+
+## `osc load-balancer healthmonitor set`
+
+Update an existing health monitor.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the health monitor provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the health monitor object for changes.
+
+This operation returns the updated health monitor object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+**Usage:** `osc load-balancer healthmonitor set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — healthmonitor_id parameter for /v2/lbaas/healthmonitors/{healthmonitor_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--delay <DELAY>` — The time, in seconds, between sending probes to members
+* `--domain-name <DOMAIN_NAME>` — The domain name, which be injected into the HTTP Host Header to the backend server for HTTP health check
+* `--expected-codes <EXPECTED_CODES>` — The list of HTTP status codes expected in response from the member to declare it healthy. Specify one of the following values:
+* `--http-method <HTTP_METHOD>` — The HTTP method that the health monitor uses for requests. One of `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`, or `TRACE`. The default is `GET`
+
+  Possible values: `connect`, `delete`, `get`, `head`, `options`, `patch`, `post`, `put`, `trace`
+
+* `--http-version <HTTP_VERSION>` — The HTTP version. One of `1.0` or `1.1`. The default is `1.0`
+* `--max-retries <MAX_RETRIES>` — The number of successful checks before changing the `operating status` of the member to `ONLINE`. A valid value is from `1` to `10`
+* `--max-retries-down <MAX_RETRIES_DOWN>` — The number of allowed check failures before changing the `operating status` of the member to `ERROR`. A valid value is from `1` to `10`. The default is `3`
+* `--name <NAME>` — Human-readable name of the resource
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--timeout <TIMEOUT>` — The maximum time, in seconds, that a monitor waits to connect before it times out. This value must be less than the delay value
+* `--url-path <URL_PATH>` — The HTTP URL path of the request sent by the monitor to test the health of a backend member. Must be a string that begins with a forward slash (`/`). The default URL path is `/`
+
+
+
+## `osc load-balancer healthmonitor show`
+
+Shows the details of a health monitor.
+
+If you are not an administrative user and the parent load balancer does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer healthmonitor show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — healthmonitor_id parameter for /v2/lbaas/healthmonitors/{healthmonitor_id} API
+
+
+
+## `osc load-balancer l7policy`
+
+L7Policy (Octavia) commands
+
+**Usage:** `osc load-balancer l7policy <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create an L7 Policy
+* `delete` — Remove a L7 Policy
+* `list` — List L7 Policies
+* `rule` — `L7Policy Rule` commands
+* `set` — Update a L7 Policy
+* `show` — Show L7 Policy details
+
+
+
+## `osc load-balancer l7policy create`
+
+Creates a L7 policy.
+
+This operation provisions a new L7 policy by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, the API returns a response object that contains a unique ID and the status of provisioning the L7 policy.
+
+In the response, the L7 policy [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/l7policies/{l7policy_id}` to view the progress of the provisioning operation. When the L7 policy status changes to `ACTIVE`, the L7 policy is successfully provisioned and is ready for further configuration.
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+All the rules associated with a given policy are logically ANDead together. A request must match all the policy’s rules to match the policy.
+
+If you need to express a logical OR operation between rules, then do this by creating multiple policies with the same action.
+
+If a new policy is created with a position that matches that of an existing policy, then the new policy is inserted at the given position.
+
+L7 policies with `action` of `REDIRECT_TO_URL` will return the default HTTP `Found (302)` response code with the `redirect_url`. Also, specify `redirect_http_code` to configure the needed HTTP response code, such as, 301, 302, 303, 307 and 308.
+
+L7 policies with `action` of `REJECT` will return a `Forbidden (403)` response code to the requester.
+
+**Usage:** `osc load-balancer l7policy create [OPTIONS] --action <ACTION> --listener-id <LISTENER_ID>`
+
+###### **Options:**
+
+* `--action <ACTION>` — The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`, `REDIRECT_TO_URL`, or `REJECT`
+
+  Possible values: `redirect-prefix`, `redirect-to-pool`, `redirect-to-url`, `reject`
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--listener-id <LISTENER_ID>` — The ID of the listener
+* `--name <NAME>` — Human-readable name of the resource
+* `--position <POSITION>` — The position of this policy on the listener. Positions start at 1
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource
+* `--redirect-http-code <REDIRECT_HTTP_CODE>` — Requests matching this policy will be redirected to the specified URL or Prefix URL with the HTTP response code. Valid if `action` is `REDIRECT_TO_URL` or `REDIRECT_PREFIX`. Valid options are: 301, 302, 303, 307, or 308. Default is 302
+* `--redirect-pool-id <REDIRECT_POOL_ID>` — Requests matching this policy will be redirected to the pool with this ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some restrictions, See [Protocol Combinations (Listener/Pool)](#valid-protocol)
+* `--redirect-prefix <REDIRECT_PREFIX>` — Requests matching this policy will be redirected to this Prefix URL. Only valid if `action` is `REDIRECT_PREFIX`
+* `--redirect-url <REDIRECT_URL>` — Requests matching this policy will be redirected to this URL. Only valid if `action` is `REDIRECT_TO_URL`
+* `--rules <JSON>`
+* `--tags <TAGS>`
+* `--tenant-id <TENANT_ID>`
+
+
+
+## `osc load-balancer l7policy delete`
+
+Removes a L7 policy and its associated configuration from the project.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer l7policy delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id} API
+
+
+
+## `osc load-balancer l7policy list`
+
+Lists all L7 policies for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list L7 policies for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer l7policy list`
+
+
+
+## `osc load-balancer l7policy rule`
+
+`L7Policy Rule` commands
+
+**Usage:** `osc load-balancer l7policy rule <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create an L7 Rule
+* `delete` — Remove a L7 Rule
+* `list` — List L7 Rules
+* `set` — Update a L7 Rule
+* `show` — Show L7 Rule details
+
+
+
+## `osc load-balancer l7policy rule create`
+
+Creates a L7 rule.
+
+This operation provisions a new L7 rule by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, the API returns a response object that contains a unique ID and the status of provisioning the L7 rule.
+
+In the response, the L7 rule [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/l7policies/{l7policy_id}/rules/{l7rule_id}` to view the progress of the provisioning operation. When the L7 rule status changes to `ACTIVE`, the L7 rule is successfully provisioned and is ready for further configuration.
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+All the rules associated with a given policy are logically ANDead together. A request must match all the policy’s rules to match the policy.
+
+If you need to express a logical OR operation between rules, then do this by creating multiple policies with the same action.
+
+**Usage:** `osc load-balancer l7policy rule create [OPTIONS] --compare-type <COMPARE_TYPE> --type <TYPE> --value <VALUE> <L7POLICY_ID>`
+
+###### **Arguments:**
+
+* `<L7POLICY_ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--compare-type <COMPARE_TYPE>` — The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`, `EQUAL_TO`, `REGEX`, or `STARTS_WITH`
+
+  Possible values: `contains`, `ends-with`, `equal-to`, `regex`, `starts-with`
+
+* `--invert <INVERT>` — When `true` the logic of the rule is inverted. For example, with invert `true`, equal to would become not equal to. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--key <KEY>` — The key to use for the comparison. For example, the name of the cookie to evaluate
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--tenant-id <TENANT_ID>`
+* `--type <TYPE>` — The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`, `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`
+
+  Possible values: `cookie`, `file-type`, `header`, `host-name`, `path`, `ssl-conn-has-cert`, `ssl-dn-field`, `ssl-verify-result`
+
+* `--value <VALUE>` — The value to use for the comparison. For example, the file type to compare
+
+
+
+## `osc load-balancer l7policy rule delete`
+
+Removes a L7 rule and its associated configuration from the project.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer l7policy rule delete <L7POLICY_ID> <ID>`
+
+###### **Arguments:**
+
+* `<L7POLICY_ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+* `<ID>` — rule_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+
+
+
+## `osc load-balancer l7policy rule list`
+
+Lists all L7 rules for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list L7 policies for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer l7policy rule list <L7POLICY_ID>`
+
+###### **Arguments:**
+
+* `<L7POLICY_ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+
+
+
+## `osc load-balancer l7policy rule set`
+
+Updates a L7 rule.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the L7 rule provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the L7 rule object for changes.
+
+This operation returns the updated L7 rule object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+**Usage:** `osc load-balancer l7policy rule set [OPTIONS] <L7POLICY_ID> <ID>`
+
+###### **Arguments:**
+
+* `<L7POLICY_ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+* `<ID>` — rule_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--compare-type <COMPARE_TYPE>` — The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`, `EQUAL_TO`, `REGEX`, or `STARTS_WITH`
+
+  Possible values: `contains`, `ends-with`, `equal-to`, `regex`, `starts-with`
+
+* `--invert <INVERT>` — When `true` the logic of the rule is inverted. For example, with invert `true`, equal to would become not equal to. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--key <KEY>` — The key to use for the comparison. For example, the name of the cookie to evaluate
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--type <TYPE>` — The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`, `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`
+
+  Possible values: `cookie`, `file-type`, `header`, `host-name`, `path`, `ssl-conn-has-cert`, `ssl-dn-field`, `ssl-verify-result`
+
+* `--value <VALUE>` — The value to use for the comparison. For example, the file type to compare
+
+
+
+## `osc load-balancer l7policy rule show`
+
+Shows the details of a L7 rule.
+
+If you are not an administrative user and the L7 rule object does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer l7policy rule show <L7POLICY_ID> <ID>`
+
+###### **Arguments:**
+
+* `<L7POLICY_ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+* `<ID>` — rule_id parameter for /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
+
+
+
+## `osc load-balancer l7policy set`
+
+Updates a L7 policy.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the L7 policy provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the L7 policy object for changes.
+
+This operation returns the updated L7 policy object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+If a policy is updated with a position that matches that of an existing policy, then the updated policy is inserted at the given position.
+
+**Usage:** `osc load-balancer l7policy set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id} API
+
+###### **Options:**
+
+* `--action <ACTION>` — The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`, `REDIRECT_TO_URL`, or `REJECT`
+
+  Possible values: `redirect-prefix`, `redirect-to-pool`, `redirect-to-url`, `reject`
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--name <NAME>` — Human-readable name of the resource
+* `--position <POSITION>` — The position of this policy on the listener. Positions start at 1
+* `--redirect-http-code <REDIRECT_HTTP_CODE>` — Requests matching this policy will be redirected to the specified URL or Prefix URL with the HTTP response code. Valid if `action` is `REDIRECT_TO_URL` or `REDIRECT_PREFIX`. Valid options are: 301, 302, 303, 307, or 308. Default is 302
+* `--redirect-pool-id <REDIRECT_POOL_ID>` — Requests matching this policy will be redirected to the pool with this ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some restrictions, See [Protocol Combinations (Listener/Pool)](#valid-protocol)
+* `--redirect-prefix <REDIRECT_PREFIX>` — Requests matching this policy will be redirected to this Prefix URL. Only valid if `action` is `REDIRECT_PREFIX`
+* `--redirect-url <REDIRECT_URL>` — Requests matching this policy will be redirected to this URL. Only valid if `action` is `REDIRECT_TO_URL`
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+
+
+
+## `osc load-balancer l7policy show`
+
+Shows the details of a L7 policy.
+
+If you are not an administrative user and the L7 policy object does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer l7policy show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — l7policy_id parameter for /v2/lbaas/l7policies/{l7policy_id} API
+
+
+
+## `osc load-balancer listener`
+
+Listener (Octavia) commands
+
+**Usage:** `osc load-balancer listener <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Listener
+* `delete` — Remove a Listener
+* `list` — List Listeners
+* `set` — Update a Listener
+* `show` — Show Listener details
+* `stats` — Get Listener statistics
+
+
+
+## `osc load-balancer listener create`
+
+Creates a listener for a load balancer.
+
+The listener configures a port and protocol for the load balancer to listen on for incoming requests. A load balancer may have zero or more listeners configured.
+
+This operation provisions a new listener by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, the API returns a response object that contains a unique ID and the status of provisioning the listener.
+
+In the response, the listener [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/listeners/{listener_id}` to view the progress of the provisioning operation. When the listener status changes to `ACTIVE`, the listener is successfully provisioned and is ready for further configuration.
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+Specifying a project_id is deprecated. The listener will inherit the project_id of the parent load balancer.
+
+You can configure all documented features of the listener at creation time by specifying the additional elements or attributes in the request.
+
+To create a listener, the parent load balancer must have an `ACTIVE` provisioning status.
+
+**Usage:** `osc load-balancer listener create [OPTIONS] --loadbalancer-id <LOADBALANCER_ID> --protocol <PROTOCOL> --protocol-port <PROTOCOL_PORT>`
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--allowed-cidrs <ALLOWED_CIDRS>` — A list of IPv4, IPv6 or mix of both CIDRs. The default is all allowed. When a list of CIDRs is provided, the default switches to deny all
+* `--alpn-protocols <ALPN_PROTOCOLS>`
+* `--client-authentication <CLIENT_AUTHENTICATION>` — The TLS client authentication mode. One of the options `NONE`, `OPTIONAL` or `MANDATORY`
+
+  Possible values: `mandatory`, `none`, `optional`
+
+* `--client-ca-tls-container-ref <CLIENT_CA_TLS_CONTAINER_REF>` — The ref of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format client CA certificate bundle for `TERMINATED_HTTPS` listeners
+* `--client-crl-container-ref <CLIENT_CRL_CONTAINER_REF>` — The URI of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format CA revocation list file for `TERMINATED_HTTPS` listeners
+* `--connection-limit <CONNECTION_LIMIT>` — The maximum number of connections permitted for this listener. Default value is -1 which represents infinite connections or a default value defined by the provider driver
+* `--default-pool <JSON>` — A pool object
+* `--default-pool-id <DEFAULT_POOL_ID>` — The ID of the pool used by the listener if no L7 policies match. The pool has some restrictions. See [Protocol Combinations (Listener/Pool)](#valid-protocol)
+* `--default-tls-container-ref <DEFAULT_TLS_CONTAINER_REF>` — The URI of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PKCS12 format certificate/key bundle for `TERMINATED_HTTPS` listeners. DEPRECATED: A secret container of type “certificate” containing the certificate and key for `TERMINATED_HTTPS` listeners
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--hsts-include-subdomains <HSTS_INCLUDE_SUBDOMAINS>` — Defines whether the `includeSubDomains` directive should be added to the Strict-Transport-Security HTTP response header. This requires setting the `hsts_max_age` option as well in order to become effective
+
+  Possible values: `true`, `false`
+
+* `--hsts-max-age <HSTS_MAX_AGE>` — The value of the `max_age` directive for the Strict-Transport-Security HTTP response header. Setting this enables HTTP Strict Transport Security (HSTS) for the TLS-terminated listener
+* `--hsts-preload <HSTS_PRELOAD>` — Defines whether the `preload` directive should be added to the Strict-Transport-Security HTTP response header. This requires setting the `hsts_max_age` option as well in order to become effective
+
+  Possible values: `true`, `false`
+
+* `--insert-headers <key=value>` — A dictionary of optional headers to insert into the request before it is sent to the backend `member`. See [Supported HTTP Header Insertions](#header-insertions). Both keys and values are always specified as strings
+* `--l7policies <JSON>` — A list of L7 policy objects
+* `--loadbalancer-id <LOADBALANCER_ID>` — The ID of the load balancer
+* `--name <NAME>` — Human-readable name of the resource
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource. (deprecated)
+* `--protocol <PROTOCOL>` — The protocol for the resource. One of `HTTP`, `HTTPS`, `SCTP`, `PROMETHEUS`, `TCP`, `TERMINATED_HTTPS`, or `UDP`
+
+  Possible values: `http`, `https`, `prometheus`, `sctp`, `tcp`, `terminated-https`, `udp`
+
+* `--protocol-port <PROTOCOL_PORT>` — The protocol port number for the resource
+* `--sni-container-refs <SNI_CONTAINER_REFS>` — A list of URIs to the [key manager service](https://docs.openstack.org/barbican/latest/) secrets containing PKCS12 format certificate/key bundles for `TERMINATED_HTTPS` listeners. (DEPRECATED) Secret containers of type “certificate” containing the certificates and keys for `TERMINATED_HTTPS` listeners
+* `--tags <TAGS>`
+* `--tenant-id <TENANT_ID>`
+* `--timeout-client-data <TIMEOUT_CLIENT_DATA>` — Frontend client inactivity timeout in milliseconds. Default: 50000
+* `--timeout-member-connect <TIMEOUT_MEMBER_CONNECT>` — Backend member connection timeout in milliseconds. Default: 5000
+* `--timeout-member-data <TIMEOUT_MEMBER_DATA>` — Backend member inactivity timeout in milliseconds. Default: 50000
+* `--timeout-tcp-inspect <TIMEOUT_TCP_INSPECT>` — Time, in milliseconds, to wait for additional TCP packets for content inspection. Default: 0
+* `--tls-ciphers <TLS_CIPHERS>`
+* `--tls-versions <TLS_VERSIONS>`
+
+
+
+## `osc load-balancer listener delete`
+
+Removes a listener and its associated configuration from the project.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer listener delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — listener_id parameter for /v2/lbaas/listeners/{listener_id} API
+
+
+
+## `osc load-balancer listener list`
+
+Lists all listeners for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list listeners for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer listener list`
+
+
+
+## `osc load-balancer listener set`
+
+Update an existing listener.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the listener provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the listener object for changes.
+
+This operation returns the updated listener object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+**Usage:** `osc load-balancer listener set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — listener_id parameter for /v2/lbaas/listeners/{listener_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--allowed-cidrs <ALLOWED_CIDRS>` — A list of IPv4, IPv6 or mix of both CIDRs. The default is all allowed. When a list of CIDRs is provided, the default switches to deny all
+* `--alpn-protocols <ALPN_PROTOCOLS>` — A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
+* `--client-authentication <CLIENT_AUTHENTICATION>` — The TLS client authentication mode. One of the options `NONE`, `OPTIONAL` or `MANDATORY`
+
+  Possible values: `mandatory`, `none`, `optional`
+
+* `--client-ca-tls-container-ref <CLIENT_CA_TLS_CONTAINER_REF>` — The ref of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format client CA certificate bundle for `TERMINATED_HTTPS` listeners
+* `--client-crl-container-ref <CLIENT_CRL_CONTAINER_REF>` — The URI of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format CA revocation list file for `TERMINATED_HTTPS` listeners
+* `--connection-limit <CONNECTION_LIMIT>` — The maximum number of connections permitted for this listener. Default value is -1 which represents infinite connections or a default value defined by the provider driver
+* `--default-pool-id <DEFAULT_POOL_ID>` — The ID of the pool used by the listener if no L7 policies match. The pool has some restrictions. See [Protocol Combinations (Listener/Pool)](#valid-protocol)
+* `--default-tls-container-ref <DEFAULT_TLS_CONTAINER_REF>` — The URI of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PKCS12 format certificate/key bundle for `TERMINATED_HTTPS` listeners. DEPRECATED: A secret container of type “certificate” containing the certificate and key for `TERMINATED_HTTPS` listeners
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--hsts-include-subdomains <HSTS_INCLUDE_SUBDOMAINS>` — Defines whether the `includeSubDomains` directive should be added to the Strict-Transport-Security HTTP response header. This requires setting the `hsts_max_age` option as well in order to become effective
+
+  Possible values: `true`, `false`
+
+* `--hsts-max-age <HSTS_MAX_AGE>` — The value of the `max_age` directive for the Strict-Transport-Security HTTP response header. Setting this enables HTTP Strict Transport Security (HSTS) for the TLS-terminated listener
+* `--hsts-preload <HSTS_PRELOAD>` — Defines whether the `preload` directive should be added to the Strict-Transport-Security HTTP response header. This requires setting the `hsts_max_age` option as well in order to become effective
+
+  Possible values: `true`, `false`
+
+* `--insert-headers <key=value>` — A dictionary of optional headers to insert into the request before it is sent to the backend `member`. See [Supported HTTP Header Insertions](#header-insertions). Both keys and values are always specified as strings
+* `--name <NAME>` — Human-readable name of the resource
+* `--sni-container-refs <SNI_CONTAINER_REFS>` — A list of URIs to the [key manager service](https://docs.openstack.org/barbican/latest/) secrets containing PKCS12 format certificate/key bundles for `TERMINATED_HTTPS` listeners. (DEPRECATED) Secret containers of type “certificate” containing the certificates and keys for `TERMINATED_HTTPS` listeners
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--timeout-client-data <TIMEOUT_CLIENT_DATA>` — Frontend client inactivity timeout in milliseconds. Default: 50000
+* `--timeout-member-connect <TIMEOUT_MEMBER_CONNECT>` — Backend member connection timeout in milliseconds. Default: 5000
+* `--timeout-member-data <TIMEOUT_MEMBER_DATA>` — Backend member inactivity timeout in milliseconds. Default: 50000
+* `--timeout-tcp-inspect <TIMEOUT_TCP_INSPECT>` — Time, in milliseconds, to wait for additional TCP packets for content inspection. Default: 0
+* `--tls-ciphers <TLS_CIPHERS>` — List of ciphers in OpenSSL format (colon-separated). See <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
+* `--tls-versions <TLS_VERSIONS>` — A list of TLS protocol versions. Available versions: SSLv3, TLSv1, TLSv1.1, TLSv1.2, TLSv1.3
+
+
+
+## `osc load-balancer listener show`
+
+Shows the details of a listener.
+
+If you are not an administrative user and the parent load balancer does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer listener show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — listener_id parameter for /v2/lbaas/listeners/{listener_id} API
+
+
+
+## `osc load-balancer listener stats`
+
+Shows the current statistics for a listener.
+
+This operation returns the statistics of a listener object identified by listener_id.
+
+If you are not an administrative user and the parent load balancer does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer listener stats <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — listener_id parameter for /v2/lbaas/listeners/{listener_id}/stats API
+
+
+
+## `osc load-balancer loadbalancer`
+
+Loadbalancer (Octavia) commands
+
+**Usage:** `osc load-balancer loadbalancer <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create a Load Balancer
+* `delete` — Remove a Load Balancer
+* `failover` — Failover a load balancer
+* `list` — List Load Balancers
+* `set` — Update a Load Balancer
+* `show` — Show Load Balancer details
+* `stats` — Get Load Balancer statistics
+* `status` — Get the Load Balancer status tree
+
+
+
+## `osc load-balancer loadbalancer create`
+
+Creates a load balancer.
+
+This operation provisions a new load balancer by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, the API returns a response object that contains a unique ID and the status of provisioning the load balancer.
+
+In the response, the load balancer [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/loadbalancers/{loadbalancer_id}` to view the progress of the provisioning operation. When the load balancer status changes to `ACTIVE`, the load balancer is successfully provisioned and is ready for further configuration.
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+Administrative users can specify a project ID that is different than their own to create load balancers for other projects.
+
+An optional `flavor_id` attribute can be used to create the load balancer using a pre-configured octavia flavor. Flavors are created by the operator to allow custom load balancer configurations, such as allocating more memory for the load balancer.
+
+An optional `vip_qos_policy_id` attribute from Neutron can be used to apply QoS policies on a loadbalancer VIP, also could pass a ‘null’ value to remove QoS policies.
+
+You can also specify the `provider` attribute when you create a load balancer. The `provider` attribute specifies which backend should be used to create the load balancer. This could be the default provider (`octavia`) or a vendor supplied `provider` if one has been installed. Setting both a flavor_id and a provider will result in a conflict error if the provider does not match the provider of the configured flavor profiles.
+
+Specifying a Virtual IP (VIP) is mandatory. There are three ways to specify a VIP network for the load balancer:
+
+Additional VIPs may also be specified in the `additional_vips` field, by providing a list of JSON objects containing a `subnet_id` and optionally an `ip_address`. All additional subnets must be part of the same network as the primary VIP.
+
+**Usage:** `osc load-balancer loadbalancer create [OPTIONS]`
+
+###### **Options:**
+
+* `--additional-vips <JSON>` — A list of JSON objects defining “additional VIPs”. The format for these is `{"subnet_id": <subnet_id>, "ip_address": <ip_address>}`, where the `subnet_id` field is mandatory and the `ip_address` field is optional. Additional VIP subnets must all belong to the same network as the primary VIP
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--availability-zone <AVAILABILITY_ZONE>` — An availability zone name
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--flavor-id <FLAVOR_ID>` — The ID of the flavor
+* `--listeners <JSON>` — The associated listener IDs, if any
+* `--name <NAME>` — Human-readable name of the resource
+* `--pools <JSON>`
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource
+* `--provider <PROVIDER>` — Provider name for the load balancer. Default is `octavia`
+* `--tags <TAGS>`
+* `--tenant-id <TENANT_ID>`
+* `--vip-address <VIP_ADDRESS>` — The IP address of the Virtual IP (VIP)
+* `--vip-network-id <VIP_NETWORK_ID>` — The ID of the network for the Virtual IP (VIP). One of `vip_network_id`, `vip_port_id`, or `vip_subnet_id` must be specified
+* `--vip-port-id <VIP_PORT_ID>` — The ID of the Virtual IP (VIP) port. One of `vip_network_id`, `vip_port_id`, or `vip_subnet_id` must be specified
+* `--vip-qos-policy-id <VIP_QOS_POLICY_ID>` — The ID of the QoS Policy which will apply to the Virtual IP (VIP)
+* `--vip-subnet-id <VIP_SUBNET_ID>` — The ID of the subnet for the Virtual IP (VIP). One of `vip_network_id`, `vip_port_id`, or `vip_subnet_id` must be specified
+
+
+
+## `osc load-balancer loadbalancer delete`
+
+Removes a load balancer and its associated configuration from the project.
+
+The optional parameter `cascade` when defined as `true` will delete all child objects of the load balancer.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer loadbalancer delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id} API
+
+
+
+## `osc load-balancer loadbalancer failover`
+
+Failover a load balancer
+
+**Usage:** `osc load-balancer loadbalancer failover [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}/failover API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc load-balancer loadbalancer list`
+
+Lists all load balancers for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list load balancers for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer loadbalancer list`
+
+
+
+## `osc load-balancer loadbalancer set`
+
+Updates a load balancer.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the load balancer provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the load balancer object for changes.
+
+This operation returns the updated load balancer object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+**Usage:** `osc load-balancer loadbalancer set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`)
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--name <NAME>` — Human-readable name of the resource
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--vip-qos-policy-id <VIP_QOS_POLICY_ID>` — The ID of the QoS Policy which will apply to the Virtual IP (VIP)
+
+
+
+## `osc load-balancer loadbalancer show`
+
+Shows the details of a load balancer.
+
+If you are not an administrative user and the load balancer object does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer loadbalancer show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id} API
+
+
+
+## `osc load-balancer loadbalancer stats`
+
+Shows the current statistics for a load balancer.
+
+This operation returns the statistics of a load balancer object identified by loadbalancer_id.
+
+If you are not an administrative user and the load balancer object does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer loadbalancer stats <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}/stats API
+
+
+
+## `osc load-balancer loadbalancer status`
+
+Shows the status tree for a load balancer.
+
+This operation returns a status tree for a load balancer object, by load balancer ID.
+
+`provisioning_status` is the status associated with lifecycle of the resource. See [Provisioning Status Codes](#prov-status) for descriptions of the status codes.
+
+`operating_status` is the observed status of the resource. See [Operating Status Codes](#op-status) for descriptions of the status codes.
+
+If you are not an administrative user and the load balancer object does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+If the operation succeeds, the returned element is a status tree that contains the load balancer and all provisioning and operating statuses for its children.
+
+**Usage:** `osc load-balancer loadbalancer status <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — loadbalancer_id parameter for /v2/lbaas/loadbalancers/{loadbalancer_id}/status API
+
+
+
+## `osc load-balancer pool`
+
+Pool (Octavia) commands
+
+**Usage:** `osc load-balancer pool <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Pool
+* `delete` — Remove a Pool
+* `list` — List Pools
+* `member` — Pool Member commands
+* `set` — Update a Pool
+* `show` — Show Pool details
+
+
+
+## `osc load-balancer pool create`
+
+Creates a pool for a load balancer.
+
+The pool defines how requests should be balanced across the backend member servers.
+
+This operation provisions a pool by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, the API returns a response object, which contains a unique ID.
+
+In the response, the pool [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/pools/{pool_id}` to view the progress of the provisioning operation. When the pool status changes to `ACTIVE`, the pool is successfully provisioned and is ready for further configuration.
+
+At a minimum, you must specify these pool attributes:
+
+Some attributes receive default values if you omit them from the request:
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+Specifying a project_id is deprecated. The pool will inherit the project_id of the parent load balancer.
+
+You can configure all documented features of the pool at creation time by specifying the additional elements or attributes in the request.
+
+To create a pool, the parent load balancer must have an `ACTIVE` provisioning status.
+
+`SOURCE_IP_PORT` algorithm is available from version 2.13.
+
+**Usage:** `osc load-balancer pool create [OPTIONS] --lb-algorithm <LB_ALGORITHM> --protocol <PROTOCOL>`
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--alpn-protocols <ALPN_PROTOCOLS>` — A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
+* `--ca-tls-container-ref <CA_TLS_CONTAINER_REF>` — The reference of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format CA certificate bundle for `tls_enabled` pools
+* `--crl-container-ref <CRL_CONTAINER_REF>` — The reference of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format CA revocation list file for `tls_enabled` pools
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--healthmonitor <JSON>` — Defines mandatory and optional attributes of a POST request
+* `--lb-algorithm <LB_ALGORITHM>` — The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`, `ROUND_ROBIN`, `SOURCE_IP`, or `SOURCE_IP_PORT`
+
+  Possible values: `least-connections`, `round-robin`, `source-ip`, `source-ip-port`
+
+* `--listener-id <LISTENER_ID>` — The ID of the listener for the pool. Either `listener_id` or `loadbalancer_id` must be specified. The listener has some restrictions, See [Protocol Combinations (Listener/Pool)](#valid-protocol)
+* `--loadbalancer-id <LOADBALANCER_ID>` — The ID of the load balancer for the pool. Either `listener_id` or `loadbalancer_id` must be specified
+* `--members <JSON>`
+* `--name <NAME>` — Human-readable name of the resource
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource. (deprecated)
+* `--protocol <PROTOCOL>` — The protocol for the resource. One of `HTTP`, `HTTPS`, `PROXY`, `PROXYV2`, `SCTP`, `TCP`, or `UDP`
+
+  Possible values: `http`, `https`, `proxy`, `proxyv2`, `sctp`, `tcp`, `udp`
+
+* `--cookie-name <COOKIE_NAME>`
+* `--persistence-granularity <PERSISTENCE_GRANULARITY>`
+* `--persistence-timeout <PERSISTENCE_TIMEOUT>`
+* `--type <TYPE>`
+
+  Possible values: `app-cookie`, `http-cookie`, `source-ip`
+
+* `--tags <TAGS>`
+* `--tenant-id <TENANT_ID>`
+* `--tls-ciphers <TLS_CIPHERS>` — List of ciphers in OpenSSL format (colon-separated). See <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
+* `--tls-container-ref <TLS_CONTAINER_REF>` — The reference to the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PKCS12 format certificate/key bundle for `tls_enabled` pools for TLS client authentication to the member servers
+* `--tls-enabled <TLS_ENABLED>` — When `true` connections to backend member servers will use TLS encryption. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--tls-versions <TLS_VERSIONS>` — A list of TLS protocol versions. Available versions: SSLv3, TLSv1, TLSv1.1, TLSv1.2, TLSv1.3
+
+
+
+## `osc load-balancer pool delete`
+
+Removes a pool and its associated configuration from the load balancer.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer pool delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id} API
+
+
+
+## `osc load-balancer pool list`
+
+Lists all pools for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list pools for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer pool list`
+
+
+
+## `osc load-balancer pool member`
+
+Pool Member commands
+
+**Usage:** `osc load-balancer pool member <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Member
+* `delete` — Remove a Member
+* `list` — List Members
+* `set` — Update a Member
+* `show` — Show Member details
+
+
+
+## `osc load-balancer pool member create`
+
+This operation provisions a member and adds it to a pool by using the configuration that you define in the request object. After the API validates the request and starts the provisioning process, it returns a response object, which contains a unique ID.
+
+In the response, the member [provisioning status](#prov-status) is `ACTIVE`, `PENDING_CREATE`, or `ERROR`.
+
+If the status is `PENDING_CREATE`, issue GET `/v2/lbaas/pools/{pool_id}/members/{member_id}` to view the progress of the provisioning operation. When the member status changes to `ACTIVE`, the member is successfully provisioned and is ready for further configuration.
+
+If the API cannot fulfill the request due to insufficient data or data that is not valid, the service returns the HTTP `Bad Request (400)` response code with information about the failure in the response body. Validation errors require that you correct the error and submit the request again.
+
+At a minimum, you must specify these member attributes:
+
+Some attributes receive default values if you omit them from the request:
+
+If you omit the `subnet_id` parameter, the `vip_subnet_id` for the parent load balancer will be used for the member subnet UUID.
+
+The member `address` does not necessarily need to be a member of the `subnet_id` subnet. Members can be routable from the subnet specified either via the default route or by using `host_routes` defined on the subnet.
+
+Administrative users can specify a project ID that is different than their own to create members for other projects.
+
+`monitor_address` and/or `monitor_port` can be used to have the health monitor, if one is configured for the pool, connect to an alternate IP address and port when executing a health check on the member.
+
+To create a member, the load balancer must have an `ACTIVE` provisioning status.
+
+**Usage:** `osc load-balancer pool member create [OPTIONS] --address <ADDRESS> --protocol-port <PROTOCOL_PORT> <POOL_ID>`
+
+###### **Arguments:**
+
+* `<POOL_ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+
+###### **Options:**
+
+* `--address <ADDRESS>` — The IP address of the resource
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--backup <BACKUP>` — Is the member a backup? Backup members only receive traffic when all non-backup members are down
+
+  Possible values: `true`, `false`
+
+* `--monitor-address <MONITOR_ADDRESS>` — An alternate IP address used for health monitoring a backend member. Default is `null` which monitors the member `address`
+* `--monitor-port <MONITOR_PORT>` — An alternate protocol port used for health monitoring a backend member. Default is `null` which monitors the member `protocol_port`
+* `--name <NAME>` — Human-readable name of the resource
+* `--project-id <PROJECT_ID>` — The ID of the project owning this resource. (deprecated)
+* `--protocol-port <PROTOCOL_PORT>` — The protocol port number for the resource
+* `--subnet-id <SUBNET_ID>` — The subnet ID the member service is accessible from
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--tenant-id <TENANT_ID>`
+* `--weight <WEIGHT>` — The weight of a member determines the portion of requests or connections it services compared to the other members of the pool. For example, a member with a weight of 10 receives five times as many requests as a member with a weight of 2. A value of 0 means the member does not receive new connections but continues to service existing connections. A valid value is from `0` to `256`. Default is `1`
+
+
+
+## `osc load-balancer pool member delete`
+
+Removes a member and its associated configuration from the pool.
+
+The API immediately purges any and all configuration data, depending on the configuration settings. You cannot recover it.
+
+**Usage:** `osc load-balancer pool member delete <POOL_ID> <ID>`
+
+###### **Arguments:**
+
+* `<POOL_ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+* `<ID>` — member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+
+
+
+## `osc load-balancer pool member list`
+
+Lists all members for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list members for other projects.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer pool member list <POOL_ID>`
+
+###### **Arguments:**
+
+* `<POOL_ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+
+
+
+## `osc load-balancer pool member set`
+
+Update an existing member.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the member provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the member object for changes.
+
+Setting the member weight to `0` means that the member will not receive new requests but will finish any existing connections. This “drains” the backend member of active connections.
+
+This operation returns the updated member object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+**Usage:** `osc load-balancer pool member set [OPTIONS] <POOL_ID> <ID>`
+
+###### **Arguments:**
+
+* `<POOL_ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+* `<ID>` — member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--backup <BACKUP>` — Is the member a backup? Backup members only receive traffic when all non-backup members are down
+
+  Possible values: `true`, `false`
+
+* `--monitor-address <MONITOR_ADDRESS>` — An alternate IP address used for health monitoring a backend member. Default is `null` which monitors the member `address`
+* `--monitor-port <MONITOR_PORT>` — An alternate protocol port used for health monitoring a backend member. Default is `null` which monitors the member `protocol_port`
+* `--name <NAME>` — Human-readable name of the resource
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--weight <WEIGHT>` — The weight of a member determines the portion of requests or connections it services compared to the other members of the pool. For example, a member with a weight of 10 receives five times as many requests as a member with a weight of 2. A value of 0 means the member does not receive new connections but continues to service existing connections. A valid value is from `0` to `256`. Default is `1`
+
+
+
+## `osc load-balancer pool member show`
+
+Shows the details of a pool member.
+
+If you are not an administrative user and the parent load balancer does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer pool member show <POOL_ID> <ID>`
+
+###### **Arguments:**
+
+* `<POOL_ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+* `<ID>` — member_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
+
+
+
+## `osc load-balancer pool set`
+
+Update an existing pool.
+
+If the request is valid, the service returns the `Accepted (202)` response code. To confirm the update, check that the pool provisioning status is `ACTIVE`. If the status is `PENDING_UPDATE`, use a GET operation to poll the pool object for changes.
+
+This operation returns the updated pool object with the `ACTIVE`, `PENDING_UPDATE`, or `ERROR` provisioning status.
+
+**Usage:** `osc load-balancer pool set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id} API
+
+###### **Options:**
+
+* `--admin-state-up <ADMIN_STATE_UP>` — The administrative state of the resource, which is up (`true`) or down (`false`). Default is `true`
+
+  Possible values: `true`, `false`
+
+* `--alpn-protocols <ALPN_PROTOCOLS>` — A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
+* `--ca-tls-container-ref <CA_TLS_CONTAINER_REF>` — The reference of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format CA certificate bundle for `tls_enabled` pools
+* `--crl-container-ref <CRL_CONTAINER_REF>` — The reference of the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PEM format CA revocation list file for `tls_enabled` pools
+* `--description <DESCRIPTION>` — A human-readable description for the resource
+* `--lb-algorithm <LB_ALGORITHM>` — The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`, `ROUND_ROBIN`, or `SOURCE_IP`
+
+  Possible values: `least-connections`, `round-robin`, `source-ip`, `source-ip-port`
+
+* `--name <NAME>` — Human-readable name of the resource
+* `--cookie-name <COOKIE_NAME>`
+* `--persistence-granularity <PERSISTENCE_GRANULARITY>`
+* `--persistence-timeout <PERSISTENCE_TIMEOUT>`
+* `--type <TYPE>`
+
+  Possible values: `app-cookie`, `http-cookie`, `source-ip`
+
+* `--tags <TAGS>` — A list of simple strings assigned to the resource
+* `--tls-ciphers <TLS_CIPHERS>` — List of ciphers in OpenSSL format (colon-separated). See <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
+* `--tls-container-ref <TLS_CONTAINER_REF>` — The reference to the [key manager service](https://docs.openstack.org/castellan/latest/) secret containing a PKCS12 format certificate/key bundle for `tls_enabled` pools for TLS client authentication to the member servers
+* `--tls-enabled <TLS_ENABLED>` — When `true` connections to backend member servers will use TLS encryption. Default is `false`
+
+  Possible values: `true`, `false`
+
+* `--tls-versions <TLS_VERSIONS>` — A list of TLS protocol versions. Available versions: SSLv3, TLSv1, TLSv1.1, TLSv1.2, TLSv1.3
+
+
+
+## `osc load-balancer pool show`
+
+Shows the details of a pool.
+
+If you are not an administrative user and the parent load balancer does not belong to your project, the service returns the HTTP `Forbidden (403)` response code.
+
+This operation does not require a request body.
+
+**Usage:** `osc load-balancer pool show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — pool_id parameter for /v2/lbaas/pools/{pool_id} API
+
+
+
+## `osc load-balancer provider`
+
+Provider (Octavia) commands
+
+**Usage:** `osc load-balancer provider <COMMAND>`
+
+###### **Subcommands:**
+
+* `availability-zone-capability` — AvailabilityZoneCapability (Octavia) commands
+* `flavor-capability` — FlavorCapability (Octavia) commands
+* `list` — List Providers
+
+
+
+## `osc load-balancer provider availability-zone-capability`
+
+AvailabilityZoneCapability (Octavia) commands
+
+**Usage:** `osc load-balancer provider availability-zone-capability <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Show Provider Availability Zone Capabilities
+
+
+
+## `osc load-balancer provider availability-zone-capability list`
+
+Shows the provider driver availability zone capabilities. These are the features of the provider driver that can be configured in an Octavia availability zone. This API returns a list of dictionaries with the name and description of each availability zone capability of the provider.
+
+The list might be empty and a provider driver may not implement this feature.
+
+**New in version 2.14**
+
+**Usage:** `osc load-balancer provider availability-zone-capability list <PROVIDER>`
+
+###### **Arguments:**
+
+* `<PROVIDER>` — provider parameter for /v2/lbaas/providers/{provider}/availability_zone_capabilities API
+
+
+
+## `osc load-balancer provider flavor-capability`
+
+FlavorCapability (Octavia) commands
+
+**Usage:** `osc load-balancer provider flavor-capability <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Show Provider Flavor Capabilities
+
+
+
+## `osc load-balancer provider flavor-capability list`
+
+Shows the provider driver flavor capabilities. These are the features of the provider driver that can be configured in an Octavia flavor. This API returns a list of dictionaries with the name and description of each flavor capability of the provider.
+
+The list might be empty and a provider driver may not implement this feature.
+
+**New in version 2.6**
+
+**Usage:** `osc load-balancer provider flavor-capability list <PROVIDER>`
+
+###### **Arguments:**
+
+* `<PROVIDER>` — provider parameter for /v2/lbaas/providers/{provider}/flavor_capabilities API
+
+
+
+## `osc load-balancer provider list`
+
+Lists all enabled provider drivers.
+
+Use the `fields` query parameter to control which fields are returned in the response body.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer provider list`
+
+
+
+## `osc load-balancer quota`
+
+Quota commands
+
+**Usage:** `osc load-balancer quota <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Reset a Quota
+* `list` — List Quota
+* `set` — Update a Quota
+* `show` — Show Project Quota
+
+
+
+## `osc load-balancer quota delete`
+
+Reset a Quota
+
+**Usage:** `osc load-balancer quota delete <PROJECT_ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v2/lbaas/quotas/{project_id} API
+
+
+
+## `osc load-balancer quota list`
+
+Lists all quotas for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to list quotas for other projects.
+
+If the quota is listed as `null` the quota is using the deployment default quota settings.
+
+A quota of `-1` means the quota is unlimited.
+
+The list might be empty.
+
+**Usage:** `osc load-balancer quota list`
+
+
+
+## `osc load-balancer quota set`
+
+Updates a quota for a project.
+
+If the request is valid, the service returns the `Accepted (202)` response code.
+
+This operation returns the updated quota object.
+
+If the quota is specified as `null` the quota will use the deployment default quota settings.
+
+Specifying a quota of `-1` means the quota is unlimited.
+
+Specifying a quota of `0` means the project cannot create any of the resource.
+
+**Usage:** `osc load-balancer quota set [OPTIONS] <PROJECT_ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v2/lbaas/quotas/{project_id} API
+
+###### **Options:**
+
+* `--health-monitor <HEALTH_MONITOR>`
+* `--healthmonitor <HEALTHMONITOR>` — The configured health monitor quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+* `--l7policy <L7POLICY>` — The configured l7policy quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+* `--l7rule <L7RULE>` — The configured l7rule quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+* `--listener <LISTENER>` — The configured listener quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+* `--load-balancer <LOAD_BALANCER>`
+* `--loadbalancer <LOADBALANCER>` — The configured load balancer quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+* `--member <MEMBER>` — The configured member quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+* `--pool <POOL>` — The configured pool quota limit. A setting of `null` means it is using the deployment default quota. A setting of `-1` means unlimited
+
+
+
+## `osc load-balancer quota show`
+
+Show the quota for the project.
+
+Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and column selection](#filtering).
+
+Administrative users can specify a project ID that is different than their own to show quota for other projects.
+
+A quota of `-1` means the quota is unlimited.
+
+**Usage:** `osc load-balancer quota show <PROJECT_ID>`
+
+###### **Arguments:**
+
+* `<PROJECT_ID>` — project_id parameter for /v2/lbaas/quotas/{project_id} API
+
+
+
+## `osc load-balancer version`
+
+Version (Octavia) commands
+
+**Usage:** `osc load-balancer version <COMMAND>`
+
+###### **Subcommands:**
+
+* `get` — Command without description in OpenAPI
+
+
+
+## `osc load-balancer version get`
+
+Command without description in OpenAPI
+
+**Usage:** `osc load-balancer version get`
 
 
 

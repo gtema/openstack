@@ -30,6 +30,7 @@ use crate::catalog;
 use crate::compute::v2 as compute;
 use crate::identity::v3 as identity;
 use crate::image::v2 as image;
+use crate::load_balancer::v2 as load_balancer;
 use crate::network::v2 as network;
 use crate::object_store::v1 as object_store;
 
@@ -101,6 +102,7 @@ pub enum TopLevelCommands {
     Compute(compute::ComputeCommand),
     Identity(identity::IdentityCommand),
     Image(image::ImageCommand),
+    LoadBalancer(load_balancer::LoadBalancerCommand),
     Network(network::NetworkCommand),
     ObjectStore(object_store::ObjectStoreCommand),
 }
@@ -116,6 +118,7 @@ impl Cli {
             TopLevelCommands::Compute(args) => args.take_action(self, client).await,
             TopLevelCommands::Identity(args) => args.take_action(self, client).await,
             TopLevelCommands::Image(args) => args.take_action(self, client).await,
+            TopLevelCommands::LoadBalancer(args) => args.take_action(self, client).await,
             TopLevelCommands::Network(args) => args.take_action(self, client).await,
             TopLevelCommands::ObjectStore(args) => args.take_action(self, client).await,
         }
