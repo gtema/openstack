@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.3.0...openstack_cli-v0.4.0) - 2024-04-05
+
+### Added
+- Add LoadBalancer
+- regenerate code with latest generator changes
+- *(volume)* cover block-storage backup
+- *(network)* add network address_{group,scope} resources
+
+### Other
+- *(deps)* bump tempfile from 3.10.0 to 3.10.1
+- drop serde_yaml dependency
+- Merge pull request [#113](https://github.com/gtema/openstack/pull/113) from gtema/deps
+- update http/reqwest/hyper lib
+
 ## [0.3.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.2.0...openstack_cli-v0.3.0) - 2024-03-15
 
 ### Added
