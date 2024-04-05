@@ -1,6 +1,6 @@
 [package]
 name = "openstack_cli"
-version = "0.3.0"
+version = "0.4.0"
 authors = [
     "Artem Goncharov (gtema)",
 ]
@@ -29,7 +29,7 @@ cli-table = "^0.4"
 dialoguer = {workspace = true}
 http = { workspace = true }
 json-patch = { workspace = true }
-openstack_sdk = { path="../openstack_sdk", version = "^0.3" }
+openstack_sdk = { path="../openstack_sdk", version = "^0.4" }
 indicatif = "^0.17"
 regex = "^1.10"
 reqwest = { workspace = true }
