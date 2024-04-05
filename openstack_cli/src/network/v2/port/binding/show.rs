@@ -79,10 +79,17 @@ struct PathParameters {
 /// Binding response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The hostname of the system the agent is running on.
+    ///
     #[serde()]
     #[structable(optional)]
     host: Option<String>,
 
+    /// A dictionary that enables the application running on the specific host
+    /// to pass and receive vif port information specific to the networking
+    /// back-end. The networking API does not define a specific format of this
+    /// field. If the update request is null this response field will be {}.
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     profile: Option<Value>,
@@ -95,14 +102,38 @@ struct ResponseData {
     #[structable(optional)]
     status: Option<String>,
 
+    /// A dictionary which contains additional information on the port.
+    /// Currently the following fields are defined: `port_filter` and
+    /// `ovs_hybrid_plug`. `port_filter` is a boolean indicating the networking
+    /// service provides port filtering features such as security group and/or
+    /// anti MAC/IP spoofing. `ovs_hybrid_plug` is a boolean used to inform an
+    /// API consumer like nova that the hybrid plugging strategy for OVS should
+    /// be used.
+    ///
     #[serde()]
     #[structable(optional)]
     vif_details: Option<String>,
 
+    /// The type of which mechanism is used for the port. An API consumer like
+    /// nova can use this to determine an appropriate way to attach a device
+    /// (for example an interface of a virtual server) to the port. Available
+    /// values currently defined includes `ovs`, `bridge`, `macvtap`, `hw_veb`,
+    /// `hostdev_physical`, `vhostuser`, `distributed` and `other`. There are
+    /// also special values: `unbound` and `binding_failed`. `unbound` means
+    /// the port is not bound to a networking back-end. `binding_failed` means
+    /// an error that the port failed to be bound to a networking back-end.
+    ///
     #[serde()]
     #[structable(optional)]
     vif_type: Option<String>,
 
+    /// The type of vNIC which this port should be attached to. This is used to
+    /// determine which mechanism driver(s) to be used to bind the port. The
+    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
+    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
+    /// `remote-managed`. What type of vNIC is actually available depends on
+    /// deployments.
+    ///
     #[serde()]
     #[structable(optional)]
     vnic_type: Option<String>,

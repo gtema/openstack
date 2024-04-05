@@ -84,6 +84,10 @@ pub struct Roles<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Projects<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) domain: Option<Domain<'a>>,
+
     #[serde()]
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
@@ -115,7 +119,7 @@ pub struct GroupStruct<'a> {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
-pub enum GroupEnum<'a> {
+pub enum LocalGroup<'a> {
     F1(Group<'a>),
     F2(GroupStruct<'a>),
 }
@@ -129,7 +133,7 @@ pub struct Local<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) group: Option<GroupEnum<'a>>,
+    pub(crate) group: Option<LocalGroup<'a>>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -222,7 +226,7 @@ pub struct RemoteTypeWhitelistRegex<'a> {
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
-pub enum RemoteEnum<'a> {
+pub enum RulesRemote<'a> {
     F1(RemoteType<'a>),
     F2(RemoteTypeAnyOneOfRegex<'a>),
     F3(RemoteTypeNotAnyOfRegex<'a>),
@@ -239,7 +243,7 @@ pub struct Rules<'a> {
 
     #[serde()]
     #[builder(setter(into))]
-    pub(crate) remote: Vec<RemoteEnum<'a>>,
+    pub(crate) remote: Vec<RulesRemote<'a>>,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -250,6 +254,12 @@ pub struct Mapping<'a> {
     #[serde()]
     #[builder(setter(into))]
     pub(crate) rules: Vec<Rules<'a>>,
+
+    /// Mapping schema version
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) schema_version: Option<Cow<'a, str>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -351,7 +361,7 @@ mod tests {
                     MappingBuilder::default()
                         .rules(Vec::from([RulesBuilder::default()
                             .local(Vec::from([LocalBuilder::default().build().unwrap()]))
-                            .remote(Vec::from([RemoteEnum::F1(
+                            .remote(Vec::from([RulesRemote::F1(
                                 RemoteTypeBuilder::default()._type("foo").build().unwrap()
                             )]))
                             .build()
@@ -374,7 +384,7 @@ mod tests {
                     MappingBuilder::default()
                         .rules(Vec::from([RulesBuilder::default()
                             .local(Vec::from([LocalBuilder::default().build().unwrap()]))
-                            .remote(Vec::from([RemoteEnum::F1(
+                            .remote(Vec::from([RulesRemote::F1(
                                 RemoteTypeBuilder::default()._type("foo").build().unwrap()
                             )]))
                             .build()
@@ -408,7 +418,7 @@ mod tests {
                 MappingBuilder::default()
                     .rules(Vec::from([RulesBuilder::default()
                         .local(Vec::from([LocalBuilder::default().build().unwrap()]))
-                        .remote(Vec::from([RemoteEnum::F1(
+                        .remote(Vec::from([RulesRemote::F1(
                             RemoteTypeBuilder::default()._type("foo").build().unwrap(),
                         )]))
                         .build()
@@ -441,7 +451,7 @@ mod tests {
                 MappingBuilder::default()
                     .rules(Vec::from([RulesBuilder::default()
                         .local(Vec::from([LocalBuilder::default().build().unwrap()]))
-                        .remote(Vec::from([RemoteEnum::F1(
+                        .remote(Vec::from([RulesRemote::F1(
                             RemoteTypeBuilder::default()._type("foo").build().unwrap(),
                         )]))
                         .build()

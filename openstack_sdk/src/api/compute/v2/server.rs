@@ -60,7 +60,7 @@ pub mod metadata;
 pub mod migrate_256;
 pub mod migration;
 pub mod os_get_console_output;
-pub mod os_get_rdpconsole_21;
+pub mod os_get_rdpconsole;
 pub mod os_get_serial_console_21;
 pub mod os_get_spiceconsole_21;
 pub mod os_get_vncconsole_21;

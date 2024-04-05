@@ -40,7 +40,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for /v2.1/servers/{server_id}/metadata/{id} API
     ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,

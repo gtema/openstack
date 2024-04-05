@@ -89,7 +89,8 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) volume_attachment: VolumeAttachment<'a>,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for
+    /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
     ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,

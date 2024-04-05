@@ -33,16 +33,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
-use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::network::v2::port::binding::activate;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Request of the ports/port_id/bindings/id/activate:put operation
+/// Normal response codes: 200
+///
+/// Error response codes: 400, 401, 404, 412
 ///
 #[derive(Args)]
 #[command(about = "Activate Port binding")]
@@ -55,9 +53,10 @@ pub struct BindingCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// The hostname of the system the agent is running on.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    host: String,
 }
 
 /// Query parameters
@@ -87,7 +86,66 @@ struct PathParameters {
 }
 /// Binding response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+struct ResponseData {
+    /// The hostname of the system the agent is running on.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    host: Option<String>,
+
+    /// A dictionary that enables the application running on the specific host
+    /// to pass and receive vif port information specific to the networking
+    /// back-end. The networking API does not define a specific format of this
+    /// field. If the update request is null this response field will be {}.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    profile: Option<Value>,
+
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// A dictionary which contains additional information on the port.
+    /// Currently the following fields are defined: `port_filter` and
+    /// `ovs_hybrid_plug`. `port_filter` is a boolean indicating the networking
+    /// service provides port filtering features such as security group and/or
+    /// anti MAC/IP spoofing. `ovs_hybrid_plug` is a boolean used to inform an
+    /// API consumer like nova that the hybrid plugging strategy for OVS should
+    /// be used.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vif_details: Option<String>,
+
+    /// The type of which mechanism is used for the port. An API consumer like
+    /// nova can use this to determine an appropriate way to attach a device
+    /// (for example an interface of a virtual server) to the port. Available
+    /// values currently defined includes `ovs`, `bridge`, `macvtap`, `hw_veb`,
+    /// `hostdev_physical`, `vhostuser`, `distributed` and `other`. There are
+    /// also special values: `unbound` and `binding_failed`. `unbound` means
+    /// the port is not bound to a networking back-end. `binding_failed` means
+    /// an error that the port failed to be bound to a networking back-end.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vif_type: Option<String>,
+
+    /// The type of vNIC which this port should be attached to. This is used to
+    /// determine which mechanism driver(s) to be used to bind the port. The
+    /// valid values are `normal`, `macvtap`, `direct`, `baremetal`,
+    /// `direct-physical`, `virtio-forwarder`, `smart-nic` and
+    /// `remote-managed`. What type of vNIC is actually available depends on
+    /// deployments.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vnic_type: Option<String>,
+}
 
 impl BindingCommand {
     /// Perform command action
@@ -108,18 +166,15 @@ impl BindingCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
+        // Set Request.host data
+        ep_builder.host(&self.host);
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

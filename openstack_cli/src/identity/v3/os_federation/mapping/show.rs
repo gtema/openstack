@@ -85,6 +85,12 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     rules: Option<Value>,
+
+    /// Mapping schema version
+    ///
+    #[serde()]
+    #[structable(optional)]
+    schema_version: Option<String>,
 }
 
 impl MappingCommand {

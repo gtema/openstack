@@ -64,6 +64,12 @@ pub struct AllowedAddressPairs<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum HardwareOffloadType {
+    #[serde(rename = "switchdev")]
+    Switchdev,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum NumaAffinityPolicy {
     #[serde(rename = "legacy")]
     Legacy,
@@ -224,6 +230,10 @@ pub struct Port<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) fixed_ips: Option<Vec<FixedIps<'a>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) hardware_offload_type: Option<HardwareOffloadType>,
 
     /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
     /// (as defined in setup.cfg). To following values can be used to control

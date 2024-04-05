@@ -35,12 +35,12 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// id parameter for /v2.1/servers/{server_id}/migrations/{id}/action API
+    /// id parameter for /v2.1/servers/{server_id}/migrations/{id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for /v2.1/servers/{server_id}/migrations/{id} API
     ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,

@@ -33,8 +33,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-
-
 use clap::ValueEnum;
 use openstack_sdk::api::block_storage::v3::r#type::encryption::set;
 use openstack_sdk::api::QueryAsync;

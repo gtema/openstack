@@ -38,7 +38,8 @@ pub struct Request<'a> {
     #[builder(default)]
     offset: Option<i32>,
 
-    /// server_id parameter for /v2.1/servers/{server_id}/topology API
+    /// server_id parameter for
+    /// /v2.1/servers/{server_id}/os-volume_attachments/{id} API
     ///
     #[builder(default, setter(into))]
     server_id: Cow<'a, str>,

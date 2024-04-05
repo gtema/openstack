@@ -70,7 +70,8 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-flavor-access API
+    /// flavor_id parameter for /v2.1/flavors/{flavor_id}/os-extra_specs/{id}
+    /// API
     ///
     #[arg(
         help_heading = "Path parameters",

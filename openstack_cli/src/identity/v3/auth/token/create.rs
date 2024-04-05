@@ -39,6 +39,7 @@ use dialoguer::Password;
 use openstack_sdk::api::identity::v3::auth::token::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
+use std::fmt;
 use structable_derive::StructTable;
 
 /// Authenticates an identity and generates a token. Uses the password
@@ -390,6 +391,34 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseDomain {
+    id: Option<String>,
+    name: Option<String>,
+}
+
+impl fmt::Display for ResponseDomain {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "id={}",
+                self.id
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+            format!(
+                "name={}",
+                self.name
+                    .clone()
+                    .map(|v| v.to_string())
+                    .unwrap_or("".to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 
 impl TokenCommand {

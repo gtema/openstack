@@ -66,7 +66,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// id parameter for /v2.1/flavors/{id}/action API
+    /// id parameter for /v2.1/flavors/{id} API
     ///
     #[arg(
         help_heading = "Path parameters",
