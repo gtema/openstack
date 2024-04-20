@@ -23,6 +23,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
+* [`osc block-storage limit`↴](#osc-block-storage-limit)
+* [`osc block-storage limit list`↴](#osc-block-storage-limit-list)
 * [`osc block-storage message`↴](#osc-block-storage-message)
 * [`osc block-storage message delete`↴](#osc-block-storage-message-delete)
 * [`osc block-storage message list`↴](#osc-block-storage-message-list)
@@ -757,6 +759,7 @@ Block Storage (Volume) service (Cinder) commands
 ###### **Subcommands:**
 
 * `backup` — Backups
+* `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `resource-filter` — Resource filters
 * `type` — Block Storage VolumeType type commands
@@ -1001,6 +1004,28 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage limit`
+
+Limits (limits)
+
+An absolute limit value of -1 indicates that the absolute limit for the item is infinite.
+
+**Usage:** `osc block-storage limit <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Return all global and rate limit information
+
+
+
+## `osc block-storage limit list`
+
+Return all global and rate limit information
+
+**Usage:** `osc block-storage limit list`
 
 
 
