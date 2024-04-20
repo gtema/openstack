@@ -23,24 +23,14 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
-* [`osc block-storage volume`↴](#osc-block-storage-volume)
-* [`osc block-storage volume create353`↴](#osc-block-storage-volume-create353)
-* [`osc block-storage volume create347`↴](#osc-block-storage-volume-create347)
-* [`osc block-storage volume create313`↴](#osc-block-storage-volume-create313)
-* [`osc block-storage volume create30`↴](#osc-block-storage-volume-create30)
-* [`osc block-storage volume delete`↴](#osc-block-storage-volume-delete)
-* [`osc block-storage volume extend`↴](#osc-block-storage-volume-extend)
-* [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
-* [`osc block-storage volume metadata`↴](#osc-block-storage-volume-metadata)
-* [`osc block-storage volume metadata create`↴](#osc-block-storage-volume-metadata-create)
-* [`osc block-storage volume metadata delete`↴](#osc-block-storage-volume-metadata-delete)
-* [`osc block-storage volume metadata list`↴](#osc-block-storage-volume-metadata-list)
-* [`osc block-storage volume metadata replace`↴](#osc-block-storage-volume-metadata-replace)
-* [`osc block-storage volume metadata set`↴](#osc-block-storage-volume-metadata-set)
-* [`osc block-storage volume metadata show`↴](#osc-block-storage-volume-metadata-show)
-* [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
-* [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
-* [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
+* [`osc block-storage limit`↴](#osc-block-storage-limit)
+* [`osc block-storage limit list`↴](#osc-block-storage-limit-list)
+* [`osc block-storage message`↴](#osc-block-storage-message)
+* [`osc block-storage message delete`↴](#osc-block-storage-message-delete)
+* [`osc block-storage message list`↴](#osc-block-storage-message-list)
+* [`osc block-storage message show`↴](#osc-block-storage-message-show)
+* [`osc block-storage resource-filter`↴](#osc-block-storage-resource-filter)
+* [`osc block-storage resource-filter list`↴](#osc-block-storage-resource-filter-list)
 * [`osc block-storage type`↴](#osc-block-storage-type)
 * [`osc block-storage type add-project-access`↴](#osc-block-storage-type-add-project-access)
 * [`osc block-storage type create`↴](#osc-block-storage-type-create)
@@ -61,6 +51,24 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage type remove-project-access`↴](#osc-block-storage-type-remove-project-access)
 * [`osc block-storage type set`↴](#osc-block-storage-type-set)
 * [`osc block-storage type show`↴](#osc-block-storage-type-show)
+* [`osc block-storage volume`↴](#osc-block-storage-volume)
+* [`osc block-storage volume create353`↴](#osc-block-storage-volume-create353)
+* [`osc block-storage volume create347`↴](#osc-block-storage-volume-create347)
+* [`osc block-storage volume create313`↴](#osc-block-storage-volume-create313)
+* [`osc block-storage volume create30`↴](#osc-block-storage-volume-create30)
+* [`osc block-storage volume delete`↴](#osc-block-storage-volume-delete)
+* [`osc block-storage volume extend`↴](#osc-block-storage-volume-extend)
+* [`osc block-storage volume list`↴](#osc-block-storage-volume-list)
+* [`osc block-storage volume metadata`↴](#osc-block-storage-volume-metadata)
+* [`osc block-storage volume metadata create`↴](#osc-block-storage-volume-metadata-create)
+* [`osc block-storage volume metadata delete`↴](#osc-block-storage-volume-metadata-delete)
+* [`osc block-storage volume metadata list`↴](#osc-block-storage-volume-metadata-list)
+* [`osc block-storage volume metadata replace`↴](#osc-block-storage-volume-metadata-replace)
+* [`osc block-storage volume metadata set`↴](#osc-block-storage-volume-metadata-set)
+* [`osc block-storage volume metadata show`↴](#osc-block-storage-volume-metadata-show)
+* [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
+* [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
+* [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
 * [`osc catalog`↴](#osc-catalog)
 * [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
@@ -751,8 +759,11 @@ Block Storage (Volume) service (Cinder) commands
 ###### **Subcommands:**
 
 * `backup` — Backups
-* `volume` — Block Storage Volume commands
+* `limit` — Limits (limits)
+* `message` — Messages (messages)
+* `resource-filter` — Resource filters
 * `type` — Block Storage VolumeType type commands
+* `volume` — Block Storage Volume commands
 
 
 
@@ -993,6 +1004,432 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage limit`
+
+Limits (limits)
+
+An absolute limit value of -1 indicates that the absolute limit for the item is infinite.
+
+**Usage:** `osc block-storage limit <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Return all global and rate limit information
+
+
+
+## `osc block-storage limit list`
+
+Return all global and rate limit information
+
+**Usage:** `osc block-storage limit list`
+
+
+
+## `osc block-storage message`
+
+Messages (messages)
+
+Lists all, shows, and deletes messages. These are error messages generated by failed operations as a way to find out what happened when an asynchronous operation failed.
+
+**Usage:** `osc block-storage message <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Delete a message
+* `list` — Returns a list of messages, transformed through view builder
+* `show` — Return the given message
+
+
+
+## `osc block-storage message delete`
+
+Delete a message
+
+**Usage:** `osc block-storage message delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/messages/{id} API
+
+
+
+## `osc block-storage message list`
+
+Returns a list of messages, transformed through view builder
+
+**Usage:** `osc block-storage message list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage message show`
+
+Return the given message
+
+**Usage:** `osc block-storage message show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/messages/{id} API
+
+
+
+## `osc block-storage resource-filter`
+
+Resource filters
+
+Lists all resource filters, available since microversion 3.33.
+
+**Usage:** `osc block-storage resource-filter <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Return a list of resource filters
+
+
+
+## `osc block-storage resource-filter list`
+
+Return a list of resource filters
+
+**Usage:** `osc block-storage resource-filter list`
+
+
+
+## `osc block-storage type`
+
+Block Storage VolumeType type commands
+
+To create an environment with multiple-storage back ends, you must specify a volume type. The API spawns Block Storage volume back ends as children to cinder-volume, and keys them from a unique queue. The API names the back ends cinder-volume.HOST.BACKEND. For example, cinder-volume.ubuntu.lvmdriver. When you create a volume, the scheduler chooses an appropriate back end for the volume type to handle the request.
+
+For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
+
+**Usage:** `osc block-storage type <COMMAND>`
+
+###### **Subcommands:**
+
+* `add-project-access` — Command without description in OpenAPI
+* `create` — Command without description in OpenAPI
+* `delete` — Deletes an existing volume type
+* `encryption` — Volume Type Encryption commands
+* `extraspecs` — Type extra specs
+* `list` — Returns the list of volume types
+* `remove-project-access` — Command without description in OpenAPI
+* `set` — Command without description in OpenAPI
+* `show` — Return a single volume type item
+
+
+
+## `osc block-storage type add-project-access`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage type add-project-access --project <PROJECT> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/types/{id}/action API
+
+###### **Options:**
+
+* `--project <PROJECT>`
+
+
+
+## `osc block-storage type create`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage type create [OPTIONS] --name <NAME> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/types/{id}/action API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--extra-specs <key=value>`
+* `--name <NAME>`
+* `--os-volume-type-access-is-public <OS_VOLUME_TYPE_ACCESS_IS_PUBLIC>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc block-storage type delete`
+
+Deletes an existing volume type
+
+**Usage:** `osc block-storage type delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/types/{id} API
+
+
+
+## `osc block-storage type encryption`
+
+Volume Type Encryption commands
+
+Block Storage volume type assignment provides scheduling to a specific back-end, and can be used to specify actionable information for a back-end storage device.
+
+**Usage:** `osc block-storage type encryption <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create encryption specs for an existing volume type
+* `delete` — Delete encryption specs for a given volume type
+* `list` — Returns the encryption specs for a given volume type
+* `set` — Update encryption specs for a given volume type
+* `show` — Return a single encryption item
+
+
+
+## `osc block-storage type encryption create`
+
+Create encryption specs for an existing volume type
+
+**Usage:** `osc block-storage type encryption create [OPTIONS] --control-location <CONTROL_LOCATION> --provider <PROVIDER> <TYPE_ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+
+###### **Options:**
+
+* `--cipher <CIPHER>`
+* `--control-location <CONTROL_LOCATION>`
+
+  Possible values: `back-end`, `front-end`
+
+* `--key-size <KEY_SIZE>`
+* `--provider <PROVIDER>`
+
+
+
+## `osc block-storage type encryption delete`
+
+Delete encryption specs for a given volume type
+
+**Usage:** `osc block-storage type encryption delete <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
+
+
+
+## `osc block-storage type encryption list`
+
+Returns the encryption specs for a given volume type
+
+**Usage:** `osc block-storage type encryption list <TYPE_ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+
+
+
+## `osc block-storage type encryption set`
+
+Update encryption specs for a given volume type
+
+**Usage:** `osc block-storage type encryption set [OPTIONS] <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
+
+###### **Options:**
+
+* `--cipher <CIPHER>`
+* `--control-location <CONTROL_LOCATION>`
+
+  Possible values: `back-end`, `front-end`
+
+* `--key-size <KEY_SIZE>`
+* `--provider <PROVIDER>`
+
+
+
+## `osc block-storage type encryption show`
+
+Return a single encryption item
+
+**Usage:** `osc block-storage type encryption show <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
+
+
+
+## `osc block-storage type extraspecs`
+
+Type extra specs
+
+**Usage:** `osc block-storage type extraspecs <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Command without description in OpenAPI
+* `delete` — Deletes an existing extra spec
+* `list` — Returns the list of extra specs for a given volume type
+* `show` — Return a single extra spec item
+* `set` — Command without description in OpenAPI
+
+
+
+## `osc block-storage type extraspecs create`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage type extraspecs create [OPTIONS] <TYPE_ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
+
+###### **Options:**
+
+* `--extra-specs <key=value>`
+
+
+
+## `osc block-storage type extraspecs delete`
+
+Deletes an existing extra spec
+
+**Usage:** `osc block-storage type extraspecs delete <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
+
+
+
+## `osc block-storage type extraspecs list`
+
+Returns the list of extra specs for a given volume type
+
+**Usage:** `osc block-storage type extraspecs list <TYPE_ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
+
+
+
+## `osc block-storage type extraspecs show`
+
+Return a single extra spec item
+
+**Usage:** `osc block-storage type extraspecs show <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
+
+
+
+## `osc block-storage type extraspecs set`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage type extraspecs set [OPTIONS] <TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
+* `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc block-storage type list`
+
+Returns the list of volume types
+
+**Usage:** `osc block-storage type list`
+
+
+
+## `osc block-storage type remove-project-access`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage type remove-project-access --project <PROJECT> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/types/{id}/action API
+
+###### **Options:**
+
+* `--project <PROJECT>`
+
+
+
+## `osc block-storage type set`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage type set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/types/{id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--is-public <IS_PUBLIC>`
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>`
+
+
+
+## `osc block-storage type show`
+
+Return a single volume type item
+
+**Usage:** `osc block-storage type show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/types/{id} API
 
 
 
@@ -1367,325 +1804,6 @@ Return data about the given volume
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/volumes/{id} API
-
-
-
-## `osc block-storage type`
-
-Block Storage VolumeType type commands
-
-To create an environment with multiple-storage back ends, you must specify a volume type. The API spawns Block Storage volume back ends as children to cinder-volume, and keys them from a unique queue. The API names the back ends cinder-volume.HOST.BACKEND. For example, cinder-volume.ubuntu.lvmdriver. When you create a volume, the scheduler chooses an appropriate back end for the volume type to handle the request.
-
-For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
-
-**Usage:** `osc block-storage type <COMMAND>`
-
-###### **Subcommands:**
-
-* `add-project-access` — Command without description in OpenAPI
-* `create` — Command without description in OpenAPI
-* `delete` — Deletes an existing volume type
-* `encryption` — Volume Type Encryption commands
-* `extraspecs` — Type extra specs
-* `list` — Returns the list of volume types
-* `remove-project-access` — Command without description in OpenAPI
-* `set` — Command without description in OpenAPI
-* `show` — Return a single volume type item
-
-
-
-## `osc block-storage type add-project-access`
-
-Command without description in OpenAPI
-
-**Usage:** `osc block-storage type add-project-access --project <PROJECT> <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/types/{id}/action API
-
-###### **Options:**
-
-* `--project <PROJECT>`
-
-
-
-## `osc block-storage type create`
-
-Command without description in OpenAPI
-
-**Usage:** `osc block-storage type create [OPTIONS] --name <NAME> <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/types/{id}/action API
-
-###### **Options:**
-
-* `--description <DESCRIPTION>`
-* `--extra-specs <key=value>`
-* `--name <NAME>`
-* `--os-volume-type-access-is-public <OS_VOLUME_TYPE_ACCESS_IS_PUBLIC>`
-
-  Possible values: `true`, `false`
-
-
-
-
-## `osc block-storage type delete`
-
-Deletes an existing volume type
-
-**Usage:** `osc block-storage type delete <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/types/{id} API
-
-
-
-## `osc block-storage type encryption`
-
-Volume Type Encryption commands
-
-Block Storage volume type assignment provides scheduling to a specific back-end, and can be used to specify actionable information for a back-end storage device.
-
-**Usage:** `osc block-storage type encryption <COMMAND>`
-
-###### **Subcommands:**
-
-* `create` — Create encryption specs for an existing volume type
-* `delete` — Delete encryption specs for a given volume type
-* `list` — Returns the encryption specs for a given volume type
-* `set` — Update encryption specs for a given volume type
-* `show` — Return a single encryption item
-
-
-
-## `osc block-storage type encryption create`
-
-Create encryption specs for an existing volume type
-
-**Usage:** `osc block-storage type encryption create [OPTIONS] --control-location <CONTROL_LOCATION> --provider <PROVIDER> <TYPE_ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
-
-###### **Options:**
-
-* `--cipher <CIPHER>`
-* `--control-location <CONTROL_LOCATION>`
-
-  Possible values: `back-end`, `front-end`
-
-* `--key-size <KEY_SIZE>`
-* `--provider <PROVIDER>`
-
-
-
-## `osc block-storage type encryption delete`
-
-Delete encryption specs for a given volume type
-
-**Usage:** `osc block-storage type encryption delete <TYPE_ID> <ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
-* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
-
-
-
-## `osc block-storage type encryption list`
-
-Returns the encryption specs for a given volume type
-
-**Usage:** `osc block-storage type encryption list <TYPE_ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
-
-
-
-## `osc block-storage type encryption set`
-
-Update encryption specs for a given volume type
-
-**Usage:** `osc block-storage type encryption set [OPTIONS] <TYPE_ID> <ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
-* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
-
-###### **Options:**
-
-* `--cipher <CIPHER>`
-* `--control-location <CONTROL_LOCATION>`
-
-  Possible values: `back-end`, `front-end`
-
-* `--key-size <KEY_SIZE>`
-* `--provider <PROVIDER>`
-
-
-
-## `osc block-storage type encryption show`
-
-Return a single encryption item
-
-**Usage:** `osc block-storage type encryption show <TYPE_ID> <ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/encryption/{id} API
-* `<ID>` — id parameter for /v3/types/{type_id}/encryption/{id} API
-
-
-
-## `osc block-storage type extraspecs`
-
-Type extra specs
-
-**Usage:** `osc block-storage type extraspecs <COMMAND>`
-
-###### **Subcommands:**
-
-* `create` — Command without description in OpenAPI
-* `delete` — Deletes an existing extra spec
-* `list` — Returns the list of extra specs for a given volume type
-* `show` — Return a single extra spec item
-* `set` — Command without description in OpenAPI
-
-
-
-## `osc block-storage type extraspecs create`
-
-Command without description in OpenAPI
-
-**Usage:** `osc block-storage type extraspecs create [OPTIONS] <TYPE_ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
-
-###### **Options:**
-
-* `--extra-specs <key=value>`
-
-
-
-## `osc block-storage type extraspecs delete`
-
-Deletes an existing extra spec
-
-**Usage:** `osc block-storage type extraspecs delete <TYPE_ID> <ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
-* `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
-
-
-
-## `osc block-storage type extraspecs list`
-
-Returns the list of extra specs for a given volume type
-
-**Usage:** `osc block-storage type extraspecs list <TYPE_ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
-
-
-
-## `osc block-storage type extraspecs show`
-
-Return a single extra spec item
-
-**Usage:** `osc block-storage type extraspecs show <TYPE_ID> <ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
-* `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
-
-
-
-## `osc block-storage type extraspecs set`
-
-Command without description in OpenAPI
-
-**Usage:** `osc block-storage type extraspecs set [OPTIONS] <TYPE_ID> <ID>`
-
-###### **Arguments:**
-
-* `<TYPE_ID>` — type_id parameter for /v3/types/{type_id}/extra_specs/{id} API
-* `<ID>` — id parameter for /v3/types/{type_id}/extra_specs/{id} API
-
-###### **Options:**
-
-* `--property <key=value>`
-
-
-
-## `osc block-storage type list`
-
-Returns the list of volume types
-
-**Usage:** `osc block-storage type list`
-
-
-
-## `osc block-storage type remove-project-access`
-
-Command without description in OpenAPI
-
-**Usage:** `osc block-storage type remove-project-access --project <PROJECT> <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/types/{id}/action API
-
-###### **Options:**
-
-* `--project <PROJECT>`
-
-
-
-## `osc block-storage type set`
-
-Command without description in OpenAPI
-
-**Usage:** `osc block-storage type set [OPTIONS] <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/types/{id} API
-
-###### **Options:**
-
-* `--description <DESCRIPTION>`
-* `--is-public <IS_PUBLIC>`
-
-  Possible values: `true`, `false`
-
-* `--name <NAME>`
-
-
-
-## `osc block-storage type show`
-
-Return a single volume type item
-
-**Usage:** `osc block-storage type show <ID>`
-
-###### **Arguments:**
-
-* `<ID>` — id parameter for /v3/types/{id} API
 
 
 

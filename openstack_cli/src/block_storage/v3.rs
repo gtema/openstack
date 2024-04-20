@@ -15,11 +15,14 @@
 //! Block storage v3 commands
 use clap::{Parser, Subcommand};
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
 mod backup;
+mod limit;
+mod message;
+mod resource_filter;
 mod r#type;
 mod volume;
 
@@ -36,8 +39,11 @@ pub struct BlockStorageCommand {
 #[derive(Subcommand)]
 pub enum BlockStorageCommands {
     Backup(backup::BackupCommand),
-    Volume(volume::VolumeCommand),
+    Limit(limit::LimitCommand),
+    Message(message::MessageCommand),
+    ResourceFilter(resource_filter::ResourceFilterCommand),
     Type(r#type::VolumeTypeCommand),
+    Volume(volume::VolumeCommand),
 }
 
 impl BlockStorageCommand {
@@ -47,10 +53,19 @@ impl BlockStorageCommand {
         parsed_args: &Cli,
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
+        session
+            .discover_service_endpoint(&ServiceType::BlockStorage)
+            .await?;
+
         match &self.command {
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
-            BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::ResourceFilter(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             BlockStorageCommands::Type(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
