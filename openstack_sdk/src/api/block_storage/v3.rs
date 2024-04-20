@@ -14,5 +14,6 @@
 
 //! `Block_storage` Service bindings
 pub mod backup;
+pub mod resource_filter;
 pub mod r#type;
 pub mod volume;
