@@ -13,6 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 mod backup;
+mod message;
 mod resource_filter;
 mod r#type;
 mod volume;
