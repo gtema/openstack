@@ -13,6 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! `Block_storage` Service bindings
+pub mod attachment;
 pub mod backup;
 pub mod limit;
 pub mod message;

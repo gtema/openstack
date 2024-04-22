@@ -19,6 +19,7 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
+mod attachment;
 mod backup;
 mod limit;
 mod message;
@@ -38,6 +39,7 @@ pub struct BlockStorageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum BlockStorageCommands {
+    Attachment(attachment::AttachmentCommand),
     Backup(backup::BackupCommand),
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
@@ -58,6 +60,7 @@ impl BlockStorageCommand {
             .await?;
 
         match &self.command {
+            BlockStorageCommands::Attachment(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
