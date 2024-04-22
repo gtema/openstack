@@ -24,6 +24,7 @@ mod backup;
 mod limit;
 mod message;
 mod resource_filter;
+mod snapshot;
 mod r#type;
 mod volume;
 
@@ -43,6 +44,7 @@ pub enum BlockStorageCommands {
     Backup(backup::BackupCommand),
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
+    Snapshot(snapshot::SnapshotCommand),
     ResourceFilter(resource_filter::ResourceFilterCommand),
     Type(r#type::VolumeTypeCommand),
     Volume(volume::VolumeCommand),
@@ -64,6 +66,7 @@ impl BlockStorageCommand {
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::ResourceFilter(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
