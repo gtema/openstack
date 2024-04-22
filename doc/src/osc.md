@@ -10,6 +10,14 @@ This document contains the help content for the `osc` command-line program.
 * [`osc auth login`↴](#osc-auth-login)
 * [`osc auth show`↴](#osc-auth-show)
 * [`osc block-storage`↴](#osc-block-storage)
+* [`osc block-storage attachment`↴](#osc-block-storage-attachment)
+* [`osc block-storage attachment complete`↴](#osc-block-storage-attachment-complete)
+* [`osc block-storage attachment create354`↴](#osc-block-storage-attachment-create354)
+* [`osc block-storage attachment create327`↴](#osc-block-storage-attachment-create327)
+* [`osc block-storage attachment delete`↴](#osc-block-storage-attachment-delete)
+* [`osc block-storage attachment list`↴](#osc-block-storage-attachment-list)
+* [`osc block-storage attachment set327`↴](#osc-block-storage-attachment-set327)
+* [`osc block-storage attachment show`↴](#osc-block-storage-attachment-show)
 * [`osc block-storage backup`↴](#osc-block-storage-backup)
 * [`osc block-storage backup create351`↴](#osc-block-storage-backup-create351)
 * [`osc block-storage backup create343`↴](#osc-block-storage-backup-create343)
@@ -758,12 +766,218 @@ Block Storage (Volume) service (Cinder) commands
 
 ###### **Subcommands:**
 
+* `attachment` — Attachments (attachments)
 * `backup` — Backups
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `resource-filter` — Resource filters
 * `type` — Block Storage VolumeType type commands
 * `volume` — Block Storage Volume commands
+
+
+
+## `osc block-storage attachment`
+
+Attachments (attachments)
+
+Lists all, lists all with details, shows details for, creates, and deletes attachment.
+
+Note
+
+Everything except for Complete attachment is new as of the 3.27 microversion. Complete attachment is new as of the 3.44 microversion.
+
+When you create, list, update, or delete attachment, the possible status values are:
+
+- attached: A volume is attached for the attachment.
+
+- attaching: A volume is attaching for the attachment.
+
+- detached: A volume is detached for the attachment.
+
+- reserved: A volume is reserved for the attachment.
+
+- error_attaching: A volume is error attaching for the attachment.
+
+- error_detaching: A volume is error detaching for the attachment.
+
+- deleted: The attachment is deleted.
+
+**Usage:** `osc block-storage attachment <COMMAND>`
+
+###### **Subcommands:**
+
+* `complete` — Empty body for os-complete action
+* `create354` — Create an attachment
+* `create327` — Create an attachment
+* `delete` — Delete an attachment
+* `list` — Return a detailed list of attachments
+* `set327` — Update an attachment record
+* `show` — Return data about the given attachment
+
+
+
+## `osc block-storage attachment complete`
+
+Empty body for os-complete action
+
+**Usage:** `osc block-storage attachment complete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/attachments/{id}/action API
+
+
+
+## `osc block-storage attachment create354`
+
+Create an attachment.
+
+This method can be used to create an empty attachment (reserve) or to create and initialize a volume attachment based on the provided input parameters.
+
+If the caller does not yet have the connector information but needs to reserve an attachment for the volume (ie Nova BootFromVolume) the create can be called with just the volume-uuid and the server identifier. This will reserve an attachment, mark the volume as reserved and prevent any new attachment_create calls from being made until the attachment is updated (completed).
+
+The alternative is that the connection can be reserved and initialized all at once with a single call if the caller has all of the required information (connector data) at the time of the call.
+
+NOTE: In Nova terms server == instance, the server_id parameter referenced below is the UUID of the Instance, for non-nova consumers this can be a server UUID or some other arbitrary unique identifier.
+
+Starting from microversion 3.54, we can pass the attach mode as argument in the request body.
+
+Expected format of the input parameter 'body':
+
+```json { "attachment": { "volume_uuid": "volume-uuid", "instance_uuid": "null|nova-server-uuid", "connector": "null|<connector-object>", "mode": "null|rw|ro" } } ```
+
+Example connector:
+
+```json { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "null|rw|ro" } } ```
+
+NOTE all that's required for a reserve is volume_uuid and an instance_uuid.
+
+returns: A summary view of the attachment object
+
+**Usage:** `osc block-storage attachment create354 [OPTIONS] --volume-uuid <VOLUME_UUID>`
+
+###### **Options:**
+
+* `--connector <key=value>` — The `connector` object
+* `--instance-uuid <INSTANCE_UUID>` — The UUID of the volume which the attachment belongs to
+* `--mode <MODE>` — The attach mode of attachment, acceptable values are read-only (‘ro’) and read-and-write (‘rw’)
+
+  Possible values: `ro`, `rw`
+
+* `--volume-uuid <VOLUME_UUID>` — The UUID of the volume which the attachment belongs to
+
+
+
+## `osc block-storage attachment create327`
+
+Create an attachment.
+
+This method can be used to create an empty attachment (reserve) or to create and initialize a volume attachment based on the provided input parameters.
+
+If the caller does not yet have the connector information but needs to reserve an attachment for the volume (ie Nova BootFromVolume) the create can be called with just the volume-uuid and the server identifier. This will reserve an attachment, mark the volume as reserved and prevent any new attachment_create calls from being made until the attachment is updated (completed).
+
+The alternative is that the connection can be reserved and initialized all at once with a single call if the caller has all of the required information (connector data) at the time of the call.
+
+NOTE: In Nova terms server == instance, the server_id parameter referenced below is the UUID of the Instance, for non-nova consumers this can be a server UUID or some other arbitrary unique identifier.
+
+Starting from microversion 3.54, we can pass the attach mode as argument in the request body.
+
+Expected format of the input parameter 'body':
+
+```json { "attachment": { "volume_uuid": "volume-uuid", "instance_uuid": "null|nova-server-uuid", "connector": "null|<connector-object>", "mode": "null|rw|ro" } } ```
+
+Example connector:
+
+```json { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "null|rw|ro" } } ```
+
+NOTE all that's required for a reserve is volume_uuid and an instance_uuid.
+
+returns: A summary view of the attachment object
+
+**Usage:** `osc block-storage attachment create327 [OPTIONS] --volume-uuid <VOLUME_UUID>`
+
+###### **Options:**
+
+* `--connector <key=value>` — The `connector` object
+* `--instance-uuid <INSTANCE_UUID>` — The UUID of the volume which the attachment belongs to
+* `--volume-uuid <VOLUME_UUID>` — The UUID of the volume which the attachment belongs to
+
+
+
+## `osc block-storage attachment delete`
+
+Delete an attachment.
+
+Disconnects/Deletes the specified attachment, returns a list of any known shared attachment-id's for the effected backend device.
+
+returns: A summary list of any attachments sharing this connection
+
+**Usage:** `osc block-storage attachment delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/attachments/{id} API
+
+
+
+## `osc block-storage attachment list`
+
+Return a detailed list of attachments
+
+**Usage:** `osc block-storage attachment list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenans <ALL_TENANS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage attachment set327`
+
+Update an attachment record.
+
+Update a reserved attachment record with connector information and set up the appropriate connection_info from the driver.
+
+Expected format of the input parameter 'body':
+
+```json { "attachment": { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "None|rw|ro" } } } ```
+
+**Usage:** `osc block-storage attachment set327 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/attachments/{id} API
+
+###### **Options:**
+
+* `--connector <key=value>`
+
+
+
+## `osc block-storage attachment show`
+
+Return data about the given attachment
+
+**Usage:** `osc block-storage attachment show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/attachments/{id} API
 
 
 
