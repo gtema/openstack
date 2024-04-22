@@ -37,6 +37,16 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage message delete`↴](#osc-block-storage-message-delete)
 * [`osc block-storage message list`↴](#osc-block-storage-message-list)
 * [`osc block-storage message show`↴](#osc-block-storage-message-show)
+* [`osc block-storage snapshot`↴](#osc-block-storage-snapshot)
+* [`osc block-storage snapshot create`↴](#osc-block-storage-snapshot-create)
+* [`osc block-storage snapshot delete`↴](#osc-block-storage-snapshot-delete)
+* [`osc block-storage snapshot force-delete`↴](#osc-block-storage-snapshot-force-delete)
+* [`osc block-storage snapshot list`↴](#osc-block-storage-snapshot-list)
+* [`osc block-storage snapshot reset-status`↴](#osc-block-storage-snapshot-reset-status)
+* [`osc block-storage snapshot set`↴](#osc-block-storage-snapshot-set)
+* [`osc block-storage snapshot show`↴](#osc-block-storage-snapshot-show)
+* [`osc block-storage snapshot unmanage`↴](#osc-block-storage-snapshot-unmanage)
+* [`osc block-storage snapshot update-status`↴](#osc-block-storage-snapshot-update-status)
 * [`osc block-storage resource-filter`↴](#osc-block-storage-resource-filter)
 * [`osc block-storage resource-filter list`↴](#osc-block-storage-resource-filter-list)
 * [`osc block-storage type`↴](#osc-block-storage-type)
@@ -770,6 +780,7 @@ Block Storage (Volume) service (Cinder) commands
 * `backup` — Backups
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
+* `snapshot` — Volume snapshots (snapshots)
 * `resource-filter` — Resource filters
 * `type` — Block Storage VolumeType type commands
 * `volume` — Block Storage Volume commands
@@ -1303,6 +1314,199 @@ Return the given message
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/messages/{id} API
+
+
+
+## `osc block-storage snapshot`
+
+Volume snapshots (snapshots)
+
+A snapshot is a point-in-time copy of the data that a volume contains.
+
+When you create, list, or delete snapshots, these status values are possible:
+
+- creating: The snapshot is being created.
+
+- available: The snapshot is ready to use.
+
+- backing-up: The snapshot is being backed up.
+
+- deleting: The snapshot is being deleted.
+
+- error: A snapshot creation error occurred.
+
+- deleted: The snapshot has been deleted.
+
+- unmanaging: The snapshot is being unmanaged.
+
+- restoring: The snapshot is being restored to a volume.
+
+- error_deleting: A snapshot deletion error occurred.
+
+**Usage:** `osc block-storage snapshot <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Creates a new snapshot
+* `delete` — Delete a snapshot
+* `force-delete` — Empty body for os-force_delete action
+* `list` — Returns a detailed list of snapshots
+* `reset-status` — Empty body for os-reset_status action
+* `set` — Update a snapshot
+* `show` — Return data about the given snapshot
+* `unmanage` — Empty body for os-unmanage action
+* `update-status` — Command without description in OpenAPI
+
+
+
+## `osc block-storage snapshot create`
+
+Creates a new snapshot
+
+**Usage:** `osc block-storage snapshot create [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — A description for the snapshot. Default is `None`
+* `--display-name <DISPLAY_NAME>` — The name of the snapshot
+* `--force <FORCE>` — Indicates whether to snapshot, even if the volume is attached. Default is `false`. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--metadata <key=value>` — One or more metadata key and value pairs for the snapshot
+* `--name <NAME>` — The name of the snapshot
+* `--volume-id <VOLUME_ID>` — The UUID of the volume
+
+
+
+## `osc block-storage snapshot delete`
+
+Delete a snapshot
+
+**Usage:** `osc block-storage snapshot delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id} API
+
+
+
+## `osc block-storage snapshot force-delete`
+
+Empty body for os-force_delete action
+
+**Usage:** `osc block-storage snapshot force-delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id}/action API
+
+
+
+## `osc block-storage snapshot list`
+
+Returns a detailed list of snapshots
+
+**Usage:** `osc block-storage snapshot list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenans <ALL_TENANS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--consumes-quota <CONSUMES_QUOTA>` — Filters results by consumes_quota field. Resources that don’t use quotas are usually temporary internal resources created to perform an operation. Default is to not filter by it. Filtering by this option may not be always possible in a cloud, see List Resource Filters to determine whether this filter is available in your cloud
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--with-count <WITH_COUNT>` — Whether to show count in API response or not, default is False
+
+  Possible values: `true`, `false`
+
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage snapshot reset-status`
+
+Empty body for os-reset_status action
+
+**Usage:** `osc block-storage snapshot reset-status <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id}/action API
+
+
+
+## `osc block-storage snapshot set`
+
+Update a snapshot
+
+**Usage:** `osc block-storage snapshot set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--display-description <DISPLAY_DESCRIPTION>`
+* `--display-name <DISPLAY_NAME>`
+* `--name <NAME>`
+
+
+
+## `osc block-storage snapshot show`
+
+Return data about the given snapshot
+
+**Usage:** `osc block-storage snapshot show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id} API
+
+
+
+## `osc block-storage snapshot unmanage`
+
+Empty body for os-unmanage action
+
+**Usage:** `osc block-storage snapshot unmanage <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id}/action API
+
+
+
+## `osc block-storage snapshot update-status`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage snapshot update-status [OPTIONS] --status <STATUS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/snapshots/{id}/action API
+
+###### **Options:**
+
+* `--progress <PROGRESS>`
+* `--status <STATUS>`
 
 
 

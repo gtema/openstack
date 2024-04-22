@@ -17,6 +17,7 @@ mod backup;
 mod limit;
 mod message;
 mod resource_filter;
+mod snapshot;
 mod r#type;
 mod volume;
 
