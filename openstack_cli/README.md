@@ -13,6 +13,9 @@ from one tool to another.
 
 ## Features
 
+- Commands implementation code is being produced by
+  (codegenerator)[https://opendev.org/openstack/codegenerator] what means there
+  is no maintenance required for that code.
 - `osc api` as an API wrapper allowing user to perform any direct API call
   specifying service type, url, method and payload. This can be used for
   example when certain resource is not currently implemented natively.
