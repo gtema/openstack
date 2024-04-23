@@ -14,6 +14,7 @@
 
 mod attachment;
 mod backup;
+mod group;
 mod limit;
 mod message;
 mod resource_filter;
