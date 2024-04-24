@@ -7,7 +7,10 @@ interfaces.
 
 API bindings are generated from the OpenAPI specs of corresponding services.
 That means that those are only wrapping the API and usually not providing
-additional convenience features.
+additional convenience features. The major benefit is that no maintenance
+efforts are required for the code being generated. Once OpenStack service
+updates OpenAPI spec for the integrated resources the changes would be
+immediately available on the next regeneration.
 
 ## Features
 
