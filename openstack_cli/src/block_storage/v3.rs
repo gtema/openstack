@@ -22,6 +22,7 @@ use crate::{Cli, OpenStackCliError};
 mod attachment;
 mod backup;
 mod group;
+mod group_snapshot;
 mod limit;
 mod message;
 mod resource_filter;
@@ -44,6 +45,7 @@ pub enum BlockStorageCommands {
     Attachment(attachment::AttachmentCommand),
     Backup(backup::BackupCommand),
     Group(group::GroupCommand),
+    GroupSnapshot(group_snapshot::GroupSnapshotCommand),
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
     Snapshot(snapshot::SnapshotCommand),
@@ -67,6 +69,7 @@ impl BlockStorageCommand {
             BlockStorageCommands::Attachment(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::GroupSnapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,

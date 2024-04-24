@@ -43,6 +43,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage group reset-status320`↴](#osc-block-storage-group-reset-status320)
 * [`osc block-storage group set313`↴](#osc-block-storage-group-set313)
 * [`osc block-storage group show`↴](#osc-block-storage-group-show)
+* [`osc block-storage group-snapshot`↴](#osc-block-storage-group-snapshot)
+* [`osc block-storage group-snapshot create314`↴](#osc-block-storage-group-snapshot-create314)
+* [`osc block-storage group-snapshot delete`↴](#osc-block-storage-group-snapshot-delete)
+* [`osc block-storage group-snapshot list`↴](#osc-block-storage-group-snapshot-list)
+* [`osc block-storage group-snapshot reset-status319`↴](#osc-block-storage-group-snapshot-reset-status319)
+* [`osc block-storage group-snapshot show`↴](#osc-block-storage-group-snapshot-show)
 * [`osc block-storage limit`↴](#osc-block-storage-limit)
 * [`osc block-storage limit list`↴](#osc-block-storage-limit-list)
 * [`osc block-storage message`↴](#osc-block-storage-message)
@@ -791,6 +797,7 @@ Block Storage (Volume) service (Cinder) commands
 * `attachment` — Attachments (attachments)
 * `backup` — Backups
 * `group` — Generic volume groups (groups)
+* `group-snapshot` — GroupSnapshot snapshots (group_snapshots)
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `snapshot` — Volume snapshots (snapshots)
@@ -1441,6 +1448,102 @@ Return data about the given group
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/groups/{id} API
+
+
+
+## `osc block-storage group-snapshot`
+
+GroupSnapshot snapshots (group_snapshots)
+
+Lists all, lists all with details, shows details for, creates, and deletes group snapshots.
+
+**Usage:** `osc block-storage group-snapshot <COMMAND>`
+
+###### **Subcommands:**
+
+* `create314` — Create a new group_snapshot
+* `delete` — Delete a group_snapshot
+* `list` — Returns a detailed list of group_snapshots
+* `reset-status319` — Command without description in OpenAPI
+* `show` — Return data about the given group_snapshot
+
+
+
+## `osc block-storage group-snapshot create314`
+
+Create a new group_snapshot
+
+**Usage:** `osc block-storage group-snapshot create314 [OPTIONS] --group-id <GROUP_ID>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The group snapshot description
+* `--group-id <GROUP_ID>` — The ID of the group
+* `--name <NAME>` — The group snapshot name
+
+
+
+## `osc block-storage group-snapshot delete`
+
+Delete a group_snapshot
+
+**Usage:** `osc block-storage group-snapshot delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/group_snapshots/{id} API
+
+
+
+## `osc block-storage group-snapshot list`
+
+Returns a detailed list of group_snapshots
+
+**Usage:** `osc block-storage group-snapshot list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage group-snapshot reset-status319`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group-snapshot reset-status319 --status <STATUS> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/group_snapshots/{id}/action API
+
+###### **Options:**
+
+* `--status <STATUS>`
+
+
+
+## `osc block-storage group-snapshot show`
+
+Return data about the given group_snapshot
+
+**Usage:** `osc block-storage group-snapshot show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/group_snapshots/{id} API
 
 
 
