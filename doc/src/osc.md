@@ -31,6 +31,18 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
+* [`osc block-storage group`↴](#osc-block-storage-group)
+* [`osc block-storage group create313`↴](#osc-block-storage-group-create313)
+* [`osc block-storage group create-from-src314`↴](#osc-block-storage-group-create-from-src314)
+* [`osc block-storage group delete313`↴](#osc-block-storage-group-delete313)
+* [`osc block-storage group disable-replication338`↴](#osc-block-storage-group-disable-replication338)
+* [`osc block-storage group enable-replication338`↴](#osc-block-storage-group-enable-replication338)
+* [`osc block-storage group failover-replication338`↴](#osc-block-storage-group-failover-replication338)
+* [`osc block-storage group list`↴](#osc-block-storage-group-list)
+* [`osc block-storage group list-replication-targets338`↴](#osc-block-storage-group-list-replication-targets338)
+* [`osc block-storage group reset-status320`↴](#osc-block-storage-group-reset-status320)
+* [`osc block-storage group set313`↴](#osc-block-storage-group-set313)
+* [`osc block-storage group show`↴](#osc-block-storage-group-show)
 * [`osc block-storage limit`↴](#osc-block-storage-limit)
 * [`osc block-storage limit list`↴](#osc-block-storage-limit-list)
 * [`osc block-storage message`↴](#osc-block-storage-message)
@@ -778,6 +790,7 @@ Block Storage (Volume) service (Cinder) commands
 
 * `attachment` — Attachments (attachments)
 * `backup` — Backups
+* `group` — Generic volume groups (groups)
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `snapshot` — Volume snapshots (snapshots)
@@ -1229,6 +1242,205 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage group`
+
+Generic volume groups (groups)
+
+Generic volume groups enable you to create a group of volumes and manage them together.
+
+How is generic volume groups different from consistency groups? Currently consistency groups in cinder only support consistent group snapshot. It cannot be extended easily to serve other purposes. A project may want to put volumes used in the same application together in a group so that it is easier to manage them together, and this group of volumes may or may not support consistent group snapshot. Generic volume group is introduced to solve this problem. By decoupling the tight relationship between the group construct and the consistency concept, generic volume groups can be extended to support other features in the future.
+
+**Usage:** `osc block-storage group <COMMAND>`
+
+###### **Subcommands:**
+
+* `create313` — Create a new group
+* `create-from-src314` — Command without description in OpenAPI
+* `delete313` — Command without description in OpenAPI
+* `disable-replication338` — Command without description in OpenAPI
+* `enable-replication338` — Command without description in OpenAPI
+* `failover-replication338` — Command without description in OpenAPI
+* `list` — Returns a detailed list of groups
+* `list-replication-targets338` — Command without description in OpenAPI
+* `reset-status320` — Command without description in OpenAPI
+* `set313` — Update the group
+* `show` — Return data about the given group
+
+
+
+## `osc block-storage group create313`
+
+Create a new group
+
+**Usage:** `osc block-storage group create313 [OPTIONS] --group-type <GROUP_TYPE>`
+
+###### **Options:**
+
+* `--availability-zone <AVAILABILITY_ZONE>` — The name of the availability zone
+* `--description <DESCRIPTION>` — The group description
+* `--group-type <GROUP_TYPE>` — The group type ID
+* `--name <NAME>` — The group name
+* `--volume-types <VOLUME_TYPES>` — The list of volume types. In an environment with multiple-storage back ends, the scheduler determines where to send the volume based on the volume type. For information about how to use volume types to create multiple- storage back ends, see [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html)
+
+
+
+## `osc block-storage group create-from-src314`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group create-from-src314 [OPTIONS]`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--group-snapshot-id <GROUP_SNAPSHOT_ID>`
+* `--name <NAME>`
+* `--source-group-id <SOURCE_GROUP_ID>`
+
+
+
+## `osc block-storage group delete313`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group delete313 [OPTIONS]`
+
+###### **Options:**
+
+* `--delete-volumes <DELETE_VOLUMES>`
+
+  Possible values: `true`, `false`
+
+
+
+
+## `osc block-storage group disable-replication338`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group disable-replication338 [OPTIONS]`
+
+###### **Options:**
+
+* `--disable-replication <key=value>`
+
+
+
+## `osc block-storage group enable-replication338`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group enable-replication338 [OPTIONS]`
+
+###### **Options:**
+
+* `--enable-replication <key=value>`
+
+
+
+## `osc block-storage group failover-replication338`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group failover-replication338 [OPTIONS]`
+
+###### **Options:**
+
+* `--allow-attached-volume <ALLOW_ATTACHED_VOLUME>`
+
+  Possible values: `true`, `false`
+
+* `--secondary-backend-id <SECONDARY_BACKEND_ID>`
+
+
+
+## `osc block-storage group list`
+
+Returns a detailed list of groups
+
+**Usage:** `osc block-storage group list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage group list-replication-targets338`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group list-replication-targets338 [OPTIONS]`
+
+###### **Options:**
+
+* `--list-replication-targets <key=value>`
+
+
+
+## `osc block-storage group reset-status320`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group reset-status320 --status <STATUS>`
+
+###### **Options:**
+
+* `--status <STATUS>`
+
+
+
+## `osc block-storage group set313`
+
+Update the group.
+
+Expected format of the input parameter 'body':
+
+```text
+
+{ "group": { "name": "my_group", "description": "My group", "add_volumes": "volume-uuid-1,volume-uuid-2,...", "remove_volumes": "volume-uuid-8,volume-uuid-9,..." } }
+
+```
+
+**Usage:** `osc block-storage group set313 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/groups/{id} API
+
+###### **Options:**
+
+* `--add-volumes <ADD_VOLUMES>`
+* `--description <DESCRIPTION>`
+* `--name <NAME>`
+* `--remove-volumes <REMOVE_VOLUMES>`
+
+
+
+## `osc block-storage group show`
+
+Return data about the given group
+
+**Usage:** `osc block-storage group show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/groups/{id} API
 
 
 
