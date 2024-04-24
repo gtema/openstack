@@ -1,0 +1,92 @@
+name: Linters
+
+on:
+  push:
+    branches: ["main" ]
+  pull_request:
+    branches: ["main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rustfmt:
+    name: Run rustfmt on the minimum supported toolchain
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache
+        uses: actions/cache@v4.0.0
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.75.0
+          components: rustfmt
+
+      - name: Run rustfmt
+        run: cargo fmt -- --check
+
+  clippy:
+    name: Run clippy on the minimum supported toolchain
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.75.0
+          components: rustfmt, clippy
+
+      - name: Install required cargo
+        run: cargo install clippy-sarif sarif-fmt
+
+      - name: Run rust-clippy
+        run:
+          cargo clippy
+          --lib --tests
+          --all-features
+          --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
+        continue-on-error: true
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: rust-clippy-results.sarif
+          wait-for-processing: true
+
+  typos:
+    name: Spell Check with Typos
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Actions Repository
+      uses: actions/checkout@v4
+
+    - name: Check spelling of file.txt
+      uses: crate-ci/typos@master
+      with:
+        config: _typos.toml
