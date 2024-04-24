@@ -17,6 +17,7 @@ pub mod attachment;
 pub mod backup;
 pub mod group;
 pub mod group_snapshot;
+pub mod group_type;
 pub mod limit;
 pub mod message;
 pub mod resource_filter;
