@@ -1,0 +1,51 @@
+---
+name: Functional
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  functional:
+    strategy:
+      fail-fast: false
+      matrix:
+        name: ["master"]
+        openstack_version: ["master"]
+        ubuntu_version: ["22.04"]
+        # include:
+        #   - name: "bobcat"
+        #     openstack_version: "stable/2023.2"
+        #     ubuntu_version: "22.04"
+    runs-on: ubuntu-${{ matrix.ubuntu_version }}
+    name: Functional tests on OpenStack ${{ matrix.name }}
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Cache
+        uses: actions/cache@v4.0.0
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.cache/pip
+            target/
+          key: ${{ runner.os }}-devstack-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-devstack-
+            ${{ runner.os }}-
+
+      - name: Deploy devstack
+        uses: EmilienM/devstack-action@v0.15
+        with:
+          branch: ${{ matrix.openstack_version }}
+          enabled_services: swift
+          log_dir: /tmp/devstack-logs
+
+      - name: Execute functional tests
+        env:
+          OS_CLOUD: devstack
+        run: cargo test --test functional
