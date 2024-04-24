@@ -72,6 +72,10 @@ body schema and with no faulty merges between different versions.
 
 ## Trying out
 
+Any software is created to be used.
+
+### Install binary
+
 It is possible to install compiled version from the GitHub releases. It comes
 with a dedicated installer and can be retrieved with the following command:
 
@@ -79,12 +83,15 @@ with a dedicated installer and can be retrieved with the following command:
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/latest/download/openstack_cli-installer.sh | sh
 ```
 
+### Build locally
 Alternatively it is possible to compile project from sources. Since the project
 is a pure `Rust` it requires having a Rust compile suite.
 
 ```console
 cargo b
 ```
+
+### Run
 
 Once the binary is available just start playing with it. If you already have
 your `clouds.yaml` config file from `python-openstackclient` you are free to
@@ -95,13 +102,7 @@ osc --help
 osc --os-cloud devstack compute flavor list
 ```
 
-## Documentation
-
-Project [Documentation](https://gtema.github.io/openstack) is part of this
-repository as well. It follows "code as a documentation" approach to keep
-documentation matching the code.
-
-## Functional testing
+### Functional testing
 
 SDK and CLI are coming with a set of basic functional tests that are not
 executed by default since that requires access to the real cloud. In addition
@@ -118,5 +119,5 @@ OS_CLOUD=devstack cargo t --test functional
 
 The project is a private initiative. If you find it useful or just want to
 support it please consider [GitHub
-sponsoring](https://github.com/sponsors/gtema), but Pull Requests or other form
-of support is also welcome.
+sponsoring](https://github.com/sponsors/gtema). Pull Requests, Issues or other form
+of support are of course welcome as well.
