@@ -231,7 +231,6 @@ where
         let pagination = true;
         let mut keyset: Option<usize> = None;
 
-        let page: Option<usize> = None;
         let mut per_page = DEFAULT_PAGE_SIZE;
 
         for (ref key, ref value) in url.query_pairs() {
@@ -253,7 +252,7 @@ where
             }
         } else {
             Page::ByNumber {
-                number: page.unwrap_or(1),
+                number: 1,
                 size: per_page,
             }
         };
