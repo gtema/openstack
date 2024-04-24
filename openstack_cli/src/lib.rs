@@ -14,6 +14,13 @@
 
 #![doc = include_str!("../README.md")]
 #![deny(missing_docs)]
+// Allow Enum variant to end with enum's name
+// enum Type {
+//   ...
+//   FileType
+//   ...
+// }
+#![allow(clippy::enum_variant_names)]
 use std::io::{self, IsTerminal};
 
 use clap::Parser;
