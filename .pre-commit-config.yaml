@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -15,11 +15,7 @@ repos:
       - id: check-yaml
         files: .*\.(yaml|yml)$
         exclude: '^zuul.d/.*$'
-          #- repo: https://github.com/doublify/pre-commit-rust
-          #  rev: master
-          #  hooks:
-          #    - id: fmt
-          #    - id: cargo-check
+      - id: check-json
   - repo: https://github.com/crate-ci/typos
     rev: v1.18.2
     hooks:
@@ -35,21 +31,3 @@ repos:
         types: [rust]
         minimum_pre_commit_version: 2.21.0
         require_serial: true
-      - id: cargo-check
-        name: cargo check
-        description: Run cargo check for compilation errors
-        entry: cargo check
-        language: rust
-        types: [rust]
-        pass_filenames: false
-        minimum_pre_commit_version: 2.21.0
-        require_serial: true
-      - id: cargo-clippy
-        name: cargo clippy --lib --tests
-        description: Run cargo clippy lint tool
-        entry: cargo clippy
-        language: rust
-        types: [rust]
-        minimum_pre_commit_version: 2.21.0
-        require_serial: true
-        pass_filenames: false
