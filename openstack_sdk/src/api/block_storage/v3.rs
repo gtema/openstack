@@ -15,6 +15,7 @@
 //! `Block_storage` Service bindings
 pub mod attachment;
 pub mod backup;
+pub mod extension;
 pub mod group;
 pub mod group_snapshot;
 pub mod group_type;

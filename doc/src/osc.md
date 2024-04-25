@@ -31,6 +31,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
+* [`osc block-storage extension`↴](#osc-block-storage-extension)
+* [`osc block-storage extension list`↴](#osc-block-storage-extension-list)
 * [`osc block-storage group`↴](#osc-block-storage-group)
 * [`osc block-storage group create313`↴](#osc-block-storage-group-create313)
 * [`osc block-storage group create-from-src314`↴](#osc-block-storage-group-create-from-src314)
@@ -811,6 +813,7 @@ Block Storage (Volume) service (Cinder) commands
 
 * `attachment` — Attachments (attachments)
 * `backup` — Backups
+* `extension` — API extensions (extensions)
 * `group` — Generic volume groups (groups)
 * `group-snapshot` — GroupSnapshot snapshots (group_snapshots)
 * `group-type` — Group types (group_types)
@@ -1266,6 +1269,26 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage extension`
+
+API extensions (extensions)
+
+**Usage:** `osc block-storage extension <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Command without description in OpenAPI
+
+
+
+## `osc block-storage extension list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage extension list`
 
 
 
