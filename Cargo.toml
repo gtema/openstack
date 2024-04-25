@@ -39,7 +39,7 @@ url = "^2.5"
 # Config for 'cargo dist'
 [workspace.metadata.dist]
 # The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
-cargo-dist-version = "0.11.1"
+cargo-dist-version = "0.13.3"
 # CI backends to support
 ci = ["github"]
 # The installers to generate for each app
@@ -50,6 +50,8 @@ targets = ["x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl"]
 pr-run-mode = "plan"
 # Whether cargo-dist should create a Github Release or use an existing draft
 create-release = false
+# Whether to install an updater program
+install-updater = true
 
 [profile.dev]
 debug = 0
