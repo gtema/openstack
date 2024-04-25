@@ -1,3 +1,4 @@
+---
 name: Linters
 
 on:
@@ -6,32 +7,28 @@ on:
   pull_request:
     branches: ["main" ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 env:
   CARGO_TERM_COLOR: always
+  rust_min: 1.75.0
 
 jobs:
   rustfmt:
     name: Run rustfmt on the minimum supported toolchain
     runs-on: ubuntu-latest
     steps:
-      - name: Cache
-        uses: actions/cache@v4.0.0
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
       - uses: actions/checkout@v4
 
-      - name: Install Rust
+      - name: Install Rust ${{ env.rust_min }}
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.75.0
+          toolchain: ${{ env.rust_min }}
           components: rustfmt
+
+      - uses: Swatinem/rust-cache@v2
 
       - name: Run rustfmt
         run: cargo fmt -- --check
@@ -43,27 +40,19 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - name: Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions/checkout@v4
 
-      - name: Install Rust
+      - name: Install Rust ${{ env.rust_min }}
         uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: 1.75.0
+          toolchain: ${{ env.rust_min }}
           components: rustfmt, clippy
 
       - name: Install required cargo
         run: cargo install clippy-sarif sarif-fmt
+
+      - uses: Swatinem/rust-cache@v2
 
       - name: Run rust-clippy
         run:
@@ -90,3 +79,16 @@ jobs:
       uses: crate-ci/typos@master
       with:
         config: _typos.toml
+
+  committed:
+    name: Lint Commits
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout Actions Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Lint Commits
+      uses: crate-ci/committed@master
