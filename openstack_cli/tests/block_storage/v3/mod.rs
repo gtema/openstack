@@ -17,6 +17,7 @@ mod backup;
 mod group;
 mod group_snapshot;
 mod group_type;
+mod host;
 mod limit;
 mod message;
 mod resource_filter;

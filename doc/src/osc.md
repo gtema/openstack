@@ -61,6 +61,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage group-type list`↴](#osc-block-storage-group-type-list)
 * [`osc block-storage group-type set311`↴](#osc-block-storage-group-type-set311)
 * [`osc block-storage group-type show`↴](#osc-block-storage-group-type-show)
+* [`osc block-storage host`↴](#osc-block-storage-host)
+* [`osc block-storage host list`↴](#osc-block-storage-host-list)
+* [`osc block-storage host show`↴](#osc-block-storage-host-show)
 * [`osc block-storage limit`↴](#osc-block-storage-limit)
 * [`osc block-storage limit list`↴](#osc-block-storage-limit-list)
 * [`osc block-storage message`↴](#osc-block-storage-message)
@@ -811,6 +814,7 @@ Block Storage (Volume) service (Cinder) commands
 * `group` — Generic volume groups (groups)
 * `group-snapshot` — GroupSnapshot snapshots (group_snapshots)
 * `group-type` — Group types (group_types)
+* `host` — Hosts extension (os-hosts)
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `snapshot` — Volume snapshots (snapshots)
@@ -1750,6 +1754,45 @@ Return a single group type item
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/group_types/{id} API
+
+
+
+## `osc block-storage host`
+
+Hosts extension (os-hosts)
+
+Administrators only, depending on policy settings.
+
+Lists, shows hosts.
+
+**Usage:** `osc block-storage host <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Command without description in OpenAPI
+* `show` — Shows the volume usage info given by hosts
+
+
+
+## `osc block-storage host list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage host list`
+
+
+
+## `osc block-storage host show`
+
+Shows the volume usage info given by hosts.
+
+| param req: | security context | | --- | --- | | param id: | hostname | | returns: | dict -- the host resources dictionary. ex.: `  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  ` |
+
+**Usage:** `osc block-storage host show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/os-hosts/{id} API
 
 
 
