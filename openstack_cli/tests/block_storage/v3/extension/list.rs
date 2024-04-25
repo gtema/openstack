@@ -11,29 +11,16 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-
-mod attachment;
-mod backup;
-mod extension;
-mod group;
-mod group_snapshot;
-mod group_type;
-mod host;
-mod limit;
-mod message;
-mod resource_filter;
-mod snapshot;
-mod r#type;
-mod volume;
+//
 
 use assert_cmd::prelude::*;
 use std::process::Command;
 
 #[test]
-fn help() -> Result<(), Box<dyn std::error::Error>> {
+fn list() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("block-storage").arg("--help");
+    cmd.arg("block-storage").arg("extension").arg("list");
     cmd.assert().success();
 
     Ok(())

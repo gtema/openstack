@@ -21,6 +21,7 @@ use crate::{Cli, OpenStackCliError};
 
 mod attachment;
 mod backup;
+mod extension;
 mod group;
 mod group_snapshot;
 mod group_type;
@@ -46,6 +47,7 @@ pub struct BlockStorageCommand {
 pub enum BlockStorageCommands {
     Attachment(attachment::AttachmentCommand),
     Backup(backup::BackupCommand),
+    Extension(extension::ExtensionCommand),
     Group(group::GroupCommand),
     GroupSnapshot(group_snapshot::GroupSnapshotCommand),
     GroupType(group_type::GroupTypeCommand),
@@ -72,6 +74,7 @@ impl BlockStorageCommand {
         match &self.command {
             BlockStorageCommands::Attachment(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::GroupSnapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::GroupType(cmd) => cmd.take_action(parsed_args, session).await,
