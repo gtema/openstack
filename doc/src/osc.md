@@ -49,6 +49,18 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage group-snapshot list`↴](#osc-block-storage-group-snapshot-list)
 * [`osc block-storage group-snapshot reset-status319`↴](#osc-block-storage-group-snapshot-reset-status319)
 * [`osc block-storage group-snapshot show`↴](#osc-block-storage-group-snapshot-show)
+* [`osc block-storage group-type`↴](#osc-block-storage-group-type)
+* [`osc block-storage group-type create311`↴](#osc-block-storage-group-type-create311)
+* [`osc block-storage group-type delete`↴](#osc-block-storage-group-type-delete)
+* [`osc block-storage group-type group-spec`↴](#osc-block-storage-group-type-group-spec)
+* [`osc block-storage group-type group-spec create311`↴](#osc-block-storage-group-type-group-spec-create311)
+* [`osc block-storage group-type group-spec delete`↴](#osc-block-storage-group-type-group-spec-delete)
+* [`osc block-storage group-type group-spec list`↴](#osc-block-storage-group-type-group-spec-list)
+* [`osc block-storage group-type group-spec set311`↴](#osc-block-storage-group-type-group-spec-set311)
+* [`osc block-storage group-type group-spec show`↴](#osc-block-storage-group-type-group-spec-show)
+* [`osc block-storage group-type list`↴](#osc-block-storage-group-type-list)
+* [`osc block-storage group-type set311`↴](#osc-block-storage-group-type-set311)
+* [`osc block-storage group-type show`↴](#osc-block-storage-group-type-show)
 * [`osc block-storage limit`↴](#osc-block-storage-limit)
 * [`osc block-storage limit list`↴](#osc-block-storage-limit-list)
 * [`osc block-storage message`↴](#osc-block-storage-message)
@@ -798,6 +810,7 @@ Block Storage (Volume) service (Cinder) commands
 * `backup` — Backups
 * `group` — Generic volume groups (groups)
 * `group-snapshot` — GroupSnapshot snapshots (group_snapshots)
+* `group-type` — Group types (group_types)
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `snapshot` — Volume snapshots (snapshots)
@@ -1544,6 +1557,199 @@ Return data about the given group_snapshot
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/group_snapshots/{id} API
+
+
+
+## `osc block-storage group-type`
+
+Group types (group_types)
+
+To create a generic volume group, you must specify a group type.
+
+**Usage:** `osc block-storage group-type <COMMAND>`
+
+###### **Subcommands:**
+
+* `create311` — Creates a new group type
+* `delete` — Deletes an existing group type
+* `group-spec` — Server metadata
+* `list` — Returns the list of group types
+* `set311` — Command without description in OpenAPI
+* `show` — Return a single group type item
+
+
+
+## `osc block-storage group-type create311`
+
+Creates a new group type
+
+**Usage:** `osc block-storage group-type create311 [OPTIONS] --name <NAME>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The group type description
+* `--group-specs <key=value>` — A set of key and value pairs that contains the specifications for a group type
+* `--is-public <IS_PUBLIC>` — Whether the group type is publicly visible. See [valid boolean values](#valid-boolean-values)
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The group type name
+
+
+
+## `osc block-storage group-type delete`
+
+Deletes an existing group type
+
+**Usage:** `osc block-storage group-type delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/group_types/{id} API
+
+
+
+## `osc block-storage group-type group-spec`
+
+Server metadata
+
+**Usage:** `osc block-storage group-type group-spec <COMMAND>`
+
+###### **Subcommands:**
+
+* `create311` — Command without description in OpenAPI
+* `delete` — Deletes an existing group spec
+* `list` — Returns the list of group specs for a given group type
+* `set311` — Command without description in OpenAPI
+* `show` — Return a single extra spec item
+
+
+
+## `osc block-storage group-type group-spec create311`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group-type group-spec create311 [OPTIONS] <GROUP_TYPE_ID>`
+
+###### **Arguments:**
+
+* `<GROUP_TYPE_ID>` — group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+
+###### **Options:**
+
+* `--group-specs <key=value>` — A set of key and value pairs that contains the specifications for a group type
+
+
+
+## `osc block-storage group-type group-spec delete`
+
+Deletes an existing group spec
+
+**Usage:** `osc block-storage group-type group-spec delete <GROUP_TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<GROUP_TYPE_ID>` — group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+* `<ID>` — id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+
+
+
+## `osc block-storage group-type group-spec list`
+
+Returns the list of group specs for a given group type
+
+**Usage:** `osc block-storage group-type group-spec list <GROUP_TYPE_ID>`
+
+###### **Arguments:**
+
+* `<GROUP_TYPE_ID>` — group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+
+
+
+## `osc block-storage group-type group-spec set311`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group-type group-spec set311 [OPTIONS] <GROUP_TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<GROUP_TYPE_ID>` — group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+* `<ID>` — id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc block-storage group-type group-spec show`
+
+Return a single extra spec item
+
+**Usage:** `osc block-storage group-type group-spec show <GROUP_TYPE_ID> <ID>`
+
+###### **Arguments:**
+
+* `<GROUP_TYPE_ID>` — group_type_id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+* `<ID>` — id parameter for /v3/group_types/{group_type_id}/group_specs/{id} API
+
+
+
+## `osc block-storage group-type list`
+
+Returns the list of group types
+
+**Usage:** `osc block-storage group-type list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage group-type set311`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage group-type set311 [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/group_types/{id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--is-public <IS_PUBLIC>`
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>`
+
+
+
+## `osc block-storage group-type show`
+
+Return a single group type item
+
+**Usage:** `osc block-storage group-type show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/group_types/{id} API
 
 
 

@@ -23,6 +23,7 @@ mod attachment;
 mod backup;
 mod group;
 mod group_snapshot;
+mod group_type;
 mod limit;
 mod message;
 mod resource_filter;
@@ -46,6 +47,7 @@ pub enum BlockStorageCommands {
     Backup(backup::BackupCommand),
     Group(group::GroupCommand),
     GroupSnapshot(group_snapshot::GroupSnapshotCommand),
+    GroupType(group_type::GroupTypeCommand),
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
     Snapshot(snapshot::SnapshotCommand),
@@ -70,6 +72,7 @@ impl BlockStorageCommand {
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::GroupSnapshot(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::GroupType(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
