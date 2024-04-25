@@ -115,6 +115,30 @@ To trigger functional tests invoke:
 OS_CLOUD=devstack cargo t --test functional
 ```
 
+## Benchmarks
+
+Rust is known to deliver nearly maximum possible performance being only
+marginally slower compared to C. The table below presents time comparison
+between `python-openstackclient` (isolated virtual environment) and `osc` on
+the Intel i5-5250 (2 cores) on a reference public cloud (not local devstack) and token caching enabled.
+
+*Note: While the benchmark is not very representative due to the potential
+network caching and cloud differences the command has been performed multiple
+times and average duration has been recorded. Comparison was performed to give
+a rough feeling.*
+
+| Test | python-openstackclient | osc (Rust) |
+|------|--------|------|
+| `catalog list` | 1.44s | 0.1s |
+| `flavor list` | 2.6s | 0.5s |
+| `server list` (empty) | 1.8s | 0.2s |
+| `server list` (10 entries) | 4s | 0.7s |
+| `image list` | 2.4s | 0.6s |
+| `network list` | 1.7s | 0.4s |
+| `volume list` | 1.9s | 0.3s |
+| `container list` | 1.2s | 0.6s |
+| `object list` (3200 files) | 2.4s | 1.1s |
+
 ## Support
 
 The project is a private initiative. If you find it useful or just want to
