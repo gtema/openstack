@@ -31,8 +31,10 @@ mod limit;
 mod message;
 mod resource_filter;
 mod snapshot;
+mod snapshot_manage;
 mod r#type;
 mod volume;
+mod volume_manage;
 
 /// Block Storage (Volume) service (Cinder) commands
 #[derive(Parser)]
@@ -57,9 +59,11 @@ pub enum BlockStorageCommands {
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
     Snapshot(snapshot::SnapshotCommand),
+    SnapshotManage(snapshot_manage::SnapshotManageCommand),
     ResourceFilter(resource_filter::ResourceFilterCommand),
     Type(r#type::VolumeTypeCommand),
     Volume(volume::VolumeCommand),
+    VolumeManage(volume_manage::VolumeManageCommand),
 }
 
 impl BlockStorageCommand {
@@ -85,11 +89,15 @@ impl BlockStorageCommand {
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::SnapshotManage(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             BlockStorageCommands::ResourceFilter(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
             BlockStorageCommands::Type(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::VolumeManage(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

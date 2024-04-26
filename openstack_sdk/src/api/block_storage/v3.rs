@@ -25,5 +25,7 @@ pub mod limit;
 pub mod message;
 pub mod resource_filter;
 pub mod snapshot;
+pub mod snapshot_manage;
 pub mod r#type;
 pub mod volume;
+pub mod volume_manage;
