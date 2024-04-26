@@ -27,10 +27,15 @@ jobs:
     name: Functional tests on OpenStack ${{ matrix.name }}
     steps:
 
-      - uses: actions/checkout@v4
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
       - name: Cache
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@13aacd865c20de90d75de3b17ebe84f7a17d57d2 # v4.0.0
         with:
           path: |
             ~/.cargo/bin/
@@ -45,14 +50,14 @@ jobs:
             ${{ runner.os }}-
 
       - name: Deploy devstack
-        uses: EmilienM/devstack-action@v0.15
+        uses: EmilienM/devstack-action@e82a9cbead099cba72f99537e82a360c3e319c69 # v0.15
         with:
           branch: ${{ matrix.openstack_version }}
           enabled_services: swift
           log_dir: /tmp/devstack-logs
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@032431f26ad14217b24e529fa2ab72cf558de38b # stable
         with:
           toolchain: stable
 
