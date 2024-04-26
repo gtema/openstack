@@ -31,6 +31,11 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
+* [`osc block-storage default-type`↴](#osc-block-storage-default-type)
+* [`osc block-storage default-type delete`↴](#osc-block-storage-default-type-delete)
+* [`osc block-storage default-type list`↴](#osc-block-storage-default-type-list)
+* [`osc block-storage default-type set362`↴](#osc-block-storage-default-type-set362)
+* [`osc block-storage default-type show`↴](#osc-block-storage-default-type-show)
 * [`osc block-storage extension`↴](#osc-block-storage-extension)
 * [`osc block-storage extension list`↴](#osc-block-storage-extension-list)
 * [`osc block-storage group`↴](#osc-block-storage-group)
@@ -813,6 +818,7 @@ Block Storage (Volume) service (Cinder) commands
 
 * `attachment` — Attachments (attachments)
 * `backup` — Backups
+* `default-type` — Default Volume Types (default-types)
 * `extension` — API extensions (extensions)
 * `group` — Generic volume groups (groups)
 * `group-snapshot` — GroupSnapshot snapshots (group_snapshots)
@@ -1269,6 +1275,77 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage default-type`
+
+Default Volume Types (default-types)
+
+Manage a default volume type for individual projects.
+
+By default, a volume-create request that does not specify a volume-type will assign the configured system default volume type to the volume. You can override this behavior on a per-project basis by setting a different default volume type for any project.
+
+Available in microversion 3.62 or higher.
+
+NOTE: The default policy for list API is system admin so you would require a system scoped token to access it.
+
+**Usage:** `osc block-storage default-type <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Unset a default volume type for a project
+* `list` — Return a list of default types
+* `set362` — Set a default volume type for the specified project
+* `show` — Return detail of a default type
+
+
+
+## `osc block-storage default-type delete`
+
+Unset a default volume type for a project
+
+**Usage:** `osc block-storage default-type delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/default-types/{id} API
+
+
+
+## `osc block-storage default-type list`
+
+Return a list of default types
+
+**Usage:** `osc block-storage default-type list`
+
+
+
+## `osc block-storage default-type set362`
+
+Set a default volume type for the specified project
+
+**Usage:** `osc block-storage default-type set362 --volume-type <VOLUME_TYPE> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/default-types/{id} API
+
+###### **Options:**
+
+* `--volume-type <VOLUME_TYPE>`
+
+
+
+## `osc block-storage default-type show`
+
+Return detail of a default type
+
+**Usage:** `osc block-storage default-type show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/default-types/{id} API
 
 
 
