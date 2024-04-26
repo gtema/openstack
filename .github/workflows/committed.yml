@@ -3,6 +3,8 @@
 name: Lint Commits
 on: [pull_request]
 
+permissions: read_all
+
 env:
   RUST_BACKTRACE: 1
   CARGO_TERM_COLOR: always

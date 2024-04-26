@@ -22,12 +22,15 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }} # <-- GitHub App ID secret name
           private-key: ${{ secrets.APP_PRIVATE_KEY }} # <-- GitHub App private key secret name
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
       - name: Run release-plz
         uses: MarcoIeni/release-plz-action@v0.5.52
         env:
