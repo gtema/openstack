@@ -52,6 +52,7 @@ pub trait RestClient {
 }
 
 /// A trait representing a client which can communicate with a OpenStack cloud APIs.
+#[cfg(feature = "sync")]
 pub trait Client: RestClient {
     /// Send a REST query.
     fn rest(
@@ -62,6 +63,7 @@ pub trait Client: RestClient {
 }
 
 /// A trait representing an asynchronous client which can communicate with OpenStack cloud.
+#[cfg(feature = "async")]
 #[async_trait]
 pub trait AsyncClient: RestClient {
     /// Send a REST query asynchronously.

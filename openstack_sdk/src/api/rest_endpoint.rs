@@ -29,10 +29,11 @@ use serde::de::DeserializeOwned;
 
 use serde_json::json;
 
-use crate::api::{
-    query, ApiError, AsyncClient, BodyError, Client, Query, QueryAsync, QueryParams, RawQuery,
-    RawQueryAsync, RestClient,
-};
+use crate::api::{query, ApiError, BodyError, QueryParams, RestClient};
+#[cfg(feature = "async")]
+use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
+#[cfg(feature = "sync")]
+use crate::api::{Client, Query, RawQuery};
 use crate::catalog::ServiceEndpoint;
 use crate::types::BoxedAsyncRead;
 use crate::types::ServiceType;
@@ -167,6 +168,7 @@ where
     Ok(())
 }
 
+#[cfg(feature = "sync")]
 impl<E, T, C> Query<T, C> for E
 where
     E: RestEndpoint,
@@ -207,6 +209,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl<E, T, C> QueryAsync<T, C> for E
 where
@@ -247,6 +250,7 @@ where
     }
 }
 
+#[cfg(feature = "sync")]
 /// Raw Query implementation
 impl<E, C> RawQuery<C> for E
 where
@@ -270,6 +274,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 /// Raw Query Async implementation
 #[async_trait]
 impl<E, C> RawQueryAsync<C> for E
@@ -354,6 +359,7 @@ where
     }
 }
 
+#[cfg(feature = "sync")]
 #[cfg(test)]
 mod tests {
 

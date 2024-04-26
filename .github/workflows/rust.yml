@@ -16,23 +16,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Update Rust
-        run: |
-          curl --proto '=https' --tlsv1.2 https://sh.rustup.rs -sSf -y | sh
-          rustup update
 
-      - name: Cache
-        uses: actions/cache@v4.0.0
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          toolchain: stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Build
         run: cargo build --verbose
+
       - name: Run tests
-        run: cargo test --verbose
+        run: cargo test --verbose --all-features

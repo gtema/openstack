@@ -11,6 +11,28 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+default = [
+  "async",
+  "sync",
+  "block_storage",
+  "compute",
+  "identity",
+  "image",
+  "load_balancer",
+  "network",
+  "object_store"
+]
+block_storage = []
+compute = []
+identity = []
+image = []
+load_balancer = []
+network = []
+object_store = []
+sync = []
+async = []
+
 [dependencies]
 async-trait = {workspace = true}
 anyhow = {workspace = true}
@@ -36,7 +58,7 @@ serde = { workspace = true }
 serde_json = {workspace = true}
 serde_urlencoded = "^0.7"
 thiserror = { workspace = true }
-tokio = {workspace = true }
+tokio = { workspace = true }
 tokio-util = {workspace = true}
 tracing = { workspace = true}
 url = { workspace = true }

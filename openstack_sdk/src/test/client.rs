@@ -17,6 +17,7 @@ use std::cmp;
 
 use std::ops::Range;
 
+#[cfg(feature = "sync")]
 use async_trait::async_trait;
 
 use bytes::Bytes;
@@ -24,7 +25,9 @@ use derive_builder::Builder;
 use http::request::Builder as RequestBuilder;
 use http::{header, Method, Response, StatusCode};
 use http::{HeaderMap, Response as HttpResponse};
+#[cfg(feature = "sync")]
 use reqwest::blocking::Client as HttpClient;
+#[cfg(feature = "async")]
 use reqwest::Client as AsyncHttpClient;
 use serde::ser::Serialize;
 use thiserror::Error;
@@ -32,7 +35,12 @@ use url::Url;
 
 use serde_json::json;
 
-use crate::api::{ApiError, AsyncClient, Client, RestClient};
+#[cfg(feature = "async")]
+use crate::api::AsyncClient;
+#[cfg(feature = "sync")]
+use crate::api::Client;
+use crate::api::{ApiError, RestClient};
+
 use crate::catalog::ServiceEndpoint;
 use crate::types::identity::v3::Project;
 use crate::types::{BoxedAsyncRead, ServiceType};
@@ -197,6 +205,7 @@ impl<T> RestClient for PagedTestClient<T> {
     }
 }
 
+#[cfg(feature = "sync")]
 impl<T> Client for PagedTestClient<T>
 where
     T: Serialize,
@@ -296,6 +305,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl<T> AsyncClient for PagedTestClient<T>
 where
@@ -340,6 +350,7 @@ impl MockServerClient {
     }
 }
 
+#[cfg(feature = "sync")]
 impl RestClient for MockServerClient {
     type Error = RestError;
 
@@ -372,6 +383,7 @@ impl RestClient for MockServerClient {
     }
 }
 
+#[cfg(feature = "sync")]
 impl Client for MockServerClient {
     fn rest(
         &self,
@@ -399,11 +411,13 @@ impl Client for MockServerClient {
     }
 }
 
+#[cfg(feature = "async")]
 pub struct MockAsyncServerClient {
     pub server: MockServer,
     pub client: AsyncHttpClient,
 }
 
+#[cfg(feature = "async")]
 impl MockAsyncServerClient {
     pub async fn new() -> Self {
         let server = MockServer::start_async().await;
@@ -412,6 +426,7 @@ impl MockAsyncServerClient {
     }
 }
 
+#[cfg(feature = "async")]
 impl RestClient for MockAsyncServerClient {
     type Error = RestError;
 
@@ -444,6 +459,7 @@ impl RestClient for MockAsyncServerClient {
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl AsyncClient for MockAsyncServerClient {
     async fn rest_async(

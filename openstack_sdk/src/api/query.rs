@@ -16,11 +16,16 @@ use http::Uri;
 
 use url::Url;
 
+#[cfg(feature = "async")]
 use async_trait::async_trait;
 use bytes::Bytes;
 //use futures::io::AsyncRead;
 
-use crate::api::{ApiError, AsyncClient, Client};
+use crate::api::ApiError;
+#[cfg(feature = "async")]
+use crate::api::AsyncClient;
+#[cfg(feature = "sync")]
+use crate::api::Client;
 use crate::types::BoxedAsyncRead;
 use http::{HeaderMap, Response};
 
@@ -33,6 +38,7 @@ pub fn url_to_http_uri(url: Url) -> Uri {
 /// A trait which represents a query which may be made to a OpenStack
 /// service API client trat returns deserializable data. It does know
 /// nothing about required authorization, which is handled by the client.
+#[cfg(feature = "sync")]
 pub trait Query<T, C>
 where
     C: Client,
@@ -44,6 +50,7 @@ where
 /// A trait which represents an asynchronous query which may be made to a
 /// OpenStack service API client that returns deserializable data. It does know
 /// nothing about required authorization, which is handled by the client.
+#[cfg(feature = "async")]
 #[async_trait]
 pub trait QueryAsync<T, C>
 where
@@ -58,6 +65,7 @@ where
 /// nothing about required authorization, which is handled by the client. It
 /// can be used for special cases where headers must be captured, response
 /// is not json, etc.
+#[cfg(feature = "sync")]
 pub trait RawQuery<C>
 where
     C: Client,
@@ -69,6 +77,7 @@ where
 /// A trait which represents an asynchronous query which may be made to a
 /// OpenStack service API client and return http response. It does know
 /// nothing about required authorization, which is handled by the client.
+#[cfg(feature = "async")]
 #[async_trait]
 pub trait RawQueryAsync<C>
 where
