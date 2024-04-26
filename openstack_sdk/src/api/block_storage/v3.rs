@@ -15,6 +15,7 @@
 //! `Block_storage` Service bindings
 pub mod attachment;
 pub mod backup;
+pub mod default_type;
 pub mod extension;
 pub mod group;
 pub mod group_snapshot;
@@ -24,5 +25,7 @@ pub mod limit;
 pub mod message;
 pub mod resource_filter;
 pub mod snapshot;
+pub mod snapshot_manage;
 pub mod r#type;
 pub mod volume;
+pub mod volume_manage;

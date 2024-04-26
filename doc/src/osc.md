@@ -31,6 +31,11 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
+* [`osc block-storage default-type`↴](#osc-block-storage-default-type)
+* [`osc block-storage default-type delete`↴](#osc-block-storage-default-type-delete)
+* [`osc block-storage default-type list`↴](#osc-block-storage-default-type-list)
+* [`osc block-storage default-type set362`↴](#osc-block-storage-default-type-set362)
+* [`osc block-storage default-type show`↴](#osc-block-storage-default-type-show)
 * [`osc block-storage extension`↴](#osc-block-storage-extension)
 * [`osc block-storage extension list`↴](#osc-block-storage-extension-list)
 * [`osc block-storage group`↴](#osc-block-storage-group)
@@ -82,6 +87,9 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage snapshot show`↴](#osc-block-storage-snapshot-show)
 * [`osc block-storage snapshot unmanage`↴](#osc-block-storage-snapshot-unmanage)
 * [`osc block-storage snapshot update-status`↴](#osc-block-storage-snapshot-update-status)
+* [`osc block-storage snapshot-manage`↴](#osc-block-storage-snapshot-manage)
+* [`osc block-storage snapshot-manage create`↴](#osc-block-storage-snapshot-manage-create)
+* [`osc block-storage snapshot-manage list`↴](#osc-block-storage-snapshot-manage-list)
 * [`osc block-storage resource-filter`↴](#osc-block-storage-resource-filter)
 * [`osc block-storage resource-filter list`↴](#osc-block-storage-resource-filter-list)
 * [`osc block-storage type`↴](#osc-block-storage-type)
@@ -122,6 +130,10 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume set353`↴](#osc-block-storage-volume-set353)
 * [`osc block-storage volume set30`↴](#osc-block-storage-volume-set30)
 * [`osc block-storage volume show`↴](#osc-block-storage-volume-show)
+* [`osc block-storage volume-manage`↴](#osc-block-storage-volume-manage)
+* [`osc block-storage volume-manage create316`↴](#osc-block-storage-volume-manage-create316)
+* [`osc block-storage volume-manage create30`↴](#osc-block-storage-volume-manage-create30)
+* [`osc block-storage volume-manage list`↴](#osc-block-storage-volume-manage-list)
 * [`osc catalog`↴](#osc-catalog)
 * [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
@@ -813,6 +825,7 @@ Block Storage (Volume) service (Cinder) commands
 
 * `attachment` — Attachments (attachments)
 * `backup` — Backups
+* `default-type` — Default Volume Types (default-types)
 * `extension` — API extensions (extensions)
 * `group` — Generic volume groups (groups)
 * `group-snapshot` — GroupSnapshot snapshots (group_snapshots)
@@ -821,9 +834,11 @@ Block Storage (Volume) service (Cinder) commands
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `snapshot` — Volume snapshots (snapshots)
+* `snapshot-manage` — SnapshotManage manage extension (manageable_snapshots)
 * `resource-filter` — Resource filters
 * `type` — Block Storage VolumeType type commands
 * `volume` — Block Storage Volume commands
+* `volume-manage` — Volume manage extension (manageable_volumes)
 
 
 
@@ -1269,6 +1284,77 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage default-type`
+
+Default Volume Types (default-types)
+
+Manage a default volume type for individual projects.
+
+By default, a volume-create request that does not specify a volume-type will assign the configured system default volume type to the volume. You can override this behavior on a per-project basis by setting a different default volume type for any project.
+
+Available in microversion 3.62 or higher.
+
+NOTE: The default policy for list API is system admin so you would require a system scoped token to access it.
+
+**Usage:** `osc block-storage default-type <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Unset a default volume type for a project
+* `list` — Return a list of default types
+* `set362` — Set a default volume type for the specified project
+* `show` — Return detail of a default type
+
+
+
+## `osc block-storage default-type delete`
+
+Unset a default volume type for a project
+
+**Usage:** `osc block-storage default-type delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/default-types/{id} API
+
+
+
+## `osc block-storage default-type list`
+
+Return a list of default types
+
+**Usage:** `osc block-storage default-type list`
+
+
+
+## `osc block-storage default-type set362`
+
+Set a default volume type for the specified project
+
+**Usage:** `osc block-storage default-type set362 --volume-type <VOLUME_TYPE> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/default-types/{id} API
+
+###### **Options:**
+
+* `--volume-type <VOLUME_TYPE>`
+
+
+
+## `osc block-storage default-type show`
+
+Return detail of a default type
+
+**Usage:** `osc block-storage default-type show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/default-types/{id} API
 
 
 
@@ -2097,6 +2183,71 @@ Command without description in OpenAPI
 
 
 
+## `osc block-storage snapshot-manage`
+
+SnapshotManage manage extension (manageable_snapshots)
+
+Creates or lists snapshots by using existing storage instead of allocating new storage.
+
+**Usage:** `osc block-storage snapshot-manage <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Instruct Cinder to manage a storage snapshot object
+* `list` — Returns a detailed list of snapshots available to manage
+
+
+
+## `osc block-storage snapshot-manage create`
+
+Instruct Cinder to manage a storage snapshot object.
+
+Manages an existing backend storage snapshot object (e.g. a Linux logical volume or a SAN disk) by creating the Cinder objects required to manage it, and possibly renaming the backend storage snapshot object (driver dependent).
+
+From an API perspective, this operation behaves very much like a snapshot creation operation.
+
+Required HTTP Body:
+
+```text
+
+{ "snapshot": { "volume_id": "<Cinder volume already exists in volume backend>", "ref": "<Driver-specific reference to the existing storage object>" } }
+
+```
+
+See the appropriate Cinder drivers' implementations of the manage_snapshot method to find out the accepted format of 'ref'. For example,in LVM driver, it will be the logic volume name of snapshot which you want to manage.
+
+This API call will return with an error if any of the above elements are missing from the request, or if the 'volume_id' element refers to a cinder volume that could not be found.
+
+The snapshot will later enter the error state if it is discovered that 'ref' is bad.
+
+Optional elements to 'snapshot' are:
+
+```text
+
+name           A name for the new snapshot. description    A description for the new snapshot. metadata       Key/value pairs to be associated with the new snapshot.
+
+```
+
+**Usage:** `osc block-storage snapshot-manage create [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>`
+* `--metadata <key=value>`
+* `--name <NAME>`
+* `--ref <JSON>`
+* `--volume-id <VOLUME_ID>`
+
+
+
+## `osc block-storage snapshot-manage list`
+
+Returns a detailed list of snapshots available to manage
+
+**Usage:** `osc block-storage snapshot-manage list`
+
+
+
 ## `osc block-storage resource-filter`
 
 Resource filters
@@ -2809,6 +2960,127 @@ Return data about the given volume
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/volumes/{id} API
+
+
+
+## `osc block-storage volume-manage`
+
+Volume manage extension (manageable_volumes)
+
+Creates or lists volumes by using existing storage instead of allocating new storage.
+
+**Usage:** `osc block-storage volume-manage <COMMAND>`
+
+###### **Subcommands:**
+
+* `create316` — Instruct Cinder to manage a storage object
+* `create30` — Instruct Cinder to manage a storage object
+* `list` — Returns a detailed list of volumes available to manage
+
+
+
+## `osc block-storage volume-manage create316`
+
+Instruct Cinder to manage a storage object.
+
+Manages an existing backend storage object (e.g. a Linux logical volume or a SAN disk) by creating the Cinder objects required to manage it, and possibly renaming the backend storage object (driver dependent)
+
+From an API perspective, this operation behaves very much like a volume creation operation, except that properties such as image, snapshot and volume references don't make sense, because we are taking an existing storage object into Cinder management.
+
+Required HTTP Body:
+
+```text
+
+{ "volume": { "host": "<Cinder host on which the existing storage resides>", "cluster": "<Cinder cluster on which the storage resides>", "ref": "<Driver-specific reference to existing storage object>" } }
+
+```
+
+See the appropriate Cinder drivers' implementations of the manage_volume method to find out the accepted format of 'ref'.
+
+This API call will return with an error if any of the above elements are missing from the request, or if the 'host' element refers to a cinder host that is not registered.
+
+The volume will later enter the error state if it is discovered that 'ref' is bad.
+
+Optional elements to 'volume' are:
+
+```text
+
+name               A name for the new volume. description        A description for the new volume. volume_type        ID or name of a volume type to associate with the new Cinder volume. Does not necessarily guarantee that the managed volume will have the properties described in the volume_type. The driver may choose to fail if it identifies that the specified volume_type is not compatible with the backend storage object. metadata           Key/value pairs to be associated with the new volume. availability_zone  The availability zone to associate with the new volume. bootable           If set to True, marks the volume as bootable.
+
+```
+
+**Usage:** `osc block-storage volume-manage create316 [OPTIONS] --ref <JSON>`
+
+###### **Options:**
+
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--bootable <BOOTABLE>`
+
+  Possible values: `true`, `false`
+
+* `--cluster <CLUSTER>`
+* `--description <DESCRIPTION>`
+* `--host <HOST>`
+* `--metadata <key=value>`
+* `--name <NAME>`
+* `--ref <JSON>`
+* `--volume-type <VOLUME_TYPE>`
+
+
+
+## `osc block-storage volume-manage create30`
+
+Instruct Cinder to manage a storage object.
+
+Manages an existing backend storage object (e.g. a Linux logical volume or a SAN disk) by creating the Cinder objects required to manage it, and possibly renaming the backend storage object (driver dependent)
+
+From an API perspective, this operation behaves very much like a volume creation operation, except that properties such as image, snapshot and volume references don't make sense, because we are taking an existing storage object into Cinder management.
+
+Required HTTP Body:
+
+```text
+
+{ "volume": { "host": "<Cinder host on which the existing storage resides>", "cluster": "<Cinder cluster on which the storage resides>", "ref": "<Driver-specific reference to existing storage object>" } }
+
+```
+
+See the appropriate Cinder drivers' implementations of the manage_volume method to find out the accepted format of 'ref'.
+
+This API call will return with an error if any of the above elements are missing from the request, or if the 'host' element refers to a cinder host that is not registered.
+
+The volume will later enter the error state if it is discovered that 'ref' is bad.
+
+Optional elements to 'volume' are:
+
+```text
+
+name               A name for the new volume. description        A description for the new volume. volume_type        ID or name of a volume type to associate with the new Cinder volume. Does not necessarily guarantee that the managed volume will have the properties described in the volume_type. The driver may choose to fail if it identifies that the specified volume_type is not compatible with the backend storage object. metadata           Key/value pairs to be associated with the new volume. availability_zone  The availability zone to associate with the new volume. bootable           If set to True, marks the volume as bootable.
+
+```
+
+**Usage:** `osc block-storage volume-manage create30 [OPTIONS] --ref <JSON>`
+
+###### **Options:**
+
+* `--availability-zone <AVAILABILITY_ZONE>`
+* `--bootable <BOOTABLE>`
+
+  Possible values: `true`, `false`
+
+* `--description <DESCRIPTION>`
+* `--host <HOST>`
+* `--metadata <key=value>`
+* `--name <NAME>`
+* `--ref <JSON>`
+* `--volume-type <VOLUME_TYPE>`
+
+
+
+## `osc block-storage volume-manage list`
+
+Returns a detailed list of volumes available to manage
+
+**Usage:** `osc block-storage volume-manage list`
 
 
 

@@ -27,10 +27,13 @@ use url::Url;
 
 use crate::api::paged::{next_page, Pageable, Paged, Pagination};
 use crate::api::rest_endpoint::set_latest_microversion;
-use crate::api::{
-    query, ApiError, AsyncClient, Client, Query, QueryAsync, RestClient, RestEndpoint,
-};
+use crate::api::{query, ApiError, RestClient, RestEndpoint};
+#[cfg(feature = "async")]
+use crate::api::{AsyncClient, QueryAsync};
+#[cfg(feature = "sync")]
+use crate::api::{Client, Query};
 
+#[cfg(feature = "sync")]
 impl<E> Paged<E>
 where
     E: RestEndpoint,
@@ -42,6 +45,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 impl<E> Paged<E>
 where
     E: RestEndpoint + Pageable + Sync,
@@ -291,6 +295,7 @@ where
     }
 }
 
+#[cfg(feature = "sync")]
 impl<'a, E, T, C> Query<Vec<T>, C> for PagedState<'a, E>
 where
     E: RestEndpoint,
@@ -317,6 +322,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl<'a, E, T, C> QueryAsync<Vec<T>, C> for PagedState<'a, E>
 where
@@ -368,6 +374,7 @@ where
     }
 }
 
+#[cfg(feature = "sync")]
 impl<'a, E, C, T> Iterator for PagedIter<'a, E, C, T>
 where
     E: RestEndpoint,
@@ -394,6 +401,7 @@ where
 
 // Instead of implementing Stream directly, we implement this "async" next method and use it with
 // `stream::unfold` to return an anonymous Stream impl.
+#[cfg(feature = "async")]
 impl<'a, E, C, T> PagedIter<'a, E, C, T>
 where
     E: RestEndpoint + Pageable + Sync,

@@ -16,7 +16,12 @@ use async_trait::async_trait;
 
 use serde::de::DeserializeOwned;
 
-use crate::api::{ApiError, AsyncClient, Client, Query, QueryAsync, RestClient, RestEndpoint};
+use crate::api::{ApiError, RestClient, RestEndpoint};
+
+#[cfg(feature = "async")]
+use crate::api::{AsyncClient, QueryAsync};
+#[cfg(feature = "sync")]
+use crate::api::{Client, Query};
 
 /// Trait for findable resources that combines GET and LIST endpoint
 pub trait Findable {
@@ -57,6 +62,7 @@ pub fn find<F>(findable: F) -> Find<F> {
     Find { findable }
 }
 
+#[cfg(feature = "sync")]
 impl<E, T, C> Query<T, C> for Find<E>
 where
     E: Findable,
@@ -88,6 +94,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl<E, T, C> QueryAsync<T, C> for Find<E>
 where
@@ -128,8 +135,15 @@ mod tests {
 
     use crate::api::find::Findable;
     use crate::api::rest_endpoint_prelude::*;
-    use crate::api::{self, ApiError, Query, QueryAsync};
-    use crate::test::client::{MockAsyncServerClient, MockServerClient};
+    #[cfg(feature = "sync")]
+    use crate::api::Query;
+    #[cfg(feature = "async")]
+    use crate::api::QueryAsync;
+    use crate::api::{self, ApiError};
+    #[cfg(feature = "async")]
+    use crate::test::client::MockAsyncServerClient;
+    #[cfg(feature = "sync")]
+    use crate::test::client::MockServerClient;
     use derive_builder::Builder;
 
     #[derive(Debug, Builder, Clone)]
@@ -218,6 +232,7 @@ mod tests {
         id: String,
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_get_1() {
         let client = MockServerClient::new();
@@ -237,6 +252,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_1_async() {
         let client = MockAsyncServerClient::new().await;
@@ -256,6 +272,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_1() {
         let client = MockServerClient::new();
@@ -278,6 +295,7 @@ mod tests {
         let _err = res.unwrap();
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_1_async() {
         let client = MockAsyncServerClient::new().await;
@@ -300,6 +318,7 @@ mod tests {
         let _err = res.unwrap();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_2() {
         let client = MockServerClient::new();
@@ -325,6 +344,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_2_async() {
         let client = MockAsyncServerClient::new().await;
@@ -350,6 +370,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_0() {
         let client = MockServerClient::new();
@@ -375,6 +396,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_0_async() {
         let client = MockAsyncServerClient::new().await;

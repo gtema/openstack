@@ -21,6 +21,7 @@ use crate::{Cli, OpenStackCliError};
 
 mod attachment;
 mod backup;
+mod default_type;
 mod extension;
 mod group;
 mod group_snapshot;
@@ -30,8 +31,10 @@ mod limit;
 mod message;
 mod resource_filter;
 mod snapshot;
+mod snapshot_manage;
 mod r#type;
 mod volume;
+mod volume_manage;
 
 /// Block Storage (Volume) service (Cinder) commands
 #[derive(Parser)]
@@ -47,6 +50,7 @@ pub struct BlockStorageCommand {
 pub enum BlockStorageCommands {
     Attachment(attachment::AttachmentCommand),
     Backup(backup::BackupCommand),
+    DefaultType(default_type::DefaultTypeCommand),
     Extension(extension::ExtensionCommand),
     Group(group::GroupCommand),
     GroupSnapshot(group_snapshot::GroupSnapshotCommand),
@@ -55,9 +59,11 @@ pub enum BlockStorageCommands {
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
     Snapshot(snapshot::SnapshotCommand),
+    SnapshotManage(snapshot_manage::SnapshotManageCommand),
     ResourceFilter(resource_filter::ResourceFilterCommand),
     Type(r#type::VolumeTypeCommand),
     Volume(volume::VolumeCommand),
+    VolumeManage(volume_manage::VolumeManageCommand),
 }
 
 impl BlockStorageCommand {
@@ -74,6 +80,7 @@ impl BlockStorageCommand {
         match &self.command {
             BlockStorageCommands::Attachment(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::DefaultType(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::GroupSnapshot(cmd) => cmd.take_action(parsed_args, session).await,
@@ -82,11 +89,15 @@ impl BlockStorageCommand {
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::SnapshotManage(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             BlockStorageCommands::ResourceFilter(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
             BlockStorageCommands::Type(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::VolumeManage(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

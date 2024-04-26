@@ -14,6 +14,7 @@
 
 mod attachment;
 mod backup;
+mod default_type;
 mod extension;
 mod group;
 mod group_snapshot;
@@ -23,8 +24,10 @@ mod limit;
 mod message;
 mod resource_filter;
 mod snapshot;
+mod snapshot_manage;
 mod r#type;
 mod volume;
+mod volume_manage;
 
 use assert_cmd::prelude::*;
 use std::process::Command;

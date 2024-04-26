@@ -21,7 +21,12 @@
 use async_trait::async_trait;
 
 use crate::api::rest_endpoint::prepare_request;
-use crate::api::{ApiError, AsyncClient, Client, Query, QueryAsync, RestEndpoint};
+use crate::api::{ApiError, RestEndpoint};
+
+#[cfg(feature = "async")]
+use crate::api::{AsyncClient, QueryAsync};
+#[cfg(feature = "sync")]
+use crate::api::{Client, Query};
 
 /// A query modifier that ignores the data returned from an endpoint. For
 /// error responses it tries to extract error information from body. It can
@@ -36,6 +41,7 @@ pub fn ignore<E>(endpoint: E) -> Ignore<E> {
     Ignore { endpoint }
 }
 
+#[cfg(feature = "sync")]
 impl<E, C> Query<(), C> for Ignore<E>
 where
     E: RestEndpoint,
@@ -65,6 +71,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl<E, C> QueryAsync<(), C> for Ignore<E>
 where
@@ -102,8 +109,15 @@ mod tests {
     use serde_json::json;
 
     use crate::api::rest_endpoint_prelude::*;
-    use crate::api::{self, ApiError, Query, QueryAsync};
-    use crate::test::client::{MockAsyncServerClient, MockServerClient};
+    #[cfg(feature = "sync")]
+    use crate::api::Query;
+    #[cfg(feature = "async")]
+    use crate::api::QueryAsync;
+    use crate::api::{self, ApiError};
+    #[cfg(feature = "async")]
+    use crate::test::client::MockAsyncServerClient;
+    #[cfg(feature = "sync")]
+    use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
 
     struct Dummy;
@@ -128,6 +142,7 @@ mod tests {
         value: u8,
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_non_json_response() {
         let client = MockServerClient::new();
@@ -140,6 +155,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_openstack_non_json_response_async() {
         let client = MockAsyncServerClient::new().await;
@@ -152,6 +168,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_bad_json() {
         let client = MockServerClient::new();
@@ -169,6 +186,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_detection() {
         let client = MockServerClient::new();
@@ -187,6 +205,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_detection_unknown() {
         let client = MockServerClient::new();
