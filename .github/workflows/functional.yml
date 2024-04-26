@@ -4,6 +4,12 @@ name: Functional
 on:
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '.github/workflows/functional.yml'
+      - 'openstack_cli/**'
+      - 'openstack_sdk/**'
 
 jobs:
   functional:
@@ -44,6 +50,11 @@ jobs:
           branch: ${{ matrix.openstack_version }}
           enabled_services: swift
           log_dir: /tmp/devstack-logs
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
 
       - name: Execute functional tests
         env:
