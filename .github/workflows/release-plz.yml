@@ -16,20 +16,25 @@ jobs:
     steps:
         # Generating a GitHub token, so that PRs and tags created by
         # the release-plz-action can trigger actions workflows.
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
       - name: Generate GitHub token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@7bfa3a4717ef143a604ee0a99d859b8886a96d00 # v1.9.3
         id: generate-token
         with:
           app-id: ${{ secrets.APP_ID }} # <-- GitHub App ID secret name
           private-key: ${{ secrets.APP_PRIVATE_KEY }} # <-- GitHub App private key secret name
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
         with:
           fetch-depth: 0
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@032431f26ad14217b24e529fa2ab72cf558de38b # stable
       - name: Run release-plz
-        uses: MarcoIeni/release-plz-action@v0.5.52
+        uses: MarcoIeni/release-plz-action@a6a23fd7bb7db7cf2912d029703ed80932cf94fa # v0.5.52
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
