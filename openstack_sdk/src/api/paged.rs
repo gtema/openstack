@@ -19,6 +19,7 @@ mod pagination;
 use http::{header, HeaderValue, Request};
 use tracing::{debug, trace};
 
+#[cfg(feature = "async")]
 use async_trait::async_trait;
 use std::sync::{Arc, Mutex};
 
@@ -27,7 +28,12 @@ use serde::de::DeserializeOwned;
 pub use self::pagination::{Pagination, PaginationError};
 
 use crate::api::rest_endpoint::set_latest_microversion;
-use crate::api::{query, ApiError, AsyncClient, Client, Query, QueryAsync, RestEndpoint};
+use crate::api::{query, ApiError, RestEndpoint};
+
+#[cfg(feature = "async")]
+use crate::api::{AsyncClient, QueryAsync};
+#[cfg(feature = "sync")]
+use crate::api::{Client, Query};
 
 /// A trait to indicate that an endpoint is pageable.
 pub trait Pageable {
@@ -54,6 +60,7 @@ pub fn paged<E>(endpoint: E, pagination: Pagination) -> Paged<E> {
     }
 }
 
+#[cfg(feature = "sync")]
 impl<E, T, C> Query<Vec<T>, C> for Paged<E>
 where
     E: RestEndpoint,
@@ -68,6 +75,7 @@ where
     }
 }
 
+#[cfg(feature = "async")]
 #[async_trait]
 impl<E, T, C> QueryAsync<Vec<T>, C> for Paged<E>
 where

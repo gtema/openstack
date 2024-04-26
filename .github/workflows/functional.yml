@@ -59,4 +59,4 @@ jobs:
       - name: Execute functional tests
         env:
           OS_CLOUD: devstack
-        run: cargo test --test functional
+        run: cargo test --test functional --all-features

@@ -20,7 +20,7 @@
 pub use std::borrow::Cow;
 
 pub use crate::api::BodyError;
-pub use crate::api::Client;
+//pub use crate::api::Client;
 pub use crate::api::JsonBodyParams;
 pub use crate::api::Pageable;
 pub use crate::api::QueryParams;

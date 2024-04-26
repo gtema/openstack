@@ -27,30 +27,43 @@ mod params;
 pub(crate) mod query;
 mod rest_endpoint;
 
+#[cfg(feature = "block_storage")]
 pub mod block_storage;
+#[cfg(feature = "compute")]
 pub mod compute;
 #[allow(dead_code)]
+#[cfg(feature = "identity")]
 pub mod identity;
 #[allow(dead_code)]
 #[allow(clippy::module_inception)]
+#[cfg(feature = "image")]
 pub mod image;
+#[cfg(feature = "load_balancer")]
 pub mod load_balancer;
+#[cfg(feature = "network")]
 pub mod network;
+#[cfg(feature = "object_store")]
 pub mod object_store;
 
 pub use self::error::ApiError;
 pub use self::error::BodyError;
 
-pub use self::client::AsyncClient;
-pub use self::client::Client;
 pub use self::client::RestClient;
 
 pub use self::rest_endpoint::check_response_error;
 pub use self::rest_endpoint::RestEndpoint;
 
+#[cfg(feature = "async")]
+pub use self::client::AsyncClient;
+#[cfg(feature = "sync")]
+pub use self::client::Client;
+#[cfg(feature = "sync")]
 pub use self::query::Query;
+#[cfg(feature = "async")]
 pub use self::query::QueryAsync;
+#[cfg(feature = "sync")]
 pub use self::query::RawQuery;
+#[cfg(feature = "async")]
 pub use self::query::RawQueryAsync;
 
 pub mod rest_endpoint_prelude;
