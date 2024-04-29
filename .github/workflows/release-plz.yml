@@ -1,5 +1,7 @@
 name: Release-plz
 
+permissions: read-all
+
 on:
   push:
     branches:
