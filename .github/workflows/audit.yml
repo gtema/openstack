@@ -1,5 +1,7 @@
 name: Security audit
 
+permissions: read-all
+
 on:
   schedule:
     - cron: '0 0 * * *'
