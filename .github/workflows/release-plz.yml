@@ -1,6 +1,6 @@
 name: Release-plz
 
-permissions: read-all
+permissions: {}
 
 on:
   push:
