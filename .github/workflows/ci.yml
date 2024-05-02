@@ -13,8 +13,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,11 +29,16 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@af5d802f13195cc3a6becf3d19d72f7de93908d8 # v2.33.122
+        with:
+          tool: cargo-nextest
+
       - name: Rust Cache
         uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2.7.3
 
-      - name: Build
-        run: cargo build --verbose
-
       - name: Run tests
-        run: cargo test --verbose --all-features
+        run: |
+          set -exuo pipefail
+          cargo nextest run
+          cargo test --doc
