@@ -64,7 +64,12 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@af5d802f13195cc3a6becf3d19d72f7de93908d8 # v2.33.122
+        with:
+          tool: cargo-nextest
+
       - name: Execute functional tests
         env:
           OS_CLOUD: devstack
-        run: cargo test --test functional --all-features
+        run: cargo nextest run --test functional --all-features
