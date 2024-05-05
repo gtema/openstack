@@ -29,12 +29,14 @@ mod group_type;
 mod host;
 mod limit;
 mod message;
+mod os_volume_transfer;
 mod resource_filter;
 mod snapshot;
 mod snapshot_manage;
 mod r#type;
 mod volume;
 mod volume_manage;
+mod volume_transfer;
 
 /// Block Storage (Volume) service (Cinder) commands
 #[derive(Parser)]
@@ -58,12 +60,14 @@ pub enum BlockStorageCommands {
     Host(host::HostCommand),
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
+    OsVolumeTransfer(os_volume_transfer::VolumeTransferCommand),
     Snapshot(snapshot::SnapshotCommand),
     SnapshotManage(snapshot_manage::SnapshotManageCommand),
     ResourceFilter(resource_filter::ResourceFilterCommand),
     Type(r#type::VolumeTypeCommand),
     Volume(volume::VolumeCommand),
     VolumeManage(volume_manage::VolumeManageCommand),
+    VolumeTransfer(volume_transfer::VolumeTransferCommand),
 }
 
 impl BlockStorageCommand {
@@ -88,6 +92,9 @@ impl BlockStorageCommand {
             BlockStorageCommands::Host(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Message(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::OsVolumeTransfer(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::SnapshotManage(cmd) => {
                 cmd.take_action(parsed_args, session).await
@@ -98,6 +105,9 @@ impl BlockStorageCommand {
             BlockStorageCommands::Type(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Volume(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::VolumeManage(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::VolumeTransfer(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
         }
     }
 }

@@ -12,22 +12,23 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! `Block_storage` Service bindings
-pub mod attachment;
-pub mod backup;
-pub mod default_type;
-pub mod extension;
-pub mod group;
-pub mod group_snapshot;
-pub mod group_type;
-pub mod host;
-pub mod limit;
-pub mod message;
-pub mod os_volume_transfer;
-pub mod resource_filter;
-pub mod snapshot;
-pub mod snapshot_manage;
-pub mod r#type;
-pub mod volume;
-pub mod volume_manage;
-pub mod volume_transfer;
+mod accept_autogen;
+mod create_autogen;
+mod delete_autogen;
+mod list_autogen;
+mod show_autogen;
+
+use assert_cmd::prelude::*;
+use std::process::Command;
+
+#[test]
+fn help() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("osc")?;
+
+    cmd.arg("block-storage")
+        .arg("os-volume-transfer")
+        .arg("--help");
+    cmd.assert().success();
+
+    Ok(())
+}
