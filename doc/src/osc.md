@@ -77,6 +77,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage message delete`↴](#osc-block-storage-message-delete)
 * [`osc block-storage message list`↴](#osc-block-storage-message-list)
 * [`osc block-storage message show`↴](#osc-block-storage-message-show)
+* [`osc block-storage os-volume-transfer`↴](#osc-block-storage-os-volume-transfer)
+* [`osc block-storage os-volume-transfer accept`↴](#osc-block-storage-os-volume-transfer-accept)
+* [`osc block-storage os-volume-transfer create`↴](#osc-block-storage-os-volume-transfer-create)
+* [`osc block-storage os-volume-transfer delete`↴](#osc-block-storage-os-volume-transfer-delete)
+* [`osc block-storage os-volume-transfer list`↴](#osc-block-storage-os-volume-transfer-list)
+* [`osc block-storage os-volume-transfer show`↴](#osc-block-storage-os-volume-transfer-show)
 * [`osc block-storage snapshot`↴](#osc-block-storage-snapshot)
 * [`osc block-storage snapshot create`↴](#osc-block-storage-snapshot-create)
 * [`osc block-storage snapshot delete`↴](#osc-block-storage-snapshot-delete)
@@ -134,6 +140,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage volume-manage create316`↴](#osc-block-storage-volume-manage-create316)
 * [`osc block-storage volume-manage create30`↴](#osc-block-storage-volume-manage-create30)
 * [`osc block-storage volume-manage list`↴](#osc-block-storage-volume-manage-list)
+* [`osc block-storage volume-transfer`↴](#osc-block-storage-volume-transfer)
+* [`osc block-storage volume-transfer accept`↴](#osc-block-storage-volume-transfer-accept)
+* [`osc block-storage volume-transfer create355`↴](#osc-block-storage-volume-transfer-create355)
+* [`osc block-storage volume-transfer delete`↴](#osc-block-storage-volume-transfer-delete)
+* [`osc block-storage volume-transfer list`↴](#osc-block-storage-volume-transfer-list)
+* [`osc block-storage volume-transfer show`↴](#osc-block-storage-volume-transfer-show)
 * [`osc catalog`↴](#osc-catalog)
 * [`osc catalog list`↴](#osc-catalog-list)
 * [`osc compute`↴](#osc-compute)
@@ -833,12 +845,14 @@ Block Storage (Volume) service (Cinder) commands
 * `host` — Hosts extension (os-hosts)
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
+* `os-volume-transfer` — Volume transfers
 * `snapshot` — Volume snapshots (snapshots)
 * `snapshot-manage` — SnapshotManage manage extension (manageable_snapshots)
 * `resource-filter` — Resource filters
 * `type` — Block Storage VolumeType type commands
 * `volume` — Block Storage Volume commands
 * `volume-manage` — Volume manage extension (manageable_volumes)
+* `volume-transfer` — Volume transfers (volume-transfers) (3.55 or later)
 
 
 
@@ -1990,6 +2004,85 @@ Return the given message
 
 
 
+## `osc block-storage os-volume-transfer`
+
+Volume transfers
+
+Transfers a volume from one user to another user.
+
+**Usage:** `osc block-storage os-volume-transfer <COMMAND>`
+
+###### **Subcommands:**
+
+* `accept` — Accept a new volume transfer
+* `create` — Create a new volume transfer
+* `delete` — Delete a transfer
+* `list` — Returns a detailed list of transfers
+* `show` — Return data about active transfers
+
+
+
+## `osc block-storage os-volume-transfer accept`
+
+Accept a new volume transfer
+
+**Usage:** `osc block-storage os-volume-transfer accept --auth-key <AUTH_KEY> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/os-volume-transfer/{id}/accept API
+
+###### **Options:**
+
+* `--auth-key <AUTH_KEY>`
+
+
+
+## `osc block-storage os-volume-transfer create`
+
+Create a new volume transfer
+
+**Usage:** `osc block-storage os-volume-transfer create [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the object
+* `--volume-id <VOLUME_ID>` — The UUID of the volume
+
+
+
+## `osc block-storage os-volume-transfer delete`
+
+Delete a transfer
+
+**Usage:** `osc block-storage os-volume-transfer delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/os-volume-transfer/{id} API
+
+
+
+## `osc block-storage os-volume-transfer list`
+
+Returns a detailed list of transfers
+
+**Usage:** `osc block-storage os-volume-transfer list`
+
+
+
+## `osc block-storage os-volume-transfer show`
+
+Return data about active transfers
+
+**Usage:** `osc block-storage os-volume-transfer show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/os-volume-transfer/{id} API
+
+
+
 ## `osc block-storage snapshot`
 
 Volume snapshots (snapshots)
@@ -3081,6 +3174,109 @@ name               A name for the new volume. description        A description f
 Returns a detailed list of volumes available to manage
 
 **Usage:** `osc block-storage volume-manage list`
+
+
+
+## `osc block-storage volume-transfer`
+
+Volume transfers (volume-transfers) (3.55 or later)
+
+Transfers a volume from one user to another user. This is the new transfer APIs with microversion 3.55.
+
+**Usage:** `osc block-storage volume-transfer <COMMAND>`
+
+###### **Subcommands:**
+
+* `accept` — Accept a new volume transfer
+* `create355` — Create a new volume transfer
+* `delete` — Delete a transfer
+* `list` — Returns a detailed list of transfers
+* `show` — Return data about active transfers
+
+
+
+## `osc block-storage volume-transfer accept`
+
+Accept a new volume transfer
+
+**Usage:** `osc block-storage volume-transfer accept --auth-key <AUTH_KEY> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volume-transfers/{id}/accept API
+
+###### **Options:**
+
+* `--auth-key <AUTH_KEY>`
+
+
+
+## `osc block-storage volume-transfer create355`
+
+Create a new volume transfer
+
+**Usage:** `osc block-storage volume-transfer create355 [OPTIONS] --volume-id <VOLUME_ID>`
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the object
+* `--no-snapshots <NO_SNAPSHOTS>` — Transfer volume without snapshots. Defaults to False if not specified
+
+  Possible values: `true`, `false`
+
+* `--volume-id <VOLUME_ID>` — The UUID of the volume
+
+
+
+## `osc block-storage volume-transfer delete`
+
+Delete a transfer
+
+**Usage:** `osc block-storage volume-transfer delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volume-transfers/{id} API
+
+
+
+## `osc block-storage volume-transfer list`
+
+Returns a detailed list of transfers
+
+**Usage:** `osc block-storage volume-transfer list [OPTIONS]`
+
+###### **Options:**
+
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
+
+  Possible values: `true`, `false`
+
+* `--is-public <IS_PUBLIC>` — Filter the volume transfer by public visibility
+
+  Possible values: `true`, `false`
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage volume-transfer show`
+
+Return data about active transfers
+
+**Usage:** `osc block-storage volume-transfer show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/volume-transfers/{id} API
 
 
 
