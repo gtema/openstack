@@ -89,6 +89,18 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage os-volume-transfer delete`↴](#osc-block-storage-os-volume-transfer-delete)
 * [`osc block-storage os-volume-transfer list`↴](#osc-block-storage-os-volume-transfer-list)
 * [`osc block-storage os-volume-transfer show`↴](#osc-block-storage-os-volume-transfer-show)
+* [`osc block-storage qos-spec`↴](#osc-block-storage-qos-spec)
+* [`osc block-storage qos-spec association`↴](#osc-block-storage-qos-spec-association)
+* [`osc block-storage qos-spec association list`↴](#osc-block-storage-qos-spec-association-list)
+* [`osc block-storage qos-spec associate`↴](#osc-block-storage-qos-spec-associate)
+* [`osc block-storage qos-spec create`↴](#osc-block-storage-qos-spec-create)
+* [`osc block-storage qos-spec delete`↴](#osc-block-storage-qos-spec-delete)
+* [`osc block-storage qos-spec delete-keys`↴](#osc-block-storage-qos-spec-delete-keys)
+* [`osc block-storage qos-spec disassociate`↴](#osc-block-storage-qos-spec-disassociate)
+* [`osc block-storage qos-spec disassociate-all`↴](#osc-block-storage-qos-spec-disassociate-all)
+* [`osc block-storage qos-spec list`↴](#osc-block-storage-qos-spec-list)
+* [`osc block-storage qos-spec set`↴](#osc-block-storage-qos-spec-set)
+* [`osc block-storage qos-spec show`↴](#osc-block-storage-qos-spec-show)
 * [`osc block-storage snapshot`↴](#osc-block-storage-snapshot)
 * [`osc block-storage snapshot create`↴](#osc-block-storage-snapshot-create)
 * [`osc block-storage snapshot delete`↴](#osc-block-storage-snapshot-delete)
@@ -854,6 +866,7 @@ Block Storage (Volume) service (Cinder) commands
 * `limit` — Limits (limits)
 * `message` — Messages (messages)
 * `os-volume-transfer` — Volume transfers
+* `qos-spec` — Quality of service (QoS) specifications (qos-specs)
 * `snapshot` — Volume snapshots (snapshots)
 * `snapshot-manage` — SnapshotManage manage extension (manageable_snapshots)
 * `resource-filter` — Resource filters
@@ -2199,6 +2212,179 @@ Return data about active transfers
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/os-volume-transfer/{id} API
+
+
+
+## `osc block-storage qos-spec`
+
+Quality of service (QoS) specifications (qos-specs)
+
+Administrators only, depending on policy settings.
+
+Creates, lists, shows details for, associates, disassociates, sets keys, unsets keys, and deletes quality of service (QoS) specifications.
+
+**Usage:** `osc block-storage qos-spec <COMMAND>`
+
+###### **Subcommands:**
+
+* `association` — Supported subcommands
+* `associate` — Associate a qos specs with a volume type
+* `create` — Command without description in OpenAPI
+* `delete` — Deletes an existing qos specs
+* `delete-keys` — Deletes specified keys in qos specs
+* `disassociate` — Disassociate a qos specs from a volume type
+* `disassociate-all` — Disassociate a qos specs from all volume types
+* `list` — Returns the list of qos_specs
+* `set` — Command without description in OpenAPI
+* `show` — Return a single qos spec item
+
+
+
+## `osc block-storage qos-spec association`
+
+Supported subcommands
+
+**Usage:** `osc block-storage qos-spec association <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — List all associations of given qos specs
+
+
+
+## `osc block-storage qos-spec association list`
+
+List all associations of given qos specs
+
+**Usage:** `osc block-storage qos-spec association list <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id}/associations API
+
+
+
+## `osc block-storage qos-spec associate`
+
+Associate a qos specs with a volume type
+
+**Usage:** `osc block-storage qos-spec associate <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id}/associate API
+
+
+
+## `osc block-storage qos-spec create`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage qos-spec create --name <NAME>`
+
+###### **Options:**
+
+* `--name <NAME>` — The name of the QoS specification
+
+
+
+## `osc block-storage qos-spec delete`
+
+Deletes an existing qos specs
+
+**Usage:** `osc block-storage qos-spec delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id} API
+
+
+
+## `osc block-storage qos-spec delete-keys`
+
+Deletes specified keys in qos specs
+
+**Usage:** `osc block-storage qos-spec delete-keys [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id}/delete_keys API
+
+###### **Options:**
+
+* `--keys <KEYS>`
+
+
+
+## `osc block-storage qos-spec disassociate`
+
+Disassociate a qos specs from a volume type
+
+**Usage:** `osc block-storage qos-spec disassociate <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id}/disassociate API
+
+
+
+## `osc block-storage qos-spec disassociate-all`
+
+Disassociate a qos specs from all volume types
+
+**Usage:** `osc block-storage qos-spec disassociate-all <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id}/disassociate_all API
+
+
+
+## `osc block-storage qos-spec list`
+
+Returns the list of qos_specs
+
+**Usage:** `osc block-storage qos-spec list [OPTIONS]`
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--offset <OFFSET>` — Used in conjunction with limit to return a slice of items. offset is where to start in the list
+* `--sort <SORT>` — Comma-separated list of sort keys and optional sort directions in the form of \< key > \[: \< direction > \]. A valid direction is asc (ascending) or desc (descending)
+* `--sort-dir <SORT_DIR>` — Sorts by one or more sets of attribute and sort direction combinations. If you omit the sort direction in a set, default is desc. Deprecated in favour of the combined sort parameter
+* `--sort-key <SORT_KEY>` — Sorts by an attribute. A valid value is name, status, container_format, disk_format, size, id, created_at, or updated_at. Default is created_at. The API uses the natural sorting direction of the sort_key attribute value. Deprecated in favour of the combined sort parameter
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
+
+
+
+## `osc block-storage qos-spec set`
+
+Command without description in OpenAPI
+
+**Usage:** `osc block-storage qos-spec set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id} API
+
+###### **Options:**
+
+* `--qos-specs <key=value>`
+
+
+
+## `osc block-storage qos-spec show`
+
+Return a single qos spec item
+
+**Usage:** `osc block-storage qos-spec show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/qos-specs/{id} API
 
 
 

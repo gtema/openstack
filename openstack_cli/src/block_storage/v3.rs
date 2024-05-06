@@ -32,6 +32,7 @@ mod host;
 mod limit;
 mod message;
 mod os_volume_transfer;
+mod qos_spec;
 mod resource_filter;
 mod snapshot;
 mod snapshot_manage;
@@ -65,6 +66,7 @@ pub enum BlockStorageCommands {
     Limit(limit::LimitCommand),
     Message(message::MessageCommand),
     OsVolumeTransfer(os_volume_transfer::VolumeTransferCommand),
+    QosSpec(qos_spec::QosSpecCommand),
     Snapshot(snapshot::SnapshotCommand),
     SnapshotManage(snapshot_manage::SnapshotManageCommand),
     ResourceFilter(resource_filter::ResourceFilterCommand),
@@ -103,6 +105,7 @@ impl BlockStorageCommand {
             BlockStorageCommands::OsVolumeTransfer(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
+            BlockStorageCommands::QosSpec(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::SnapshotManage(cmd) => {
                 cmd.take_action(parsed_args, session).await

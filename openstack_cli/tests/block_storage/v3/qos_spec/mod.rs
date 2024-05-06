@@ -12,24 +12,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod attachment;
-mod backup;
-mod cluster;
-mod default_type;
-mod extension;
-mod group;
-mod group_snapshot;
-mod group_type;
-mod host;
-mod limit;
-mod message;
-mod qos_spec;
-mod resource_filter;
-mod snapshot;
-mod snapshot_manage;
-mod r#type;
-mod volume;
-mod volume_manage;
+mod associate_autogen;
+mod association;
+mod create_autogen;
+mod delete_autogen;
+mod delete_keys_autogen;
+mod disassociate_all_autogen;
+mod disassociate_autogen;
+mod list_autogen;
+mod set_autogen;
+mod show_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -38,7 +30,7 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("block-storage").arg("--help");
+    cmd.arg("block-storage").arg("qos-spec").arg("--help");
     cmd.assert().success();
 
     Ok(())

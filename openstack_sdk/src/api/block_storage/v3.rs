@@ -26,6 +26,7 @@ pub mod host;
 pub mod limit;
 pub mod message;
 pub mod os_volume_transfer;
+pub mod qos_spec;
 pub mod resource_filter;
 pub mod snapshot;
 pub mod snapshot_manage;
