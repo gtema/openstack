@@ -32,6 +32,8 @@ network = []
 object_store = []
 sync = []
 async = []
+client_der = []
+client_pem = []
 
 [dependencies]
 async-trait = {workspace = true}

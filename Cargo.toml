@@ -4,7 +4,8 @@ members = [
   "openstack_sdk",
   "openstack_cli",
   "structable_derive",
-  "xtask"
+  "xtask",
+  "fuzz"
 ]
 default-members = ["openstack_cli", "openstack_sdk"]
 
