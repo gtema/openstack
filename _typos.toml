@@ -1,7 +1,0 @@
-[default]
-
-[type.rust.extend-identifiers]
-"wher"="wher"
-
-[default.extend-words]
-ro = "ro"

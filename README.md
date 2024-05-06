@@ -1,9 +1,9 @@
 # OpenStack Rust
 
-Welcome to the Openstack<->Rust project.
+Welcome to the OpenStack<->Rust project.
 
 As a programming language Rust is getting more and more traction in the low
-level programming. It has very unique programming safety featrues what makes it
+level programming. It has very unique programming safety features what makes it
 a very good fit in a complex world of OpenStack. As a compiled language it is
 also a very good fit for the CLI tools allowing users to escape the python
 dependency issues. In the containerization era placing a small size binary is
@@ -32,7 +32,7 @@ maintenance effort while at the same time guaranteeing that API bindings match
 to what service is supporting in reality. Instead of human reading the API-REF
 written by another human who maybe was involved in the implementation of the
 feature OpenAPI specs is being chosen as a source of truth. Since such specs
-were also not existing and multiple attempts to introde OpenAPI in OpenStack
+were also not existing and multiple attempts to introduce OpenAPI in OpenStack
 failed the process was restarted again. Currently there is a lot of work
 happening in OpenStack to produce specs for majority of the services. Main
 component responsible for that is
@@ -56,6 +56,9 @@ always landing on the shoulders of SDK/CLI maintainers to try to cope with it.
 Now if API is bad - API author is to blame.
 
 - Code being automatically generated from OpenAPI specs of the service APIs.
+- Unix philosophy: "do one thing well". Every resource/command coverage tries
+to focus only on the exact API. Combination of API calls is not in scope of the
+generated code. "Simple is better then complex" (The Zen of Python).
 - SDK/CLI bindings are wrapping the API with no additional guessing or
 normalization.
 - User is in full control of input and output. Microversion X.Y has a concrete
@@ -104,10 +107,7 @@ osc --os-cloud devstack compute flavor list
 
 ### Functional testing
 
-SDK and CLI are coming with a set of basic functional tests that are not
-executed by default since that requires access to the real cloud. In addition
-to that some tests require extended privileges so those are additionally
-ignored.
+SDK and CLI are coming with a set of basic functional tests.
 
 To trigger functional tests invoke:
 
