@@ -96,4 +96,4 @@ jobs:
     - name: Check spelling of file.txt
       uses: crate-ci/typos@f2c1f08a7b3c1b96050cb786baaa2a94797bdb7d # master
       with:
-        config: _typos.toml
+        config: typos.toml

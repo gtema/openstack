@@ -17,7 +17,7 @@ repos:
         exclude: '^zuul.d/.*$'
       - id: check-json
   - repo: https://github.com/crate-ci/typos
-    rev: v1.18.2
+    rev: v1.21.0
     hooks:
       - id: typos
   - repo: local

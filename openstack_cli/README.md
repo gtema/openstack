@@ -19,7 +19,7 @@ from one tool to another.
 - `osc api` as an API wrapper allowing user to perform any direct API call
   specifying service type, url, method and payload. This can be used for
   example when certain resource is not currently implemented natively.
-- `osc auth` with subcommands for deailng explicitly with authentication
+- `osc auth` with subcommands for dealing explicitly with authentication
   (showing current auth info, renewing auth, MFA/SSO support)
 - Every resource is having a service type in the command solving confusions
   like user groups vs volume groups

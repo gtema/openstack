@@ -20,6 +20,7 @@ immediately available on the next regeneration.
   invocation with upload and download capabilities.
 - Every combination of URL + http method + body schema is represented by a
 dedicated module
+- User is in charge of return data schema.
 
 ## Structure
 
