@@ -31,6 +31,10 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage backup set343`↴](#osc-block-storage-backup-set343)
 * [`osc block-storage backup set39`↴](#osc-block-storage-backup-set39)
 * [`osc block-storage backup show`↴](#osc-block-storage-backup-show)
+* [`osc block-storage cluster`↴](#osc-block-storage-cluster)
+* [`osc block-storage cluster list`↴](#osc-block-storage-cluster-list)
+* [`osc block-storage cluster set`↴](#osc-block-storage-cluster-set)
+* [`osc block-storage cluster show`↴](#osc-block-storage-cluster-show)
 * [`osc block-storage default-type`↴](#osc-block-storage-default-type)
 * [`osc block-storage default-type delete`↴](#osc-block-storage-default-type-delete)
 * [`osc block-storage default-type list`↴](#osc-block-storage-default-type-list)
@@ -837,6 +841,7 @@ Block Storage (Volume) service (Cinder) commands
 
 * `attachment` — Attachments (attachments)
 * `backup` — Backups
+* `cluster` — Clusters (clusters)
 * `default-type` — Default Volume Types (default-types)
 * `extension` — API extensions (extensions)
 * `group` — Generic volume groups (groups)
@@ -1298,6 +1303,95 @@ Return data about the given backup
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/backups/{id} API
+
+
+
+## `osc block-storage cluster`
+
+Clusters (clusters)
+
+Administrator only. Lists all Cinder clusters, show cluster detail, enable or disable a cluster.
+
+Each cinder service runs on a host computer (possibly multiple services on the same host; it depends how you decide to deploy cinder). In order to support High Availability scenarios, services can be grouped into clusters where the same type of service (for example, cinder-volume) can run on different hosts so that if one host goes down the service is still available on a different host. Since there’s no point having these services sitting around doing nothing while waiting for some other host to go down (which is also known as Active/Passive mode), grouping services into clusters also allows cinder to support Active/Active mode in which all services in a cluster are doing work all the time.
+
+**Note**: Currently the only service that can be grouped into clusters is cinder-volume.
+
+Clusters are determined by the deployment configuration; that’s why there is no ‘create-cluster’ API call listed below. Once your services are up and running, however, you can use the following API requests to get information about your clusters and to update their status.
+
+**Usage:** `osc block-storage cluster <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Return a detailed list of all existing clusters
+* `set` — Enable/Disable scheduling for a cluster
+* `show` — Return data for a given cluster name with optional binary
+
+
+
+## `osc block-storage cluster list`
+
+Return a detailed list of all existing clusters.
+
+Filter by is_up, disabled, num_hosts, and num_down_hosts.
+
+**Usage:** `osc block-storage cluster list [OPTIONS]`
+
+###### **Options:**
+
+* `--active-backend-id <ACTIVE_BACKEND_ID>` — The ID of active storage backend. Only in cinder-volume service
+* `--binary <BINARY>` — Filter the cluster list result by binary name of the clustered services. One of cinder-api, cinder-scheduler, cinder-volume or cinder-backup
+
+  Possible values: `cinder-api`, `cinder-backup`, `cinder-scheduler`, `cinder-volume`
+
+* `--disabled <DISABLED>` — Filter the cluster list result by status
+
+  Possible values: `true`, `false`
+
+* `--frozen <FROZEN>` — Whether the cluster is frozen or not
+
+  Possible values: `true`, `false`
+
+* `--is-up <IS_UP>` — Filter the cluster list result by state
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — Filter the cluster list result by cluster name
+* `--num-down-hosts <NUM_DOWN_HOSTS>` — Filter the cluster list result by number of down hosts
+* `--num-hosts <NUM_HOSTS>` — Filter the cluster list result by number of hosts
+* `--replication-stats <REPLICATION_STATS>` — Filter the cluster list result by replication status
+
+  Possible values: `disabled`, `enabled`
+
+
+
+
+## `osc block-storage cluster set`
+
+Enable/Disable scheduling for a cluster
+
+**Usage:** `osc block-storage cluster set [OPTIONS] --name <NAME> <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/clusters/{id} API
+
+###### **Options:**
+
+* `--binary <BINARY>` — The binary name of the services in the cluster
+* `--disabled-reason <DISABLED_REASON>` — The reason for disabling a resource
+* `--name <NAME>` — The name to identify the service cluster
+
+
+
+## `osc block-storage cluster show`
+
+Return data for a given cluster name with optional binary
+
+**Usage:** `osc block-storage cluster show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v3/clusters/{id} API
 
 
 
