@@ -20,6 +20,7 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 use crate::{Cli, OpenStackCliError};
 
 mod attachment;
+mod availability_zone;
 mod backup;
 mod cluster;
 mod default_type;
@@ -52,6 +53,7 @@ pub struct BlockStorageCommand {
 #[derive(Subcommand)]
 pub enum BlockStorageCommands {
     Attachment(attachment::AttachmentCommand),
+    AvailabilityZone(availability_zone::AvailabilityZoneCommand),
     Backup(backup::BackupCommand),
     Cluster(cluster::ClusterCommand),
     DefaultType(default_type::DefaultTypeCommand),
@@ -85,6 +87,9 @@ impl BlockStorageCommand {
 
         match &self.command {
             BlockStorageCommands::Attachment(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::AvailabilityZone(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             BlockStorageCommands::Backup(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Cluster(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::DefaultType(cmd) => cmd.take_action(parsed_args, session).await,

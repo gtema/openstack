@@ -18,6 +18,8 @@ This document contains the help content for the `osc` command-line program.
 * [`osc block-storage attachment list`↴](#osc-block-storage-attachment-list)
 * [`osc block-storage attachment set327`↴](#osc-block-storage-attachment-set327)
 * [`osc block-storage attachment show`↴](#osc-block-storage-attachment-show)
+* [`osc block-storage availability-zone`↴](#osc-block-storage-availability-zone)
+* [`osc block-storage availability-zone list`↴](#osc-block-storage-availability-zone-list)
 * [`osc block-storage backup`↴](#osc-block-storage-backup)
 * [`osc block-storage backup create351`↴](#osc-block-storage-backup-create351)
 * [`osc block-storage backup create343`↴](#osc-block-storage-backup-create343)
@@ -840,6 +842,7 @@ Block Storage (Volume) service (Cinder) commands
 ###### **Subcommands:**
 
 * `attachment` — Attachments (attachments)
+* `availability-zone` — Availability zones
 * `backup` — Backups
 * `cluster` — Clusters (clusters)
 * `default-type` — Default Volume Types (default-types)
@@ -1063,6 +1066,28 @@ Return data about the given attachment
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v3/attachments/{id} API
+
+
+
+## `osc block-storage availability-zone`
+
+Availability zones
+
+Lists and gets detailed availability zone information.
+
+**Usage:** `osc block-storage availability-zone <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Describe all known availability zones
+
+
+
+## `osc block-storage availability-zone list`
+
+Describe all known availability zones
+
+**Usage:** `osc block-storage availability-zone list`
 
 
 
