@@ -230,78 +230,84 @@ impl CloudConfig {
         if let Some(update_auth) = &update.auth {
             let auth = self.auth.get_or_insert(Auth::default());
             if auth.auth_url.is_none() && update_auth.auth_url.is_some() {
-                auth.auth_url = update_auth.auth_url.clone();
+                auth.auth_url.clone_from(&update_auth.auth_url);
             }
             if auth.domain_id.is_none() && update_auth.domain_id.is_some() {
-                auth.domain_id = update_auth.domain_id.clone();
+                auth.domain_id.clone_from(&update_auth.domain_id);
             }
             if auth.domain_name.is_none() && update_auth.domain_name.is_some() {
-                auth.domain_name = update_auth.domain_name.clone();
+                auth.domain_name.clone_from(&update_auth.domain_name);
             }
             if auth.endpoint.is_none() && update_auth.endpoint.is_some() {
-                auth.endpoint = update_auth.endpoint.clone();
+                auth.endpoint.clone_from(&update_auth.endpoint);
             }
             if auth.password.is_none() && update_auth.password.is_some() {
-                auth.password = update_auth.password.clone();
+                auth.password.clone_from(&update_auth.password);
             }
             if auth.project_id.is_none() && update_auth.project_id.is_some() {
-                auth.project_id = update_auth.project_id.clone();
+                auth.project_id.clone_from(&update_auth.project_id);
             }
             if auth.project_name.is_none() && update_auth.project_name.is_some() {
-                auth.project_name = update_auth.project_name.clone();
+                auth.project_name.clone_from(&update_auth.project_name);
             }
             if auth.project_domain_id.is_none() && update_auth.project_domain_id.is_some() {
-                auth.project_domain_id = update_auth.project_domain_id.clone();
+                auth.project_domain_id
+                    .clone_from(&update_auth.project_domain_id);
             }
             if auth.project_domain_name.is_none() && update_auth.project_domain_name.is_some() {
-                auth.project_domain_name = update_auth.project_domain_name.clone();
+                auth.project_domain_name
+                    .clone_from(&update_auth.project_domain_name);
             }
             if auth.token.is_none() && update_auth.token.is_some() {
-                auth.token = update_auth.token.clone();
+                auth.token.clone_from(&update_auth.token);
             }
             if auth.username.is_none() && update_auth.username.is_some() {
-                auth.username = update_auth.username.clone();
+                auth.username.clone_from(&update_auth.username);
             }
             if auth.user_domain_name.is_none() && update_auth.user_domain_name.is_some() {
-                auth.user_domain_name = update_auth.user_domain_name.clone();
+                auth.user_domain_name
+                    .clone_from(&update_auth.user_domain_name);
             }
             if auth.user_domain_id.is_none() && update_auth.user_domain_id.is_some() {
-                auth.user_domain_id = update_auth.user_domain_id.clone();
+                auth.user_domain_id.clone_from(&update_auth.user_domain_id);
             }
             if auth.protocol.is_none() && update_auth.protocol.is_some() {
-                auth.protocol = update_auth.protocol.clone();
+                auth.protocol.clone_from(&update_auth.protocol);
             }
             if auth.identity_provider.is_none() && update_auth.identity_provider.is_some() {
-                auth.identity_provider = update_auth.identity_provider.clone();
+                auth.identity_provider
+                    .clone_from(&update_auth.identity_provider);
             }
             if auth.application_credential_id.is_none()
                 && update_auth.application_credential_id.is_some()
             {
-                auth.application_credential_id = update_auth.application_credential_id.clone();
+                auth.application_credential_id
+                    .clone_from(&update_auth.application_credential_id);
             }
             if auth.application_credential_name.is_none()
                 && update_auth.application_credential_name.is_some()
             {
-                auth.application_credential_name = update_auth.application_credential_name.clone();
+                auth.application_credential_name
+                    .clone_from(&update_auth.application_credential_name);
             }
             if auth.application_credential_secret.is_none()
                 && update_auth.application_credential_secret.is_some()
             {
-                auth.application_credential_secret =
-                    update_auth.application_credential_secret.clone();
+                auth.application_credential_secret
+                    .clone_from(&update_auth.application_credential_secret);
             }
         }
         if self.auth_type.is_none() && update.auth_type.is_some() {
-            self.auth_type = update.auth_type.clone();
+            self.auth_type.clone_from(&update.auth_type);
         }
         if self.profile.is_none() && update.profile.is_some() {
-            self.profile = update.profile.clone();
+            self.profile.clone_from(&update.profile);
         }
         if self.interface.is_none() && update.interface.is_some() {
-            self.interface = update.interface.clone();
+            self.interface.clone_from(&update.interface);
         }
         if self.region_name.is_none() && update.region_name.is_some() {
-            self.region_name = update.region_name.clone();
+            self.region_name.clone_from(&update.region_name);
         }
         let current_keys: HashSet<String> = self.options.keys().cloned().collect();
         self.options.extend(

@@ -221,7 +221,7 @@ impl Catalog {
         //// Set the URL from catalog/input respecting known overrides
         self.service_endpoints.insert(
             service_type.to_string(),
-            match self.endpoint_overrides.get(&service_type.to_string()) {
+            match self.endpoint_overrides.get(service_type) {
                 Some(ep) => ep.clone(),
                 None => self.build_service_endpoint(url)?,
             },
@@ -264,7 +264,7 @@ impl Catalog {
         service_type: &ServiceType,
     ) -> Option<ServiceEndpoint> {
         for cat_type in service_type.get_supported_catalog_types() {
-            if let Some(sep) = self.service_endpoints.get(&cat_type.to_string()) {
+            if let Some(sep) = self.service_endpoints.get(cat_type) {
                 debug!("Service endpoint url = {}", sep.url);
                 info!("Service info = {:?}", sep);
                 return Some(sep.clone());
@@ -288,7 +288,7 @@ impl Catalog {
         data: &Bytes,
     ) -> Result<(), CatalogError> {
         for cat_type in service_type.get_supported_catalog_types() {
-            if let Some(sep) = self.service_endpoints.get_mut(&cat_type.to_string()) {
+            if let Some(sep) = self.service_endpoints.get_mut(cat_type) {
                 return sep.process_discovery(data);
             }
         }
