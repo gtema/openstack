@@ -75,13 +75,13 @@ struct ResponseData {
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
-    #[structable(optional, title = "zoneName", wide)]
+    #[structable(optional, title = "zoneName")]
     zone_name: Option<String>,
 
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
-    #[structable(optional, pretty, title = "zoneState", wide)]
+    #[structable(optional, pretty, title = "zoneState")]
     zone_state: Option<Value>,
 }
 

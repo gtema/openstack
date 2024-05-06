@@ -17,7 +17,7 @@
 
 //! List AvailabilityZones command
 //!
-//! Wraps invoking of the `v2.1/os-availability-zone/detail` with `GET` method
+//! Wraps invoking of the `v3/os-availability-zone` with `GET` method
 
 use clap::Args;
 use serde::{Deserialize, Serialize};
@@ -33,21 +33,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use openstack_sdk::api::compute::v2::availability_zone::list_detail;
+use openstack_sdk::api::block_storage::v3::availability_zone::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Gets detailed availability zone information. Policy defaults enable only
-/// users with the administrative role to perform this operation. Cloud
-/// providers can change these permissions through the `policy.json` file.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: unauthorized(401), forbidden(403)
+/// Describe all known availability zones.
 ///
 #[derive(Args)]
-#[command(about = "Get Detailed Availability Zone Information")]
 pub struct AvailabilityZonesCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -68,23 +61,12 @@ struct PathParameters {}
 /// AvailabilityZones response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// An object containing a list of host information. The host information
-    /// is comprised of host and service objects. The service object returns
-    /// three parameters representing the states of the service: `active`,
-    /// `available`, and `updated_at`.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    hosts: Option<Value>,
-
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
     #[structable(optional, title = "zoneName")]
     zone_name: Option<String>,
 
-    /// The current state of the availability zone.
-    ///
     #[serde(rename = "zoneState")]
     #[structable(optional, pretty, title = "zoneState")]
     zone_state: Option<Value>,
@@ -102,7 +84,7 @@ impl AvailabilityZonesCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list_detail::Request::builder();
+        let ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
