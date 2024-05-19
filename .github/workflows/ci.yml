@@ -15,7 +15,18 @@ env:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Harden Runner
@@ -29,6 +40,7 @@ jobs:
         uses: dtolnay/rust-toolchain@032431f26ad14217b24e529fa2ab72cf558de38b # stable
         with:
           toolchain: stable
+          targets: ${{ matrix.target }}
 
       - name: Install cargo-nextest
         uses: taiki-e/install-action@af5d802f13195cc3a6becf3d19d72f7de93908d8 # v2.33.122
@@ -39,7 +51,7 @@ jobs:
         uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2.7.3
 
       - name: Run tests
-        run: |
-          set -exuo pipefail
-          cargo nextest run
-          cargo test --doc
+        run: cargo nextest run
+
+      - name: Run Doc tests
+        run: cargo test --doc
