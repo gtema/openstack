@@ -52,7 +52,7 @@ http = { workspace = true }
 http-body-util = "^0.1"
 hyper = { version = "^1.3", features = ["full"] }
 hyper-util = { version = "^0.1", features = ["full"] }
-itertools = { version = "^0.12" }
+itertools = { version = "^0.13" }
 json-patch = { workspace = true }
 open = { version = "^5.1" }
 reqwest = { workspace = true }
