@@ -13,11 +13,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Service Catalog processing
+#![allow(dead_code)]
 
 use bytes::Bytes;
+use lazy_static::lazy_static;
+use regex::Regex;
 use serde::de::Deserializer;
 use serde::Deserialize;
 use std::collections::HashMap;
+use std::num::ParseIntError;
 
 use anyhow::Context;
 use thiserror::Error;
@@ -29,6 +33,11 @@ use tracing::{debug, error, info, trace};
 use crate::config::CloudConfig;
 use crate::types::identity::v3::ServiceEndpoints;
 use crate::types::{ServiceType, SupportedServiceTypes};
+
+lazy_static! {
+    static ref API_VERSION_REGEX: Regex =
+        Regex::new(r"^v(?<major>[0-9]+)(?:\.)?(?<minor>[0-9]+)?$").unwrap();
+}
 
 #[derive(Debug, Clone, Default)]
 pub struct ServiceEndpointInformation {}
@@ -42,8 +51,77 @@ pub enum CatalogError {
         #[from]
         source: url::ParseError,
     },
+    #[error("Not a valid integer: {}", source)]
+    ParseIntError {
+        #[from]
+        source: ParseIntError,
+    },
     #[error(transparent)]
     Other(#[from] anyhow::Error),
+}
+
+/// Catalog endpoint
+#[derive(Clone, Debug)]
+pub struct Endpoint {
+    pub url: Url,
+    pub version: ApiVersion,
+}
+
+impl Endpoint {
+    /// Build new Endpoint from string URL
+    ///
+    /// optional project_id is used to locate version information in the url
+    pub fn from_url_string<S1: AsRef<str>, S2: AsRef<str>>(
+        url: S1,
+        project_id: &Option<S2>,
+    ) -> Result<Self, CatalogError> {
+        let url = Url::parse(url.as_ref())
+            .with_context(|| format!("Wrong endpoint URL: `{}`", url.as_ref()))?;
+        let version = ApiVersion::from_url(&url, project_id)?;
+        let res = Self { url, version };
+        Ok(res)
+    }
+}
+
+/// ApiVersion
+///
+/// ApiVersion of the Endpoint as described in
+/// https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html
+#[derive(Clone, Debug)]
+pub struct ApiVersion {
+    pub major: u8,
+    pub minor: u8,
+}
+
+impl ApiVersion {
+    /// Determine Api Version based on the Endpoint URL and optional project_id
+    pub fn from_url<S: AsRef<str>>(
+        url: &Url,
+        project_id: &Option<S>,
+    ) -> Result<Self, CatalogError> {
+        let mut res = Self { major: 0, minor: 0 };
+        // Find the version as described under
+        // https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html#inferring-version
+        let mut path_segments = url.path_segments().map_or(Vec::new(), |x| {
+            x.into_iter().filter(|x| !x.is_empty()).collect()
+        });
+        if let Some(pid) = project_id {
+            if let Some(last) = path_segments.last() {
+                if last.ends_with(pid.as_ref()) {
+                    path_segments.pop();
+                }
+            }
+        }
+        if let Some(last) = path_segments.last() {
+            if let Some(cap) = API_VERSION_REGEX.captures(last) {
+                res.major = cap["major"].parse()?;
+                if let Some(vmin) = cap.name("minor") {
+                    res.minor = vmin.as_str().parse()?;
+                }
+            }
+        }
+        Ok(res)
+    }
 }
 
 /// ServiceEndpoint data
@@ -319,5 +397,41 @@ impl Catalog {
             }
         }
         Ok(self)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use url::Url;
+
+    #[test]
+    fn test_service_endpoint() {
+        let matrix = [
+            ("http://test.com/foo", None, 0, 0),
+            ("http://test.com/v1", None, 1, 0),
+            ("http://test.com/prefix/v1", None, 1, 0),
+            ("http://test.com/prefix/v1", Some("project"), 1, 0),
+            ("http://test.com/prefix/v1/project", Some("project"), 1, 0),
+            ("http://test.com/prefix/v2.3/project", Some("project"), 2, 3),
+            (
+                "http://test.com/prefix/v1/AUTH_project",
+                Some("project"),
+                1,
+                0,
+            ),
+        ];
+        for (url, pid, maj, min) in matrix.iter() {
+            let sep = Endpoint::from_url_string(url, pid).unwrap();
+            assert_eq!(sep.url, Url::parse(url).unwrap());
+            assert_eq!(
+                (*maj, *min),
+                (sep.version.major, sep.version.minor),
+                "Major version of {} must be {}.{}",
+                url,
+                maj,
+                min
+            );
+        }
     }
 }
