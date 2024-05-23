@@ -30,7 +30,6 @@ use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
 
 use reqwest::{Body, Client as AsyncClient, Request, Response};
-use url::Url;
 
 use crate::config::CloudConfig;
 
@@ -115,32 +114,6 @@ impl Debug for AsyncOpenStack {
 #[async_trait]
 impl api::RestClient for AsyncOpenStack {
     type Error = RestError;
-
-    /// Construct final URL for the resource given the service type and RestEndpoint
-    fn rest_endpoint(
-        &self,
-        service_type: &ServiceType,
-        endpoint: &str,
-    ) -> Result<Url, api::ApiError<Self::Error>> {
-        let service_url = self.get_service_endpoint(service_type)?.url;
-        let mut work_endpoint = endpoint;
-        if let Some(segments) = service_url.path_segments() {
-            // Service catalog may point to /v2.1/ and target endpoint start
-            // with v2.1/servers. The same may happen also for project_id being
-            // used in the service catalog while rest endpoint also contain it.
-            // In order to construct proper url look in the path elements of
-            // the service catalog and for each entry ensure target url does
-            // not start with that value.
-            for part in segments {
-                if !part.is_empty() && work_endpoint.starts_with(format!("{}/", part).as_str()) {
-                    work_endpoint = work_endpoint
-                        .get(part.len() + 1..)
-                        .expect("Cannot remove prefix from url");
-                }
-            }
-        }
-        Ok(service_url.join(work_endpoint)?)
-    }
 
     /// Get service endpoint from the catalog
     fn get_service_endpoint(
