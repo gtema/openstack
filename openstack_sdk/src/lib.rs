@@ -23,6 +23,7 @@ mod error;
 mod openstack;
 #[cfg(feature = "async")]
 mod openstack_async;
+mod service_authority;
 mod state;
 mod utils;
 
