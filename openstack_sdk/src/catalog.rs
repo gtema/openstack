@@ -31,8 +31,9 @@ use url::Url;
 use tracing::{debug, error, info, trace};
 
 use crate::config::CloudConfig;
+use crate::service_authority::{ServiceAuthority, ServiceAuthorityError};
 use crate::types::identity::v3::ServiceEndpoints;
-use crate::types::{ServiceType, SupportedServiceTypes};
+use crate::types::ServiceType;
 
 lazy_static! {
     static ref API_VERSION_REGEX: Regex =
@@ -52,9 +53,14 @@ pub enum CatalogError {
         source: url::ParseError,
     },
     #[error("Not a valid integer: {}", source)]
-    ParseIntError {
+    ParseInt {
         #[from]
         source: ParseIntError,
+    },
+    #[error("Service Authority data cannot be parsed: {}", source)]
+    ServiceAuthority {
+        #[from]
+        source: ServiceAuthorityError,
     },
     #[error(transparent)]
     Other(#[from] anyhow::Error),
@@ -270,13 +276,26 @@ pub(crate) struct EndpointVersionValues {
 }
 
 /// Structure representing session ServiceCatalog
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub(crate) struct Catalog {
     /// HashMap containing service endpoints by the service type
     service_endpoints: HashMap<String, ServiceEndpoint>,
     token_catalog: Option<Vec<ServiceEndpoints>>,
     /// Configured endpoint overrides
     endpoint_overrides: HashMap<String, ServiceEndpoint>,
+    /// Service Authority data
+    service_authority: ServiceAuthority,
+}
+
+impl Default for Catalog {
+    fn default() -> Self {
+        Self {
+            service_endpoints: HashMap::new(),
+            token_catalog: None,
+            endpoint_overrides: HashMap::new(),
+            service_authority: ServiceAuthority::from_official_data().unwrap_or_default(),
+        }
+    }
 }
 
 impl Catalog {
@@ -341,8 +360,13 @@ impl Catalog {
         &self,
         service_type: &ServiceType,
     ) -> Option<ServiceEndpoint> {
-        for cat_type in service_type.get_supported_catalog_types() {
-            if let Some(sep) = self.service_endpoints.get(cat_type) {
+        let srv_type_string: String = service_type.to_string();
+        for cat_type in self
+            .service_authority
+            .get_all_types_by_service_type(&srv_type_string)
+            .unwrap_or(Vec::from([srv_type_string.clone()]))
+        {
+            if let Some(sep) = self.service_endpoints.get(&cat_type) {
                 debug!("Service endpoint url = {}", sep.url);
                 info!("Service info = {:?}", sep);
                 return Some(sep.clone());
@@ -350,9 +374,7 @@ impl Catalog {
         }
         // There is nothing in the altered catalog, but what if the service is not present in the
         // catalog while being set as endpoint_override
-        self.endpoint_overrides
-            .get(&service_type.to_string())
-            .cloned()
+        self.endpoint_overrides.get(&srv_type_string).cloned()
     }
 
     /// Invoke process_discovery of the endpoint by the service type
@@ -365,8 +387,13 @@ impl Catalog {
         service_type: &ServiceType,
         data: &Bytes,
     ) -> Result<(), CatalogError> {
-        for cat_type in service_type.get_supported_catalog_types() {
-            if let Some(sep) = self.service_endpoints.get_mut(cat_type) {
+        let srv_type_string: String = service_type.to_string();
+        for cat_type in self
+            .service_authority
+            .get_all_types_by_service_type(&srv_type_string)
+            .unwrap_or(Vec::from([srv_type_string.clone()]))
+        {
+            if let Some(sep) = self.service_endpoints.get_mut(&cat_type) {
                 return sep.process_discovery(data);
             }
         }
