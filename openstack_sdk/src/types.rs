@@ -26,27 +26,6 @@ use futures::io::Error;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-// /// Compute (Nova) Service
-struct BlockStorageService {}
-struct ComputeService {}
-struct IdentityService {}
-struct ImageService {}
-struct ObjectStoreService {}
-
-const BLOCK_STORAGE_SERVICE_TYPES: &[&str] = &[
-    "block-storage",
-    "volumev3",
-    "volumev2",
-    "volume",
-    "block-store",
-];
-const COMPUTE_SERVICE_TYPES: &[&str] = &["compute"];
-const IDENTITY_SERVICE_TYPES: &[&str] = &["identity"];
-const IMAGE_SERVICE_TYPES: &[&str] = &["image"];
-const OBJECT_STORE_SERVICE_TYPES: &[&str] = &["object-store"];
-const LOAD_BALANCER_SERVICE_TYPES: &[&str] = &["load-balancer"];
-const NETWORK_SERVICE_TYPES: &[&str] = &["network"];
-
 /// Supported Service Types
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum ServiceType {
@@ -58,25 +37,6 @@ pub enum ServiceType {
     Network,
     ObjectStore,
     Other(String),
-}
-
-pub trait SupportedServiceTypes {
-    fn get_supported_catalog_types(&self) -> Vec<&str>;
-}
-
-impl SupportedServiceTypes for ServiceType {
-    fn get_supported_catalog_types(&self) -> Vec<&str> {
-        match self {
-            ServiceType::BlockStorage => BLOCK_STORAGE_SERVICE_TYPES.to_vec(),
-            ServiceType::Compute => COMPUTE_SERVICE_TYPES.to_vec(),
-            ServiceType::Image => IMAGE_SERVICE_TYPES.to_vec(),
-            ServiceType::Identity => IDENTITY_SERVICE_TYPES.to_vec(),
-            ServiceType::LoadBalancer => LOAD_BALANCER_SERVICE_TYPES.to_vec(),
-            ServiceType::Network => NETWORK_SERVICE_TYPES.to_vec(),
-            ServiceType::ObjectStore => OBJECT_STORE_SERVICE_TYPES.to_vec(),
-            ServiceType::Other(x) => Vec::from([x.as_str()]),
-        }
-    }
 }
 
 impl fmt::Display for ServiceType {
