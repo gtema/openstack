@@ -23,7 +23,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::num::ParseIntError;
 
-use anyhow::Context;
+use anyhow::{anyhow, Context};
 use thiserror::Error;
 
 use url::Url;
@@ -38,6 +38,7 @@ use crate::types::ServiceType;
 lazy_static! {
     static ref API_VERSION_REGEX: Regex =
         Regex::new(r"^v(?<major>[0-9]+)(?:\.)?(?<minor>[0-9]+)?$").unwrap();
+    static ref ID_LIKE_REGEX: Regex = Regex::new(r"[0-9a-z]{32}$").unwrap();
 }
 
 #[derive(Debug, Clone, Default)]
@@ -67,6 +68,8 @@ pub enum CatalogError {
 }
 
 /// Catalog endpoint
+///
+/// Representation of the catalog endpoint with url and guessed API version
 #[derive(Clone, Debug)]
 pub struct Endpoint {
     pub url: Url,
@@ -83,6 +86,13 @@ impl Endpoint {
     ) -> Result<Self, CatalogError> {
         let url = Url::parse(url.as_ref())
             .with_context(|| format!("Wrong endpoint URL: `{}`", url.as_ref()))?;
+        assert!(!url.cannot_be_a_base());
+        if url.cannot_be_a_base() {
+            return Err(anyhow!("URL `{}` cannot be a base url", url.as_ref()).into());
+        }
+        if !["http", "https"].contains(&url.scheme()) {
+            return Err(anyhow!("URL `{}` must be http/https", url.as_ref()).into());
+        }
         let version = ApiVersion::from_url(&url, project_id)?;
         let res = Self { url, version };
         Ok(res)
@@ -93,7 +103,7 @@ impl Endpoint {
 ///
 /// ApiVersion of the Endpoint as described in
 /// https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ApiVersion {
     pub major: u8,
     pub minor: u8,
@@ -111,10 +121,21 @@ impl ApiVersion {
         let mut path_segments = url.path_segments().map_or(Vec::new(), |x| {
             x.into_iter().filter(|x| !x.is_empty()).collect()
         });
-        if let Some(pid) = project_id {
-            if let Some(last) = path_segments.last() {
-                if last.ends_with(pid.as_ref()) {
-                    path_segments.pop();
+        // Strip last element if it ends with project_id
+        if let Some(last) = path_segments.last() {
+            match project_id {
+                Some(pid) => {
+                    if last.ends_with(pid.as_ref()) {
+                        path_segments.pop();
+                    }
+                }
+                None => {
+                    // Project_id is not known, but path_element contains something that look like
+                    // ID. This is safe since this anyway doesn't look like version information.
+                    if ID_LIKE_REGEX.is_match(last) {
+                        // NOTE(gtema): I don't think it is worth of logging a warning.
+                        path_segments.pop();
+                    }
                 }
             }
         }
@@ -282,7 +303,7 @@ pub(crate) struct Catalog {
     service_endpoints: HashMap<String, ServiceEndpoint>,
     token_catalog: Option<Vec<ServiceEndpoints>>,
     /// Configured endpoint overrides
-    endpoint_overrides: HashMap<String, ServiceEndpoint>,
+    endpoint_overrides: HashMap<String, Endpoint>,
     /// Service Authority data
     service_authority: ServiceAuthority,
 }
@@ -316,13 +337,8 @@ impl Catalog {
         url: &str,
     ) -> Result<(), CatalogError> {
         //// Set the URL from catalog/input respecting known overrides
-        self.service_endpoints.insert(
-            service_type.to_string(),
-            match self.endpoint_overrides.get(service_type) {
-                Some(ep) => ep.clone(),
-                None => self.build_service_endpoint(url)?,
-            },
-        );
+        self.service_endpoints
+            .insert(service_type.to_string(), self.build_service_endpoint(url)?);
         Ok(())
     }
 
@@ -372,9 +388,10 @@ impl Catalog {
                 return Some(sep.clone());
             }
         }
-        // There is nothing in the altered catalog, but what if the service is not present in the
-        // catalog while being set as endpoint_override
-        self.endpoint_overrides.get(&srv_type_string).cloned()
+        None
+        // // There is nothing in the altered catalog, but what if the service is not present in the
+        // // catalog while being set as endpoint_override
+        // self.endpoint_overrides.get(&srv_type_string).cloned()
     }
 
     /// Invoke process_discovery of the endpoint by the service type
@@ -417,10 +434,15 @@ impl Catalog {
                 let srv_type = &name[..(len - 18)];
                 let service_type = &srv_type.replace('_', "-");
 
-                self.endpoint_overrides.insert(
-                    service_type.to_string(),
-                    self.build_service_endpoint(&val.to_string())?,
-                );
+                // If URL is not valid not raise an error, but instead only log an error and ignore
+                match Endpoint::from_url_string(&val.to_string(), &None::<String>) {
+                    Ok(ep) => {
+                        self.endpoint_overrides.insert(service_type.to_string(), ep);
+                    }
+                    Err(err) => {
+                        error!("Error processing {}: {}", name, err);
+                    }
+                }
             }
         }
         Ok(self)
@@ -436,6 +458,7 @@ mod tests {
     fn test_service_endpoint() {
         let matrix = [
             ("http://test.com/foo", None, 0, 0),
+            ("https://test.com/foo", None, 0, 0),
             ("http://test.com/v1", None, 1, 0),
             ("http://test.com/prefix/v1", None, 1, 0),
             ("http://test.com/prefix/v1", Some("project"), 1, 0),
@@ -444,6 +467,12 @@ mod tests {
             (
                 "http://test.com/prefix/v1/AUTH_project",
                 Some("project"),
+                1,
+                0,
+            ),
+            (
+                "https://test.com/prefix/v1/AUTH_eed9239eaff6447a95da625e945f1978",
+                None,
                 1,
                 0,
             ),
@@ -460,5 +489,47 @@ mod tests {
                 min
             );
         }
+        let val = Endpoint::from_url_string("unix://foo.bar", &None::<String>);
+        assert!(val.is_err());
+    }
+
+    #[test]
+    fn test_set_endpoint_overrides() {
+        let mut cat = Catalog::default();
+        let conf = CloudConfig {
+            options: HashMap::from([
+                (
+                    "s1_endpoint_override".to_string(),
+                    config::Value::from("http://foo.bar/v3/wrong"),
+                ),
+                (
+                    "s2_endpoint_override".to_string(),
+                    config::Value::from("http://foo.bar/v3"),
+                ),
+                (
+                    "s3_endpoint_override".to_string(),
+                    config::Value::from("http://foo.bar"),
+                ),
+                (
+                    "s4_endpoint_override".to_string(),
+                    config::Value::from("uni://foo/bar"),
+                ),
+            ]),
+            ..Default::default()
+        };
+        cat.set_endpoint_overrides(&conf).unwrap();
+        let val = cat.endpoint_overrides.get(&"s1".to_string()).unwrap();
+        assert_eq!("http://foo.bar/v3/wrong", val.url.as_str());
+        assert_eq!(ApiVersion { major: 0, minor: 0 }, val.version);
+        let val = cat.endpoint_overrides.get(&"s2".to_string()).unwrap();
+        assert_eq!("http://foo.bar/v3", val.url.as_str());
+        assert_eq!(ApiVersion { major: 3, minor: 0 }, val.version);
+        let val = cat.endpoint_overrides.get(&"s3".to_string()).unwrap();
+        assert_eq!("http://foo.bar/", val.url.as_str());
+        assert_eq!(ApiVersion { major: 0, minor: 0 }, val.version);
+        assert!(
+            cat.endpoint_overrides.get(&"s4".to_string()).is_none(),
+            "Ensure bad URL is simply ignored"
+        );
     }
 }
