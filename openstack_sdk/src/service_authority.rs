@@ -98,6 +98,34 @@ impl ServiceAuthority {
             }
         }
     }
+
+    /// Get main service_type by service_type or alias
+    #[allow(dead_code)]
+    pub fn get_service_type_by_service_type_or_alias<S: AsRef<str>>(
+        &self,
+        service_type: S,
+    ) -> Result<String, ServiceAuthorityError> {
+        // Try forward lookup (it is the service itself)
+        if self.forward.contains_key(service_type.as_ref()) {
+            return Ok(service_type.as_ref().to_string());
+        }
+
+        // Lookup all_types_by_service_type
+        if let Some(atbst) = &self.all_types_by_service_type {
+            if atbst.contains_key(service_type.as_ref()) {
+                return Ok(service_type.as_ref().to_string());
+            }
+        }
+
+        // Reverse lookup
+        if let Some(srv) = self.reverse.get(service_type.as_ref()) {
+            return Ok(srv.to_string());
+        }
+
+        Err(ServiceAuthorityError::ServiceUnknown(
+            service_type.as_ref().to_string(),
+        ))
+    }
 }
 
 #[cfg(test)]
@@ -162,6 +190,52 @@ mod tests {
                 .get_all_types_by_service_type(&"foo1".to_string())
                 .unwrap(),
             Vec::from(["foo1".to_string(), "alias".to_string()])
+        );
+    }
+
+    #[test]
+    fn test_get_service_type_by_service_type_or_alias() {
+        let authority = ServiceAuthority {
+            services: Vec::from([
+                Service {
+                    service_type: "foo".to_string(),
+                    aliases: None,
+                },
+                Service {
+                    service_type: "foo1".to_string(),
+                    aliases: Some(Vec::from(["alias".to_string()])),
+                },
+            ]),
+            forward: HashMap::from([("foo1".to_string(), Vec::from(["alias".to_string()]))]),
+            reverse: HashMap::from([("alias".to_string(), "foo1".to_string())]),
+            all_types_by_service_type: Some(HashMap::from([
+                ("foo".to_string(), Vec::from(["foo".to_string()])),
+                (
+                    "foo1".to_string(),
+                    Vec::from(["foo1".to_string(), "alias".to_string()]),
+                ),
+            ])),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            "foo".to_string(),
+            authority
+                .get_service_type_by_service_type_or_alias("foo")
+                .unwrap()
+        );
+        // Test service_type with alias and using &str instead of String
+        assert_eq!(
+            "foo1".to_string(),
+            authority
+                .get_service_type_by_service_type_or_alias("foo1")
+                .unwrap()
+        );
+        assert_eq!(
+            "foo1".to_string(),
+            authority
+                .get_service_type_by_service_type_or_alias("alias")
+                .unwrap()
         );
     }
 }
