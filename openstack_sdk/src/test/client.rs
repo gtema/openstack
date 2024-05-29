@@ -43,7 +43,7 @@ use crate::api::{ApiError, RestClient};
 
 use crate::catalog::ServiceEndpoint;
 use crate::types::identity::v3::Project;
-use crate::types::{BoxedAsyncRead, ServiceType};
+use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 use crate::RestError;
 
 use httpmock::prelude::*;
@@ -160,6 +160,7 @@ impl Page {
 pub struct PagedTestClient<T> {
     expected: ExpectedUrl,
     data: Vec<T>,
+    endpoint: ServiceEndpoint,
 }
 
 const KEYSET_QUERY_PARAM: &str = "marker";
@@ -173,6 +174,7 @@ impl<T> PagedTestClient<T> {
         Self {
             expected,
             data: data.into_iter().collect(),
+            endpoint: ServiceEndpoint::new(Url::parse(CLIENT_STUB).unwrap(), ApiVersion::new(0, 0)),
         }
     }
 }
@@ -180,24 +182,12 @@ impl<T> PagedTestClient<T> {
 impl<T> RestClient for PagedTestClient<T> {
     type Error = TestClientError;
 
-    fn rest_endpoint(
-        &self,
-        _service_type: &ServiceType,
-        endpoint: &str,
-    ) -> Result<Url, ApiError<Self::Error>> {
-        Ok(Url::parse(&format!("{}/{}", CLIENT_STUB, endpoint))?)
-    }
-
     fn get_service_endpoint(
         &self,
         _service_type: &ServiceType,
-    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
-        Ok(ServiceEndpoint {
-            url: Url::parse(CLIENT_STUB)?,
-            discovered: true,
-            versions: Vec::new(),
-            current_version: None,
-        })
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(&self.endpoint)
     }
 
     fn get_current_project(&self) -> Option<Project> {
@@ -340,13 +330,19 @@ where
 pub struct MockServerClient {
     pub server: MockServer,
     pub client: HttpClient,
+    endpoint: ServiceEndpoint,
 }
 
 impl MockServerClient {
     pub fn new() -> Self {
         let server = MockServer::start();
         let client = HttpClient::new();
-        Self { server, client }
+        let base_url = Url::parse(&server.base_url().to_string()).unwrap();
+        Self {
+            server,
+            client,
+            endpoint: ServiceEndpoint::new(base_url, ApiVersion::new(0, 0)),
+        }
     }
 }
 
@@ -354,28 +350,12 @@ impl MockServerClient {
 impl RestClient for MockServerClient {
     type Error = RestError;
 
-    fn rest_endpoint(
-        &self,
-        _service_type: &ServiceType,
-        endpoint: &str,
-    ) -> Result<Url, ApiError<Self::Error>> {
-        Ok(Url::parse(&format!(
-            "http://127.0.0.1:{}/{}",
-            self.server.port(),
-            endpoint
-        ))?)
-    }
-
     fn get_service_endpoint(
         &self,
         _service_type: &ServiceType,
-    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
-        Ok(ServiceEndpoint {
-            url: Url::parse(&self.server.base_url().to_string())?,
-            discovered: true,
-            versions: Vec::new(),
-            current_version: None,
-        })
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(&self.endpoint)
     }
 
     fn get_current_project(&self) -> Option<Project> {
@@ -415,6 +395,7 @@ impl Client for MockServerClient {
 pub struct MockAsyncServerClient {
     pub server: MockServer,
     pub client: AsyncHttpClient,
+    endpoint: ServiceEndpoint,
 }
 
 #[cfg(feature = "async")]
@@ -422,7 +403,12 @@ impl MockAsyncServerClient {
     pub async fn new() -> Self {
         let server = MockServer::start_async().await;
         let client = AsyncHttpClient::new();
-        Self { server, client }
+        let base_url = Url::parse(&server.base_url().to_string()).unwrap();
+        Self {
+            server,
+            client,
+            endpoint: ServiceEndpoint::new(base_url, ApiVersion::new(0, 0)),
+        }
     }
 }
 
@@ -430,28 +416,12 @@ impl MockAsyncServerClient {
 impl RestClient for MockAsyncServerClient {
     type Error = RestError;
 
-    fn rest_endpoint(
-        &self,
-        _service_type: &ServiceType,
-        endpoint: &str,
-    ) -> Result<Url, ApiError<Self::Error>> {
-        Ok(Url::parse(&format!(
-            "{}/{}",
-            self.server.base_url(),
-            endpoint
-        ))?)
-    }
-
     fn get_service_endpoint(
         &self,
         _service_type: &ServiceType,
-    ) -> Result<ServiceEndpoint, ApiError<Self::Error>> {
-        Ok(ServiceEndpoint {
-            url: Url::parse(&self.server.base_url().to_string())?,
-            discovered: true,
-            versions: Vec::new(),
-            current_version: None,
-        })
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(&self.endpoint)
     }
 
     fn get_current_project(&self) -> Option<Project> {

@@ -120,7 +120,9 @@ impl ApiCommand {
 
         client.discover_service_endpoint(&service).await?;
 
-        let endpoint = client.rest_endpoint(&service, &self.url)?;
+        let service_endpoint = client.get_service_endpoint(&service, None)?;
+
+        let endpoint = service_endpoint.build_request_url(&self.url)?;
 
         let mut req = http::Request::builder()
             .method::<http::Method>(self.method.clone().into())

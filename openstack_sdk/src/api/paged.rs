@@ -88,10 +88,12 @@ where
         debug!("Async Query for paginated resource");
         // Consume iterator and fetch all requested data.
 
-        let ep = client.get_service_endpoint(&self.endpoint.service_type())?;
+        let ep = client.get_service_endpoint(
+            &self.endpoint.service_type(),
+            self.endpoint.api_version().as_ref(),
+        )?;
         let url = {
-            let mut url =
-                client.rest_endpoint(&self.endpoint.service_type(), &self.endpoint.endpoint())?;
+            let mut url = ep.build_request_url(&self.endpoint.endpoint())?;
             self.endpoint.parameters().add_to_url(&mut url);
             url
         };
@@ -131,7 +133,7 @@ where
                 .method(self.endpoint.method())
                 .uri(query::url_to_http_uri(page_url.clone()))
                 .header(header::ACCEPT, HeaderValue::from_static("application/json"));
-            set_latest_microversion(&mut req, &ep, &self.endpoint);
+            set_latest_microversion(&mut req, ep, &self.endpoint);
             // Set endpoint headers
             if let Some(request_headers) = self.endpoint.request_headers() {
                 let headers = req.headers_mut().unwrap();

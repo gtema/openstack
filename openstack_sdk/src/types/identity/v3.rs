@@ -18,6 +18,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::IdAndName;
 
+pub mod version;
+
 /// AuthResponse structure returned by token authentication calls
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct AuthResponse {

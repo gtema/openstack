@@ -18,6 +18,7 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+pub mod api_version;
 pub mod compute;
 pub mod identity;
 
@@ -25,6 +26,8 @@ use futures::io::AsyncRead;
 use futures::io::Error;
 use std::pin::Pin;
 use std::task::{Context, Poll};
+
+pub use crate::types::api_version::ApiVersion;
 
 /// Supported Service Types
 #[derive(Debug, Clone, Eq, PartialEq)]

@@ -12,6 +12,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Service Authority
+//!
+//! The [OpenStack Service Types
+//! Authority](https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/authority.html)
+//! is data about official service type names and historical service type names commonly in use
+//! from before there was an official list. It is made available to allow libraries and other
+//! client API consumers to be able to provide a consistent interface based on the official list
+//! but still support existing names. Providing this support is highly recommended, but is
+//! ultimately optional. The first step in the matching process is always to return direct matches
+//! between the catalog and the user request, so the existing consumption models from before the
+//! existence of the authority should always work.
+//!
 use serde::Deserialize;
 use std::collections::HashMap;
 use thiserror::Error;
@@ -32,7 +44,7 @@ pub enum ServiceAuthorityError {
     ServiceUnknown(String),
 }
 
-/// ServiceType Authority as provided by https://service-types.openstack.org/service-types.json
+/// ServiceType Authority as provided by <https://service-types.openstack.org/service-types.json>
 ///
 /// This structure lists services with their service types and corresponding aliases.
 #[derive(Clone, Debug, Deserialize, Default)]
@@ -63,7 +75,7 @@ pub struct Service {
 impl ServiceAuthority {
     /// Load service types from the official OpenStack authority data
     pub fn from_official_data() -> Result<Self, ServiceAuthorityError> {
-        let data = include_str!("../static/service-types.json");
+        let data = include_str!("../../static/service-types.json");
         let authority: ServiceAuthority = serde_json::from_str(data)?;
         Ok(authority)
     }
