@@ -349,7 +349,7 @@ impl OpenStack {
             self.catalog
                 .get_service_endpoint(service_type.to_string(), None, None::<String>)
         {
-            if true {
+            if self.catalog.discovery_allowed(service_type.to_string()) {
                 info!("Performing `{}` endpoint version discovery", service_type);
 
                 let mut try_url = ep.url().clone();

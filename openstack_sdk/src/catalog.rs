@@ -21,7 +21,7 @@
 //! <https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog.html>
 
 use bytes::Bytes;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use anyhow::Context;
 
@@ -65,6 +65,9 @@ pub(crate) struct Catalog {
 
     /// Service endpoints as configured by the service catalog
     catalog_endpoints: HashMap<String, ServiceEndpoints>,
+
+    /// Skip discovery configuration
+    skip_discovery: HashSet<String>,
 }
 
 impl Default for Catalog {
@@ -77,11 +80,15 @@ impl Default for Catalog {
             endpoint_overrides: HashMap::new(),
             service_authority: ServiceAuthority::from_official_data().unwrap_or_default(),
             catalog_endpoints: HashMap::new(),
+            skip_discovery: HashSet::from(["object-store".to_string()]),
         }
     }
 }
 
 impl Catalog {
+    pub fn discovery_allowed<S: AsRef<str>>(&self, service_type: S) -> bool {
+        !self.skip_discovery.contains(service_type.as_ref())
+    }
     /// Set project_id for the catalog scope knowledge. This influences certain discovery
     /// mechanisms but should be also safe to skip.
     pub fn set_project_id<S: AsRef<str>>(&mut self, project_id: Option<S>) -> &mut Self {
@@ -318,6 +325,19 @@ impl Catalog {
                         error!("Error processing {}: {}", name, err);
                     }
                 }
+            } else if name.ends_with("_skip_discovery") {
+                let len = name.len();
+                let srv_type = &name[..(len - 15)];
+                let service_type = &srv_type.replace('_', "-");
+                match val.clone().into_bool() {
+                    Ok(true) => {
+                        self.skip_discovery.insert(service_type.to_string());
+                    }
+                    Ok(false) => {
+                        self.skip_discovery.remove(service_type);
+                    }
+                    _ => {}
+                };
             }
             if name == "region_name" {
                 self.region = Some(val.to_string());
