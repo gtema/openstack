@@ -18,7 +18,6 @@ use std::error::Error;
 use thiserror::Error;
 
 use crate::api::PaginationError;
-use crate::types::ServiceType;
 
 /// Errors which may occur when creating form data.
 #[derive(Debug, Error)]
@@ -124,12 +123,14 @@ where
         #[from]
         source: PaginationError,
     },
-    //    #[error("failed to handle for catalog: {}", source)]
-    //    Catalog {
-    //        /// The source of the error.
-    //        #[from]
-    //        source: CaralogError,
-    //    },
+    #[error("failed to handle for catalog: {}", source)]
+    Catalog {
+        /// The source of the error.
+        #[from]
+        source: crate::catalog::CatalogError,
+    },
+    #[error(transparent)]
+    Other(#[from] anyhow::Error),
 }
 
 impl<E> ApiError<E>
@@ -140,29 +141,9 @@ where
     pub fn client(source: E) -> Self {
         ApiError::Client { source }
     }
-
-    /// Wrap a client error in another wrapper.
-    pub fn map_client<F, W>(self, f: F) -> ApiError<W>
-    where
-        F: FnOnce(E) -> W,
-        W: Error + Send + Sync + 'static,
-    {
-        match self {
-            Self::Client { source } => ApiError::client(f(source)),
-            Self::UrlParse { source } => ApiError::UrlParse { source },
-            Self::Body { source } => ApiError::Body { source },
-            Self::Json { source } => ApiError::Json { source },
-            Self::OpenStack { status, msg } => ApiError::OpenStack { status, msg },
-            Self::Session { msg } => ApiError::Session { msg },
-            Self::OpenStackService { status, data } => ApiError::OpenStackService { status, data },
-            Self::ResourceNotFound => ApiError::ResourceNotFound,
-            Self::IdNotUnique => ApiError::IdNotUnique,
-            Self::OpenStackUnrecognized { status, obj } => {
-                ApiError::OpenStackUnrecognized { status, obj }
-            }
-            Self::DataType { source, typename } => ApiError::DataType { source, typename },
-            Self::Pagination { source } => ApiError::Pagination { source },
-        }
+    /// Create an API error in a catalog error.
+    pub fn catalog(source: crate::catalog::CatalogError) -> Self {
+        ApiError::Catalog { source }
     }
 
     /// Process server response with no Json body
@@ -211,12 +192,6 @@ where
         ApiError::DataType {
             source,
             typename: any::type_name::<T>(),
-        }
-    }
-
-    pub(crate) fn endpoint(service_type: &ServiceType) -> Self {
-        ApiError::Session {
-            msg: format!("No Endpoint for service `{}`", service_type),
         }
     }
 }

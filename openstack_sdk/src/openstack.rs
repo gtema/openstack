@@ -40,7 +40,7 @@ use crate::auth::{
 use crate::config::{get_config_identity_hash, ConfigFile};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project};
-use crate::types::ServiceType;
+use crate::types::{ApiVersion, ServiceType};
 
 use crate::catalog::{Catalog, ServiceEndpoint};
 
@@ -154,11 +154,14 @@ impl OpenStack {
             .as_ref()
             .ok_or(AuthTokenError::MissingAuthUrl)?;
 
-        session
-            .catalog
-            .add_service_endpoint("identity", identity_service_url)?;
+        session.catalog.register_catalog_endpoint(
+            "identity",
+            identity_service_url,
+            None::<String>,
+            Some("public"),
+        )?;
 
-        session.catalog.set_endpoint_overrides(config)?;
+        session.catalog.configure(config)?;
 
         session
             .state
@@ -321,6 +324,9 @@ impl OpenStack {
         if let auth::Auth::AuthToken(token_data) = &self.auth {
             match &token_data.auth_info {
                 Some(auth_data) => {
+                    if let Some(project) = &auth_data.token.project {
+                        self.catalog.set_project_id(project.id.clone());
+                    }
                     if let Some(endpoints) = &auth_data.token.catalog {
                         self.catalog
                             .process_catalog_endpoints(endpoints, Some("public"))?;
@@ -339,11 +345,14 @@ impl OpenStack {
         &mut self,
         service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
-        if let Some(ep) = self.catalog.get_service_endpoint(service_type) {
-            if !ep.discovered {
+        if let Ok(ep) =
+            self.catalog
+                .get_service_endpoint(service_type.to_string(), None, None::<String>)
+        {
+            if true {
                 info!("Performing `{}` endpoint version discovery", service_type);
 
-                let mut try_url = ep.url.clone();
+                let mut try_url = ep.url().clone();
                 let mut max_depth = 10;
                 loop {
                     let req = http::Request::builder()
@@ -352,9 +361,13 @@ impl OpenStack {
 
                     let rsp = self.rest_with_auth(req, Vec::new(), &self.auth)?;
                     if rsp.status() != StatusCode::NOT_FOUND {
-                        return Ok(self
-                            .catalog
-                            .process_endpoint_discovery(service_type, rsp.body())?);
+                        self.catalog.process_endpoint_discovery(
+                            service_type,
+                            &try_url,
+                            rsp.body(),
+                            None::<String>,
+                        )?;
+                        return Ok(());
                     }
                     if try_url.path() != "/" {
                         // We are not at the root yet and have not found a
@@ -430,10 +443,11 @@ impl api::RestClient for OpenStack {
     fn get_service_endpoint(
         &self,
         service_type: &ServiceType,
-    ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
-        self.catalog
-            .get_service_endpoint(service_type)
-            .ok_or_else(|| api::ApiError::endpoint(service_type))
+        version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, api::ApiError<Self::Error>> {
+        Ok(self
+            .catalog
+            .get_service_endpoint(service_type.to_string(), version, None::<String>)?)
     }
 
     fn get_current_project(&self) -> Option<Project> {

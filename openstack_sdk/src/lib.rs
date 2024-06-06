@@ -16,14 +16,13 @@
 
 pub mod api;
 mod auth;
-mod catalog;
+pub mod catalog;
 pub mod config;
 mod error;
 #[cfg(feature = "sync")]
 mod openstack;
 #[cfg(feature = "async")]
 mod openstack_async;
-mod service_authority;
 mod state;
 mod utils;
 

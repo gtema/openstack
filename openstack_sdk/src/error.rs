@@ -163,6 +163,10 @@ impl OpenStackError {
             typename: any::type_name::<T>(),
         }
     }
+
+    pub fn catalog(source: CatalogError) -> Self {
+        OpenStackError::Catalog { source }
+    }
 }
 
 // Explicitly implement From to easier propagate nested errors

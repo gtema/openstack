@@ -35,6 +35,7 @@ use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
 #[cfg(feature = "sync")]
 use crate::api::{Client, Query, RawQuery};
 use crate::catalog::ServiceEndpoint;
+use crate::types::ApiVersion;
 use crate::types::BoxedAsyncRead;
 use crate::types::ServiceType;
 
@@ -78,6 +79,15 @@ pub trait RestEndpoint {
     fn request_headers(&self) -> Option<&HeaderMap> {
         None
     }
+
+    /// Returns required API version
+    ///
+    /// - `None` is interpreted as default version
+    /// - `ApiVersion {0, 0}` is interpreted as explicitly unversioned API
+    /// Default is to try to determine version from the url (first segment)
+    fn api_version(&self) -> Option<ApiVersion> {
+        ApiVersion::from_endpoint_url(self.endpoint())
+    }
 }
 
 /// Set latest microversion information into the request
@@ -94,11 +104,16 @@ pub(crate) fn set_latest_microversion<E>(
         ServiceType::Compute => Some("compute"),
         _ => None,
     };
-    if let (Some(st), Some(ref curr_ver)) =
-        (mh_service_type, service_endpoint.current_version.clone())
-    {
-        if let (Some(hdrs), Some(ref ver)) = (request.headers_mut(), curr_ver.version.clone()) {
-            if let Ok(val) = HeaderValue::from_str(format!("{} {}", st, ver).as_str()) {
+    if let Some(st) = mh_service_type {
+        // TODO(gtema) switch to `get_api_version` method since version may be missing
+        if let Some(hdrs) = request.headers_mut() {
+            let ver = service_endpoint.version();
+            if ver.major == 0 {
+                return;
+            }
+            if let Ok(val) =
+                HeaderValue::from_str(format!("{} {}.{}", st, ver.major, ver.minor).as_str())
+            {
                 hdrs.insert("Openstack-API-Version", val);
             }
         }
@@ -179,12 +194,9 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(
-            &ep,
-            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
-            self,
-        )?;
+        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let (req, data) =
+            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.rest(req, data)?;
 
@@ -221,12 +233,9 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(
-            &ep,
-            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
-            self,
-        )?;
+        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let (req, data) =
+            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.rest_async(req, data).await?;
         let mut v = get_json::<C>(&rsp)?;
@@ -261,12 +270,9 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(
-            &ep,
-            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
-            self,
-        )?;
+        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let (req, data) =
+            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.rest(req, data)?;
 
@@ -290,12 +296,9 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(
-            &ep,
-            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
-            self,
-        )?;
+        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let (req, data) =
+            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.rest_async(req, data).await?;
 
@@ -317,13 +320,13 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let ep = client.get_service_endpoint(&self.service_type())?;
-        let mut url = client.rest_endpoint(&self.service_type(), &self.endpoint())?;
+        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let mut url = ep.build_request_url(&self.endpoint())?;
         self.parameters().add_to_url(&mut url);
         let mut req = Request::builder()
             .method(self.method())
             .uri(query::url_to_http_uri(url));
-        set_latest_microversion(&mut req, &ep, self);
+        set_latest_microversion(&mut req, ep, self);
         if let Some(request_headers) = self.request_headers() {
             let headers = req.headers_mut().unwrap();
             for (k, v) in request_headers.iter() {
@@ -346,12 +349,9 @@ where
         let span = span!(Level::DEBUG, "Query span");
         let _enter = span.enter();
 
-        let ep = client.get_service_endpoint(&self.service_type())?;
-        let (req, data) = prepare_request::<C, E>(
-            &ep,
-            client.rest_endpoint(&self.service_type(), &self.endpoint())?,
-            self,
-        )?;
+        let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
+        let (req, data) =
+            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
         let rsp = client.download_async(req, data).await?;
 

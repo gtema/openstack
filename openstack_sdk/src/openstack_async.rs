@@ -45,7 +45,7 @@ use crate::auth::{
 use crate::config::{get_config_identity_hash, ConfigFile};
 use crate::state;
 use crate::types::identity::v3::{AuthReceiptResponse, AuthResponse, Project, ServiceEndpoints};
-use crate::types::{BoxedAsyncRead, ServiceType};
+use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 
 use crate::catalog::{Catalog, ServiceEndpoint};
 
@@ -119,10 +119,11 @@ impl api::RestClient for AsyncOpenStack {
     fn get_service_endpoint(
         &self,
         service_type: &ServiceType,
-    ) -> Result<ServiceEndpoint, api::ApiError<Self::Error>> {
-        self.catalog
-            .get_service_endpoint(service_type)
-            .ok_or_else(|| api::ApiError::endpoint(service_type))
+        version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, api::ApiError<Self::Error>> {
+        Ok(self
+            .catalog
+            .get_service_endpoint(service_type.to_string(), version, None::<String>)?)
     }
 
     /// Get project id from the current scope
@@ -191,11 +192,14 @@ impl AsyncOpenStack {
             .as_ref()
             .ok_or(AuthTokenError::MissingAuthUrl)?;
 
-        session
-            .catalog
-            .add_service_endpoint("identity", identity_service_url)?;
+        session.catalog.register_catalog_endpoint(
+            "identity",
+            identity_service_url,
+            None::<String>,
+            Some("public"),
+        )?;
 
-        session.catalog.set_endpoint_overrides(config)?;
+        session.catalog.configure(config)?;
 
         session
             .state
@@ -357,7 +361,11 @@ where {
                     }
                     AuthType::V3WebSso => {
                         let auth_url = auth::v3websso::get_auth_url(&self.config)?;
-                        let mut url = self.rest_endpoint(&ServiceType::Identity, &auth_url)?;
+                        let identity_ep = self.get_service_endpoint(
+                            &ServiceType::Identity,
+                            Some(&ApiVersion::new(3, 0)),
+                        )?;
+                        let mut url = identity_ep.build_request_url(&auth_url)?;
 
                         let mut token_auth = auth::v3websso::get_token_auth(&mut url).await?;
 
@@ -396,6 +404,9 @@ where {
         if let auth::Auth::AuthToken(token_data) = &self.auth {
             match &token_data.auth_info {
                 Some(auth_data) => {
+                    if let Some(project) = &auth_data.token.project {
+                        self.catalog.set_project_id(project.id.clone());
+                    }
                     if let Some(endpoints) = &auth_data.token.catalog {
                         self.catalog
                             .process_catalog_endpoints(endpoints, Some("public"))?;
@@ -415,11 +426,14 @@ where {
         &mut self,
         service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
-        if let Some(ep) = self.catalog.get_service_endpoint(service_type) {
-            if !ep.discovered {
+        if let Ok(ep) =
+            self.catalog
+                .get_service_endpoint(service_type.to_string(), None, None::<String>)
+        {
+            if true {
                 info!("Performing `{}` endpoint version discovery", service_type);
 
-                let mut try_url = ep.url.clone();
+                let mut try_url = ep.url().clone();
                 let mut max_depth = 10;
                 loop {
                     let req = http::Request::builder()
@@ -429,10 +443,19 @@ where {
                     let rsp = self
                         .rest_with_auth_async(req, Vec::new(), &self.auth)
                         .await?;
-                    if rsp.status() != StatusCode::NOT_FOUND {
-                        return Ok(self
+                    if rsp.status() != StatusCode::NOT_FOUND
+                        && self
                             .catalog
-                            .process_endpoint_discovery(service_type, rsp.body())?);
+                            .process_endpoint_discovery(
+                                service_type,
+                                &try_url,
+                                rsp.body(),
+                                None::<String>,
+                            )
+                            .is_ok()
+                    {
+                        debug!("Finished service version discovery at {}", try_url.as_str());
+                        return Ok(());
                     }
                     if try_url.path() != "/" {
                         // We are not at the root yet and have not found a

@@ -51,6 +51,14 @@ pub enum OpenStackCliError {
         source: openstack_sdk::config::ConfigError,
     },
 
+    /// OpenStack Service Catalog error
+    #[error("Service catalog error: {}", source)]
+    OpenStackCatalog {
+        /// The source of the error.
+        #[from]
+        source: openstack_sdk::catalog::CatalogError,
+    },
+
     /// No subcommands
     #[error("Command has no subcommands")]
     NoSubcommands,

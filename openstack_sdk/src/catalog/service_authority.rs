@@ -12,6 +12,18 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Service Authority
+//!
+//! The [OpenStack Service Types
+//! Authority](https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/authority.html)
+//! is data about official service type names and historical service type names commonly in use
+//! from before there was an official list. It is made available to allow libraries and other
+//! client API consumers to be able to provide a consistent interface based on the official list
+//! but still support existing names. Providing this support is highly recommended, but is
+//! ultimately optional. The first step in the matching process is always to return direct matches
+//! between the catalog and the user request, so the existing consumption models from before the
+//! existence of the authority should always work.
+//!
 use serde::Deserialize;
 use std::collections::HashMap;
 use thiserror::Error;
@@ -32,7 +44,7 @@ pub enum ServiceAuthorityError {
     ServiceUnknown(String),
 }
 
-/// ServiceType Authority as provided by https://service-types.openstack.org/service-types.json
+/// ServiceType Authority as provided by <https://service-types.openstack.org/service-types.json>
 ///
 /// This structure lists services with their service types and corresponding aliases.
 #[derive(Clone, Debug, Deserialize, Default)]
@@ -63,7 +75,7 @@ pub struct Service {
 impl ServiceAuthority {
     /// Load service types from the official OpenStack authority data
     pub fn from_official_data() -> Result<Self, ServiceAuthorityError> {
-        let data = include_str!("../static/service-types.json");
+        let data = include_str!("../../static/service-types.json");
         let authority: ServiceAuthority = serde_json::from_str(data)?;
         Ok(authority)
     }
@@ -97,6 +109,34 @@ impl ServiceAuthority {
                 Ok(res)
             }
         }
+    }
+
+    /// Get main service_type by service_type or alias
+    #[allow(dead_code)]
+    pub fn get_service_type_by_service_type_or_alias<S: AsRef<str>>(
+        &self,
+        service_type: S,
+    ) -> Result<String, ServiceAuthorityError> {
+        // Try forward lookup (it is the service itself)
+        if self.forward.contains_key(service_type.as_ref()) {
+            return Ok(service_type.as_ref().to_string());
+        }
+
+        // Lookup all_types_by_service_type
+        if let Some(atbst) = &self.all_types_by_service_type {
+            if atbst.contains_key(service_type.as_ref()) {
+                return Ok(service_type.as_ref().to_string());
+            }
+        }
+
+        // Reverse lookup
+        if let Some(srv) = self.reverse.get(service_type.as_ref()) {
+            return Ok(srv.to_string());
+        }
+
+        Err(ServiceAuthorityError::ServiceUnknown(
+            service_type.as_ref().to_string(),
+        ))
     }
 }
 
@@ -162,6 +202,52 @@ mod tests {
                 .get_all_types_by_service_type(&"foo1".to_string())
                 .unwrap(),
             Vec::from(["foo1".to_string(), "alias".to_string()])
+        );
+    }
+
+    #[test]
+    fn test_get_service_type_by_service_type_or_alias() {
+        let authority = ServiceAuthority {
+            services: Vec::from([
+                Service {
+                    service_type: "foo".to_string(),
+                    aliases: None,
+                },
+                Service {
+                    service_type: "foo1".to_string(),
+                    aliases: Some(Vec::from(["alias".to_string()])),
+                },
+            ]),
+            forward: HashMap::from([("foo1".to_string(), Vec::from(["alias".to_string()]))]),
+            reverse: HashMap::from([("alias".to_string(), "foo1".to_string())]),
+            all_types_by_service_type: Some(HashMap::from([
+                ("foo".to_string(), Vec::from(["foo".to_string()])),
+                (
+                    "foo1".to_string(),
+                    Vec::from(["foo1".to_string(), "alias".to_string()]),
+                ),
+            ])),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            "foo".to_string(),
+            authority
+                .get_service_type_by_service_type_or_alias("foo")
+                .unwrap()
+        );
+        // Test service_type with alias and using &str instead of String
+        assert_eq!(
+            "foo1".to_string(),
+            authority
+                .get_service_type_by_service_type_or_alias("foo1")
+                .unwrap()
+        );
+        assert_eq!(
+            "foo1".to_string(),
+            authority
+                .get_service_type_by_service_type_or_alias("alias")
+                .unwrap()
         );
     }
 }
