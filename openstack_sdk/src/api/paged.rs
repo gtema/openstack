@@ -148,16 +148,17 @@ where
             } else {
                 (req, Vec::new())
             };
+            let query_uri = req.uri_ref().cloned();
             let rsp = client.rest_async(req, data).await?;
             let status = rsp.status();
 
             let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
-                return Err(ApiError::server_error(status, rsp.body()));
+                return Err(ApiError::server_error(query_uri, status, rsp.body()));
             };
             if !status.is_success() {
-                return Err(ApiError::from_openstack(status, v));
+                return Err(ApiError::from_openstack(query_uri, status, v));
             }
 
             if use_keyset_pagination {
@@ -346,7 +347,7 @@ mod tests {
 
         let res: Result<Vec<DummyResult>, _> = api::paged(endpoint, Pagination::All).query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStack { status: _, msg } = err {
+        if let ApiError::OpenStack { msg, .. } = err {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);

@@ -14,7 +14,6 @@
 
 //! Results pagination
 
-use anyhow;
 use thiserror::Error;
 
 /// Errors which may occur with pagination.
@@ -31,9 +30,6 @@ pub enum PaginationError {
         #[source]
         source: url::ParseError,
     },
-
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
 }
 
 /// Pagination options

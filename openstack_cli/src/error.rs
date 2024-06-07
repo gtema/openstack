@@ -29,14 +29,14 @@ pub enum OpenStackCliError {
         source: serde_json::Error,
     },
     /// SDK error
-    #[error("OpenStackSDK error: {}", source)]
+    #[error(transparent)]
     OpenStackSDK {
         /// The source of the error.
         #[from]
         source: openstack_sdk::OpenStackError,
     },
     /// OpenStack API error
-    #[error("OpenStackSDK error: {}", source)]
+    #[error(transparent)]
     OpenStackApi {
         /// The source of the error.
         #[from]
@@ -44,7 +44,7 @@ pub enum OpenStackCliError {
     },
 
     /// Configuration error
-    #[error("Config error: {}", source)]
+    #[error(transparent)]
     ConfigError {
         /// The source of the error.
         #[from]
@@ -52,7 +52,7 @@ pub enum OpenStackCliError {
     },
 
     /// OpenStack Service Catalog error
-    #[error("Service catalog error: {}", source)]
+    #[error(transparent)]
     OpenStackCatalog {
         /// The source of the error.
         #[from]
@@ -64,11 +64,11 @@ pub enum OpenStackCliError {
     NoSubcommands,
 
     /// Resource is not found
-    #[error("resource not found")]
+    #[error("Resource not found")]
     ResourceNotFound,
 
     /// Resource identifier is not unique
-    #[error("cannot uniqly findresource by identifier")]
+    #[error("Cannot uniqly findresource by identifier")]
     IdNotUnique,
 
     /// IO error

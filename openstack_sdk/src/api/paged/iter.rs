@@ -248,10 +248,18 @@ where
         let mut v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
             v
         } else {
-            return Err(ApiError::server_error(status, rsp.body()));
+            return Err(ApiError::server_error(
+                Some(query::url_to_http_uri(base)),
+                status,
+                rsp.body(),
+            ));
         };
         if !status.is_success() {
-            return Err(ApiError::from_openstack(status, v));
+            return Err(ApiError::from_openstack(
+                Some(query::url_to_http_uri(base)),
+                status,
+                v,
+            ));
         }
 
         let next_url = if self.paged.endpoint.use_keyset_pagination() {

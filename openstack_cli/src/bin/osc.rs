@@ -24,7 +24,7 @@ async fn main() -> Result<(), OpenStackCliError> {
     match openstack_cli::entry_point().await {
         Ok(()) => Ok(()),
         Err(e) => {
-            println!("{}", e);
+            eprintln!("{e:#}");
             return Err(e);
         }
     }

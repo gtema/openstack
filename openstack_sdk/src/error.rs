@@ -67,6 +67,10 @@ pub enum OpenStackError {
     },
 
     /// Authentication error
+    #[error("No authentication information available")]
+    NoAuth,
+
+    /// Authentication error
     #[error("error setting auth header: {}", source)]
     AuthError {
         /// The source of the error.
@@ -142,10 +146,6 @@ pub enum OpenStackError {
         #[from]
         source: serde_json::Error,
     },
-
-    /// Any other error
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
 }
 
 impl OpenStackError {

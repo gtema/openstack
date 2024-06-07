@@ -56,8 +56,6 @@ pub enum ConfigError {
         #[from]
         source: config::ConfigError,
     },
-    #[error(transparent)]
-    Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
 }
 
 impl ConfigError {

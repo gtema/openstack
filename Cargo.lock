@@ -1711,7 +1711,6 @@ dependencies = [
 name = "openstack_sdk"
 version = "0.5.0"
 dependencies = [
- "anyhow",
  "async-trait",
  "bincode",
  "bytes",

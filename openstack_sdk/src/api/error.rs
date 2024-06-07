@@ -15,6 +15,7 @@
 use std::any;
 use std::error::Error;
 
+use http::Uri;
 use thiserror::Error;
 
 use crate::api::PaginationError;
@@ -72,8 +73,8 @@ where
         #[from]
         source: serde_json::Error,
     },
-    /// Server returned 404.
-    #[error("resource not found")]
+    /// Resource can not be found using known locations.
+    #[error("resource cannot be found")]
     ResourceNotFound,
     /// Too many candidates to identitfy resource by identifier
     #[error("cannot uniqly find resource by identifier")]
@@ -85,18 +86,31 @@ where
         msg: String,
     },
     /// OpenStack returned understandable error message
-    #[error("openstack server error: {}", msg)]
+    #[error(
+        "openstack server error:\n\turi: `{}`\n\tstatus: `{}`\n\tmessage: `{}`",
+        uri,
+        status,
+        msg
+    )]
     OpenStack {
         /// The status code for the return.
         status: http::StatusCode,
+        /// The URI of the request
+        uri: Uri,
         /// The error message from OpenStack.
         msg: String,
     },
     /// OpenStack returned an error without JSON information.
-    #[error("openstack internal server error {}", status)]
+    #[error(
+        "openstack internal server error:\n\turi: `{}`\n\tstatus: `{}`",
+        uri,
+        status
+    )]
     OpenStackService {
         /// The status code for the return.
         status: http::StatusCode,
+        /// The URI of the request
+        uri: Uri,
         /// The error data from OpenStack.
         data: String,
     },
@@ -105,6 +119,8 @@ where
     OpenStackUnrecognized {
         /// The status code for the return.
         status: http::StatusCode,
+        /// The URI of the request
+        uri: Uri,
         /// The full object from OpenStack.
         obj: serde_json::Value,
     },
@@ -129,8 +145,6 @@ where
         #[from]
         source: crate::catalog::CatalogError,
     },
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
 }
 
 impl<E> ApiError<E>
@@ -147,22 +161,39 @@ where
     }
 
     /// Process server response with no Json body
-    pub(crate) fn server_error(status: http::StatusCode, body: &bytes::Bytes) -> Self {
+    pub(crate) fn server_error(
+        uri: Option<Uri>,
+        status: http::StatusCode,
+        body: &bytes::Bytes,
+    ) -> Self {
         // Non Json body response ends in this function
         if http::StatusCode::NOT_FOUND.as_u16() == status {
-            return ApiError::ResourceNotFound;
+            return Self::OpenStack {
+                status,
+                uri: uri.unwrap_or(Uri::from_static("/")),
+                msg: String::new(),
+            };
         };
 
         Self::OpenStackService {
             status,
+            uri: uri.unwrap_or(Uri::from_static("/")),
             data: String::from_utf8_lossy(body).into(),
         }
     }
 
     /// Process server error response with Json body
-    pub(crate) fn from_openstack(status: http::StatusCode, value: serde_json::Value) -> Self {
+    pub(crate) fn from_openstack(
+        uri: Option<Uri>,
+        status: http::StatusCode,
+        value: serde_json::Value,
+    ) -> Self {
         if http::StatusCode::NOT_FOUND.as_u16() == status {
-            return ApiError::ResourceNotFound;
+            return Self::OpenStack {
+                status,
+                uri: uri.unwrap_or(Uri::from_static("/")),
+                msg: value.to_string(),
+            };
         };
 
         let error_value = value
@@ -174,17 +205,23 @@ where
                 // Error we know how to parse
                 ApiError::OpenStack {
                     status,
+                    uri: uri.unwrap_or(Uri::from_static("/")),
                     msg: msg.into(),
                 }
             } else {
                 // Error we do not know how to parse
                 ApiError::OpenStackUnrecognized {
                     status,
+                    uri: uri.unwrap_or(Uri::from_static("/")),
                     obj: error_value.clone(),
                 }
             }
         } else {
-            ApiError::OpenStackUnrecognized { status, obj: value }
+            ApiError::OpenStackUnrecognized {
+                status,
+                uri: uri.unwrap_or(Uri::from_static("/")),
+                obj: value,
+            }
         }
     }
 
@@ -198,6 +235,7 @@ where
 
 #[cfg(test)]
 mod tests {
+    use http::Uri;
     use serde_json::json;
     use thiserror::Error;
 
@@ -213,9 +251,13 @@ mod tests {
             "error": "error contents",
         });
 
-        let err: ApiError<MyError> =
-            ApiError::from_openstack(http::StatusCode::CONFLICT, obj.clone());
-        if let ApiError::OpenStack { status, msg } = err {
+        let err: ApiError<MyError> = ApiError::from_openstack(
+            Some(Uri::from_static("http://foo.bar")),
+            http::StatusCode::CONFLICT,
+            obj.clone(),
+        );
+        if let ApiError::OpenStack { status, uri, msg } = err {
+            assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(msg, "error contents");
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
@@ -229,9 +271,13 @@ mod tests {
             "message": "error contents",
         });
 
-        let err: ApiError<MyError> =
-            ApiError::from_openstack(http::StatusCode::CONFLICT, obj.clone());
-        if let ApiError::OpenStack { status, msg } = err {
+        let err: ApiError<MyError> = ApiError::from_openstack(
+            Some(Uri::from_static("http://foo.bar")),
+            http::StatusCode::CONFLICT,
+            obj.clone(),
+        );
+        if let ApiError::OpenStack { status, uri, msg } = err {
+            assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(msg, "error contents");
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
@@ -248,9 +294,13 @@ mod tests {
             "message": err_obj,
         });
 
-        let err: ApiError<MyError> =
-            ApiError::from_openstack(http::StatusCode::CONFLICT, obj.clone());
-        if let ApiError::OpenStackUnrecognized { status, obj } = err {
+        let err: ApiError<MyError> = ApiError::from_openstack(
+            Some(Uri::from_static("http://foo.bar")),
+            http::StatusCode::CONFLICT,
+            obj.clone(),
+        );
+        if let ApiError::OpenStackUnrecognized { status, uri, obj } = err {
+            assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(obj, err_obj);
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
@@ -264,9 +314,13 @@ mod tests {
             "some_weird_key": "an even weirder value",
         });
 
-        let err: ApiError<MyError> =
-            ApiError::from_openstack(http::StatusCode::CONFLICT, err_obj.clone());
-        if let ApiError::OpenStackUnrecognized { status, obj } = err {
+        let err: ApiError<MyError> = ApiError::from_openstack(
+            Some(Uri::from_static("http://foo.bar")),
+            http::StatusCode::CONFLICT,
+            err_obj.clone(),
+        );
+        if let ApiError::OpenStackUnrecognized { status, uri, obj } = err {
+            assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(obj, err_obj);
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
@@ -280,9 +334,16 @@ mod tests {
             "some_weird_key": "an even weirder value",
         });
 
-        let err: ApiError<MyError> =
-            ApiError::from_openstack(http::StatusCode::NOT_FOUND, err_obj.clone());
-        if !matches!(err, ApiError::ResourceNotFound) {
+        let err: ApiError<MyError> = ApiError::from_openstack(
+            Some(Uri::from_static("http://foo.bar")),
+            http::StatusCode::NOT_FOUND,
+            err_obj.clone(),
+        );
+        if let ApiError::OpenStack { status, uri, msg } = err {
+            assert_eq!(uri, Uri::from_static("http://foo.bar"));
+            assert_eq!(msg, err_obj.to_string());
+            assert_eq!(status, http::StatusCode::NOT_FOUND);
+        } else {
             panic!("unexpected error: {}", err);
         }
     }

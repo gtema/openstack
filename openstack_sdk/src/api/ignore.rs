@@ -58,6 +58,7 @@ where
             &self.endpoint,
         )?;
 
+        let query_uri = req.uri_ref().cloned();
         let rsp = client.rest(req, data)?;
 
         let status = rsp.status();
@@ -65,9 +66,9 @@ where
             let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
-                return Err(ApiError::server_error(rsp.status(), rsp.body()));
+                return Err(ApiError::server_error(query_uri, rsp.status(), rsp.body()));
             };
-            return Err(ApiError::from_openstack(status, v));
+            return Err(ApiError::from_openstack(query_uri, status, v));
         }
 
         Ok(())
@@ -92,6 +93,7 @@ where
             &self.endpoint,
         )?;
 
+        let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
 
         let status = rsp.status();
@@ -99,9 +101,9 @@ where
             let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
                 v
             } else {
-                return Err(ApiError::server_error(rsp.status(), rsp.body()));
+                return Err(ApiError::server_error(query_uri, rsp.status(), rsp.body()));
             };
-            return Err(ApiError::from_openstack(status, v));
+            return Err(ApiError::from_openstack(query_uri, status, v));
         }
 
         Ok(())
@@ -203,7 +205,7 @@ mod tests {
         });
 
         let err = api::ignore(Dummy).query(&client).unwrap_err();
-        if let ApiError::OpenStack { status: _, msg } = err {
+        if let ApiError::OpenStack { msg, .. } = err {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);
@@ -223,7 +225,7 @@ mod tests {
         });
 
         let err = api::ignore(Dummy).query(&client).unwrap_err();
-        if let ApiError::OpenStackUnrecognized { status: _, obj } = err {
+        if let ApiError::OpenStackUnrecognized { obj, .. } = err {
             assert_eq!(obj, err_obj);
         } else {
             panic!("unexpected error: {}", err);
