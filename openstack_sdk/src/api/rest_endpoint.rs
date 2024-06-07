@@ -23,7 +23,9 @@ use std::collections::HashMap;
 use tracing::{span, trace, Level};
 use url::Url;
 
-use http::{self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response};
+use http::{
+    self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response, Uri,
+};
 use serde::de::DeserializeOwned;
 //use serde_bytes::ByteBuf;
 
@@ -150,7 +152,10 @@ where
 }
 
 /// Cast response to Json Value
-pub(super) fn get_json<C>(rsp: &Response<Bytes>) -> Result<serde_json::Value, ApiError<C::Error>>
+pub(super) fn get_json<C>(
+    rsp: &Response<Bytes>,
+    uri: Option<Uri>,
+) -> Result<serde_json::Value, ApiError<C::Error>>
 where
     C: RestClient,
 {
@@ -158,16 +163,19 @@ where
     let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
         v
     } else {
-        return Err(ApiError::server_error(status, rsp.body()));
+        return Err(ApiError::server_error(uri, status, rsp.body()));
     };
     if !status.is_success() {
-        return Err(ApiError::from_openstack(status, v));
+        return Err(ApiError::from_openstack(uri, status, v));
     }
     Ok(v)
 }
 
 /// Check for possible error in the response
-pub fn check_response_error<C>(rsp: &Response<Bytes>) -> Result<(), ApiError<C::Error>>
+pub fn check_response_error<C>(
+    rsp: &Response<Bytes>,
+    uri: Option<Uri>,
+) -> Result<(), ApiError<C::Error>>
 where
     C: RestClient,
 {
@@ -176,9 +184,9 @@ where
         let v = if let Ok(v) = serde_json::from_slice(rsp.body()) {
             v
         } else {
-            return Err(ApiError::server_error(status, rsp.body()));
+            return Err(ApiError::server_error(uri, status, rsp.body()));
         };
-        return Err(ApiError::from_openstack(status, v));
+        return Err(ApiError::from_openstack(uri, status, v));
     }
     Ok(())
 }
@@ -195,12 +203,13 @@ where
         let _enter = span.enter();
 
         let ep = client.get_service_endpoint(&self.service_type(), self.api_version().as_ref())?;
-        let (req, data) =
-            prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
+        let url = ep.build_request_url(&self.endpoint())?;
+        let (req, data) = prepare_request::<C, E>(ep, url, self)?;
 
+        let query_uri = req.uri_ref().cloned();
         let rsp = client.rest(req, data)?;
-
-        let mut v = get_json::<C>(&rsp)?;
+        let mut v = get_json::<C>(&rsp, query_uri)?;
+        //.with_context(|| format!("Request to `{}` failed", url))?;
 
         if let Some(root_key) = self.response_key() {
             v = v[root_key.to_string()].take();
@@ -237,8 +246,9 @@ where
         let (req, data) =
             prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
+        let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
-        let mut v = get_json::<C>(&rsp)?;
+        let mut v = get_json::<C>(&rsp, query_uri)?;
 
         if let Some(root_key) = self.response_key() {
             v = v[root_key.to_string()].take();
@@ -300,10 +310,11 @@ where
         let (req, data) =
             prepare_request::<C, E>(ep, ep.build_request_url(&self.endpoint())?, self)?;
 
+        let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_async(req, data).await?;
 
         if inspect_error.unwrap_or(true) {
-            check_response_error::<C>(&rsp)?;
+            check_response_error::<C>(&rsp, query_uri)?;
         }
         Ok(rsp)
     }
@@ -334,9 +345,10 @@ where
             }
         }
 
+        let query_uri = req.uri_ref().cloned();
         let rsp = client.rest_read_body_async(req, data).await?;
 
-        check_response_error::<C>(&rsp)?;
+        check_response_error::<C>(&rsp, query_uri)?;
 
         Ok(rsp)
     }
@@ -437,11 +449,11 @@ mod tests {
             then.status(404);
         });
         let res: Result<DummyResult, _> = Dummy.query(&client);
-        match res.unwrap_err() {
-            ApiError::ResourceNotFound {} => {}
-            err => {
-                panic!("unexpected error: {}", err);
-            }
+        let err = res.unwrap_err();
+        if let ApiError::OpenStack { status, .. } = err {
+            assert_eq!(status, http::StatusCode::NOT_FOUND);
+        } else {
+            panic!("unexpected error: {}", err);
         }
         mock.assert();
     }
@@ -475,7 +487,12 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStack { status: _, msg } = err {
+        if let ApiError::OpenStack {
+            status: _,
+            uri: _,
+            msg,
+        } = err
+        {
             assert_eq!(msg, "dummy error message");
         } else {
             panic!("unexpected error: {}", err);
@@ -495,7 +512,12 @@ mod tests {
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
-        if let ApiError::OpenStackUnrecognized { status: _, obj } = err {
+        if let ApiError::OpenStackUnrecognized {
+            status: _,
+            uri: _,
+            obj,
+        } = err
+        {
             assert_eq!(obj, err_obj);
         } else {
             panic!("unexpected error: {}", err);

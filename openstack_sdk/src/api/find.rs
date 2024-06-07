@@ -75,15 +75,28 @@ where
         let get_ep = self.findable.get_ep();
         let get_res = get_ep.query(client);
         let res: serde_json::Value = match get_res {
-            Err(x) => {
-                if let crate::api::ApiError::ResourceNotFound = x {
+            Err(x) => match x {
+                crate::api::ApiError::ResourceNotFound
+                | crate::api::ApiError::OpenStack {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+                | crate::api::ApiError::OpenStackService {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+                | crate::api::ApiError::OpenStackUnrecognized {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                } => {
                     let list_ep = self.findable.list_ep();
                     let data: Vec<serde_json::Value> = list_ep.query(client)?;
                     self.findable.locate_resource_in_list::<C>(data)?
-                } else {
+                }
+                _ => {
                     return Err(x);
                 }
-            }
+            },
             Ok(x) => x,
         };
 
@@ -108,15 +121,28 @@ where
         let get_ep = self.findable.get_ep();
         let get_res = get_ep.query_async(client).await;
         let res: serde_json::Value = match get_res {
-            Err(x) => {
-                if let crate::api::ApiError::ResourceNotFound = x {
+            Err(x) => match x {
+                crate::api::ApiError::ResourceNotFound
+                | crate::api::ApiError::OpenStack {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+                | crate::api::ApiError::OpenStackService {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                }
+                | crate::api::ApiError::OpenStackUnrecognized {
+                    status: http::StatusCode::NOT_FOUND,
+                    ..
+                } => {
                     let list_ep = self.findable.list_ep();
                     let data: Vec<serde_json::Value> = list_ep.query_async(client).await?;
                     self.findable.locate_resource_in_list::<C>(data)?
-                } else {
+                }
+                _ => {
                     return Err(x);
                 }
-            }
+            },
             Ok(x) => x,
         };
 

@@ -16,7 +16,6 @@
 //!
 //! <https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html>
 
-use anyhow::anyhow;
 use bytes::Bytes;
 use url::Url;
 
@@ -66,17 +65,25 @@ pub fn expand_link<S: AsRef<str>>(link: S, base_url: &Url) -> Result<Url, Catalo
     // Parse link url
     let mut url = match Url::parse(link.as_ref()) {
         Ok(url) => url,
-        Err(url::ParseError::RelativeUrlWithoutBase) => base_url.clone().join(link.as_ref())?,
+        Err(url::ParseError::RelativeUrlWithoutBase) => base_url
+            .clone()
+            .join(link.as_ref())
+            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, link.as_ref())))?,
         Err(err) => {
-            return Err(CatalogError::UrlParse { source: err });
+            return Err(CatalogError::url_parse(err, link.as_ref()));
         }
     };
+    if url.cannot_be_a_base() {
+        return Err(CatalogError::cannot_be_base(&url));
+    }
     url.set_scheme(base_url.scheme())
-        .map_err(|_| anyhow!("Error setting scheme"))?;
-    url.set_host(base_url.host_str())?;
+        .map_err(|_| CatalogError::UrlScheme(base_url.as_ref().to_string()))?;
+    url.set_host(base_url.host_str())
+        .map_err(|x| CatalogError::url_parse(x, url.as_ref()))?;
     if !url.as_str().ends_with('/') {
         url.path_segments_mut()
-            .map_err(|_| anyhow!("Cannot be base"))?
+            // The error here should not happen since we checked above for cannot_be_base
+            .map_err(|_| CatalogError::cannot_be_base(base_url))?
             .push("");
     }
     Ok(url.to_owned())

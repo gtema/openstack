@@ -16,7 +16,6 @@
 //!
 //! Represent the Service ServiceEndpoint.
 
-use anyhow::{anyhow, Context};
 use std::fmt;
 use url::Url;
 
@@ -70,14 +69,12 @@ impl ServiceEndpoint {
         url: S1,
         project_id: Option<S2>,
     ) -> Result<Self, CatalogError> {
-        let url = Url::parse(url.as_ref())
-            .with_context(|| format!("Wrong endpoint URL: `{}`", url.as_ref()))?;
-        assert!(!url.cannot_be_a_base());
+        let url = Url::parse(url.as_ref()).map_err(|x| CatalogError::url_parse(x, url.as_ref()))?;
         if url.cannot_be_a_base() {
-            return Err(anyhow!("URL `{}` cannot be a base url", url.as_ref()).into());
+            return Err(CatalogError::UrlCannotBeBase(url.as_ref().to_string()));
         }
         if !["http", "https"].contains(&url.scheme()) {
-            return Err(anyhow!("URL `{}` must be http/https", url.as_ref()).into());
+            return Err(CatalogError::UrlScheme(url.as_ref().to_string()));
         }
         let version = ApiVersion::from_url(&url, project_id.as_ref())?;
 
@@ -192,7 +189,8 @@ impl ServiceEndpoint {
             if !(base_url.path().trim_end_matches('/').ends_with(pid_suffix)) {
                 base_url
                     .path_segments_mut()
-                    .map_err(|_| anyhow!("cannot be base"))?
+                    // The error here should not happen since we checked above for cannot_be_base
+                    .map_err(|_| CatalogError::cannot_be_base(self.url()))?
                     // Strip trailing slash
                     .pop_if_empty()
                     // Append segment with project_id
@@ -205,7 +203,8 @@ impl ServiceEndpoint {
             // Ensure base url ends with "/"
             base_url
                 .path_segments_mut()
-                .map_err(|_| anyhow!("cannot be base"))?
+                // The error here should not happen since we checked above for cannot_be_base
+                .map_err(|_| CatalogError::cannot_be_base(self.url()))?
                 // Append trailing slash
                 .push("");
         }
@@ -230,7 +229,9 @@ impl ServiceEndpoint {
                 }
             }
         }
-        Ok(base_url.join(work_endpoint)?)
+        base_url
+            .join(work_endpoint)
+            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, work_endpoint)))
     }
 }
 

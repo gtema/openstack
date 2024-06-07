@@ -47,8 +47,6 @@ pub enum StateError {
         #[from]
         source: std::io::Error,
     },
-    #[error(transparent)]
-    Other(#[from] anyhow::Error), // source and Display delegate to anyhow::Error
 }
 
 /// A HashMap of Scope to Token

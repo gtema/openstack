@@ -13,6 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use thiserror::Error;
+use url::Url;
 
 use crate::catalog::service_authority::ServiceAuthorityError;
 use crate::types::api_version::ApiVersionError;
@@ -27,11 +28,27 @@ pub enum CatalogError {
         source: ApiVersionError,
     },
 
-    #[error("failed to parse url: {}", source)]
+    /// Invalid URL
+    #[error("Url `{0}` cannot be base")]
+    UrlCannotBeBase(String),
+
+    /// Invalid URL
+    #[error("Failed to parse url: `{}`", source)]
     UrlParse {
+        source: url::ParseError,
+        url: String,
+    },
+
+    /// A transparent url::ParseError error for unwrapped cases
+    #[error("Failed to parse url: `{}`", source)]
+    UrlParseError {
         #[from]
         source: url::ParseError,
     },
+
+    /// Invalid URL scheme
+    #[error("Url must be http/https")]
+    UrlScheme(String),
 
     #[error("Service Authority data cannot be parsed: {}", source)]
     ServiceAuthority {
@@ -47,7 +64,17 @@ pub enum CatalogError {
 
     #[error("Api Version with id `{id}` for service is not defining `self` link")]
     VersionSelfLinkMissing { id: String },
+}
 
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
+impl CatalogError {
+    pub fn url_parse<S: AsRef<str>>(source: url::ParseError, url: S) -> Self {
+        Self::UrlParse {
+            source,
+            url: url.as_ref().to_string(),
+        }
+    }
+
+    pub fn cannot_be_base(url: &Url) -> Self {
+        Self::UrlCannotBeBase(url.as_str().to_string())
+    }
 }

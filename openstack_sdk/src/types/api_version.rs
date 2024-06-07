@@ -16,7 +16,6 @@
 //!
 //! Endpoint api version handling
 
-use anyhow::anyhow;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::fmt;
@@ -45,8 +44,8 @@ pub enum ApiVersionError {
         #[from]
         source: std::num::ParseIntError,
     },
-    #[error(transparent)]
-    Other(#[from] anyhow::Error),
+    #[error("Not a valid version string: {0}")]
+    Invalid(String),
 }
 
 /// ApiVersion
@@ -120,11 +119,7 @@ impl ApiVersion {
             }
             return Ok(res);
         }
-        Err(anyhow!(
-            "String {} does not look like a supported version.",
-            data.as_ref()
-        )
-        .into())
+        Err(ApiVersionError::Invalid(data.as_ref().to_string()))
     }
 
     /// Determine the api version from the [RestEndpoint](crate::api::RestEndpoint)

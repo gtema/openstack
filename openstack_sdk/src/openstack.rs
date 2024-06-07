@@ -21,7 +21,6 @@ use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use tracing::{debug, error, info, span, trace, Level};
 
-use anyhow::anyhow;
 use bytes::Bytes;
 use http::{Response as HttpResponse, StatusCode};
 
@@ -298,7 +297,7 @@ impl OpenStack {
                                 rsp = auth_endpoint.raw_query(self)?;
                             }
                         }
-                        api::check_response_error::<Self>(&rsp)?;
+                        api::check_response_error::<Self>(&rsp, None)?;
                     }
                     other => {
                         return Err(AuthTokenError::IdentityMethodSync {
@@ -334,7 +333,7 @@ impl OpenStack {
                         error!("No catalog information");
                     }
                 }
-                _ => return Err(anyhow!("No authentication information available").into()),
+                _ => return Err(OpenStackError::NoAuth),
             }
         }
         // TODO: without AuthToken authorization we may want to read catalog separately

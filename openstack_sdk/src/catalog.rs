@@ -22,12 +22,8 @@
 
 use bytes::Bytes;
 use std::collections::{HashMap, HashSet};
-
-use anyhow::Context;
-
-use url::Url;
-
 use tracing::{debug, error, trace};
+use url::Url;
 
 pub use crate::catalog::error::CatalogError;
 pub(crate) use crate::catalog::service_endpoint::ServiceEndpoint;
@@ -137,13 +133,7 @@ impl Catalog {
                         &ep.url,
                         Some(&ep.region),
                         Some(&ep.interface),
-                    )
-                    .with_context(|| {
-                        format!(
-                            "While processing service catalog response for service {}",
-                            srv.service_type
-                        )
-                    })?;
+                    )?;
                 }
             }
         }
