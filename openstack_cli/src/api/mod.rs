@@ -47,6 +47,8 @@ enum Method {
     Head,
     /// GET
     Get,
+    /// PATCH
+    Patch,
     /// PUT
     Put,
     /// POST
@@ -60,6 +62,7 @@ impl From<Method> for http::Method {
         match item {
             Method::Head => http::Method::HEAD,
             Method::Get => http::Method::GET,
+            Method::Patch => http::Method::PATCH,
             Method::Put => http::Method::PUT,
             Method::Post => http::Method::POST,
             Method::Delete => http::Method::DELETE,
