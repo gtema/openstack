@@ -22,11 +22,7 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("identity")
-        .arg("auth")
-        .arg("domain")
-        .arg("list")
-        .arg("--help");
+    cmd.arg("identity").arg("domain").arg("list").arg("--help");
     cmd.assert().success();
 
     Ok(())

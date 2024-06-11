@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // mod catalog;
-//mod domain;
+mod domain;
 mod endpoint;
 mod group;
 mod os_federation;

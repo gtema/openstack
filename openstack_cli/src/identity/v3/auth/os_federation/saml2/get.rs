@@ -33,11 +33,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::identity::v3::auth::os_federation::saml2::get;
-use openstack_sdk::api::RawQueryAsync;
-use structable_derive::StructTable;
+use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
+use std::collections::HashMap;
 
 /// GET operation on /v3/auth/OS-FEDERATION/saml2
 ///
@@ -59,9 +58,23 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Saml2 response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 impl Saml2Command {
     /// Perform command action
@@ -85,10 +98,8 @@ impl Saml2Command {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

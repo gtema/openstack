@@ -35,7 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::project::group::role::list;
 use openstack_sdk::api::QueryAsync;
-
 use structable_derive::StructTable;
 
 /// Lists role assignments for a group on a project.
