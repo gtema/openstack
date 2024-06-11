@@ -789,6 +789,8 @@ Example:
     HEAD
   - `get`:
     GET
+  - `patch`:
+    PATCH
   - `put`:
     PUT
   - `post`:
