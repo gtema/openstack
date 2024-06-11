@@ -19,6 +19,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod domain;
 mod endpoint;
 mod group;
 mod os_federation;
@@ -44,6 +45,7 @@ pub struct IdentityCommand {
 pub enum IdentityCommands {
     AccessRule(user::access_rule::AccessRuleCommand),
     ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
+    Domain(domain::DomainCommand),
     Endpoint(endpoint::EndpointCommand),
     Federation(os_federation::FederationCommand),
     Group(group::GroupCommand),
@@ -68,6 +70,7 @@ impl IdentityCommand {
             IdentityCommands::ApplicationCredential(cmd) => {
                 cmd.take_action(parsed_args, session).await
             }
+            IdentityCommands::Domain(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Endpoint(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,

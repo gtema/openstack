@@ -342,6 +342,40 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity application-credential delete`↴](#osc-identity-application-credential-delete)
 * [`osc identity application-credential list`↴](#osc-identity-application-credential-list)
 * [`osc identity application-credential show`↴](#osc-identity-application-credential-show)
+* [`osc identity domain`↴](#osc-identity-domain)
+* [`osc identity domain create`↴](#osc-identity-domain-create)
+* [`osc identity domain config`↴](#osc-identity-domain-config)
+* [`osc identity domain config default`↴](#osc-identity-domain-config-default)
+* [`osc identity domain config group`↴](#osc-identity-domain-config-group)
+* [`osc identity domain config group default`↴](#osc-identity-domain-config-group-default)
+* [`osc identity domain config group delete`↴](#osc-identity-domain-config-group-delete)
+* [`osc identity domain config group option`↴](#osc-identity-domain-config-group-option)
+* [`osc identity domain config group option default`↴](#osc-identity-domain-config-group-option-default)
+* [`osc identity domain config group option delete`↴](#osc-identity-domain-config-group-option-delete)
+* [`osc identity domain config group option set`↴](#osc-identity-domain-config-group-option-set)
+* [`osc identity domain config group option show`↴](#osc-identity-domain-config-group-option-show)
+* [`osc identity domain config group set`↴](#osc-identity-domain-config-group-set)
+* [`osc identity domain config group show`↴](#osc-identity-domain-config-group-show)
+* [`osc identity domain config purge`↴](#osc-identity-domain-config-purge)
+* [`osc identity domain config list`↴](#osc-identity-domain-config-list)
+* [`osc identity domain config replace`↴](#osc-identity-domain-config-replace)
+* [`osc identity domain config set`↴](#osc-identity-domain-config-set)
+* [`osc identity domain delete`↴](#osc-identity-domain-delete)
+* [`osc identity domain group`↴](#osc-identity-domain-group)
+* [`osc identity domain group role`↴](#osc-identity-domain-group-role)
+* [`osc identity domain group role delete`↴](#osc-identity-domain-group-role-delete)
+* [`osc identity domain group role list`↴](#osc-identity-domain-group-role-list)
+* [`osc identity domain group role set`↴](#osc-identity-domain-group-role-set)
+* [`osc identity domain group role show`↴](#osc-identity-domain-group-role-show)
+* [`osc identity domain list`↴](#osc-identity-domain-list)
+* [`osc identity domain set`↴](#osc-identity-domain-set)
+* [`osc identity domain show`↴](#osc-identity-domain-show)
+* [`osc identity domain user`↴](#osc-identity-domain-user)
+* [`osc identity domain user role`↴](#osc-identity-domain-user-role)
+* [`osc identity domain user role delete`↴](#osc-identity-domain-user-role-delete)
+* [`osc identity domain user role list`↴](#osc-identity-domain-user-role-list)
+* [`osc identity domain user role set`↴](#osc-identity-domain-user-role-set)
+* [`osc identity domain user role show`↴](#osc-identity-domain-user-role-show)
 * [`osc identity endpoint`↴](#osc-identity-endpoint)
 * [`osc identity endpoint create`↴](#osc-identity-endpoint-create)
 * [`osc identity endpoint delete`↴](#osc-identity-endpoint-delete)
@@ -8096,6 +8130,7 @@ Identity (Keystone) commands
 
 * `access-rule` — **Application Credentials - Access Rules**
 * `application-credential` — **Application Credentials**
+* `domain` — Identity Domain commands
 * `endpoint` — Endpoint commands
 * `federation` — OS-Federation
 * `group` — Identity Group commands
@@ -8308,6 +8343,611 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/applicati
 
 * `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+
+
+## `osc identity domain`
+
+Identity Domain commands
+
+A domain is a collection of users, groups, and projects. Each group and project is owned by exactly one domain.
+
+Each domain defines a namespace where certain API-visible name attributes exist, which affects whether those names must be globally unique or unique within that domain. In the Identity API, the uniqueness of these attributes is as follows:
+
+- Domain name. Globally unique across all domains.
+
+- Role name. Unique within the owning domain.
+
+- User name. Unique within the owning domain.
+
+- Project name. Unique within the owning domain.
+
+- Group name. Unique within the owning domain.
+
+**Usage:** `osc identity domain <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create domain
+* `config` — Config configuration
+* `delete` — Delete domain
+* `group` — Domain groups
+* `list` — List domains
+* `set` — Update domain
+* `show` — Show domain details
+* `user` — Domain groups
+
+
+
+## `osc identity domain create`
+
+Creates a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domains`
+
+**Usage:** `osc identity domain create [OPTIONS]`
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the domain
+* `--enabled <ENABLED>` — If set to `true`, domain is enabled. If set to `false`, domain is disabled
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The name of the domain
+* `--options <key=value>` — The resource options for the role. Available resource options are `immutable`
+* `--tags <TAGS>`
+
+
+
+## `osc identity domain config`
+
+Config configuration
+
+You can manage domain-specific configuration options.
+
+Config-specific configuration options are structured within their group objects. The API supports only the identity and ldap groups. These groups override the default configuration settings for the storage of users and groups by the Identity server.
+
+You can create, update, and delete domain-specific configuration options by using the HTTP PUT , PATCH , and DELETE methods. When updating, it is only necessary to include those options that are being updated.
+
+To create an option, use the PUT method. The Identity API does not return options that are considered sensitive, although you can create and update these options. The only option currently considered sensitive is the password option within the ldap group.
+
+The API enables you to include sensitive options as part of non- sensitive options. For example, you can include the password as part of the url option.
+
+If you try to create or update configuration options for groups other than whitelisted on the server side, the Forbidden (403) response code is returned.
+
+For information about how to integrate the Identity service with LDAP, see Integrate Identity with LDAP.
+
+A domain is a collection of users, groups, and projects. Each group and project is owned by exactly one domain.
+
+**Usage:** `osc identity domain config <COMMAND>`
+
+###### **Subcommands:**
+
+* `default` — Show default configuration settings
+* `group` — Domain Group group
+* `purge` — Delete domain configuration
+* `list` — Show domain configuration
+* `replace` — Create domain configuration
+* `set` — Update domain configuration
+
+
+
+## `osc identity domain config default`
+
+The default configuration settings for the options that can be overridden can be retrieved.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config default`
+
+
+
+## `osc identity domain config group`
+
+Domain Group group
+
+Group group is a driver specific configuration for the domain. It contains individual configuration options.
+
+**Usage:** `osc identity domain config group <COMMAND>`
+
+###### **Subcommands:**
+
+* `default` — Show default configuration for a group
+* `delete` — Delete domain group configuration
+* `option` — Domain Group Option
+* `set` — Update domain group configuration
+* `show` — Show domain group configuration
+
+
+
+## `osc identity domain config group default`
+
+Reads the default configuration settings for a specific group.
+
+The API supports only the `identity` and `ldap` groups.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group default <GROUP>`
+
+###### **Arguments:**
+
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+
+
+
+## `osc identity domain config group delete`
+
+Deletes a domain group configuration.
+
+The API supports only the `identity` and `ldap` groups.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group delete <DOMAIN_ID> <GROUP>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+
+
+
+## `osc identity domain config group option`
+
+Domain Group Option
+
+A domain group option is a configuration option of the domain specific driver.
+
+**Usage:** `osc identity domain config group option <COMMAND>`
+
+###### **Subcommands:**
+
+* `default` — Show default option for a group
+* `delete` — Delete domain group option configuration
+* `set` — Update domain group option configuration
+* `show` — Show domain group option configuration
+
+
+
+## `osc identity domain config group option default`
+
+Reads the default configuration setting for an option within a group.
+
+The API supports only the `identity` and `ldap` groups. For the `ldap` group, a valid value is `url` or `user_tree_dn`. For the `identity` group, a valid value is `driver`.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group option default <GROUP> <OPTION>`
+
+###### **Arguments:**
+
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+
+
+
+## `osc identity domain config group option delete`
+
+Deletes a domain group option configuration.
+
+The API supports only the `identity` and `ldap` groups. For the `ldap` group, a valid value is `url` or `user_tree_dn`. For the `identity` group, a valid value is `driver`.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group option delete <DOMAIN_ID> <GROUP> <OPTION>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+
+
+
+## `osc identity domain config group option set`
+
+Updates a domain group option configuration.
+
+The API supports only the `identity` and `ldap` groups. For the `ldap` group, a valid value is `url` or `user_tree_dn`. For the `identity` group, a valid value is `driver`.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group option set [OPTIONS] <DOMAIN_ID> <GROUP> <OPTION>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+
+###### **Options:**
+
+* `--config <key=value>` — A `config` object
+
+
+
+## `osc identity domain config group option show`
+
+Shows details for a domain group option configuration.
+
+The API supports only the `identity` and `ldap` groups. For the `ldap` group, a valid value is `url` or `user_tree_dn`. For the `identity` group, a valid value is `driver`.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group option show <DOMAIN_ID> <GROUP> <OPTION>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+
+
+
+## `osc identity domain config group set`
+
+Updates a domain group configuration.
+
+The API supports only the `identity` and `ldap` groups. If you try to set configuration options for other groups, this call fails with the `Forbidden (403)` response code.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group set --config <JSON> <DOMAIN_ID> <GROUP>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+
+###### **Options:**
+
+* `--config <JSON>` — A `config` object
+
+
+
+## `osc identity domain config group show`
+
+Shows details for a domain group configuration.
+
+The API supports only the `identity` and `ldap` groups.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
+
+**Usage:** `osc identity domain config group show <DOMAIN_ID> <GROUP>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+
+
+
+## `osc identity domain config purge`
+
+Deletes a domain configuration.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
+
+**Usage:** `osc identity domain config purge <DOMAIN_ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain config list`
+
+Shows details for a domain configuration.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
+
+**Usage:** `osc identity domain config list <DOMAIN_ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain config replace`
+
+Creates a domain configuration.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
+
+**Usage:** `osc identity domain config replace --config <JSON> <DOMAIN_ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--config <JSON>` — A `config` object
+
+
+
+## `osc identity domain config set`
+
+Updates a domain configuration.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
+
+**Usage:** `osc identity domain config set --config <JSON> <DOMAIN_ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--config <JSON>` — A `config` object
+
+
+
+## `osc identity domain delete`
+
+Deletes a domain. To minimize the risk of accidentally deleting a domain, you must first disable the domain by using the update domain method.
+
+When you delete a domain, this call also deletes all entities owned by it, such as users, groups, and projects, and any credentials and granted roles that relate to those entities.
+
+If you try to delete an enabled domain, this call returns the `Forbidden (403)` response code.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain`
+
+**Usage:** `osc identity domain delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain group`
+
+Domain groups
+
+**Usage:** `osc identity domain group <COMMAND>`
+
+###### **Subcommands:**
+
+* `role` — Domain group roles
+
+
+
+## `osc identity domain group role`
+
+Domain group roles
+
+OpenStack services typically determine whether a user’s API request should be allowed using Role Based Access Control (RBAC). For OpenStack this means the service compares the roles that user has on the project (as indicated by the roles in the token), against the roles required for the API in question (as defined in the service’s policy file). A user obtains roles on a project by having these assigned to them via the Identity service API.
+
+Roles must initially be created as entities via the Identity services API and, once created, can then be assigned. You can assign roles to a user or group on a project, including projects owned by other domains. You can also assign roles to a user or group on a domain, although this is only currently relevant for using a domain scoped token to execute domain-level Identity service API requests.
+
+**Usage:** `osc identity domain group role <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Unassign role from group on domain
+* `list` — List role assignments for group on domain
+* `set` — Assign role to group on domain
+* `show` — Check if a group has a specific role on a domain
+
+
+
+## `osc identity domain group role delete`
+
+Unassigns a role from a group on a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_group_role`
+
+**Usage:** `osc identity domain group role delete <DOMAIN_ID> <GROUP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<ID>` — role_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain group role list`
+
+Lists role assignments for a group on a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_group_roles`
+
+**Usage:** `osc identity domain group role list <DOMAIN_ID> <GROUP_ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain group role set`
+
+Assigns a role to a group on a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_group_role`
+
+**Usage:** `osc identity domain group role set <DOMAIN_ID> <GROUP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<ID>` — role_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain group role show`
+
+Check if a group has a specific role on a domain.
+
+GET/HEAD /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id}
+
+**Usage:** `osc identity domain group role show <DOMAIN_ID> <GROUP_ID> <ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<ID>` — role_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain list`
+
+Lists all domains.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domains`
+
+**Usage:** `osc identity domain list [OPTIONS]`
+
+###### **Options:**
+
+* `--enabled <ENABLED>` — If set to true, then only domains that are enabled will be returned, if set to false only that are disabled will be returned. Any value other than 0, including no value, will be interpreted as true
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — Filters the response by a domain name
+
+
+
+## `osc identity domain set`
+
+Updates a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain`
+
+**Usage:** `osc identity domain set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--description <DESCRIPTION>` — The description of the domain
+* `--enabled <ENABLED>` — If set to `true`, domain is enabled. If set to `false`, domain is disabled
+
+  Possible values: `true`, `false`
+
+* `--name <NAME>` — The name of the domain
+* `--options <key=value>` — The resource options for the role. Available resource options are `immutable`
+* `--tags <TAGS>`
+
+
+
+## `osc identity domain show`
+
+Shows details for a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domains`
+
+**Usage:** `osc identity domain show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+
+
+## `osc identity domain user`
+
+Domain groups
+
+**Usage:** `osc identity domain user <COMMAND>`
+
+###### **Subcommands:**
+
+* `role` — Domain user roles
+
+
+
+## `osc identity domain user role`
+
+Domain user roles
+
+OpenStack services typically determine whether a user’s API request should be allowed using Role Based Access Control (RBAC). For OpenStack this means the service compares the roles that user has on the project (as indicated by the roles in the token), against the roles required for the API in question (as defined in the service’s policy file). A user obtains roles on a project by having these assigned to them via the Identity service API.
+
+Roles must initially be created as entities via the Identity services API and, once created, can then be assigned. You can assign roles to a user or group on a project, including projects owned by other domains. You can also assign roles to a user or group on a domain, although this is only currently relevant for using a domain scoped token to execute domain-level Identity service API requests.
+
+**Usage:** `osc identity domain user role <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Unassigns role from user on domain
+* `list` — List role assignments for user on domain
+* `set` — Assign role to user on domain
+* `show` — Check if a user has a specific role on the domain
+
+
+
+## `osc identity domain user role delete`
+
+Unassigns a role from a user on a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_user_role`
+
+**Usage:** `osc identity domain user role delete <DOMAIN_ID> <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+* `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+
+
+## `osc identity domain user role list`
+
+Lists role assignments for a user on a domain.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_user_roles`
+
+**Usage:** `osc identity domain user role list <DOMAIN_ID> <USER_ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+
+
+## `osc identity domain user role set`
+
+Assigns a role to a user on a domain.
+
+Relationship: `https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-domain`
+
+**Usage:** `osc identity domain user role set <DOMAIN_ID> <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+* `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+
+
+## `osc identity domain user role show`
+
+Check if a user has a specific role on the domain.
+
+GET/HEAD /v3/domains/{domain_id}/users/{user_id}/roles/{role_id}
+
+**Usage:** `osc identity domain user role show <DOMAIN_ID> <USER_ID> <ID>`
+
+###### **Arguments:**
+
+* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+* `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 
 
 

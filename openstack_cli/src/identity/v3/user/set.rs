@@ -34,7 +34,6 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
-
 use openstack_sdk::api::find;
 use openstack_sdk::api::identity::v3::user::find;
 use openstack_sdk::api::identity::v3::user::set;
