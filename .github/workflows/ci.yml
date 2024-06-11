@@ -55,3 +55,28 @@ jobs:
 
       - name: Run Doc tests
         run: cargo test --doc
+  fuzz:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@032431f26ad14217b24e529fa2ab72cf558de38b # stable
+        with:
+          toolchain: nightly
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2.7.3
+
+      - name: Install cargo-fuzz
+        run: |
+          cargo install cargo-fuzz
+
+      - name: Run tests
+        run: cargo fuzz run fuzz_openstack_sdk_config -- -max_total_time=60
