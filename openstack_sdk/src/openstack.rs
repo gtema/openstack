@@ -351,6 +351,7 @@ impl OpenStack {
             if self.catalog.discovery_allowed(service_type.to_string()) {
                 info!("Performing `{}` endpoint version discovery", service_type);
 
+                let orig_url = ep.url().clone();
                 let mut try_url = ep.url().clone();
                 let mut max_depth = 10;
                 loop {
@@ -359,13 +360,18 @@ impl OpenStack {
                         .uri(query::url_to_http_uri(try_url.clone()));
 
                     let rsp = self.rest_with_auth(req, Vec::new(), &self.auth)?;
-                    if rsp.status() != StatusCode::NOT_FOUND {
-                        self.catalog.process_endpoint_discovery(
-                            service_type,
-                            &try_url,
-                            rsp.body(),
-                            None::<String>,
-                        )?;
+                    if rsp.status() != StatusCode::NOT_FOUND
+                        && self
+                            .catalog
+                            .process_endpoint_discovery(
+                                service_type,
+                                &try_url,
+                                rsp.body(),
+                                None::<String>,
+                            )
+                            .is_ok()
+                    {
+                        debug!("Finished service version discovery at {}", try_url.as_str());
                         return Ok(());
                     }
                     if try_url.path() != "/" {
@@ -374,7 +380,12 @@ impl OpenStack {
                         try_url = try_url.join("../")?;
                     } else {
                         return Err(OpenStackError::Discovery {
-                            msg: "No Version document discovered".to_string(),
+                            service: service_type.to_string(),
+                            url: orig_url.to_string(),
+                            msg: match service_type {
+                                ServiceType::Identity => "Service is not working.".to_string(),
+                                _ => "No Version document found. Either service is not supporting version discovery, or API is not working".to_string(),
+                            }
                         });
                     }
 
@@ -384,6 +395,8 @@ impl OpenStack {
                     }
                 }
                 return Err(OpenStackError::Discovery {
+                    service: service_type.to_string(),
+                    url: orig_url.to_string(),
                     msg: "Unknown".to_string(),
                 });
             }

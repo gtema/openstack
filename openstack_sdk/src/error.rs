@@ -129,8 +129,17 @@ pub enum OpenStackError {
     },
 
     /// Service version discovery error
-    #[error("Endpoint version discovery error: {}", msg)]
-    Discovery { msg: String },
+    #[error(
+        "`{}` endpoint version discovery error:\n\tUrl: {}\n\tMessage: {}",
+        service,
+        url,
+        msg
+    )]
+    Discovery {
+        service: String,
+        url: String,
+        msg: String,
+    },
 
     /// Interactive mode required
     #[error(
