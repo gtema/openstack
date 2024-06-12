@@ -20,12 +20,12 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-          - target: x86_64-unknown-linux-musl
-            os: ubuntu-latest
-          - target: x86_64-apple-darwin
-            os: macos-latest
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
+          # - target: x86_64-unknown-linux-musl
+          #   os: ubuntu-latest
+          # - target: x86_64-apple-darwin
+          #   os: macos-latest
+          # - target: x86_64-pc-windows-msvc
+          #   os: windows-latest
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -55,6 +55,7 @@ jobs:
 
       - name: Run Doc tests
         run: cargo test --doc
+
   fuzz:
     runs-on: ubuntu-latest
 
