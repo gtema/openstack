@@ -12,11 +12,14 @@ autobenches = false
 [package.metadata]
 cargo-fuzz = true
 
+[features]
+fuzzing = ["dep:libfuzzer-sys"]
+
 [package.metadata.dist]
 dist = false
 
 [dependencies]
-libfuzzer-sys = "0.4"
+libfuzzer-sys = { version = "0.4", optional = true }
 
 [dependencies.openstack_sdk]
 path = "../openstack_sdk"
@@ -24,6 +27,7 @@ path = "../openstack_sdk"
 [[bin]]
 name = "fuzz_openstack_sdk_config"
 path = "fuzz_targets/fuzz_openstack_sdk_config.rs"
+required-features = ["fuzzing"]
 test = false
 doc = false
 bench = false
