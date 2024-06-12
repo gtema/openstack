@@ -23,8 +23,8 @@
 #![allow(clippy::enum_variant_names)]
 use std::io::{self, IsTerminal};
 
+use anyhow::Context;
 use clap::Parser;
-
 use tracing::Level;
 
 use openstack_sdk::AsyncOpenStack;
@@ -77,7 +77,8 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         )?
         .ok_or(OpenStackCliError::ConnectionNotFound(
             cli.global_opts.os_cloud.clone().unwrap(),
-        ))?;
+        ))
+        .with_context(|| "Error loading the connection configuration")?;
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization
@@ -91,9 +92,13 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
 
     let mut session;
     if std::io::stdin().is_terminal() {
-        session = AsyncOpenStack::new_interactive(&profile, renew_auth).await?;
+        session = AsyncOpenStack::new_interactive(&profile, renew_auth)
+            .await
+            .with_context(|| "Error during authenticating")?;
     } else {
-        session = AsyncOpenStack::new(&profile).await?;
+        session = AsyncOpenStack::new(&profile)
+            .await
+            .with_context(|| "Error during authenticating")?;
     }
 
     // Invoke the command

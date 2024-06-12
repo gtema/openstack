@@ -432,6 +432,7 @@ where {
             if self.catalog.discovery_allowed(service_type.to_string()) {
                 info!("Performing `{}` endpoint version discovery", service_type);
 
+                let orig_url = ep.url().clone();
                 let mut try_url = ep.url().clone();
                 let mut max_depth = 10;
                 loop {
@@ -462,7 +463,12 @@ where {
                         try_url = try_url.join("../")?;
                     } else {
                         return Err(OpenStackError::Discovery {
-                            msg: "No Version document discovered".to_string(),
+                            service: service_type.to_string(),
+                            url: orig_url.to_string(),
+                            msg: match service_type {
+                                ServiceType::Identity => "Service is not working.".to_string(),
+                                _ => "No Version document found. Either service is not supporting version discovery, or API is not working".to_string(),
+                            }
                         });
                     }
 
@@ -472,6 +478,8 @@ where {
                     }
                 }
                 return Err(OpenStackError::Discovery {
+                    service: service_type.to_string(),
+                    url: orig_url.to_string(),
                     msg: "Unknown".to_string(),
                 });
             }
