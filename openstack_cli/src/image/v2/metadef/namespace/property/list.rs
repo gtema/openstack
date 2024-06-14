@@ -36,7 +36,7 @@ use crate::StructTable;
 use openstack_sdk::api::image::v2::metadef::namespace::property::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use structable_derive::StructTable;
+use std::collections::HashMap;
 
 /// Lists property definitions in a namespace.
 ///
@@ -73,84 +73,22 @@ struct PathParameters {
     )]
     namespace_name: String,
 }
-/// Property response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde(rename = "additionalItems")]
-    #[structable(optional, title = "additionalItems", wide)]
-    additional_items: Option<bool>,
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
 
-    #[serde(rename = "default")]
-    #[structable(optional, pretty, title = "default", wide)]
-    _default: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    description: Option<String>,
-
-    #[serde(rename = "enum")]
-    #[structable(optional, pretty, title = "enum", wide)]
-    _enum: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, pretty)]
-    items: Option<Value>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    maximum: Option<f32>,
-
-    #[serde(rename = "maxItems")]
-    #[structable(optional, title = "maxItems", wide)]
-    max_items: Option<i32>,
-
-    #[serde(rename = "maxLength")]
-    #[structable(optional, title = "maxLength", wide)]
-    max_length: Option<i32>,
-
-    #[serde()]
-    #[structable(optional, wide)]
-    minimum: Option<f32>,
-
-    #[serde(rename = "minItems")]
-    #[structable(optional, title = "minItems", wide)]
-    min_items: Option<i32>,
-
-    #[serde(rename = "minLength")]
-    #[structable(optional, title = "minLength", wide)]
-    min_length: Option<i32>,
-
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    operators: Option<Value>,
-
-    #[serde()]
-    #[structable(optional)]
-    pattern: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    readonly: Option<bool>,
-
-    #[serde()]
-    #[structable(optional, pretty, wide)]
-    required: Option<Value>,
-
-    #[serde()]
-    #[structable()]
-    title: String,
-
-    #[serde(rename = "type")]
-    #[structable(title = "type", wide)]
-    _type: String,
-
-    #[serde(rename = "uniqueItems")]
-    #[structable(optional, title = "uniqueItems", wide)]
-    unique_items: Option<bool>,
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
 }
 
 impl PropertyCommand {
@@ -177,21 +115,7 @@ impl PropertyCommand {
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
         let data: serde_json::Value = ep.query_async(client).await?;
-        let split: Vec<Value> = data
-            .as_object()
-            .expect("API response is not an object")
-            .iter()
-            .map(|(k, v)| {
-                let mut new = v.clone();
-                new.as_object_mut()
-                    .expect("Object item is an object")
-                    .entry("name".to_string())
-                    .or_insert(serde_json::json!(k));
-                new
-            })
-            .collect();
-
-        op.output_list::<ResponseData>(split)?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

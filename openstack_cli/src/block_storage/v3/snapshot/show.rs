@@ -120,19 +120,19 @@ struct ResponseData {
     #[structable(optional)]
     group_snapshot_id: Option<String>,
 
-    /// The snapshot UUID.
+    /// The UUID of the object.
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// One or more metadata key and value pairs for the snapshot, if any.
+    /// One or more metadata key and value pairs for the snapshot.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     metadata: Option<Value>,
 
-    /// The name of the snapshot.
+    /// The name of the snapshot. Default is `None`.
     ///
     #[serde()]
     #[structable(optional)]
@@ -184,7 +184,7 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// If the snapshot was created from a volume, the volume ID.
+    /// The UUID of the volume.
     ///
     #[serde()]
     #[structable(optional)]

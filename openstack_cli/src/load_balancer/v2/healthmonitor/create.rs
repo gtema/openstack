@@ -457,7 +457,7 @@ impl HealthmonitorCommand {
         healthmonitor_builder.pool_id(&args.pool_id);
 
         if let Some(val) = &args.tags {
-            healthmonitor_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            healthmonitor_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.http_version {

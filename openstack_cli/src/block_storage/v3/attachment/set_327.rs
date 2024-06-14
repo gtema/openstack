@@ -46,7 +46,8 @@ use structable_derive::StructTable;
 ///
 /// Expected format of the input parameter 'body':
 ///
-/// ```json
+/// ```text
+///
 /// {
 ///     "attachment":
 ///     {
@@ -63,6 +64,7 @@ use structable_derive::StructTable;
 ///         }
 ///     }
 /// }
+///
 /// ```
 ///
 #[derive(Args)]

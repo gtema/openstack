@@ -49,12 +49,6 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,
 
-    /// The range of image data requested. Note that multi range requests are
-    /// not supported.
-    ///
-    #[builder(default, setter(into))]
-    range: Option<Cow<'a, str>>,
-
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
@@ -125,7 +119,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -144,6 +140,7 @@ mod tests {
         assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -161,6 +158,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

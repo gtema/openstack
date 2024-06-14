@@ -199,7 +199,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute flavor extraspecs show`↴](#osc-compute-flavor-extraspecs-show)
 * [`osc compute flavor extraspecs set`↴](#osc-compute-flavor-extraspecs-set)
 * [`osc compute flavor list`↴](#osc-compute-flavor-list)
-* [`osc compute flavor set`↴](#osc-compute-flavor-set)
+* [`osc compute flavor set255`↴](#osc-compute-flavor-set255)
 * [`osc compute flavor show`↴](#osc-compute-flavor-show)
 * [`osc compute hypervisor`↴](#osc-compute-hypervisor)
 * [`osc compute hypervisor list`↴](#osc-compute-hypervisor-list)
@@ -981,11 +981,19 @@ Starting from microversion 3.54, we can pass the attach mode as argument in the 
 
 Expected format of the input parameter 'body':
 
-```json { "attachment": { "volume_uuid": "volume-uuid", "instance_uuid": "null|nova-server-uuid", "connector": "null|<connector-object>", "mode": "null|rw|ro" } } ```
+```text
+
+{ "attachment": { "volume_uuid": "volume-uuid", "instance_uuid": "null|nova-server-uuid", "connector": "null|<connector-object>", "mode": "null|rw|ro" } }
+
+```
 
 Example connector:
 
-```json { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "null|rw|ro" } } ```
+```text
+
+{ "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "null|rw|ro" } }
+
+```
 
 NOTE all that's required for a reserve is volume_uuid and an instance_uuid.
 
@@ -1021,11 +1029,19 @@ Starting from microversion 3.54, we can pass the attach mode as argument in the 
 
 Expected format of the input parameter 'body':
 
-```json { "attachment": { "volume_uuid": "volume-uuid", "instance_uuid": "null|nova-server-uuid", "connector": "null|<connector-object>", "mode": "null|rw|ro" } } ```
+```text
+
+{ "attachment": { "volume_uuid": "volume-uuid", "instance_uuid": "null|nova-server-uuid", "connector": "null|<connector-object>", "mode": "null|rw|ro" } }
+
+```
 
 Example connector:
 
-```json { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "null|rw|ro" } } ```
+```text
+
+{ "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "null|rw|ro" } }
+
+```
 
 NOTE all that's required for a reserve is volume_uuid and an instance_uuid.
 
@@ -1092,7 +1108,11 @@ Update a reserved attachment record with connector information and set up the ap
 
 Expected format of the input parameter 'body':
 
-```json { "attachment": { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "None|rw|ro" } } } ```
+```text
+
+{ "attachment": { "connector": { "initiator": "iqn.1993-08.org.debian:01:cad181614cec", "ip": "192.168.1.20", "platform": "x86_64", "host": "tempest-1", "os_type": "linux2", "multipath": false, "mountpoint": "/dev/vdb", "mode": "None|rw|ro" } } }
+
+```
 
 **Usage:** `osc block-storage attachment set327 [OPTIONS] <ID>`
 
@@ -3049,7 +3069,7 @@ Block Storage Volume commands
 
 Creates a new volume.
 
-:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
+| param req: | the request | | --- | --- | | param body: | the request body | | returns: | dict -- the new volume dictionary | | raises HTTPNotFound, HTTPBadRequest: | | | | |
 
 **Usage:** `osc block-storage volume create353 [OPTIONS]`
 
@@ -3082,7 +3102,7 @@ Creates a new volume.
 
 Creates a new volume.
 
-:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
+| param req: | the request | | --- | --- | | param body: | the request body | | returns: | dict -- the new volume dictionary | | raises HTTPNotFound, HTTPBadRequest: | | | | |
 
 **Usage:** `osc block-storage volume create347 [OPTIONS]`
 
@@ -3115,7 +3135,7 @@ Creates a new volume.
 
 Creates a new volume.
 
-:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
+| param req: | the request | | --- | --- | | param body: | the request body | | returns: | dict -- the new volume dictionary | | raises HTTPNotFound, HTTPBadRequest: | | | | |
 
 **Usage:** `osc block-storage volume create313 [OPTIONS]`
 
@@ -3147,7 +3167,7 @@ Creates a new volume.
 
 Creates a new volume.
 
-:param req: the request :param body: the request body :returns: dict -- the new volume dictionary :raises HTTPNotFound, HTTPBadRequest:
+| param req: | the request | | --- | --- | | param body: | the request body | | returns: | dict -- the new volume dictionary | | raises HTTPNotFound, HTTPBadRequest: | | | | |
 
 **Usage:** `osc block-storage volume create30 [OPTIONS]`
 
@@ -3930,7 +3950,7 @@ Flavors are a way to describe the basic dimensions of a server to be created inc
 * `delete` — Delete Flavor
 * `extraspecs` — Flavor extra specs
 * `list` — List Flavors With Details
-* `set` — Update Flavor Description
+* `set255` — Update Flavor Description (microversion = 2.55)
 * `show` — Show Flavor Details
 
 
@@ -4219,7 +4239,7 @@ Error response codes: badRequest(400), unauthorized(401), forbidden(403)
 
 
 
-## `osc compute flavor set`
+## `osc compute flavor set255`
 
 Updates a flavor description.
 
@@ -4231,7 +4251,7 @@ Normal response codes: 200
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute flavor set --description <DESCRIPTION> <ID>`
+**Usage:** `osc compute flavor set255 --description <DESCRIPTION> <ID>`
 
 ###### **Arguments:**
 
@@ -14252,7 +14272,13 @@ Lists address groups that the project has access to.
 
 Default policy settings return only the address groups owned by the project of the user submitting the request, unless the user has administrative role.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -14310,7 +14336,7 @@ Error response codes: 400, 401, 403, 404, 412
 
 Shows information for an address group.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -14386,7 +14412,13 @@ Lists address scopes that the project has access to.
 
 Default policy settings return only the address scopes owned by the project of the user submitting the request, unless the user has administrative role.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -14435,7 +14467,7 @@ Error response codes: 400, 401, 403, 404, 412
 
 Shows information for an address scope.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -14464,6 +14496,14 @@ Availability Zones commands
 ## `osc network availability-zone list`
 
 Lists all availability zones.
+
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -14496,7 +14536,15 @@ Extensions commands
 
 Lists available extensions.
 
-Lists available Networking API v2.0 extensions and shows details for an extension.
+Lists available Networking API v2.0 extensions.
+
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -14509,6 +14557,8 @@ Error response codes: 401
 ## `osc network extension show`
 
 Shows details for an extension, by alias. The response shows the extension name and its alias. To show details for an extension, you specify the alias.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -14605,9 +14655,15 @@ Lists floating IPs visible to the user.
 
 Default policy settings return only the floating IPs owned by the user’s project, unless the user has admin role.
 
-This example request lists floating IPs in JSON format:
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
+
+This example request lists floating IPs in JSON format:
 
 Normal response codes: 200
 
@@ -14714,7 +14770,13 @@ Lists floating IP port forwardings that the project has access to.
 
 Default policy settings return only the port forwardings associated to floating IPs owned by the project of the user submitting the request, unless the user has administrative role.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -14775,7 +14837,7 @@ Error response codes: 400, 404
 
 Shows information for a floating IP port forwarding.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -14825,7 +14887,7 @@ Error response codes: 400, 401, 404, 409, 412
 
 Shows details for a floating IP.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 This example request shows details for a floating IP in JSON format. This example also filters the result by the `fixed_ip_address` and `floating_ip_address` fields.
 
@@ -15023,6 +15085,14 @@ The DHCP agent scheduler extension (dhcp_agent_scheduler) enables administrators
 
 Lists DHCP agents hosting a network.
 
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
+
 Normal response codes: 200
 
 Error response codes: 401, 403
@@ -15041,7 +15111,13 @@ Lists networks to which the project has access.
 
 Default policy settings return only networks that the project who submits the request owns, unless an administrative user submits the request. In addition, networks shared with the project who submits the request are also returned.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query parameter to filter the response with tags. For information, see [REST API Impact](http://specs.openstack.org/openstack/neutron-specs/specs/mitaka/add-tags-to-core-resources.html#rest-api-impact).
 
@@ -15090,7 +15166,7 @@ Error response codes: 401
 
 Shows details for a network.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -15283,7 +15359,13 @@ Lists ports to which the user has access.
 
 Default policy settings return only those ports that are owned by the project of the user who submits the request, unless the request is submitted by a user with administrative rights.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 If the `ip-substring-filtering` extension is enabled, the Neutron API supports IP address substring filtering on the `fixed_ips` attribute. If you specify an IP address substring (`ip_address_substr`) in an entry of the `fixed_ips` attribute, the Neutron API will list all ports that have an IP address matching the substring.
 
@@ -15324,7 +15406,7 @@ Error response codes: 401
 
 Shows details for a port.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -15553,7 +15635,13 @@ Error response codes: 404
 
 Lists router conntrack helpers associated with a router.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -15607,7 +15695,7 @@ Error response codes: 400, 404
 
 Shows information for a router conntrack helper.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -15702,6 +15790,14 @@ The L3 agent scheduler extension (l3_agent_scheduler) allows administrators to a
 
 Lists l3 agents hosting a specific router.
 
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
+
 Normal response codes: 200
 
 Error response codes: 401, 404
@@ -15720,7 +15816,13 @@ Lists logical routers that the project who submits the request can access.
 
 Default policy settings return only those routers that the project who submits the request owns, unless an administrative user submits the request.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -15803,7 +15905,7 @@ Remove interface from router
 
 Shows details for a router.
 
-Use the `fields` query parameter to control which fields are returned in the response body. For information, see [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 
@@ -15998,7 +16100,13 @@ Lists subnets that the project has access to.
 
 Default policy settings return only subnets owned by the project of the user submitting the request, unless the user has administrative role. You can control which attributes are returned by using the fields query parameter. You can filter results by using query string parameters.
 
-Use the `fields` query parameter to control which fields are returned in the response body. Additionally, you can filter results by using query string parameters. For information, see [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 
 Normal response codes: 200
 
@@ -16084,6 +16192,8 @@ Error response codes: 400, 401, 403, 404, 412
 Shows details for a subnet.
 
 Use the fields query parameter to filter the results.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
 
 Normal response codes: 200
 

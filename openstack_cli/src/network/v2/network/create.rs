@@ -389,8 +389,7 @@ impl NetworkCommand {
         }
 
         if let Some(val) = &args.availability_zone_hints {
-            network_builder
-                .availability_zone_hints(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            network_builder.availability_zone_hints(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.ha {

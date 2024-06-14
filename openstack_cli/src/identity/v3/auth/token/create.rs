@@ -406,15 +406,13 @@ impl fmt::Display for ResponseDomain {
                 "id={}",
                 self.id
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "name={}",
                 self.name
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
         ]);
         write!(f, "{}", data.join(";"))
@@ -448,7 +446,7 @@ impl TokenCommand {
             args.identity
                 .methods
                 .iter()
-                .map(|v| v.into())
+                .map(Into::into)
                 .collect::<Vec<_>>(),
         );
         if let Some(val) = &&args.identity.password {

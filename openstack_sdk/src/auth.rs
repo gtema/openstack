@@ -127,7 +127,7 @@ mod tests {
     #[test]
     fn test_auth_validity_expired() {
         let auth = super::AuthToken {
-            token: "".to_string(),
+            token: String::new(),
             auth_info: Some(AuthResponse {
                 token: AuthToken {
                     expires_at: chrono::offset::Local::now()
@@ -142,7 +142,7 @@ mod tests {
     #[test]
     fn test_auth_validity_valid() {
         let auth = super::AuthToken {
-            token: "".to_string(),
+            token: String::new(),
             auth_info: Some(AuthResponse {
                 token: AuthToken {
                     expires_at: chrono::offset::Local::now()

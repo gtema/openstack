@@ -36,12 +36,14 @@ use crate::StructTable;
 use crate::common::parse_json;
 use crate::common::parse_key_val;
 use crate::common::BoolString;
+use anyhow::Context;
 use clap::ValueEnum;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::network::v2::port::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
+use std::collections::BTreeMap;
 use structable_derive::StructTable;
 
 /// Updates a port.
@@ -735,7 +737,7 @@ impl PortCommand {
         }
 
         if let Some(val) = &args.security_groups {
-            port_builder.security_groups(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            port_builder.security_groups(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.port(port_builder.build().unwrap());

@@ -22,7 +22,8 @@
 //!
 //! Expected format of the input parameter 'body':
 //!
-//! ```json
+//! ```text
+//!
 //! {
 //!     "attachment":
 //!     {
@@ -39,6 +40,7 @@
 //!         }
 //!     }
 //! }
+//!
 //! ```
 //!
 use derive_builder::Builder;
@@ -159,7 +161,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -171,7 +175,7 @@ mod tests {
             Request::builder()
                 .attachment(
                     AttachmentBuilder::default()
-                        .connector(BTreeMap::<String, String>::new().into_iter())
+                        .connector(BTreeMap::<String, Value>::new().into_iter())
                         .build()
                         .unwrap()
                 )
@@ -188,7 +192,7 @@ mod tests {
             Request::builder()
                 .attachment(
                     AttachmentBuilder::default()
-                        .connector(BTreeMap::<String, String>::new().into_iter())
+                        .connector(BTreeMap::<String, Value>::new().into_iter())
                         .build()
                         .unwrap()
                 )
@@ -200,6 +204,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -216,7 +221,7 @@ mod tests {
             .id("id")
             .attachment(
                 AttachmentBuilder::default()
-                    .connector(BTreeMap::<String, String>::new().into_iter())
+                    .connector(BTreeMap::<String, Value>::new().into_iter())
                     .build()
                     .unwrap(),
             )
@@ -226,6 +231,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();
@@ -243,7 +249,7 @@ mod tests {
             .id("id")
             .attachment(
                 AttachmentBuilder::default()
-                    .connector(BTreeMap::<String, String>::new().into_iter())
+                    .connector(BTreeMap::<String, Value>::new().into_iter())
                     .build()
                     .unwrap(),
             )

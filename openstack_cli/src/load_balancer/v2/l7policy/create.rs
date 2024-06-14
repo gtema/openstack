@@ -394,7 +394,7 @@ impl L7PolicyCommand {
         }
 
         if let Some(val) = &args.tags {
-            l7policy_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            l7policy_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.redirect_http_code {

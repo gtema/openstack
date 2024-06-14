@@ -18,6 +18,7 @@
 //! `/v3/group_snapshots/detail` REST operations of block_storage
 pub mod create_314;
 pub mod delete;
+pub mod find;
 pub mod get;
 pub mod list;
 pub mod list_detailed;

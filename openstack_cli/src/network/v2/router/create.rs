@@ -363,8 +363,7 @@ impl RouterCommand {
         }
 
         if let Some(val) = &args.availability_zone_hints {
-            router_builder
-                .availability_zone_hints(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            router_builder.availability_zone_hints(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.distributed {

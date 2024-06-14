@@ -18,8 +18,7 @@
 //! Shows information for an address scope.
 //!
 //! Use the `fields` query parameter to control which fields are returned in
-//! the response body. For information, see
-//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+//! the response body. For more information, see [Fields](#fields).
 //!
 //! Normal response codes: 200
 //!
@@ -106,7 +105,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -128,6 +129,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -145,6 +147,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

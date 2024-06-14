@@ -44,6 +44,9 @@ use structable_derive::StructTable;
 ///
 /// Use the fields query parameter to filter the results.
 ///
+/// Use the `fields` query parameter to control which fields are returned in
+/// the response body. For more information, see [Fields](#fields).
+///
 /// Normal response codes: 200
 ///
 /// Error response codes: 401, 404

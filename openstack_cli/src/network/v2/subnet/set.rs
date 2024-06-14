@@ -341,7 +341,7 @@ impl SubnetCommand {
         }
 
         if let Some(val) = &args.dns_nameservers {
-            subnet_builder.dns_nameservers(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            subnet_builder.dns_nameservers(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.host_routes {
@@ -357,7 +357,7 @@ impl SubnetCommand {
         }
 
         if let Some(val) = &args.service_types {
-            subnet_builder.service_types(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            subnet_builder.service_types(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.dns_publish_fixed_ip {

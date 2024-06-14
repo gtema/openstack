@@ -335,7 +335,7 @@ impl RuleCommand {
         }
 
         if let Some(val) = &args.tags {
-            rule_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            rule_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.tenant_id {

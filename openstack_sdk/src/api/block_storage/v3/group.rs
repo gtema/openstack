@@ -22,6 +22,7 @@ pub mod delete_313;
 pub mod disable_replication_338;
 pub mod enable_replication_338;
 pub mod failover_replication_338;
+pub mod find;
 pub mod get;
 pub mod list;
 pub mod list_detailed;

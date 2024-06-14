@@ -338,7 +338,7 @@ impl PropertyCommand {
 
         // Set Request._enum data
         if let Some(arg) = &self._enum {
-            ep_builder._enum(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
+            ep_builder._enum(arg.iter().map(std::convert::Into::into).collect::<Vec<_>>());
         }
 
         // Set Request.items data
@@ -381,7 +381,7 @@ impl PropertyCommand {
 
         // Set Request.operators data
         if let Some(arg) = &self.operators {
-            ep_builder.operators(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
+            ep_builder.operators(arg.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         // Set Request.pattern data
@@ -396,7 +396,7 @@ impl PropertyCommand {
 
         // Set Request.required data
         if let Some(arg) = &self.required {
-            ep_builder.required(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
+            ep_builder.required(arg.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         // Set Request.title data

@@ -35,7 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::block_storage::v3::extension::list;
 use openstack_sdk::api::QueryAsync;
-
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI

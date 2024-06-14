@@ -43,8 +43,7 @@ use structable_derive::StructTable;
 /// Shows details for a port.
 ///
 /// Use the `fields` query parameter to control which fields are returned in
-/// the response body. For information, see
-/// [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+/// the response body. For more information, see [Fields](#fields).
 ///
 /// Normal response codes: 200
 ///

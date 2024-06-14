@@ -19,6 +19,9 @@
 //! name and its alias. To show details for an extension, you specify the
 //! alias.
 //!
+//! Use the `fields` query parameter to control which fields are returned in
+//! the response body. For more information, see [Fields](#fields).
+//!
 //! Normal response codes: 200
 //!
 //! Error response codes: 401, 404
@@ -104,7 +107,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -126,6 +131,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -143,6 +149,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

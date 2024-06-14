@@ -50,7 +50,7 @@ pub enum Type {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum TypeStringEnum {
+pub enum ItemsType {
     #[serde(rename = "array")]
     Array,
     #[serde(rename = "boolean")]
@@ -76,7 +76,7 @@ pub struct Items<'a> {
 
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) _type: Option<TypeStringEnum>,
+    pub(crate) _type: Option<ItemsType>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -312,7 +312,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -344,6 +346,7 @@ mod tests {
             .is_none())
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -369,6 +372,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

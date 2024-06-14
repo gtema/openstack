@@ -211,12 +211,7 @@ impl GroupCommand {
             group_builder.name(Some(val.into()));
         }
 
-        group_builder.volume_types(
-            args.volume_types
-                .iter()
-                .map(|v| v.into())
-                .collect::<Vec<_>>(),
-        );
+        group_builder.volume_types(args.volume_types.iter().map(Into::into).collect::<Vec<_>>());
 
         if let Some(val) = &args.availability_zone {
             group_builder.availability_zone(Some(val.into()));

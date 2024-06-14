@@ -54,24 +54,10 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// The media type descriptor of the body, namely application/octet-stream
-    ///
-    #[builder(default, setter(into))]
-    content_type: Option<Cow<'a, str>>,
-
     /// image_id parameter for /v2/images/{image_id}/file API
     ///
     #[builder(default, setter(into))]
     image_id: Cow<'a, str>,
-
-    /// A store identifier to upload or import image data. Should only be
-    /// included when making a request to a cloud that supports multiple
-    /// backing stores. Use the Store Discovery call to determine an
-    /// appropriate store identifier. Simply omit this header to use the
-    /// default store.
-    ///
-    #[builder(default, setter(into))]
-    x_image_meta_store: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -143,7 +129,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -162,6 +150,7 @@ mod tests {
         assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -179,6 +168,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

@@ -482,7 +482,7 @@ impl PoolCommand {
         }
 
         if let Some(val) = &args.tags {
-            pool_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            pool_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.tls_container_ref {
@@ -506,11 +506,11 @@ impl PoolCommand {
         }
 
         if let Some(val) = &args.tls_versions {
-            pool_builder.tls_versions(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            pool_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.alpn_protocols {
-            pool_builder.alpn_protocols(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            pool_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.pool(pool_builder.build().unwrap());

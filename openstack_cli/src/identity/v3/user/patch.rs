@@ -248,50 +248,43 @@ impl fmt::Display for ResponseOptions {
                 "ignore_change_password_upon_first_use={}",
                 self.ignore_change_password_upon_first_use
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "ignore_password_expiry={}",
                 self.ignore_password_expiry
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "ignore_lockout_failure_attempts={}",
                 self.ignore_lockout_failure_attempts
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "lock_password={}",
                 self.lock_password
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "ignore_user_inactivity={}",
                 self.ignore_user_inactivity
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "multi_factor_auth_rules={}",
                 self.multi_factor_auth_rules
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "multi_factor_auth_enabled={}",
                 self.multi_factor_auth_enabled
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
         ]);
         write!(f, "{}", data.join(";"))
@@ -392,7 +385,7 @@ impl OSCCommand for UserCmd {
 
             if let Some(val) = &args.multi_factor_auth_rules {
                 options_builder
-                    .multi_factor_auth_rules(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+                    .multi_factor_auth_rules(val.iter().map(Into::into).collect::<Vec<_>>());
             }
 
             if let Some(val) = &args.multi_factor_auth_enabled {

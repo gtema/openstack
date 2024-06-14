@@ -660,7 +660,7 @@ impl ListenerCommand {
         }
 
         if let Some(val) = &args.sni_container_refs {
-            listener_builder.sni_container_refs(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            listener_builder.sni_container_refs(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.project_id {
@@ -708,7 +708,7 @@ impl ListenerCommand {
         }
 
         if let Some(val) = &args.tags {
-            listener_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            listener_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.client_ca_tls_container_ref {
@@ -729,7 +729,7 @@ impl ListenerCommand {
         }
 
         if let Some(val) = &args.allowed_cidrs {
-            listener_builder.allowed_cidrs(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            listener_builder.allowed_cidrs(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.tls_ciphers {
@@ -737,11 +737,11 @@ impl ListenerCommand {
         }
 
         if let Some(val) = &args.tls_versions {
-            listener_builder.tls_versions(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            listener_builder.tls_versions(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.alpn_protocols {
-            listener_builder.alpn_protocols(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            listener_builder.alpn_protocols(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.hsts_max_age {

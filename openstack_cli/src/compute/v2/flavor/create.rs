@@ -248,15 +248,13 @@ impl fmt::Display for Links {
                 "href={}",
                 self.href
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "rel={}",
                 self.rel
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
         ]);
         return write!(f, "{}", data.join(";"));
@@ -287,7 +285,7 @@ impl OSCCommand for FlavorCmd {
         flavor_builder.name(&args.name);
 
         if let Some(val) = &args.id {
-            flavor_builder.id(val.clone().map(|v| v.into()));
+            flavor_builder.id(val.clone().map(Into::into));
         }
 
         flavor_builder.ram(&args.ram);
@@ -313,7 +311,7 @@ impl OSCCommand for FlavorCmd {
         }
 
         if let Some(val) = &args.description {
-            flavor_builder.description(val.clone().map(|v| v.into()));
+            flavor_builder.description(val.clone().map(Into::into));
         }
 
         ep_builder.flavor(flavor_builder.build().unwrap());

@@ -240,7 +240,7 @@ impl ImportCommand {
 
         // Set Request.stores data
         if let Some(arg) = &self.stores {
-            ep_builder.stores(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
+            ep_builder.stores(arg.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         let ep = ep_builder

@@ -42,8 +42,7 @@ use structable_derive::StructTable;
 /// Shows information for an address scope.
 ///
 /// Use the `fields` query parameter to control which fields are returned in
-/// the response body. For information, see
-/// [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+/// the response body. For more information, see [Fields](#fields).
 ///
 /// Normal response codes: 200
 ///

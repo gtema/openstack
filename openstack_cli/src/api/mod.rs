@@ -144,10 +144,7 @@ impl ApiCommand {
         }
 
         let rsp = client
-            .rest_async(
-                req,
-                self.body.clone().unwrap_or("".to_string()).into_bytes(),
-            )
+            .rest_async(req, self.body.clone().unwrap_or_default().into_bytes())
             .await?;
 
         info!("Response = {:?}", rsp);

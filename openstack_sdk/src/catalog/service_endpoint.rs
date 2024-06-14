@@ -17,6 +17,7 @@
 //! Represent the Service ServiceEndpoint.
 
 use std::fmt;
+use tracing::trace;
 use url::Url;
 
 use crate::catalog::CatalogError;
@@ -184,6 +185,11 @@ impl ServiceEndpoint {
     }
 
     pub fn build_request_url(&self, endpoint: &str) -> Result<Url, CatalogError> {
+        trace!(
+            "Constructing request url for service endpoint {} for {}",
+            self.url_str(),
+            endpoint
+        );
         let mut base_url = self.url().clone();
         if let Some(pid_suffix) = self.last_segment_with_project_id() {
             if !(base_url.path().trim_end_matches('/').ends_with(pid_suffix)) {
@@ -220,9 +226,7 @@ impl ServiceEndpoint {
             let mut overlap: bool = false;
             for part in segments.filter(|x| !x.is_empty()) {
                 if work_endpoint.starts_with(part) {
-                    work_endpoint = work_endpoint
-                        .get(part.len() + 1..)
-                        .expect("Cannot remove prefix from url");
+                    work_endpoint = work_endpoint.get(part.len() + 1..).unwrap_or("");
                     overlap = true;
                 } else if overlap {
                     break;
