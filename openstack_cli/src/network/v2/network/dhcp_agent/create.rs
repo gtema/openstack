@@ -35,12 +35,10 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::network::v2::network::dhcp_agent::create;
-use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use structable_derive::StructTable;
+use std::collections::HashMap;
 
 /// Command without description in OpenAPI
 ///
@@ -76,9 +74,23 @@ struct PathParameters {
     )]
     network_id: String,
 }
-/// DhcpAgent response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 impl DhcpAgentCommand {
     /// Perform command action
@@ -106,10 +118,8 @@ impl DhcpAgentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

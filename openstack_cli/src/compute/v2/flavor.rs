@@ -29,7 +29,7 @@ mod extra_spec;
 mod flavor_access;
 mod list;
 mod remove_tenant_access;
-mod set;
+mod set_255;
 mod show;
 
 /// Flavor commands
@@ -56,7 +56,8 @@ pub enum FlavorCommands {
     Delete(Box<delete::FlavorCommand>),
     Extraspecs(Box<extra_spec::ExtraSpecsCommand>),
     List(Box<list::FlavorsCommand>),
-    Set(Box<set::FlavorCommand>),
+    #[command(visible_alias = "set")]
+    Set255(Box<set_255::FlavorCommand>),
     Show(Box<show::FlavorCommand>),
 }
 
@@ -75,7 +76,7 @@ impl FlavorCommand {
             FlavorCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorCommands::Extraspecs(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            FlavorCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
+            FlavorCommands::Set255(cmd) => cmd.take_action(parsed_args, session).await,
             FlavorCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

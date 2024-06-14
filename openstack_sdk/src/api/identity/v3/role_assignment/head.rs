@@ -137,7 +137,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::RawQuery;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -155,6 +157,7 @@ mod tests {
         assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -170,6 +173,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

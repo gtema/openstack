@@ -30,10 +30,14 @@ use crate::OutputConfig;
 use crate::StructTable;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::{
+    api::RestClient,
+    types::{ApiVersion, ServiceType},
+    AsyncOpenStack,
+};
 
 use crate::common::HashMapStringString;
-use openstack_sdk::api::object_store::v1::container::head;
+use openstack_sdk::api::object_store::v1::container::head::Request;
 use openstack_sdk::api::RawQueryAsync;
 use regex::Regex;
 use std::collections::HashMap;
@@ -70,17 +74,27 @@ impl ContainerCommand {
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = head::Container::builder();
+        let mut ep_builder = Request::builder();
         // Set path parameters
+        let ep = client.get_service_endpoint(
+            &ServiceType::ObjectStore,
+            Some(ApiVersion::new(1, 0)).as_ref(),
+        )?;
+        let account = ep
+            .url()
+            .path_segments()
+            .expect("Object Store endpoint must not point to a bare domain")
+            .filter(|x| !x.is_empty())
+            .last();
+        if let Some(account) = account {
+            ep_builder.account(account);
+        }
         ep_builder.container(&self.container);
         // Set query parameters
         // Set body parameters
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::ObjectStore)
-            .await?;
         let rsp: Response<Bytes> = ep.raw_query_async(client).await?;
         let mut metadata: HashMap<String, String> = HashMap::new();
         let headers = rsp.headers();

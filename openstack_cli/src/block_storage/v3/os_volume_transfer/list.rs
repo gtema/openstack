@@ -35,7 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::block_storage::v3::os_volume_transfer::list_detailed;
 use openstack_sdk::api::QueryAsync;
-
 use structable_derive::StructTable;
 
 /// Returns a detailed list of transfers.

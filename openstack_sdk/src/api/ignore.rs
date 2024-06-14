@@ -156,7 +156,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
-            then.status(200).body("not json");
+            then.status(StatusCode::OK.into()).body("not json");
         });
 
         api::ignore(Dummy).query(&client).unwrap();
@@ -169,7 +169,7 @@ mod tests {
         let client = MockAsyncServerClient::new().await;
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
-            then.status(200).body("not json");
+            then.status(StatusCode::OK.into()).body("not json");
         });
 
         api::ignore(Dummy).query_async(&client).await.unwrap();
@@ -186,6 +186,24 @@ mod tests {
         });
 
         let err = api::ignore(Dummy).query(&client).unwrap_err();
+        if let ApiError::OpenStackService { status, .. } = err {
+            assert_eq!(status, http::StatusCode::CONFLICT);
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+        mock.assert();
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_openstack_error_bad_json_async() {
+        let client = MockAsyncServerClient::new().await;
+        let mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummy");
+            then.status(StatusCode::CONFLICT.into());
+        });
+
+        let err = api::ignore(Dummy).query_async(&client).await.unwrap_err();
         if let ApiError::OpenStackService { status, .. } = err {
             assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
@@ -213,6 +231,25 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_openstack_error_detection_async() {
+        let client = MockAsyncServerClient::new().await;
+        let mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummy");
+            then.status(StatusCode::CONFLICT.into())
+                .json_body(json!({"message": "dummy error message"}));
+        });
+
+        let err = api::ignore(Dummy).query_async(&client).await.unwrap_err();
+        if let ApiError::OpenStack { msg, .. } = err {
+            assert_eq!(msg, "dummy error message");
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+        mock.assert();
+    }
+
     #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_detection_unknown() {
@@ -225,6 +262,26 @@ mod tests {
         });
 
         let err = api::ignore(Dummy).query(&client).unwrap_err();
+        if let ApiError::OpenStackUnrecognized { obj, .. } = err {
+            assert_eq!(obj, err_obj);
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+        mock.assert();
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_openstack_error_detection_unknown_async() {
+        let client = MockAsyncServerClient::new().await;
+        let err_obj = json!({"bogus": "dummy error message"});
+        let mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummy");
+            then.status(StatusCode::CONFLICT.into())
+                .json_body(err_obj.clone());
+        });
+
+        let err = api::ignore(Dummy).query_async(&client).await.unwrap_err();
         if let ApiError::OpenStackUnrecognized { obj, .. } = err {
             assert_eq!(obj, err_obj);
         } else {

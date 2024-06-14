@@ -18,8 +18,7 @@
 //! Shows details for a floating IP.
 //!
 //! Use the `fields` query parameter to control which fields are returned in
-//! the response body. For information, see
-//! [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+//! the response body. For more information, see [Fields](#fields).
 //!
 //! This example request shows details for a floating IP in JSON format. This
 //! example also filters the result by the `fixed_ip_address` and
@@ -110,7 +109,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -132,6 +133,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -149,6 +151,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

@@ -36,7 +36,6 @@ use crate::StructTable;
 use openstack_sdk::api::block_storage::v3::message::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
-
 use structable_derive::StructTable;
 
 /// Returns a list of messages, transformed through view builder.

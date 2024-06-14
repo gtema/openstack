@@ -28,9 +28,13 @@ use crate::OutputConfig;
 use crate::StructTable;
 use structable_derive::StructTable;
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::{
+    api::RestClient,
+    types::{ApiVersion, ServiceType},
+    AsyncOpenStack,
+};
 
-use openstack_sdk::api::object_store::v1::account::get;
+use openstack_sdk::api::object_store::v1::account::get::Request;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 
@@ -40,7 +44,7 @@ use openstack_sdk::api::{paged, Pagination};
 pub struct ContainersCommand {
     /// For an integer value n, limits the number of results to n.
     #[arg(long)]
-    limit: Option<u32>,
+    limit: Option<i32>,
 
     /// For a string value, x, constrains the list to items whose names are
     /// greater than x.
@@ -116,8 +120,21 @@ impl ContainersCommand {
 
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
-        let mut ep_builder = get::Account::builder();
+        let mut ep_builder = Request::builder();
         // Set path parameters
+        let ep = client.get_service_endpoint(
+            &ServiceType::ObjectStore,
+            Some(ApiVersion::new(1, 0)).as_ref(),
+        )?;
+        let account = ep
+            .url()
+            .path_segments()
+            .expect("Object Store endpoint must not point to a bare domain")
+            .filter(|x| !x.is_empty())
+            .last();
+        if let Some(account) = account {
+            ep_builder.account(account);
+        }
         // Set query parameters
         if let Some(val) = &self.limit {
             ep_builder.limit(*val);
@@ -144,9 +161,6 @@ impl ContainersCommand {
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
-        client
-            .discover_service_endpoint(&ServiceType::ObjectStore)
-            .await?;
         let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
             .query_async(client)
             .await?;

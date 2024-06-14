@@ -151,8 +151,9 @@ impl Catalog {
         // Check for endpoint_override -> return override directly
         if let Some(ep) = &self.endpoint_overrides.get(service_type.as_ref()) {
             debug!(
-                "Using `{}_endpoint_override` as endpoint for version `{:?}`",
+                "Using `{}_endpoint_override` [`{}`] as endpoint for version `{:?}`",
                 service_type.as_ref(),
+                ep.url_str(),
                 api_version
             );
             return Ok(ep);

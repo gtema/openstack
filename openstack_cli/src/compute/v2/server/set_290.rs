@@ -169,7 +169,8 @@ struct ResponseData {
     access_ipv6: Option<String>,
 
     /// The addresses for the server. Servers with status `BUILD` hide their
-    /// addresses information.
+    /// addresses information. This view is not updated immediately. Please
+    /// consult with OpenStack Networking API for up-to-date information.
     ///
     #[serde()]
     #[structable(optional, pretty)]

@@ -35,7 +35,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::extension::list;
 use openstack_sdk::api::QueryAsync;
-
 use structable_derive::StructTable;
 
 /// Lists all extensions to the API.

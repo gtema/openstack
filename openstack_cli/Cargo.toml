@@ -23,6 +23,7 @@ bench = false
 
 [features]
 default = [
+  "openstack_sdk/async",
   "block_storage",
   "compute",
   "identity",

@@ -33,11 +33,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::block_storage::v3::volume::metadata::list;
-use openstack_sdk::api::RawQueryAsync;
-use structable_derive::StructTable;
+use openstack_sdk::api::QueryAsync;
+use std::collections::HashMap;
 
 /// Returns the list of metadata for a given volume.
 ///
@@ -68,9 +66,22 @@ struct PathParameters {
     )]
     volume_id: String,
 }
-/// Metadatas response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, String>);
+
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(
+            self.0
+                .iter()
+                .map(|(k, v)| Vec::from([k.clone(), v.clone()])),
+        );
+        (headers, rows)
+    }
+}
 
 impl MetadatasCommand {
     /// Perform command action
@@ -95,10 +106,8 @@ impl MetadatasCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

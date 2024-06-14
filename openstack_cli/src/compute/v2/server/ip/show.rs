@@ -35,7 +35,8 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::ip::get;
 use openstack_sdk::api::QueryAsync;
-use structable_derive::StructTable;
+use serde_json::Value;
+use std::collections::HashMap;
 
 /// Shows IP addresses details for a network label of a server instance.
 ///
@@ -84,20 +85,22 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Ip response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The IP address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    addr: Option<String>,
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
 
-    /// The IP version of the address associated with server.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    version: Option<i32>,
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
 }
 
 impl IpCommand {

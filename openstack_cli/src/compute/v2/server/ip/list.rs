@@ -35,7 +35,8 @@ use crate::StructTable;
 
 use openstack_sdk::api::compute::v2::server::ip::list;
 use openstack_sdk::api::QueryAsync;
-use structable_derive::StructTable;
+use serde_json::Value;
+use std::collections::HashMap;
 
 /// Lists IP addresses that are assigned to an instance.
 ///
@@ -75,20 +76,22 @@ struct PathParameters {
     )]
     server_id: String,
 }
-/// Ips response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The IP address.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    addr: Option<String>,
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
 
-    /// The IP version of the address associated with server.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    version: Option<i32>,
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
 }
 
 impl IpsCommand {
@@ -114,9 +117,8 @@ impl IpsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

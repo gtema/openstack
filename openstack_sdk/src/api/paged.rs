@@ -243,16 +243,22 @@ where
 
 #[cfg(test)]
 mod tests {
-    use http::StatusCode;
-    use http::{HeaderMap, HeaderName, HeaderValue};
+
+    use http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
     use crate::api::rest_endpoint_prelude::*;
-    use crate::api::{self, ApiError, Pagination, Query, QueryAsync};
-    use crate::test::client::{
-        ExpectedUrl, MockAsyncServerClient, MockServerClient, PagedTestClient,
-    };
+    #[cfg(feature = "sync")]
+    use crate::api::Query;
+    #[cfg(feature = "async")]
+    use crate::api::QueryAsync;
+    use crate::api::{self, ApiError, Pagination};
+    #[cfg(feature = "async")]
+    use crate::test::client::MockAsyncServerClient;
+    #[cfg(feature = "sync")]
+    use crate::test::client::MockServerClient;
+    use crate::test::client::{ExpectedUrl, PagedTestClient};
 
     // #[derive(Debug)]
     struct Dummy {
@@ -297,12 +303,13 @@ mod tests {
         value: u8,
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_non_json_response() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(200).body("not json");
+            then.status(StatusCode::OK.into()).body("not json");
         });
 
         let res: Result<Vec<DummyResult>, _> =
@@ -316,6 +323,28 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_non_json_response_async() {
+        let client = MockAsyncServerClient::new().await;
+        let mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/paged_dummy");
+            then.status(StatusCode::OK.into()).body("not json");
+        });
+
+        let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
+            .query_async(&client)
+            .await;
+        let err = res.unwrap_err();
+        if let ApiError::OpenStackService { status, .. } = err {
+            assert_eq!(status, http::StatusCode::OK);
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+        mock.assert();
+    }
+
+    #[cfg(feature = "sync")]
     #[test]
     fn test_error_bad_json() {
         let client = MockServerClient::new();
@@ -335,6 +364,28 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_error_bad_json_async() {
+        let client = MockAsyncServerClient::new().await;
+        let mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/paged_dummy");
+            then.status(StatusCode::CONFLICT.into());
+        });
+
+        let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
+            .query_async(&client)
+            .await;
+        let err = res.unwrap_err();
+        if let ApiError::OpenStackService { status, .. } = err {
+            assert_eq!(status, http::StatusCode::CONFLICT);
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+        mock.assert();
+    }
+
+    #[cfg(feature = "sync")]
     #[test]
     fn test_error_detection() {
         let client = MockServerClient::new();
@@ -355,6 +406,30 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_error_detection_async() {
+        let client = MockAsyncServerClient::new().await;
+        let mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/paged_dummy");
+            then.status(StatusCode::CONFLICT.into())
+                .json_body(json!({"message": "dummy error message"}));
+        });
+        let endpoint = Dummy::default();
+
+        let res: Result<Vec<DummyResult>, _> = api::paged(endpoint, Pagination::All)
+            .query_async(&client)
+            .await;
+        let err = res.unwrap_err();
+        if let ApiError::OpenStack { msg, .. } = err {
+            assert_eq!(msg, "dummy error message");
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+        mock.assert();
+    }
+
+    #[cfg(feature = "sync")]
     #[test]
     fn test_pagination_limit() {
         let endpoint = ExpectedUrl::builder()
@@ -378,6 +453,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_pagination_limit_async() {
         let endpoint = ExpectedUrl::builder()
@@ -402,6 +478,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_pagination_all() {
         let endpoint = ExpectedUrl::builder()
@@ -420,6 +497,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_pagination_all_async() {
         let endpoint = ExpectedUrl::builder()
@@ -441,6 +519,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn test_keyset_pagination_limit() {
         let endpoint = ExpectedUrl::builder()
@@ -464,6 +543,32 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_keyset_pagination_limit_async() {
+        let endpoint = ExpectedUrl::builder()
+            .endpoint("paged_dummy")
+            .paginated(true)
+            .build()
+            .unwrap();
+        let client =
+            PagedTestClient::new_raw(endpoint, (0..=255).map(|value| DummyResult { value }));
+        let query = Dummy {
+            with_keyset: true,
+            _headers: None,
+        };
+
+        let res: Vec<DummyResult> = api::paged(query, Pagination::Limit(25))
+            .query_async(&client)
+            .await
+            .unwrap();
+        assert_eq!(res.len(), 25);
+        for (i, value) in res.iter().enumerate() {
+            assert_eq!(value.value, i as u8);
+        }
+    }
+
+    #[cfg(feature = "sync")]
     #[test]
     fn test_keyset_pagination_all() {
         let endpoint = ExpectedUrl::builder()
@@ -485,6 +590,32 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_keyset_pagination_all_async() {
+        let endpoint = ExpectedUrl::builder()
+            .endpoint("paged_dummy")
+            .paginated(true)
+            .build()
+            .unwrap();
+        let client =
+            PagedTestClient::new_raw(endpoint, (0..=255).map(|value| DummyResult { value }));
+        let query = Dummy {
+            with_keyset: true,
+            _headers: None,
+        };
+
+        let res: Vec<DummyResult> = api::paged(query, Pagination::All)
+            .query_async(&client)
+            .await
+            .unwrap();
+        assert_eq!(res.len(), 256);
+        for (i, value) in res.iter().enumerate() {
+            assert_eq!(value.value, i as u8);
+        }
+    }
+
+    #[cfg(feature = "sync")]
     #[test]
     fn test_pagination_headers() {
         let client = MockServerClient::new();
@@ -508,6 +639,7 @@ mod tests {
         assert_eq!(res.len(), 256);
     }
 
+    #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_pagination_headers_async() {
         let client = MockAsyncServerClient::new().await;

@@ -31,6 +31,7 @@ pub mod os_attach;
 pub mod os_begin_detaching;
 pub mod os_detach;
 pub mod os_extend;
+pub mod os_extend_volume_completion;
 pub mod os_force_delete;
 pub mod os_force_detach;
 pub mod os_initialize_connection;

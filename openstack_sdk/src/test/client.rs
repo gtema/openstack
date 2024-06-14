@@ -17,7 +17,7 @@ use std::cmp;
 
 use std::ops::Range;
 
-#[cfg(feature = "sync")]
+#[cfg(feature = "async")]
 use async_trait::async_trait;
 
 use bytes::Bytes;
@@ -166,7 +166,10 @@ pub struct PagedTestClient<T> {
 const KEYSET_QUERY_PARAM: &str = "marker";
 const DEFAULT_PAGE_SIZE: usize = 20;
 
-impl<T> PagedTestClient<T> {
+impl<T> PagedTestClient<T>
+where
+    T: Serialize,
+{
     pub fn new_raw<I>(expected: ExpectedUrl, data: I) -> Self
     where
         I: IntoIterator<Item = T>,
@@ -177,34 +180,12 @@ impl<T> PagedTestClient<T> {
             endpoint: ServiceEndpoint::new(Url::parse(CLIENT_STUB).unwrap(), ApiVersion::new(0, 0)),
         }
     }
-}
 
-impl<T> RestClient for PagedTestClient<T> {
-    type Error = TestClientError;
-
-    fn get_service_endpoint(
-        &self,
-        _service_type: &ServiceType,
-        _version: Option<&ApiVersion>,
-    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
-        Ok(&self.endpoint)
-    }
-
-    fn get_current_project(&self) -> Option<Project> {
-        None
-    }
-}
-
-#[cfg(feature = "sync")]
-impl<T> Client for PagedTestClient<T>
-where
-    T: Serialize,
-{
-    fn rest(
+    fn _query(
         &self,
         request: RequestBuilder,
         body: Vec<u8>,
-    ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
+    ) -> Result<Response<Bytes>, ApiError<TestClientError>> {
         let url = Url::parse(&format!("{}", request.uri_ref().unwrap())).unwrap();
 
         self.expected
@@ -295,6 +276,36 @@ where
     }
 }
 
+impl<T> RestClient for PagedTestClient<T> {
+    type Error = TestClientError;
+
+    fn get_service_endpoint(
+        &self,
+        _service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(&self.endpoint)
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
+    }
+}
+
+#[cfg(feature = "sync")]
+impl<T> Client for PagedTestClient<T>
+where
+    T: Serialize,
+{
+    fn rest(
+        &self,
+        request: RequestBuilder,
+        body: Vec<u8>,
+    ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
+        self._query(request, body)
+    }
+}
+
 #[cfg(feature = "async")]
 #[async_trait]
 impl<T> AsyncClient for PagedTestClient<T>
@@ -306,7 +317,7 @@ where
         request: RequestBuilder,
         body: Vec<u8>,
     ) -> Result<Response<Bytes>, ApiError<<Self as RestClient>::Error>> {
-        <Self as Client>::rest(self, request, body)
+        Ok(self._query(request, body)?)
     }
 
     async fn rest_read_body_async(
@@ -327,12 +338,14 @@ where
 }
 
 /// Mock Test client
+#[cfg(feature = "sync")]
 pub struct MockServerClient {
     pub server: MockServer,
     pub client: HttpClient,
     endpoint: ServiceEndpoint,
 }
 
+#[cfg(feature = "sync")]
 impl MockServerClient {
     pub fn new() -> Self {
         let server = MockServer::start();

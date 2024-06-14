@@ -118,7 +118,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -128,7 +130,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .disable_replication(BTreeMap::<String, String>::new().into_iter())
+                .disable_replication(BTreeMap::<String, Value>::new().into_iter())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -139,13 +141,14 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .disable_replication(BTreeMap::<String, String>::new().into_iter())
+            .disable_replication(BTreeMap::<String, Value>::new().into_iter())
             .build()
             .unwrap()
             .response_key()
             .is_none())
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -159,13 +162,14 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .disable_replication(BTreeMap::<String, String>::new().into_iter())
+            .disable_replication(BTreeMap::<String, Value>::new().into_iter())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();
@@ -180,7 +184,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .disable_replication(BTreeMap::<String, String>::new().into_iter())
+            .disable_replication(BTreeMap::<String, Value>::new().into_iter())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

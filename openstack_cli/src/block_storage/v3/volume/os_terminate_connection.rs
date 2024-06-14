@@ -107,7 +107,9 @@ impl VolumeCommand {
         let mut os_terminate_connection_builder =
             os_terminate_connection::OsTerminateConnectionBuilder::default();
 
-        os_terminate_connection_builder.connector(*&args.connector);
+        if let Some(val) = &args.connector {
+            os_terminate_connection_builder.connector(val.clone());
+        }
 
         ep_builder.os_terminate_connection(os_terminate_connection_builder.build().unwrap());
 

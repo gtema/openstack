@@ -41,8 +41,7 @@ use structable_derive::StructTable;
 /// Shows details for a floating IP.
 ///
 /// Use the `fields` query parameter to control which fields are returned in
-/// the response body. For information, see
-/// [Filtering and Column Selection](http://specs.openstack.org/openstack/neutron-specs/specs/api/networking_general_api_information.html#filtering-and-column-selection).
+/// the response body. For more information, see [Fields](#fields).
 ///
 /// This example request shows details for a floating IP in JSON format. This
 /// example also filters the result by the `fixed_ip_address` and

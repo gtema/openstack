@@ -22,10 +22,18 @@
 //! addition, networks shared with the project who submits the request are also
 //! returned.
 //!
+//! Standard query parameters are supported on the URI. For more information,
+//! see [Filtering and Column Selection](#filtering).
+//!
 //! Use the `fields` query parameter to control which fields are returned in
-//! the response body. Additionally, you can filter results by using query
-//! string parameters. For information, see
-//! [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+//! the response body. For more information, see [Fields](#fields).
+//!
+//! Pagination query parameters are supported if Neutron configuration supports
+//! it by overriding `allow_pagination=false`. For more information, see
+//! [Pagination](#pagination).
+//!
+//! Sorting query parameters are supported if Neutron configuration supports it
+//! with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 //!
 //! You can also use the `tags`, `tags-any`, `not-tags`, `not-tags-any` query
 //! parameter to filter the response with tags. For information, see
@@ -281,7 +289,9 @@ impl<'a> RestEndpoint for Request<'a> {
 mod tests {
     #![allow(unused_imports)]
     use super::*;
+    #[cfg(feature = "sync")]
     use crate::api::Query;
+    #[cfg(feature = "sync")]
     use crate::test::client::MockServerClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
@@ -303,6 +313,7 @@ mod tests {
         );
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
         let client = MockServerClient::new();
@@ -320,6 +331,7 @@ mod tests {
         mock.assert();
     }
 
+    #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
         let client = MockServerClient::new();

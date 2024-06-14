@@ -35,9 +35,8 @@ impl<'de> Deserialize<'de> for EndpointVersionStatus {
     {
         let s = String::deserialize(deserializer)?;
         match s.to_lowercase().as_str() {
-            "current" => Ok(EndpointVersionStatus::Current),
             // Keystone "stable" is same as "current" everywhere else
-            "stable" => Ok(EndpointVersionStatus::Current),
+            "current" | "stable" => Ok(EndpointVersionStatus::Current),
             "supported" => Ok(EndpointVersionStatus::Supported),
             "deprecated" => Ok(EndpointVersionStatus::Deprecated),
             "experimental" => Ok(EndpointVersionStatus::Experimental),

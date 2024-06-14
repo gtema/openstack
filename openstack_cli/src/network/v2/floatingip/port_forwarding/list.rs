@@ -43,10 +43,18 @@ use structable_derive::StructTable;
 /// floating IPs owned by the project of the user submitting the request,
 /// unless the user has administrative role.
 ///
+/// Standard query parameters are supported on the URI. For more information,
+/// see [Filtering and Column Selection](#filtering).
+///
 /// Use the `fields` query parameter to control which fields are returned in
-/// the response body. Additionally, you can filter results by using query
-/// string parameters. For information, see
-/// [Filtering and Column Selection](https://wiki.openstack.org/wiki/Neutron/APIv2-specification#Filtering_and_Column_Selection).
+/// the response body. For more information, see [Fields](#fields).
+///
+/// Pagination query parameters are supported if Neutron configuration supports
+/// it by overriding `allow_pagination=false`. For more information, see
+/// [Pagination](#pagination).
+///
+/// Sorting query parameters are supported if Neutron configuration supports it
+/// with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 ///
 /// Normal response codes: 200
 ///

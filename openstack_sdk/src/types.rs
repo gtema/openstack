@@ -52,7 +52,7 @@ impl fmt::Display for ServiceType {
             ServiceType::LoadBalancer => write!(f, "load-balancer"),
             ServiceType::Network => write!(f, "network"),
             ServiceType::ObjectStore => write!(f, "object-store"),
-            ServiceType::Other(x) => write!(f, "{}", x),
+            ServiceType::Other(x) => write!(f, "{x}"),
         }
     }
 }
@@ -72,7 +72,8 @@ impl From<&str> for ServiceType {
     }
 }
 
-/// A wrapper around AsyncRead trait allowing returning HTTP response body as something implementing AsyncRead.
+/// A wrapper around `AsyncRead` trait allowing returning HTTP response body as something
+/// implementing `AsyncRead`.
 /// Returning `impl AsyncRead` would be the best option, but since
 /// we need to return it from inside a trait function it is
 /// currently not possible in Rust to do so and the only way is to

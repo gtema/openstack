@@ -66,7 +66,8 @@ use structable_derive::StructTable;
 ///
 /// Expected format of the input parameter 'body':
 ///
-/// ```json
+/// ```text
+///
 /// {
 ///     "attachment":
 ///     {
@@ -76,11 +77,13 @@ use structable_derive::StructTable;
 ///         "mode": "null|rw|ro"
 ///     }
 /// }
+///
 /// ```
 ///
 /// Example connector:
 ///
-/// ```json
+/// ```text
+///
 /// {
 ///     "connector":
 ///     {
@@ -94,6 +97,7 @@ use structable_derive::StructTable;
 ///         "mode": "null|rw|ro"
 ///     }
 /// }
+///
 /// ```
 ///
 /// NOTE all that's required for a reserve is volume_uuid and an instance_uuid.

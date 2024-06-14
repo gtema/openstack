@@ -39,8 +39,20 @@ use structable_derive::StructTable;
 
 /// Lists available extensions.
 ///
-/// Lists available Networking API v2.0 extensions and shows details for an
-/// extension.
+/// Lists available Networking API v2.0 extensions.
+///
+/// Standard query parameters are supported on the URI. For more information,
+/// see [Filtering and Column Selection](#filtering).
+///
+/// Use the `fields` query parameter to control which fields are returned in
+/// the response body. For more information, see [Fields](#fields).
+///
+/// Pagination query parameters are supported if Neutron configuration supports
+/// it by overriding `allow_pagination=false`. For more information, see
+/// [Pagination](#pagination).
+///
+/// Sorting query parameters are supported if Neutron configuration supports it
+/// with `allow_sorting=true`. For more information, see [Sorting](#sorting).
 ///
 /// Normal response codes: 200
 ///
