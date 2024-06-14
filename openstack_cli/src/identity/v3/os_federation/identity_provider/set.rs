@@ -172,7 +172,7 @@ impl IdentityProviderCommand {
         }
 
         if let Some(val) = &args.remote_ids {
-            identity_provider_builder.remote_ids(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            identity_provider_builder.remote_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.identity_provider(identity_provider_builder.build().unwrap());

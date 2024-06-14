@@ -108,7 +108,7 @@ impl QosSpecCommand {
         // Set body parameters
         // Set Request.keys data
 
-        ep_builder.keys(self.keys.iter().map(|v| v.into()).collect::<Vec<_>>());
+        ep_builder.keys(self.keys.iter().map(Into::into).collect::<Vec<_>>());
 
         let ep = ep_builder
             .build()

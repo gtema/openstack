@@ -76,7 +76,7 @@ impl StructTable for ResponseData {
         let mut rows: Vec<Vec<String>> = Vec::new();
         rows.extend(
             self.0.iter().map(|(k, v)| {
-                Vec::from([k.clone(), v.clone().unwrap_or("".to_string()).to_string()])
+                Vec::from([k.clone(), v.clone().unwrap_or(String::new()).to_string()])
             }),
         );
         (headers, rows)

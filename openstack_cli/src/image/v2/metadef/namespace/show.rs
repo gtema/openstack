@@ -204,114 +204,83 @@ impl fmt::Display for ResponseProperties {
             format!(
                 "additional_items={}",
                 self.additional_items
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "_default={}",
                 self._default
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "description={}",
                 self.description
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "_enum={}",
-                self._enum
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self._enum.clone().map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "items={}",
-                self.items
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.items.clone().map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "maximum={}",
-                self.maximum
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.maximum.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "max_items={}",
-                self.max_items
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.max_items.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "max_length={}",
-                self.max_length
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.max_length.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "minimum={}",
-                self.minimum
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.minimum.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "min_items={}",
-                self.min_items
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.min_items.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "min_length={}",
-                self.min_length
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.min_length.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "name={}",
-                self.name
-                    .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.name.clone().map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "operators={}",
                 self.operators
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "pattern={}",
                 self.pattern
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "readonly={}",
-                self.readonly
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.readonly.map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "required={}",
                 self.required
                     .clone()
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                    .map_or(String::new(), |v| v.to_string())
             ),
             format!("title={}", self.title),
             format!("_type={}", self._type),
             format!(
                 "unique_items={}",
-                self.unique_items
-                    .map(|v| v.to_string())
-                    .unwrap_or("".to_string())
+                self.unique_items.map_or(String::new(), |v| v.to_string())
             ),
         ]);
         write!(f, "{}", data.join(";"))

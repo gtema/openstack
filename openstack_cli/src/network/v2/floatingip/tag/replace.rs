@@ -113,7 +113,7 @@ impl TagCommand {
         // Set body parameters
         // Set Request.tags data
 
-        ep_builder.tags(self.tags.iter().map(|v| v.into()).collect::<Vec<_>>());
+        ep_builder.tags(self.tags.iter().map(Into::into).collect::<Vec<_>>());
 
         let ep = ep_builder
             .build()

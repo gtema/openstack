@@ -225,10 +225,7 @@ impl fmt::Display for ResponseLinks {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([format!(
             "_self={}",
-            self._self
-                .clone()
-                .map(|v| v.to_string())
-                .unwrap_or("".to_string())
+            self._self.clone().map_or(String::new(), |v| v.to_string())
         )]);
         write!(f, "{}", data.join(";"))
     }

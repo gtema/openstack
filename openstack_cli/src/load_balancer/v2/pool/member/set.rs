@@ -332,7 +332,7 @@ impl MemberCommand {
         }
 
         if let Some(val) = &args.tags {
-            member_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            member_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.member(member_builder.build().unwrap());

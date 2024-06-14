@@ -135,7 +135,7 @@ impl AddressGroupCommand {
         let args = &self.address_group;
         let mut address_group_builder = add_addresses::AddressGroupBuilder::default();
         if let Some(val) = &args.addresses {
-            address_group_builder.addresses(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            address_group_builder.addresses(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.address_group(address_group_builder.build().unwrap());

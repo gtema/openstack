@@ -579,7 +579,7 @@ impl ImageCommand {
 
         // Set Request.tags data
         if let Some(arg) = &self.tags {
-            ep_builder.tags(arg.iter().map(|v| v.into()).collect::<Vec<_>>());
+            ep_builder.tags(arg.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         // Set Request.visibility data

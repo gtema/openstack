@@ -322,7 +322,7 @@ impl RuleCommand {
         }
 
         if let Some(val) = &args.tags {
-            rule_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            rule_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.rule(rule_builder.build().unwrap());

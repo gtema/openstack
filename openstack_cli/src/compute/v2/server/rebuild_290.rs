@@ -296,7 +296,7 @@ impl ServerCommand {
 
         if let Some(val) = &args.trusted_image_certificates {
             rebuild_builder
-                .trusted_image_certificates(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+                .trusted_image_certificates(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.hostname {

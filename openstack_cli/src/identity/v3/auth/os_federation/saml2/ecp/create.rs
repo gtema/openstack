@@ -322,7 +322,7 @@ impl EcpCommand {
             args.identity
                 .methods
                 .iter()
-                .map(|v| v.into())
+                .map(Into::into)
                 .collect::<Vec<_>>(),
         );
         if let Some(val) = &&args.identity.password {

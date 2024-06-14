@@ -528,12 +528,12 @@ impl ServerCommand {
 
             if let Some(val) = &args.different_host {
                 os_scheduler_hints_builder
-                    .different_host(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+                    .different_host(val.iter().map(Into::into).collect::<Vec<_>>());
             }
 
             if let Some(val) = &args.same_host {
                 os_scheduler_hints_builder
-                    .same_host(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+                    .same_host(val.iter().map(Into::into).collect::<Vec<_>>());
             }
 
             if let Some(val) = &args.query {
@@ -546,7 +546,7 @@ impl ServerCommand {
 
             if let Some(val) = &args.different_cell {
                 os_scheduler_hints_builder
-                    .different_cell(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+                    .different_cell(val.iter().map(Into::into).collect::<Vec<_>>());
             }
 
             if let Some(val) = &args.build_near_host_ip {
@@ -684,7 +684,7 @@ impl ServerCommand {
         }
 
         if let Some(val) = &args.tags {
-            server_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            server_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.server(server_builder.build().unwrap());

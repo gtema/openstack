@@ -318,7 +318,7 @@ impl LoadbalancerCommand {
         }
 
         if let Some(val) = &args.tags {
-            loadbalancer_builder.tags(val.iter().map(|v| v.into()).collect::<Vec<_>>());
+            loadbalancer_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.loadbalancer(loadbalancer_builder.build().unwrap());
