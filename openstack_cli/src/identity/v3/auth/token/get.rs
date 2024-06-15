@@ -185,15 +185,11 @@ impl fmt::Display for ResponseDomain {
         let data = Vec::from([
             format!(
                 "id={}",
-                self.id
-                    .clone()
-                    .map_or(String::new(), |v| v.to_string())
+                self.id.clone().map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "name={}",
-                self.name
-                    .clone()
-                    .map_or(String::new(), |v| v.to_string())
+                self.name.clone().map_or(String::new(), |v| v.to_string())
             ),
         ]);
         write!(f, "{}", data.join(";"))

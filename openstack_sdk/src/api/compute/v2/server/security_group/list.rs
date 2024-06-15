@@ -79,7 +79,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2.1/servers/{server_id}/os-security-groups",
+            "servers/{server_id}/os-security-groups",
             server_id = self.server_id.as_ref(),
         )
         .into()
@@ -100,6 +100,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 1))
     }
 }
 
@@ -137,7 +142,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET).path(format!(
-                "/v2.1/servers/{server_id}/os-security-groups",
+                "/servers/{server_id}/os-security-groups",
                 server_id = "server_id",
             ));
 
@@ -158,7 +163,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path(format!(
-                    "/v2.1/servers/{server_id}/os-security-groups",
+                    "/servers/{server_id}/os-security-groups",
                     server_id = "server_id",
                 ))
                 .header("foo", "bar")

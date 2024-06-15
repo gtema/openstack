@@ -229,7 +229,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2/metadefs/namespaces/{namespace_name}/objects",
+            "metadefs/namespaces/{namespace_name}/objects",
             namespace_name = self.namespace_name.as_ref(),
         )
         .into()
@@ -267,6 +267,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
     }
 }
 
@@ -310,7 +315,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST).path(format!(
-                "/v2/metadefs/namespaces/{namespace_name}/objects",
+                "/metadefs/namespaces/{namespace_name}/objects",
                 namespace_name = "namespace_name",
             ));
 
@@ -335,7 +340,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
                 .path(format!(
-                    "/v2/metadefs/namespaces/{namespace_name}/objects",
+                    "/metadefs/namespaces/{namespace_name}/objects",
                     namespace_name = "namespace_name",
                 ))
                 .header("foo", "bar")

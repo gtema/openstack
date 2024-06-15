@@ -74,7 +74,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v3/types/{type_id}/encryption",
+            "types/{type_id}/encryption",
             type_id = self.type_id.as_ref(),
         )
         .into()
@@ -95,6 +95,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -128,10 +133,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path(format!(
-                "/v3/types/{type_id}/encryption",
-                type_id = "type_id",
-            ));
+            when.method(httpmock::Method::GET)
+                .path(format!("/types/{type_id}/encryption", type_id = "type_id",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -149,10 +152,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!(
-                    "/v3/types/{type_id}/encryption",
-                    type_id = "type_id",
-                ))
+                .path(format!("/types/{type_id}/encryption", type_id = "type_id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

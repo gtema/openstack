@@ -139,7 +139,7 @@ where
         #[from]
         source: PaginationError,
     },
-    #[error("failed to handle for catalog: {}", source)]
+    #[error("Service Catalog error: {}", source)]
     Catalog {
         /// The source of the error.
         #[from]

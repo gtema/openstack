@@ -16,7 +16,7 @@
 
 use clap::{Parser, Subcommand};
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
@@ -51,6 +51,10 @@ impl ImageCommand {
         parsed_args: &Cli,
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
+        session
+            .discover_service_endpoint(&ServiceType::Image)
+            .await?;
+
         match &self.command {
             ImageCommands::Image(cmd) => cmd.take_action(parsed_args, session).await,
             ImageCommands::Metadef(cmd) => cmd.take_action(parsed_args, session).await,

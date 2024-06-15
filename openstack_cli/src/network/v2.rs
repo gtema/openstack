@@ -16,7 +16,7 @@
 
 use clap::{Parser, Subcommand};
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
@@ -60,6 +60,10 @@ impl NetworkCommand {
         parsed_args: &Cli,
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
+        session
+            .discover_service_endpoint(&ServiceType::Network)
+            .await?;
+
         match &self.command {
             NetworkCommands::AddressGroup(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::AddressScope(cmd) => cmd.take_action(parsed_args, session).await,

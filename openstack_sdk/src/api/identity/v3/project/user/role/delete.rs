@@ -90,7 +90,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v3/projects/{project_id}/users/{user_id}/roles/{id}",
+            "projects/{project_id}/users/{user_id}/roles/{id}",
             project_id = self.project_id.as_ref(),
             user_id = self.user_id.as_ref(),
             id = self.id.as_ref(),
@@ -113,6 +113,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -147,7 +152,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE).path(format!(
-                "/v3/projects/{project_id}/users/{user_id}/roles/{id}",
+                "/projects/{project_id}/users/{user_id}/roles/{id}",
                 project_id = "project_id",
                 user_id = "user_id",
                 id = "id",
@@ -175,7 +180,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
                 .path(format!(
-                    "/v3/projects/{project_id}/users/{user_id}/roles/{id}",
+                    "/projects/{project_id}/users/{user_id}/roles/{id}",
                     project_id = "project_id",
                     user_id = "user_id",
                     id = "id",

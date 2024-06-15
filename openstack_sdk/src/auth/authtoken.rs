@@ -434,9 +434,9 @@ pub(crate) fn build_auth_request_from_receipt<'a>(
 }
 
 /// Prepare Endpoint for token info
-pub(crate) fn build_token_info_endpoint<'a, S: AsRef<str>>(
+pub(crate) fn build_token_info_endpoint<S: AsRef<str>>(
     subject_token: S,
-) -> Result<token_v3_info::Request<'a>, AuthTokenError> {
+) -> Result<token_v3_info::Request, AuthTokenError> {
     Ok(token_v3_info::RequestBuilder::default()
         .headers(
             [(

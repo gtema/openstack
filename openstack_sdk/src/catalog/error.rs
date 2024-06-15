@@ -16,7 +16,7 @@ use thiserror::Error;
 use url::Url;
 
 use crate::catalog::service_authority::ServiceAuthorityError;
-use crate::types::api_version::ApiVersionError;
+use crate::types::api_version::{ApiVersion, ApiVersionError};
 
 /// Service catalog error
 #[derive(Debug, Error)]
@@ -64,6 +64,12 @@ pub enum CatalogError {
 
     #[error("Api Version with id `{id}` for service is not defining `self` link")]
     VersionSelfLinkMissing { id: String },
+
+    #[error(
+        "Requested/Required Api Version `{}` is not supported by the server side",
+        ver
+    )]
+    VersionUnsupported { ver: ApiVersion },
 }
 
 impl CatalogError {

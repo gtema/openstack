@@ -77,7 +77,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v3/OS-FEDERATION/identity_providers/{idp_id}/protocols",
+            "OS-FEDERATION/identity_providers/{idp_id}/protocols",
             idp_id = self.idp_id.as_ref(),
         )
         .into()
@@ -98,6 +98,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -131,7 +136,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::HEAD).path(format!(
-                "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols",
+                "/OS-FEDERATION/identity_providers/{idp_id}/protocols",
                 idp_id = "idp_id",
             ));
 
@@ -150,7 +155,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::HEAD)
                 .path(format!(
-                    "/v3/OS-FEDERATION/identity_providers/{idp_id}/protocols",
+                    "/OS-FEDERATION/identity_providers/{idp_id}/protocols",
                     idp_id = "idp_id",
                 ))
                 .header("foo", "bar")

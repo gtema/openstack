@@ -194,6 +194,11 @@ impl Catalog {
                 );
                 return Ok(ep);
             }
+            if let Some(ver) = api_version {
+                // Specific version requested, version discovery info available, but version is not
+                // present - error
+                return Err(CatalogError::VersionUnsupported { ver: ver.clone() });
+            }
         }
 
         // No override and no discovered service info -> just return what is in the service catalog

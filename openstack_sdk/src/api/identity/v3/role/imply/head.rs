@@ -84,7 +84,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v3/roles/{prior_role_id}/implies/{implied_role_id}",
+            "roles/{prior_role_id}/implies/{implied_role_id}",
             prior_role_id = self.prior_role_id.as_ref(),
             implied_role_id = self.implied_role_id.as_ref(),
         )
@@ -106,6 +106,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -139,7 +144,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::HEAD).path(format!(
-                "/v3/roles/{prior_role_id}/implies/{implied_role_id}",
+                "/roles/{prior_role_id}/implies/{implied_role_id}",
                 prior_role_id = "prior_role_id",
                 implied_role_id = "implied_role_id",
             ));
@@ -163,7 +168,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::HEAD)
                 .path(format!(
-                    "/v3/roles/{prior_role_id}/implies/{implied_role_id}",
+                    "/roles/{prior_role_id}/implies/{implied_role_id}",
                     prior_role_id = "prior_role_id",
                     implied_role_id = "implied_role_id",
                 ))

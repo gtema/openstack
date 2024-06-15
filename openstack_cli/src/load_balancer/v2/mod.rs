@@ -16,7 +16,7 @@
 
 use clap::{Parser, Subcommand};
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
@@ -68,6 +68,10 @@ impl LoadBalancerCommand {
         parsed_args: &Cli,
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
+        session
+            .discover_service_endpoint(&ServiceType::LoadBalancer)
+            .await?;
+
         match &self.command {
             LoadBalancerCommands::Amphorae(cmd) => cmd.take_action(parsed_args, session).await,
             LoadBalancerCommands::AvailabilityZone(cmd) => {
