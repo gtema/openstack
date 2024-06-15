@@ -214,28 +214,9 @@ impl ServiceEndpoint {
                 // Append trailing slash
                 .push("");
         }
-        //let work_service_url = url;
-        let mut work_endpoint = endpoint;
-        if let Some(segments) = base_url.path_segments() {
-            // Service catalog may point to /v2.1/ and target endpoint start
-            // with v2.1/servers. The same may happen also for project_id being
-            // used in the service catalog while rest endpoint also contain it.
-            // In order to construct proper url look in the path elements of
-            // the service catalog and for each entry ensure target url does
-            // not start with that value.
-            let mut overlap: bool = false;
-            for part in segments.filter(|x| !x.is_empty()) {
-                if work_endpoint.starts_with(part) {
-                    work_endpoint = work_endpoint.get(part.len() + 1..).unwrap_or("");
-                    overlap = true;
-                } else if overlap {
-                    break;
-                }
-            }
-        }
         base_url
-            .join(work_endpoint)
-            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, work_endpoint)))
+            .join(endpoint)
+            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, endpoint)))
     }
 }
 
@@ -485,19 +466,11 @@ mod tests {
             ("http://foo.bar/", 0, 0, None, "info", "http://foo.bar/info"),
             ("http://foo.bar/", 0, 0, None, "v1", "http://foo.bar/v1"),
             (
-                "http://foo.bar/",
-                0,
-                0,
-                None,
-                "v1/resource",
-                "http://foo.bar/v1/resource",
-            ),
-            (
                 "http://foo.bar/v1/",
                 1,
                 0,
                 None,
-                "v1/resource",
+                "resource",
                 "http://foo.bar/v1/resource",
             ),
             (
@@ -515,38 +488,6 @@ mod tests {
                 Some("PROJECT_ID".to_string()),
                 "resources",
                 "http://foo.bar/v1/PROJECT_ID/resources",
-            ),
-            (
-                "http://foo.bar/v1/PROJECT_ID/",
-                1,
-                0,
-                None,
-                "v1/resource",
-                "http://foo.bar/v1/PROJECT_ID/resource",
-            ),
-            (
-                "http://foo.bar/v1/PROJECT_ID/",
-                1,
-                0,
-                Some("PROJECT_ID".to_string()),
-                "v1/resource",
-                "http://foo.bar/v1/PROJECT_ID/resource",
-            ),
-            (
-                "http://foo.bar/v1/PROJECT_ID",
-                1,
-                0,
-                Some("PROJECT_ID".to_string()),
-                "v1/resource",
-                "http://foo.bar/v1/PROJECT_ID/resource",
-            ),
-            (
-                "http://foo.bar/v1/PROJECT_ID/",
-                1,
-                0,
-                None,
-                "v1/PROJECT_ID/resource",
-                "http://foo.bar/v1/PROJECT_ID/resource",
             ),
             (
                 "http://foo.bar/prefix/",
@@ -555,14 +496,6 @@ mod tests {
                 None,
                 "info",
                 "http://foo.bar/prefix/info",
-            ),
-            (
-                "http://foo.bar/prefix/v1/",
-                1,
-                0,
-                None,
-                "v1/info",
-                "http://foo.bar/prefix/v1/info",
             ),
         ];
         for (service_url, major, minor, pid, endpoint, expected) in map {
