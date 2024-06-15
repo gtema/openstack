@@ -108,7 +108,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2.0/routers/{id}/remove_router_interface",
+            "routers/{id}/remove_router_interface",
             id = self.id.as_ref(),
         )
         .into()
@@ -143,6 +143,11 @@ impl<'a> RestEndpoint for Request<'a> {
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
     }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
+    }
 }
 
 #[cfg(test)]
@@ -175,10 +180,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::PUT).path(format!(
-                "/v2.0/routers/{id}/remove_router_interface",
-                id = "id",
-            ));
+            when.method(httpmock::Method::PUT)
+                .path(format!("/routers/{id}/remove_router_interface", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -196,10 +199,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
-                .path(format!(
-                    "/v2.0/routers/{id}/remove_router_interface",
-                    id = "id",
-                ))
+                .path(format!("/routers/{id}/remove_router_interface", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

@@ -94,7 +94,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2/images/{image_id}/tags/{tag_value}",
+            "images/{image_id}/tags/{tag_value}",
             image_id = self.image_id.as_ref(),
             tag_value = self.tag_value.as_ref(),
         )
@@ -126,6 +126,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
     }
 }
 
@@ -160,7 +165,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
-                "/v2/images/{image_id}/tags/{tag_value}",
+                "/images/{image_id}/tags/{tag_value}",
                 image_id = "image_id",
                 tag_value = "tag_value",
             ));
@@ -186,7 +191,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
                 .path(format!(
-                    "/v2/images/{image_id}/tags/{tag_value}",
+                    "/images/{image_id}/tags/{tag_value}",
                     image_id = "image_id",
                     tag_value = "tag_value",
                 ))

@@ -35,24 +35,18 @@ use std::borrow::Cow;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request<'a> {
-    /// The authentication token. An authentication response returns the token
-    /// ID in this header rather than in the response body.
-    ///
-    #[builder(default, setter(into))]
-    x_subject_token: Cow<'a, str>,
-
+pub struct Request {
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl<'a> Request<'a> {
+impl Request {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder<'a> {
+    pub fn builder() -> RequestBuilder {
         RequestBuilder::default()
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder {
     /// Add a single header to the Token.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -77,13 +71,13 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "v3/auth/tokens".to_string().into()
+        "auth/tokens".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -101,6 +95,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -138,7 +137,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/auth/tokens".to_string());
+                .path("/auth/tokens".to_string());
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -156,7 +155,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/v3/auth/tokens".to_string())
+                .path("/auth/tokens".to_string())
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

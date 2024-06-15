@@ -322,7 +322,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "v2/images".to_string().into()
+        "images".to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -387,6 +387,11 @@ impl<'a> RestEndpoint for Request<'a> {
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
     }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
+    }
 }
 
 #[cfg(test)]
@@ -420,7 +425,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
-                .path("/v2/images".to_string());
+                .path("/images".to_string());
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -438,7 +443,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
-                .path("/v2/images".to_string())
+                .path("/images".to_string())
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

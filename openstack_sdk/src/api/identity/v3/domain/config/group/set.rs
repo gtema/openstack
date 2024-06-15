@@ -115,7 +115,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v3/domains/{domain_id}/config/{group}",
+            "domains/{domain_id}/config/{group}",
             domain_id = self.domain_id.as_ref(),
             group = self.group.as_ref(),
         )
@@ -145,6 +145,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -199,7 +204,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PATCH).path(format!(
-                "/v3/domains/{domain_id}/config/{group}",
+                "/domains/{domain_id}/config/{group}",
                 domain_id = "domain_id",
                 group = "group",
             ));
@@ -230,7 +235,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PATCH)
                 .path(format!(
-                    "/v3/domains/{domain_id}/config/{group}",
+                    "/domains/{domain_id}/config/{group}",
                     domain_id = "domain_id",
                     group = "group",
                 ))

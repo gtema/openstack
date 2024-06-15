@@ -338,7 +338,7 @@ impl PropertyCommand {
 
         // Set Request._enum data
         if let Some(arg) = &self._enum {
-            ep_builder._enum(arg.iter().map(std::convert::Into::into).collect::<Vec<_>>());
+            ep_builder._enum(arg.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         // Set Request.items data

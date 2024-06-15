@@ -96,7 +96,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2/octavia/amphorae/{amphora_id}/failover",
+            "octavia/amphorae/{amphora_id}/failover",
             amphora_id = self.amphora_id.as_ref(),
         )
         .into()
@@ -127,6 +127,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
     }
 }
 
@@ -161,7 +166,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT).path(format!(
-                "/v2/octavia/amphorae/{amphora_id}/failover",
+                "/octavia/amphorae/{amphora_id}/failover",
                 amphora_id = "amphora_id",
             ));
 
@@ -182,7 +187,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
                 .path(format!(
-                    "/v2/octavia/amphorae/{amphora_id}/failover",
+                    "/octavia/amphorae/{amphora_id}/failover",
                     amphora_id = "amphora_id",
                 ))
                 .header("foo", "bar")

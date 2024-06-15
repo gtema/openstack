@@ -97,7 +97,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v2.0/ports/{id}/add_allowed_address_pairs",
+            "ports/{id}/add_allowed_address_pairs",
             id = self.id.as_ref(),
         )
         .into()
@@ -128,6 +128,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(2, 0))
     }
 }
 
@@ -161,10 +166,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::PUT).path(format!(
-                "/v2.0/ports/{id}/add_allowed_address_pairs",
-                id = "id",
-            ));
+            when.method(httpmock::Method::PUT)
+                .path(format!("/ports/{id}/add_allowed_address_pairs", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -182,10 +185,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PUT)
-                .path(format!(
-                    "/v2.0/ports/{id}/add_allowed_address_pairs",
-                    id = "id",
-                ))
+                .path(format!("/ports/{id}/add_allowed_address_pairs", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)

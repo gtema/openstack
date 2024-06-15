@@ -79,7 +79,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v3/domains/config/{group}/default",
+            "domains/config/{group}/default",
             group = self.group.as_ref(),
         )
         .into()
@@ -100,6 +100,11 @@ impl<'a> RestEndpoint for Request<'a> {
     /// Returns headers to be set into the request
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
+    }
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(3, 0))
     }
 }
 
@@ -136,10 +141,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path(format!(
-                "/v3/domains/config/{group}/default",
-                group = "group",
-            ));
+            when.method(httpmock::Method::GET)
+                .path(format!("/domains/config/{group}/default", group = "group",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -157,10 +160,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path(format!(
-                    "/v3/domains/config/{group}/default",
-                    group = "group",
-                ))
+                .path(format!("/domains/config/{group}/default", group = "group",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
