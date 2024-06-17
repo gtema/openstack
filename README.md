@@ -141,6 +141,33 @@ and token caching enabled. Benchmarking is performed using
 API response. High amount of long API requests causes smaller performance
 difference.
 
+## Software security
+
+Security is being taken seriously. Every step of the development and release
+process is designed with security in mind. OpenSSF Scorecard is embedded into
+the pipeline and helps identifying potential improvements or the
+vulnerabilities.
+
+### RustSec
+
+Binary deliveries are built with
+[cargo-audit](https://github.com/RustSec/rustsec/tree/main/cargo-audit). This
+allows embedding information about used dependencies directly into the binary.
+Popular scanning tools like `trivy` or `syft` already know how to extract this
+information.
+
+```console
+cargo audit bin osc
+```
+
+### GitHub Attestations
+
+All artifacts can be verified using GitHub Attestations (using the GitHub binary)
+
+```console
+gh attestation verify <file-path of downloaded artifact> --repo gtema/openstack
+```
+
 ## Support
 
 The project is a private initiative. If you find it useful or just want to
