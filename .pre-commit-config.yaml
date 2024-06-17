@@ -20,6 +20,10 @@ repos:
     rev: v1.21.0
     hooks:
       - id: typos
+  - repo: https://github.com/crate-ci/committed
+    rev: v1.0.20
+    hooks:
+      - id: committed
   - repo: local
     hooks:
       - id: cargo-fmt
