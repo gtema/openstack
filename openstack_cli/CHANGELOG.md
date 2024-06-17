@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.5.0...openstack_cli-v0.5.1) - 2024-06-17
+
+### Added
+- *(sdk)* Add api version into RestEndpoint ([#241](https://github.com/gtema/openstack/pull/241))
+- Add domain commands implementation ([#233](https://github.com/gtema/openstack/pull/233))
+- *(cli)* Add support for patch method in `api` call ([#232](https://github.com/gtema/openstack/pull/232))
+- *(sdk)* Rework service catalog processing ([#225](https://github.com/gtema/openstack/pull/225))
+- *(sdk)* Add possibility to skip version discovery ([#227](https://github.com/gtema/openstack/pull/227))
+- *(sdk)* Use 'Endpoint' struct for endpoint overrides ([#216](https://github.com/gtema/openstack/pull/216))
+- *(sdk)* Start consuming service_authority ([#215](https://github.com/gtema/openstack/pull/215))
+- *(sdk)* Deduplicate endpoint construction method ([#214](https://github.com/gtema/openstack/pull/214))
+- *(sdk)* Add Endpoint struct ([#213](https://github.com/gtema/openstack/pull/213))
+- *(sdk)* Add service authority data ([#212](https://github.com/gtema/openstack/pull/212))
+
+### Other
+- *(features)* Renerate code fixing sdk crate features ([#240](https://github.com/gtema/openstack/pull/240))
+- *(error)* Improve discovery error ([#237](https://github.com/gtema/openstack/pull/237))
+- *(sdk)* Get rid of anyhow in openstack_sdk ([#228](https://github.com/gtema/openstack/pull/228))
+- --- ([#211](https://github.com/gtema/openstack/pull/211))
+
 ## [0.5.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.4.0...openstack_cli-v0.5.0) - 2024-05-07
 
 ### Added
