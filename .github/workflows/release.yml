@@ -12,6 +12,7 @@
 # with the appropriate title/body, and will be undrafted for you.
 
 name: Release
+
 permissions:
   contents: read
 
@@ -45,8 +46,6 @@ on:
 jobs:
   # Run 'cargo dist plan' (or host) to determine what tasks we need to do
   plan:
-    permissions:
-      contents: read
     runs-on: "ubuntu-latest"
     outputs:
       val: ${{ steps.plan.outputs.manifest }}
@@ -68,7 +67,7 @@ jobs:
         # we specify bash to get pipefail; it guards against the `curl` command
         # failing. otherwise `sh` won't catch that `curl` returned non-0
         shell: bash
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.15.1/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.16.0/cargo-dist-installer.sh | sh"
       # sure would be cool if github gave us proper conditionals...
       # so here's a doubly-nested ternary-via-truthiness to try to provide the best possible
       # functionality based on whether this is a pull_request, and whether it's from a fork.
@@ -91,7 +90,6 @@ jobs:
     name: build-local-artifacts (${{ join(matrix.targets, ', ') }})
     permissions:
       id-token: write
-      contents: read
       attestations: write
     # Let the initial task tell us to not run (currently very blunt)
     needs:
@@ -129,6 +127,7 @@ jobs:
       - uses: Swatinem/rust-cache@23bce251a8cd2ffc3c1075eaa2367cf899916d84 # v2.7.3
         with:
           key: ${{ join(matrix.targets, '-') }}
+          cache-provider: ${{ matrix.cache_provider }}
       - name: Install cargo-dist
         run: ${{ matrix.install_dist }}
       - name: Install cargo-auditable
@@ -153,6 +152,10 @@ jobs:
           # Actually do builds and make zips and whatnot
           cargo dist build ${{ needs.plan.outputs.tag-flag }} --print=linkage --output-format=json ${{ matrix.dist_args }} > dist-manifest.json
           echo "cargo dist ran successfully"
+      - name: Attest
+        uses: actions/attest-build-provenance@49df96e17e918a15956db358890b08e61c704919
+        with:
+          subject-path: "target/distrib/*${{ join(matrix.targets, ', ') }}*"
       - id: cargo-dist
         name: Post-build
         # We force bash here just because github makes it really hard to get values up
@@ -166,12 +169,6 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
           cp dist-manifest.json "$BUILD_MANIFEST_NAME"
-
-      - name: Attest
-        uses: actions/attest-build-provenance@49df96e17e918a15956db358890b08e61c704919
-        with:
-          subject-path: '${{ steps.cargo-dist.outputs.paths }}'
-
       - name: "Upload artifacts"
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
         with:
@@ -184,8 +181,6 @@ jobs:
   build-global-artifacts:
     permissions:
       id-token: write
-      contents: read
-      attestations: write
     needs:
       - plan
       - build-local-artifacts
@@ -204,7 +199,7 @@ jobs:
           submodules: recursive
       - name: Install cargo-dist
         shell: bash
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.15.1/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.16.0/cargo-dist-installer.sh | sh"
       # Get all the local artifacts for the global tasks to use (for e.g. checksums)
       - name: Fetch local artifacts
         uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e
@@ -224,12 +219,6 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
           cp dist-manifest.json "$BUILD_MANIFEST_NAME"
-
-      - name: Attest
-        uses: actions/attest-build-provenance@49df96e17e918a15956db358890b08e61c704919
-        with:
-          subject-path: '${{ steps.cargo-dist.outputs.paths }}'
-
       - name: "Upload artifacts"
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
         with:
@@ -239,8 +228,6 @@ jobs:
             ${{ env.BUILD_MANIFEST_NAME }}
   # Determines if we should publish/announce
   host:
-    permissions:
-      contents: read
     needs:
       - plan
       - build-local-artifacts
@@ -262,7 +249,7 @@ jobs:
         with:
           submodules: recursive
       - name: Install cargo-dist
-        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.15.1/cargo-dist-installer.sh | sh"
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.16.0/cargo-dist-installer.sh | sh"
       # Fetch artifacts from scratch-storage
       - name: Fetch artifacts
         uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e
@@ -319,12 +306,9 @@ jobs:
           # Remove the granular manifests
           rm -f artifacts/*-dist-manifest.json
       - name: Create GitHub Release
-        uses: ncipollo/release-action@2c591bcc8ecdcd2db72b97d6147f871fcd833ba5
-        with:
-          tag: ${{ needs.plan.outputs.tag }}
-          allowUpdates: true
-          updateOnlyUnreleased: true
-          omitBodyDuringUpdate: true
-          omitNameDuringUpdate: true
-          prerelease: ${{ fromJson(needs.host.outputs.val).announcement_is_prerelease }}
-          artifacts: "artifacts/*"
+        env:
+          PRERELEASE_FLAG: "${{ fromJson(needs.host.outputs.val).announcement_is_prerelease && '--prerelease' || '' }}"
+        run: |
+
+          gh release edit "${{ needs.plan.outputs.tag }}" --draft=false $PRERELEASE_FLAG
+          gh release upload "${{ needs.plan.outputs.tag }}" artifacts/*

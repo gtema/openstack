@@ -18,3 +18,15 @@ All generated modules have a corresponding notice in the header.
 - If a function only needs to read the data, pass a reference (borrow)
 
 - If a function needs to change the data, pass a mutable reference.
+
+## Releasing
+
+There are 2 projects being used to take care of release process:
+
+- `release-plz` validates challenges and prepares PR to cut a release proposing
+  the corresponding version. Merging PR will trigger `release-plz` to create
+  new version, tag it, perform Rust release to <crates.io>.
+
+- `cargo dist` builds and uploads binary artifacts to the GH releases. This is
+  triggered by creating a git tag `vMAJ.MIN.PATCH`. Part of the normal PR CI
+  `cargo dist` is also building artifacts and stores them as CI artifacts.
