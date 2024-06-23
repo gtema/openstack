@@ -94,6 +94,6 @@ jobs:
       uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     - name: Check spelling of file.txt
-      uses: crate-ci/typos@dde47868a506acfe1117a6ea9621271439d8c89b # master
+      uses: crate-ci/typos@c16dc8f5b4a7ad6211464ecf136c69c851e8e83c # master
       with:
         config: typos.toml
