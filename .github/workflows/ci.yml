@@ -43,7 +43,7 @@ jobs:
           targets: ${{ matrix.target }}
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@bb478bb090ef943f66f14da0e437f05102529ef9 # v2.41.1
+        uses: taiki-e/install-action@77774d839c4049accfb62dde47bd85fd65f522c0 # v2.41.2
         with:
           tool: cargo-nextest
 
