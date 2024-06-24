@@ -84,13 +84,13 @@ impl ToTokens for TableStructInputReceiver {
                 },
                 true => match field.pretty {
                     false => quote!(
-                        self. #field_ident .clone().map_or_else(|| "".to_string(), |v| v.to_string())
+                        self. #field_ident .clone().map_or(String::from(" "), |v| v.to_string())
                     ),
                     true => quote!(
                         self. #field_ident
                             .clone()
-                            .map_or_else(
-                                || "".to_string(),
+                            .map_or(
+                                String::from(" "),
                                 |v| if options.pretty {serde_json::to_string_pretty(&v).unwrap_or(v.to_string())} else { v.to_string() }
                             )
                     ),
@@ -110,13 +110,13 @@ impl ToTokens for TableStructInputReceiver {
                 },
                 true => match field.pretty {
                     false => quote!(
-                        x. #field_ident .clone().map_or_else(|| "".to_string(), |v| v.to_string())
+                        x. #field_ident .clone().map_or(String::from(" "), |v| v.to_string())
                     ),
                     true => quote!(
                         x. #field_ident
                             .clone()
-                            .map_or_else(
-                                || "".to_string(),
+                            .map_or(
+                                String::from(" "),
                                 |v| serde_json::to_string_pretty(&v).unwrap_or(v.to_string())
                             )
                     ),
