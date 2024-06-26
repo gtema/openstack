@@ -15,6 +15,9 @@
 use assert_cmd::prelude::*;
 use std::process::Command;
 
+mod account;
+mod container;
+
 #[test]
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;

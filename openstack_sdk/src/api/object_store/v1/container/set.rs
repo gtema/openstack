@@ -86,7 +86,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "v1/{account}/{container}",
+            "{account}/{container}",
             account = self.account.as_ref(),
             container = self.container.as_ref(),
         )
@@ -142,7 +142,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST).path(format!(
-                "/v1/{account}/{container}",
+                "/{account}/{container}",
                 account = "account",
                 container = "container",
             ));
@@ -168,7 +168,7 @@ mod tests {
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::POST)
                 .path(format!(
-                    "/v1/{account}/{container}",
+                    "/{account}/{container}",
                     account = "account",
                     container = "container",
                 ))

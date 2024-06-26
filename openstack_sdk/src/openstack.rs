@@ -345,6 +345,8 @@ impl OpenStack {
                 Some(auth_data) => {
                     if let Some(project) = &auth_data.token.project {
                         self.catalog.set_project_id(project.id.clone());
+                        // Reconfigure catalog since we know now the project_id
+                        self.catalog.configure(&self.config)?;
                     }
                     if let Some(endpoints) = &auth_data.token.catalog {
                         self.catalog

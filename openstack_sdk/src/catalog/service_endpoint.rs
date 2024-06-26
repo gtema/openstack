@@ -184,6 +184,7 @@ impl ServiceEndpoint {
         &self.max_version
     }
 
+    /// Build request URL from base endpoint url and the `RestEndpoint`
     pub fn build_request_url(&self, endpoint: &str) -> Result<Url, CatalogError> {
         trace!(
             "Constructing request url for service endpoint {} for {}",
@@ -191,8 +192,29 @@ impl ServiceEndpoint {
             endpoint
         );
         let mut base_url = self.url().clone();
+        let mut work_endpoint = endpoint;
         if let Some(pid_suffix) = self.last_segment_with_project_id() {
-            if !(base_url.path().trim_end_matches('/').ends_with(pid_suffix)) {
+            // Ensure we do not double the `project_id` part of the path if base endpoint ends with
+            // it and the target url starts with it.
+            if endpoint.starts_with(pid_suffix) {
+                if work_endpoint == pid_suffix {
+                    work_endpoint = ""
+                } else {
+                    work_endpoint =
+                        work_endpoint
+                            .get(pid_suffix.len() + 1..)
+                            .unwrap_or_else(|| {
+                                panic!(
+                                    "project_id suffix '{}' can be stripped from the endpoint '{}'",
+                                    pid_suffix, work_endpoint
+                                )
+                            });
+                }
+            }
+
+            if !(base_url.path().trim_end_matches('/').ends_with(pid_suffix))
+                && !work_endpoint.is_empty()
+            {
                 base_url
                     .path_segments_mut()
                     // The error here should not happen since we checked above for cannot_be_base
@@ -205,7 +227,8 @@ impl ServiceEndpoint {
                     .push("");
             }
         }
-        if !base_url.path().ends_with('/') {
+        if !base_url.path().ends_with('/') && (!work_endpoint.is_empty() || endpoint.ends_with('/'))
+        {
             // Ensure base url ends with "/"
             base_url
                 .path_segments_mut()
@@ -215,8 +238,8 @@ impl ServiceEndpoint {
                 .push("");
         }
         base_url
-            .join(endpoint)
-            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, endpoint)))
+            .join(work_endpoint)
+            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, work_endpoint)))
     }
 }
 
@@ -485,7 +508,7 @@ mod tests {
                 "http://foo.bar/v1/",
                 1,
                 0,
-                Some("PROJECT_ID".to_string()),
+                Some(String::from("PROJECT_ID")),
                 "resources",
                 "http://foo.bar/v1/PROJECT_ID/resources",
             ),
@@ -496,6 +519,30 @@ mod tests {
                 None,
                 "info",
                 "http://foo.bar/prefix/info",
+            ),
+            (
+                "http://foo.bar/prefix/v1/AUTH_PROJECT_ID",
+                1,
+                0,
+                Some(String::from("AUTH_PROJECT_ID")),
+                "AUTH_PROJECT_ID",
+                "http://foo.bar/prefix/v1/AUTH_PROJECT_ID",
+            ),
+            (
+                "http://foo.bar/prefix/v1/AUTH_PROJECT_ID",
+                1,
+                0,
+                Some(String::from("AUTH_PROJECT_ID")),
+                "AUTH_PROJECT_ID/",
+                "http://foo.bar/prefix/v1/AUTH_PROJECT_ID/",
+            ),
+            (
+                "http://foo.bar/prefix/v1/AUTH_PROJECT_ID",
+                1,
+                0,
+                Some(String::from("AUTH_PROJECT_ID")),
+                "AUTH_PROJECT_ID/resource",
+                "http://foo.bar/prefix/v1/AUTH_PROJECT_ID/resource",
             ),
         ];
         for (service_url, major, minor, pid, endpoint, expected) in map {
