@@ -17,6 +17,7 @@
 use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
+use std::{fs::File, io::Read};
 use tracing::{debug, error, info, span, trace, Level};
 
 use async_trait::async_trait;
@@ -28,7 +29,7 @@ use http::{HeaderMap, Response as HttpResponse, StatusCode};
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
 
-use reqwest::{Body, Client as AsyncClient, Request, Response};
+use reqwest::{Body, Certificate, Client as AsyncClient, Request, Response};
 
 use crate::config::CloudConfig;
 
@@ -49,6 +50,7 @@ use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
 use crate::catalog::{Catalog, ServiceEndpoint};
 
 use crate::error::{OpenStackError, OpenStackResult, RestError};
+use crate::utils::expand_tilde;
 
 /// Asynchronous client for the OpenStack API for a single user
 ///
@@ -172,8 +174,27 @@ impl AsyncOpenStack {
         let span = span!(Level::DEBUG, "new_impl");
         let _enter = span.enter();
 
+        let mut client_builder = AsyncClient::builder();
+
+        if let Some(cacert) = &config.cacert {
+            let mut buf = Vec::new();
+            File::open(expand_tilde(cacert).unwrap_or(cacert.into()))
+                .map_err(|e| OpenStackError::IO {
+                    source: e,
+                    path: cacert.to_string(),
+                })?
+                .read_to_end(&mut buf)
+                .map_err(|e| OpenStackError::IO {
+                    source: e,
+                    path: cacert.to_string(),
+                })?;
+            for cert in Certificate::from_pem_bundle(&buf)? {
+                client_builder = client_builder.add_root_certificate(cert);
+            }
+        }
+
         let mut session = AsyncOpenStack {
-            client: AsyncClient::new(),
+            client: client_builder.build()?,
             config: config.clone(),
             auth,
             catalog: Catalog::default(),

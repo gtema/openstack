@@ -177,6 +177,9 @@ pub struct CloudConfig {
     /// Region name
     pub region_name: Option<String>,
 
+    /// Custom CA Certificate
+    pub cacert: Option<String>,
+
     /// All other options
     #[serde(flatten)]
     pub options: HashMap<String, config::Value>,
@@ -306,6 +309,9 @@ impl CloudConfig {
         }
         if self.region_name.is_none() && update.region_name.is_some() {
             self.region_name.clone_from(&update.region_name);
+        }
+        if self.cacert.is_none() && update.cacert.is_some() {
+            self.cacert.clone_from(&update.cacert);
         }
         let current_keys: HashSet<String> = self.options.keys().cloned().collect();
         self.options.extend(

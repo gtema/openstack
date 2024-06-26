@@ -155,6 +155,13 @@ pub enum OpenStackError {
         #[from]
         source: serde_json::Error,
     },
+    /// IO error.
+    #[error("IO error: {}\n\tPath: {}", source, path)]
+    IO {
+        /// The source of the error.
+        source: std::io::Error,
+        path: String,
+    },
 }
 
 impl OpenStackError {
