@@ -802,11 +802,11 @@ Example:
 
 ```console osc --os-cloud devstack api compute flavors/detail | jq ```
 
-**Usage:** `osc api [OPTIONS] <SERVICE> <URL>`
+**Usage:** `osc api [OPTIONS] <SERVICE_TYPE> <URL>`
 
 ###### **Arguments:**
 
-* `<SERVICE>` — Service name
+* `<SERVICE_TYPE>` — Service type as used in the service catalog
 * `<URL>` — Rest URL (relative to the endpoint information from the service catalog). Do not start URL with the "/" to respect endpoint version information
 
 ###### **Options:**

@@ -84,9 +84,9 @@ impl From<Method> for http::Method {
 /// ```
 #[derive(Debug, Parser)]
 pub struct ApiCommand {
-    /// Service name
+    /// Service type as used in the service catalog
     #[arg()]
-    service: String,
+    service_type: String,
 
     /// Rest URL (relative to the endpoint information
     /// from the service catalog). Do not start URL with
@@ -119,11 +119,11 @@ impl ApiCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let service = ServiceType::from(self.service.as_str());
+        let service_type = ServiceType::from(self.service_type.as_str());
 
-        client.discover_service_endpoint(&service).await?;
+        client.discover_service_endpoint(&service_type).await?;
 
-        let service_endpoint = client.get_service_endpoint(&service, None)?;
+        let service_endpoint = client.get_service_endpoint(&service_type, None)?;
 
         let endpoint = service_endpoint.build_request_url(&self.url)?;
 
