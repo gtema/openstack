@@ -13,3 +13,44 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Utilities
+
+use std::path::{Path, PathBuf};
+
+/// Expand tilde in the file path
+pub(crate) fn expand_tilde<P: AsRef<Path>>(path_user_input: P) -> Option<PathBuf> {
+    let path = path_user_input.as_ref();
+    if !path.starts_with("~") {
+        return Some(path.to_path_buf());
+    }
+    if path == Path::new("~") {
+        return dirs::home_dir();
+    }
+    dirs::home_dir().map(|mut home| {
+        if home == Path::new("/") {
+            // Corner case: `home` is root directory;
+            // don't prepend extra `/`, just drop the tilde.
+            path.strip_prefix("~").unwrap().to_path_buf()
+        } else {
+            home.push(path.strip_prefix("~/").unwrap());
+            home
+        }
+    })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_expand_tilde() {
+        let home = std::env::var("HOME").unwrap();
+        assert_eq!(
+            expand_tilde("~/dummy").unwrap(),
+            PathBuf::from(format!("{}/dummy", home))
+        );
+        assert_eq!(
+            expand_tilde("/root/dummy").unwrap(),
+            PathBuf::from("/root/dummy")
+        );
+    }
+}
