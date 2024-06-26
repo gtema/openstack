@@ -84,7 +84,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        format!("v1/{account}", account = self.account.as_ref(),).into()
+        self.account.as_ref().to_string().into()
     }
 
     fn parameters(&self) -> QueryParams {
@@ -136,7 +136,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
-                .path(format!("/v1/{account}", account = "account",));
+                .path(format!("/{account}", account = "account",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -154,7 +154,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
-                .path(format!("/v1/{account}", account = "account",))
+                .path(format!("/{account}", account = "account",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
