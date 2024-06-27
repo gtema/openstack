@@ -1,6 +1,6 @@
 [package]
 name = "structable_derive"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Artem Goncharov (gtema)"]
 description = "A crate for 'serializing' structs as Vec<Vec<String>> tables"
 categories = ["command-line-interface"]
