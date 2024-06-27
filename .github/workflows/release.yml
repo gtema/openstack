@@ -266,7 +266,7 @@ jobs:
           cat dist-manifest.json
           echo "manifest=$(jq -c "." dist-manifest.json)" >> "$GITHUB_OUTPUT"
       - name: "Upload dist-manifest.json"
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+        uses: actions/upload-artifact@268d7547644ab8a9d0c1163299e59a1f5d93f39b # v2.1.3
         with:
           # Overwrite the previous copy
           name: artifacts-dist-manifest
