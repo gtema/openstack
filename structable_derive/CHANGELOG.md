@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/gtema/openstack/compare/structable_derive-v0.1.3...structable_derive-v0.1.4) - 2024-06-27
+
+### Fixed
+- Fix table output for empty data ([#289](https://github.com/gtema/openstack/pull/289))
+
 ## [0.1.3](https://github.com/gtema/openstack/compare/structable_derive-v0.1.2...structable_derive-v0.1.3) - 2024-03-15
 
 ### Added

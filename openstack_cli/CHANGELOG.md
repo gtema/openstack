@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.5.1...openstack_cli-v0.5.2) - 2024-06-27
+
+### Added
+- *(ssl)* Add possibility to add custom root SSL ca ([#293](https://github.com/gtema/openstack/pull/293))
+
+### Fixed
+- Repair endpoint url construction for object ([#295](https://github.com/gtema/openstack/pull/295))
+
+### Other
+- *(cli)* Clarify the API command parameters ([#294](https://github.com/gtema/openstack/pull/294))
+
 ## [0.5.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.5.0...openstack_cli-v0.5.1) - 2024-06-17
 
 ### Added
