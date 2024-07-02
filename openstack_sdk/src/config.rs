@@ -179,6 +179,8 @@ pub struct CloudConfig {
 
     /// Custom CA Certificate
     pub cacert: Option<String>,
+    /// Verify SSL Certificates
+    pub verify: Option<bool>,
 
     /// All other options
     #[serde(flatten)]
@@ -312,6 +314,9 @@ impl CloudConfig {
         }
         if self.cacert.is_none() && update.cacert.is_some() {
             self.cacert.clone_from(&update.cacert);
+        }
+        if self.verify.is_none() && update.verify.is_some() {
+            self.verify.clone_from(&update.verify);
         }
         let current_keys: HashSet<String> = self.options.keys().cloned().collect();
         self.options.extend(
