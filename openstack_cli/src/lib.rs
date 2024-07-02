@@ -60,7 +60,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     tracing_subscriber::fmt()
         .with_writer(io::stderr)
         .with_max_level(match cli.global_opts.verbose {
-            0 => Level::ERROR,
+            0 => Level::WARN,
             1 => Level::INFO,
             2 => Level::DEBUG,
             _ => Level::TRACE,

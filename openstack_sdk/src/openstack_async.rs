@@ -18,7 +18,7 @@ use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
-use tracing::{debug, error, info, span, trace, Level};
+use tracing::{debug, error, info, span, trace, warn, Level};
 
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -191,6 +191,10 @@ impl AsyncOpenStack {
             for cert in Certificate::from_pem_bundle(&buf)? {
                 client_builder = client_builder.add_root_certificate(cert);
             }
+        }
+        if let Some(false) = &config.verify {
+            warn!("SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate.");
+            client_builder = client_builder.danger_accept_invalid_certs(true);
         }
 
         let mut session = AsyncOpenStack {
