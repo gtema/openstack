@@ -269,7 +269,9 @@ impl Catalog {
         let catalog_types = self
             .service_authority
             .get_all_types_by_service_type(&service_type.to_string())?;
-        for ep in discovery::extract_discovery_endpoints(url, data)?.iter_mut() {
+        for ep in
+            discovery::extract_discovery_endpoints(url, data, service_type.to_string())?.iter_mut()
+        {
             ep.set_region(region.as_ref());
             // Rounded (to the major) version so that we respect catalog_endpoints and
             // endpoint_overrides for a higher minor versions
