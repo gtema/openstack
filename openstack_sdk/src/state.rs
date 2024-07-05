@@ -23,7 +23,7 @@ use std::collections::HashMap;
 use std::fs::{DirBuilder, File};
 use std::io::prelude::*;
 use std::path::PathBuf;
-use tracing::{trace, warn};
+use tracing::{debug, info, trace, warn};
 
 use crate::auth::{
     authtoken::{AuthToken, AuthTokenScope},
@@ -244,7 +244,7 @@ impl State {
                             Some(auth)
                         }
                         Err(x) => {
-                            warn!(
+                            info!(
                                 "Corrupted cache file {}: {:?}. Removing ",
                                 fname.display(),
                                 x
@@ -254,13 +254,17 @@ impl State {
                         }
                     },
                     _ => {
-                        warn!("Error reading file {}", fname.display());
+                        // Not able to read file, maybe it is corrupted. There is nothing user can
+                        // or is expected to do about it, but it make sense to make user aware of.
+                        info!("Error reading file {}", fname.display());
                         None
                     }
                 }
             }
             _ => {
-                warn!("Error opening file {}", fname.display());
+                // Not able to open file, maybe it is missing. There is nothing user can or is
+                // expected to do about it.
+                debug!("Error opening file {}", fname.display());
                 None
             }
         }
