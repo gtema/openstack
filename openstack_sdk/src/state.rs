@@ -184,7 +184,7 @@ impl State {
                 AuthTokenScope::Project(project) => {
                     if let AuthTokenScope::Project(cached) = k {
                         // Scope type matches
-                        if project.id == cached.id {
+                        if project.id.is_some() && project.id == cached.id {
                             // Match by ID is definite
                             return Some((k.clone(), v.clone()));
                         } else if project.name == cached.name {

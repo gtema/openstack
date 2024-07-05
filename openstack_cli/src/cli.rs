@@ -64,6 +64,14 @@ pub struct GlobalOpts {
     #[arg(long, env = "OS_CLOUD", global = true, display_order = 900)]
     pub os_cloud: Option<String>,
 
+    /// Project ID to use instead of the one in connection profile
+    #[arg(long, env = "OS_PROJECT_ID", global = true, display_order = 901)]
+    pub os_project_id: Option<String>,
+
+    /// Project Name to use instead of the one in the connection profile
+    #[arg(long, env = "OS_PROJECT_NAME", global = true, display_order = 901)]
+    pub os_project_name: Option<String>,
+
     /// Output format
     #[arg(short, long, global = true, value_enum, display_order = 910)]
     pub output: Option<OutputFormat>,

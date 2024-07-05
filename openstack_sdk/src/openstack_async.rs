@@ -339,6 +339,8 @@ where {
                 trace!("Valid Auth is available for reauthz: {:?}", available_auth);
                 let auth_ep = authtoken::build_reauth_request(&available_auth, &requested_scope)?;
                 rsp = auth_ep.raw_query_async_ll(self, Some(false)).await?;
+                // Check whether re-auth was successful
+                api::check_response_error::<Self>(&rsp, None)?;
             } else {
                 // No auth/authz information available. Proceed with new auth
                 trace!("No Auth already available. Proceeding with new login");
