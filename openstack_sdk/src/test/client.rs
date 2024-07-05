@@ -193,7 +193,7 @@ where
         assert_eq!(
             &body,
             &self.expected.body,
-            "\nbody is not the same:\nactual  : {}\nexpected: {}\n",
+            "\nbody is not the same:\nactual: {}\nexpected: {}\n",
             String::from_utf8_lossy(&body),
             String::from_utf8_lossy(&self.expected.body),
         );

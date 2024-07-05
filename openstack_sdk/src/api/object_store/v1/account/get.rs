@@ -154,7 +154,11 @@ impl<'a> RestEndpoint for Request<'a> {
         self._headers.as_ref()
     }
 }
-impl<'a> Pageable for Request<'a> {}
+impl<'a> Pageable for Request<'a> {
+    fn use_keyset_pagination(&self) -> bool {
+        false
+    }
+}
 
 #[cfg(test)]
 mod tests {
