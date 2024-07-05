@@ -14,7 +14,7 @@ default-members = ["openstack_cli", "openstack_sdk"]
 license = "Apache-2.0"
 edition = "2021"
 authors = ["Artem Goncharov (gtema)"]
-rust-version = "1.75"  # MSRV
+rust-version = "1.76"  # MSRV
 homepage = "https://github.com/gtema/openstack"
 repository = "https://github.com/gtema/openstack"
 

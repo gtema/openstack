@@ -21,7 +21,7 @@ use std::str::FromStr;
 use http::{HeaderMap, HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
-use tracing::{error, trace};
+use tracing::{debug, error, trace};
 
 use crate::api::identity::v3::auth::token::create as token_v3;
 use crate::api::identity::v3::auth::token::get as token_v3_info;
@@ -394,6 +394,10 @@ pub(crate) fn build_auth_request_from_receipt<'a>(
     let auth = config.auth.clone().ok_or(AuthTokenError::MissingAuthData)?;
     // Check required_auth_methods rules
     // Note: Keystone returns list of lists (as set of different rules)
+    debug!(
+        "Server requests additional authentication with one of: {:?}",
+        &receipt_data.required_auth_methods
+    );
     for auth_rule in &receipt_data.required_auth_methods {
         for required_method in auth_rule {
             if !receipt_data

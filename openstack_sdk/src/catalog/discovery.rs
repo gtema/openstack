@@ -17,6 +17,8 @@
 //! <https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html>
 
 use bytes::Bytes;
+use regex::Regex;
+use tracing::error;
 use url::Url;
 
 use crate::catalog::{error::CatalogError, service_endpoint::ServiceEndpoint};
@@ -26,9 +28,10 @@ use crate::types::identity::v3::version::{
 };
 
 /// Process Endpoint version discovery response
-pub fn extract_discovery_endpoints(
+pub fn extract_discovery_endpoints<S: AsRef<str>>(
     discovery_url: &Url,
     data: &Bytes,
+    service_type: S,
 ) -> Result<Vec<ServiceEndpoint>, CatalogError> {
     let mut endpoints: Vec<ServiceEndpoint> = Vec::new();
     // Explicitly add `unversioned` endpoint
@@ -40,17 +43,20 @@ pub fn extract_discovery_endpoints(
     if let Ok(versions) = serde_json::from_slice::<EndpointVersions>(data) {
         // Unversioned endpoint normally returns: `{versions: []}`
         for ver in versions.versions {
-            endpoints.push(ver.as_endpoint(discovery_url)?);
+            endpoints.push(ver.as_endpoint(discovery_url, service_type.as_ref())?);
         }
         return Ok(endpoints);
     } else if let Ok(ver) = serde_json::from_slice::<EndpointVersionContainer>(data) {
         // Versioned endpoint normally returns: `{version: {}}`
-        endpoints.push(ver.version.as_endpoint(discovery_url)?);
+        endpoints.push(
+            ver.version
+                .as_endpoint(discovery_url, service_type.as_ref())?,
+        );
         return Ok(endpoints);
     } else if let Ok(vers) = serde_json::from_slice::<EndpointVersionsValues>(data) {
         // Keystone returns `{versions: {values: []}}}`
         for ver in vers.versions.values {
-            endpoints.push(ver.as_endpoint(discovery_url)?);
+            endpoints.push(ver.as_endpoint(discovery_url, service_type.as_ref())?);
         }
         return Ok(endpoints);
     }
@@ -61,14 +67,42 @@ pub fn extract_discovery_endpoints(
 ///
 /// Convert link href to the full url according to
 /// <https://specs.openstack.org/openstack/api-sig/guidelines/consuming-catalog/version-discovery.html#expanding-endpoints>.
-pub fn expand_link<S: AsRef<str>>(link: S, base_url: &Url) -> Result<Url, CatalogError> {
+pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
+    link: S1,
+    base_url: &Url,
+    service_type: S2,
+) -> Result<Url, CatalogError> {
     // Parse link url
     let mut url = match Url::parse(link.as_ref()) {
         Ok(url) => url,
-        Err(url::ParseError::RelativeUrlWithoutBase) => base_url
-            .clone()
-            .join(link.as_ref())
-            .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, link.as_ref())))?,
+        Err(url::ParseError::InvalidPort) => {
+            error!(
+                "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Invalid port. Only path part is going to be used. Please inform your cloud provider.",
+                service_type.as_ref(),
+                link.as_ref()
+            );
+            let re = Regex::new(r"^(?<scheme>.+)://(?<host>[^:]+):(?<port>[^/]+)/(?<path>.*)$")?;
+            if let Some(caps) = re.captures(link.as_ref()) {
+                let path = &caps["path"];
+                base_url
+                    .clone()
+                    .join(path)
+                    .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, path)))?
+            } else {
+                error!("Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Not able to determine path part. Please inform your cloud provider.", service_type.as_ref(), link.as_ref());
+                return Err(CatalogError::url_parse(url::ParseError::InvalidPort, link));
+            }
+        }
+        Err(url::ParseError::RelativeUrlWithoutBase) => {
+            error!(
+                "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: URL without a base. Ignoring base information from the discovery document. Please inform your cloud provider.",
+                service_type.as_ref(),
+                link.as_ref()
+            );
+            base_url.clone().join(link.as_ref()).map_err(|x| {
+                CatalogError::url_parse(x, format!("{}/{}", base_url, link.as_ref()))
+            })?
+        }
         Err(err) => {
             return Err(CatalogError::url_parse(err, link.as_ref()));
         }
@@ -102,10 +136,17 @@ impl EndpointVersion {
     }
 
     /// Return `Endpoint` representation of the Version
-    pub fn as_endpoint(&self, base_url: &Url) -> Result<ServiceEndpoint, CatalogError> {
+    pub fn as_endpoint<S: AsRef<str>>(
+        &self,
+        base_url: &Url,
+        service_type: S,
+    ) -> Result<ServiceEndpoint, CatalogError> {
         if let Some(link) = self.links.iter().find(|&x| x.rel == "self") {
             return Ok(ServiceEndpoint::new(
-                expand_link(&link.href, base_url)?.clone(),
+                expand_link(&link.href, base_url, &service_type)
+                    .inspect_err(|e| {error!("Service version discovery error: {:?}. Using catalog endpoint. Consider setting `{}_endpoint_override` when necessary. Please inform your cloud provider.", e, service_type.as_ref())})
+                    .unwrap_or(base_url.clone())
+                    .clone(),
                 self.get_api_version()?,
             )
             .set_min_version(self.min_version.clone())
@@ -197,9 +238,43 @@ mod tests {
         let self_link = version.links.iter().find(|&x| x.rel == "self").unwrap();
         assert_eq!(
             "https://compute.example.com/v2/",
-            expand_link(&self_link.href, &base_url).unwrap().as_str(),
+            expand_link(&self_link.href, &base_url, "dummy")
+                .unwrap()
+                .as_str(),
             "Scheme and host are from base_url, ends with `/`"
         );
+    }
+
+    #[test]
+    fn test_expand_link() {
+        let base_url = Url::parse("https://compute.example.com/").unwrap();
+        assert_eq!(
+            "https://compute.example.com/v2/",
+            expand_link("https://hostname:1234:1234/v2/", &base_url, "dummy")
+                .unwrap()
+                .as_str(),
+            "Invalid port is recovered"
+        );
+        assert_eq!(
+            "https://compute.example.com/v2/",
+            expand_link("https://hostname:abc/v2", &base_url, "dummy")
+                .unwrap()
+                .as_str(),
+            "Invalid port is recovered"
+        );
+        assert_eq!(
+            "https://compute.example.com/v2/",
+            expand_link("/v2", &base_url, "dummy").unwrap().as_str(),
+            "Absent host replaced with base"
+        );
+        assert_eq!(
+            "https://compute.example.com/v2/",
+            expand_link("http://localhost/v2", &base_url, "dummy")
+                .unwrap()
+                .as_str(),
+            "Scheme and host are from base_url, ends with `/`"
+        );
+        assert!(expand_link("foobar:\\", &base_url, "dummy").is_err(),);
     }
 
     #[test]
@@ -216,7 +291,7 @@ mod tests {
             }]),
         };
         let base_url = Url::parse("https://compute.example.com/").unwrap();
-        let ep = version.as_endpoint(&base_url).unwrap();
+        let ep = version.as_endpoint(&base_url, "dummy").unwrap();
         assert_eq!("https://compute.example.com/v2/", ep.url_str());
     }
 
@@ -231,7 +306,7 @@ mod tests {
             links: Vec::new(),
         };
         let base_url = Url::parse("https://compute.example.com/").unwrap();
-        let err = version.as_endpoint(&base_url).unwrap_err();
+        let err = version.as_endpoint(&base_url, "dummy").unwrap_err();
 
         if let CatalogError::VersionSelfLinkMissing { id } = err {
             assert_eq!("v2.0", id);
@@ -254,12 +329,10 @@ mod tests {
             }]),
         };
         let base_url = Url::parse("https://compute.example.com/").unwrap();
-        let err = version.as_endpoint(&base_url).unwrap_err();
-
-        if let CatalogError::UrlParse { .. } = err {
-        } else {
-            panic!("Unexpected error: {}", err);
-        }
+        assert_eq!(
+            "https://compute.example.com/",
+            version.as_endpoint(&base_url, "dummy").unwrap().url_str()
+        );
     }
 
     #[test]
@@ -281,6 +354,7 @@ mod tests {
                 })
                 .to_string(),
             ),
+            "dummy",
         )
         .unwrap();
         assert_eq!(2, endpoints.len());
@@ -322,6 +396,7 @@ mod tests {
                 })
                 .to_string(),
             ),
+            "dummy",
         )
         .unwrap();
         assert_eq!(3, endpoints.len());
@@ -357,6 +432,7 @@ mod tests {
                 })
                 .to_string(),
             ),
+            "dummy",
         )
         .unwrap();
         assert_eq!(2, endpoints.len());

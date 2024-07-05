@@ -28,6 +28,12 @@ pub enum CatalogError {
         source: ApiVersionError,
     },
 
+    #[error("Regex parse error: {}", source)]
+    Regex {
+        #[from]
+        source: regex::Error,
+    },
+
     /// Invalid URL
     #[error("Url `{0}` cannot be base")]
     UrlCannotBeBase(String),
