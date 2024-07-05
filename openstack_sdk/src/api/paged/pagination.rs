@@ -16,19 +16,29 @@
 
 use thiserror::Error;
 
+use crate::api::paged::next_page::LinkHeaderParseError;
+
 /// Errors which may occur with pagination.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum PaginationError {
+    /// No pagination information available in the body.
     #[error("failed to find pagination in the response: {}", msg)]
     Body { msg: String },
-    /// An invalid URL can be returned.
+    /// An invalid URL.
     #[error("failed to parse a Link HTTP URL: {} {}", url, source)]
     InvalidUrl {
         url: String,
         /// The source of the error.
         #[source]
         source: url::ParseError,
+    },
+    /// A `Link` HTTP header cannot be parsed.
+    #[error("failed to parse a Link HTTP header: {}", source)]
+    LinkHeader {
+        /// The source of the error.
+        #[from]
+        source: LinkHeaderParseError,
     },
 }
 

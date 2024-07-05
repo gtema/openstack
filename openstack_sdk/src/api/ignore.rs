@@ -144,12 +144,6 @@ mod tests {
         }
     }
 
-    #[derive(Debug)]
-    struct DummyResult {
-        #[allow(dead_code)]
-        value: u8,
-    }
-
     #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_non_json_response() {

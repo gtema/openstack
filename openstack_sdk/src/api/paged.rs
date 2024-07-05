@@ -228,7 +228,7 @@ where
             }
 
             if use_keyset_pagination {
-                if next_url.is_none() && marker.is_none() {
+                if next_url.is_none() {
                     break;
                 }
             } else {
