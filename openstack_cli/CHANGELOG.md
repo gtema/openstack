@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.5.2...openstack_cli-v0.6.0) - 2024-07-05
+
+### Added
+- Allow overriding project in cli ([#313](https://github.com/gtema/openstack/pull/313))
+- Allow skipping SSL verification ([#309](https://github.com/gtema/openstack/pull/309))
+
+### Fixed
+- *(openstack_cli)* Check `api` content carefully ([#314](https://github.com/gtema/openstack/pull/314))
+- *(pagination)* Address new cornercase in pagination ([#312](https://github.com/gtema/openstack/pull/312))
+- *(auth)* Deal with InvalidPort in discovery doc ([#311](https://github.com/gtema/openstack/pull/311))
+
+### Other
+- Absent state file is not a warning ([#315](https://github.com/gtema/openstack/pull/315))
+
 ## [0.5.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.5.1...openstack_cli-v0.5.2) - 2024-06-27
 
 ### Added
