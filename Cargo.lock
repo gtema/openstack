@@ -1686,7 +1686,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_cli"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -1716,7 +1716,7 @@ dependencies = [
 
 [[package]]
 name = "openstack_sdk"
-version = "0.5.2"
+version = "0.6.0"
 dependencies = [
  "async-trait",
  "bincode",
