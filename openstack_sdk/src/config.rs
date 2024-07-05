@@ -84,7 +84,7 @@ pub struct ConfigFile {
 
 /// Authentication data
 #[derive(Clone, Default, Deserialize)]
-pub(crate) struct Auth {
+pub struct Auth {
     /// Authentication URL
     pub(crate) auth_url: Option<String>,
     /// Authentication endpoint type (public/internal/admin)

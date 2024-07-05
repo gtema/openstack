@@ -27,7 +27,9 @@ use anyhow::Context;
 use clap::Parser;
 use tracing::Level;
 
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{
+    auth::authtoken::AuthTokenScope, types::identity::v3::Project, AsyncOpenStack,
+};
 
 mod api;
 mod auth;
@@ -99,6 +101,23 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         session = AsyncOpenStack::new(&profile)
             .await
             .with_context(|| "Error during authenticating")?;
+    }
+    if cli.global_opts.os_project_id.is_some() || cli.global_opts.os_project_name.is_some() {
+        let current_project = session
+            .get_auth_info()
+            .expect("Already authenticated")
+            .token
+            .project;
+        let project = Project {
+            id: cli.global_opts.os_project_id.clone(),
+            name: cli.global_opts.os_project_name.clone(),
+            domain: current_project.expect("Current scope is project").domain,
+        };
+        let scope = AuthTokenScope::Project(project.clone());
+        session
+            .authorize(Some(scope), std::io::stdin().is_terminal(), renew_auth)
+            .await
+            .with_context(|| format!("Error during changing scope to {:?}", project))?;
     }
 
     // Invoke the command

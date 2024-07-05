@@ -15,7 +15,7 @@
 #![doc = include_str!("../README.md")]
 
 pub mod api;
-mod auth;
+pub mod auth;
 pub mod catalog;
 pub mod config;
 mod error;

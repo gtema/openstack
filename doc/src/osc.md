@@ -778,6 +778,8 @@ OpenStack client rewritten in Rust
 ###### **Options:**
 
 * `--os-cloud <OS_CLOUD>` — Name reference to the clouds.yaml entry for the cloud configuration
+* `--os-project-id <OS_PROJECT_ID>` — Project ID to use instead of the one in connection profile
+* `--os-project-name <OS_PROJECT_NAME>` — Project Name to use instead of the one in the connection profile
 * `-o`, `--output <OUTPUT>` — Output format
 
   Possible values:
