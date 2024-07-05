@@ -14,13 +14,12 @@
 
 //! Direct API command implementation
 
+use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use http::Uri;
 use serde_json::Value;
-
+use std::io::{self, Write};
 use tracing::info;
-
-use anyhow::Result;
 use url::Url;
 
 use openstack_sdk::{
@@ -148,9 +147,16 @@ impl ApiCommand {
             .await?;
 
         info!("Response = {:?}", rsp);
-        let data: Value = serde_json::from_slice(rsp.body())?;
-
-        op.output_machine(data)?;
+        if let Some(content_type) = rsp.headers().get("content-type") {
+            if content_type == "application/json" {
+                if !rsp.body().is_empty() {
+                    let data: Value = serde_json::from_slice(rsp.body())?;
+                    op.output_machine(data)?;
+                }
+            } else {
+                io::stdout().write_all(rsp.body())?;
+            }
+        }
 
         Ok(())
     }
