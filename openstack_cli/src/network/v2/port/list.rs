@@ -296,8 +296,8 @@ struct ResponseData {
     /// `hostname`, `ip_address` and `fqdn`.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    dns_assignment: Option<String>,
+    #[structable(optional, pretty, wide)]
+    dns_assignment: Option<Value>,
 
     /// A valid DNS domain.
     ///

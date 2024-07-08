@@ -401,8 +401,8 @@ struct ResponseData {
     /// `hostname`, `ip_address` and `fqdn`.
     ///
     #[serde()]
-    #[structable(optional)]
-    dns_assignment: Option<String>,
+    #[structable(optional, pretty)]
+    dns_assignment: Option<Value>,
 
     /// A valid DNS domain.
     ///
