@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.0...openstack_cli-v0.6.1) - 2024-07-08
+
+### Fixed
+- *(cli)* Fix network.port.dns_assignments schema ([#329](https://github.com/gtema/openstack/pull/329))
+
 ## [0.6.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.5.2...openstack_cli-v0.6.0) - 2024-07-05
 
 ### Added
