@@ -1695,6 +1695,7 @@ dependencies = [
  "cli-table",
  "dialoguer",
  "file_diff",
+ "futures",
  "http 1.1.0",
  "indicatif",
  "json-patch",
