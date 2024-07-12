@@ -162,6 +162,10 @@ pub enum OpenStackError {
         source: std::io::Error,
         path: String,
     },
+
+    /// Endpoint builder error
+    #[error("endpoint builder error: `{0}`")]
+    EndpointBuild(String),
 }
 
 impl OpenStackError {
