@@ -20,4 +20,5 @@ pub mod create;
 pub mod delete;
 pub mod get;
 pub mod head;
+pub mod prune;
 pub mod set;

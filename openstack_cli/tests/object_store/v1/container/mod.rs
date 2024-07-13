@@ -16,6 +16,7 @@ use assert_cmd::prelude::*;
 use std::process::Command;
 
 mod list;
+mod prune;
 
 #[test]
 fn help() -> Result<(), Box<dyn std::error::Error>> {

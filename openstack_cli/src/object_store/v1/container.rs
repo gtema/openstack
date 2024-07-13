@@ -22,6 +22,7 @@ use crate::{Cli, OpenStackCliError};
 mod create;
 mod delete;
 mod list;
+mod prune;
 mod set;
 mod show;
 
@@ -38,6 +39,7 @@ pub enum ContainerCommands {
     Create(create::ContainerCommand),
     Delete(delete::ContainerCommand),
     List(list::ContainersCommand),
+    Prune(prune::ContainerCommand),
     Set(set::ContainerCommand),
     Show(show::ContainerCommand),
 }
@@ -53,6 +55,7 @@ impl ContainerCommand {
             ContainerCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             ContainerCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             ContainerCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ContainerCommands::Prune(cmd) => cmd.take_action(parsed_args, session).await,
             ContainerCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             ContainerCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }

@@ -747,6 +747,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc object-store container create`↴](#osc-object-store-container-create)
 * [`osc object-store container delete`↴](#osc-object-store-container-delete)
 * [`osc object-store container list`↴](#osc-object-store-container-list)
+* [`osc object-store container prune`↴](#osc-object-store-container-prune)
 * [`osc object-store container set`↴](#osc-object-store-container-set)
 * [`osc object-store container show`↴](#osc-object-store-container-show)
 * [`osc object-store object`↴](#osc-object-store-object)
@@ -17114,6 +17115,7 @@ Container commands
 * `create` — Creates a container. You do not need to check whether a container already exists before issuing a PUT operation because the operation is idempotent: It creates a container or updates an existing container, as appropriate
 * `delete` — Deletes an empty container. This operation fails unless the container is empty. An empty container has no objects
 * `list` — Shows details for an account and lists containers, sorted by name, in the account
+* `prune` — Prune objects in a container
 * `set` — Creates, updates, or deletes custom metadata for a container
 * `show` — Shows container metadata, including the number of objects and the total bytes of all objects stored in the container
 
@@ -17164,6 +17166,22 @@ Shows details for an account and lists containers, sorted by name, in the accoun
 * `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
 
   Default value: `10000`
+
+
+
+## `osc object-store container prune`
+
+Prune objects in a container
+
+**Usage:** `osc object-store container prune [OPTIONS] <CONTAINER>`
+
+###### **Arguments:**
+
+* `<CONTAINER>` — The unique (within an account) name for the container. The container name must be from 1 to 256 characters long and can start with any character and contain any pattern. Character set must be UTF-8. The container name cannot contain a slash (/) character because this character delimits the container and object name
+
+###### **Options:**
+
+* `--prefix <PREFIX>` — Only objects with this prefix will be deleted
 
 
 
