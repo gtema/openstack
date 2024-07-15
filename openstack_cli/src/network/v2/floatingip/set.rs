@@ -128,8 +128,6 @@ struct ResponseData {
     #[structable(optional)]
     created_at: Option<String>,
 
-    /// A human-readable description for the resource.
-    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
@@ -178,8 +176,8 @@ struct ResponseData {
     /// this field is `null`.
     ///
     #[serde()]
-    #[structable(optional)]
-    port_details: Option<String>,
+    #[structable(optional, pretty)]
+    port_details: Option<Value>,
 
     /// The associated port forwarding resources for the floating IP. If the
     /// floating IP has multiple port forwarding resources, this field has
@@ -191,8 +189,8 @@ struct ResponseData {
     /// or (`external_port_range`).
     ///
     #[serde()]
-    #[structable(optional)]
-    port_forwardings: Option<String>,
+    #[structable(optional, pretty)]
+    port_forwardings: Option<Value>,
 
     /// The ID of a port associated with the floating IP.
     ///
