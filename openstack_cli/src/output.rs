@@ -14,13 +14,11 @@
 
 //! Output processing module
 
-use anyhow::Context;
+use cli_table::{print_stdout, Table};
+use eyre::WrapErr;
+use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
 use std::io::{self, Write};
-
-use serde::de::DeserializeOwned;
-
-use cli_table::{print_stdout, Table};
 
 use crate::cli::{Cli, OutputFormat};
 use crate::OpenStackCliError;
@@ -91,7 +89,7 @@ impl OutputProcessor {
         match self.target {
             OutputFor::Human => {
                 let table: Vec<T> = serde_json::from_value(serde_json::Value::Array(data.clone()))
-                    .with_context(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
+                    .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
                 self.output_human(&table)
             }
             _ => self.output_machine(serde_json::from_value(serde_json::Value::Array(data))?),
@@ -107,7 +105,7 @@ impl OutputProcessor {
         match self.target {
             OutputFor::Human => {
                 let table: T = serde_json::from_value(data.clone())
-                    .with_context(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
+                    .wrap_err_with(|| "Serializing Json data list into the table failed. Try using `-o json` to still see the raw data.".to_string())?;
                 self.output_human(&table)
             }
             _ => self.output_machine(serde_json::from_value(data)?),

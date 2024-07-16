@@ -23,7 +23,6 @@
 #![allow(clippy::enum_variant_names)]
 use std::io::{self, IsTerminal};
 
-use anyhow::Context;
 use clap::Parser;
 use tracing::Level;
 
@@ -79,8 +78,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         )?
         .ok_or(OpenStackCliError::ConnectionNotFound(
             cli.global_opts.os_cloud.clone().unwrap(),
-        ))
-        .with_context(|| "Error loading the connection configuration")?;
+        ))?;
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization
@@ -96,11 +94,11 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     if std::io::stdin().is_terminal() {
         session = AsyncOpenStack::new_interactive(&profile, renew_auth)
             .await
-            .with_context(|| "Error during authenticating")?;
+            .map_err(|err| OpenStackCliError::Auth { source: err })?;
     } else {
         session = AsyncOpenStack::new(&profile)
             .await
-            .with_context(|| "Error during authenticating")?;
+            .map_err(|err| OpenStackCliError::Auth { source: err })?;
     }
     if cli.global_opts.os_project_id.is_some() || cli.global_opts.os_project_name.is_some() {
         let current_project = session
@@ -115,9 +113,16 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         };
         let scope = AuthTokenScope::Project(project.clone());
         session
-            .authorize(Some(scope), std::io::stdin().is_terminal(), renew_auth)
+            .authorize(
+                Some(scope.clone()),
+                std::io::stdin().is_terminal(),
+                renew_auth,
+            )
             .await
-            .with_context(|| format!("Error during changing scope to {:?}", project))?;
+            .map_err(|err| OpenStackCliError::ReScope {
+                scope: scope,
+                source: err,
+            })?;
     }
 
     // Invoke the command

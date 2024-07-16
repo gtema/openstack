@@ -77,7 +77,7 @@ where
     #[error("resource cannot be found")]
     ResourceNotFound,
     /// Too many candidates to identitfy resource by identifier
-    #[error("cannot uniqly find resource by identifier")]
+    #[error("cannot find unambiguous resource by identifier")]
     IdNotUnique,
     /// OpenStack session error.
     #[error("openstack session error: {}", msg)]
@@ -115,7 +115,12 @@ where
         data: String,
     },
     /// OpenStack returned an HTTP error with JSON we did not recognize.
-    #[error("openstack server error: {:?}", obj)]
+    #[error(
+        "openstack server error:\n\turi: `{}`\n\tstatus: `{}`\n\tdata: `{}`",
+        uri,
+        status,
+        obj
+    )]
     OpenStackUnrecognized {
         /// The status code for the return.
         status: http::StatusCode,
@@ -133,13 +138,13 @@ where
         typename: &'static str,
     },
     /// An error with pagination occurred.
-    #[error("failed to handle for pagination: {}", source)]
+    #[error("failed to handle pagination: {}", source)]
     Pagination {
         /// The source of the error.
         #[from]
         source: PaginationError,
     },
-    #[error("Service Catalog error: {}", source)]
+    #[error("service catalog error: {}", source)]
     Catalog {
         /// The source of the error.
         #[from]
@@ -198,7 +203,8 @@ where
 
         let error_value = value
             .pointer("/message")
-            .or_else(|| value.pointer("/error"));
+            .or_else(|| value.pointer("/error"))
+            .or_else(|| value.pointer("/faultstring"));
 
         if let Some(error_value) = error_value {
             if let Some(msg) = error_value.as_str() {
@@ -343,6 +349,27 @@ mod tests {
             assert_eq!(uri, Uri::from_static("http://foo.bar"));
             assert_eq!(msg, err_obj.to_string());
             assert_eq!(status, http::StatusCode::NOT_FOUND);
+        } else {
+            panic!("unexpected error: {}", err);
+        }
+    }
+
+    #[test]
+    fn openstack_error_message_octavia() {
+        let obj = json!({
+            "faultstring": "foo",
+            "debuginfo": null
+        });
+
+        let err: ApiError<MyError> = ApiError::from_openstack(
+            Some(Uri::from_static("http://foo.bar")),
+            http::StatusCode::CONFLICT,
+            obj.clone(),
+        );
+        if let ApiError::OpenStack { status, uri, msg } = err {
+            assert_eq!(uri, Uri::from_static("http://foo.bar"));
+            assert_eq!(obj["faultstring"], msg);
+            assert_eq!(status, http::StatusCode::CONFLICT);
         } else {
             panic!("unexpected error: {}", err);
         }

@@ -21,21 +21,37 @@ use thiserror::Error;
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum OpenStackCliError {
-    /// Json serialization error
+    /// Json serialization error.
     #[error("failed to serialize data to json: {}", source)]
     SerializeJson {
         /// The source of the error.
         #[from]
         source: serde_json::Error,
     },
-    /// SDK error
+
+    /// OpenStack Auth error.
+    #[error("authentication error")]
+    Auth {
+        /// The source of the error.
+        source: openstack_sdk::OpenStackError,
+    },
+    /// Re-scope error.
+    #[error("error changing scope to {:?}", scope)]
+    ReScope {
+        /// Target scope.
+        scope: openstack_sdk::auth::authtoken::AuthTokenScope,
+        /// The source of the error.
+        source: openstack_sdk::OpenStackError,
+    },
+
+    /// SDK error.
     #[error(transparent)]
     OpenStackSDK {
         /// The source of the error.
         #[from]
         source: openstack_sdk::OpenStackError,
     },
-    /// OpenStack API error
+    /// OpenStack API error.
     #[error(transparent)]
     OpenStackApi {
         /// The source of the error.
@@ -43,7 +59,7 @@ pub enum OpenStackCliError {
         source: openstack_sdk::api::ApiError<openstack_sdk::RestError>,
     },
 
-    /// Configuration error
+    /// Configuration error.
     #[error(transparent)]
     ConfigError {
         /// The source of the error.
@@ -51,7 +67,7 @@ pub enum OpenStackCliError {
         source: openstack_sdk::config::ConfigError,
     },
 
-    /// OpenStack Service Catalog error
+    /// OpenStack Service Catalog error.
     #[error(transparent)]
     OpenStackCatalog {
         /// The source of the error.
@@ -59,71 +75,75 @@ pub enum OpenStackCliError {
         source: openstack_sdk::catalog::CatalogError,
     },
 
-    /// No subcommands
-    #[error("Command has no subcommands")]
+    /// No subcommands.
+    #[error("command has no subcommands")]
     NoSubcommands,
 
-    /// Resource is not found
-    #[error("Resource not found")]
+    /// Resource is not found.
+    #[error("resource not found")]
     ResourceNotFound,
 
-    /// Resource identifier is not unique
-    #[error("Cannot uniqly findresource by identifier")]
+    /// Resource identifier is not unique.
+    #[error("cannot find resource by identifier")]
     IdNotUnique,
 
-    /// IO error
+    /// IO error.
     #[error("IO error: {}", source)]
     IO {
         /// The source of the error.
         #[from]
         source: std::io::Error,
     },
-    /// Reqwest library error
-    #[error("Reqwest error: {}", source)]
+    /// Reqwest library error.
+    #[error("reqwest error: {}", source)]
     Reqwest {
         /// The source of the error.
         #[from]
         source: reqwest::Error,
     },
-    /// Clap library error
-    #[error("Argument parsing error: {}", source)]
+    /// Clap library error.
+    #[error("argument parsing error: {}", source)]
     Clap {
         /// The source of the error.
         #[from]
         source: clap::error::Error,
     },
-    /// Indicativ library error
-    #[error("Indicativ error: {}", source)]
+    /// Indicativ library error.
+    #[error("indicativ error: {}", source)]
     Idinticatif {
         /// The source of the error.
         #[from]
         source: indicatif::style::TemplateError,
     },
-    /// Endpoint builder error
+    /// Endpoint builder error.
     #[error("OpenStackSDK endpoint builder error: `{0}`")]
     EndpointBuild(String),
 
-    /// Connection error
-    #[error("Cloud connection for `{0:?}` cannot be found")]
+    /// Connection error.
+    #[error("cloud connection `{0:?}` cannot be found")]
     ConnectionNotFound(String),
 
-    /// Invalid header name
-    #[error("Invalid header name `{}`", source)]
+    /// Invalid header name.
+    #[error("invalid header name `{}`", source)]
     InvalidHeaderName {
         /// The source of the error.
         #[from]
         source: http::header::InvalidHeaderName,
     },
 
-    /// Invalid header value
-    #[error("Invalid header value `{}`", source)]
+    /// Invalid header value.
+    #[error("invalid header value `{}`", source)]
     InvalidHeaderValue {
         /// The source of the error.
         #[from]
         source: http::header::InvalidHeaderValue,
     },
 
-    /// Others
+    /// Anyhow error.
     #[error(transparent)]
-    Other(#[from] anyhow::Error),
+    Anyhow(#[from] anyhow::Error),
+
+    /// Others.
+    #[error(transparent)]
+    Other(#[from] eyre::Report),
 }

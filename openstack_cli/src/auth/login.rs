@@ -13,8 +13,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Perform cloud login
-use anyhow::anyhow;
 use clap::Parser;
+use eyre::eyre;
 use std::io::{self, Write};
 use tracing::info;
 
@@ -51,6 +51,6 @@ impl LoginCommand {
             stdout.write_all(&token.into_bytes())?;
             return Ok(());
         }
-        Err(anyhow!("Authorization information missing").into())
+        Err(eyre!("Authorization information missing").into())
     }
 }
