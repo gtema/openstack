@@ -17,15 +17,11 @@
 //! The binary of the CLI
 #![deny(missing_docs)]
 
-use openstack_cli::error::OpenStackCliError;
+use color_eyre::eyre::{Report, Result};
 
 #[tokio::main]
-async fn main() -> Result<(), OpenStackCliError> {
-    match openstack_cli::entry_point().await {
-        Ok(()) => Ok(()),
-        Err(e) => {
-            eprintln!("{e:#}");
-            return Err(e);
-        }
-    }
+async fn main() -> Result<(), Report> {
+    color_eyre::install()?;
+    openstack_cli::entry_point().await?;
+    Ok(())
 }
