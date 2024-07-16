@@ -19,9 +19,27 @@
 
 use color_eyre::eyre::{Report, Result};
 
+use openstack_cli::error::OpenStackCliError;
+
 #[tokio::main]
 async fn main() -> Result<(), Report> {
-    color_eyre::install()?;
+    color_eyre::config::HookBuilder::default()
+        .issue_url(concat!(env!("CARGO_PKG_REPOSITORY"), "/issues/new"))
+        .add_issue_metadata("version", env!("CARGO_PKG_VERSION"))
+        .issue_filter(|kind| match kind {
+            color_eyre::ErrorKind::NonRecoverable(_) => true,
+            color_eyre::ErrorKind::Recoverable(error) => {
+                match error.downcast_ref::<OpenStackCliError>() {
+                    Some(OpenStackCliError::OpenStackApi { .. }) => false,
+                    Some(OpenStackCliError::Auth { .. }) => false,
+                    Some(OpenStackCliError::ReScope { .. }) => false,
+                    Some(OpenStackCliError::ConnectionNotFound { .. }) => false,
+                    _ => true,
+                }
+            }
+        })
+        .install()?;
+
     openstack_cli::entry_point().await?;
     Ok(())
 }

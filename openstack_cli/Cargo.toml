@@ -45,7 +45,7 @@ anyhow = {workspace = true}
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 cli-table = "^0.4"
-color-eyre = { version = "^0.5" }
+color-eyre = { version = "^0.5", features = ["default", "issue-url"] }
 dialoguer = {workspace = true}
 eyre = { version = "^0.6" }
 http = { workspace = true }
