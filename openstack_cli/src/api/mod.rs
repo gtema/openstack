@@ -14,7 +14,6 @@
 
 //! Direct API command implementation
 
-use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use http::Uri;
 use serde_json::Value;

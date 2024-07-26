@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -33,10 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
 use openstack_sdk::api::compute::v2::server::add_security_group;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Adds a security group to a server.
@@ -58,6 +58,15 @@ pub struct ServerCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// The security group name.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    name: String,
+    /// Additional properties to be sent with the request
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
+    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -98,6 +107,12 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
+        // Set Request.name data
+        ep_builder.name(&self.name);
+
+        if let Some(properties) = &self.properties {
+            ep_builder.properties(properties.iter().cloned());
+        }
 
         let ep = ep_builder
             .build()

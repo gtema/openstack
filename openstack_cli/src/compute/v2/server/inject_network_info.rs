@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -33,10 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_json;
 use bytes::Bytes;
 use http::Response;
 use openstack_sdk::api::compute::v2::server::inject_network_info;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Injects network information into a server.
@@ -62,6 +62,9 @@ pub struct ServerCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    inject_network_info: Value,
 }
 
 /// Query parameters
@@ -102,6 +105,8 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
+        // Set Request.inject_network_info data
+        ep_builder.inject_network_info(self.inject_network_info.clone());
 
         let ep = ep_builder
             .build()

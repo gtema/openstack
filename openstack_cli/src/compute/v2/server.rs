@@ -112,7 +112,7 @@ mod topology {
     pub(super) mod list;
 }
 mod trigger_crash_dump_217;
-mod unlock;
+mod unlock_21;
 mod unpause;
 mod unrescue;
 mod unshelve_277;
@@ -248,7 +248,8 @@ pub enum ServerCommands {
     Topology(Box<topology::list::TopologiesCommand>),
     #[command(visible_alias = "trigger-crash-dump")]
     TriggerCrashDump217(Box<trigger_crash_dump_217::ServerCommand>),
-    Unlock(Box<unlock::ServerCommand>),
+    #[command(visible_alias = "unlock")]
+    Unlock21(Box<unlock_21::ServerCommand>),
     Unpause(Box<unpause::ServerCommand>),
     Unrescue(Box<unrescue::ServerCommand>),
     Unshelve277(Box<unshelve_277::ServerCommand>),
@@ -393,7 +394,7 @@ impl ServerCommand {
 
             ServerCommands::Topology(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::TriggerCrashDump217(cmd) => cmd.take_action(parsed_args, session).await,
-            ServerCommands::Unlock(cmd) => cmd.take_action(parsed_args, session).await,
+            ServerCommands::Unlock21(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unpause(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unrescue(cmd) => cmd.take_action(parsed_args, session).await,
             ServerCommands::Unshelve277(cmd) => cmd.take_action(parsed_args, session).await,

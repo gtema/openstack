@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -140,7 +138,7 @@ struct ResponseData {
     #[structable(optional)]
     expires_at: Option<String>,
 
-    /// The UUID for the credential.
+    /// The ID of the application credential.
     ///
     #[serde()]
     #[structable(optional)]
@@ -150,7 +148,9 @@ struct ResponseData {
     #[structable(optional)]
     name: Option<String>,
 
-    /// The ID for the project.
+    /// The ID of the project the application credential was created for and
+    /// that authentication requests using this application credential will be
+    /// scoped to.
     ///
     #[serde()]
     #[structable(optional)]

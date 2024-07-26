@@ -17,8 +17,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;

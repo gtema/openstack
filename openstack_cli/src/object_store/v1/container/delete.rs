@@ -22,8 +22,6 @@ use http::Response;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;

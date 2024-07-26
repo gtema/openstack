@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;

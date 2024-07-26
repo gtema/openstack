@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -33,10 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_json;
 use bytes::Bytes;
 use http::Response;
 use openstack_sdk::api::compute::v2::server::restore;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Restores a previously soft-deleted server instance. You cannot use this
@@ -63,6 +63,9 @@ pub struct ServerCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    restore: Value,
 }
 
 /// Query parameters
@@ -103,6 +106,8 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
+        // Set Request.restore data
+        ep_builder.restore(self.restore.clone());
 
         let ep = ep_builder
             .build()

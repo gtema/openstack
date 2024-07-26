@@ -41,7 +41,6 @@ network = ["openstack_sdk/network"]
 object_store = ["openstack_sdk/object_store"]
 
 [dependencies]
-anyhow = {workspace = true}
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 cli-table = "^0.4"

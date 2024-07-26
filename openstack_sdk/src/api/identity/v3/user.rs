@@ -19,6 +19,7 @@
 pub mod access_rule;
 pub mod application_credential;
 pub mod create;
+pub mod credential;
 pub mod delete;
 pub mod find;
 pub mod get;

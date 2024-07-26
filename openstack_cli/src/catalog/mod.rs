@@ -22,8 +22,6 @@ use serde_json::Value;
 use std::fmt;
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;

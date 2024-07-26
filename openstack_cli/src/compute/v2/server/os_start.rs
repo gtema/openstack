@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -33,10 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_json;
 use bytes::Bytes;
 use http::Response;
 use openstack_sdk::api::compute::v2::server::os_start;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Starts a stopped server and changes its status to `ACTIVE`.
@@ -76,6 +76,9 @@ pub struct ServerCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    os_start: Value,
 }
 
 /// Query parameters
@@ -116,6 +119,8 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
+        // Set Request.os_start data
+        ep_builder.os_start(self.os_start.clone());
 
         let ep = ep_builder
             .build()

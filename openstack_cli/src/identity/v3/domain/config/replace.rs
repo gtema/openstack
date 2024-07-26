@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -34,7 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
-use anyhow::Context;
+use eyre::WrapErr;
 use openstack_sdk::api::identity::v3::domain::config::replace;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -121,7 +119,7 @@ impl ConfigCommand {
             serde_json::from_value::<BTreeMap<String, BTreeMap<String, Value>>>(
                 self.config.clone(),
             )
-            .with_context(|| "Failed to parse `config` as dict of dicts of Value")?
+            .wrap_err_with(|| "Failed to parse `config` as dict of dicts of Value")?
             .into_iter()
             .map(|(k, v)| (k, v.into_iter())),
         );
