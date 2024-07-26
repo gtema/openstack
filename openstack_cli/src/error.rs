@@ -139,10 +139,6 @@ pub enum OpenStackCliError {
         source: http::header::InvalidHeaderValue,
     },
 
-    /// Anyhow error.
-    #[error(transparent)]
-    Anyhow(#[from] anyhow::Error),
-
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),

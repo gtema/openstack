@@ -31,8 +31,6 @@ use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OutputConfig;
@@ -246,15 +244,11 @@ impl fmt::Display for Links {
         let data = Vec::from([
             format!(
                 "href={}",
-                self.href
-                    .clone()
-                    .map_or(String::new(), |v| v.to_string())
+                self.href.clone().map_or(String::new(), |v| v.to_string())
             ),
             format!(
                 "rel={}",
-                self.rel
-                    .clone()
-                    .map_or(String::new(), |v| v.to_string())
+                self.rel.clone().map_or(String::new(), |v| v.to_string())
             ),
         ]);
         return write!(f, "{}", data.join(";"));

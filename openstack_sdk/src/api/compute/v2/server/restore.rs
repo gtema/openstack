@@ -26,6 +26,9 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(setter(into))]
+    pub(crate) restore: Value,
+
     /// id parameter for /v2.1/servers/{id}/action API
     ///
     #[builder(default, setter(into))]
@@ -82,7 +85,7 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("restore", Value::Null);
+        params.push("restore", serde_json::to_value(&self.restore)?);
 
         params.into_body()
     }
@@ -121,14 +124,23 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .restore(json!({}))
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Compute
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert!(Request::builder()
+            .restore(json!({}))
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -144,7 +156,11 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .restore(json!({}))
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -165,6 +181,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
+            .restore(json!({}))
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

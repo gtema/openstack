@@ -13,7 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Prune objects in a container.
-use anyhow::Result;
 use clap::Args;
 use tracing::info;
 

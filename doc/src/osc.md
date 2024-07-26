@@ -318,7 +318,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server tag replace226`↴](#osc-compute-server-tag-replace226)
 * [`osc compute server topology`↴](#osc-compute-server-topology)
 * [`osc compute server trigger-crash-dump217`↴](#osc-compute-server-trigger-crash-dump217)
-* [`osc compute server unlock`↴](#osc-compute-server-unlock)
+* [`osc compute server unlock21`↴](#osc-compute-server-unlock21)
 * [`osc compute server unpause`↴](#osc-compute-server-unpause)
 * [`osc compute server unrescue`↴](#osc-compute-server-unrescue)
 * [`osc compute server unshelve277`↴](#osc-compute-server-unshelve277)
@@ -4668,7 +4668,7 @@ You can specify custom server metadata at server launch time. The maximum size f
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a server, checks the existence of a tag for a server
 * `topology` — Show Server Topology
 * `trigger-crash-dump217` — Command without description in OpenAPI
-* `unlock` — Unlock Server (unlock Action)
+* `unlock21` — Unlock Server (unlock Action) (microversion = 2.1)
 * `unpause` — Unpause Server (unpause Action)
 * `unrescue` — Unrescue Server (unrescue Action)
 * `unshelve277` — Unshelve (Restore) Shelved Server (unshelve Action) (microversion = 2.77)
@@ -4742,11 +4742,16 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server add-security-group <ID>`
+**Usage:** `osc compute server add-security-group [OPTIONS] --name <NAME> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The security group name
+* `--property <key=value>` — Additional properties to be sent with the request
 
 
 
@@ -4798,11 +4803,15 @@ Normal response codes: 204
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server confirm-resize <ID>`
+**Usage:** `osc compute server confirm-resize --confirm-resize <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--confirm-resize <JSON>`
 
 
 
@@ -6310,11 +6319,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server force-delete <ID>`
+**Usage:** `osc compute server force-delete --force-delete <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--force-delete <JSON>`
 
 
 
@@ -6516,11 +6529,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server inject-network-info <ID>`
+**Usage:** `osc compute server inject-network-info --inject-network-info <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--inject-network-info <JSON>`
 
 
 
@@ -6784,21 +6801,7 @@ Live-Migrate Server (os-migrateLive Action) (microversion = 2.68)
 
 ## `osc compute server lock273`
 
-Locks a server.
-
-Specify the `lock` action in the request body.
-
-Most actions by non-admin users are not allowed to the server after this operation is successful and the server is locked. See the “Lock, Unlock” item in [Server actions](https://docs.openstack.org/api-guide/compute/server_concepts.html#server-actions) for the restricted actions. But administrators can perform actions on the server even though the server is locked. Note that from microversion 2.73 it is possible to specify a reason when locking the server.
-
-The [unlock action](https://docs.openstack.org/api-ref/compute/#unlock-server-unlock-action) will unlock a server in locked state so additional actions can be performed on the server by non-admin users.
-
-You can know whether a server is locked or not and the `locked_reason` (if specified, from the 2.73 microversion) by the [List Servers Detailed API](https://docs.openstack.org/api-ref/compute/#list-servers-detailed) or the [Show Server Details API](https://docs.openstack.org/api-ref/compute/#show-server-details).
-
-Policy defaults enable only users with the administrative role or the owner of the server to perform this operation. Cloud providers can change these permissions through the `policy.json` file. Administrators can overwrite owner’s lock.
-
-Normal response codes: 202
-
-Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
+Lock Server (lock Action) (microversion = 2.73)
 
 **Usage:** `osc compute server lock273 [OPTIONS] <ID>`
 
@@ -7185,11 +7188,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
 
-**Usage:** `osc compute server pause <ID>`
+**Usage:** `osc compute server pause --pause <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--pause <JSON>`
 
 
 
@@ -7738,11 +7745,16 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server remove-security-group <ID>`
+**Usage:** `osc compute server remove-security-group [OPTIONS] --name <NAME> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--name <NAME>` — The security group name
+* `--property <key=value>` — Additional properties to be sent with the request
 
 
 
@@ -7847,11 +7859,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server restore <ID>`
+**Usage:** `osc compute server restore --restore <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--restore <JSON>`
 
 
 
@@ -7867,11 +7883,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server resume <ID>`
+**Usage:** `osc compute server resume --resume <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--resume <JSON>`
 
 
 
@@ -7901,11 +7921,15 @@ Normal response codes: 202
 
 Error response codes: badRequest(400), unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server revert-resize <ID>`
+**Usage:** `osc compute server revert-resize --revert-resize <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--revert-resize <JSON>`
 
 
 
@@ -8094,11 +8118,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server shelve <ID>`
+**Usage:** `osc compute server shelve --shelve <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--shelve <JSON>`
 
 
 
@@ -8130,11 +8158,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server shelve-offload <ID>`
+**Usage:** `osc compute server shelve-offload --shelve-offload <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--shelve-offload <JSON>`
 
 
 
@@ -8190,11 +8222,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server start <ID>`
+**Usage:** `osc compute server start --os-start <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--os-start <JSON>`
 
 
 
@@ -8218,11 +8254,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server stop <ID>`
+**Usage:** `osc compute server stop --os-stop <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--os-stop <JSON>`
 
 
 
@@ -8238,11 +8278,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409)
 
-**Usage:** `osc compute server suspend <ID>`
+**Usage:** `osc compute server suspend --suspend <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--suspend <JSON>`
 
 
 
@@ -8414,7 +8458,7 @@ Command without description in OpenAPI
 
 
 
-## `osc compute server unlock`
+## `osc compute server unlock21`
 
 Unlocks a locked server.
 
@@ -8426,11 +8470,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404)
 
-**Usage:** `osc compute server unlock <ID>`
+**Usage:** `osc compute server unlock21 --unlock <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--unlock <JSON>`
 
 
 
@@ -8446,11 +8494,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
 
-**Usage:** `osc compute server unpause <ID>`
+**Usage:** `osc compute server unpause --unpause <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--unpause <JSON>`
 
 
 
@@ -8474,11 +8526,15 @@ Normal response codes: 202
 
 Error response codes: unauthorized(401), forbidden(403), itemNotFound(404), conflict(409), notImplemented(501)
 
-**Usage:** `osc compute server unrescue <ID>`
+**Usage:** `osc compute server unrescue --unrescue <JSON> <ID>`
 
 ###### **Arguments:**
 
 * `<ID>` — id parameter for /v2.1/servers/{id}/action API
+
+###### **Options:**
+
+* `--unrescue <JSON>`
 
 
 

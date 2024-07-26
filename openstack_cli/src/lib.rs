@@ -119,10 +119,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
                 renew_auth,
             )
             .await
-            .map_err(|err| OpenStackCliError::ReScope {
-                scope: scope,
-                source: err,
-            })?;
+            .map_err(|err| OpenStackCliError::ReScope { scope, source: err })?;
     }
 
     // Invoke the command

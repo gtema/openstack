@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -36,8 +34,8 @@ use crate::StructTable;
 use crate::common::parse_json;
 use crate::common::parse_key_val;
 use crate::common::BoolString;
-use anyhow::Context;
 use clap::ValueEnum;
+use eyre::WrapErr;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::network::v2::port::set;

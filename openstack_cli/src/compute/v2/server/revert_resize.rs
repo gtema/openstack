@@ -23,8 +23,6 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use anyhow::Result;
-
 use openstack_sdk::AsyncOpenStack;
 
 use crate::output::OutputProcessor;
@@ -33,10 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_json;
 use bytes::Bytes;
 use http::Response;
 use openstack_sdk::api::compute::v2::server::revert_resize;
 use openstack_sdk::api::RawQueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Cancels and reverts a pending resize action for a server.
@@ -84,6 +84,9 @@ pub struct ServerCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    revert_resize: Value,
 }
 
 /// Query parameters
@@ -124,6 +127,8 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
+        // Set Request.revert_resize data
+        ep_builder.revert_resize(self.revert_resize.clone());
 
         let ep = ep_builder
             .build()
