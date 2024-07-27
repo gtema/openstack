@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.1...openstack_cli-v0.6.2) - 2024-07-27
+
+### Added
+- *(deps)* Drop anyhow dependency ([#368](https://github.com/gtema/openstack/pull/368))
+- *(cli)* Start switch to eyre for error handling ([#357](https://github.com/gtema/openstack/pull/357))
+
+### Fixed
+- *(deps)* update rust crate color-eyre to ^0.6.0 ([#364](https://github.com/gtema/openstack/pull/364))
+- Fix network.fip cli command ([#355](https://github.com/gtema/openstack/pull/355))
+
+### Other
+- *(deps)* Update dependencies ([#367](https://github.com/gtema/openstack/pull/367))
+
 ## [0.6.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.0...openstack_cli-v0.6.1) - 2024-07-15
 
 ### Added

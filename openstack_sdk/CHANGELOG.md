@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.6.1...openstack_sdk-v0.7.0) - 2024-07-27
+
+### Added
+- *(deps)* Drop anyhow dependency ([#368](https://github.com/gtema/openstack/pull/368))
+- *(cli)* Start switch to eyre for error handling ([#357](https://github.com/gtema/openstack/pull/357))
+
+### Other
+- *(deps)* Update dependencies ([#367](https://github.com/gtema/openstack/pull/367))
+
 ## [0.6.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.6.0...openstack_sdk-v0.6.1) - 2024-07-15
 
 ### Added
