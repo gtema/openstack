@@ -1,6 +1,6 @@
 ################
 ##### Builder
-FROM rust:1.80.0-slim as builder
+FROM rust:1.80.0-slim@sha256:37e6f90f98b3afd15c2526d7abb257a1f4cb7d49808fe3729d9d62020b07b544 as builder
 
 RUN rustup target add x86_64-unknown-linux-musl &&\
     apt update && \
@@ -47,7 +47,7 @@ RUN cargo build --target x86_64-unknown-linux-musl --release
 
 ################
 ##### Runtime
-FROM alpine:3.20.0 AS runtime
+FROM alpine:3.20.2@sha256:eddacbc7e24bf8799a4ed3cdcfa50d4b88a323695ad80f317b6629883b2c2a78 AS runtime
 
 LABEL maintainer="Artem Goncharov"
 
