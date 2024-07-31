@@ -61,7 +61,7 @@ pub struct TokenCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// Auth data with user’s identity and Service Provider scope information
+    /// An `auth` object.
     ///
     #[command(flatten)]
     auth: Auth,

@@ -35,13 +35,11 @@ use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Update the attribute mapping for an identity provider and protocol.
+/// Update protocol for an IDP.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol`
+/// PATCH /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 ///
 #[derive(Args)]
-#[command(about = "Update attribute mapping for identity provider")]
 pub struct ProtocolCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -51,8 +49,6 @@ pub struct ProtocolCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// The Federation Protocol object
-    ///
     #[command(flatten)]
     protocol: Protocol,
 }

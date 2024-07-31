@@ -36,13 +36,11 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Gets an access token.
+/// Get specific access token.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-OAUTH1/1.0/rel/user_access_token`
+/// GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}
 ///
 #[derive(Args)]
-#[command(about = "Get access token")]
 pub struct AccessTokenCommand {
     /// Request Query parameters
     #[command(flatten)]

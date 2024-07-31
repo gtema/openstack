@@ -37,13 +37,11 @@ use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Delete a protocol and attribute mapping from an identity provider.
+/// Delete a protocol from an IDP.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol`
+/// DELETE /OS-FEDERATION/identity_providers/ {idp_id}/protocols/{protocol_id}
 ///
 #[derive(Args)]
-#[command(about = "Delete a protocol from identity provider")]
 pub struct ProtocolCommand {
     /// Request Query parameters
     #[command(flatten)]

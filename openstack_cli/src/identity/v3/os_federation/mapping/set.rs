@@ -37,13 +37,11 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Update a federated mapping.
+/// Update an attribute mapping for identity federation.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mapping`
+/// PATCH /OS-FEDERATION/mappings/{mapping_id}
 ///
 #[derive(Args)]
-#[command(about = "Update a mapping")]
 pub struct MappingCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -76,8 +74,6 @@ struct PathParameters {
 /// Mapping Body data
 #[derive(Args, Clone)]
 struct Mapping {
-    /// The list of rules used to map remote users into local users
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     rules: Vec<Value>,
 
@@ -96,8 +92,6 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The list of rules used to map remote users into local users
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     rules: Option<Value>,

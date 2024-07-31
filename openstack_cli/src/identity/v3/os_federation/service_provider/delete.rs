@@ -39,11 +39,9 @@ use structable_derive::StructTable;
 
 /// Delete a service provider.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
+/// DELETE /OS-FEDERATION/service_providers/{sp_id}
 ///
 #[derive(Args)]
-#[command(about = "Delete service provider")]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
     #[command(flatten)]

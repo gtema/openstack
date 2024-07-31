@@ -35,13 +35,9 @@ use openstack_sdk::api::identity::v3::os_federation::service_provider::get;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Get a specific service provider reference.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
+/// GET operation on /v3/OS-FEDERATION/service_providers/{sp_id}
 ///
 #[derive(Args)]
-#[command(about = "Get service provider")]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
     #[command(flatten)]
