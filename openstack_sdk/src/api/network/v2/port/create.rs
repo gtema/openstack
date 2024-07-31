@@ -77,6 +77,8 @@ pub enum NumaAffinityPolicy {
     Preferred,
     #[serde(rename = "required")]
     Required,
+    #[serde(rename = "socket")]
+    Socket,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

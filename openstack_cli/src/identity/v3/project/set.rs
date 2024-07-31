@@ -98,12 +98,14 @@ struct Project {
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     is_domain: Option<bool>,
@@ -147,7 +149,8 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde()]
     #[structable(optional)]
@@ -159,7 +162,8 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde()]
     #[structable(optional)]

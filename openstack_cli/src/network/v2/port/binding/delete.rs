@@ -37,9 +37,12 @@ use openstack_sdk::api::network::v2::port::binding::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Command without description in OpenAPI
+/// Normal response codes: 204
+///
+/// Error response codes: 401, 403, 404, 412
 ///
 #[derive(Args)]
+#[command(about = "Delete Port Binding")]
 pub struct BindingCommand {
     /// Request Query parameters
     #[command(flatten)]

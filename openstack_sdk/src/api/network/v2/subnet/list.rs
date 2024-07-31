@@ -115,6 +115,11 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     revision_number: Option<Cow<'a, str>>,
 
+    /// The membership of a subnet to an external network.
+    ///
+    #[builder(default)]
+    router_external: Option<bool>,
+
     /// segment_id query parameter for /v2.0/subnets API
     ///
     #[builder(default, setter(into))]
@@ -260,6 +265,7 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("ipv6_address_mode", self.ipv6_address_mode.as_ref());
         params.push_opt("shared", self.shared);
         params.push_opt("revision_number", self.revision_number.as_ref());
+        params.push_opt("router:external", self.router_external);
         params.push_opt("tags", self.tags.as_ref());
         params.push_opt("tags-any", self.tags_any.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());

@@ -41,19 +41,11 @@ use openstack_sdk::api::RawQueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// A user may generate a SAML assertion document based on the scoped token
-/// that is used in the request.
+/// Exchange a scoped token for a SAML assertion.
 ///
-/// Request Parameters:
-///
-/// To generate a SAML assertion, a user must provides a scoped token ID and
-/// Service Provider ID in the request body.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/saml2`
+/// POST /v3/auth/OS-FEDERATION/saml2
 ///
 #[derive(Args)]
-#[command(about = "Generate a SAML assertion")]
 pub struct Saml2Command {
     /// Request Query parameters
     #[command(flatten)]
@@ -63,7 +55,7 @@ pub struct Saml2Command {
     #[command(flatten)]
     path: PathParameters,
 
-    /// Auth data with user’s identity and Service Provider scope information
+    /// An `auth` object.
     ///
     #[command(flatten)]
     auth: Auth,

@@ -36,19 +36,11 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// **Deprecated in v1.1**. Use core `GET /auth/projects`. This call has the
-/// same response format.
+/// Get possible project scopes for token.
 ///
-/// Returns a collection of projects to which the federated user has
-/// authorization to access. To access this resource, an unscoped token is
-/// used, the user can then select a project and request a scoped token. Note
-/// that only enabled projects will be returned.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/projects`
+/// GET/HEAD /v3/auth/projects GET/HEAD /v3/OS-FEDERATION/projects
 ///
 #[derive(Args)]
-#[command(about = "List projects a federated user can access")]
 pub struct ProjectsCommand {
     /// Request Query parameters
     #[command(flatten)]

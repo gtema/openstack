@@ -36,13 +36,11 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Register an identity provider to be used to authenticate federated users.
+/// Create an idp resource for federated authentication.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider`
+/// PUT /OS-FEDERATION/identity_providers/{idp_id}
 ///
 #[derive(Args)]
-#[command(about = "Register an identity provider")]
 pub struct IdentityProviderCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -76,32 +74,21 @@ struct PathParameters {
 /// IdentityProvider Body data
 #[derive(Args, Clone)]
 struct IdentityProvider {
-    /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database. If left unset, the
-    /// default value configured in keystone will be used, if enabled.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     authorization_ttl: Option<Option<i32>>,
 
-    /// The Identity Provider description
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The ID of a domain that is associated with the Identity Provider.
-    /// Federated users that authenticate with the Identity Provider will be
-    /// created under the domain specified.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
-    /// List of the unique Identity Provider’s remote IDs
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     remote_ids: Option<Vec<String>>,
 }
@@ -110,8 +97,7 @@ struct IdentityProvider {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database. If left unset, the
-    /// default value configured in keystone will be used, if enabled.
+    /// through mapping and persisted in the database.
     ///
     #[serde()]
     #[structable(optional)]
@@ -124,8 +110,6 @@ struct ResponseData {
     description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
-    /// Federated users that authenticate with the Identity Provider will be
-    /// created under the domain specified.
     ///
     #[serde()]
     #[structable(optional)]

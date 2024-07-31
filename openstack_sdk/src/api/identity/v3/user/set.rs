@@ -117,7 +117,8 @@ pub struct User<'a> {
     #[builder(default, setter(into))]
     pub(crate) domain_id: Option<Cow<'a, str>>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]

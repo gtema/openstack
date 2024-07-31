@@ -37,13 +37,11 @@ use openstack_sdk::api::identity::v3::os_federation::mapping::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Remove a specific federated mapping.
+/// Delete a mapping.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/mapping`
+/// DELETE /OS-FEDERATION/mappings/{mapping_id}
 ///
 #[derive(Args)]
-#[command(about = "Delete a mapping")]
 pub struct MappingCommand {
     /// Request Query parameters
     #[command(flatten)]

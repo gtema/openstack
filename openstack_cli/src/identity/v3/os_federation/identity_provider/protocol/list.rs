@@ -35,13 +35,11 @@ use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// List all protocol and attribute mappings of an identity provider.
+/// List protocols for an IDP.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocols`
+/// HEAD/GET /OS-FEDERATION/identity_providers/{idp_id}/protocols
 ///
 #[derive(Args)]
-#[command(about = "List protocols of identity provider")]
 pub struct ProtocolsCommand {
     /// Request Query parameters
     #[command(flatten)]
