@@ -141,6 +141,11 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     revision_number: Option<String>,
 
+    /// The membership of a subnet to an external network.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    router_external: Option<bool>,
+
     /// segment_id query parameter for /v2.0/subnets API
     ///
     #[arg(help_heading = "Query parameters", long)]
@@ -279,6 +284,10 @@ struct ResponseData {
     #[structable(optional, wide)]
     revision_number: Option<i32>,
 
+    #[serde(rename = "router:external")]
+    #[structable(optional, title = "router:external", wide)]
+    router_external: Option<BoolString>,
+
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
     ///
@@ -371,6 +380,9 @@ impl SubnetsCommand {
         }
         if let Some(val) = &self.query.revision_number {
             ep_builder.revision_number(val);
+        }
+        if let Some(val) = &self.query.router_external {
+            ep_builder.router_external(*val);
         }
         if let Some(val) = &self.query.tags {
             ep_builder.tags(val.iter());

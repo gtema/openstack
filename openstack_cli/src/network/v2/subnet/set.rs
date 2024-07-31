@@ -251,6 +251,10 @@ struct ResponseData {
     #[structable(optional)]
     revision_number: Option<i32>,
 
+    #[serde(rename = "router:external")]
+    #[structable(optional, title = "router:external")]
+    router_external: Option<BoolString>,
+
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
     ///
