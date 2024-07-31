@@ -32,9 +32,10 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::snapshot::create;
-use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Creates a new snapshot.
@@ -99,126 +100,7 @@ struct Snapshot {
 
 /// Snapshot response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Whether this resource consumes quota or not. Resources that not counted
-    /// for quota usage are usually temporary internal resources created to
-    /// perform an operation.
-    ///
-    /// **New in version 3.65**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    consumes_quota: Option<bool>,
-
-    /// The total count of requested resource before pagination is applied.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    count: Option<i32>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// A description for the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    /// **New in version 3.14**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_snapshot_id: Option<String>,
-
-    /// The UUID of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// One or more metadata key and value pairs for the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The name of the snapshot. Default is `None`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// A percentage value for the build progress.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:progress")]
-    #[structable(optional, title = "os-extended-snapshot-attributes:progress")]
-    os_extended_snapshot_attributes_progress: Option<String>,
-
-    /// The UUID of the owning project.
-    ///
-    #[serde(rename = "os-extended-snapshot-attributes:project_id")]
-    #[structable(optional, title = "os-extended-snapshot-attributes:project_id")]
-    os_extended_snapshot_attributes_project_id: Option<String>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    size: Option<i64>,
-
-    /// The status for the snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The date and time when the resource was updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
-}
+struct ResponseData {}
 
 impl SnapshotCommand {
     /// Perform command action
@@ -268,8 +150,10 @@ impl SnapshotCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

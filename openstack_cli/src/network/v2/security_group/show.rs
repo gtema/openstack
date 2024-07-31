@@ -117,7 +117,7 @@ struct ResponseData {
     #[structable(optional)]
     security_group_rules: Option<String>,
 
-    /// Indicates whether this security group is shared to the requester’s
+    /// Indicates whether this security group is shared to the requestor’s
     /// project.
     ///
     #[serde()]

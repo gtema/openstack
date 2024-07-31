@@ -32,9 +32,10 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::group_type::create_311;
-use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Creates a new group type.
@@ -90,38 +91,7 @@ struct GroupType {
 
 /// GroupType response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The group type description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// A set of key and value pairs that contains the specifications for a
-    /// group type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    group_specs: Option<Value>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Whether the group type is publicly visible.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_public: Option<bool>,
-
-    /// The group type name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
+struct ResponseData {}
 
 impl GroupTypeCommand {
     /// Perform command action
@@ -165,8 +135,10 @@ impl GroupTypeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

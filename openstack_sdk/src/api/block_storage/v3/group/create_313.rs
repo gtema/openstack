@@ -135,7 +135,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("group".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -181,21 +181,18 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder()
-                .group(
-                    GroupBuilder::default()
-                        .group_type("foo")
-                        .volume_types(Vec::from(["foo".into()]))
-                        .build()
-                        .unwrap()
-                )
-                .build()
-                .unwrap()
-                .response_key()
-                .unwrap(),
-            "group"
-        );
+        assert!(Request::builder()
+            .group(
+                GroupBuilder::default()
+                    .group_type("foo")
+                    .volume_types(Vec::from(["foo".into()]))
+                    .build()
+                    .unwrap()
+            )
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -208,7 +205,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "group": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
@@ -236,7 +233,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "group": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()

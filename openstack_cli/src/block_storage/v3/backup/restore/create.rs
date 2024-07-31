@@ -31,8 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::backup::restore::create;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Restore an existing backup to a volume.
@@ -79,25 +81,7 @@ struct Restore {
 
 /// Restore response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID for a backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    backup_id: Option<String>,
-
-    /// The volume name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    backup_name: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
-}
+struct ResponseData {}
 
 impl RestoreCommand {
     /// Perform command action
@@ -133,8 +117,10 @@ impl RestoreCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

@@ -124,8 +124,6 @@ struct ResponseData {
 
     /// Transfer volume without snapshots. Defaults to False if not specified.
     ///
-    /// **New in version 3.55**
-    ///
     #[serde()]
     #[structable(optional)]
     no_snapshots: Option<bool>,

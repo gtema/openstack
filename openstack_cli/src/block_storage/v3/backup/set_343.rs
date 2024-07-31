@@ -148,15 +148,16 @@ struct ResponseData {
     #[structable(optional)]
     is_incremental: Option<bool>,
 
-    /// Links for the backup.
+    /// Links to the resources in question. See
+    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+    /// for more info.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     links: Option<Value>,
 
-    /// The backup metadata key value pairs.
-    ///
-    /// **New in version 3.43**
+    /// A metadata object. Contains one or more metadata key and value pairs
+    /// that are associated with the resource.
     ///
     #[serde()]
     #[structable(optional, pretty)]

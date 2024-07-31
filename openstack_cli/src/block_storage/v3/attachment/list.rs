@@ -129,7 +129,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
-    connection_info: Option<Value>,
+    connecttion_info: Option<Value>,
 
     /// The time when attachment is detached.
     ///

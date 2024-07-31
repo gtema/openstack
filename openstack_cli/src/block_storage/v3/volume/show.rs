@@ -73,22 +73,7 @@ struct ResponseData {
     /// instance, the attachments list includes the UUID of the attached
     /// server, an attachment UUID, the name of the attached host, if any, the
     /// volume UUID, the device, and the device UUID. Otherwise, this list is
-    /// empty. For example:
-    ///
-    /// ```text
-    /// [
-    ///   {
-    ///     'server_id': '6c8cf6e0-4c8f-442f-9196-9679737feec6',
-    ///     'attachment_id': '3dafcac4-1cb9-4b60-a227-d729baa10cf6',
-    ///     'attached_at': '2019-09-30T19:30:34.000000',
-    ///     'host_name': null,
-    ///     'volume_id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53',
-    ///     'device': '/dev/vda',
-    ///     'id': '5d95d5ee-4bdd-4452-b9d7-d44ca10d3d53'
-    ///   }
-    /// ]
-    ///
-    /// ```
+    /// empty.
     ///
     #[serde()]
     #[structable(optional, pretty)]
@@ -101,8 +86,6 @@ struct ResponseData {
     availability_zone: Option<String>,
 
     /// The cluster name of volume backend.
-    ///
-    /// **New in version 3.61**
     ///
     #[serde()]
     #[structable(optional)]
@@ -118,26 +101,11 @@ struct ResponseData {
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
     ///
-    /// **New in version 3.65**
-    ///
     #[serde()]
     #[structable(optional)]
     consumes_quota: Option<bool>,
 
     /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
     ///
     #[serde()]
     #[structable(optional)]
@@ -157,8 +125,6 @@ struct ResponseData {
 
     /// The ID of the group.
     ///
-    /// **New in version 3.13**
-    ///
     #[serde()]
     #[structable(optional)]
     group_id: Option<String>,
@@ -169,14 +135,16 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The volume links.
+    /// Links to the resources in question. See
+    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+    /// for more info.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     links: Option<Value>,
 
-    /// A `metadata` object. Contains one or more metadata key and value pairs
-    /// that are associated with the volume.
+    /// A metadata object. Contains one or more metadata key and value pairs
+    /// that are associated with the resource.
     ///
     #[serde()]
     #[structable(optional, pretty)]
@@ -201,10 +169,8 @@ struct ResponseData {
     name: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
-    /// driver or `null` if the driver doesn’t use the field or if it hasn’t
+    /// driver or null if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
-    ///
-    /// **New in version 3.21**
     ///
     #[serde()]
     #[structable(optional)]
@@ -219,19 +185,15 @@ struct ResponseData {
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
     ///
-    /// **New in version 3.48**
-    ///
     #[serde()]
     #[structable(optional)]
     service_uuid: Option<String>,
 
     /// An indicator whether the host connecting the volume should lock for the
-    /// whole attach/detach process or not. `true` means only is iSCSI
-    /// initiator running on host doesn’t support manual scans, `false` means
-    /// never use locks, and `null` means to always use locks. Look at
-    /// os-brick’s `guard_connection` context manager. Default=True.
-    ///
-    /// **New in version 3.69**
+    /// whole attach/detach process or not. true means only is iSCSI initiator
+    /// running on host doesn’t support manual scans, false means never use
+    /// locks, and null means to always use locks. Look at os-brick’s
+    /// guard_connection context manager. Default=True.
     ///
     #[serde()]
     #[structable(optional)]
@@ -266,22 +228,6 @@ struct ResponseData {
 
     /// The date and time when the resource was updated.
     ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
@@ -299,8 +245,6 @@ struct ResponseData {
     volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
-    ///
-    /// **New in version 3.63**
     ///
     #[serde()]
     #[structable(optional)]

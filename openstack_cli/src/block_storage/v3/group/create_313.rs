@@ -31,9 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::group::create_313;
-use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Create a new group.
@@ -96,87 +97,7 @@ struct Group {
 
 /// Group response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The group description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_snapshot_id: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type: Option<String>,
-
-    /// The UUID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The group name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The UUID of the volume group project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The group replication status.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    replication_status: Option<String>,
-
-    /// The UUID of the source group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_group_id: Option<String>,
-
-    /// The status of the generic group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The list of volume types. In an environment with multiple-storage back
-    /// ends, the scheduler determines where to send the volume based on the
-    /// volume type.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    volume_types: Option<Value>,
-
-    /// A list of volume ids, available only when list_volume set true.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    volumes: Option<Value>,
-}
+struct ResponseData {}
 
 impl GroupCommand {
     /// Perform command action
@@ -221,8 +142,10 @@ impl GroupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

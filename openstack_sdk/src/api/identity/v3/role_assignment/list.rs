@@ -33,7 +33,7 @@
 //! `GET /v3/role_assignments?scope.project.id={project_id}&include_subtree=true`
 //! would list all role assignments involving the specified project and all
 //! sub-projects. `include_subtree=true` can only be specified in conjunction
-//! with `scope.project.id`, specifying it without this will result in an HTTP
+//! with `scope.project.id`, specifiying it without this will result in an HTTP
 //! 400 Bad Request being returned.
 //!
 //! Each role assignment entity in the collection contains a link to the

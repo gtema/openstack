@@ -36,7 +36,7 @@
 //! code with information about the failure in the response body. Validation
 //! errors require that you correct the error and submit the request again.
 //!
-//! All the rules associated with a given policy are logically ANDead together.
+//! All the rules associated with a given policy are logically ANDed together.
 //! A request must match all the policy’s rules to match the policy.
 //!
 //! If you need to express a logical OR operation between rules, then do this

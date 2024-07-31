@@ -31,8 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::default_type::get;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Return detail of a default type.
@@ -66,19 +68,7 @@ struct PathParameters {
 }
 /// DefaultType response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The UUID for an existing volume type.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_type_id: Option<String>,
-}
+struct ResponseData {}
 
 impl DefaultTypeCommand {
     /// Perform command action
@@ -103,8 +93,10 @@ impl DefaultTypeCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

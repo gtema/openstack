@@ -32,9 +32,11 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
+use bytes::Bytes;
 use clap::ValueEnum;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::attachment::create_354;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
@@ -161,56 +163,7 @@ struct Attachment {
 
 /// Attachment response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The attach mode of attachment, read-only (‘ro’) or read-and-write
-    /// (‘rw’), default is ‘rw’.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    attach_mode: Option<String>,
-
-    /// The time when attachment is attached.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    attached_at: Option<String>,
-
-    /// The connection info used for server to connect the volume.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    connection_info: Option<Value>,
-
-    /// The time when attachment is detached.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    detached_at: Option<String>,
-
-    /// The ID of attachment.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The UUID of the attaching instance.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    instance: Option<String>,
-
-    /// The status of the attachment.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The UUID of the volume which the attachment belongs to.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
-}
+struct ResponseData {}
 
 impl AttachmentCommand {
     /// Perform command action
@@ -257,8 +210,10 @@ impl AttachmentCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

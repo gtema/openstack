@@ -173,12 +173,13 @@ impl<'a> RestEndpoint for Request<'a> {
     fn request_headers(&self) -> Option<&HeaderMap> {
         self._headers.as_ref()
     }
-}
-impl<'a> Pageable for Request<'a> {
-    fn use_keyset_pagination(&self) -> bool {
-        false
+
+    /// Returns required API version
+    fn api_version(&self) -> Option<ApiVersion> {
+        Some(ApiVersion::new(1, 0))
     }
 }
+impl<'a> Pageable for Request<'a> {}
 
 #[cfg(test)]
 mod tests {

@@ -31,9 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::volume_transfer::create_355;
-use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Create a new volume transfer.
@@ -84,82 +85,7 @@ struct Transfer {
 
 /// VolumeTransfer response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// Records if this transfer was accepted or not.
-    ///
-    /// **New in version 3.57**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    accepted: Option<bool>,
-
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// Records the destination project_id after volume transfer.
-    ///
-    /// **New in version 3.57**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    destination_project_id: Option<String>,
-
-    /// The UUID of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Links for the message.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The name of the object.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// Transfer volume without snapshots. Defaults to False if not specified.
-    ///
-    /// **New in version 3.55**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    no_snapshots: Option<bool>,
-
-    /// Records the source project_id before volume transfer.
-    ///
-    /// **New in version 3.57**
-    ///
-    #[serde()]
-    #[structable(optional)]
-    source_project_id: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
-}
+struct ResponseData {}
 
 impl VolumeTransferCommand {
     /// Perform command action
@@ -199,8 +125,10 @@ impl VolumeTransferCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }
