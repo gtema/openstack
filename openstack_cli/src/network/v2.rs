@@ -31,6 +31,7 @@ mod router;
 mod security_group;
 mod security_group_rule;
 mod subnet;
+mod subnetpool;
 
 /// Network (Neutron) commands
 #[derive(Parser)]
@@ -55,6 +56,8 @@ pub enum NetworkCommands {
     SecurityGroup(Box<security_group::SecurityGroupCommand>),
     SecurityGroupRule(Box<security_group_rule::SecurityGroupRuleCommand>),
     Subnet(Box<subnet::SubnetCommand>),
+    #[command(visible_alias = "subnet-pool")]
+    Subnetpool(Box<subnetpool::SubnetPoolCommand>),
 }
 
 impl NetworkCommand {
@@ -80,6 +83,7 @@ impl NetworkCommand {
             NetworkCommands::SecurityGroup(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::SecurityGroupRule(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Subnet(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Subnetpool(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

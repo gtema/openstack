@@ -757,6 +757,18 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network subnet tag delete`↴](#osc-network-subnet-tag-delete)
 * [`osc network subnet tag list`↴](#osc-network-subnet-tag-list)
 * [`osc network subnet tag purge`↴](#osc-network-subnet-tag-purge)
+* [`osc network subnetpool`↴](#osc-network-subnetpool)
+* [`osc network subnetpool create`↴](#osc-network-subnetpool-create)
+* [`osc network subnetpool delete`↴](#osc-network-subnetpool-delete)
+* [`osc network subnetpool list`↴](#osc-network-subnetpool-list)
+* [`osc network subnetpool set`↴](#osc-network-subnetpool-set)
+* [`osc network subnetpool show`↴](#osc-network-subnetpool-show)
+* [`osc network subnetpool tag`↴](#osc-network-subnetpool-tag)
+* [`osc network subnetpool tag add`↴](#osc-network-subnetpool-tag-add)
+* [`osc network subnetpool tag check`↴](#osc-network-subnetpool-tag-check)
+* [`osc network subnetpool tag delete`↴](#osc-network-subnetpool-tag-delete)
+* [`osc network subnetpool tag list`↴](#osc-network-subnetpool-tag-list)
+* [`osc network subnetpool tag purge`↴](#osc-network-subnetpool-tag-purge)
 * [`osc object-store`↴](#osc-object-store)
 * [`osc object-store account`↴](#osc-object-store-account)
 * [`osc object-store account show`↴](#osc-object-store-account-show)
@@ -15015,6 +15027,7 @@ Network (Neutron) commands
 * `security-group` — SecurityGroup commands
 * `security-group-rule` — SecurityGroupRule commands
 * `subnet` — Subnet commands
+* `subnetpool` — SubnetPool commands
 
 
 
@@ -17488,6 +17501,249 @@ Command without description in OpenAPI
 ###### **Arguments:**
 
 * `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
+
+
+
+## `osc network subnetpool`
+
+SubnetPool commands
+
+**Usage:** `osc network subnetpool <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create subnet pool
+* `delete` — Delete subnet pool
+* `list` — List subnet pools
+* `set` — Update subnet pool
+* `show` — Show subnet pool
+* `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+
+
+## `osc network subnetpool create`
+
+Creates a subnet pool.
+
+Normal response codes: 201
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc network subnetpool create [OPTIONS]`
+
+###### **Options:**
+
+* `--address-scope-id <ADDRESS_SCOPE_ID>` — An address scope to assign to the subnet pool
+* `--default-prefixlen <DEFAULT_PREFIXLEN>` — The size of the prefix to allocate when the `cidr` or `prefixlen` attributes are omitted when you create the subnet. Default is `min_prefixlen`
+* `--default-quota <DEFAULT_QUOTA>` — A per-project quota on the prefix space that can be allocated from the subnet pool for project subnets. Default is no quota is enforced on allocations from the subnet pool. For IPv4 subnet pools, `default_quota` is measured in units of /32. For IPv6 subnet pools, `default_quota` is measured units of /64. All projects that use the subnet pool have the same prefix quota applied
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--is-default <IS_DEFAULT>` — The subnetpool is default pool or not
+
+  Possible values: `true`, `false`
+
+* `--max-prefixlen <MAX_PREFIXLEN>` — The maximum prefix size that can be allocated from the subnet pool. For IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is `128`
+* `--min-prefixlen <MIN_PREFIXLEN>` — The smallest prefix that can be allocated from a subnet pool. For IPv4 subnet pools, default is `8`. For IPv6 subnet pools, default is `64`
+* `--name <NAME>` — Human-readable name of the resource
+* `--prefixes <PREFIXES>` — A list of subnet prefixes to assign to the subnet pool. The API merges adjacent prefixes and treats them as a single prefix. Each subnet prefix must be unique among all subnet prefixes in all subnet pools that are associated with the address scope
+* `--shared <SHARED>` — Indicates whether this resource is shared across all projects. By default, only administrative users can change this value
+
+  Possible values: `true`, `false`
+
+* `--tenant-id <TENANT_ID>` — The ID of the project
+
+
+
+## `osc network subnetpool delete`
+
+Deletes a subnet pool.
+
+The operation fails if any subnets allocated from the subnet pool are still in use.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 412
+
+**Usage:** `osc network subnetpool delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
+
+
+
+## `osc network subnetpool list`
+
+Lists subnet pools that the project has access to.
+
+Default policy settings return only the subnet pools owned by the project of the user submitting the request, unless the user has administrative role.
+
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
+
+Normal response codes: 200
+
+Error response codes: 401
+
+**Usage:** `osc network subnetpool list [OPTIONS]`
+
+###### **Options:**
+
+* `--address-scope-id <ADDRESS_SCOPE_ID>` — address_scope_id query parameter for /v2.0/subnetpools API
+* `--default-prefixlen <DEFAULT_PREFIXLEN>` — default_prefixlen query parameter for /v2.0/subnetpools API
+* `--default-quota <DEFAULT_QUOTA>` — default_quota query parameter for /v2.0/subnetpools API
+* `--description <DESCRIPTION>` — description query parameter for /v2.0/subnetpools API
+* `--id <ID>` — id query parameter for /v2.0/subnetpools API
+* `--ip-version <IP_VERSION>` — ip_version query parameter for /v2.0/subnetpools API
+* `--is-default <IS_DEFAULT>` — is_default query parameter for /v2.0/subnetpools API
+
+  Possible values: `true`, `false`
+
+* `--max-prefixlen <MAX_PREFIXLEN>` — max_prefixlen query parameter for /v2.0/subnetpools API
+* `--min-prefixlen <MIN_PREFIXLEN>` — min_prefixlen query parameter for /v2.0/subnetpools API
+* `--name <NAME>` — name query parameter for /v2.0/subnetpools API
+* `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/subnetpools API
+* `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/subnetpools API
+* `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/subnetpools API
+* `--shared <SHARED>` — shared query parameter for /v2.0/subnetpools API
+
+  Possible values: `true`, `false`
+
+* `--tags <TAGS>` — tags query parameter for /v2.0/subnetpools API
+* `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/subnetpools API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnetpools API
+
+
+
+## `osc network subnetpool set`
+
+Updates a subnet pool.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404, 412
+
+**Usage:** `osc network subnetpool set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
+
+###### **Options:**
+
+* `--address-scope-id <ADDRESS_SCOPE_ID>` — An address scope to assign to the subnet pool
+* `--default-prefixlen <DEFAULT_PREFIXLEN>` — The size of the prefix to allocate when the `cidr` or `prefixlen` attributes are omitted when you create the subnet. Default is `min_prefixlen`
+* `--default-quota <DEFAULT_QUOTA>` — A per-project quota on the prefix space that can be allocated from the subnet pool for project subnets. Default is no quota is enforced on allocations from the subnet pool. For IPv4 subnet pools, `default_quota` is measured in units of /32. For IPv6 subnet pools, `default_quota` is measured units of /64. All projects that use the subnet pool have the same prefix quota applied
+* `--description <DESCRIPTION>` — A human-readable description for the resource. Default is an empty string
+* `--is-default <IS_DEFAULT>` — The subnetpool is default pool or not
+
+  Possible values: `true`, `false`
+
+* `--max-prefixlen <MAX_PREFIXLEN>` — The maximum prefix size that can be allocated from the subnet pool. For IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is `128`
+* `--min-prefixlen <MIN_PREFIXLEN>` — The smallest prefix that can be allocated from a subnet pool. For IPv4 subnet pools, default is `8`. For IPv6 subnet pools, default is `64`
+* `--name <NAME>` — Human-readable name of the resource
+* `--prefixes <PREFIXES>` — A list of subnet prefixes to assign to the subnet pool. The API merges adjacent prefixes and treats them as a single prefix. Each subnet prefix must be unique among all subnet prefixes in all subnet pools that are associated with the address scope
+
+
+
+## `osc network subnetpool show`
+
+Shows information for a subnet pool.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Normal response codes: 200
+
+Error response codes: 401, 404
+
+**Usage:** `osc network subnetpool show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
+
+
+
+## `osc network subnetpool tag`
+
+Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+**Usage:** `osc network subnetpool tag <COMMAND>`
+
+###### **Subcommands:**
+
+* `add` — Command without description in OpenAPI
+* `check` — Command without description in OpenAPI
+* `delete` — Command without description in OpenAPI
+* `list` — Command without description in OpenAPI
+* `purge` — Command without description in OpenAPI
+
+
+
+## `osc network subnetpool tag add`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnetpool tag add <SUBNETPOOL_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SUBNETPOOL_ID>` — subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+
+
+
+## `osc network subnetpool tag check`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnetpool tag check <SUBNETPOOL_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SUBNETPOOL_ID>` — subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+
+
+
+## `osc network subnetpool tag delete`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnetpool tag delete <SUBNETPOOL_ID> <ID>`
+
+###### **Arguments:**
+
+* `<SUBNETPOOL_ID>` — subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+* `<ID>` — id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+
+
+
+## `osc network subnetpool tag list`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnetpool tag list <SUBNETPOOL_ID>`
+
+###### **Arguments:**
+
+* `<SUBNETPOOL_ID>` — subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+
+
+
+## `osc network subnetpool tag purge`
+
+Command without description in OpenAPI
+
+**Usage:** `osc network subnetpool tag purge <SUBNETPOOL_ID>`
+
+###### **Arguments:**
+
+* `<SUBNETPOOL_ID>` — subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
 
 
 
