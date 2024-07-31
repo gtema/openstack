@@ -315,7 +315,7 @@ impl Catalog {
                 let service_type = &srv_type.replace('_', "-");
 
                 // If URL is not valid not raise an error, but instead only log an error and ignore
-                match ServiceEndpoint::from_url_string(&val.to_string(), self.project_id.as_ref()) {
+                match ServiceEndpoint::from_url_string(val.to_string(), self.project_id.as_ref()) {
                     Ok(ep) => {
                         self.endpoint_overrides.insert(service_type.to_string(), ep);
                     }

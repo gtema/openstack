@@ -12,26 +12,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod address_group;
-mod address_scope;
-mod availability_zone;
-mod extension;
-mod floatingip;
-mod network;
-mod port;
-mod router;
-mod security_group;
-mod security_group_rule;
-mod subnet;
-
 use assert_cmd::prelude::*;
 use std::process::Command;
 
 #[test]
-fn help() -> Result<(), Box<dyn std::error::Error>> {
+fn list() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("network").arg("--help");
+    cmd.arg("network").arg("security-group-rule").arg("list");
     cmd.assert().success();
 
     Ok(())
