@@ -28,6 +28,8 @@ mod floatingip;
 mod network;
 mod port;
 mod router;
+mod security_group;
+mod security_group_rule;
 mod subnet;
 
 /// Network (Neutron) commands
@@ -50,6 +52,8 @@ pub enum NetworkCommands {
     Network(Box<network::NetworkCommand>),
     Port(Box<port::PortCommand>),
     Router(Box<router::RouterCommand>),
+    SecurityGroup(Box<security_group::SecurityGroupCommand>),
+    SecurityGroupRule(Box<security_group_rule::SecurityGroupRuleCommand>),
     Subnet(Box<subnet::SubnetCommand>),
 }
 
@@ -73,6 +77,8 @@ impl NetworkCommand {
             NetworkCommands::Network(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Port(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Router(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::SecurityGroup(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::SecurityGroupRule(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Subnet(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
