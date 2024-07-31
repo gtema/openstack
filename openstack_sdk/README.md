@@ -19,7 +19,7 @@ immediately available on the next regeneration.
 - `RawQuery` interface providing more control over the API
   invocation with upload and download capabilities.
 - Every combination of URL + http method + body schema is represented by a
-dedicated module
+  dedicated module
 - User is in charge of return data schema.
 
 ## Structure

@@ -58,6 +58,7 @@ pub struct ServiceAuthority {
     /// Mapping of official service-type to official type and aliases
     pub all_types_by_service_type: Option<HashMap<String, Vec<String>>>,
     /// Mapping of project name to list of service-types for the project
+    #[allow(dead_code)]
     pub service_types_by_projects: Option<HashMap<String, Vec<String>>>,
 }
 

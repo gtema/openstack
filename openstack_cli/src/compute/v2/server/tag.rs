@@ -41,7 +41,7 @@ mod show;
 ///  - ‘/’ is not allowed to be in a tag name
 ///
 ///  - Comma is not allowed to be in a tag name in order to
-///  simplify requests that specify lists of tags
+///    simplify requests that specify lists of tags
 ///
 ///  - All other characters are allowed to be in a tag name
 ///
