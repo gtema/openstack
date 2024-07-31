@@ -98,7 +98,7 @@ struct ResponseData {
     #[structable(optional)]
     group_type_id: Option<String>,
 
-    /// The ID of the group snapshot.
+    /// The UUID of the group snapshot.
     ///
     #[serde()]
     #[structable(optional)]

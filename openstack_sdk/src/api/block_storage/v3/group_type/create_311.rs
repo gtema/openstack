@@ -147,7 +147,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("group_type".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -187,15 +187,12 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder()
-                .group_type(GroupTypeBuilder::default().name("foo").build().unwrap())
-                .build()
-                .unwrap()
-                .response_key()
-                .unwrap(),
-            "group_type"
-        );
+        assert!(Request::builder()
+            .group_type(GroupTypeBuilder::default().name("foo").build().unwrap())
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -208,7 +205,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "group_type": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
@@ -230,7 +227,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "group_type": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()

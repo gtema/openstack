@@ -31,8 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::group_snapshot::create_314;
-use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Create a new group_snapshot.
@@ -81,61 +83,7 @@ struct GroupSnapshot {
 
 /// GroupSnapshot response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The group snapshot description.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// The ID of the group.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_id: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type: Option<String>,
-
-    /// The group type ID.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    group_type_id: Option<String>,
-
-    /// The ID of the group snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// The group snapshot name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The UUID of the volume group project.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
-
-    /// The status of the generic group snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-}
+struct ResponseData {}
 
 impl GroupSnapshotCommand {
     /// Perform command action
@@ -175,8 +123,10 @@ impl GroupSnapshotCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

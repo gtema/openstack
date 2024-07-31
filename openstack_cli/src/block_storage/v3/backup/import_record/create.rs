@@ -31,9 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::backup::import_record::create;
-use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Import a backup.
@@ -78,25 +79,7 @@ struct BackupRecord {
 
 /// ImportRecord response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The UUID of the backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Links for the backup.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The backup name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-}
+struct ResponseData {}
 
 impl ImportRecordCommand {
     /// Perform command action
@@ -129,8 +112,10 @@ impl ImportRecordCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

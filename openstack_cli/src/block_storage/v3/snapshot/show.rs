@@ -73,8 +73,6 @@ struct ResponseData {
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
     ///
-    /// **New in version 3.65**
-    ///
     #[serde()]
     #[structable(optional)]
     consumes_quota: Option<bool>,
@@ -86,19 +84,6 @@ struct ResponseData {
     count: Option<i32>,
 
     /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC.
     ///
     #[serde()]
     #[structable(optional)]
@@ -112,25 +97,24 @@ struct ResponseData {
 
     /// The ID of the group snapshot.
     ///
-    /// **New in version 3.14**
-    ///
     #[serde()]
     #[structable(optional)]
     group_snapshot_id: Option<String>,
 
-    /// The UUID of the object.
+    /// The snapshot UUID.
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
 
-    /// One or more metadata key and value pairs for the snapshot.
+    /// A metadata object. Contains one or more metadata key and value pairs
+    /// that are associated with the resource.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     metadata: Option<Value>,
 
-    /// The name of the snapshot. Default is `None`.
+    /// The name of the object.
     ///
     #[serde()]
     #[structable(optional)]
@@ -162,27 +146,11 @@ struct ResponseData {
 
     /// The date and time when the resource was updated.
     ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`.
-    ///
-    /// The `±hh:mm` value, if included, is the time zone as an offset from
-    /// UTC. In the previous example, the offset value is `-05:00`.
-    ///
-    /// If the `updated_at` date and time stamp is not set, its value is
-    /// `null`.
-    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// The UUID of the volume.
+    /// If the snapshot was created from a volume, the volume ID.
     ///
     #[serde()]
     #[structable(optional)]

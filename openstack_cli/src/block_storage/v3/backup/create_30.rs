@@ -31,9 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
+use http::Response;
 use openstack_sdk::api::block_storage::v3::backup::create_30;
-use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
+use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Create a new backup.
@@ -104,126 +105,7 @@ struct Backup {
 
 /// Backup response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The name of the availability zone.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    availability_zone: Option<String>,
-
-    /// The container name or null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    container: Option<String>,
-
-    /// The date and time when the resource was created. The date and time
-    /// stamp format is ISO 8601
-    ///
-    #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
-
-    /// The time when the data on the volume was first saved. If it is a backup
-    /// from volume, it will be the same as created_at for a backup. If it is a
-    /// backup from a snapshot, it will be the same as created_at for the
-    /// snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    data_timestamp: Option<String>,
-
-    /// The backup description or null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    description: Option<String>,
-
-    /// If the backup failed, the reason for the failure. Otherwise, null.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    fail_reason: Option<String>,
-
-    /// If this value is true, there are other backups depending on this
-    /// backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    has_dependent_backups: Option<bool>,
-
-    /// The UUID of the backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
-
-    /// Indicates whether the backup mode is incremental. If this value is
-    /// true, the backup mode is incremental. If this value is false, the
-    /// backup mode is full.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    is_incremental: Option<bool>,
-
-    /// Links for the backup.
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
-
-    /// The backup metadata key value pairs.
-    ///
-    /// **New in version 3.43**
-    ///
-    #[serde()]
-    #[structable(optional, pretty)]
-    metadata: Option<Value>,
-
-    /// The backup name.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
-
-    /// The number of objects in the backup.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    object_count: Option<i32>,
-
-    /// The size of the volume, in gibibytes (GiB).
-    ///
-    #[serde()]
-    #[structable(optional)]
-    size: Option<i64>,
-
-    /// The UUID of the source volume snapshot.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    snapshot_id: Option<String>,
-
-    /// The backup status. Refer to Backup statuses table for the possible
-    /// status value.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
-
-    /// The date and time when the resource was updated. The date and time
-    /// stamp format is ISO 8601
-    ///
-    #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
-
-    /// The UUID of the volume.
-    ///
-    #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
-}
+struct ResponseData {}
 
 impl BackupCommand {
     /// Perform command action
@@ -279,8 +161,10 @@ impl BackupCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }

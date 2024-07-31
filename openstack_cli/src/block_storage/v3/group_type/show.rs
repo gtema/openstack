@@ -82,7 +82,7 @@ struct ResponseData {
     #[structable(optional, pretty)]
     group_specs: Option<Value>,
 
-    /// The group type ID.
+    /// The UUID of the group type.
     ///
     #[serde()]
     #[structable(optional)]

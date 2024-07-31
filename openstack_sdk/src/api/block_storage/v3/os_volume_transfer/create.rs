@@ -113,7 +113,7 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        Some("transfer".into())
+        None
     }
 
     /// Returns headers to be set into the request
@@ -153,15 +153,12 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert_eq!(
-            Request::builder()
-                .transfer(TransferBuilder::default().volume_id("foo").build().unwrap())
-                .build()
-                .unwrap()
-                .response_key()
-                .unwrap(),
-            "transfer"
-        );
+        assert!(Request::builder()
+            .transfer(TransferBuilder::default().volume_id("foo").build().unwrap())
+            .build()
+            .unwrap()
+            .response_key()
+            .is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -174,7 +171,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "transfer": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
@@ -196,7 +193,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "transfer": {} }));
+                .json_body(json!({ "dummy": {} }));
         });
 
         let endpoint = Request::builder()
