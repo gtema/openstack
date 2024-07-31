@@ -16,6 +16,8 @@
 //!
 //! This module provides implementation for the individual APIs as well as the necessary logic
 //!
+#![allow(clippy::module_inception)]
+
 mod client;
 mod common;
 mod error;
@@ -35,7 +37,6 @@ pub mod compute;
 #[cfg(feature = "identity")]
 pub mod identity;
 #[allow(dead_code)]
-#[allow(clippy::module_inception)]
 #[cfg(feature = "image")]
 pub mod image;
 #[cfg(feature = "load_balancer")]

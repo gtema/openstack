@@ -86,6 +86,7 @@ pub trait RestEndpoint {
     ///
     /// - `None` is interpreted as default version
     /// - `ApiVersion {0, 0}` is interpreted as explicitly unversioned API
+    ///
     /// Default is to try to determine version from the url (first segment)
     fn api_version(&self) -> Option<ApiVersion> {
         ApiVersion::from_endpoint_url(self.endpoint())
