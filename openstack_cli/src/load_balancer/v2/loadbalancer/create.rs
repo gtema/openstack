@@ -36,7 +36,6 @@ use clap::ValueEnum;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Creates a load balancer.
@@ -350,18 +349,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     vip_vnic_type: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponsePools {
-    id: String,
-}
-
-impl fmt::Display for ResponsePools {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!("id={}", self.id)]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl LoadbalancerCommand {

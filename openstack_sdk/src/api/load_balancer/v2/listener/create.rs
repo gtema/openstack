@@ -349,7 +349,7 @@ pub struct DefaultPool<'a> {
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
 
     /// List of ciphers in OpenSSL format (colon-separated). See
-    /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
+    /// [https://www.openssl.org/docs/man1.1.1/man1/ciphers.html](https://www.openssl.org/docs/man1.1.1/man1/ciphers.html)
     ///
     /// **New in version 2.15**
     ///
