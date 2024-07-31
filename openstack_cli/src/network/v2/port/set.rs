@@ -121,6 +121,7 @@ enum NumaAffinityPolicy {
     Legacy,
     Preferred,
     Required,
+    Socket,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -683,6 +684,7 @@ impl PortCommand {
                 NumaAffinityPolicy::Legacy => set::NumaAffinityPolicy::Legacy,
                 NumaAffinityPolicy::Preferred => set::NumaAffinityPolicy::Preferred,
                 NumaAffinityPolicy::Required => set::NumaAffinityPolicy::Required,
+                NumaAffinityPolicy::Socket => set::NumaAffinityPolicy::Socket,
             };
             port_builder.numa_affinity_policy(tmp);
         }
