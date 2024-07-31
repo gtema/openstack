@@ -36,13 +36,9 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Get registered identity providers.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider`
+/// GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 ///
 #[derive(Args)]
-#[command(about = "Get identity provider")]
 pub struct IdentityProviderCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -74,8 +70,7 @@ struct PathParameters {
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
     /// The length of validity in minutes for group memberships carried over
-    /// through mapping and persisted in the database. If left unset, the
-    /// default value configured in keystone will be used, if enabled.
+    /// through mapping and persisted in the database.
     ///
     #[serde()]
     #[structable(optional)]
@@ -88,8 +83,6 @@ struct ResponseData {
     description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
-    /// Federated users that authenticate with the Identity Provider will be
-    /// created under the domain specified.
     ///
     #[serde()]
     #[structable(optional)]

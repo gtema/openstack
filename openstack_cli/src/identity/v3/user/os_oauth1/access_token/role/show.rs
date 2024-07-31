@@ -36,13 +36,12 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Shows details for a role for an access token.
+/// Get role for access token.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-OAUTH1/1.0/rel/user_access_token_role`
+/// GET/HEAD /v3/users/{user_id}/OS-OAUTH1/access_tokens/
+/// {access_token_id}/roles/{role_id}
 ///
 #[derive(Args)]
-#[command(about = "Show role details for an access token")]
 pub struct RoleCommand {
     /// Request Query parameters
     #[command(flatten)]

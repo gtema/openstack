@@ -345,7 +345,7 @@ pub struct Scope<'a> {
     pub(crate) system: Option<System>,
 }
 
-/// Auth data with user’s identity and Service Provider scope information
+/// An `auth` object.
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -374,7 +374,7 @@ pub struct Auth<'a> {
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Auth data with user’s identity and Service Provider scope information
+    /// An `auth` object.
     ///
     #[builder(setter(into))]
     pub(crate) auth: Auth<'a>,

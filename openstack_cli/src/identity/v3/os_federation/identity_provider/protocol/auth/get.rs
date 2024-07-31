@@ -36,28 +36,12 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// A federated ephemeral user may request an unscoped token, which can be used
-/// to get a scoped token.
+/// Authenticate from dedicated uri endpoint.
 ///
-/// If the user is mapped directly (mapped to an existing user), a standard,
-/// unscoped token will be issued.
-///
-/// Due to the fact that this part of authentication is strictly connected with
-/// the SAML2 authentication workflow, a client should not send any data, as
-/// the content may be lost when a client is being redirected between Service
-/// Provider and Identity Provider. Both HTTP methods - GET and POST should be
-/// allowed as Web Single Sign-On (WebSSO) and Enhanced Client Proxy (ECP)
-/// mechanisms have different authentication workflows and use different HTTP
-/// methods while accessing protected endpoints.
-///
-/// The returned token will contain information about the groups to which the
-/// federated user belongs.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/identity_provider_protocol_auth`
+/// GET/HEAD /OS-FEDERATION/identity_providers/
+/// {idp_id}/protocols/{protocol_id}/auth
 ///
 #[derive(Args)]
-#[command(about = "Request an unscoped OS-FEDERATION token")]
 pub struct AuthCommand {
     /// Request Query parameters
     #[command(flatten)]

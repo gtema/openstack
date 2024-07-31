@@ -35,13 +35,11 @@ use openstack_sdk::api::identity::v3::os_federation::service_provider::set;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Update a service provider’s attributes.
+/// Update a service provider.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_provider`
+/// PATCH /OS-FEDERATION/service_providers/{sp_id}
 ///
 #[derive(Args)]
-#[command(about = "Update service provider")]
 pub struct ServiceProviderCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -74,17 +72,14 @@ struct PathParameters {
 /// ServiceProvider Body data
 #[derive(Args, Clone)]
 struct ServiceProvider {
-    /// The Service Provider’s URL
-    ///
     #[arg(help_heading = "Body parameters", long)]
     auth_url: Option<String>,
 
-    /// The description of the Service Provider
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
@@ -92,8 +87,6 @@ struct ServiceProvider {
     #[arg(help_heading = "Body parameters", long)]
     relay_state_prefix: Option<String>,
 
-    /// The Service Provider’s URL
-    ///
     #[arg(help_heading = "Body parameters", long)]
     sp_url: Option<String>,
 }

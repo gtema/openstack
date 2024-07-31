@@ -35,13 +35,9 @@ use openstack_sdk::api::identity::v3::os_federation::service_provider::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// List all service providers.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/service_providers`
+/// GET operation on /v3/OS-FEDERATION/service_providers
 ///
 #[derive(Args)]
-#[command(about = "List service providers")]
 pub struct ServiceProvidersCommand {
     /// Request Query parameters
     #[command(flatten)]

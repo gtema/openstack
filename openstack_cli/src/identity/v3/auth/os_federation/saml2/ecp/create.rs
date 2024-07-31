@@ -41,20 +41,11 @@ use openstack_sdk::api::RawQueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// A user may generate a SAML assertion document to work with the *Enhanced
-/// Client or Proxy* (ECP) profile based on the scoped token that is used in
-/// the request.
+/// Exchange a scoped token for an ECP assertion.
 ///
-/// Request Parameters:
-///
-/// To generate an ECP wrapped SAML assertion, a user must provides a scoped
-/// token ID and Service Provider ID in the request body.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/saml2/ecp`
+/// POST /v3/auth/OS-FEDERATION/saml2/ecp
 ///
 #[derive(Args)]
-#[command(about = "Generate an ECP wrapped SAML assertion")]
 pub struct EcpCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -64,7 +55,7 @@ pub struct EcpCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// Auth data with user’s identity and Service Provider scope information
+    /// An `auth` object.
     ///
     #[command(flatten)]
     auth: Auth,

@@ -36,19 +36,11 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// **Deprecated in v1.1**. Use core `GET /auth/domains`. This call has the
-/// same response format.
+/// Get possible domain scopes for token.
 ///
-/// Returns a collection of domains to which the federated user has
-/// authorization to access. To access this resource, an unscoped token is
-/// used, the user can then select a domain and request a scoped token. Note
-/// that only enabled domains will be returned.
-///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-FEDERATION/1.0/rel/domains`
+/// GET/HEAD /v3/auth/domains GET/HEAD /v3/OS-FEDERATION/domains
 ///
 #[derive(Args)]
-#[command(about = "List domains a federated user can access")]
 pub struct DomainsCommand {
     /// Request Query parameters
     #[command(flatten)]

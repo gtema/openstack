@@ -36,13 +36,11 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Lists authorized access tokens.
+/// List OAuth1 Access Tokens for user.
 ///
-/// Relationship:
-/// `https://docs.openstack.org/api/openstack-identity/3/ext/OS-OAUTH1/1.0/rel/user_access_tokens`
+/// GET /v3/users/{user_id}/OS-OAUTH1/access_tokens
 ///
 #[derive(Args)]
-#[command(about = "List access tokens")]
 pub struct AccessTokensCommand {
     /// Request Query parameters
     #[command(flatten)]
