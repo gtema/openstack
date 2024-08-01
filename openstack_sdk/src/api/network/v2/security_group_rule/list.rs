@@ -80,13 +80,13 @@ pub struct Request<'a> {
 
     /// port_range_max query parameter for /v2.0/security-group-rules API
     ///
-    #[builder(default, setter(into))]
-    port_range_max: Option<Cow<'a, str>>,
+    #[builder(default)]
+    port_range_max: Option<i32>,
 
     /// port_range_min query parameter for /v2.0/security-group-rules API
     ///
-    #[builder(default, setter(into))]
-    port_range_min: Option<Cow<'a, str>>,
+    #[builder(default)]
+    port_range_min: Option<i32>,
 
     /// protocol query parameter for /v2.0/security-group-rules API
     ///
@@ -175,8 +175,8 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("remote_group_id", self.remote_group_id.as_ref());
         params.push_opt("direction", self.direction.as_ref());
         params.push_opt("protocol", self.protocol.as_ref());
-        params.push_opt("port_range_min", self.port_range_min.as_ref());
-        params.push_opt("port_range_max", self.port_range_max.as_ref());
+        params.push_opt("port_range_min", self.port_range_min);
+        params.push_opt("port_range_max", self.port_range_max);
         params.push_opt("ethertype", self.ethertype.as_ref());
         params.push_opt("remote_ip_prefix", self.remote_ip_prefix.as_ref());
         params.push_opt("tenant_id", self.tenant_id.as_ref());

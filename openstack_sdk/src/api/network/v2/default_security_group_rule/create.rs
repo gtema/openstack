@@ -79,7 +79,7 @@ pub struct DefaultSecurityGroupRule<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) port_range_max: Option<Cow<'a, str>>,
+    pub(crate) port_range_max: Option<Option<i32>>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
@@ -88,7 +88,7 @@ pub struct DefaultSecurityGroupRule<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) port_range_min: Option<Cow<'a, str>>,
+    pub(crate) port_range_min: Option<Option<i32>>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`

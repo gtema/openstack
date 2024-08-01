@@ -108,11 +108,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    port_range_max: Option<String>,
+    port_range_max: Option<i32>,
 
     #[serde()]
     #[structable(optional)]
-    port_range_min: Option<String>,
+    port_range_min: Option<i32>,
 
     #[serde()]
     #[structable(optional)]

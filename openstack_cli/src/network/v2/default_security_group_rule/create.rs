@@ -107,7 +107,7 @@ struct DefaultSecurityGroupRule {
     /// value. If the protocol is ICMP, this value must be an ICMP code.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    port_range_max: Option<String>,
+    port_range_max: Option<Option<i32>>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
@@ -115,7 +115,7 @@ struct DefaultSecurityGroupRule {
     /// value. If the protocol is ICMP, this value must be an ICMP type.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    port_range_min: Option<String>,
+    port_range_min: Option<Option<i32>>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
@@ -200,7 +200,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    port_range_max: Option<String>,
+    port_range_max: Option<i32>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
@@ -209,7 +209,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    port_range_min: Option<String>,
+    port_range_min: Option<i32>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
@@ -314,11 +314,11 @@ impl DefaultSecurityGroupRuleCommand {
         }
 
         if let Some(val) = &args.port_range_min {
-            default_security_group_rule_builder.port_range_min(val);
+            default_security_group_rule_builder.port_range_min(*val);
         }
 
         if let Some(val) = &args.port_range_max {
-            default_security_group_rule_builder.port_range_max(val);
+            default_security_group_rule_builder.port_range_max(*val);
         }
 
         if let Some(val) = &args.ethertype {
