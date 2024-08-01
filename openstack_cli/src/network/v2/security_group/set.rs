@@ -99,14 +99,10 @@ struct SecurityGroup {
 /// SecurityGroup response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// Time at which the resource has been created (in UTC ISO8601 format).
-    ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
-    /// A human-readable description for the resource.
-    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
@@ -123,8 +119,6 @@ struct ResponseData {
     #[structable(optional)]
     name: Option<String>,
 
-    /// The revision number of the resource.
-    ///
     #[serde()]
     #[structable(optional)]
     revision_number: Option<i32>,
@@ -133,8 +127,8 @@ struct ResponseData {
     /// [Security group rules](#security-group-rules) for details.
     ///
     #[serde()]
-    #[structable(optional)]
-    security_group_rules: Option<String>,
+    #[structable(optional, pretty)]
+    security_group_rules: Option<Value>,
 
     /// Indicates whether this security group is shared to the requester’s
     /// project.
@@ -161,8 +155,6 @@ struct ResponseData {
     #[structable(optional)]
     tenant_id: Option<String>,
 
-    /// Time at which the resource has been updated (in UTC ISO8601 format).
-    ///
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,

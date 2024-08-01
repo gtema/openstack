@@ -107,12 +107,12 @@ struct QueryParameters {
     /// port_range_max query parameter for /v2.0/security-group-rules API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    port_range_max: Option<String>,
+    port_range_max: Option<i32>,
 
     /// port_range_min query parameter for /v2.0/security-group-rules API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    port_range_min: Option<String>,
+    port_range_min: Option<i32>,
 
     /// protocol query parameter for /v2.0/security-group-rules API
     ///
@@ -312,10 +312,10 @@ impl SecurityGroupRulesCommand {
             ep_builder.protocol(val);
         }
         if let Some(val) = &self.query.port_range_min {
-            ep_builder.port_range_min(val);
+            ep_builder.port_range_min(*val);
         }
         if let Some(val) = &self.query.port_range_max {
-            ep_builder.port_range_max(val);
+            ep_builder.port_range_max(*val);
         }
         if let Some(val) = &self.query.ethertype {
             ep_builder.ethertype(val);

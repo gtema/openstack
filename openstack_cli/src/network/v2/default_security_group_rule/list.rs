@@ -97,13 +97,13 @@ struct QueryParameters {
     /// API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    port_range_max: Option<String>,
+    port_range_max: Option<i32>,
 
     /// port_range_min query parameter for /v2.0/default-security-group-rules
     /// API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    port_range_min: Option<String>,
+    port_range_min: Option<i32>,
 
     /// protocol query parameter for /v2.0/default-security-group-rules API
     ///
@@ -183,7 +183,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, wide)]
-    port_range_max: Option<String>,
+    port_range_max: Option<i32>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
@@ -192,7 +192,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, wide)]
-    port_range_min: Option<String>,
+    port_range_min: Option<i32>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
@@ -278,10 +278,10 @@ impl DefaultSecurityGroupRulesCommand {
             ep_builder.protocol(val);
         }
         if let Some(val) = &self.query.port_range_min {
-            ep_builder.port_range_min(val);
+            ep_builder.port_range_min(*val);
         }
         if let Some(val) = &self.query.port_range_max {
-            ep_builder.port_range_max(val);
+            ep_builder.port_range_max(*val);
         }
         if let Some(val) = &self.query.ethertype {
             ep_builder.ethertype(val);
