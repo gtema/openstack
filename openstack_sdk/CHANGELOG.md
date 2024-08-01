@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.7.0...openstack_sdk-v0.8.0) - 2024-08-01
+
+### Added
+- Enable security_groups command ([#393](https://github.com/gtema/openstack/pull/393))
+
+### Fixed
+- Fix certain network.SG properties ([#398](https://github.com/gtema/openstack/pull/398))
+
+### Other
+- Address some warning of newest rust ([#395](https://github.com/gtema/openstack/pull/395))
+- Regenerate load-balancer resources ([#388](https://github.com/gtema/openstack/pull/388))
+- Regenerate compute resources ([#389](https://github.com/gtema/openstack/pull/389))
+- Regenerate identity resource ([#387](https://github.com/gtema/openstack/pull/387))
+- Regenerate network resources ([#386](https://github.com/gtema/openstack/pull/386))
+
 ## [0.7.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.6.1...openstack_sdk-v0.7.0) - 2024-07-27
 
 ### Added
