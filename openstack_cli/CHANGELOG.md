@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.3...openstack_cli-v0.6.4) - 2024-08-01
+
+### Added
+- Enable subnetpool command ([#394](https://github.com/gtema/openstack/pull/394))
+- Enable security_groups command ([#393](https://github.com/gtema/openstack/pull/393))
+- New generated content ([#401](https://github.com/gtema/openstack/pull/401))
+
+### Fixed
+- Fix certain network.SG properties ([#398](https://github.com/gtema/openstack/pull/398))
+
+### Other
+- Regenerate block-storage resources ([#397](https://github.com/gtema/openstack/pull/397))
+- Address some warning of newest rust ([#395](https://github.com/gtema/openstack/pull/395))
+- Regenerate load-balancer resources ([#388](https://github.com/gtema/openstack/pull/388))
+- Regenerate compute resources ([#389](https://github.com/gtema/openstack/pull/389))
+- Regenerate identity resource ([#387](https://github.com/gtema/openstack/pull/387))
+- Regenerate network resources ([#386](https://github.com/gtema/openstack/pull/386))
+
 ## [0.6.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.2...openstack_cli-v0.6.3) - 2024-07-27
 
 ### Other
