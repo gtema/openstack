@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.4...openstack_cli-v0.6.5) - 2024-08-05
+
+### Other
+- update Cargo.lock dependencies
+
 ## [0.6.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.3...openstack_cli-v0.6.4) - 2024-08-01
 
 ### Added
