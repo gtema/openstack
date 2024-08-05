@@ -9,6 +9,14 @@ on:
     branches: ["main" ]
   pull_request:
     branches: ["main" ]
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '.github/workflows/linters.yml'
+      - 'openstack_cli/**'
+      - 'openstack_sdk/**'
+      - 'structable_derive/**'
+      - 'fuzz/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}

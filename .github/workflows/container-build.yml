@@ -5,6 +5,16 @@ name: Build container image
 # Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
   pull_request:
+    paths:
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - '.github/workflows/container-build.yml'
+      - '.github/workflows/container-publish.yml'
+      - 'openstack_cli/**'
+      - 'openstack_sdk/**'
+      - 'Dockerfile'
+      - '.dockerignore'
+
 
 permissions:
   contents: read
