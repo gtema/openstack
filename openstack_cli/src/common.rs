@@ -430,7 +430,7 @@ async fn build_upload_asyncread_from_file(
 pub(crate) async fn build_upload_asyncread(
     src_name: Option<String>,
 ) -> Result<BoxedAsyncRead, OpenStackCliError> {
-    if !std::io::stdin().is_terminal() || src_name.is_none() {
+    if !std::io::stdin().is_terminal() && src_name.is_none() {
         // Reading from stdin
         build_upload_asyncread_from_stdin().await
     } else {
