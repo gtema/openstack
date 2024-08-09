@@ -40,7 +40,7 @@ pub struct Request<'a> {
     /// API
     ///
     #[builder(default)]
-    min_kbps: Option<f32>,
+    min_kbps: Option<i32>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

@@ -45,11 +45,11 @@ pub struct NetworkSegmentRange<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) maximum: Option<f32>,
+    pub(crate) maximum: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) minimum: Option<f32>,
+    pub(crate) minimum: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]

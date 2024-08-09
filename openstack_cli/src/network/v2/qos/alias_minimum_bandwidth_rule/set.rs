@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::qos::alias_minimum_bandwidth_rule::set;
 use openstack_sdk::api::QueryAsync;
@@ -82,7 +83,7 @@ struct AliasMinimumBandwidthRule {
     direction: Option<Direction>,
 
     #[arg(help_heading = "Body parameters", long)]
-    min_kbps: Option<f32>,
+    min_kbps: Option<i32>,
 }
 
 /// AliasMinimumBandwidthRule response representation
@@ -98,7 +99,7 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    min_kbps: Option<f32>,
+    min_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]

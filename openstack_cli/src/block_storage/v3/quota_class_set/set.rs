@@ -49,8 +49,8 @@ pub struct QuotaClassSetCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
-    quota_class_set: Vec<(String, String)>,
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, i32>)]
+    quota_class_set: Vec<(String, i32)>,
 }
 
 /// Query parameters

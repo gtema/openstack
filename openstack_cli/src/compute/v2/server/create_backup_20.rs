@@ -94,7 +94,7 @@ struct CreateBackup {
     /// when image count exceed the rotation count.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    rotation: String,
+    rotation: i32,
 }
 
 /// Server response representation
@@ -134,7 +134,7 @@ impl ServerCommand {
 
         create_backup_builder.backup_type(&args.backup_type);
 
-        create_backup_builder.rotation(&args.rotation);
+        create_backup_builder.rotation(args.rotation);
 
         if let Some(val) = &args.metadata {
             create_backup_builder.metadata(val.iter().cloned());

@@ -55,14 +55,14 @@ pub struct BandwidthLimitRule {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) max_burst_kbps: Option<f32>,
+    pub(crate) max_burst_kbps: Option<i32>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) max_kbps: Option<f32>,
+    pub(crate) max_kbps: Option<i32>,
 }
 
 #[derive(Builder, Debug, Clone)]

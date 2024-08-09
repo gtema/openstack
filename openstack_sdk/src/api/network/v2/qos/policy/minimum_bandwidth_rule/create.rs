@@ -56,7 +56,7 @@ pub struct MinimumBandwidthRule {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) min_kbps: Option<f32>,
+    pub(crate) min_kbps: Option<i32>,
 }
 
 #[derive(Builder, Debug, Clone)]

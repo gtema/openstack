@@ -55,10 +55,10 @@ pub enum Policy {
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Rules<'a> {
+pub struct Rules {
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) max_server_per_host: Option<Cow<'a, str>>,
+    #[builder(default)]
+    pub(crate) max_server_per_host: Option<i32>,
 }
 
 /// The server group object.
@@ -104,7 +104,7 @@ pub struct ServerGroup<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) rules: Option<Rules<'a>>,
+    pub(crate) rules: Option<Rules>,
 }
 
 #[derive(Builder, Debug, Clone)]

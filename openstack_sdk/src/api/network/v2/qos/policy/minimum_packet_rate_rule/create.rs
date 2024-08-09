@@ -43,7 +43,7 @@ pub struct MinimumPacketRateRule {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) min_kpps: Option<f32>,
+    pub(crate) min_kpps: Option<i32>,
 }
 
 #[derive(Builder, Debug, Clone)]

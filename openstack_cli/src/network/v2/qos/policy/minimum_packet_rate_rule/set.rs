@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::qos::policy::minimum_packet_rate_rule::set;
 use openstack_sdk::api::QueryAsync;
@@ -94,7 +95,7 @@ struct MinimumPacketRateRule {
     direction: Option<Direction>,
 
     #[arg(help_heading = "Body parameters", long)]
-    min_kpps: Option<f32>,
+    min_kpps: Option<i32>,
 }
 
 /// MinimumPacketRateRule response representation
@@ -110,7 +111,7 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    min_kpps: Option<f32>,
+    min_kpps: Option<IntString>,
 }
 
 impl MinimumPacketRateRuleCommand {
