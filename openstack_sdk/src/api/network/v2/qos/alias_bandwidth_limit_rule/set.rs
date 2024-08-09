@@ -41,11 +41,11 @@ pub struct AliasBandwidthLimitRule {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) max_burst_kbps: Option<f32>,
+    pub(crate) max_burst_kbps: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) max_kbps: Option<f32>,
+    pub(crate) max_kbps: Option<i32>,
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -27,7 +27,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(private, setter(name = "_quota_class_set"))]
-    pub(crate) quota_class_set: BTreeMap<Cow<'a, str>, Cow<'a, str>>,
+    pub(crate) quota_class_set: BTreeMap<Cow<'a, str>, i32>,
 
     /// id parameter for /v3/os-quota-class-sets/{id} API
     ///
@@ -49,7 +49,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Cow<'a, str>>,
+        V: Into<i32>,
     {
         self.quota_class_set
             .get_or_insert_with(BTreeMap::new)
@@ -140,7 +140,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .quota_class_set(BTreeMap::<String, String>::new().into_iter())
+                .quota_class_set(BTreeMap::<String, i32>::new().into_iter())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -151,7 +151,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .quota_class_set(BTreeMap::<String, String>::new().into_iter())
+            .quota_class_set(BTreeMap::<String, i32>::new().into_iter())
             .build()
             .unwrap()
             .response_key()
@@ -173,7 +173,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .quota_class_set(BTreeMap::<String, String>::new().into_iter())
+            .quota_class_set(BTreeMap::<String, i32>::new().into_iter())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -196,7 +196,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .quota_class_set(BTreeMap::<String, String>::new().into_iter())
+            .quota_class_set(BTreeMap::<String, i32>::new().into_iter())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

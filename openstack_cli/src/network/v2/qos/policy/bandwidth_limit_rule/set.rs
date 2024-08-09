@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::set;
 use openstack_sdk::api::QueryAsync;
@@ -106,13 +107,13 @@ struct BandwidthLimitRule {
     /// The maximum burst size (in kilobits). Default is `0`.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<i32>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<i32>,
 }
 
 /// BandwidthLimitRule response representation
@@ -136,14 +137,14 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<IntString>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
     ///
     #[serde()]
     #[structable(optional)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<IntString>,
 }
 
 impl BandwidthLimitRuleCommand {

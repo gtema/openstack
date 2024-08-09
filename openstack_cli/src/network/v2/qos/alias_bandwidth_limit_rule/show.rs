@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::get;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
@@ -77,11 +78,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]

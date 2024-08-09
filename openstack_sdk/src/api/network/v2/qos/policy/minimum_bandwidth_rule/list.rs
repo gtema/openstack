@@ -62,7 +62,7 @@ pub struct Request<'a> {
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules API
     ///
     #[builder(default)]
-    min_kbps: Option<f32>,
+    min_kbps: Option<i32>,
 
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum_bandwidth_rules/{id} API

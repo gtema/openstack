@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::router::conntrack_helper::get;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
@@ -101,7 +102,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    port: Option<f32>,
+    port: Option<IntString>,
 
     /// The network protocol for the netfilter conntrack target rule.
     ///

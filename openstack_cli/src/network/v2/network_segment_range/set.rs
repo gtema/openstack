@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::BoolString;
+use crate::common::IntString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::network_segment_range::find;
 use openstack_sdk::api::network::v2::network_segment_range::set;
@@ -78,10 +79,10 @@ struct NetworkSegmentRange {
     description: Option<String>,
 
     #[arg(help_heading = "Body parameters", long)]
-    maximum: Option<f32>,
+    maximum: Option<i32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    minimum: Option<f32>,
+    minimum: Option<i32>,
 
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -112,11 +113,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    maximum: Option<f32>,
+    maximum: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]
-    minimum: Option<f32>,
+    minimum: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]

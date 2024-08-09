@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::BoolString;
+use crate::common::IntString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::subnetpool::find;
 use openstack_sdk::api::QueryAsync;
@@ -96,7 +97,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    default_prefixlen: Option<i32>,
+    default_prefixlen: Option<IntString>,
 
     /// A per-project quota on the prefix space that can be allocated from the
     /// subnet pool for project subnets. Default is no quota is enforced on
@@ -107,7 +108,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    default_quota: Option<i32>,
+    default_quota: Option<IntString>,
 
     /// A human-readable description for the resource.
     ///
@@ -139,14 +140,14 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    max_prefixlen: Option<i32>,
+    max_prefixlen: Option<IntString>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
     ///
     #[serde()]
     #[structable(optional)]
-    min_prefixlen: Option<i32>,
+    min_prefixlen: Option<IntString>,
 
     /// Human-readable name of the resource.
     ///

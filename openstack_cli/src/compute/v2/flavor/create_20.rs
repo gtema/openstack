@@ -80,7 +80,7 @@ struct Flavor {
     /// (the default), no dedicated swap disk will be created.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    disk: String,
+    disk: i32,
 
     /// Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces
     /// and dots ‘.’ are permitted. If an ID is not provided, then a default
@@ -104,12 +104,12 @@ struct Flavor {
     /// (the default), no dedicated swap disk will be created.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    os_flv_ext_data_ephemeral: Option<String>,
+    os_flv_ext_data_ephemeral: Option<i32>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    ram: String,
+    ram: i32,
 
     /// The receive / transmit factor (as a float) that will be set on ports if
     /// the network backend supports the QOS extension. Otherwise it will be
@@ -122,12 +122,12 @@ struct Flavor {
     /// (the default), no dedicated swap disk will be created.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    swap: Option<String>,
+    swap: Option<i32>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    vcpus: String,
+    vcpus: i32,
 }
 
 /// Flavor response representation
@@ -250,18 +250,18 @@ impl FlavorCommand {
             flavor_builder.id(Some(val.into()));
         }
 
-        flavor_builder.ram(&args.ram);
+        flavor_builder.ram(args.ram);
 
-        flavor_builder.vcpus(&args.vcpus);
+        flavor_builder.vcpus(args.vcpus);
 
-        flavor_builder.disk(&args.disk);
+        flavor_builder.disk(args.disk);
 
         if let Some(val) = &args.os_flv_ext_data_ephemeral {
-            flavor_builder.os_flv_ext_data_ephemeral(val);
+            flavor_builder.os_flv_ext_data_ephemeral(*val);
         }
 
         if let Some(val) = &args.swap {
-            flavor_builder.swap(val);
+            flavor_builder.swap(*val);
         }
 
         if let Some(val) = &args.rxtx_factor {

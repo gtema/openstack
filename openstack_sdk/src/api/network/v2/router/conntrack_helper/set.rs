@@ -59,7 +59,7 @@ pub struct ConntrackHelper<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) port: Option<f32>,
+    pub(crate) port: Option<i32>,
 
     /// The network protocol for the netfilter conntrack target rule.
     ///
