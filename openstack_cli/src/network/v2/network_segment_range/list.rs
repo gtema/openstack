@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::BoolString;
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::network_segment_range::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -137,11 +138,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional, wide)]
-    maximum: Option<f32>,
+    maximum: Option<IntString>,
 
     #[serde()]
     #[structable(optional, wide)]
-    minimum: Option<f32>,
+    minimum: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]

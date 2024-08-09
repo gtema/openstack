@@ -28,7 +28,7 @@ use std::borrow::Cow;
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct OsGetConsoleOutput<'a> {
+pub struct OsGetConsoleOutput {
     /// The number of lines to fetch from the end of console log. All lines
     /// will be returned if this is not specified.
     ///
@@ -39,7 +39,7 @@ pub struct OsGetConsoleOutput<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) length: Option<Option<Cow<'a, str>>>,
+    pub(crate) length: Option<Option<i32>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -48,7 +48,7 @@ pub struct Request<'a> {
     /// The action to get console output of the server.
     ///
     #[builder(setter(into))]
-    pub(crate) os_get_console_output: OsGetConsoleOutput<'a>,
+    pub(crate) os_get_console_output: OsGetConsoleOutput,
 
     /// id parameter for /v2.1/servers/{id}/action API
     ///

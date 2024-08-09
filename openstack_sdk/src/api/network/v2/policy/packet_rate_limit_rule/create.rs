@@ -41,11 +41,11 @@ pub struct PacketRateLimitRule {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) max_burst_kpps: Option<f32>,
+    pub(crate) max_burst_kpps: Option<i32>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
-    pub(crate) max_kpps: Option<f32>,
+    pub(crate) max_kpps: Option<i32>,
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -231,7 +231,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    mtu: Option<i32>,
+    mtu: Option<IntString>,
 
     /// Human-readable name of the network.
     ///

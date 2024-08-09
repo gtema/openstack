@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::router::conntrack_helper::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
@@ -84,7 +85,7 @@ struct QueryParameters {
     /// API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    port: Option<f32>,
+    port: Option<i32>,
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API
@@ -125,7 +126,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, wide)]
-    port: Option<f32>,
+    port: Option<IntString>,
 
     /// The network protocol for the netfilter conntrack target rule.
     ///

@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::policy::packet_rate_limit_rule::create;
 use openstack_sdk::api::QueryAsync;
@@ -83,10 +84,10 @@ struct PacketRateLimitRule {
     direction: Option<Direction>,
 
     #[arg(help_heading = "Body parameters", long)]
-    max_burst_kpps: Option<f32>,
+    max_burst_kpps: Option<i32>,
 
     #[arg(help_heading = "Body parameters", long)]
-    max_kpps: Option<f32>,
+    max_kpps: Option<i32>,
 }
 
 /// PacketRateLimitRule response representation
@@ -102,11 +103,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    max_burst_kpps: Option<f32>,
+    max_burst_kpps: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]
-    max_kpps: Option<f32>,
+    max_kpps: Option<IntString>,
 }
 
 impl PacketRateLimitRuleCommand {

@@ -87,105 +87,105 @@ struct QuotaClassSet {
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    cores: Option<String>,
+    cores: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    fixed_ips: Option<String>,
+    fixed_ips: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    floating_ips: Option<String>,
+    floating_ips: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    injected_file_content_bytes: Option<String>,
+    injected_file_content_bytes: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    injected_file_path_bytes: Option<String>,
+    injected_file_path_bytes: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    injected_files: Option<String>,
+    injected_files: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    instances: Option<String>,
+    instances: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    key_pairs: Option<String>,
+    key_pairs: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    metadata_items: Option<String>,
+    metadata_items: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    networks: Option<String>,
+    networks: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    ram: Option<String>,
+    ram: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    security_group_rules: Option<String>,
+    security_group_rules: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    security_groups: Option<String>,
+    security_groups: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    server_group_members: Option<String>,
+    server_group_members: Option<i32>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
     #[arg(help_heading = "Body parameters", long)]
-    server_groups: Option<String>,
+    server_groups: Option<i32>,
 }
 
 /// Response data as HashMap type
@@ -229,63 +229,63 @@ impl QuotaClassSetCommand {
         let args = &self.quota_class_set;
         let mut quota_class_set_builder = set_21::QuotaClassSetBuilder::default();
         if let Some(val) = &args.instances {
-            quota_class_set_builder.instances(val);
+            quota_class_set_builder.instances(*val);
         }
 
         if let Some(val) = &args.cores {
-            quota_class_set_builder.cores(val);
+            quota_class_set_builder.cores(*val);
         }
 
         if let Some(val) = &args.ram {
-            quota_class_set_builder.ram(val);
+            quota_class_set_builder.ram(*val);
         }
 
         if let Some(val) = &args.floating_ips {
-            quota_class_set_builder.floating_ips(val);
+            quota_class_set_builder.floating_ips(*val);
         }
 
         if let Some(val) = &args.fixed_ips {
-            quota_class_set_builder.fixed_ips(val);
+            quota_class_set_builder.fixed_ips(*val);
         }
 
         if let Some(val) = &args.metadata_items {
-            quota_class_set_builder.metadata_items(val);
+            quota_class_set_builder.metadata_items(*val);
         }
 
         if let Some(val) = &args.key_pairs {
-            quota_class_set_builder.key_pairs(val);
+            quota_class_set_builder.key_pairs(*val);
         }
 
         if let Some(val) = &args.security_groups {
-            quota_class_set_builder.security_groups(val);
+            quota_class_set_builder.security_groups(*val);
         }
 
         if let Some(val) = &args.security_group_rules {
-            quota_class_set_builder.security_group_rules(val);
+            quota_class_set_builder.security_group_rules(*val);
         }
 
         if let Some(val) = &args.injected_files {
-            quota_class_set_builder.injected_files(val);
+            quota_class_set_builder.injected_files(*val);
         }
 
         if let Some(val) = &args.injected_file_content_bytes {
-            quota_class_set_builder.injected_file_content_bytes(val);
+            quota_class_set_builder.injected_file_content_bytes(*val);
         }
 
         if let Some(val) = &args.injected_file_path_bytes {
-            quota_class_set_builder.injected_file_path_bytes(val);
+            quota_class_set_builder.injected_file_path_bytes(*val);
         }
 
         if let Some(val) = &args.server_groups {
-            quota_class_set_builder.server_groups(val);
+            quota_class_set_builder.server_groups(*val);
         }
 
         if let Some(val) = &args.server_group_members {
-            quota_class_set_builder.server_group_members(val);
+            quota_class_set_builder.server_group_members(*val);
         }
 
         if let Some(val) = &args.networks {
-            quota_class_set_builder.networks(val);
+            quota_class_set_builder.networks(*val);
         }
 
         ep_builder.quota_class_set(quota_class_set_builder.build().unwrap());

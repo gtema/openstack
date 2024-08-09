@@ -94,7 +94,7 @@ struct OsGetConsoleOutput {
     /// ‘string’.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    length: Option<String>,
+    length: Option<Option<i32>>,
 }
 
 /// Server response representation
@@ -131,7 +131,7 @@ impl ServerCommand {
         let mut os_get_console_output_builder =
             os_get_console_output::OsGetConsoleOutputBuilder::default();
         if let Some(val) = &args.length {
-            os_get_console_output_builder.length(Some(val.into()));
+            os_get_console_output_builder.length(*val);
         }
 
         ep_builder.os_get_console_output(os_get_console_output_builder.build().unwrap());
