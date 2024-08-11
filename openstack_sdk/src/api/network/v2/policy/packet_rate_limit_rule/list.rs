@@ -41,13 +41,13 @@ pub struct Request<'a> {
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules API
     ///
     #[builder(default)]
-    max_burst_kpps: Option<f32>,
+    max_burst_kpps: Option<i32>,
 
     /// max_kpps query parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules API
     ///
     #[builder(default)]
-    max_kpps: Option<f32>,
+    max_kpps: Option<i32>,
 
     /// policy_id parameter for
     /// /v2.0/policies/{policy_id}/packet_rate_limit_rules/{id} API

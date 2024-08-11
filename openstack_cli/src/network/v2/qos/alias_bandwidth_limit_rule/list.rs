@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
@@ -65,12 +66,12 @@ struct QueryParameters {
     /// /v2.0/qos/alias-bandwidth-limit-rules API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<i32>,
 
     /// max_kbps query parameter for /v2.0/qos/alias-bandwidth-limit-rules API
     ///
     #[arg(help_heading = "Query parameters", long)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<i32>,
 }
 
 /// Path parameters
@@ -89,11 +90,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional, wide)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional, wide)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional, wide)]

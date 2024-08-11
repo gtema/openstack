@@ -82,7 +82,7 @@ enum Policy {
 #[group(required = false, multiple = true)]
 struct Rules {
     #[arg(help_heading = "Body parameters", long)]
-    max_server_per_host: Option<String>,
+    max_server_per_host: Option<i32>,
 }
 
 /// ServerGroup Body data
@@ -264,7 +264,7 @@ impl ServerGroupCommand {
         if let Some(val) = &args.rules {
             let mut rules_builder = create_264::RulesBuilder::default();
             if let Some(val) = &val.max_server_per_host {
-                rules_builder.max_server_per_host(val);
+                rules_builder.max_server_per_host(*val);
             }
             server_group_builder.rules(rules_builder.build().expect("A valid object"));
         }

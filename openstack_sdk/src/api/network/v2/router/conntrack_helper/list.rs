@@ -59,7 +59,7 @@ pub struct Request<'a> {
     /// API
     ///
     #[builder(default)]
-    port: Option<f32>,
+    port: Option<i32>,
 
     /// protocol query parameter for
     /// /v2.0/routers/{router_id}/conntrack_helpers API

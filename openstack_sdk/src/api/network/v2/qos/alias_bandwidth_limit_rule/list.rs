@@ -39,12 +39,12 @@ pub struct Request<'a> {
     /// /v2.0/qos/alias-bandwidth-limit-rules API
     ///
     #[builder(default)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<i32>,
 
     /// max_kbps query parameter for /v2.0/qos/alias-bandwidth-limit-rules API
     ///
     #[builder(default)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<i32>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

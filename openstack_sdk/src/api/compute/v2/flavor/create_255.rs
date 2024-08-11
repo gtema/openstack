@@ -53,8 +53,8 @@ pub struct Flavor<'a> {
     /// (the default), no dedicated swap disk will be created.
     ///
     #[serde()]
-    #[builder(setter(into))]
-    pub(crate) disk: Cow<'a, str>,
+    #[builder()]
+    pub(crate) disk: i32,
 
     /// Only alphanumeric characters with hyphen ‘-’, underscore ‘\_’, spaces
     /// and dots ‘.’ are permitted. If an ID is not provided, then a default
@@ -87,14 +87,14 @@ pub struct Flavor<'a> {
         rename = "OS-FLV-EXT-DATA:ephemeral",
         skip_serializing_if = "Option::is_none"
     )]
-    #[builder(default, setter(into))]
-    pub(crate) os_flv_ext_data_ephemeral: Option<Cow<'a, str>>,
+    #[builder(default)]
+    pub(crate) os_flv_ext_data_ephemeral: Option<i32>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[serde()]
-    #[builder(setter(into))]
-    pub(crate) ram: Cow<'a, str>,
+    #[builder()]
+    pub(crate) ram: i32,
 
     /// The receive / transmit factor (as a float) that will be set on ports if
     /// the network backend supports the QOS extension. Otherwise it will be
@@ -108,14 +108,14 @@ pub struct Flavor<'a> {
     /// (the default), no dedicated swap disk will be created.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) swap: Option<Cow<'a, str>>,
+    #[builder(default)]
+    pub(crate) swap: Option<i32>,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[serde()]
-    #[builder(setter(into))]
-    pub(crate) vcpus: Cow<'a, str>,
+    #[builder()]
+    pub(crate) vcpus: i32,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -220,10 +220,10 @@ mod tests {
             Request::builder()
                 .flavor(
                     FlavorBuilder::default()
-                        .disk("foo")
+                        .disk(123)
                         .name("foo")
-                        .ram("foo")
-                        .vcpus("foo")
+                        .ram(123)
+                        .vcpus(123)
                         .build()
                         .unwrap()
                 )
@@ -240,10 +240,10 @@ mod tests {
             Request::builder()
                 .flavor(
                     FlavorBuilder::default()
-                        .disk("foo")
+                        .disk(123)
                         .name("foo")
-                        .ram("foo")
-                        .vcpus("foo")
+                        .ram(123)
+                        .vcpus(123)
                         .build()
                         .unwrap()
                 )
@@ -271,10 +271,10 @@ mod tests {
         let endpoint = Request::builder()
             .flavor(
                 FlavorBuilder::default()
-                    .disk("foo")
+                    .disk(123)
                     .name("foo")
-                    .ram("foo")
-                    .vcpus("foo")
+                    .ram(123)
+                    .vcpus(123)
                     .build()
                     .unwrap(),
             )
@@ -301,10 +301,10 @@ mod tests {
         let endpoint = Request::builder()
             .flavor(
                 FlavorBuilder::default()
-                    .disk("foo")
+                    .disk(123)
                     .name("foo")
-                    .ram("foo")
-                    .vcpus("foo")
+                    .ram(123)
+                    .vcpus(123)
                     .build()
                     .unwrap(),
             )

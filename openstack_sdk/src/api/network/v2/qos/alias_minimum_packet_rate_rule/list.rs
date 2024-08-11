@@ -40,7 +40,7 @@ pub struct Request<'a> {
     /// API
     ///
     #[builder(default)]
-    min_kpps: Option<f32>,
+    min_kpps: Option<i32>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,

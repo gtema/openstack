@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::BoolString;
+use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::vpn::ipsec_site_connection::create;
 use openstack_sdk::api::QueryAsync;
@@ -262,7 +263,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    mtu: Option<i32>,
+    mtu: Option<IntString>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///

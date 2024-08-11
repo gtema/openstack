@@ -33,6 +33,7 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::alias_minimum_packet_rate_rule::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -74,7 +75,7 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    min_kpps: Option<f32>,
+    min_kpps: Option<IntString>,
 }
 
 impl AliasMinimumPacketRateRuleCommand {

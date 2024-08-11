@@ -33,6 +33,7 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
+use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -74,11 +75,11 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    max_burst_kbps: Option<f32>,
+    max_burst_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]
-    max_kbps: Option<f32>,
+    max_kbps: Option<IntString>,
 
     #[serde()]
     #[structable(optional)]

@@ -41,7 +41,7 @@ pub struct Request<'a> {
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
     ///
     #[builder(default)]
-    min_kpps: Option<f32>,
+    min_kpps: Option<i32>,
 
     /// policy_id parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules/{id} API
