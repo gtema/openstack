@@ -108,7 +108,7 @@ impl AsyncRead for BoxedAsyncRead {
 }
 
 /// A reference to a resource by its Name and ID.
-#[derive(Deserialize, Debug, Clone, Serialize)]
+#[derive(Deserialize, Debug, Clone, Serialize, Eq, PartialEq)]
 pub struct IdAndName {
     /// The name of the entity.
     pub name: String,
