@@ -126,7 +126,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    ip_version: Option<String>,
+    ip_version: Option<i32>,
 
     /// The subnetpool is default pool or not.
     ///
