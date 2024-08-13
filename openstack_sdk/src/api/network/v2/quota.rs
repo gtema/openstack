@@ -16,7 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `/v2.0/quotas` REST operations of network
-pub mod default;
+pub mod defaults;
 pub mod delete;
 pub mod details;
 pub mod get;

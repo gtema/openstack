@@ -16,8 +16,8 @@
 // `openstack-codegenerator`.
 
 //! `/v2.1/os-quota-sets/{id}` REST operations of compute
-pub mod default;
+pub mod defaults;
 pub mod delete;
+pub mod details;
 pub mod get;
-pub mod list_detailed;
 pub mod set_21;
