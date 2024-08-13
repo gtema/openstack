@@ -27,7 +27,7 @@ pub struct AuthResponse {
 }
 
 /// AuthToken response information
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub struct AuthToken {
     /// Application credential information
     pub application_credential: Option<ApplicationCredential>,
@@ -40,7 +40,7 @@ pub struct AuthToken {
     pub expires_at: DateTime<Local>,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub struct ServiceEndpoints {
     pub endpoints: Vec<CatalogEndpoint>,
     #[serde(rename = "type")]
@@ -48,7 +48,7 @@ pub struct ServiceEndpoints {
     pub name: String,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
 pub struct CatalogEndpoint {
     pub id: String,
     pub interface: String,
@@ -56,7 +56,7 @@ pub struct CatalogEndpoint {
     pub url: String,
 }
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, Eq, PartialEq)]
 pub struct User {
     pub domain: Option<Domain>,
     pub name: String,
@@ -88,13 +88,13 @@ pub struct Domain {
     pub name: Option<String>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq)]
 pub struct AuthReceiptResponse {
     pub receipt: AuthReceipt,
     pub required_auth_methods: Vec<Vec<String>>,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq)]
 pub struct AuthReceipt {
     pub catalog: Option<Vec<ServiceEndpoints>>,
     pub roles: Option<Vec<IdAndName>>,
@@ -105,7 +105,7 @@ pub struct AuthReceipt {
 }
 
 /// Application Credential information from the token
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, Eq, PartialEq)]
 pub struct ApplicationCredential {
     /// The ID of the application credential.
     pub id: Option<String>,
