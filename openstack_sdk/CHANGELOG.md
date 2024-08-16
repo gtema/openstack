@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.8.0...openstack_sdk-v0.9.0) - 2024-08-16
+
+### Added
+- New generated content ([#444](https://github.com/gtema/openstack/pull/444))
+- New generated content ([#424](https://github.com/gtema/openstack/pull/424))
+
+### Other
+- Add Eq/PartialEq derives in some types ([#446](https://github.com/gtema/openstack/pull/446))
+- Remove unused code ([#445](https://github.com/gtema/openstack/pull/445))
+
 ## [0.8.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.7.0...openstack_sdk-v0.8.0) - 2024-08-01
 
 ### Added
