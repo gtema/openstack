@@ -702,6 +702,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network port tag delete`↴](#osc-network-port-tag-delete)
 * [`osc network port tag list`↴](#osc-network-port-tag-list)
 * [`osc network port tag purge`↴](#osc-network-port-tag-purge)
+* [`osc network rbac-policy`↴](#osc-network-rbac-policy)
+* [`osc network rbac-policy create`↴](#osc-network-rbac-policy-create)
+* [`osc network rbac-policy delete`↴](#osc-network-rbac-policy-delete)
+* [`osc network rbac-policy list`↴](#osc-network-rbac-policy-list)
+* [`osc network rbac-policy set`↴](#osc-network-rbac-policy-set)
+* [`osc network rbac-policy show`↴](#osc-network-rbac-policy-show)
 * [`osc network router`↴](#osc-network-router)
 * [`osc network router add-external-gateway`↴](#osc-network-router-add-external-gateway)
 * [`osc network router add-extraroute`↴](#osc-network-router-add-extraroute)
@@ -15023,6 +15029,7 @@ Network (Neutron) commands
 * `floating-ip` — Floating IP commands
 * `network` — Network commands
 * `port` — Port commands
+* `rbac-policy` — RbacPolicy commands
 * `router` — Router commands
 * `security-group` — SecurityGroup commands
 * `security-group-rule` — SecurityGroupRule commands
@@ -16338,6 +16345,125 @@ Command without description in OpenAPI
 ###### **Arguments:**
 
 * `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
+
+
+
+## `osc network rbac-policy`
+
+RbacPolicy commands
+
+**Usage:** `osc network rbac-policy <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create RBAC policy
+* `delete` — Delete RBAC policy
+* `list` — List RBAC policies
+* `set` — Update RBAC policy
+* `show` — Show RBAC policy details
+
+
+
+## `osc network rbac-policy create`
+
+Create RBAC policy for given tenant.
+
+Normal response codes: 201
+
+Error response codes: 400, 401
+
+**Usage:** `osc network rbac-policy create [OPTIONS]`
+
+###### **Options:**
+
+* `--action <ACTION>` — Action for the RBAC policy which is `access_as_external` or `access_as_shared`
+* `--object-id <OBJECT_ID>` — The ID of the `object_type` resource. An `object_type` of `network` returns a network ID, an `object_type` of `qos-policy` returns a QoS policy ID, an `object_type` of `security-group` returns a security group ID, an `object_type` of `address-scope` returns a address scope ID, an `object_type` of `subnetpool` returns a subnetpool ID and an `object_type` of `address-group` returns an address group ID
+* `--object-type <OBJECT_TYPE>` — The type of the object that the RBAC policy affects. Types include `qos-policy`, `network`, `security-group`, `address-scope`, `subnetpool` or `address-group`
+* `--target-tenant <TARGET_TENANT>` — The ID of the tenant to which the RBAC policy will be enforced. Please note that Neutron does not perform any type of validation that the value provided is actually the ID of the existing project. If, for example, the name of the project is provided here, it will be accepted by the Neutron API, but the RBAC rule created will not work as expected
+* `--tenant-id <TENANT_ID>`
+
+
+
+## `osc network rbac-policy delete`
+
+Delete an RBAC policy.
+
+Normal response codes: 204
+
+Error response codes: 401, 404, 409
+
+**Usage:** `osc network rbac-policy delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/rbac-policies/{id} API
+
+
+
+## `osc network rbac-policy list`
+
+List RBAC policies that belong to a given tenant.
+
+Standard query parameters are supported on the URI. For more information, see [Filtering and Column Selection](#filtering).
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Pagination query parameters are supported if Neutron configuration supports it by overriding `allow_pagination=false`. For more information, see [Pagination](#pagination).
+
+Sorting query parameters are supported if Neutron configuration supports it with `allow_sorting=true`. For more information, see [Sorting](#sorting).
+
+Normal response codes: 200
+
+Error response codes: 401
+
+**Usage:** `osc network rbac-policy list [OPTIONS]`
+
+###### **Options:**
+
+* `--action <ACTION>` — action query parameter for /v2.0/rbac-policies API
+* `--id <ID>` — id query parameter for /v2.0/rbac-policies API
+* `--object-id <OBJECT_ID>` — object_id query parameter for /v2.0/rbac-policies API
+* `--object-type <OBJECT_TYPE>` — object_type query parameter for /v2.0/rbac-policies API
+* `--target-tenant <TARGET_TENANT>` — target_tenant query parameter for /v2.0/rbac-policies API
+* `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/rbac-policies API
+
+
+
+## `osc network rbac-policy set`
+
+Update RBAC policy for given tenant.
+
+Normal response codes: 200
+
+Error response codes: 400, 401, 403, 404
+
+**Usage:** `osc network rbac-policy set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/rbac-policies/{id} API
+
+###### **Options:**
+
+* `--target-tenant <TARGET_TENANT>` — The ID of the tenant to which the RBAC policy will be enforced. Please note that Neutron does not perform any type of validation that the value provided is actually the ID of the existing project. If, for example, the name of the project is provided here, it will be accepted by the Neutron API, but the RBAC rule created will not work as expected
+
+
+
+## `osc network rbac-policy show`
+
+Show details for a given RBAC policy.
+
+Use the `fields` query parameter to control which fields are returned in the response body. For more information, see [Fields](#fields).
+
+Normal response codes: 200
+
+Error response codes: 401, 404
+
+**Usage:** `osc network rbac-policy show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/rbac-policies/{id} API
 
 
 
