@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.4...openstack_cli-v0.6.5) - 2024-08-16
+
+### Added
+- Enable network.rbac_policy ([#447](https://github.com/gtema/openstack/pull/447))
+- New generated content ([#444](https://github.com/gtema/openstack/pull/444))
+- New generated content ([#443](https://github.com/gtema/openstack/pull/443))
+- New generated content ([#424](https://github.com/gtema/openstack/pull/424))
+
+### Fixed
+- Change condition in non-terminal data upload ([#422](https://github.com/gtema/openstack/pull/422))
+
+### Other
+- *(deps)* Update dependencies ([#449](https://github.com/gtema/openstack/pull/449))
+- Remove unused code ([#445](https://github.com/gtema/openstack/pull/445))
+- Add Eq/PartialEq derives in some types ([#446](https://github.com/gtema/openstack/pull/446))
+
 ## [0.6.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.3...openstack_cli-v0.6.4) - 2024-08-01
 
 ### Added
