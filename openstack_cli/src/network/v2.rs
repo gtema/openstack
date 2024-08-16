@@ -27,6 +27,7 @@ mod extension;
 mod floatingip;
 mod network;
 mod port;
+mod rbac_policy;
 mod router;
 mod security_group;
 mod security_group_rule;
@@ -52,6 +53,7 @@ pub enum NetworkCommands {
     FloatingIP(Box<floatingip::FloatingIPCommand>),
     Network(Box<network::NetworkCommand>),
     Port(Box<port::PortCommand>),
+    RbacPolicy(Box<rbac_policy::RbacPolicyCommand>),
     Router(Box<router::RouterCommand>),
     SecurityGroup(Box<security_group::SecurityGroupCommand>),
     SecurityGroupRule(Box<security_group_rule::SecurityGroupRuleCommand>),
@@ -79,6 +81,7 @@ impl NetworkCommand {
             NetworkCommands::FloatingIP(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Network(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Port(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::RbacPolicy(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Router(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::SecurityGroup(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::SecurityGroupRule(cmd) => cmd.take_action(parsed_args, session).await,
