@@ -41,9 +41,11 @@ pub struct SubnetPoolCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SubnetPoolCommands {
+    AddPrefixes(Box<add_prefixes::SubnetpoolCommand>),
     Create(Box<create::SubnetpoolCommand>),
     Delete(delete::SubnetpoolCommand),
     List(Box<list::SubnetpoolsCommand>),
+    RemovePrefixes(Box<remove_prefixes::SubnetpoolCommand>),
     Set(Box<set::SubnetpoolCommand>),
     Show(Box<show::SubnetpoolCommand>),
     Tag(Box<tag::TagCommand>),
@@ -57,9 +59,11 @@ impl SubnetPoolCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
+            SubnetPoolCommands::AddPrefixes(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetPoolCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetPoolCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetPoolCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            SubnetPoolCommands::RemovePrefixes(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetPoolCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetPoolCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
             SubnetPoolCommands::Tag(cmd) => cmd.take_action(parsed_args, session).await,
