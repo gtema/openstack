@@ -129,6 +129,9 @@ impl EndpointVersion {
         if let Some(ver) = &self.version {
             return ApiVersion::from_apiver_str(ver, false);
         }
+        if let Some(ver) = &self.max_version {
+            return ApiVersion::from_apiver_str(ver, false);
+        }
         if let Some(ver) = &self.min_version {
             return ApiVersion::from_apiver_str(ver, false);
         }
@@ -185,7 +188,7 @@ mod tests {
         assert_eq!(None, ev.version);
         assert_eq!(None, ev.min_version);
         assert_eq!(Some("2.38".to_string()), ev.max_version);
-        assert_eq!(ApiVersion::new(2, 1), ev.get_api_version().unwrap());
+        assert_eq!(ApiVersion::new(2, 38), ev.get_api_version().unwrap());
 
         let ev: EndpointVersion = serde_json::from_value(json!({
               "status": "CURRENT",
@@ -436,5 +439,36 @@ mod tests {
         )
         .unwrap();
         assert_eq!(2, endpoints.len());
+    }
+
+    #[test]
+    fn test_discovery_placement() {
+        let endpoints = extract_discovery_endpoints(
+            &Url::parse("http://placement.example.com/").unwrap(),
+            &Bytes::from(
+                json!({
+                  "versions": {
+                    "values": [
+                      {
+                        "id": "v1.0",
+                        "links": [
+                          {
+                            "href": "",
+                            "rel": "self"
+                          }
+                        ],
+                        "status": "CURRENT",
+                        "min_version": "1.0",
+                        "max_version": "1.31",
+                      }
+                    ]
+                  }
+                })
+                .to_string(),
+            ),
+            "dummy",
+        )
+        .unwrap();
+        assert_eq!(&ApiVersion::new(1, 31), endpoints[1].version());
     }
 }

@@ -39,6 +39,7 @@ pub enum ServiceType {
     LoadBalancer,
     Network,
     ObjectStore,
+    Placement,
     Other(String),
 }
 
@@ -52,6 +53,7 @@ impl fmt::Display for ServiceType {
             ServiceType::LoadBalancer => write!(f, "load-balancer"),
             ServiceType::Network => write!(f, "network"),
             ServiceType::ObjectStore => write!(f, "object-store"),
+            ServiceType::Placement => write!(f, "placement"),
             ServiceType::Other(x) => write!(f, "{x}"),
         }
     }
