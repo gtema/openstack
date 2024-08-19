@@ -31,8 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
-use crate::common::parse_key_val;
 use openstack_sdk::api::compute::v2::floating_ip::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -63,10 +61,6 @@ pub struct FloatingIpCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -106,14 +100,11 @@ impl FloatingIpCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = create::Request::builder();
+        let ep_builder = create::Request::builder();
 
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
 
         let ep = ep_builder
             .build()
