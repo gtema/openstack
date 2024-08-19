@@ -764,9 +764,11 @@ This document contains the help content for the `osc` command-line program.
 * [`osc network subnet tag list`↴](#osc-network-subnet-tag-list)
 * [`osc network subnet tag purge`↴](#osc-network-subnet-tag-purge)
 * [`osc network subnetpool`↴](#osc-network-subnetpool)
+* [`osc network subnetpool add-prefixes`↴](#osc-network-subnetpool-add-prefixes)
 * [`osc network subnetpool create`↴](#osc-network-subnetpool-create)
 * [`osc network subnetpool delete`↴](#osc-network-subnetpool-delete)
 * [`osc network subnetpool list`↴](#osc-network-subnetpool-list)
+* [`osc network subnetpool remove-prefixes`↴](#osc-network-subnetpool-remove-prefixes)
 * [`osc network subnetpool set`↴](#osc-network-subnetpool-set)
 * [`osc network subnetpool show`↴](#osc-network-subnetpool-show)
 * [`osc network subnetpool tag`↴](#osc-network-subnetpool-tag)
@@ -17638,12 +17640,30 @@ SubnetPool commands
 
 ###### **Subcommands:**
 
+* `add-prefixes` — Add prefixes
 * `create` — Create subnet pool
 * `delete` — Delete subnet pool
 * `list` — List subnet pools
+* `remove-prefixes` — Remove prefixes
 * `set` — Update subnet pool
 * `show` — Show subnet pool
 * `tag` — Lists tags, creates, replaces or deletes one or more tags for a resource, checks the existence of a tag for a resource
+
+
+
+## `osc network subnetpool add-prefixes`
+
+Add prefixes
+
+**Usage:** `osc network subnetpool add-prefixes [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
+
+###### **Options:**
+
+* `--property <key=value>`
 
 
 
@@ -17742,6 +17762,22 @@ Error response codes: 401
 * `--tags <TAGS>` — tags query parameter for /v2.0/subnetpools API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/subnetpools API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnetpools API
+
+
+
+## `osc network subnetpool remove-prefixes`
+
+Remove prefixes
+
+**Usage:** `osc network subnetpool remove-prefixes [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — id parameter for /v2.0/subnetpools/{id}/remove_prefixes API
+
+###### **Options:**
+
+* `--property <key=value>`
 
 
 
