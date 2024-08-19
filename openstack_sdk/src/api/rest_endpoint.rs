@@ -105,6 +105,7 @@ pub(crate) fn set_latest_microversion<E>(
     let mh_service_type = match endpoint.service_type() {
         ServiceType::BlockStorage => Some("volume"),
         ServiceType::Compute => Some("compute"),
+        ServiceType::Placement => Some("placement"),
         _ => None,
     };
     if let Some(st) = mh_service_type {

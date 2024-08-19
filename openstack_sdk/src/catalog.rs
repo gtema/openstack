@@ -266,9 +266,14 @@ impl Catalog {
             .service_endpoints
             .entry(service_type.to_string())
             .or_default();
+        // Get main service type
+        let main_service_type = self
+            .service_authority
+            .get_service_type_by_service_type_or_alias(service_type.to_string())?;
+        // Get all known service aliases
         let catalog_types = self
             .service_authority
-            .get_all_types_by_service_type(&service_type.to_string())?;
+            .get_all_types_by_service_type(&main_service_type.to_string())?;
         for ep in
             discovery::extract_discovery_endpoints(url, data, service_type.to_string())?.iter_mut()
         {
@@ -281,7 +286,9 @@ impl Catalog {
             // the corresponding version to identify whether it should end with project_id
             for cat_type in catalog_types.iter() {
                 if let Some(epo) = &self.endpoint_overrides.get(cat_type) {
-                    if epo.version() == ep.version() {
+                    if epo.version().major == ep.version().major {
+                        // Endpoint override applies to all microversions of the service of the
+                        // major version
                         ep.set_last_segment_with_project_id(
                             epo.last_segment_with_project_id().clone(),
                         );
