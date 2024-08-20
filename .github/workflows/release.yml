@@ -37,16 +37,17 @@ permissions:
 # If there's a prerelease-style suffix to the version, then the release(s)
 # will be marked as a prerelease.
 on:
-  pull_request:
-    paths:
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - '.github/workflows/release.yml'
-      - 'openstack_cli/**'
-      - 'openstack_sdk/**'
-      - 'structable_derive/**'
-      - 'doc/**'
-      - 'fuzz/**'
+#  pull_request:
+#    paths:
+#      - 'Cargo.toml'
+#      - 'Cargo.lock'
+#      - '.github/workflows/release.yml'
+#      - 'openstack_cli/**'
+#      - 'openstack_sdk/**'
+#      - 'openstack_tui/**'
+#      - 'structable_derive/**'
+#      - 'doc/**'
+#      - 'fuzz/**'
   push:
     tags:
       - '**[0-9]+.[0-9]+.[0-9]+*'

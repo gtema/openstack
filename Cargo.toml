@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "openstack_sdk",
   "openstack_cli",
+  "openstack_tui",
   "structable_derive",
   "xtask",
   "fuzz"
@@ -23,13 +24,17 @@ async-trait = { version = "^0.1" } #, optional = true }
 better-panic = { version = "^0.3" }
 bytes = "^1.7"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
-clap = { version = "^4.5", features = ["derive", "env"] }
+clap = { version = "^4.5", features = ["cargo", "color", "derive", "env"] }
 clap_complete = { version = "^4.5" }
+color-eyre = { version = "^0.6", features = ["default", "issue-url"] }
+config = { version = "^0.14", default-features = false }
 dialoguer = "^0.11"
+dirs = "^5.0"
 futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
 http = "^1.1"
 human-panic = { version = "^2.0" }
+itertools = { version = "^0.13" }
 json-patch = { version = "^2.0" }
 reqwest = { version = "^0.12", features = ["blocking", "stream", "rustls-tls"], default-features = false }
 serde = { version="^1.0", features=["derive"] }
@@ -40,12 +45,14 @@ tokio = { version = "^1.39", features = ["fs", "macros", "net", "sync", "rt-mult
 tokio-util = { version="^0.7", features = ["io", "compat"]}
 thiserror = { version = "^1.0" }
 tracing = "^0.1"
+tracing-error = { version = "^0.2" }
+tracing-subscriber = { version = "^0.3", features = ["env-filter", "serde"] }
 url = "^2.5"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
 # The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
-cargo-dist-version = "0.21.0"
+cargo-dist-version = "0.21.1"
 # CI backends to support
 ci = "github"
 # Skip checking whether the specified configuration files are up to date
@@ -55,7 +62,7 @@ installers = ["shell"]
 # Target platforms to build apps for (Rust target-triple syntax)
 targets = ["aarch64-apple-darwin", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl", "x86_64-pc-windows-msvc"]
 # Which actions to run on pull requests
-pr-run-mode = "upload"
+pr-run-mode = "skip"
 # Whether cargo-dist should create a Github Release or use an existing draft
 create-release = false
 # Whether to install an updater program

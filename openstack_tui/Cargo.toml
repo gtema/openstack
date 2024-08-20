@@ -1,0 +1,53 @@
+[package]
+name = "openstack_tui"
+description = "OpenStack Terminal User interface"
+version = "0.1.0"
+keywords = ["tui", "openstack"]
+categories = ["command-line-utilities"]
+authors = ["Artem Goncharov (gtema)"]
+rust-version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+build = "build.rs"
+
+[[bin]]
+name = "ostui"
+path = "src/main.rs"
+
+[dependencies]
+better-panic = { workspace = true }
+clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
+color-eyre = { workspace = true }
+config = { workspace = true, features = ["json", "json5", "yaml"] }
+crossterm = { version = "^0.28", features = ["serde", "event-stream"] }
+derive_deref = "^1.1"
+dirs = { workspace = true }
+eyre = "0.6.12"
+futures = { workspace = true }
+human-panic = { workspace = true }
+itertools = { workspace = true }
+json5 = "^0.4"
+lazy_static = "^1.5"
+#log = "^0.4"
+openstack_sdk = { path = "../openstack_sdk", version = "^0.9" }
+pretty_assertions = "^1.4"
+ratatui = { version = "^0.28", features = ["serde", "macros"] }
+serde = { workspace = true  }
+serde_json = { workspace = true }
+serde_yaml = "^0.9"
+signal-hook = "^0.3"
+strip-ansi-escapes = "^0.2"
+structable_derive = { path = "../structable_derive", version = "^0.1" }
+strum = { version = "^0.26", features = ["derive"] }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+tracing-error = { workspace = true }
+tracing-subscriber = { workspace = true }
+unicode-width = { version = "^0.1" }
+
+[build-dependencies]
+vergen-gitcl = { version = "^1.0", features = ["build", "cargo", "rustc", "si"] }
