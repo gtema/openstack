@@ -416,6 +416,14 @@ impl ConfigFile {
     pub fn is_auth_cache_enabled(&self) -> bool {
         self.cache.as_ref().and_then(|c| c.auth).unwrap_or(true)
     }
+
+    /// Return list of available cloud connections
+    pub fn get_available_clouds(&self) -> Vec<String> {
+        if let Some(clouds) = &self.clouds {
+            return clouds.keys().cloned().collect();
+        }
+        Vec::new()
+    }
 }
 
 #[cfg(test)]
@@ -456,5 +464,11 @@ mod tests {
     fn test_default_auth_cache_enabled() {
         let cfg = ConfigFile::new().unwrap();
         assert!(cfg.is_auth_cache_enabled());
+    }
+
+    #[test]
+    fn test_get_available_clouds() {
+        let cfg = ConfigFile::new().unwrap();
+        let _ = cfg.get_available_clouds();
     }
 }
