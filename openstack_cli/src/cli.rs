@@ -18,6 +18,7 @@ use clap::builder::{
     Styles,
 };
 use clap::{Args, Parser, ValueEnum};
+use clap_complete::Shell;
 
 use openstack_sdk::AsyncOpenStack;
 
@@ -113,6 +114,24 @@ pub enum TopLevelCommands {
     LoadBalancer(load_balancer::LoadBalancerCommand),
     Network(network::NetworkCommand),
     ObjectStore(object_store::ObjectStoreCommand),
+    Completion(CompletionCommand),
+}
+
+/// Output shell completion code for the specified shell (bash, zsh, fish, or powershell). The
+/// shell code must be evaluated to provide interactive completion of `osc` commands.  This can
+/// be done by sourcing it from the .bash_profile.
+///
+/// Examples:
+///
+///  Enable completion at a shell start:
+///
+/// `echo 'source <(osc completion bash)' >>~/.bashrc`
+///
+#[derive(Parser, Debug)]
+pub struct CompletionCommand {
+    /// If provided, outputs the completion file for given shell
+    #[arg(default_value_t = Shell::Bash)]
+    pub shell: Shell,
 }
 
 impl Cli {
@@ -129,6 +148,7 @@ impl Cli {
             TopLevelCommands::LoadBalancer(args) => args.take_action(self, client).await,
             TopLevelCommands::Network(args) => args.take_action(self, client).await,
             TopLevelCommands::ObjectStore(args) => args.take_action(self, client).await,
+            TopLevelCommands::Completion(_) => unimplemented!(),
         }
     }
 }

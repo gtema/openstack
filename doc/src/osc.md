@@ -794,6 +794,7 @@ This document contains the help content for the `osc` command-line program.
 * [`osc object-store object list`↴](#osc-object-store-object-list)
 * [`osc object-store object show`↴](#osc-object-store-object-show)
 * [`osc object-store object upload`↴](#osc-object-store-object-upload)
+* [`osc completion`↴](#osc-completion)
 
 ## `osc`
 
@@ -813,6 +814,7 @@ OpenStack client rewritten in Rust
 * `load-balancer` — Load Balancer service operations
 * `network` — Network (Neutron) commands
 * `object-store` — Object Store service (Swift) commands
+* `completion` — Output shell completion code for the specified shell (bash, zsh, fish, or powershell). The shell code must be evaluated to provide interactive completion of `osc` commands.  This can be done by sourcing it from the .bash_profile
 
 ###### **Options:**
 
@@ -18188,6 +18190,29 @@ Creates an object with data content and metadata, or replaces an existing object
 * `--filename <FILENAME>` — Overrides the default file name. Object Storage generates a default file name for GET temporary URLs that is based on the object name. Object Storage returns this value in the Content-Disposition response header. Browsers can interpret this file name value as a file attachment to save. For more information about temporary URLs, see Temporary URL middleware
 * `--symlink <SYMLINK>` — If you include the symlink=get query parameter and the object is a symlink, then the response will include data and metadata from the symlink itself rather than from the target
 * `--file <FILE>` — Source filename (using "-" will read object from stdout)
+
+
+
+## `osc completion`
+
+Output shell completion code for the specified shell (bash, zsh, fish, or powershell). The shell code must be evaluated to provide interactive completion of `osc` commands.  This can be done by sourcing it from the .bash_profile.
+
+Examples:
+
+Enable completion at a shell start:
+
+`echo 'source <(osc completion bash)' >>~/.bashrc`
+
+**Usage:** `osc completion [SHELL]`
+
+###### **Arguments:**
+
+* `<SHELL>` — If provided, outputs the completion file for given shell
+
+  Default value: `bash`
+
+  Possible values: `bash`, `elvish`, `fish`, `powershell`, `zsh`
+
 
 
 

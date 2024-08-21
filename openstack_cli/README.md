@@ -65,3 +65,12 @@ When a newer microversion is required user should explicitly to do "migration"
 step adapting the invocation to a newer set of parameters. Microversion (or
 functionality) deprecation is also much simpler this way and is handled by
 marking the whole command deprecated and/or drop it completely.
+
+### Shell autocompletion
+
+`osc` supports generation of the completion file for diverse shells. This can
+be enabled i.e. by executing
+
+```bash
+echo 'source <(osc completion bash)' >>~/.bashrc
+```

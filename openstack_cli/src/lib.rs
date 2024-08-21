@@ -23,7 +23,8 @@
 #![allow(clippy::enum_variant_names)]
 use std::io::{self, IsTerminal};
 
-use clap::Parser;
+use clap::{CommandFactory, Parser};
+use clap_complete::generate;
 use tracing::Level;
 
 use openstack_sdk::{
@@ -57,6 +58,16 @@ pub(crate) use output::StructTable;
 /// Entry point for the CLI wrapper
 pub async fn entry_point() -> Result<(), OpenStackCliError> {
     let cli = Cli::parse();
+
+    if let TopLevelCommands::Completion(args) = &cli.command {
+        generate(
+            args.shell,
+            &mut Cli::command(),
+            Cli::command().get_name().to_string(),
+            &mut io::stdout(),
+        );
+        return Ok(());
+    }
 
     tracing_subscriber::fmt()
         .with_writer(io::stderr)
