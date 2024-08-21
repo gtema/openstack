@@ -44,6 +44,7 @@ object_store = ["openstack_sdk/object_store"]
 better-panic = { workspace = true }
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
+clap_complete = { workspace = true }
 cli-table = "^0.4"
 color-eyre = { version = "^0.6", features = ["default", "issue-url"] }
 dialoguer = {workspace = true}
