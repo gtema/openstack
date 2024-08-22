@@ -60,7 +60,7 @@ struct QueryParameters {
     /// Shows details for all project. Admin only.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
-    all_tenans: Option<bool>,
+    all_tenants: Option<bool>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
@@ -178,8 +178,8 @@ impl AttachmentsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.all_tenans {
-            ep_builder.all_tenans(*val);
+        if let Some(val) = &self.query.all_tenants {
+            ep_builder.all_tenants(*val);
         }
         if let Some(val) = &self.query.sort {
             ep_builder.sort(val);
