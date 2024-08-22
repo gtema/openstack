@@ -43,6 +43,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -73,17 +74,49 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
     /// metering_label_id query parameter for
     /// /v2.0/metering/metering-label-rules API
     ///
     #[builder(default, setter(into))]
     metering_label_id: Option<Cow<'a, str>>,
 
+    /// Reverse the page direction
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
+
     /// remote_ip_prefix query parameter for
     /// /v2.0/metering/metering-label-rules API
     ///
     #[builder(default, setter(into))]
     remote_ip_prefix: Option<Cow<'a, str>>,
+
+    /// Sort direction. This is an optional feature and may be silently ignored
+    /// by the server.
+    ///
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    ///
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
 
     /// The source IP prefix that the metering rule is associated with; in this
     /// context, source IP prefix represents the source IP of the network
@@ -149,6 +182,11 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("remote_ip_prefix", self.remote_ip_prefix.as_ref());
         params.push_opt("source_ip_prefix", self.source_ip_prefix.as_ref());
         params.push_opt("destination_ip_prefix", self.destination_ip_prefix.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
 
         params
     }
@@ -171,6 +209,7 @@ impl<'a> RestEndpoint for Request<'a> {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl<'a> Pageable for Request<'a> {}
 
 #[cfg(test)]
 mod tests {

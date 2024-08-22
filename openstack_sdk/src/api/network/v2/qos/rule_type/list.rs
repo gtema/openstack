@@ -39,9 +39,12 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
     /// all_rules query parameter for /v2.0/qos/rule-types API
     ///
     #[builder(default)]
@@ -52,17 +55,49 @@ pub struct Request {
     #[builder(default)]
     all_supported: Option<bool>,
 
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
+    /// Reverse the page direction
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
+
+    /// Sort direction. This is an optional feature and may be silently ignored
+    /// by the server.
+    ///
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    ///
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Rule_Type.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -87,7 +122,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -100,6 +135,11 @@ impl RestEndpoint for Request {
         let mut params = QueryParams::default();
         params.push_opt("all_rules", self.all_rules);
         params.push_opt("all_supported", self.all_supported);
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
 
         params
     }
@@ -122,6 +162,7 @@ impl RestEndpoint for Request {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl<'a> Pageable for Request<'a> {}
 
 #[cfg(test)]
 mod tests {

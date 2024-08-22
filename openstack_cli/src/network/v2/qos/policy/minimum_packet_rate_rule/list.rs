@@ -34,6 +34,7 @@ use crate::StructTable;
 use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::policy::minimum_packet_rate_rule::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI
@@ -47,6 +48,10 @@ pub struct MinimumPacketRateRulesCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -64,11 +69,43 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
+
     /// min_kpps query parameter for
     /// /v2.0/qos/policies/{policy_id}/minimum-packet-rate-rules API
     ///
     #[arg(help_heading = "Query parameters", long)]
     min_kpps: Option<i32>,
+
+    /// Reverse the page direction
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
+
+    /// Sort direction. This is an optional feature and may be silently ignored
+    /// by the server.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
+    sort_dir: Option<String>,
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    sort_key: Option<String>,
 }
 
 /// Path parameters
@@ -126,13 +163,30 @@ impl MinimumPacketRateRulesCommand {
         if let Some(val) = &self.query.direction {
             ep_builder.direction(val);
         }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
+        }
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())
