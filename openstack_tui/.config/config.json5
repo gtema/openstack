@@ -1,0 +1,25 @@
+{
+  "mode_keybindings": {
+    "Home": { },
+    "NetworkSubnets": {
+      "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
+    },
+    "ImageImages": {
+      "0": { "action": {"ImageFilter": {} }, "description": "all"},
+      "1": { "action": {"ImageFilter": {"visibility": "public"} },"description": "public"},
+      "2": { "action": {"ImageFilter": {"visibility": "shared"} },"description": "shared"},
+      "3": { "action": {"ImageFilter": {"visibility": "private"} },"description": "private"},
+
+    }
+  },
+  "global_keybindings": {
+    "<q>": { "action": "Quit", "description": "Quit"}, // Quit the application
+    "<Ctrl-d>": { "action": "Quit", "description": "Quit"},// Another way to quit
+    "<Ctrl-c>": { "action": "Quit", "description": "Quit"},// Yet another way to quit
+    "<Ctrl-z>": { "action": "Suspend", "description": "Suspend"},// Suspend the application
+    "F1": { "action": {"Mode": "Home"}, "description": "Home"},
+    "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
+    "F3": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
+    "r": {"action": "Refresh", "description": "Refresh data"}
+  }
+}

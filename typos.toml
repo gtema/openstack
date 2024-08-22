@@ -23,6 +23,7 @@ extend-ignore-re = []
 
 [default.extend-words]
 ro = "ro"
+ratatui = "ratatui"
 
 [type.rust]
 extend-glob = []
