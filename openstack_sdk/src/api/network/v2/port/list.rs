@@ -53,6 +53,7 @@ use crate::api::common::CommaSeparatedList;
 use std::borrow::Cow;
 use std::collections::BTreeSet;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -96,10 +97,25 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     ip_allocation: Option<Cow<'a, str>>,
 
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
     /// mac_address query parameter for /v2.0/ports API
     ///
     #[builder(default, setter(into))]
     mac_address: Option<Cow<'a, str>>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
 
     /// name query parameter for /v2.0/ports API
     ///
@@ -121,6 +137,11 @@ pub struct Request<'a> {
     #[builder(default, private, setter(name = "_not_tags_any"))]
     not_tags_any: Option<CommaSeparatedList<Cow<'a, str>>>,
 
+    /// Reverse the page direction
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
+
     /// revision_number query parameter for /v2.0/ports API
     ///
     #[builder(default, setter(into))]
@@ -130,6 +151,18 @@ pub struct Request<'a> {
     ///
     #[builder(default, private, setter(name = "_security_groups"))]
     security_groups: BTreeSet<Cow<'a, str>>,
+
+    /// Sort direction. This is an optional feature and may be silently ignored
+    /// by the server.
+    ///
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    ///
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
 
     /// status query parameter for /v2.0/ports API
     ///
@@ -303,6 +336,11 @@ impl<'a> RestEndpoint for Request<'a> {
                 .iter()
                 .map(|value| ("security_groups", value)),
         );
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
 
         params
     }
@@ -325,6 +363,7 @@ impl<'a> RestEndpoint for Request<'a> {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl<'a> Pageable for Request<'a> {}
 
 #[cfg(test)]
 mod tests {

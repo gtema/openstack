@@ -1120,7 +1120,7 @@ Return a detailed list of attachments
 
 ###### **Options:**
 
-* `--all-tenans <ALL_TENANS>` — Shows details for all project. Admin only
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
 
   Possible values: `true`, `false`
 
@@ -2583,7 +2583,7 @@ Returns a detailed list of snapshots
 
 ###### **Options:**
 
-* `--all-tenans <ALL_TENANS>` — Shows details for all project. Admin only
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
 
   Possible values: `true`, `false`
 
@@ -3279,7 +3279,7 @@ Returns a detailed list of volumes
 
 ###### **Options:**
 
-* `--all-tenans <ALL_TENANS>` — Shows details for all project. Admin only
+* `--all-tenants <ALL_TENANTS>` — Shows details for all project. Admin only
 
   Possible values: `true`, `false`
 
@@ -15137,8 +15137,22 @@ Error response codes: 401
 
 * `--description <DESCRIPTION>` — description query parameter for /v2.0/address-groups API
 * `--id <ID>` — id query parameter for /v2.0/address-groups API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/address-groups API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--project-id <PROJECT_ID>` — project_id query parameter for /v2.0/address-groups API
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15277,12 +15291,26 @@ Error response codes: 401
 
 * `--id <ID>` — id query parameter for /v2.0/address-scopes API
 * `--ip-version <IP_VERSION>` — ip_version query parameter for /v2.0/address-scopes API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/address-scopes API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--shared <SHARED>` — shared query parameter for /v2.0/address-scopes API
 
   Possible values: `true`, `false`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/address-scopes API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15360,9 +15388,23 @@ Error response codes: 401
 
 ###### **Options:**
 
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/availability_zones API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--resource <RESOURCE>` — resource query parameter for /v2.0/availability_zones API
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--state <STATE>` — state query parameter for /v2.0/availability_zones API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15525,15 +15567,29 @@ Error response codes: 401
 * `--floating-ip-address <FLOATING_IP_ADDRESS>` — floating_ip_address query parameter for /v2.0/floatingips API
 * `--floating-network-id <FLOATING_NETWORK_ID>` — floating_network_id query parameter for /v2.0/floatingips API
 * `--id <ID>` — id query parameter for /v2.0/floatingips API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/floatingips API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/floatingips API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--port-id <PORT_ID>` — port_id query parameter for /v2.0/floatingips API
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/floatingips API
 * `--router-id <ROUTER_ID>` — router_id query parameter for /v2.0/floatingips API
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--status <STATUS>` — status query parameter for /v2.0/floatingips API
 * `--tags <TAGS>` — tags query parameter for /v2.0/floatingips API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/floatingips API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/floatingips API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15642,10 +15698,24 @@ Error response codes: 400, 404
 * `--external-port-range <EXTERNAL_PORT_RANGE>` — external_port_range query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 * `--id <ID>` — id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 * `--internal-port-id <INTERNAL_PORT_ID>` — internal_port_id query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/floatingips/{floatingip_id}/port_forwardings API
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15809,11 +15879,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network floating-ip tag list <FLOATINGIP_ID>`
+**Usage:** `osc network floating-ip tag list [OPTIONS] <FLOATINGIP_ID>`
 
 ###### **Arguments:**
 
 * `<FLOATINGIP_ID>` — floatingip_id parameter for /v2.0/floatingips/{floatingip_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15944,11 +16031,28 @@ Normal response codes: 200
 
 Error response codes: 401, 403
 
-**Usage:** `osc network network dhcp-agent list <NETWORK_ID>`
+**Usage:** `osc network network dhcp-agent list [OPTIONS] <NETWORK_ID>`
 
 ###### **Arguments:**
 
 * `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/dhcp-agents/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -15986,10 +16090,16 @@ Error response codes: 401
 
   Possible values: `true`, `false`
 
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--mtu <MTU>` — mtu query parameter for /v2.0/networks API
 * `--name <NAME>` — name query parameter for /v2.0/networks API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/networks API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/networks API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--provider-network-type <PROVIDER_NETWORK_TYPE>` — provider:network_type query parameter for /v2.0/networks API
 * `--provider-physical-network <PROVIDER_PHYSICAL_NETWORK>` — provider:physical_network query parameter for /v2.0/networks API
 * `--provider-segmentation-id <PROVIDER_SEGMENTATION_ID>` — provider:segmentation_id query parameter for /v2.0/networks API
@@ -16002,10 +16112,18 @@ Error response codes: 401
 
   Possible values: `true`, `false`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--status <STATUS>` — status query parameter for /v2.0/networks API
 * `--tags <TAGS>` — tags query parameter for /v2.0/networks API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/networks API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/networks API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16086,11 +16204,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network network tag list <NETWORK_ID>`
+**Usage:** `osc network network tag list [OPTIONS] <NETWORK_ID>`
 
 ###### **Arguments:**
 
 * `<NETWORK_ID>` — network_id parameter for /v2.0/networks/{network_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16241,17 +16376,31 @@ Error response codes: 401
 * `--fixed-ips <FIXED_IPS>` — fixed_ips query parameter for /v2.0/ports API
 * `--id <ID>` — id query parameter for /v2.0/ports API
 * `--ip-allocation <IP_ALLOCATION>` — ip_allocation query parameter for /v2.0/ports API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--mac-address <MAC_ADDRESS>` — mac_address query parameter for /v2.0/ports API
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/ports API
 * `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/ports API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/ports API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/ports API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/ports API
 * `--security-groups <SECURITY_GROUPS>` — security_groups query parameter for /v2.0/ports API
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--status <STATUS>` — status query parameter for /v2.0/ports API
 * `--tags <TAGS>` — tags query parameter for /v2.0/ports API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/ports API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/ports API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16332,11 +16481,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network port tag list <PORT_ID>`
+**Usage:** `osc network port tag list [OPTIONS] <PORT_ID>`
 
 ###### **Arguments:**
 
 * `<PORT_ID>` — port_id parameter for /v2.0/ports/{port_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16426,10 +16592,24 @@ Error response codes: 401
 
 * `--action <ACTION>` — action query parameter for /v2.0/rbac-policies API
 * `--id <ID>` — id query parameter for /v2.0/rbac-policies API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--object-id <OBJECT_ID>` — object_id query parameter for /v2.0/rbac-policies API
 * `--object-type <OBJECT_TYPE>` — object_type query parameter for /v2.0/rbac-policies API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--target-tenant <TARGET_TENANT>` — target_tenant query parameter for /v2.0/rbac-policies API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/rbac-policies API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16629,11 +16809,25 @@ Error response codes: 400, 404
 
 * `--helper <HELPER>` — helper query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 * `--id <ID>` — id query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--port <PORT>` — port query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 * `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/routers/{router_id}/conntrack_helpers API
 
   Possible values: `dccp`, `icmp`, `ipv6-icmp`, `sctp`, `tcp`, `udp`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16774,11 +16968,28 @@ Normal response codes: 200
 
 Error response codes: 401, 404
 
-**Usage:** `osc network router l3-agent list <ROUTER_ID>`
+**Usage:** `osc network router l3-agent list [OPTIONS] <ROUTER_ID>`
 
 ###### **Arguments:**
 
 * `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/l3-agents/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16814,13 +17025,27 @@ Error response codes: 401
   Possible values: `true`, `false`
 
 * `--id <ID>` — id query parameter for /v2.0/routers API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/routers API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/routers API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/routers API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/routers API
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--tags <TAGS>` — tags query parameter for /v2.0/routers API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/routers API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/routers API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -16950,11 +17175,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network router tag list <ROUTER_ID>`
+**Usage:** `osc network router tag list [OPTIONS] <ROUTER_ID>`
 
 ###### **Arguments:**
 
 * `<ROUTER_ID>` — router_id parameter for /v2.0/routers/{router_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17055,17 +17297,31 @@ Error response codes: 401
 
 * `--description <DESCRIPTION>` — description query parameter for /v2.0/security-groups API
 * `--id <ID>` — id query parameter for /v2.0/security-groups API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/security-groups API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/security-groups API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/security-groups API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/security-groups API
 * `--shared <SHARED>` — shared query parameter for /v2.0/security-groups API
 
   Possible values: `true`, `false`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--tags <TAGS>` — tags query parameter for /v2.0/security-groups API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/security-groups API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/security-groups API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17173,11 +17429,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network security-group tag list <SECURITY_GROUP_ID>`
+**Usage:** `osc network security-group tag list [OPTIONS] <SECURITY_GROUP_ID>`
 
 ###### **Arguments:**
 
 * `<SECURITY_GROUP_ID>` — security_group_id parameter for /v2.0/security-groups/{security_group_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17293,7 +17566,13 @@ Error response codes: 401
   Possible values: `IPv4`, `IPv6`
 
 * `--id <ID>` — id query parameter for /v2.0/security-group-rules API
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--normalized-cidr <NORMALIZED_CIDR>` — normalized_cidr query parameter for /v2.0/security-group-rules API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--port-range-max <PORT_RANGE_MAX>` — port_range_max query parameter for /v2.0/security-group-rules API
 * `--port-range-min <PORT_RANGE_MIN>` — port_range_min query parameter for /v2.0/security-group-rules API
 * `--protocol <PROTOCOL>` — protocol query parameter for /v2.0/security-group-rules API
@@ -17302,7 +17581,15 @@ Error response codes: 401
 * `--remote-ip-prefix <REMOTE_IP_PREFIX>` — remote_ip_prefix query parameter for /v2.0/security-group-rules API
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/security-group-rules API
 * `--security-group-id <SECURITY_GROUP_ID>` — security_group_id query parameter for /v2.0/security-group-rules API
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/security-group-rules API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17477,10 +17764,16 @@ Error response codes: 401
 
   Possible values: `dhcpv6-stateful`, `dhcpv6-stateless`, `slaac`
 
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--name <NAME>` — name query parameter for /v2.0/subnets API
 * `--network-id <NETWORK_ID>` — network_id query parameter for /v2.0/subnets API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/subnets API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/subnets API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/subnets API
 * `--router-external <ROUTER_EXTERNAL>` — The membership of a subnet to an external network
 
@@ -17491,10 +17784,18 @@ Error response codes: 401
 
   Possible values: `true`, `false`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--subnetpool-id <SUBNETPOOL_ID>` — subnetpool_id query parameter for /v2.0/subnets API
 * `--tags <TAGS>` — tags query parameter for /v2.0/subnets API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/subnets API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnets API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17614,11 +17915,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network subnet tag list <SUBNET_ID>`
+**Usage:** `osc network subnet tag list [OPTIONS] <SUBNET_ID>`
 
 ###### **Arguments:**
 
 * `<SUBNET_ID>` — subnet_id parameter for /v2.0/subnets/{subnet_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17751,19 +18069,33 @@ Error response codes: 401
 
   Possible values: `true`, `false`
 
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
 * `--max-prefixlen <MAX_PREFIXLEN>` — max_prefixlen query parameter for /v2.0/subnetpools API
 * `--min-prefixlen <MIN_PREFIXLEN>` — min_prefixlen query parameter for /v2.0/subnetpools API
 * `--name <NAME>` — name query parameter for /v2.0/subnetpools API
 * `--not-tags <NOT_TAGS>` — not-tags query parameter for /v2.0/subnetpools API
 * `--not-tags-any <NOT_TAGS_ANY>` — not-tags-any query parameter for /v2.0/subnetpools API
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
 * `--revision-number <REVISION_NUMBER>` — revision_number query parameter for /v2.0/subnetpools API
 * `--shared <SHARED>` — shared query parameter for /v2.0/subnetpools API
 
   Possible values: `true`, `false`
 
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
 * `--tags <TAGS>` — tags query parameter for /v2.0/subnetpools API
 * `--tags-any <TAGS_ANY>` — tags-any query parameter for /v2.0/subnetpools API
 * `--tenant-id <TENANT_ID>` — tenant_id query parameter for /v2.0/subnetpools API
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
@@ -17891,11 +18223,28 @@ Command without description in OpenAPI
 
 Command without description in OpenAPI
 
-**Usage:** `osc network subnetpool tag list <SUBNETPOOL_ID>`
+**Usage:** `osc network subnetpool tag list [OPTIONS] <SUBNETPOOL_ID>`
 
 ###### **Arguments:**
 
 * `<SUBNETPOOL_ID>` — subnetpool_id parameter for /v2.0/subnetpools/{subnetpool_id}/tags/{id} API
+
+###### **Options:**
+
+* `--limit <LIMIT>` — Requests a page size of items. Returns a number of items up to a limit value. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--marker <MARKER>` — The ID of the last-seen item. Use the limit parameter to make an initial limited request and use the ID of the last-seen item from the response as the marker parameter value in a subsequent limited request
+* `--page-reverse <PAGE_REVERSE>` — Reverse the page direction
+
+  Possible values: `true`, `false`
+
+* `--sort-dir <SORT_DIR>` — Sort direction. This is an optional feature and may be silently ignored by the server
+
+  Possible values: `asc`, `desc`
+
+* `--sort-key <SORT_KEY>` — Sort results by the attribute. This is an optional feature and may be silently ignored by the server
+* `--max-items <MAX_ITEMS>` — Total limit of entities count to return. Use this when there are too many entries
+
+  Default value: `10000`
 
 
 
