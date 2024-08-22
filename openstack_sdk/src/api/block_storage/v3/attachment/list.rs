@@ -31,7 +31,7 @@ pub struct Request<'a> {
     /// Shows details for all project. Admin only.
     ///
     #[builder(default)]
-    all_tenans: Option<bool>,
+    all_tenants: Option<bool>,
 
     /// Requests a page size of items. Returns a number of items up to a limit
     /// value. Use the limit parameter to make an initial limited request and
@@ -122,7 +122,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("all_tenans", self.all_tenans);
+        params.push_opt("all_tenants", self.all_tenants);
         params.push_opt("sort", self.sort.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());

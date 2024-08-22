@@ -31,7 +31,7 @@ pub struct Request<'a> {
     /// Shows details for all project. Admin only.
     ///
     #[builder(default)]
-    all_tenans: Option<bool>,
+    all_tenants: Option<bool>,
 
     /// Filters results by consumes_quota field. Resources that don’t use
     /// quotas are usually temporary internal resources created to perform an
@@ -148,7 +148,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("all_tenans", self.all_tenans);
+        params.push_opt("all_tenants", self.all_tenants);
         params.push_opt("sort", self.sort.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());

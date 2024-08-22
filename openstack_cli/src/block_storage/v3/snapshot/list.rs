@@ -60,7 +60,7 @@ struct QueryParameters {
     /// Shows details for all project. Admin only.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
-    all_tenans: Option<bool>,
+    all_tenants: Option<bool>,
 
     /// Filters results by consumes_quota field. Resources that don’t use
     /// quotas are usually temporary internal resources created to perform an
@@ -264,8 +264,8 @@ impl SnapshotsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.all_tenans {
-            ep_builder.all_tenans(*val);
+        if let Some(val) = &self.query.all_tenants {
+            ep_builder.all_tenants(*val);
         }
         if let Some(val) = &self.query.sort {
             ep_builder.sort(val);
