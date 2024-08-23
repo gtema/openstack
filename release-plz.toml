@@ -13,6 +13,11 @@ changelog_include = ["openstack_sdk"]
 git_release_enable = true
 
 [[package]]
+name = "openstack_tui"
+changelog_include = ["openstack_tui"]
+git_release_enable = true
+
+[[package]]
 name = "structable_derive"
 git_release_enable = true
 

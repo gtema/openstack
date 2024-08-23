@@ -14,6 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+    strategy:
+      matrix:
+        include:
+          - package: openstack_sdk
+          - package: openstack_cli
+          - package: openstack_tui
+          - package: structable_derive
 
     steps:
       - name: Harden Runner
@@ -46,3 +53,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        with:
+          package: ${{ matrix.package }}/Cargo.toml
