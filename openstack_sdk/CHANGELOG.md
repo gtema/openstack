@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.9.0...openstack_sdk-v0.10.0) - 2024-08-23
+
+### Added
+- Start Terminal User Interface project ([#470](https://github.com/gtema/openstack/pull/470))
+- Add network resource pagination and sorting ([#469](https://github.com/gtema/openstack/pull/469))
+- New generated content ([#468](https://github.com/gtema/openstack/pull/468))
+- Add list of available connections ([#465](https://github.com/gtema/openstack/pull/465))
+- Add support for placement microversion ([#463](https://github.com/gtema/openstack/pull/463))
+
+### Other
+- Update compute.floatingip ([#461](https://github.com/gtema/openstack/pull/461))
+
 ## [0.9.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.8.0...openstack_sdk-v0.9.0) - 2024-08-16
 
 ### Added
