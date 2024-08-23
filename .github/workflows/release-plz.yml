@@ -54,4 +54,4 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         with:
-          package: ${{ matrix.package }}/Cargo.toml
+          manifest_path: ${{ matrix.package }}/Cargo.toml
