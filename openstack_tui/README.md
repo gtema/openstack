@@ -5,5 +5,5 @@ terminal user interface imroves user experience when a quick look at currently
 present resources is required.
 
 openstack_tui (`ostui` as a binary name) is such TUI built upon
-[Ratatouille](https://ratatouille.rs) and inspired in functionality by
+[Ratatui](https://ratatui.rs) and inspired in functionality by
 [k9s](https://k9scli.io) that provides TUI for Kubernetes.
