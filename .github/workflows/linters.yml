@@ -15,6 +15,7 @@ on:
       - '.github/workflows/linters.yml'
       - 'openstack_cli/**'
       - 'openstack_sdk/**'
+      - 'openstack_tui/**'
       - 'structable_derive/**'
       - 'fuzz/**'
 

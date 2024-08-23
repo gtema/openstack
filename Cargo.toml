@@ -9,7 +9,7 @@ members = [
   "fuzz"
 ]
 exclude = ["fuzz"]
-default-members = ["openstack_cli", "openstack_sdk"]
+default-members = ["openstack_cli", "openstack_sdk", "openstack_tui"]
 
 [workspace.package]
 license = "Apache-2.0"

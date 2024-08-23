@@ -32,7 +32,7 @@ itertools = { workspace = true }
 json5 = "^0.4"
 lazy_static = "^1.5"
 #log = "^0.4"
-openstack_sdk = { path = "../openstack_sdk", version = "^0.10", default-features = false, features = ["async", "identity"] }
+openstack_sdk = { path = "../openstack_sdk", version = "^0.10", default-features = false, features = ["async", "block_storage", "compute", "identity", "network"] }
 pretty_assertions = "^1.4"
 ratatui = { version = "^0.28", features = ["serde", "macros"] }
 serde = { workspace = true  }
