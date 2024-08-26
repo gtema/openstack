@@ -25,7 +25,7 @@ config = { workspace = true, features = ["json", "json5", "yaml"] }
 crossterm = { version = "^0.28", features = ["serde", "event-stream"] }
 derive_deref = "^1.1"
 dirs = { workspace = true }
-eyre = "0.6.12"
+eyre = "^0.6"
 futures = { workspace = true }
 human-panic = { workspace = true }
 itertools = { workspace = true }
