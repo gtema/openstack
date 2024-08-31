@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.0...openstack_tui-v0.1.1) - 2024-08-31
+
+### Fixed
+- Correct autoreplaced `typos` names ([#485](https://github.com/gtema/openstack/pull/485))
+
+### Other
+- Update dependencies ([#499](https://github.com/gtema/openstack/pull/499))
+
 ## [0.1.0](https://github.com/gtema/openstack/releases/tag/openstack_tui-v0.1.0) - 2024-08-23
 
 ### Added
