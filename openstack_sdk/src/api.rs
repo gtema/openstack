@@ -75,7 +75,7 @@ pub use self::paged::Paged;
 pub use self::paged::Pagination;
 pub use self::paged::PaginationError;
 
-pub use self::find::find;
+pub use self::find::{find, find_by_name};
 
 pub use self::params::JsonBodyParams;
 pub use self::params::ParamValue;
