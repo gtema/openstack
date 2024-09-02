@@ -51,15 +51,39 @@ pub trait Findable {
     }
 }
 
+/// Resource search mode
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+enum FindMode {
+    /// Search by name or id.
+    #[default]
+    NameOrId,
+    /// Search by name.
+    Name,
+}
+
 /// A query modifier that wraps Findable resources to workaround conflicting trait implementations
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Find<E> {
+    /// Findable endpoint
     pub(in crate::api::find) findable: E,
+    /// Find mode
+    mode: FindMode,
 }
 
-/// Function wrapper for findable resources
+/// Function wrapper for findable resources to locate resource by name or id
 pub fn find<F>(findable: F) -> Find<F> {
-    Find { findable }
+    Find {
+        findable,
+        mode: FindMode::NameOrId,
+    }
+}
+
+/// Function wrapper for findable resources to locate by name
+pub fn find_by_name<F>(findable: F) -> Find<F> {
+    Find {
+        findable,
+        mode: FindMode::Name,
+    }
 }
 
 #[cfg(feature = "sync")]
@@ -72,32 +96,41 @@ where
     C: Client,
 {
     fn query(&self, client: &C) -> Result<T, ApiError<C::Error>> {
-        let get_ep = self.findable.get_ep();
-        let get_res = get_ep.query(client);
-        let res: serde_json::Value = match get_res {
-            Err(x) => match x {
-                crate::api::ApiError::ResourceNotFound
-                | crate::api::ApiError::OpenStack {
-                    status: http::StatusCode::NOT_FOUND,
-                    ..
+        let res = match self.mode {
+            FindMode::NameOrId => {
+                let get_ep = self.findable.get_ep();
+                let get_res = get_ep.query(client);
+                match get_res {
+                    Err(x) => match x {
+                        crate::api::ApiError::ResourceNotFound
+                        | crate::api::ApiError::OpenStack {
+                            status: http::StatusCode::NOT_FOUND,
+                            ..
+                        }
+                        | crate::api::ApiError::OpenStackService {
+                            status: http::StatusCode::NOT_FOUND,
+                            ..
+                        }
+                        | crate::api::ApiError::OpenStackUnrecognized {
+                            status: http::StatusCode::NOT_FOUND,
+                            ..
+                        } => {
+                            let list_ep = self.findable.list_ep();
+                            let data: Vec<serde_json::Value> = list_ep.query(client)?;
+                            self.findable.locate_resource_in_list::<C>(data)?
+                        }
+                        _ => {
+                            return Err(x);
+                        }
+                    },
+                    Ok(x) => x,
                 }
-                | crate::api::ApiError::OpenStackService {
-                    status: http::StatusCode::NOT_FOUND,
-                    ..
-                }
-                | crate::api::ApiError::OpenStackUnrecognized {
-                    status: http::StatusCode::NOT_FOUND,
-                    ..
-                } => {
-                    let list_ep = self.findable.list_ep();
-                    let data: Vec<serde_json::Value> = list_ep.query(client)?;
-                    self.findable.locate_resource_in_list::<C>(data)?
-                }
-                _ => {
-                    return Err(x);
-                }
-            },
-            Ok(x) => x,
+            }
+            FindMode::Name => {
+                let list_ep = self.findable.list_ep();
+                let data: Vec<serde_json::Value> = list_ep.query(client)?;
+                self.findable.locate_resource_in_list::<C>(data)?
+            }
         };
 
         match serde_json::from_value::<T>(res) {
@@ -118,32 +151,41 @@ where
     C: AsyncClient + Sync,
 {
     async fn query_async(&self, client: &C) -> Result<T, ApiError<C::Error>> {
-        let get_ep = self.findable.get_ep();
-        let get_res = get_ep.query_async(client).await;
-        let res: serde_json::Value = match get_res {
-            Err(x) => match x {
-                crate::api::ApiError::ResourceNotFound
-                | crate::api::ApiError::OpenStack {
-                    status: http::StatusCode::NOT_FOUND,
-                    ..
+        let res = match self.mode {
+            FindMode::NameOrId => {
+                let get_ep = self.findable.get_ep();
+                let get_res = get_ep.query_async(client).await;
+                match get_res {
+                    Err(x) => match x {
+                        crate::api::ApiError::ResourceNotFound
+                        | crate::api::ApiError::OpenStack {
+                            status: http::StatusCode::NOT_FOUND,
+                            ..
+                        }
+                        | crate::api::ApiError::OpenStackService {
+                            status: http::StatusCode::NOT_FOUND,
+                            ..
+                        }
+                        | crate::api::ApiError::OpenStackUnrecognized {
+                            status: http::StatusCode::NOT_FOUND,
+                            ..
+                        } => {
+                            let list_ep = self.findable.list_ep();
+                            let data: Vec<serde_json::Value> = list_ep.query_async(client).await?;
+                            self.findable.locate_resource_in_list::<C>(data)?
+                        }
+                        _ => {
+                            return Err(x);
+                        }
+                    },
+                    Ok(x) => x,
                 }
-                | crate::api::ApiError::OpenStackService {
-                    status: http::StatusCode::NOT_FOUND,
-                    ..
-                }
-                | crate::api::ApiError::OpenStackUnrecognized {
-                    status: http::StatusCode::NOT_FOUND,
-                    ..
-                } => {
-                    let list_ep = self.findable.list_ep();
-                    let data: Vec<serde_json::Value> = list_ep.query_async(client).await?;
-                    self.findable.locate_resource_in_list::<C>(data)?
-                }
-                _ => {
-                    return Err(x);
-                }
-            },
-            Ok(x) => x,
+            }
+            FindMode::Name => {
+                let list_ep = self.findable.list_ep();
+                let data: Vec<serde_json::Value> = list_ep.query_async(client).await?;
+                self.findable.locate_resource_in_list::<C>(data)?
+            }
         };
 
         match serde_json::from_value::<T>(res) {
@@ -346,6 +388,42 @@ mod tests {
 
     #[cfg(feature = "sync")]
     #[test]
+    fn test_by_name_0_list_1() {
+        let client = MockServerClient::new();
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [{"id": "abc"}] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find_by_name(ep).query(&client);
+        list_mock.assert();
+        let _err = res.unwrap();
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_by_name_list_1_async() {
+        let client = MockAsyncServerClient::new().await;
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [{"id": "abc"}] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find_by_name(ep).query_async(&client).await;
+        list_mock.assert();
+        let _err = res.unwrap();
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
     fn test_get_0_list_2() {
         let client = MockServerClient::new();
         let get_mock = client.server.mock(|when, then| {
@@ -398,6 +476,48 @@ mod tests {
 
     #[cfg(feature = "sync")]
     #[test]
+    fn test_by_name_list_2() {
+        let client = MockServerClient::new();
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [{"id": "abc"}, {"id": "abc2"}] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find_by_name(ep).query(&client);
+        list_mock.assert();
+        let err = res.unwrap_err();
+        if !matches!(err, ApiError::IdNotUnique) {
+            panic!("Unexpected error");
+        }
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_by_name_list_2_async() {
+        let client = MockAsyncServerClient::new().await;
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [{"id": "abc"}, {"id": "abc2"}] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find_by_name(ep).query_async(&client).await;
+        list_mock.assert();
+        let err = res.unwrap_err();
+        if !matches!(err, ApiError::IdNotUnique) {
+            panic!("Unexpected error");
+        }
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
     fn test_get_0_list_0() {
         let client = MockServerClient::new();
         let get_mock = client.server.mock(|when, then| {
@@ -441,6 +561,48 @@ mod tests {
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         get_mock.assert();
+        list_mock.assert();
+        let err = res.unwrap_err();
+        if !matches!(err, ApiError::ResourceNotFound) {
+            panic!("Unexpected error: {}", err);
+        }
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_by_name_list_0() {
+        let client = MockServerClient::new();
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find_by_name(ep).query(&client);
+        list_mock.assert();
+        let err = res.unwrap_err();
+        if !matches!(err, ApiError::ResourceNotFound) {
+            panic!("Unexpected error: {}", err);
+        }
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_by_name_list_0_async() {
+        let client = MockAsyncServerClient::new().await;
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find_by_name(ep).query_async(&client).await;
         list_mock.assert();
         let err = res.unwrap_err();
         if !matches!(err, ApiError::ResourceNotFound) {
