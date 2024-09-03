@@ -9615,13 +9615,17 @@ Unassigns a role from a user on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_user_role`
 
-**Usage:** `osc identity domain user role delete <DOMAIN_ID> <USER_ID> <ID>`
+**Usage:** `osc identity domain user role delete <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -9631,12 +9635,16 @@ Lists role assignments for a user on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_user_roles`
 
-**Usage:** `osc identity domain user role list <DOMAIN_ID> <USER_ID>`
+**Usage:** `osc identity domain user role list <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID>`
 
 ###### **Arguments:**
 
 * `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -9646,13 +9654,17 @@ Assigns a role to a user on a domain.
 
 Relationship: `https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-domain`
 
-**Usage:** `osc identity domain user role set <DOMAIN_ID> <USER_ID> <ID>`
+**Usage:** `osc identity domain user role set <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -9662,13 +9674,17 @@ Check if a user has a specific role on the domain.
 
 GET/HEAD /v3/domains/{domain_id}/users/{user_id}/roles/{role_id}
 
-**Usage:** `osc identity domain user role show <DOMAIN_ID> <USER_ID> <ID>`
+**Usage:** `osc identity domain user role show <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<USER_ID>` — user_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -10600,13 +10616,17 @@ Unassigns a role from a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role delete <PROJECT_ID> <USER_ID> <ID>`
+**Usage:** `osc identity project user role delete <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
-* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -10616,12 +10636,16 @@ Lists role assignments for a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role list <PROJECT_ID> <USER_ID>`
+**Usage:** `osc identity project user role list <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID>`
 
 ###### **Arguments:**
 
 * `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
-* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -10631,13 +10655,17 @@ Assigns a role to a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role set <PROJECT_ID> <USER_ID> <ID>`
+**Usage:** `osc identity project user role set <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
-* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -10647,13 +10675,17 @@ Check grant for project, user, role.
 
 GET/HEAD /v3/projects/{project_id/users/{user_id}/roles/{role_id}
 
-**Usage:** `osc identity project user role show <PROJECT_ID> <USER_ID> <ID>`
+**Usage:** `osc identity project user role show <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID> <ID>`
 
 ###### **Arguments:**
 
 * `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
-* `<USER_ID>` — user_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
 
 
 
@@ -16292,10 +16324,6 @@ Error response codes: 400, 401, 403, 404
 * `--fixed-ips <JSON>` — The IP addresses for the port. If you would like to assign multiple IP addresses for the port, specify multiple entries in this field. Each entry consists of IP address (`ip_address`) and the subnet ID from which the IP address is assigned (`subnet_id`).
 
    - If you specify both a subnet ID and an IP address, OpenStack Networking tries to allocate the IP address on that subnet to the port. - If you specify only a subnet ID, OpenStack Networking allocates an available IP from that subnet to the port. - If you specify only an IP address, OpenStack Networking tries to allocate the IP address if the address is a valid IP for any of the subnets on the specified network.
-* `--hardware-offload-type <HARDWARE_OFFLOAD_TYPE>`
-
-  Possible values: `switchdev`
-
 * `--hints <key=value>` — Admin-only. A dict, at the top level keyed by mechanism driver aliases (as defined in setup.cfg). To following values can be used to control Open vSwitch’s Userspace Tx packet steering feature:
 
    - `{"openvswitch": {"other_config": {"tx-steering": "hash"}}}` - `{"openvswitch": {"other_config": {"tx-steering": "thread"}}}`

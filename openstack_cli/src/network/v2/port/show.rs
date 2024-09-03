@@ -221,10 +221,6 @@ struct ResponseData {
     #[structable(optional, pretty)]
     fixed_ips: Option<Value>,
 
-    #[serde()]
-    #[structable(optional)]
-    hardware_offload_type: Option<String>,
-
     /// Admin-only. The following values control Open vSwitch’s Userspace Tx
     /// packet steering feature:
     ///
