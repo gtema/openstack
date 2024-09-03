@@ -87,6 +87,14 @@ pub enum OpenStackCliError {
     #[error("cannot find resource by identifier")]
     IdNotUnique,
 
+    /// Resource attribute is not present.
+    #[error("cannot find resource attribute {0}")]
+    ResourceAttributeMissing(String),
+
+    /// Resource attribute is not string.
+    #[error("resource attribute {0} is not a string")]
+    ResourceAttributeNotString(String),
+
     /// IO error.
     #[error("IO error: {}", source)]
     IO {
