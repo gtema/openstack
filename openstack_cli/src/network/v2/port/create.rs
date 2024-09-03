@@ -75,11 +75,6 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum HardwareOffloadType {
-    Switchdev,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum NumaAffinityPolicy {
     Legacy,
     Preferred,
@@ -212,9 +207,6 @@ struct Port {
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     fixed_ips: Option<Vec<Value>>,
-
-    #[arg(help_heading = "Body parameters", long)]
-    hardware_offload_type: Option<HardwareOffloadType>,
 
     /// Admin-only. A dict, at the top level keyed by mechanism driver aliases
     /// (as defined in setup.cfg). To following values can be used to control
@@ -431,10 +423,6 @@ struct ResponseData {
     #[structable(optional, pretty)]
     fixed_ips: Option<Value>,
 
-    #[serde()]
-    #[structable(optional)]
-    hardware_offload_type: Option<String>,
-
     /// Admin-only. The following values control Open vSwitch’s Userspace Tx
     /// packet steering feature:
     ///
@@ -649,13 +637,6 @@ impl PortCommand {
 
         if let Some(val) = &args.device_profile {
             port_builder.device_profile(Some(val.into()));
-        }
-
-        if let Some(val) = &args.hardware_offload_type {
-            let tmp = match val {
-                HardwareOffloadType::Switchdev => create::HardwareOffloadType::Switchdev,
-            };
-            port_builder.hardware_offload_type(tmp);
         }
 
         if let Some(val) = &args.hints {
