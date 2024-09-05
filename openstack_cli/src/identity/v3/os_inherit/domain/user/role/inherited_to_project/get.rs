@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::os_inherit::domain::user::role::inherited_to_project::get;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
@@ -64,20 +65,25 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// domain_id parameter for
-    /// /v3/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/inherited_to_projects
-    /// API
-    ///
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_domain_id",
-        value_name = "DOMAIN_ID"
-    )]
-    domain_id: String,
+    /// Domain resource for which the operation should be performed.
+    #[command(flatten)]
+    domain: DomainInput,
 
     /// User resource for which the operation should be performed.
     #[command(flatten)]
     user: UserInput,
+}
+
+/// Domain input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct DomainInput {
+    /// Domain Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_NAME")]
+    domain_name: Option<String>,
+    /// Domain ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_ID")]
+    domain_id: Option<String>,
 }
 
 /// User input select group
@@ -124,7 +130,40 @@ impl InheritedToProjectCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.domain_id(&self.path.domain_id);
+
+        // Process path parameter `domain_id`
+        if let Some(id) = &self.path.domain.domain_id {
+            // domain_id is passed. No need to lookup
+            ep_builder.domain_id(id);
+        } else if let Some(name) = &self.path.user.user_name {
+            // domain_name is passed. Need to lookup resource
+            let mut find_builder = find_domain::Request::builder();
+            warn!("Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead.");
+
+            find_builder.id(name);
+            let find_ep = find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.domain_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        }
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {
