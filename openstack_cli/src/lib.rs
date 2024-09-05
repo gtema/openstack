@@ -25,7 +25,8 @@ use std::io::{self, IsTerminal};
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
-use tracing::Level;
+use eyre::OptionExt;
+use tracing::{warn, Level};
 
 use openstack_sdk::{
     auth::authtoken::AuthTokenScope, types::identity::v3::Project, AsyncOpenStack,
@@ -85,7 +86,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             cli.global_opts
                 .os_cloud
                 .clone()
-                .expect("--os-cloud or OS_CLOUD env must be given"),
+                .ok_or_eyre("`--os-cloud` or `OS_CLOUD` environment variable must be given")?,
         )?
         .ok_or(OpenStackCliError::ConnectionNotFound(
             cli.global_opts.os_cloud.clone().unwrap(),
@@ -112,15 +113,24 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             .map_err(|err| OpenStackCliError::Auth { source: err })?;
     }
     if cli.global_opts.os_project_id.is_some() || cli.global_opts.os_project_name.is_some() {
-        let current_project = session
+        warn!(
+            "Cloud config is being chosen with arguments overriding project. Result may be not as expected."
+        );
+        let current_auth = session
             .get_auth_info()
             .expect("Already authenticated")
-            .token
-            .project;
+            .token;
         let project = Project {
             id: cli.global_opts.os_project_id.clone(),
             name: cli.global_opts.os_project_name.clone(),
-            domain: current_project.expect("Current scope is project").domain,
+            domain: match (current_auth.project, current_auth.domain) {
+                // New project is in the same domain as the original
+                (Some(project), _) => project.domain,
+                // domain scope was used
+                (None, Some(domain)) => Some(domain),
+                // There was no scope thus using user domain
+                _ => current_auth.user.domain,
+            },
         };
         let scope = AuthTokenScope::Project(project.clone());
         session
