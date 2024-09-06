@@ -206,7 +206,7 @@ impl TokenCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = get::Request::builder();
+        let ep_builder = get::Request::builder();
 
         // Set path parameters
         // Set query parameters

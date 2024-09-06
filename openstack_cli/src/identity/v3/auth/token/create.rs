@@ -33,7 +33,6 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use clap::ValueEnum;
-use dialoguer::Password;
 use openstack_sdk::api::identity::v3::auth::token::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;

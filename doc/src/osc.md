@@ -333,6 +333,27 @@ This document contains the help content for the `osc` command-line program.
 * [`osc compute server volume-attachment set285`↴](#osc-compute-server-volume-attachment-set285)
 * [`osc compute server volume-attachment show`↴](#osc-compute-server-volume-attachment-show)
 * [`osc identity`↴](#osc-identity)
+* [`osc identity auth`↴](#osc-identity-auth)
+* [`osc identity auth catalog`↴](#osc-identity-auth-catalog)
+* [`osc identity auth catalog list`↴](#osc-identity-auth-catalog-list)
+* [`osc identity auth domain`↴](#osc-identity-auth-domain)
+* [`osc identity auth domain list`↴](#osc-identity-auth-domain-list)
+* [`osc identity auth federation`↴](#osc-identity-auth-federation)
+* [`osc identity auth federation identity-provider`↴](#osc-identity-auth-federation-identity-provider)
+* [`osc identity auth federation identity-provider protocol`↴](#osc-identity-auth-federation-identity-provider-protocol)
+* [`osc identity auth federation identity-provider protocol websso`↴](#osc-identity-auth-federation-identity-provider-protocol-websso)
+* [`osc identity auth federation identity-provider protocol websso create`↴](#osc-identity-auth-federation-identity-provider-protocol-websso-create)
+* [`osc identity auth federation identity-provider protocol websso get`↴](#osc-identity-auth-federation-identity-provider-protocol-websso-get)
+* [`osc identity auth federation websso`↴](#osc-identity-auth-federation-websso)
+* [`osc identity auth federation websso create`↴](#osc-identity-auth-federation-websso-create)
+* [`osc identity auth federation websso show`↴](#osc-identity-auth-federation-websso-show)
+* [`osc identity auth project`↴](#osc-identity-auth-project)
+* [`osc identity auth project list`↴](#osc-identity-auth-project-list)
+* [`osc identity auth system`↴](#osc-identity-auth-system)
+* [`osc identity auth system list`↴](#osc-identity-auth-system-list)
+* [`osc identity auth token`↴](#osc-identity-auth-token)
+* [`osc identity auth token delete`↴](#osc-identity-auth-token-delete)
+* [`osc identity auth token get`↴](#osc-identity-auth-token-get)
 * [`osc identity access-rule`↴](#osc-identity-access-rule)
 * [`osc identity access-rule delete`↴](#osc-identity-access-rule-delete)
 * [`osc identity access-rule list`↴](#osc-identity-access-rule-list)
@@ -8849,6 +8870,7 @@ Identity (Keystone) commands
 
 ###### **Subcommands:**
 
+* `auth` — Identity Auth commands
 * `access-rule` — **Application Credentials - Access Rules**
 * `application-credential` — **Application Credentials**
 * `domain` — Identity Domain commands
@@ -8862,6 +8884,309 @@ Identity (Keystone) commands
 * `role-inference` — Role Inferences commands
 * `service` — Service commands
 * `user` — User commands
+
+
+
+## `osc identity auth`
+
+Identity Auth commands
+
+The Identity service generates tokens in exchange for authentication credentials. A token represents the authenticated identity of a user and, optionally, grants authorization on a specific project, domain, or the deployment system.
+
+The body of an authentication request must include a payload that specifies the authentication methods, which are normally just password or token, the credentials, and, optionally, the authorization scope. You can scope a token to a project, domain, the deployment system, or the token can be unscoped. You cannot scope a token to multiple scope targets.
+
+Tokens have IDs, which the Identity API returns in the X-Subject-Token response header.
+
+In the case of multi-factor authentication (MFA) more than one authentication method needs to be supplied to authenticate. As of v3.12 a failure due to MFA rules only partially being met will result in an auth receipt ID being returned in the response header Openstack-Auth-Receipt, and a response body that details the receipt itself and the missing authentication methods. Supplying the auth receipt ID in the Openstack-Auth-Receipt header in a follow-up authentication request, with the missing authentication methods, will result in a valid token by reusing the successful methods from the first request. This allows MFA authentication to be a multi-step process.
+
+After you obtain an authentication token, you can:
+
+- Make REST API requests to other OpenStack services. You supply the ID of your authentication token in the X-Auth-Token request header.
+
+- Validate your authentication token and list the domains, projects, roles, and endpoints that your token gives you access to.
+
+- Use your token to request another token scoped for a different domain and project.
+
+- Force the immediate revocation of a token.
+
+- List revoked public key infrastructure (PKI) tokens.
+
+**Usage:** `osc identity auth <COMMAND>`
+
+###### **Subcommands:**
+
+* `catalog` — Identity Catalog commands
+* `domain` — Identity Domain scope commands
+* `federation` — Identity Federated auch commands
+* `project` — Identity project scope commands
+* `system` — Identity system scope commands
+* `token` — Identity token commands
+
+
+
+## `osc identity auth catalog`
+
+Identity Catalog commands
+
+A service is an OpenStack web service that you can access through a URL, i.e. an endpoint. A service catalog lists the services that are available to the caller based upon the current authorization.
+
+**Usage:** `osc identity auth catalog <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get service catalog
+
+
+
+## `osc identity auth catalog list`
+
+New in version 3.3
+
+This call returns a service catalog for the X-Auth-Token provided in the request, even if the token does not contain a catalog itself (for example, if it was generated using ?nocatalog).
+
+The structure of the catalog object is identical to that contained in a token.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/auth_catalog`
+
+**Usage:** `osc identity auth catalog list`
+
+
+
+## `osc identity auth domain`
+
+Identity Domain scope commands
+
+authorization.
+
+**Usage:** `osc identity auth domain <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get available domain scopes
+
+
+
+## `osc identity auth domain list`
+
+New in version 3.3
+
+This call returns the list of domains that are available to be scoped to based on the X-Auth-Token provided in the request.
+
+The structure is the same as listing domains.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/auth_domains`
+
+**Usage:** `osc identity auth domain list`
+
+
+
+## `osc identity auth federation`
+
+Identity Federated auch commands
+
+authorization.
+
+**Usage:** `osc identity auth federation <COMMAND>`
+
+###### **Subcommands:**
+
+* `identity-provider` — Identity WebSSO auth commands
+* `websso` — Identity WebSSO auth commands
+
+
+
+## `osc identity auth federation identity-provider`
+
+Identity WebSSO auth commands
+
+**Usage:** `osc identity auth federation identity-provider <COMMAND>`
+
+###### **Subcommands:**
+
+* `protocol` — Identity WebSSO auth commands
+
+
+
+## `osc identity auth federation identity-provider protocol`
+
+Identity WebSSO auth commands
+
+**Usage:** `osc identity auth federation identity-provider protocol <COMMAND>`
+
+###### **Subcommands:**
+
+* `websso` — Identity WebSSO auth commands
+
+
+
+## `osc identity auth federation identity-provider protocol websso`
+
+Identity WebSSO auth commands
+
+**Usage:** `osc identity auth federation identity-provider protocol websso <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — POST operation on /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
+* `get` — GET operation on /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
+
+
+
+## `osc identity auth federation identity-provider protocol websso create`
+
+POST operation on /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
+
+**Usage:** `osc identity auth federation identity-provider protocol websso create <IDP_ID> <PROTOCOL_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso API
+* `<PROTOCOL_ID>` — protocol_id parameter for /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso API
+
+
+
+## `osc identity auth federation identity-provider protocol websso get`
+
+GET operation on /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso
+
+**Usage:** `osc identity auth federation identity-provider protocol websso get <IDP_ID> <PROTOCOL_ID>`
+
+###### **Arguments:**
+
+* `<IDP_ID>` — idp_id parameter for /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso API
+* `<PROTOCOL_ID>` — protocol_id parameter for /v3/auth/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/websso API
+
+
+
+## `osc identity auth federation websso`
+
+Identity WebSSO auth commands
+
+**Usage:** `osc identity auth federation websso <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — POST operation on /v3/auth/OS-FEDERATION/websso/{protocol_id}
+* `show` — GET operation on /v3/auth/OS-FEDERATION/websso/{protocol_id}
+
+
+
+## `osc identity auth federation websso create`
+
+POST operation on /v3/auth/OS-FEDERATION/websso/{protocol_id}
+
+**Usage:** `osc identity auth federation websso create <PROTOCOL_ID>`
+
+###### **Arguments:**
+
+* `<PROTOCOL_ID>` — protocol_id parameter for /v3/auth/OS-FEDERATION/websso/{protocol_id} API
+
+
+
+## `osc identity auth federation websso show`
+
+GET operation on /v3/auth/OS-FEDERATION/websso/{protocol_id}
+
+**Usage:** `osc identity auth federation websso show <PROTOCOL_ID>`
+
+###### **Arguments:**
+
+* `<PROTOCOL_ID>` — protocol_id parameter for /v3/auth/OS-FEDERATION/websso/{protocol_id} API
+
+
+
+## `osc identity auth project`
+
+Identity project scope commands
+
+authorization.
+
+**Usage:** `osc identity auth project <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get available project scopes
+
+
+
+## `osc identity auth project list`
+
+New in version 3.3
+
+This call returns the list of projects that are available to be scoped to based on the X-Auth-Token provided in the request.
+
+The structure of the response is exactly the same as listing projects for a user.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/auth_projects`
+
+**Usage:** `osc identity auth project list`
+
+
+
+## `osc identity auth system`
+
+Identity system scope commands
+
+authorization.
+
+**Usage:** `osc identity auth system <COMMAND>`
+
+###### **Subcommands:**
+
+* `list` — Get available system scopes
+
+
+
+## `osc identity auth system list`
+
+New in version 3.10
+
+This call returns the list of systems that are available to be scoped to based on the X-Auth-Token provided in the request.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/auth_system`
+
+**Usage:** `osc identity auth system list`
+
+
+
+## `osc identity auth token`
+
+Identity token commands
+
+authorization.
+
+**Usage:** `osc identity auth token <COMMAND>`
+
+###### **Subcommands:**
+
+* `delete` — Revoke token
+* `get` — Validate and show information for token
+
+
+
+## `osc identity auth token delete`
+
+Revokes a token.
+
+This call is similar to the HEAD `/auth/tokens` call except that the `X-Subject-Token` token is immediately not valid, regardless of the `expires_at` attribute value. An additional `X-Auth-Token` is not required.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
+
+**Usage:** `osc identity auth token delete`
+
+
+
+## `osc identity auth token get`
+
+Validates and shows information for a token, including its expiration date and authorization scope.
+
+Pass your own token in the `X-Auth-Token` request header.
+
+Pass the token that you want to validate in the `X-Subject-Token` request header.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/auth_tokens`
+
+**Usage:** `osc identity auth token get`
 
 
 
