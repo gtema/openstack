@@ -19,6 +19,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod auth;
 mod domain;
 mod endpoint;
 mod group;
@@ -43,6 +44,7 @@ pub struct IdentityCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum IdentityCommands {
+    Auth(auth::AuthCommand),
     AccessRule(user::access_rule::AccessRuleCommand),
     ApplicationCredential(user::application_credential::ApplicationCredentialCommand),
     Domain(domain::DomainCommand),
@@ -66,6 +68,7 @@ impl IdentityCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
+            IdentityCommands::Auth(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::AccessRule(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::ApplicationCredential(cmd) => {
                 cmd.take_action(parsed_args, session).await

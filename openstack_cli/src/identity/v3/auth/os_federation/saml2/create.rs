@@ -34,7 +34,6 @@ use crate::StructTable;
 use crate::common::parse_json;
 use bytes::Bytes;
 use clap::ValueEnum;
-use dialoguer::Password;
 use http::Response;
 use openstack_sdk::api::identity::v3::auth::os_federation::saml2::create;
 use openstack_sdk::api::RawQueryAsync;

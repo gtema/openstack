@@ -33,7 +33,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::auth::project::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 use structable_derive::StructTable;
 
 /// New in version 3.3
