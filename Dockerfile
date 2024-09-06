@@ -17,7 +17,6 @@ COPY Cargo.toml Cargo.lock /usr/src/openstack/
 COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
 COPY openstack_tui/Cargo.toml /usr/src/openstack/openstack_tui/
-COPY openstack_tui/build.rs /usr/src/openstack/openstack_tui/
 COPY structable_derive/Cargo.toml /usr/src/openstack/structable_derive/
 COPY xtask/Cargo.toml /usr/src/openstack/xtask/
 COPY fuzz/Cargo.toml /usr/src/openstack/fuzz/
