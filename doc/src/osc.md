@@ -363,6 +363,12 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity application-credential delete`↴](#osc-identity-application-credential-delete)
 * [`osc identity application-credential list`↴](#osc-identity-application-credential-list)
 * [`osc identity application-credential show`↴](#osc-identity-application-credential-show)
+* [`osc identity credential`↴](#osc-identity-credential)
+* [`osc identity credential create`↴](#osc-identity-credential-create)
+* [`osc identity credential delete`↴](#osc-identity-credential-delete)
+* [`osc identity credential list`↴](#osc-identity-credential-list)
+* [`osc identity credential set`↴](#osc-identity-credential-set)
+* [`osc identity credential show`↴](#osc-identity-credential-show)
 * [`osc identity domain`↴](#osc-identity-domain)
 * [`osc identity domain create`↴](#osc-identity-domain-create)
 * [`osc identity domain config`↴](#osc-identity-domain-config)
@@ -8873,6 +8879,7 @@ Identity (Keystone) commands
 * `auth` — Identity Auth commands
 * `access-rule` — **Application Credentials - Access Rules**
 * `application-credential` — **Application Credentials**
+* `credential` — Identity Credential commands
 * `domain` — Identity Domain commands
 * `endpoint` — Endpoint commands
 * `federation` — OS-Federation
@@ -9389,6 +9396,100 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/applicati
 
 * `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+
+
+## `osc identity credential`
+
+Identity Credential commands
+
+In exchange for a set of authentication credentials that the user submits, the Identity service generates and returns a token. A token represents the authenticated identity of a user and, optionally, grants authorization on a specific project or domain.
+
+You can list all credentials, and create, show details for, update, and delete a credential.
+
+**Usage:** `osc identity credential <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create credential
+* `delete` — Delete credential
+* `list` — List credentials
+* `set` — Update credential
+* `show` — Show credential details
+
+
+
+## `osc identity credential create`
+
+Creates a credential.
+
+The following example shows how to create an EC2-style credential. The credential blob is a string that contains a JSON-serialized dictionary with the `access` and `secret` keys. This format is required when you specify the `ec2` type. To specify other credentials, such as `access_key`, change the type and contents of the data blob.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/credentials`
+
+**Usage:** `osc identity credential create [OPTIONS]`
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity credential delete`
+
+Deletes a credential.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/credential`
+
+**Usage:** `osc identity credential delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — credential_id parameter for /v3/credentials/{credential_id} API
+
+
+
+## `osc identity credential list`
+
+Lists all credentials.
+
+Optionally, you can include the `user_id` or `type` query parameter in the URI to filter the response by a user or credential type.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/credentials`
+
+**Usage:** `osc identity credential list`
+
+
+
+## `osc identity credential set`
+
+Updates a credential.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/credential`
+
+**Usage:** `osc identity credential set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — credential_id parameter for /v3/credentials/{credential_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity credential show`
+
+Shows details for a credential.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/credential`
+
+**Usage:** `osc identity credential show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — credential_id parameter for /v3/credentials/{credential_id} API
 
 
 

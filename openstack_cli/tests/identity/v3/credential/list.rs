@@ -12,29 +12,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod auth;
-// mod catalog;
-mod credential;
-mod domain;
-mod endpoint;
-mod group;
-mod os_federation;
-mod project;
-mod region;
-mod role;
-mod role_assignment;
-mod role_inference;
-mod service;
-mod user;
-
 use assert_cmd::prelude::*;
 use std::process::Command;
 
 #[test]
-fn help() -> Result<(), Box<dyn std::error::Error>> {
+fn region_list() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("identity").arg("--help");
+    cmd.arg("identity").arg("credential").arg("list");
     cmd.assert().success();
 
     Ok(())
