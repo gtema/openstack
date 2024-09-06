@@ -11,8 +11,6 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
-build = "build.rs"
-
 [[bin]]
 name = "ostui"
 path = "src/main.rs"
@@ -31,7 +29,6 @@ human-panic = { workspace = true }
 itertools = { workspace = true }
 json5 = "^0.4"
 lazy_static = "^1.5"
-#log = "^0.4"
 openstack_sdk = { path = "../openstack_sdk", version = "^0.10", default-features = false, features = ["async", "block_storage", "compute", "identity", "image", "network"] }
 pretty_assertions = "^1.4"
 ratatui = { version = "^0.28", features = ["serde", "macros"] }
@@ -48,6 +45,3 @@ tracing = { workspace = true }
 tracing-error = { workspace = true }
 tracing-subscriber = { workspace = true }
 unicode-width = { version = "^0.1" }
-
-[build-dependencies]
-vergen-gitcl = { version = "^1.0", features = ["build", "cargo", "rustc", "si"] }
