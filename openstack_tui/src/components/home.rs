@@ -79,8 +79,10 @@ impl Home {
     pub fn render_tick(&mut self) {}
 
     fn set_compute_data(&mut self, data: Value) -> Result<()> {
-        let data: ComputeQuota = serde_json::from_value(data.clone())?;
-        self.compute_quota = data;
+        if !data.is_null() {
+            let data: ComputeQuota = serde_json::from_value(data.clone())?;
+            self.compute_quota = data;
+        }
         Ok(())
     }
 

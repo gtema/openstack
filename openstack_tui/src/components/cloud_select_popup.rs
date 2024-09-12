@@ -47,7 +47,7 @@ impl CloudSelect {
             content_size: Size::new(0, 0),
             clouds,
             state: ListState::default(),
-            scroll_state: ScrollbarState::new(clouds_count - 1),
+            scroll_state: ScrollbarState::new(clouds_count.saturating_sub(1)),
             colors,
             user_input: None,
         }
