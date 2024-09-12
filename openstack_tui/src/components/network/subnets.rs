@@ -91,6 +91,7 @@ impl<'a> Component for NetworkSubnets<'a> {
             KeyCode::End => self.cursor_last()?,
             KeyCode::PageUp => self.cursor_page_up()?,
             KeyCode::PageDown => self.cursor_page_down()?,
+            KeyCode::Tab => self.key_tab()?,
             KeyCode::Char('0') => {
                 return Ok(Some(Action::NetworkSubnetFilter(NetworkSubnetFilters {
                     network_id: None,

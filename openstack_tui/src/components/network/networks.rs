@@ -90,6 +90,7 @@ impl<'a> Component for NetworkNetworks<'a> {
             KeyCode::End => self.cursor_last()?,
             KeyCode::PageUp => self.cursor_page_up()?,
             KeyCode::PageDown => self.cursor_page_down()?,
+            KeyCode::Tab => self.key_tab()?,
             KeyCode::Enter => {
                 if let Some(command_tx) = self.get_command_tx() {
                     command_tx.send(Action::NetworkSubnetFilter(NetworkSubnetFilters {
