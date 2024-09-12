@@ -52,14 +52,14 @@ pub struct App {
     action_rx: mpsc::UnboundedReceiver<Action>,
     cloud_worker_tx: mpsc::UnboundedSender<Action>,
     last_tick_key_events: Vec<KeyEvent>,
-    cloud_name: String,
+    cloud_name: Option<String>,
     popup: Option<Box<dyn Component>>, //cloud_worker: Cloud,
     colors: TableColors,
     available_clouds: Vec<String>,
 }
 
 impl App {
-    pub fn new(tick_rate: f64, frame_rate: f64, cloud_name: String) -> Result<Self> {
+    pub fn new(tick_rate: f64, frame_rate: f64, cloud_name: Option<String>) -> Result<Self> {
         let config = Config::new()?;
         let mode = Mode::Home;
         let colors = TableColors::new(&PALETTES[0]);
@@ -135,7 +135,9 @@ impl App {
         let action_tx = self.action_tx.clone();
 
         self.cloud_worker_tx.send(Action::ListClouds)?;
-        action_tx.send(Action::ConnectToCloud(self.cloud_name.clone()))?;
+        if let Some(cloud_name) = &self.cloud_name {
+            action_tx.send(Action::ConnectToCloud(cloud_name.clone()))?;
+        }
         action_tx.send(Action::Mode(Mode::Home))?;
         loop {
             self.handle_events(&mut tui).await?;
@@ -231,6 +233,9 @@ impl App {
                 Action::Clouds(ref clouds) => {
                     self.available_clouds = clouds.clone();
                     self.available_clouds.sort();
+                    if self.cloud_name.is_none() {
+                        self.action_tx.send(Action::CloudSelect)?;
+                    }
                 }
                 Action::ResourceSelect => {
                     self.popup = Some(Box::new(ResourceSelect::new(self.colors.clone())))

@@ -37,5 +37,5 @@ pub struct Cli {
     )]
     pub frame_rate: f64,
     #[arg(long)]
-    pub os_cloud: String,
+    pub os_cloud: Option<String>,
 }
