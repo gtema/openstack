@@ -100,6 +100,7 @@ impl<'a> Component for Images<'a> {
             KeyCode::End => self.cursor_last()?,
             KeyCode::PageUp => self.cursor_page_up()?,
             KeyCode::PageDown => self.cursor_page_down()?,
+            KeyCode::Tab => self.key_tab()?,
             _ => {}
         }
         Ok(None)
