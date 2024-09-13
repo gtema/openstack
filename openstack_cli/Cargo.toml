@@ -47,7 +47,7 @@ clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
 cli-table = "^0.4"
 color-eyre = { workspace = true }
-dialoguer = {workspace = true}
+dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { version = "^0.6" }
 http = { workspace = true }
 human-panic = { workspace = true }
