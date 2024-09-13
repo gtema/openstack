@@ -12,11 +12,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
+use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
+use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::{Action, ComputeServerFilters, Resource},
@@ -48,6 +49,11 @@ impl<'a> Component for ComputeServers<'a> {
         Ok(())
     }
 
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
+        self.set_command_tx(tx);
+        Ok(())
+    }
+
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
             Action::Mode(Mode::ComputeServers) | Action::Refresh | Action::ConnectToCloud(_) => {
@@ -70,6 +76,24 @@ impl<'a> Component for ComputeServers<'a> {
                 data,
             } => {
                 self.set_data(data)?;
+            }
+            Action::ResourceData {
+                resource: Resource::ComputeServerConsoleOutput(id),
+                data,
+            } => {
+                let server_id = self.get_selected_resource_id()?;
+                if server_id == id {
+                    return Ok(Some(Action::Describe(data)));
+                }
+            }
+            Action::ServerConsoleOutput => {
+                let server_id = self.get_selected_resource_id()?;
+                if let Some(command_tx) = self.get_command_tx() {
+                    command_tx.send(Action::Mode(Mode::Describe))?;
+                }
+                return Ok(Some(Action::RequestCloudResource(
+                    Resource::ComputeServerConsoleOutput(server_id),
+                )));
             }
             _ => {}
         };
