@@ -33,7 +33,8 @@ pub struct Describe {
     pub keymap: HashMap<KeyEvent, Action>,
     pub text: Vec<String>,
     pub last_events: Vec<KeyEvent>,
-    wrap: bool,
+    title: Option<String>,
+    is_focused: bool,
     max_row_length: u16,
     content_scroll: (u16, u16),
     content_size: Size,
@@ -43,7 +44,10 @@ pub struct Describe {
 
 impl Describe {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            is_focused: true,
+            ..Default::default()
+        }
     }
 
     pub fn keymap(mut self, keymap: HashMap<KeyEvent, Action>) -> Self {
@@ -57,11 +61,11 @@ impl Describe {
 
     pub fn render_tick(&mut self) {}
 
-    fn set_data(&mut self, data: Value) -> Result<()> {
+    pub fn set_data(&mut self, data: Value) -> Result<()> {
         if data.is_string() {
             self.text = data
                 .as_str()
-                .ok_or_eyre("Cannot treat data as string")?
+                .ok_or_eyre("Cannot access data as string")?
                 .split("\n")
                 .map(String::from)
                 .collect::<Vec<_>>();
@@ -84,6 +88,16 @@ impl Describe {
                 .into(),
         );
 
+        Ok(())
+    }
+
+    pub fn set_title(&mut self, title: Option<String>) -> Result<()> {
+        self.title = title;
+        Ok(())
+    }
+
+    pub fn set_focus(&mut self, focus: bool) -> Result<()> {
+        self.is_focused = focus;
         Ok(())
     }
 
@@ -165,10 +179,21 @@ impl Describe {
 
     fn render(&mut self, f: &mut Frame<'_>, area: Rect) {
         let block = Block::default()
-            .title(Title::from(" Describe ").alignment(Alignment::Center))
+            .title(
+                Title::from(self.title.clone().unwrap_or(String::from(" Describe ")))
+                    .alignment(Alignment::Center),
+            )
+            .title_style(match self.is_focused {
+                true => Style::new().white(),
+                false => Style::default(),
+            })
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(PALETTES[0].c900));
+            .border_style(Style::default().fg(PALETTES[0].c900))
+            .style(match self.is_focused {
+                true => Style::new(),
+                false => Style::new().gray(),
+            });
         self.content_size = block.inner(area).as_size();
 
         let text: Vec<Line> = self.text.clone().into_iter().map(Line::from).collect();

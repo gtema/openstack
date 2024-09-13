@@ -23,11 +23,10 @@ use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
 use tokio::sync::mpsc::UnboundedSender;
-use tracing::info;
 
 use crate::{
     action::Action,
-    components::Frame,
+    components::{describe::Describe, Component, Frame},
     config::Config,
     utils::{OutputConfig, StructTable, TableColors, PALETTES},
 };
@@ -57,8 +56,6 @@ where
 
     state: TableState,
     scroll_state: ScrollbarState,
-    describe_vscroll_state: ScrollbarState,
-    describe_hscroll_state: ScrollbarState,
 
     items: Vec<T>,
     raw_items: Vec<Value>,
@@ -70,10 +67,10 @@ where
     describe_text: Vec<String>,
     table_headers: Row<'a>,
     table_rows: Vec<Vec<String>>,
+    describe: Describe,
 
     is_loading: bool,
     describe_enabled: bool,
-    describe_scroll: (u16, u16),
     focus: Focus,
 }
 
@@ -106,8 +103,6 @@ where
             raw_items: Vec::new(),
             filter: F::default(),
             scroll_state: ScrollbarState::new(0),
-            describe_vscroll_state: ScrollbarState::new(0),
-            describe_hscroll_state: ScrollbarState::new(0),
             colors: TableColors::new(&PALETTES[0]),
             column_widths: Vec::new(),
             content_size: Size::new(0, 0),
@@ -115,9 +110,9 @@ where
             output_config: OutputConfig::default(),
             table_headers: Row::default(),
             table_rows: Vec::new(),
+            describe: Describe::new(),
             is_loading: false,
             describe_enabled: true,
-            describe_scroll: (0, 0),
             focus: Focus::Table,
         }
     }
@@ -158,14 +153,8 @@ where
                 self.scroll_state.first();
                 self.set_describe_content()?;
             }
-            _ => {
-                self.describe_scroll.0 = 0;
-                self.describe_vscroll_state = self.describe_vscroll_state.position(
-                    self.describe_scroll
-                        // look at the head when scrolling down
-                        .0
-                        .into(),
-                );
+            Focus::Describe => {
+                self.describe.cursor_first()?;
             }
         };
         Ok(())
@@ -178,17 +167,8 @@ where
                 self.scroll_state.last();
                 self.set_describe_content()?;
             }
-            _ => {
-                // increase position but limit it at total_len-viewport.height
-                self.describe_scroll.0 =
-                    (self.describe_text.len() as u16).saturating_sub(self.content_size.height) + 1;
-                self.describe_vscroll_state = self.describe_vscroll_state.position(
-                    // look at the tail when scrolling down
-                    self.describe_scroll
-                        .0
-                        .saturating_add(self.content_size.height - 2)
-                        .into(),
-                );
+            Focus::Describe => {
+                self.describe.cursor_last()?;
             }
         };
         Ok(())
@@ -212,21 +192,7 @@ where
                 self.set_describe_content()?;
             }
             Focus::Describe => {
-                // increase position but limit it at total_len-viewport.height
-                if self.describe_text.len() as u16 > self.content_size.height - 1 {
-                    self.describe_scroll.0 = cmp::min(
-                        self.describe_scroll.0.saturating_add(1),
-                        (self.describe_text.len() as u16)
-                            .saturating_sub(self.content_size.height - 1),
-                    );
-                    self.describe_vscroll_state = self.describe_vscroll_state.position(
-                        // look at the tail when scrolling down
-                        self.describe_scroll
-                            .0
-                            .saturating_add(self.content_size.height - 1)
-                            .into(),
-                    );
-                };
+                self.describe.cursor_down()?;
             }
         };
         Ok(())
@@ -244,13 +210,7 @@ where
                 self.set_describe_content()?;
             }
             Focus::Describe => {
-                self.describe_scroll.0 = self.describe_scroll.0.saturating_sub(1);
-                self.describe_vscroll_state = self.describe_vscroll_state.position(
-                    self.describe_scroll
-                        // look at the head when scrolling down
-                        .0
-                        .into(),
-                );
+                self.describe.cursor_up()?;
             }
         };
         Ok(())
@@ -271,23 +231,7 @@ where
                 self.set_describe_content()?;
             }
             Focus::Describe => {
-                // increase position but limit it at total_len-viewport.height
-                if self.describe_text.len() as u16 > self.content_size.height - 1 {
-                    self.describe_scroll.0 = cmp::min(
-                        self.describe_scroll
-                            .0
-                            .saturating_add(self.content_size.height),
-                        (self.describe_text.len() as u16)
-                            .saturating_sub(self.content_size.height - 1),
-                    );
-                    self.describe_vscroll_state = self.describe_vscroll_state.position(
-                        // look at the tail when scrolling down
-                        self.describe_scroll
-                            .0
-                            .saturating_add(self.content_size.height - 1)
-                            .into(),
-                    );
-                };
+                self.describe.cursor_page_down()?;
             }
         }
         Ok(())
@@ -304,17 +248,28 @@ where
                 self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
                 self.set_describe_content()?;
             }
-            _ => {
-                self.describe_scroll.0 = self
-                    .describe_scroll
-                    .0
-                    .saturating_sub(self.content_size.height);
-                self.describe_vscroll_state = self.describe_vscroll_state.position(
-                    self.describe_scroll
-                        // look at the head when scrolling down
-                        .0
-                        .into(),
-                );
+            Focus::Describe => {
+                self.describe.cursor_page_up()?;
+            }
+        };
+        Ok(())
+    }
+
+    pub fn cursor_left(&mut self) -> Result<()> {
+        match self.focus {
+            Focus::Table => {}
+            Focus::Describe => {
+                self.describe.cursor_left()?;
+            }
+        };
+        Ok(())
+    }
+
+    pub fn cursor_right(&mut self) -> Result<()> {
+        match self.focus {
+            Focus::Table => {}
+            Focus::Describe => {
+                self.describe.cursor_right()?;
             }
         };
         Ok(())
@@ -326,31 +281,17 @@ where
                 Focus::Table => Focus::Describe,
                 Focus::Describe => Focus::Table,
             };
+            self.describe
+                .set_focus(matches!(self.focus, Focus::Describe))?;
         }
-        //let i = match self.state.selected() {
-        //    Some(i) => i.saturating_sub(self.content_size.height as usize),
-        //    None => 0,
-        //};
-        //self.state.select(Some(i));
-        //self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
-        //self.set_describe_content()?;
         Ok(())
     }
 
     pub fn set_describe_content(&mut self) -> Result<()> {
         if let Some(selected_idx) = self.state.selected() {
             if selected_idx < self.raw_items.len() {
-                let data: serde_yaml::Value =
-                    serde_json::from_value(self.raw_items[selected_idx].clone())?;
-                self.describe_text = serde_yaml::to_string(&data)?
-                    .split("\n")
-                    .map(String::from)
-                    .collect::<Vec<_>>();
-                self.describe_vscroll_state = ScrollbarState::default()
-                    .content_length(self.describe_text.len())
-                //    .viewport_content_length(self.content_size.height.saturating_sub(2).into())
-                ;
-                info!("Content size {:?}", self.content_size);
+                self.describe
+                    .set_data(self.raw_items[selected_idx].clone())?;
             }
         }
         Ok(())
@@ -453,47 +394,6 @@ where
         );
     }
 
-    pub fn render_describe(&mut self, f: &mut Frame, area: Rect) {
-        let block = Block::default()
-            .title(Title::from(DESCRIBE_TITLE.white()).alignment(Alignment::Center))
-            .borders(Borders::ALL)
-            .padding(Padding::horizontal(1))
-            .border_style(match self.focus {
-                Focus::Table => Style::default().fg(PALETTES[0].c900),
-                Focus::Describe => Style::default().fg(PALETTES[0].c100),
-            })
-            .style(match self.focus {
-                Focus::Table => Style::new().gray(),
-                Focus::Describe => Style::new(),
-            });
-
-        let text: Vec<Line> = self
-            .describe_text
-            .clone()
-            .into_iter()
-            .map(Line::from)
-            .collect();
-        let paragraph = Paragraph::new(text)
-            .block(block)
-            .bg(self.colors.buffer_bg)
-            .scroll((self.describe_scroll.0, self.describe_scroll.1));
-        f.render_widget(paragraph, area);
-
-        if usize::from(self.content_size.height) < self.describe_text.len() {
-            f.render_stateful_widget(
-                Scrollbar::default()
-                    .orientation(ScrollbarOrientation::VerticalRight)
-                    .begin_symbol(None)
-                    .end_symbol(None),
-                area.inner(Margin {
-                    vertical: 1,
-                    horizontal: 1,
-                }),
-                &mut self.describe_vscroll_state,
-            );
-        }
-    }
-
     pub fn render_footer(&mut self, f: &mut Frame, area: Rect) {
         let info_footer = Paragraph::new(Line::from(match self.focus {
             Focus::Table => INFO_TEXT,
@@ -513,7 +413,12 @@ where
         f.render_widget(info_footer, area);
     }
 
-    pub fn render_content<S: AsRef<str>>(&mut self, title: S, frame: &mut Frame, area: Rect) {
+    pub fn render_content<S: AsRef<str>>(
+        &mut self,
+        title: S,
+        frame: &mut Frame,
+        area: Rect,
+    ) -> Result<()> {
         let mut title = vec![title.as_ref().white()];
         if self.is_loading {
             title.push(Span::styled(" ...Loading... ", tailwind::PINK.c400));
@@ -546,10 +451,14 @@ where
             let [content, describe] = content_layout.areas(inner);
 
             self.render_table(frame, content);
-            self.render_describe(frame, describe);
+            self.describe
+                .set_focus(matches!(self.focus, Focus::Describe))?;
+            self.describe.draw(frame, describe)?;
         } else {
             self.render_table(frame, inner);
         }
+
+        Ok(())
     }
 
     pub fn get_selected_raw(&self) -> &Value {

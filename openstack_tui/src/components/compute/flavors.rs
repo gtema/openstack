@@ -87,6 +87,8 @@ impl<'a> Component for ComputeFlavors<'a> {
             KeyCode::End => self.cursor_last()?,
             KeyCode::PageUp => self.cursor_page_up()?,
             KeyCode::PageDown => self.cursor_page_down()?,
+            KeyCode::Left => self.cursor_left()?,
+            KeyCode::Right => self.cursor_right()?,
             KeyCode::Tab => self.key_tab()?,
             _ => {}
         }
@@ -99,7 +101,7 @@ impl<'a> Component for ComputeFlavors<'a> {
     fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
         let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
 
-        self.render_content(TITLE, f, areas[0]);
+        self.render_content(TITLE, f, areas[0])?;
         self.render_footer(f, areas[1]);
         Ok(())
     }
