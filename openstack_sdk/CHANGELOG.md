@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.10.0...openstack_sdk-v0.11.0) - 2024-09-13
+
+### Added
+
+- *(cli)* Interactive cloud connection ([#532](https://github.com/gtema/openstack/pull/532))
+- Add resource link in path parameters ([#507](https://github.com/gtema/openstack/pull/507))
+- *(sdk)* Add find_by_name method ([#505](https://github.com/gtema/openstack/pull/505))
+
 ## [0.10.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.9.0...openstack_sdk-v0.10.0) - 2024-08-23
 
 ### Added
