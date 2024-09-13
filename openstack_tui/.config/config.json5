@@ -1,6 +1,9 @@
 {
   "mode_keybindings": {
     "Home": { },
+    "ComputeServers": {
+      "c": { "action": "ServerConsoleOutput", "description": "Get Console output" },
+    },
     "NetworkSubnets": {
       "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
     },
@@ -9,7 +12,6 @@
       "1": { "action": {"ImageFilter": {"visibility": "public"} },"description": "public"},
       "2": { "action": {"ImageFilter": {"visibility": "shared"} },"description": "shared"},
       "3": { "action": {"ImageFilter": {"visibility": "private"} },"description": "private"},
-
     }
   },
   "global_keybindings": {

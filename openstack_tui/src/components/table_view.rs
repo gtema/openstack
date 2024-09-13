@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use color_eyre::eyre::Result;
 use crossterm::event::KeyEvent;
+use eyre::{OptionExt, Report, Result};
 use ratatui::{
     prelude::*,
     style::palette::tailwind,
@@ -554,5 +554,14 @@ where
 
     pub fn get_selected_raw(&self) -> &Value {
         &self.raw_items[self.state.selected().unwrap()]
+    }
+
+    pub fn get_selected_resource_id(&self) -> Result<String, Report> {
+        self.get_selected_raw()
+            .get("id")
+            .ok_or_eyre("Resource ID must be known")?
+            .as_str()
+            .map(String::from)
+            .ok_or_eyre("Resource ID must be string")
     }
 }

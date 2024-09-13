@@ -20,6 +20,7 @@ use strum::Display;
 pub enum Resource {
     ComputeFlavors(ComputeFlavorFilters),
     ComputeServers(ComputeServerFilters),
+    ComputeServerConsoleOutput(String),
     ComputeQuota,
     NetworkNetworks(NetworkNetworkFilters),
     NetworkSubnets(NetworkSubnetFilters),
@@ -63,6 +64,7 @@ pub enum Action {
     Clouds(Vec<String>),
     NetworkSubnetFilter(NetworkSubnetFilters),
     ImageFilter(ImageFilters),
+    ServerConsoleOutput,
     ResetFilter,
 }
 

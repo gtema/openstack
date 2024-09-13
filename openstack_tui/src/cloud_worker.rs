@@ -98,6 +98,21 @@ impl Cloud {
         Ok(Vec::new())
     }
 
+    async fn get_compute_server_console_output(&mut self, id: &String) -> Result<Value> {
+        if let Some(session) = &self.cloud {
+            debug!("Fetching server console output for {:?}", id);
+            let ep =
+                openstack_sdk::api::compute::v2::server::os_get_console_output::Request::builder()
+                    .id(id)
+                    .os_get_console_output(openstack_sdk::api::compute::v2::server::os_get_console_output::OsGetConsoleOutputBuilder::default().build()?)
+                    .build()?;
+
+            let res: Value = ep.query_async(session).await?;
+            return Ok(res.get("output").unwrap_or(&Value::Null).to_owned());
+        }
+        Ok(Value::Null)
+    }
+
     async fn get_compute_quota(&mut self) -> Result<Value> {
         if let Some(session) = &self.cloud {
             let mut ep_builder =
@@ -226,6 +241,15 @@ impl Cloud {
                                 err
                             )))?,
                         },
+                        Resource::ComputeServerConsoleOutput(ref id) => {
+                            match self.get_compute_server_console_output(id).await {
+                                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch server console output: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::ComputeQuota => match self.get_compute_quota().await {
                             Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
                             Err(err) => app_tx.send(Action::Error(format!(
