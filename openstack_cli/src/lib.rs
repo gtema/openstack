@@ -25,7 +25,8 @@ use std::io::{self, IsTerminal};
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
-use eyre::OptionExt;
+use dialoguer::FuzzySelect;
+use eyre::eyre;
 use tracing::{warn, Level};
 
 use openstack_sdk::{
@@ -81,16 +82,30 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         .init();
 
     let cfg = openstack_sdk::config::ConfigFile::new().unwrap();
+    // Identify target cloud to connect to
+    let cloud_name = match cli.global_opts.os_cloud {
+        Some(ref cloud) => cloud.clone(),
+        None => {
+            if std::io::stdin().is_terminal() {
+                // Cloud was not selected and we are in the potentially interactive mode (terminal)
+                let mut profiles = cfg.get_available_clouds();
+                profiles.sort();
+                let selected_cloud_idx = FuzzySelect::new()
+                    .with_prompt("Please select cloud you want to connect to (use `--os-cloud` next time for efficiency)?")
+                    .items(&profiles)
+                    .interact()?;
+                profiles[selected_cloud_idx].clone()
+            } else {
+                return Err(
+                    eyre!("`--os-cloud` or `OS_CLOUD` environment variable must be given").into(),
+                );
+            }
+        }
+    };
+    // Get the connection details
     let profile = cfg
-        .get_cloud_config(
-            cli.global_opts
-                .os_cloud
-                .clone()
-                .ok_or_eyre("`--os-cloud` or `OS_CLOUD` environment variable must be given")?,
-        )?
-        .ok_or(OpenStackCliError::ConnectionNotFound(
-            cli.global_opts.os_cloud.clone().unwrap(),
-        ))?;
+        .get_cloud_config(&cloud_name)?
+        .ok_or(OpenStackCliError::ConnectionNotFound(cloud_name))?;
     let mut renew_auth: bool = false;
 
     // Login command need to be analyzed before authorization
@@ -104,10 +119,12 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
 
     let mut session;
     if std::io::stdin().is_terminal() {
+        // Interactive session (may ask for password/MFA/SSO)
         session = AsyncOpenStack::new_interactive(&profile, renew_auth)
             .await
             .map_err(|err| OpenStackCliError::Auth { source: err })?;
     } else {
+        // Non-interactive session if i.e. scripted with chaining
         session = AsyncOpenStack::new(&profile)
             .await
             .map_err(|err| OpenStackCliError::Auth { source: err })?;

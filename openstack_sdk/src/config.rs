@@ -385,9 +385,12 @@ impl ConfigFile {
     ///
     /// This method does not raise the exception when the cloud is
     /// not found.
-    pub fn get_cloud_config(&self, cloud_name: String) -> Result<Option<CloudConfig>, ConfigError> {
+    pub fn get_cloud_config<S: AsRef<str>>(
+        &self,
+        cloud_name: S,
+    ) -> Result<Option<CloudConfig>, ConfigError> {
         if let Some(clouds) = &self.clouds {
-            if let Some(cfg) = clouds.get(&cloud_name) {
+            if let Some(cfg) = clouds.get(cloud_name.as_ref()) {
                 let mut config = cfg.clone();
                 if let Some(ref profile_name) = config.profile {
                     let mut profile_definition: Option<&CloudConfig> = None;

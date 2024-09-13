@@ -147,6 +147,14 @@ pub enum OpenStackCliError {
         source: http::header::InvalidHeaderValue,
     },
 
+    /// User interaction using dialoguer crate failed
+    #[error("dialoguer error `{}`", source)]
+    DialoguerError {
+        /// The source of the error.
+        #[from]
+        source: dialoguer::Error,
+    },
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),
