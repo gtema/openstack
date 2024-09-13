@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.0...openstack_cli-v0.7.1) - 2024-09-13
+
+### Added
+
+- *(cli)* Interactive cloud connection ([#532](https://github.com/gtema/openstack/pull/532))
+- *(cli)* Add identity.credential commands ([#515](https://github.com/gtema/openstack/pull/515))
+- *(cli)* Enable identity.auth commands ([#513](https://github.com/gtema/openstack/pull/513))
+- Add resource link to domain_id path parameter ([#509](https://github.com/gtema/openstack/pull/509))
+- Remove few panics in auth handling ([#508](https://github.com/gtema/openstack/pull/508))
+- Add resource link in path parameters ([#507](https://github.com/gtema/openstack/pull/507))
+- Add few exceptions for cli ([#506](https://github.com/gtema/openstack/pull/506))
+- *(sdk)* Add find_by_name method ([#505](https://github.com/gtema/openstack/pull/505))
+
 ## [0.7.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.6.5...openstack_cli-v0.7.0) - 2024-08-23
 
 ### Added
