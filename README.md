@@ -83,7 +83,7 @@ It is possible to install compiled version from the GitHub releases. It comes
 with a dedicated installer and can be retrieved with the following command:
 
 ```console
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_cli-v0.7.0/openstack_cli-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_cli-v0.7.1/openstack_cli-installer.sh | sh
 ```
 
 ### Build locally
