@@ -48,6 +48,7 @@ pub struct App {
     should_quit: bool,
     should_suspend: bool,
     mode: Mode,
+    prev_mode: Option<Mode>,
     action_tx: mpsc::UnboundedSender<Action>,
     action_rx: mpsc::UnboundedReceiver<Action>,
     cloud_worker_tx: mpsc::UnboundedSender<Action>,
@@ -100,6 +101,7 @@ impl App {
             should_suspend: false,
             config,
             mode,
+            prev_mode: None,
             action_tx,
             action_rx,
             cloud_worker_tx: cloud_worker,
@@ -210,6 +212,10 @@ impl App {
             }
         } else if key == KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
             action_tx.send(Action::Quit)?;
+        } else if key.code == KeyCode::Esc {
+            if let Some(prev_mode) = self.prev_mode {
+                self.mode = prev_mode;
+            }
         }
         action_tx.send(Action::Render)?;
         Ok(())
@@ -251,9 +257,11 @@ impl App {
                     if self.popup.is_some() {
                         self.popup = None;
                     }
+                    self.prev_mode = Some(self.mode);
                     self.mode = mode;
                 }
                 Action::Describe(_) => {
+                    self.prev_mode = Some(self.mode);
                     self.mode = Mode::Describe;
                 }
 
