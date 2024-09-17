@@ -34,7 +34,7 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// domain_id parameter for
-    /// /v3/OS-INHERIT/domains/{domain_id}/users/{user_id}/roles/inherited_to_projects
+    /// /v3/OS-INHERIT/domains/{domain_id}/groups/{group_id}/roles/inherited_to_projects
     /// API
     ///
     #[builder(default, setter(into))]

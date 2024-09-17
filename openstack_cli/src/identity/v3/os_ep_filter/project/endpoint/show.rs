@@ -58,7 +58,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// project_id parameter for
-    /// /v3/OS-EP-FILTER/projects/{project_id}/endpoint_groups API
+    /// /v3/OS-EP-FILTER/projects/{project_id}/endpoints API
     ///
     #[arg(
         help_heading = "Path parameters",

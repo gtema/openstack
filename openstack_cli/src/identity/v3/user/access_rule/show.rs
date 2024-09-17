@@ -31,9 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::access_rule::get;
+use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Show details of an access rule.
 ///
@@ -59,15 +62,9 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
-    /// API
-    ///
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_user_id",
-        value_name = "USER_ID"
-    )]
-    user_id: String,
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
 
     /// access_rule_id parameter for
     /// /v3/users/{user_id}/access_rules/{access_rule_id} API
@@ -78,6 +75,18 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+}
+
+/// User input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct UserInput {
+    /// User Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
+    user_name: Option<String>,
+    /// User ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
+    user_id: Option<String>,
 }
 /// AccessRule response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -114,7 +123,40 @@ impl AccessRuleCommand {
         let mut ep_builder = get::Request::builder();
 
         // Set path parameters
-        ep_builder.user_id(&self.path.user_id);
+
+        // Process path parameter `user_id`
+        if let Some(id) = &self.path.user.user_id {
+            // user_id is passed. No need to lookup
+            ep_builder.user_id(id);
+        } else if let Some(name) = &self.path.user.user_name {
+            // user_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_user::Request::builder();
+            warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.user_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        }
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters

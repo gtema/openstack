@@ -37,7 +37,7 @@ pub struct Request<'a> {
     id: Cow<'a, str>,
 
     /// project_id parameter for
-    /// /v3/OS-EP-FILTER/projects/{project_id}/endpoint_groups API
+    /// /v3/OS-EP-FILTER/projects/{project_id}/endpoints API
     ///
     #[builder(default, setter(into))]
     project_id: Cow<'a, str>,

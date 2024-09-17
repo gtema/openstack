@@ -31,15 +31,13 @@ use std::collections::BTreeMap;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// service_id parameter for
-    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-    /// API
+    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
     /// policy_id parameter for
-    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-    /// API
+    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id} API
     ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,

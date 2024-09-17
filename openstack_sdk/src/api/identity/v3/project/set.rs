@@ -127,8 +127,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) project: Project<'a>,
 
-    /// project_id parameter for
-    /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    /// project_id parameter for /v3/projects/{project_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

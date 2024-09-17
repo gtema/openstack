@@ -55,8 +55,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) user: User<'a>,
 
-    /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
-    /// API
+    /// user_id parameter for /v3/users/{user_id}/password API
     ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,

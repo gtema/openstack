@@ -37,8 +37,7 @@ pub struct Request<'a> {
     id: Cow<'a, str>,
 
     /// policy_id parameter for
-    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-    /// API
+    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id} API
     ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,

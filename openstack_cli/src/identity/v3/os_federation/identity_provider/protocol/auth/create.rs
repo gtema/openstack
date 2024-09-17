@@ -66,7 +66,8 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// idp_id parameter for
-    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth
+    /// API
     ///
     #[arg(
         help_heading = "Path parameters",
@@ -76,7 +77,7 @@ struct PathParameters {
     idp_id: String,
 
     /// protocol_id parameter for
-    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth
     /// API
     ///
     #[arg(

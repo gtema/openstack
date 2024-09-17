@@ -30,7 +30,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// domain_id parameter for
-    /// /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+    /// /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
     ///
     #[builder(default, setter(into))]
     domain_id: Cow<'a, str>,
