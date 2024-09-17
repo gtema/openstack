@@ -24,7 +24,7 @@ use std::cmp;
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{action::Action, config::Config, mode::Mode, utils::PALETTES};
+use crate::{action::Action, config::Config, mode::Mode};
 
 #[derive(Default)]
 pub struct Describe {
@@ -189,11 +189,14 @@ impl Describe {
             })
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(PALETTES[0].c900))
-            .style(match self.is_focused {
-                true => Style::new(),
-                false => Style::new().gray(),
-            });
+            .border_style(Style::default().fg(self.config.styles.border_fg))
+            .style(
+                match self.is_focused {
+                    true => Style::new().fg(self.config.styles.fg),
+                    false => Style::new().gray(),
+                }
+                .bg(self.config.styles.buffer_bg),
+            );
         self.content_size = block.inner(area).as_size();
 
         let text: Vec<Line> = self.text.clone().into_iter().map(Line::from).collect();
@@ -222,8 +225,7 @@ impl Describe {
         f.render_stateful_widget(
             Scrollbar::default()
                 .orientation(ScrollbarOrientation::VerticalRight)
-                .begin_symbol(None)
-                .end_symbol(None),
+                .style(Style::default().fg(self.config.styles.border_fg)),
             area.inner(Margin {
                 vertical: 1,
                 horizontal: 1,
@@ -244,8 +246,7 @@ impl Describe {
         f.render_stateful_widget(
             Scrollbar::default()
                 .orientation(ScrollbarOrientation::HorizontalBottom)
-                .begin_symbol(None)
-                .end_symbol(None),
+                .style(Style::default().fg(self.config.styles.border_fg)),
             area.inner(Margin {
                 vertical: 1,
                 horizontal: 1,

@@ -23,11 +23,7 @@ use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
 use super::{Component, Frame};
-use crate::{
-    action::Action,
-    config::Config,
-    utils::{centered_rect, TableColors},
-};
+use crate::{action::Action, config::Config, utils::centered_rect};
 
 pub struct ErrorPopup {
     command_tx: Option<UnboundedSender<Action>>,
@@ -35,12 +31,11 @@ pub struct ErrorPopup {
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
     text: Vec<String>,
-    colors: TableColors,
     scroll: (u16, u16),
 }
 
 impl ErrorPopup {
-    pub fn new(colors: TableColors, text: String) -> Self {
+    pub fn new(text: String) -> Self {
         Self {
             command_tx: None,
             config: Config::default(),
@@ -50,7 +45,6 @@ impl ErrorPopup {
                 .map(String::from)
                 .collect::<Vec<_>>(),
             last_events: Vec::new(),
-            colors,
             scroll: (0, 0),
         }
     }
@@ -71,6 +65,11 @@ impl ErrorPopup {
 }
 
 impl Component for ErrorPopup {
+    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+        self.config = config;
+        Ok(())
+    }
+
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
         match key.code {
             KeyCode::Down => self.scroll_down(),
@@ -90,8 +89,8 @@ impl Component for ErrorPopup {
             .borders(Borders::ALL)
             .border_type(BorderType::Thick)
             .padding(Padding::uniform(1))
-            .bg(self.colors.header_bg)
-            .border_style(Style::default().red());
+            .bg(self.config.styles.popup_bg)
+            .border_style(Style::default().fg(self.config.styles.popup_border_error_fg));
         let text: Vec<Line> = self.text.clone().into_iter().map(Line::from).collect();
         let paragraph = Paragraph::new(text)
             .block(popup_block)
