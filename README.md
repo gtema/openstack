@@ -11,7 +11,7 @@ so much easier.
 
 Current focus of the project is at introducing Rust as a programming language
 into the ecosystem of OpenStack user facing tooling and provides SDK as well as
-CLI.
+CLI and TUI.
 
 ## Design principles
 
@@ -68,6 +68,7 @@ body schema and with no faulty merges between different versions.
 
 - `openstack_sdk` - SDK
 - `openstack_cli` - The new and shiny CLI for OpenStack
+- `openstack_tui` - Text (Terminal) User Interface
 - `structable_derive` - Helper crate for having Output in some way similar to
   old OpenStackClient
 - `xtask` - Workflow helper
@@ -80,11 +81,19 @@ Any software is created to be used.
 ### Install binary
 
 It is possible to install compiled version from the GitHub releases. It comes
-with a dedicated installer and can be retrieved with the following command:
+with a dedicated installer in every release and can be retrieved with the
+following command:
 
 ```console
 curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_cli-v0.7.1/openstack_cli-installer.sh | sh
 ```
+
+TUI can be installed similarly:
+
+```console
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_tui-v0.1.1/openstack_tui-installer.sh | sh
+```
+
 
 ### Build locally
 Alternatively it is possible to compile project from sources. Since the project

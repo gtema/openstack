@@ -12,7 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{Component, Frame};
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use ratatui::{
@@ -23,7 +22,9 @@ use ratatui::{
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{action::Action, config::Config, mode::Mode, utils::centered_rect};
+use crate::{
+    action::Action, components::Component, config::Config, mode::Mode, utils::centered_rect,
+};
 
 #[derive(Debug, Clone, Default)]
 enum CursorAt {

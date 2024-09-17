@@ -12,19 +12,20 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crate::{
-    action::{Action, NetworkNetworkFilters, NetworkSubnetFilters, Resource},
-    components::{table_view::TableViewComponentBase, Component, Frame},
-    config::Config,
-    mode::Mode,
-    utils::{OutputConfig, StructTable},
-};
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent};
+use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
+
+use crate::{
+    action::{Action, NetworkNetworkFilters, NetworkSubnetFilters, Resource},
+    components::{table_view::TableViewComponentBase, Component},
+    config::Config,
+    mode::Mode,
+    utils::{OutputConfig, StructTable},
+};
 
 const TITLE: &str = "Networks";
 

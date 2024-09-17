@@ -12,15 +12,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
+use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
 
 use crate::{
     action::{Action, ComputeFlavorFilters, Resource},
-    components::{table_view::TableViewComponentBase, Component, Frame},
+    components::{table_view::TableViewComponentBase, Component},
     config::Config,
     mode::Mode,
     utils::{as_string, OutputConfig, StructTable},

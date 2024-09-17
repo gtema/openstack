@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use color_eyre::eyre::Result;
+use eyre::Result;
 use itertools::Itertools;
 use ratatui::{prelude::*, widgets::*};
 
