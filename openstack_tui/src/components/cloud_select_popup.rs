@@ -23,32 +23,29 @@ use ratatui::{
 };
 use std::cmp;
 
-use crate::{
-    action::Action,
-    utils::{centered_rect, TableColors},
-};
+use crate::{action::Action, config::Config, utils::centered_rect};
 
 const TITLE: &str = " Select cloud to connect: ";
 
 pub struct CloudSelect {
+    config: Config,
     content_size: Size,
     clouds: Vec<String>,
     state: ListState,
     scroll_state: ScrollbarState,
-    colors: TableColors,
     user_input: Option<String>,
 }
 
 impl CloudSelect {
-    pub fn new(colors: TableColors, data: Vec<String>) -> Self {
+    pub fn new(data: Vec<String>) -> Self {
         let clouds_count = data.len();
         let clouds = data;
         Self {
+            config: Config::default(),
             content_size: Size::new(0, 0),
             clouds,
             state: ListState::default(),
             scroll_state: ScrollbarState::new(clouds_count.saturating_sub(1)),
-            colors,
             user_input: None,
         }
     }
@@ -128,6 +125,11 @@ impl CloudSelect {
 }
 
 impl Component for CloudSelect {
+    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+        self.config = config;
+        Ok(())
+    }
+
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
         match key.code {
             KeyCode::Down => self.cursor_down()?,
@@ -167,7 +169,7 @@ impl Component for CloudSelect {
         if let Some(input) = &self.user_input {
             title.push(Span::styled(
                 format!("(prefix: {})", input),
-                tailwind::BLUE.c400,
+                self.config.styles.popup_title_fg,
             ));
         }
         let popup_block = Block::default()
@@ -179,10 +181,9 @@ impl Component for CloudSelect {
             )
             .borders(Borders::ALL)
             .border_type(BorderType::Thick)
-            .style(tailwind::GREEN.c900)
-            .bg(self.colors.header_bg)
+            .bg(self.config.styles.popup_bg)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().white());
+            .border_style(Style::default().fg(self.config.styles.popup_border_fg));
         let inner = popup_block.inner(area);
         self.content_size = inner.as_size();
 
@@ -199,17 +200,21 @@ impl Component for CloudSelect {
                         ),
                     ])));
                 } else {
-                    rows.push(ListItem::new(cloud.clone().fg(self.colors.row_fg)));
+                    rows.push(ListItem::new(
+                        cloud.clone().fg(self.config.styles.popup_item_title_fg),
+                    ));
                 }
             } else {
-                rows.push(ListItem::new(cloud.clone().fg(self.colors.row_fg)));
+                rows.push(ListItem::new(
+                    cloud.clone().fg(self.config.styles.popup_item_title_fg),
+                ));
             }
         }
         let list = List::default()
             .items(rows)
             .block(popup_block)
-            .style(self.colors.header_fg)
-            .highlight_style(Style::new().bg(self.colors.selected_style_fg));
+            .style(self.config.styles.popup_item_title_fg)
+            .highlight_style(Style::new().bg(self.config.styles.item_selected_bg));
 
         frame.render_widget(Clear, area);
         frame.render_stateful_widget(list, area, &mut self.state);
@@ -218,8 +223,7 @@ impl Component for CloudSelect {
             frame.render_stateful_widget(
                 Scrollbar::default()
                     .orientation(ScrollbarOrientation::VerticalRight)
-                    .begin_symbol(None)
-                    .end_symbol(None),
+                    .style(Style::default().fg(self.config.styles.popup_border_fg)),
                 area.inner(Margin {
                     vertical: 1,
                     horizontal: 1,

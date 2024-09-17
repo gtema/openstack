@@ -28,7 +28,7 @@ use crate::{
     action::Action,
     components::{describe::Describe, Component, Frame},
     config::Config,
-    utils::{OutputConfig, StructTable, TableColors, PALETTES},
+    utils::{OutputConfig, StructTable},
 };
 
 const ITEM_HEIGHT: usize = 1;
@@ -61,7 +61,6 @@ where
     raw_items: Vec<Value>,
     filter: F,
 
-    colors: TableColors,
     column_widths: Vec<usize>,
     content_size: Size,
     describe_text: Vec<String>,
@@ -103,7 +102,6 @@ where
             raw_items: Vec::new(),
             filter: F::default(),
             scroll_state: ScrollbarState::new(0),
-            colors: TableColors::new(&PALETTES[0]),
             column_widths: Vec::new(),
             content_size: Size::new(0, 0),
             describe_text: Vec::new(),
@@ -128,10 +126,6 @@ where
 
     pub fn set_command_tx(&mut self, tx: UnboundedSender<Action>) {
         self.command_tx = Some(tx);
-    }
-
-    pub fn set_colors(&mut self) {
-        self.colors = TableColors::new(&PALETTES[0]);
     }
 
     pub fn set_loading(&mut self, loading: bool) {
@@ -336,27 +330,29 @@ where
         let block = Block::default()
             .borders(Borders::RIGHT)
             .padding(Padding::right(1))
-            .border_style(Style::default().fg(PALETTES[0].c900));
+            .border_style(Style::default().fg(self.config.styles.border_fg));
 
         self.content_size = block.inner(area).as_size();
 
         let header_style = Style::default()
-            .fg(self.colors.header_fg)
-            .bg(self.colors.header_bg);
-        let selected_style = Style::default()
-            .add_modifier(Modifier::REVERSED)
-            .fg(self.colors.selected_style_fg);
+            .fg(self.config.styles.table.header_fg)
+            .bg(self.config.styles.table.header_bg);
+        let selected_style = Style::default().add_modifier(Modifier::REVERSED).fg(self
+            .config
+            .styles
+            .table
+            .row_fg_selected);
 
         let header = self.table_headers.clone().style(header_style).height(1);
         let rows = self.table_rows.iter().enumerate().map(|(i, data)| {
             let color = match i % 2 {
-                0 => self.colors.normal_row_color,
-                _ => self.colors.alt_row_color,
+                0 => self.config.styles.table.row_bg_normal,
+                _ => self.config.styles.table.row_bg_alt,
             };
             data.iter()
                 .map(|content| Cell::from(Text::from(content.to_string())))
                 .collect::<Row>()
-                .style(Style::new().fg(self.colors.row_fg).bg(color))
+                .style(Style::new().fg(self.config.styles.table.row_fg).bg(color))
                 .height(1)
         });
         let t = Table::default()
@@ -369,7 +365,7 @@ where
                     .map(|v| Constraint::Length((v + 1).try_into().unwrap())),
             )
             .highlight_style(selected_style)
-            .bg(self.colors.buffer_bg)
+            .bg(self.config.styles.buffer_bg)
             .block(block)
             .highlight_spacing(HighlightSpacing::Always);
 
@@ -384,8 +380,7 @@ where
         f.render_stateful_widget(
             Scrollbar::default()
                 .orientation(ScrollbarOrientation::VerticalRight)
-                .begin_symbol(None)
-                .end_symbol(None),
+                .style(Style::default().fg(self.config.styles.border_fg)),
             area.inner(Margin {
                 vertical: 1,
                 horizontal: 1,
@@ -401,14 +396,14 @@ where
         }))
         .style(
             Style::new()
-                .fg(self.colors.row_fg)
-                .bg(self.colors.buffer_bg),
+                .fg(self.config.styles.table.row_fg)
+                .bg(self.config.styles.buffer_bg),
         )
         .centered()
         .block(
             Block::bordered()
                 .border_type(BorderType::Double)
-                .border_style(Style::new().fg(self.colors.footer_border_color)),
+                .border_style(Style::new().fg(self.config.styles.table.footer_border)),
         );
         f.render_widget(info_footer, area);
     }
@@ -440,7 +435,7 @@ where
             .title_alignment(Alignment::Center)
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(PALETTES[0].c900));
+            .border_style(Style::default().fg(self.config.styles.border_fg));
 
         let inner = block.inner(area);
         frame.render_widget(block, area);

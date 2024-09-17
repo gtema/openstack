@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
+use eyre::Result;
 use ratatui::prelude::{Rect, *};
 use std::collections::HashMap;
 use tokio::sync::mpsc;
@@ -32,7 +32,6 @@ use crate::{
     mode::Mode,
     tui,
     tui::{Event, Tui},
-    utils::{TableColors, PALETTES},
 };
 
 enum Popup {
@@ -55,7 +54,6 @@ pub struct App {
     last_tick_key_events: Vec<KeyEvent>,
     cloud_name: Option<String>,
     popup: Option<Box<dyn Component>>, //cloud_worker: Cloud,
-    colors: TableColors,
     available_clouds: Vec<String>,
 }
 
@@ -63,7 +61,6 @@ impl App {
     pub fn new(tick_rate: f64, frame_rate: f64, cloud_name: Option<String>) -> Result<Self> {
         let config = Config::new()?;
         let mode = Mode::Home;
-        let colors = TableColors::new(&PALETTES[0]);
         let home_components: Box<dyn Component> = Box::new(Home::new());
         let describe_component: Box<dyn Component> = Box::new(Describe::new());
         let compute_servers_component: Box<dyn Component> = Box::new(ComputeServers::new());
@@ -108,7 +105,6 @@ impl App {
             last_tick_key_events: Vec::new(),
             cloud_name,
             popup: None,
-            colors,
             available_clouds: Vec::new(),
         })
     }
@@ -244,13 +240,14 @@ impl App {
                     }
                 }
                 Action::ResourceSelect => {
-                    self.popup = Some(Box::new(ResourceSelect::new(self.colors.clone())))
+                    let mut popup = Box::new(ResourceSelect::new());
+                    popup.register_config_handler(self.config.clone())?;
+                    self.popup = Some(popup);
                 }
                 Action::CloudSelect => {
-                    self.popup = Some(Box::new(CloudSelect::new(
-                        self.colors.clone(),
-                        self.available_clouds.clone(),
-                    )))
+                    let mut popup = Box::new(CloudSelect::new(self.available_clouds.clone()));
+                    popup.register_config_handler(self.config.clone())?;
+                    self.popup = Some(popup);
                 }
                 Action::Mode(mode) => {
                     // Exit from the popup
@@ -278,7 +275,9 @@ impl App {
                     }
                 }
                 Action::Error(ref msg) => {
-                    self.popup = Some(Box::new(ErrorPopup::new(self.colors.clone(), msg.clone())))
+                    let mut popup = Box::new(ErrorPopup::new(msg.clone()));
+                    popup.register_config_handler(self.config.clone())?;
+                    self.popup = Some(popup);
                 }
                 _ => {}
             }

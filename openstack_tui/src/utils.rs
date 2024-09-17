@@ -20,7 +20,7 @@ use serde_json::Value;
 use std::collections::BTreeSet;
 use std::fmt;
 use std::path::PathBuf;
-use style::palette::tailwind;
+//use style::palette::tailwind;
 use tracing::error;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{
@@ -222,39 +222,39 @@ impl<'de> Deserialize<'de> for IntString {
     }
 }
 
-pub const PALETTES: [tailwind::Palette; 4] = [
-    tailwind::BLUE,
-    tailwind::EMERALD,
-    tailwind::INDIGO,
-    tailwind::RED,
-];
-
-#[derive(Clone)]
-pub struct TableColors {
-    pub buffer_bg: Color,
-    pub header_bg: Color,
-    pub header_fg: Color,
-    pub row_fg: Color,
-    pub selected_style_fg: Color,
-    pub normal_row_color: Color,
-    pub alt_row_color: Color,
-    pub footer_border_color: Color,
-}
-
-impl TableColors {
-    pub const fn new(color: &tailwind::Palette) -> Self {
-        Self {
-            buffer_bg: tailwind::SLATE.c950,
-            header_bg: color.c900,
-            header_fg: tailwind::SLATE.c200,
-            row_fg: tailwind::SLATE.c200,
-            selected_style_fg: color.c400,
-            normal_row_color: tailwind::SLATE.c950,
-            alt_row_color: tailwind::SLATE.c900,
-            footer_border_color: color.c400,
-        }
-    }
-}
+//pub const PALETTES: [tailwind::Palette; 4] = [
+//    tailwind::BLUE,
+//    tailwind::EMERALD,
+//    tailwind::INDIGO,
+//    tailwind::RED,
+//];
+//
+//#[derive(Clone)]
+//pub struct TableColors {
+//    pub buffer_bg: Color,
+//    pub header_bg: Color,
+//    pub header_fg: Color,
+//    pub row_fg: Color,
+//    pub row_fg_selected: Color,
+//    pub row_bg_normal: Color,
+//    pub row_bg_alt: Color,
+//    pub footer_border_color: Color,
+//}
+//
+//impl TableColors {
+//    pub const fn new(color: &tailwind::Palette) -> Self {
+//        Self {
+//            buffer_bg: tailwind::SLATE.c950,
+//            header_bg: color.c900,
+//            header_fg: tailwind::SLATE.c200,
+//            row_fg: tailwind::SLATE.c200,
+//            selected_style_fg: color.c400,
+//            normal_row_color: tailwind::SLATE.c950,
+//            alt_row_color: tailwind::SLATE.c900,
+//            footer_border_color: color.c400,
+//        }
+//    }
+//}
 
 pub(crate) fn as_string<'de, D: Deserializer<'de>>(deserializer: D) -> Result<String, D::Error> {
     Ok(match serde::de::Deserialize::deserialize(deserializer)? {

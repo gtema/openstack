@@ -13,8 +13,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use super::{Component, Frame};
-use color_eyre::eyre::Result;
 use crossterm::event::KeyEvent;
+use eyre::Result;
 use itertools::Itertools;
 use ratatui::{
     layout::{
@@ -33,7 +33,6 @@ use crate::{
     action::{Action, Resource},
     config::Config,
     mode::Mode,
-    utils::PALETTES,
 };
 
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -131,7 +130,7 @@ impl Component for Home {
             .title(Title::from(" Usage ").alignment(Alignment::Center))
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().fg(PALETTES[0].c900));
+            .border_style(Style::default().fg(self.config.styles.border_fg));
 
         let inner = block.inner(area);
         f.render_widget(block, area);

@@ -13,23 +13,17 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use super::{Component, Frame};
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent};
+use eyre::Result;
 use ratatui::{
     layout::{Constraint, Layout, Rect},
     prelude::*,
-    style::palette::tailwind,
     widgets::{block::*, *},
 };
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{
-    action::Action,
-    config::Config,
-    mode::Mode,
-    utils::{centered_rect, TableColors},
-};
+use crate::{action::Action, config::Config, mode::Mode, utils::centered_rect};
 
 #[derive(Debug, Clone, Default)]
 enum CursorAt {
@@ -47,11 +41,16 @@ pub struct ResourceSelect {
     service_state: ListState,
     resource_state: ListState,
     cursor_at: CursorAt,
-    colors: TableColors,
+}
+
+impl Default for ResourceSelect {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl ResourceSelect {
-    pub fn new(colors: TableColors) -> Self {
+    pub fn new() -> Self {
         Self {
             resources: HashMap::from([
                 (
@@ -77,7 +76,6 @@ impl ResourceSelect {
             service_state: ListState::default(),
             resource_state: ListState::default(),
             cursor_at: CursorAt::default(),
-            colors,
         }
     }
 
@@ -170,10 +168,9 @@ impl Component for ResourceSelect {
                     .right_aligned(),
             )
             .borders(Borders::ALL)
-            .style(tailwind::GREEN.c900)
-            .bg(self.colors.header_bg)
+            .bg(self.config.styles.popup_bg)
             .padding(Padding::horizontal(1))
-            .border_style(Style::default().white());
+            .border_style(Style::default().fg(self.config.styles.popup_border_fg));
         let inner = popup_block.inner(area);
         frame.render_widget(Clear, area);
         frame.render_widget(popup_block, area);
@@ -182,11 +179,10 @@ impl Component for ResourceSelect {
         let [service_area, resource_area] = horizontal.areas(inner);
 
         let service_block = Block::default().title(" Service ").borders(Borders::ALL);
-        //.border_style(Style::default().fg(PALETTES[0].c900));
 
         let service_list = List::new(self.resources.keys().cloned())
             .block(service_block)
-            .style(self.colors.header_fg)
+            .style(self.config.styles.popup_item_title_fg)
             .highlight_symbol(">>")
             .highlight_style(Style::new().add_modifier(Modifier::REVERSED));
         frame.render_stateful_widget(service_list, service_area, &mut self.service_state);
@@ -194,7 +190,7 @@ impl Component for ResourceSelect {
         let resource_block = Block::default().title(" Resource ").borders(Borders::ALL);
         let mut resource_list = List::default()
             .block(resource_block)
-            .style(self.colors.header_fg)
+            .style(self.config.styles.popup_item_title_fg)
             .highlight_symbol(">>")
             .highlight_style(Style::new().add_modifier(Modifier::REVERSED));
         if let Some(service_pos) = self.service_state.selected() {
