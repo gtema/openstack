@@ -63,7 +63,7 @@ struct QueryParameters {}
 #[derive(Args)]
 struct PathParameters {
     /// project_id parameter for
-    /// /v3/projects/{project_id}/groups/{group_id}/roles API
+    /// /v3/projects/{project_id}/users/{user_id}/roles API
     ///
     #[arg(
         help_heading = "Path parameters",
@@ -133,11 +133,11 @@ impl RolesCommand {
             ep_builder.user_id(id);
         } else if let Some(name) = &self.path.user.user_name {
             // user_name is passed. Need to lookup resource
-            let mut find_builder = find_user::Request::builder();
+            let mut sub_find_builder = find_user::Request::builder();
             warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
 
-            find_builder.id(name);
-            let find_ep = find_builder
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
                 .build()
                 .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
             let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;

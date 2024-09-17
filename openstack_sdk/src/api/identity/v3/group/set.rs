@@ -64,7 +64,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) group: Group<'a>,
 
-    /// group_id parameter for /v3/groups/{group_id}/users/{user_id} API
+    /// group_id parameter for /v3/groups/{group_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

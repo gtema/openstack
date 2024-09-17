@@ -32,9 +32,7 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// policy_id parameter for
-    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-    /// API
+    /// policy_id parameter for /v3/policies/{policy_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

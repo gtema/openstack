@@ -44,7 +44,8 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
+    /// user_id parameter for
+    /// /v3/users/{user_id}/OS-OAUTH1/access_tokens/{access_token_id}/roles/{role_id}
     /// API
     ///
     #[builder(default, setter(into))]

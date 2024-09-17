@@ -41,13 +41,13 @@ pub struct Request<'a> {
     #[builder(private, setter(name = "_config"))]
     pub(crate) config: BTreeMap<Cow<'a, str>, BTreeMap<Cow<'a, str>, Value>>,
 
-    /// domain_id parameter for
-    /// /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+    /// domain_id parameter for /v3/domains/{domain_id}/config/{group}/{option}
+    /// API
     ///
     #[builder(default, setter(into))]
     domain_id: Cow<'a, str>,
 
-    /// group parameter for /v3/domains/config/{group}/{option}/default API
+    /// group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
     ///
     #[builder(default, setter(into))]
     group: Cow<'a, str>,

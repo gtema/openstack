@@ -93,8 +93,7 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) domain: Domain<'a>,
 
-    /// domain_id parameter for
-    /// /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+    /// domain_id parameter for /v3/domains/{domain_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

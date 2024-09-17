@@ -27,8 +27,7 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
-    /// API
+    /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id} API
     ///
     #[builder(default, setter(into))]
     id: Cow<'a, str>,

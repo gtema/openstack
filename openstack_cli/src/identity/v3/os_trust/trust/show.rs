@@ -56,8 +56,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id}/roles/{role_id}
-    /// API
+    /// trust_id parameter for /v3/OS-TRUST/trusts/{trust_id} API
     ///
     #[arg(
         help_heading = "Path parameters",

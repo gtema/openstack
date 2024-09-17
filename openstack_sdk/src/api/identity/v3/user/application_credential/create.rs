@@ -147,7 +147,8 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) application_credential: ApplicationCredential<'a>,
 
-    /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
+    /// user_id parameter for
+    /// /v3/users/{user_id}/application_credentials/{application_credential_id}
     /// API
     ///
     #[builder(default, setter(into))]

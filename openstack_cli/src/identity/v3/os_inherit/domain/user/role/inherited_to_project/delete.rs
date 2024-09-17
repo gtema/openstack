@@ -133,13 +133,13 @@ impl InheritedToProjectCommand {
         if let Some(id) = &self.path.domain.domain_id {
             // domain_id is passed. No need to lookup
             ep_builder.domain_id(id);
-        } else if let Some(name) = &self.path.user.user_name {
+        } else if let Some(name) = &self.path.domain.domain_name {
             // domain_name is passed. Need to lookup resource
-            let mut find_builder = find_domain::Request::builder();
+            let mut sub_find_builder = find_domain::Request::builder();
             warn!("Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead.");
 
-            find_builder.id(name);
-            let find_ep = find_builder
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
                 .build()
                 .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
             let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
@@ -169,11 +169,11 @@ impl InheritedToProjectCommand {
             ep_builder.user_id(id);
         } else if let Some(name) = &self.path.user.user_name {
             // user_name is passed. Need to lookup resource
-            let mut find_builder = find_user::Request::builder();
+            let mut sub_find_builder = find_user::Request::builder();
             warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
 
-            find_builder.id(name);
-            let find_ep = find_builder
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
                 .build()
                 .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
             let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;

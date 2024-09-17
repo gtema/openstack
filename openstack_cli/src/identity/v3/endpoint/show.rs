@@ -59,8 +59,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// endpoint_id parameter for
-    /// /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+    /// endpoint_id parameter for /v3/endpoints/{endpoint_id} API
     ///
     #[arg(
         help_heading = "Path parameters",

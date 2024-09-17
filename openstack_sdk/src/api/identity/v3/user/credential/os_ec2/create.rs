@@ -31,8 +31,8 @@ use std::collections::BTreeMap;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
-    /// API
+    /// user_id parameter for
+    /// /v3/users/{user_id}/credentials/OS-EC2/{credential_id} API
     ///
     #[builder(default, setter(into))]
     user_id: Cow<'a, str>,

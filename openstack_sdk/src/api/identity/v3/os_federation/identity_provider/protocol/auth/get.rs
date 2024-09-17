@@ -31,13 +31,14 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// idp_id parameter for
-    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth
+    /// API
     ///
     #[builder(default, setter(into))]
     idp_id: Cow<'a, str>,
 
     /// protocol_id parameter for
-    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}
+    /// /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols/{protocol_id}/auth
     /// API
     ///
     #[builder(default, setter(into))]

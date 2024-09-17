@@ -28,8 +28,7 @@ use std::borrow::Cow;
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     /// policy_id parameter for
-    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/services/{service_id}/regions/{region_id}
-    /// API
+    /// /v3/policies/{policy_id}/OS-ENDPOINT-POLICY/endpoints/{endpoint_id} API
     ///
     #[builder(default, setter(into))]
     policy_id: Cow<'a, str>,
