@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
 use openstack_sdk::api::find;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::find;
@@ -90,6 +91,9 @@ struct UserInput {
     /// User ID.
     #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 /// ApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -179,6 +183,15 @@ impl ApplicationCredentialCommand {
                     ))
                 }
             };
+        } else if self.path.user.current_user {
+            find_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         find_builder.id(&self.path.id);
         let find_ep = find_builder

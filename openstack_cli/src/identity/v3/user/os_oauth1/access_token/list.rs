@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::identity::v3::user::os_oauth1::access_token::list;
@@ -76,6 +77,9 @@ struct UserInput {
     /// User ID.
     #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
@@ -143,6 +147,15 @@ impl AccessTokensCommand {
                     ))
                 }
             };
+        } else if self.path.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         // Set query parameters
         // Set body parameters

@@ -9239,12 +9239,17 @@ Delete an access rule. An access rule that is still in use by an application cre
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
 
-**Usage:** `osc identity access-rule delete <USER_ID> <ID>`
+**Usage:** `osc identity access-rule delete <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -9254,11 +9259,13 @@ List all access rules for a user.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
 
-**Usage:** `osc identity access-rule list <USER_ID>`
+**Usage:** `osc identity access-rule list <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
-###### **Arguments:**
+###### **Options:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -9268,12 +9275,17 @@ Show details of an access rule.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/access_rules`
 
-**Usage:** `osc identity access-rule show <USER_ID> <ID>`
+**Usage:** `osc identity access-rule show <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — access_rule_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -9330,14 +9342,13 @@ Creates an application credential for a user on the project to which the current
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
-**Usage:** `osc identity application-credential create [OPTIONS] --name <NAME> <USER_ID>`
-
-###### **Arguments:**
-
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+**Usage:** `osc identity application-credential create [OPTIONS] --name <NAME> <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
 ###### **Options:**
 
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 * `--access-rules <JSON>` — A list of `access_rules` objects
 * `--description <DESCRIPTION>` — A description of the application credential’s purpose
 * `--expires-at <EXPIRES_AT>` — An optional expiry time for the application credential. If unset, the application credential does not expire
@@ -9357,12 +9368,17 @@ Delete an application credential.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
-**Usage:** `osc identity application-credential delete <USER_ID> <ID>`
+**Usage:** `osc identity application-credential delete <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -9372,15 +9388,14 @@ List all application credentials for a user.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
-**Usage:** `osc identity application-credential list [OPTIONS] <USER_ID>`
-
-###### **Arguments:**
-
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+**Usage:** `osc identity application-credential list [OPTIONS] <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
 ###### **Options:**
 
 * `--name <NAME>` — The name of the application credential. Must be unique to a user
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -9390,12 +9405,17 @@ Show details of an application credential.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/application_credentials`
 
-**Usage:** `osc identity application-credential show <USER_ID> <ID>`
+**Usage:** `osc identity application-credential show <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
 * `<ID>` — application_credential_id parameter for /v3/users/{user_id}/application_credentials/{application_credential_id} API
+
+###### **Options:**
+
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -9632,12 +9652,16 @@ The API supports only the `identity` and `ldap` groups.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
 
-**Usage:** `osc identity domain config group delete <DOMAIN_ID> <GROUP>`
+**Usage:** `osc identity domain config group delete <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<GROUP>` — group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9683,13 +9707,17 @@ The API supports only the `identity` and `ldap` groups. For the `ldap` group, a 
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
 
-**Usage:** `osc identity domain config group option delete <DOMAIN_ID> <GROUP> <OPTION>`
+**Usage:** `osc identity domain config group option delete <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP> <OPTION>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
-* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+* `<GROUP>` — group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+* `<OPTION>` — option parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9701,16 +9729,17 @@ The API supports only the `identity` and `ldap` groups. For the `ldap` group, a 
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
 
-**Usage:** `osc identity domain config group option set [OPTIONS] <DOMAIN_ID> <GROUP> <OPTION>`
+**Usage:** `osc identity domain config group option set [OPTIONS] <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP> <OPTION>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
-* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+* `<GROUP>` — group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+* `<OPTION>` — option parameter for /v3/domains/{domain_id}/config/{group}/{option} API
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--config <key=value>` — A `config` object
 
 
@@ -9723,13 +9752,17 @@ The API supports only the `identity` and `ldap` groups. For the `ldap` group, a 
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
 
-**Usage:** `osc identity domain config group option show <DOMAIN_ID> <GROUP> <OPTION>`
+**Usage:** `osc identity domain config group option show <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP> <OPTION>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
-* `<OPTION>` — option parameter for /v3/domains/config/{group}/{option}/default API
+* `<GROUP>` — group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+* `<OPTION>` — option parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9741,15 +9774,16 @@ The API supports only the `identity` and `ldap` groups. If you try to set config
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
 
-**Usage:** `osc identity domain config group set --config <JSON> <DOMAIN_ID> <GROUP>`
+**Usage:** `osc identity domain config group set --config <JSON> <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<GROUP>` — group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--config <JSON>` — A `config` object
 
 
@@ -9762,12 +9796,16 @@ The API supports only the `identity` and `ldap` groups.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config_default`
 
-**Usage:** `osc identity domain config group show <DOMAIN_ID> <GROUP>`
+**Usage:** `osc identity domain config group show <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
-* `<GROUP>` — group parameter for /v3/domains/config/{group}/{option}/default API
+* `<GROUP>` — group parameter for /v3/domains/{domain_id}/config/{group}/{option} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9777,11 +9815,12 @@ Deletes a domain configuration.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
 
-**Usage:** `osc identity domain config purge <DOMAIN_ID>`
+**Usage:** `osc identity domain config purge <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>>`
 
-###### **Arguments:**
+###### **Options:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9791,11 +9830,12 @@ Shows details for a domain configuration.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
 
-**Usage:** `osc identity domain config list <DOMAIN_ID>`
+**Usage:** `osc identity domain config list <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>>`
 
-###### **Arguments:**
+###### **Options:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9805,14 +9845,12 @@ Creates a domain configuration.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
 
-**Usage:** `osc identity domain config replace --config <JSON> <DOMAIN_ID>`
-
-###### **Arguments:**
-
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+**Usage:** `osc identity domain config replace --config <JSON> <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>>`
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--config <JSON>` — A `config` object
 
 
@@ -9823,14 +9861,12 @@ Updates a domain configuration.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_config`
 
-**Usage:** `osc identity domain config set --config <JSON> <DOMAIN_ID>`
-
-###### **Arguments:**
-
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+**Usage:** `osc identity domain config set --config <JSON> <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>>`
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--config <JSON>` — A `config` object
 
 
@@ -9849,7 +9885,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain`
 
 ###### **Arguments:**
 
-* `<ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<ID>` — domain_id parameter for /v3/domains/{domain_id} API
 
 
 
@@ -9890,13 +9926,17 @@ Unassigns a role from a group on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_group_role`
 
-**Usage:** `osc identity domain group role delete <DOMAIN_ID> <GROUP_ID> <ID>`
+**Usage:** `osc identity domain group role delete <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9906,12 +9946,16 @@ Lists role assignments for a group on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_group_roles`
 
-**Usage:** `osc identity domain group role list <DOMAIN_ID> <GROUP_ID>`
+**Usage:** `osc identity domain group role list <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP_ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9921,13 +9965,17 @@ Assigns a role to a group on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_group_role`
 
-**Usage:** `osc identity domain group role set <DOMAIN_ID> <GROUP_ID> <ID>`
+**Usage:** `osc identity domain group role set <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9937,13 +9985,17 @@ Check if a group has a specific role on a domain.
 
 GET/HEAD /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id}
 
-**Usage:** `osc identity domain group role show <DOMAIN_ID> <GROUP_ID> <ID>`
+**Usage:** `osc identity domain group role show <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <GROUP_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<GROUP_ID>` — group_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+
+###### **Options:**
+
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 
 
 
@@ -9975,7 +10027,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain`
 
 ###### **Arguments:**
 
-* `<ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<ID>` — domain_id parameter for /v3/domains/{domain_id} API
 
 ###### **Options:**
 
@@ -10000,7 +10052,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domains`
 
 ###### **Arguments:**
 
-* `<ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+* `<ID>` — domain_id parameter for /v3/domains/{domain_id} API
 
 
 
@@ -10041,17 +10093,19 @@ Unassigns a role from a user on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_user_role`
 
-**Usage:** `osc identity domain user role delete <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID> <ID>`
+**Usage:** `osc identity domain user role delete <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -10061,16 +10115,15 @@ Lists role assignments for a user on a domain.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/domain_user_roles`
 
-**Usage:** `osc identity domain user role list <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID>`
-
-###### **Arguments:**
-
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
+**Usage:** `osc identity domain user role list <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -10080,17 +10133,19 @@ Assigns a role to a user on a domain.
 
 Relationship: `https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-domain`
 
-**Usage:** `osc identity domain user role set <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID> <ID>`
+**Usage:** `osc identity domain user role set <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -10100,17 +10155,19 @@ Check if a user has a specific role on the domain.
 
 GET/HEAD /v3/domains/{domain_id}/users/{user_id}/roles/{role_id}
 
-**Usage:** `osc identity domain user role show <--user-name <USER_NAME>|--user-id <USER_ID>> <DOMAIN_ID> <ID>`
+**Usage:** `osc identity domain user role show <--domain-name <DOMAIN_NAME>|--domain-id <DOMAIN_ID>> <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <ID>`
 
 ###### **Arguments:**
 
-* `<DOMAIN_ID>` — domain_id parameter for /v3/domains/{domain_id}/groups/{group_id}/roles/{role_id} API
 * `<ID>` — role_id parameter for /v3/domains/{domain_id}/users/{user_id}/roles/{role_id} API
 
 ###### **Options:**
 
+* `--domain-name <DOMAIN_NAME>` — Domain Name
+* `--domain-id <DOMAIN_ID>` — Domain ID
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -10165,7 +10222,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id} API
 
 
 
@@ -10198,7 +10255,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoint`
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id} API
 
 ###### **Options:**
 
@@ -10216,7 +10273,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/endpoints
 
 ###### **Arguments:**
 
-* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id}/OS-ENDPOINT-POLICY/policy API
+* `<ID>` — endpoint_id parameter for /v3/endpoints/{endpoint_id} API
 
 
 
@@ -10266,7 +10323,7 @@ PUT /OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
 
 ###### **Options:**
 
@@ -10289,7 +10346,7 @@ DELETE operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
 
 
 
@@ -10427,7 +10484,7 @@ PATCH operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
 
 ###### **Options:**
 
@@ -10449,7 +10506,7 @@ GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
 
 ###### **Arguments:**
 
-* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id}/protocols API
+* `<IDP_ID>` — idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
 
 
 
@@ -10719,7 +10776,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
 
 ###### **Arguments:**
 
-* `<ID>` — group_id parameter for /v3/groups/{group_id}/users/{user_id} API
+* `<ID>` — group_id parameter for /v3/groups/{group_id} API
 
 
 
@@ -10749,7 +10806,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
 
 ###### **Arguments:**
 
-* `<ID>` — group_id parameter for /v3/groups/{group_id}/users/{user_id} API
+* `<ID>` — group_id parameter for /v3/groups/{group_id} API
 
 ###### **Options:**
 
@@ -10769,7 +10826,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
 
 ###### **Arguments:**
 
-* `<ID>` — group_id parameter for /v3/groups/{group_id}/users/{user_id} API
+* `<ID>` — group_id parameter for /v3/groups/{group_id} API
 
 
 
@@ -10833,7 +10890,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 ###### **Arguments:**
 
-* `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<ID>` — project_id parameter for /v3/projects/{project_id} API
 
 
 
@@ -10965,7 +11022,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 ###### **Arguments:**
 
-* `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<ID>` — project_id parameter for /v3/projects/{project_id} API
 
 ###### **Options:**
 
@@ -11001,7 +11058,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project`
 
 ###### **Arguments:**
 
-* `<ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<ID>` — project_id parameter for /v3/projects/{project_id} API
 
 
 
@@ -11042,17 +11099,18 @@ Unassigns a role from a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role delete <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID> <ID>`
+**Usage:** `osc identity project user role delete <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <PROJECT_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
 
 ###### **Options:**
 
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -11062,16 +11120,17 @@ Lists role assignments for a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role list <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID>`
+**Usage:** `osc identity project user role list <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <PROJECT_ID>`
 
 ###### **Arguments:**
 
-* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 
 ###### **Options:**
 
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -11081,17 +11140,18 @@ Assigns a role to a user on a project.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/project_user_role`
 
-**Usage:** `osc identity project user role set <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID> <ID>`
+**Usage:** `osc identity project user role set <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <PROJECT_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
 
 ###### **Options:**
 
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -11101,17 +11161,18 @@ Check grant for project, user, role.
 
 GET/HEAD /v3/projects/{project_id/users/{user_id}/roles/{role_id}
 
-**Usage:** `osc identity project user role show <--user-name <USER_NAME>|--user-id <USER_ID>> <PROJECT_ID> <ID>`
+**Usage:** `osc identity project user role show <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user> <PROJECT_ID> <ID>`
 
 ###### **Arguments:**
 
-* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/groups/{group_id}/roles API
+* `<PROJECT_ID>` — project_id parameter for /v3/projects/{project_id}/users/{user_id}/roles API
 * `<ID>` — role_id parameter for /v3/projects/{project_id}/users/{user_id}/roles/{role_id} API
 
 ###### **Options:**
 
 * `--user-name <USER_NAME>` — User Name
 * `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -11783,7 +11844,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 ###### **Arguments:**
 
-* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — user_id parameter for /v3/users/{user_id} API
 
 
 
@@ -11793,11 +11854,13 @@ Lists groups to which a user belongs.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user_groups`
 
-**Usage:** `osc identity user groups <USER_ID>`
+**Usage:** `osc identity user groups <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
-###### **Arguments:**
+###### **Options:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -11844,14 +11907,13 @@ Changes the password for a user.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user_change_password`
 
-**Usage:** `osc identity user password set [OPTIONS] <USER_ID>`
-
-###### **Arguments:**
-
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+**Usage:** `osc identity user password set [OPTIONS] <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
 ###### **Options:**
 
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 * `--original-password <ORIGINAL_PASSWORD>` — The original password for the user
 * `--password <PASSWORD>` — The new password for the user
 
@@ -11863,11 +11925,13 @@ List projects to which the user has authorization to access.
 
 Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user_projects`
 
-**Usage:** `osc identity user projects <USER_ID>`
+**Usage:** `osc identity user projects <--user-name <USER_NAME>|--user-id <USER_ID>|--current-user>`
 
-###### **Arguments:**
+###### **Options:**
 
-* `<USER_ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `--user-name <USER_NAME>` — User Name
+* `--user-id <USER_ID>` — User ID
+* `--current-user` — Current authenticated user
 
 
 
@@ -11883,7 +11947,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 ###### **Arguments:**
 
-* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — user_id parameter for /v3/users/{user_id} API
 
 ###### **Options:**
 
@@ -11939,7 +12003,7 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/user`
 
 ###### **Arguments:**
 
-* `<ID>` — user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id} API
+* `<ID>` — user_id parameter for /v3/users/{user_id} API
 
 
 

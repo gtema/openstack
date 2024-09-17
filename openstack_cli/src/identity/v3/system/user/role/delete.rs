@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use bytes::Bytes;
+use eyre::OptionExt;
 use http::Response;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::system::user::role::delete;
@@ -89,6 +90,9 @@ struct UserInput {
     /// User ID.
     #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 /// Role response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -142,6 +146,15 @@ impl RoleCommand {
                     ))
                 }
             };
+        } else if self.path.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         ep_builder.id(&self.path.id);
         // Set query parameters
