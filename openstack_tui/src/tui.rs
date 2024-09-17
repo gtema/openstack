@@ -20,7 +20,6 @@ use std::{
     time::Duration,
 };
 
-use color_eyre::Result;
 use crossterm::{
     cursor,
     event::{
@@ -29,6 +28,7 @@ use crossterm::{
     },
     terminal::{EnterAlternateScreen, LeaveAlternateScreen},
 };
+use eyre::Result;
 use futures::{FutureExt, StreamExt};
 use ratatui::backend::CrosstermBackend as Backend;
 use serde::{Deserialize, Serialize};

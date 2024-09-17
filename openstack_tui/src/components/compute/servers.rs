@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::{Action, ComputeServerFilters, Resource},
-    components::{table_view::TableViewComponentBase, Component, Frame},
+    components::{table_view::TableViewComponentBase, Component},
     config::Config,
     mode::Mode,
     utils::{OutputConfig, StructTable},

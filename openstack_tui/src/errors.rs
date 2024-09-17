@@ -14,7 +14,7 @@
 
 use std::panic;
 
-use color_eyre::{config::HookBuilder, eyre};
+use color_eyre::config::HookBuilder;
 
 use crate::tui;
 

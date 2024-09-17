@@ -14,6 +14,7 @@
 
 use serde::{Deserialize, Serialize};
 
+/// TUI Modes (screens)
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum Mode {
     #[default]

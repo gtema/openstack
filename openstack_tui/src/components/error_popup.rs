@@ -22,8 +22,7 @@ use ratatui::{
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
-use super::{Component, Frame};
-use crate::{action::Action, config::Config, utils::centered_rect};
+use crate::{action::Action, components::Component, config::Config, utils::centered_rect};
 
 pub struct ErrorPopup {
     command_tx: Option<UnboundedSender<Action>>,

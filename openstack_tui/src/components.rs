@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyEvent, MouseEvent};
+use eyre::Result;
 use ratatui::{
     prelude::{Rect, Size},
     Frame,

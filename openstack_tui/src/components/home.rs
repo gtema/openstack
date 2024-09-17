@@ -12,7 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{Component, Frame};
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use itertools::Itertools;
@@ -31,6 +30,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::{Action, Resource},
+    components::Component,
     config::Config,
     mode::Mode,
 };

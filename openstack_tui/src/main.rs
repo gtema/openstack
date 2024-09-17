@@ -13,7 +13,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #![allow(dead_code)]
-//#![allow(unused_variables)]
+use clap::Parser;
+use cli::Cli;
+use eyre::Result;
+
+use crate::{
+    app::App,
+    utils::{initialize_logging, initialize_panic_handler},
+};
 
 pub mod action;
 pub mod app;
@@ -24,15 +31,6 @@ pub mod config;
 pub mod mode;
 pub mod tui;
 pub mod utils;
-
-use clap::Parser;
-use cli::Cli;
-use color_eyre::eyre::Result;
-
-use crate::{
-    app::App,
-    utils::{initialize_logging, initialize_panic_handler},
-};
 
 async fn tokio_main() -> Result<()> {
     initialize_logging()?;

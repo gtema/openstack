@@ -14,9 +14,9 @@
 
 use std::{collections::HashMap, path::PathBuf};
 
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use derive_deref::{Deref, DerefMut};
+use eyre::Result;
 use ratatui::style::{palette::tailwind, Color};
 use serde::{de::Deserializer, Deserialize};
 
@@ -88,15 +88,6 @@ impl Config {
                 .entry(key.clone())
                 .or_insert_with(|| cmd.clone());
         }
-        //for (mode, default_styles) in default_config.styles.iter() {
-        //    let user_styles = cfg.styles.entry(*mode).or_default();
-        //    for (style_key, style) in default_styles.iter() {
-        //        user_styles
-        //            .entry(style_key.clone())
-        //            .or_insert_with(|| *style);
-        //    }
-        //}
-
         Ok(cfg)
     }
 }

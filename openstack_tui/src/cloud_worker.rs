@@ -13,10 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use eyre::Result;
-use openstack_sdk::api::Pagination;
-use openstack_sdk::api::QueryAsync;
-use openstack_sdk::config::ConfigFile;
-use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::{api::Pagination, api::QueryAsync, config::ConfigFile, AsyncOpenStack};
 use serde_json::Value;
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{sleep, Duration};
@@ -24,6 +21,7 @@ use tracing::debug;
 
 use crate::action::{Action, ImageFilters, NetworkNetworkFilters, NetworkSubnetFilters, Resource};
 
+/// Cloud worker struct
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
     cloud: Option<AsyncOpenStack>,

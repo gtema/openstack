@@ -12,18 +12,16 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use super::{Component, Frame};
-use color_eyre::eyre::Result;
 use crossterm::event::{KeyCode, KeyEvent};
+use eyre::Result;
 use ratatui::{
-    layout::Rect,
     prelude::*,
     style::palette::tailwind,
     widgets::{block::*, *},
 };
 use std::cmp;
 
-use crate::{action::Action, config::Config, utils::centered_rect};
+use crate::{action::Action, components::Component, config::Config, utils::centered_rect};
 
 const TITLE: &str = " Select cloud to connect: ";
 

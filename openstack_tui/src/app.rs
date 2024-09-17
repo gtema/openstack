@@ -34,10 +34,6 @@ use crate::{
     tui::{Event, Tui},
 };
 
-enum Popup {
-    ResourceSelect,
-}
-
 pub struct App {
     config: Config,
     tick_rate: f64,
@@ -53,7 +49,7 @@ pub struct App {
     cloud_worker_tx: mpsc::UnboundedSender<Action>,
     last_tick_key_events: Vec<KeyEvent>,
     cloud_name: Option<String>,
-    popup: Option<Box<dyn Component>>, //cloud_worker: Cloud,
+    popup: Option<Box<dyn Component>>,
     available_clouds: Vec<String>,
 }
 

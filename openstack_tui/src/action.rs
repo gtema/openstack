@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum::Display;
 
+/// OpenStack "resource"
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
 pub enum Resource {
     ComputeFlavors(ComputeFlavorFilters),
@@ -27,6 +28,7 @@ pub enum Resource {
     ImageImages(ImageFilters),
 }
 
+/// TUI action
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
 pub enum Action {
     Tick,
