@@ -25,6 +25,7 @@ use crate::{
 pub mod action;
 pub mod app;
 pub mod cli;
+mod cloud_services;
 mod cloud_worker;
 pub mod components;
 pub mod config;

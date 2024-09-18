@@ -13,18 +13,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use eyre::Result;
-use openstack_sdk::{api::Pagination, api::QueryAsync, config::ConfigFile, AsyncOpenStack};
-use serde_json::Value;
+use openstack_sdk::{config::ConfigFile, AsyncOpenStack};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{sleep, Duration};
 use tracing::debug;
 
-use crate::action::{Action, ImageFilters, NetworkNetworkFilters, NetworkSubnetFilters, Resource};
+use crate::action::{Action, Resource};
+use crate::cloud_services::{ComputeExt, ImageExt, NetworkExt};
 
 /// Cloud worker struct
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
-    cloud: Option<AsyncOpenStack>,
+    pub(crate) cloud: Option<AsyncOpenStack>,
     app_tx: Option<UnboundedSender<Action>>,
     should_quit: bool,
 }
@@ -67,126 +67,6 @@ impl Cloud {
     fn register_app_tx(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
         self.app_tx = Some(tx);
         Ok(())
-    }
-
-    async fn get_compute_flavors(&mut self) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::compute::v2::flavor::list_detailed::Request::builder()
-                .sort_key("name")
-                .build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_compute_servers(&mut self) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::compute::v2::server::list_detailed::Request::builder()
-                .sort_key("display_name")
-                .sort_dir("asc")
-                .build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_compute_server_console_output(&mut self, id: &String) -> Result<Value> {
-        if let Some(session) = &self.cloud {
-            debug!("Fetching server console output for {:?}", id);
-            let ep =
-                openstack_sdk::api::compute::v2::server::os_get_console_output::Request::builder()
-                    .id(id)
-                    .os_get_console_output(openstack_sdk::api::compute::v2::server::os_get_console_output::OsGetConsoleOutputBuilder::default().build()?)
-                    .build()?;
-
-            let res: Value = ep.query_async(session).await?;
-            return Ok(res.get("output").unwrap_or(&Value::Null).to_owned());
-        }
-        Ok(Value::Null)
-    }
-
-    async fn get_compute_quota(&mut self) -> Result<Value> {
-        if let Some(session) = &self.cloud {
-            let mut ep_builder =
-                openstack_sdk::api::compute::v2::quota_set::details::Request::builder();
-
-            ep_builder.id(self
-                .cloud
-                .as_ref()
-                .expect("Connected")
-                .get_auth_info()
-                .expect("Authorized")
-                .token
-                .project
-                .expect("Project scoped")
-                .id
-                .expect("ID is known"));
-            let ep = ep_builder.build()?;
-            let res: Value = ep.query_async(session).await?;
-            return Ok(res);
-        }
-        Ok(Value::Null)
-    }
-
-    async fn get_image_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::image::v2::image::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
-
-            if let Some(vis) = &filters.visibility {
-                ep_builder.visibility(vis);
-            }
-            let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
-                .query_async(session)
-                .await?;
-            //let res: Vec<Value> = ep.query_async(session).await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_network_networks(
-        &mut self,
-        _filters: &NetworkNetworkFilters,
-    ) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
-
-            let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_network_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::subnet::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
-
-            if let Some(network_id) = &filters.network_id {
-                ep_builder.network_id(network_id.clone());
-            }
-            let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
     }
 
     pub async fn run(
