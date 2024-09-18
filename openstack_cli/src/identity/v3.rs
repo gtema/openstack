@@ -24,6 +24,7 @@ mod credential;
 mod domain;
 mod endpoint;
 mod group;
+mod limit;
 mod os_federation;
 mod project;
 mod region;
@@ -53,6 +54,7 @@ pub enum IdentityCommands {
     Endpoint(endpoint::EndpointCommand),
     Federation(os_federation::FederationCommand),
     Group(group::GroupCommand),
+    Limit(limit::LimitCommand),
     Project(project::ProjectCommand),
     Region(region::RegionCommand),
     Role(role::RoleCommand),
@@ -80,6 +82,7 @@ impl IdentityCommand {
             IdentityCommands::Endpoint(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Region(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::RoleAssignment(cmd) => cmd.take_action(parsed_args, session).await,
