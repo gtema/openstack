@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use bytes::Bytes;
+use eyre::OptionExt;
 use http::Response;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;

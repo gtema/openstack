@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
+use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::application_credential::create;
 use openstack_sdk::api::identity::v3::user::find as find_user;
@@ -85,6 +86,9 @@ struct UserInput {
     /// User ID.
     #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 /// ApplicationCredential Body data
 #[derive(Args, Clone)]
@@ -231,6 +235,15 @@ impl ApplicationCredentialCommand {
                     ))
                 }
             };
+        } else if self.path.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         // Set query parameters
         // Set body parameters
