@@ -442,6 +442,13 @@ This document contains the help content for the `osc` command-line program.
 * [`osc identity group list`↴](#osc-identity-group-list)
 * [`osc identity group set`↴](#osc-identity-group-set)
 * [`osc identity group show`↴](#osc-identity-group-show)
+* [`osc identity limit`↴](#osc-identity-limit)
+* [`osc identity limit create`↴](#osc-identity-limit-create)
+* [`osc identity limit delete`↴](#osc-identity-limit-delete)
+* [`osc identity limit list`↴](#osc-identity-limit-list)
+* [`osc identity limit model`↴](#osc-identity-limit-model)
+* [`osc identity limit set`↴](#osc-identity-limit-set)
+* [`osc identity limit show`↴](#osc-identity-limit-show)
 * [`osc identity project`↴](#osc-identity-project)
 * [`osc identity project create`↴](#osc-identity-project-create)
 * [`osc identity project delete`↴](#osc-identity-project-delete)
@@ -8884,7 +8891,8 @@ Identity (Keystone) commands
 * `endpoint` — Endpoint commands
 * `federation` — OS-Federation
 * `group` — Identity Group commands
-* `project` — Identity Project commands
+* `limit` — Unified Limits
+* `project` — Projects
 * `region` — Region commands
 * `role` — Identity Role commands
 * `role-assignment` — Role Assignments commands
@@ -10830,9 +10838,122 @@ Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/group`
 
 
 
+## `osc identity limit`
+
+Unified Limits
+
+In OpenStack, a quota system mainly contains two parts: limit and usage. The Unified limits in Keystone is a replacement of the limit part. It contains two kinds of resources: Registered Limit and Limit. A registered limit is a default limit. It is usually created by the services which are registered in Keystone. A limit is the limit that override the registered limit for each project.
+
+**Usage:** `osc identity limit <COMMAND>`
+
+###### **Subcommands:**
+
+* `create` — Create Limits
+* `delete` — Delete Limit
+* `list` — List Limits
+* `model` — Get Enforcement Model
+* `set` — Update Limit
+* `show` — Show Limit Details
+
+
+
+## `osc identity limit create`
+
+Creates limits. It supports to create more than one limit in one request.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/limits`
+
+**Usage:** `osc identity limit create [OPTIONS]`
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity limit delete`
+
+Deletes a limit.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/limit`
+
+**Usage:** `osc identity limit delete <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — limit_id parameter for /v3/limits/{limit_id} API
+
+
+
+## `osc identity limit list`
+
+Lists Limits.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/limits`
+
+**Usage:** `osc identity limit list`
+
+
+
+## `osc identity limit model`
+
+Return the configured limit enforcement model.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/limit_model`
+
+**Usage:** `osc identity limit model`
+
+
+
+## `osc identity limit set`
+
+Updates the specified limit. It only supports to update `resource_limit` or `description` for the limit.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/limit`
+
+**Usage:** `osc identity limit set [OPTIONS] <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — limit_id parameter for /v3/limits/{limit_id} API
+
+###### **Options:**
+
+* `--property <key=value>`
+
+
+
+## `osc identity limit show`
+
+Shows details for a limit.
+
+Relationship: `https://docs.openstack.org/api/openstack-identity/3/rel/limit`
+
+**Usage:** `osc identity limit show <ID>`
+
+###### **Arguments:**
+
+* `<ID>` — limit_id parameter for /v3/limits/{limit_id} API
+
+
+
 ## `osc identity project`
 
-Identity Project commands
+Projects
+
+A project is the base unit of resource ownership. Resources are owned by a specific project. A project is owned by a specific domain.
+
+(Since Identity API v3.4) You can create a hierarchy of projects by setting a parent_id when you create a project. All projects in a hierarchy must be owned by the same domain.
+
+(Since Identity API v3.6) Projects may, in addition to acting as containers for OpenStack resources, act as a domain (by setting the attribute is_domain to true), in which case it provides a namespace in which users, groups and other projects can be created. In fact, a domain created using the POST /domains API will actually be represented as a project with is_domain set to true with no parent (parent_id is null).
+
+Given this, all projects are considered part of a project hierarchy. Projects created in a domain prior to v3.6 are represented as a two-level hierarchy, with a project that has is_domain set to true as the root and all other projects referencing the root as their parent.
+
+A project acting as a domain can potentially also act as a container for OpenStack resources, although this depends on whether the policy rule for the relevant resource creation allows this.
+
+**Note**
+
+A project’s name must be unique within a domain and no more than 64 characters. A project’s name must be able to be sent within valid JSON, which could be any UTF-8 character. However, this is constrained to the given backend where project names are stored. For instance, MySQL’s restrictions states that UTF-8 support is constrained to the characters in the Basic Multilingual Plane (BMP). Supplementary characters are not permitted. Note that this last restriction is generally true for all names within resources of the Identity API. Creating a project without using a domain scoped token, i.e. using a project scoped token or a system scoped token, and also without specifying a domain or domain_id, the project will automatically be created on the default domain.
 
 **Usage:** `osc identity project <COMMAND>`
 
@@ -11654,6 +11775,8 @@ Relationship: `https://developer.openstack.org/api-ref/identity/v3/#list-all-rol
 Service commands
 
 A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
+
+You can create, list, show details for, update, and delete services. When you create or update a service, you can enable the service, which causes it and its endpoints to appear in the service catalog.
 
 **Usage:** `osc identity service <COMMAND>`
 

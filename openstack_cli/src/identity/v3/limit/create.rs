@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::limit::create;
 use openstack_sdk::api::QueryAsync;

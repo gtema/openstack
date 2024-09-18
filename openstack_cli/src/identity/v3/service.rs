@@ -29,6 +29,10 @@ mod show;
 /// Service commands
 ///
 /// A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
+///
+/// You can create, list, show details for, update, and delete services. When you create or update
+/// a service, you can enable the service, which causes it and its endpoints to appear in the
+/// service catalog.
 #[derive(Parser)]
 pub struct ServiceCommand {
     #[command(subcommand)]
