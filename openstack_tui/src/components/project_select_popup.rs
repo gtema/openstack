@@ -16,43 +16,71 @@ use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use ratatui::{
     prelude::*,
-    style::palette::tailwind,
     widgets::{block::*, *},
 };
+use serde::Deserialize;
+use serde_json::Value;
 use std::cmp;
+use structable_derive::StructTable;
 
 use crate::{
-    action::Action, components::Component, config::Config, mode::Mode, utils::centered_rect,
+    action::{Action, IdentityAuthProjectFilters, Resource},
+    components::Component,
+    config::Config,
+    mode::Mode,
+    utils::{centered_rect, OutputConfig, StructTable},
 };
 
-const TITLE: &str = " Select cloud to connect: ";
+const TITLE: &str = " Select project to switch to: ";
 
-pub struct CloudSelect {
+#[derive(Deserialize, StructTable)]
+pub struct ProjectData {
+    #[structable(title = "Name")]
+    name: String,
+    #[structable(title = "ID")]
+    id: String,
+    #[structable(title = "Domain ID")]
+    domain_id: String,
+    #[structable(title = "Enabled")]
+    enabled: bool,
+}
+
+pub struct ProjectSelect {
     config: Config,
     content_size: Size,
-    clouds: Vec<String>,
+    items: Vec<ProjectData>,
     state: ListState,
     scroll_state: ScrollbarState,
     user_input: Option<String>,
+    is_loading: bool,
 }
 
-impl CloudSelect {
+impl ProjectSelect {
     pub fn new() -> Self {
         Self {
             config: Config::default(),
             content_size: Size::new(0, 0),
-            clouds: Vec::new(),
+            items: Vec::new(),
             state: ListState::default(),
             scroll_state: ScrollbarState::new(0),
             user_input: None,
+            is_loading: true,
         }
     }
 
-    fn set_data(&mut self, data: Vec<String>) -> Result<()> {
-        let clouds_count = data.len();
-        self.clouds = data;
-        self.clouds.sort();
-        self.scroll_state = ScrollbarState::new(clouds_count.saturating_sub(1));
+    pub fn set_loading(&mut self, loading: bool) {
+        self.is_loading = loading;
+    }
+
+    fn set_data(&mut self, data: Vec<Value>) -> Result<()> {
+        let mut items: Vec<ProjectData> =
+            serde_json::from_value(serde_json::Value::Array(data.clone()))?;
+        items.sort_by_key(|x| x.name.clone());
+
+        self.items = items;
+        self.state.select_first();
+        self.scroll_state = ScrollbarState::new(self.items.len().saturating_sub(1));
+        self.set_loading(false);
         Ok(())
     }
 
@@ -88,7 +116,7 @@ impl CloudSelect {
         let i = match self.state.selected() {
             Some(i) => cmp::min(
                 i.saturating_add(self.content_size.height as usize),
-                self.clouds.len(),
+                self.items.len(),
             ),
             None => 0,
         };
@@ -113,8 +141,8 @@ impl CloudSelect {
         if let Some(input) = &self.user_input {
             if !input.is_empty() {
                 let mut found = false;
-                for (idx, item) in self.clouds.iter().enumerate() {
-                    if item.starts_with(input) {
+                for (idx, item) in self.items.iter().enumerate() {
+                    if item.name.starts_with(input) {
                         self.state.select(Some(idx));
                         self.scroll_state = self.scroll_state.position(idx);
                         found = true;
@@ -130,16 +158,27 @@ impl CloudSelect {
     }
 }
 
-impl Component for CloudSelect {
+impl Component for ProjectSelect {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.config = config;
         Ok(())
     }
-
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
         match action {
-            Action::Clouds(ref clouds) => {
-                self.set_data(clouds.clone())?;
+            Action::ConnectToCloud(_) => {
+                self.set_loading(true);
+            }
+            Action::ConnectedToCloud(_) => {
+                self.set_loading(true);
+                return Ok(Some(Action::RequestCloudResource(
+                    Resource::IdentityAuthProjects(IdentityAuthProjectFilters {}),
+                )));
+            }
+            Action::ResourcesData {
+                resource: Resource::IdentityAuthProjects(_),
+                data,
+            } => {
+                self.set_data(data)?;
             }
             _ => {}
         };
@@ -155,9 +194,19 @@ impl Component for CloudSelect {
             KeyCode::PageUp => self.cursor_page_up()?,
             KeyCode::PageDown => self.cursor_page_down()?,
             KeyCode::Enter => {
-                if let Some(cloud_pos) = self.state.selected() {
-                    if let Some(cloud) = self.clouds.get(cloud_pos) {
-                        return Ok(Some(Action::ConnectToCloud(cloud.clone())));
+                if let Some(pos) = self.state.selected() {
+                    if let Some(project) = self.items.get(pos) {
+                        let new_project = openstack_sdk::types::identity::v3::Project {
+                            id: Some(project.id.clone()),
+                            name: Some(project.name.clone()),
+                            domain: Some(openstack_sdk::types::identity::v3::Domain {
+                                id: Some(project.domain_id.clone()),
+                                name: None,
+                            }),
+                        };
+                        let new_scope =
+                            openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
+                        return Ok(Some(Action::CloudChangeScope(new_scope)));
                     }
                 }
             }
@@ -182,6 +231,13 @@ impl Component for CloudSelect {
     fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<()> {
         let area = centered_rect(25, 25, frame.area());
         let mut title = vec![TITLE.white()];
+        if self.is_loading {
+            title.push(Span::styled(
+                " ...Loading... ",
+                self.config.styles.title_loading_fg,
+            ));
+        }
+
         if let Some(input) = &self.user_input {
             title.push(Span::styled(
                 format!("(prefix: {})", input),
@@ -191,7 +247,7 @@ impl Component for CloudSelect {
         let popup_block = Block::default()
             .title_top(Line::from(title).centered())
             .title_bottom(
-                Line::from(" (↑) move up | (↓) move down | (Enter) to connect ")
+                Line::from(" (↑) move up | (↓) move down | (Enter) to select | (Esc) to close ")
                     .gray()
                     .right_aligned(), //.alignment(Alignment::Right),
             )
@@ -202,27 +258,28 @@ impl Component for CloudSelect {
             .border_style(Style::default().fg(self.config.styles.popup_border_fg));
         let inner = popup_block.inner(area);
         self.content_size = inner.as_size();
+        frame.render_widget(Clear, area);
 
         let mut rows: Vec<ListItem> = Vec::new();
-        for cloud in &self.clouds {
+        for item in &self.items {
             if let Some(input) = &self.user_input {
-                if cloud.starts_with(input) {
+                if item.name.starts_with(input) {
                     rows.push(ListItem::from(Line::from(vec![
-                        Span::styled(input.clone(), tailwind::RED.c950),
+                        Span::styled(input.clone(), self.config.styles.item_highlight_fg),
                         Span::raw(
-                            cloud
+                            item.name
                                 .strip_prefix(input)
-                                .expect("Cloud name contains user_input prefix"),
+                                .expect("Project name contains user_input prefix"),
                         ),
                     ])));
                 } else {
                     rows.push(ListItem::new(
-                        cloud.clone().fg(self.config.styles.popup_item_title_fg),
+                        item.name.clone().fg(self.config.styles.popup_item_title_fg),
                     ));
                 }
             } else {
                 rows.push(ListItem::new(
-                    cloud.clone().fg(self.config.styles.popup_item_title_fg),
+                    item.name.clone().fg(self.config.styles.popup_item_title_fg),
                 ));
             }
         }
@@ -232,10 +289,9 @@ impl Component for CloudSelect {
             .style(self.config.styles.popup_item_title_fg)
             .highlight_style(Style::new().bg(self.config.styles.item_selected_bg));
 
-        frame.render_widget(Clear, area);
         frame.render_stateful_widget(list, area, &mut self.state);
 
-        if usize::from(self.content_size.height) < self.clouds.len() {
+        if usize::from(self.content_size.height) < self.items.len() {
             frame.render_stateful_widget(
                 Scrollbar::default()
                     .orientation(ScrollbarOrientation::VerticalRight)

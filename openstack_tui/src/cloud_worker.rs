@@ -12,14 +12,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
-use openstack_sdk::{config::ConfigFile, AsyncOpenStack};
+use eyre::{eyre, Report, Result};
+use openstack_sdk::{config::ConfigFile, types::identity::v3::AuthResponse, AsyncOpenStack};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{sleep, Duration};
 use tracing::debug;
 
 use crate::action::{Action, Resource};
-use crate::cloud_services::{ComputeExt, ImageExt, NetworkExt};
+use crate::cloud_services::{ComputeExt, IdentityExt, ImageExt, NetworkExt};
 
 /// Cloud worker struct
 pub(crate) struct Cloud {
@@ -44,8 +44,8 @@ impl Cloud {
         debug!("Connecting to cloud {}", cloud);
         let profile = self
             .cloud_configs
-            .get_cloud_config(cloud)?
-            .expect("Valid cloud");
+            .get_cloud_config(cloud.clone())?
+            .ok_or_else(|| eyre!("Cloud `{}` is not present in configuration files", cloud))?;
         let mut session = AsyncOpenStack::new_interactive(&profile, false).await?;
 
         session
@@ -62,6 +62,32 @@ impl Cloud {
         self.cloud = Some(session);
 
         Ok(())
+    }
+
+    pub async fn switch_auth_scope(
+        &mut self,
+        scope: &openstack_sdk::auth::authtoken::AuthTokenScope,
+    ) -> Result<Option<AuthResponse>, Report> {
+        if let Some(ref mut session) = self.cloud {
+            debug!("Switching connection scope to {:?}", scope);
+            session.authorize(Some(scope.clone()), true, false).await?;
+            debug!("Authed as {:?}", session.get_auth_info());
+
+            session
+                .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
+                .await?;
+            session
+                .discover_service_endpoint(&openstack_sdk::types::ServiceType::Image)
+                .await?;
+
+            session
+                .discover_service_endpoint(&openstack_sdk::types::ServiceType::Network)
+                .await?;
+
+            Ok(session.get_auth_info())
+        } else {
+            return Err(eyre!("Cannot change scope without being connected first"));
+        }
     }
 
     fn register_app_tx(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
@@ -91,12 +117,27 @@ impl Cloud {
                             }
                         }
                         Err(err) => app_tx.send(Action::Error(format!(
-                            "Failed to fetch compute flavors: {:?}",
+                            "Failed to connect to the cloud: {:?}",
                             err
                         )))?,
                     },
                     Action::ListClouds => {
                         app_tx.send(Action::Clouds(self.cloud_configs.get_available_clouds()))?;
+                    }
+                    Action::CloudChangeScope(ref scope) => {
+                        match self.switch_auth_scope(scope).await {
+                            Ok(auth_response) => {
+                                if let Some(auth_info) = auth_response {
+                                    app_tx.send(Action::ConnectedToCloud(Box::new(
+                                        auth_info.token,
+                                    )))?;
+                                }
+                            }
+                            Err(err) => app_tx.send(Action::Error(format!(
+                                "Cannot switch session scope: {:?}",
+                                err
+                            )))?,
+                        }
                     }
                     Action::RequestCloudResource(resource) => match resource {
                         Resource::ComputeFlavors(ref _filters) => match self
@@ -155,6 +196,17 @@ impl Cloud {
                                 err
                             )))?,
                         },
+                        Resource::IdentityAuthProjects(ref filters) => {
+                            match self.get_identity_auth_projects(filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch available project scopes: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::ImageImages(ref filters) => {
                             match self.get_image_images(filters).await {
                                 Ok(data) => {

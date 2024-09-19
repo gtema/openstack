@@ -53,7 +53,19 @@ impl<'a> Component for ComputeFlavors<'a> {
 
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
-            Action::Mode(Mode::ComputeFlavors) | Action::Refresh | Action::ConnectToCloud(_) => {
+            Action::CloudChangeScope(_) => {
+                self.set_loading(true);
+            }
+            Action::ConnectedToCloud(_) => {
+                self.set_loading(true);
+                self.set_data(Vec::new())?;
+                if let Mode::ComputeFlavors = current_mode {
+                    return Ok(Some(Action::RequestCloudResource(
+                        Resource::ComputeFlavors(self.get_filters().clone()),
+                    )));
+                }
+            }
+            Action::Mode(Mode::ComputeFlavors) | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
                     Resource::ComputeFlavors(self.get_filters().clone()),

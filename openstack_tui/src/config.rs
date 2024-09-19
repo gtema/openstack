@@ -303,6 +303,8 @@ pub struct Styles {
     pub popup_border_fg: Color,
     pub popup_border_error_fg: Color,
     pub item_selected_bg: Color,
+    pub item_highlight_fg: Color,
+    pub title_loading_fg: Color,
 }
 
 impl Default for Styles {
@@ -318,6 +320,8 @@ impl Default for Styles {
             popup_border_fg: tailwind::WHITE,
             popup_border_error_fg: tailwind::RED.c600,
             item_selected_bg: tailwind::BLUE.c400,
+            item_highlight_fg: tailwind::RED.c950,
+            title_loading_fg: tailwind::PINK.c400,
         }
     }
 }

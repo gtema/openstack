@@ -22,7 +22,9 @@ use ratatui::{
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
-use crate::{action::Action, components::Component, config::Config, utils::centered_rect};
+use crate::{
+    action::Action, components::Component, config::Config, mode::Mode, utils::centered_rect,
+};
 
 pub struct ErrorPopup {
     command_tx: Option<UnboundedSender<Action>>,
@@ -34,15 +36,12 @@ pub struct ErrorPopup {
 }
 
 impl ErrorPopup {
-    pub fn new(text: String) -> Self {
+    pub fn new() -> Self {
         Self {
             command_tx: None,
             config: Config::default(),
             keymap: HashMap::new(),
-            text: strip_ansi_escapes::strip_str(text)
-                .split("\n")
-                .map(String::from)
-                .collect::<Vec<_>>(),
+            text: Vec::new(),
             last_events: Vec::new(),
             scroll: (0, 0),
         }
@@ -67,6 +66,19 @@ impl Component for ErrorPopup {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.config = config;
         Ok(())
+    }
+
+    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+        match action {
+            Action::Error(ref msg) => {
+                self.text = strip_ansi_escapes::strip_str(msg)
+                    .split("\n")
+                    .map(String::from)
+                    .collect::<Vec<_>>();
+            }
+            _ => {}
+        };
+        Ok(None)
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {

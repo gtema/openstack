@@ -137,6 +137,10 @@ impl Component for Header {
                 Span::styled("<F3>", Style::new().yellow()),
                 Span::from("Select resource"),
             ]),
+            Row::new(vec![
+                Span::styled("<F4>", Style::new().yellow()),
+                Span::from("Select project scope"),
+            ]),
         ];
         let global_shortcuts_table = Table::new(global_shortcuts_rows, widths)
             .column_spacing(1)

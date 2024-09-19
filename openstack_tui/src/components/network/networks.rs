@@ -55,9 +55,21 @@ impl<'a> Component for NetworkNetworks<'a> {
         Ok(())
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
-            Action::Mode(Mode::NetworkNetworks) | Action::Refresh | Action::ConnectToCloud(_) => {
+            Action::CloudChangeScope(_) => {
+                self.set_loading(true);
+            }
+            Action::ConnectedToCloud(_) => {
+                self.set_loading(true);
+                self.set_data(Vec::new())?;
+                if let Mode::NetworkNetworks = current_mode {
+                    return Ok(Some(Action::RequestCloudResource(
+                        Resource::NetworkNetworks(self.get_filters().clone()),
+                    )));
+                }
+            }
+            Action::Mode(Mode::NetworkNetworks) | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
                     Resource::NetworkNetworks(self.get_filters().clone()),
