@@ -121,10 +121,23 @@ impl Catalog {
         trace!("Start processing ServiceCatalog response");
         let mut token_catalog = Vec::new();
         let intf = interface.unwrap_or("public");
-        // TODO: Maybe we should empty the catalog_endpoints data (or at least for the services)
+        // Reset all previously discovered information. If we re-authed we may get different
+        // project_ids
+        for (srv, val) in self.service_endpoints.iter_mut() {
+            // We needed to discover identity before we ever tried to connect to the cloud. It does
+            // not support project_id part of the URL by nature so we skip resetting it, otherwise
+            // we need to again discover identity endpoint.
+            if srv != "identity" {
+                val.clear();
+            }
+        }
         for srv in srv_endpoints {
             trace!("Processing catalog service {:?}", srv);
             token_catalog.push(srv.clone());
+            if let Some(cat_service) = self.catalog_endpoints.get_mut(&srv.service_type) {
+                // Clear all endpoints processed in previous catalog processing
+                cat_service.clear();
+            }
             for ep in &srv.endpoints {
                 trace!("Processing endpoint {:?}", ep);
                 if ep.interface == intf {
