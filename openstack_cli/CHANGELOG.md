@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.1...openstack_cli-v0.7.2) - 2024-09-19
+
+### Added
+
+- Add identity.limit command ([#553](https://github.com/gtema/openstack/pull/553))
+- Extend user path param with `--current-user` ([#550](https://github.com/gtema/openstack/pull/550))
+- Use all resource names for path param naming ([#549](https://github.com/gtema/openstack/pull/549))
+
+### Fixed
+
+- Reset catalog on reauth ([#555](https://github.com/gtema/openstack/pull/555))
+
+### Other
+
+- Enable user app_creds and rules list ([#557](https://github.com/gtema/openstack/pull/557))
+
 ## [0.7.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.0...openstack_cli-v0.7.1) - 2024-09-13
 
 ### Added
