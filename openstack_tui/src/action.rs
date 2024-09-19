@@ -23,9 +23,10 @@ pub enum Resource {
     ComputeServers(ComputeServerFilters),
     ComputeServerConsoleOutput(String),
     ComputeQuota,
+    IdentityAuthProjects(IdentityAuthProjectFilters),
+    ImageImages(ImageFilters),
     NetworkNetworks(NetworkNetworkFilters),
     NetworkSubnets(NetworkSubnetFilters),
-    ImageImages(ImageFilters),
 }
 
 /// TUI action
@@ -43,6 +44,7 @@ pub enum Action {
     Error(String),
     Help,
     ConnectToCloud(String),
+    CloudChangeScope(openstack_sdk::auth::authtoken::AuthTokenScope),
     ConnectedToCloud(Box<openstack_sdk::types::identity::v3::AuthToken>),
     RequestCloudResource(Resource),
     ResourceData {
@@ -62,6 +64,7 @@ pub enum Action {
     PageDown,
     Describe(serde_json::Value),
     CloudSelect,
+    SelectProject,
     ListClouds,
     Clouds(Vec<String>),
     NetworkSubnetFilter(NetworkSubnetFilters),
@@ -103,6 +106,15 @@ impl fmt::Display for NetworkSubnetFilters {
         Ok(())
     }
 }
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentityAuthProjectFilters {}
+impl fmt::Display for IdentityAuthProjectFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImageFilters {
     pub visibility: Option<String>,

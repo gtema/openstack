@@ -286,7 +286,11 @@ where
             if selected_idx < self.raw_items.len() {
                 self.describe
                     .set_data(self.raw_items[selected_idx].clone())?;
+            } else {
+                self.describe.set_data(Value::Null)?;
             }
+        } else {
+            self.describe.set_data(Value::Null)?;
         }
         Ok(())
     }

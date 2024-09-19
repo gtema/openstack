@@ -69,6 +69,8 @@ impl Describe {
                 .split("\n")
                 .map(String::from)
                 .collect::<Vec<_>>();
+        } else if data.is_null() {
+            self.text.clear();
         } else {
             let data: serde_yaml::Value = serde_json::from_value(data)?;
             self.text = serde_yaml::to_string(&data)?

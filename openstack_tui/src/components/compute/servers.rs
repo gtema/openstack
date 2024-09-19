@@ -56,7 +56,19 @@ impl<'a> Component for ComputeServers<'a> {
 
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
-            Action::Mode(Mode::ComputeServers) | Action::Refresh | Action::ConnectToCloud(_) => {
+            Action::CloudChangeScope(_) => {
+                self.set_loading(true);
+            }
+            Action::ConnectedToCloud(_) => {
+                self.set_loading(true);
+                self.set_data(Vec::new())?;
+                if let Mode::ComputeServers = current_mode {
+                    return Ok(Some(Action::RequestCloudResource(
+                        Resource::ComputeServers(self.get_filters().clone()),
+                    )));
+                }
+            }
+            Action::Mode(Mode::ComputeServers) | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
                     Resource::ComputeServers(self.get_filters().clone()),

@@ -57,9 +57,21 @@ impl<'a> Component for Images<'a> {
         Ok(())
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
-            Action::Mode(Mode::ImageImages) | Action::Refresh | Action::ConnectToCloud(_) => {
+            Action::CloudChangeScope(_) => {
+                self.set_loading(true);
+            }
+            Action::ConnectedToCloud(_) => {
+                self.set_loading(true);
+                self.set_data(Vec::new())?;
+                if let Mode::ImageImages = current_mode {
+                    return Ok(Some(Action::RequestCloudResource(Resource::ImageImages(
+                        self.get_filters().clone(),
+                    ))));
+                }
+            }
+            Action::Mode(Mode::ImageImages) | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(Resource::ImageImages(
                     self.get_filters().clone(),

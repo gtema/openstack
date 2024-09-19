@@ -22,6 +22,7 @@
     "F1": { "action": {"Mode": "Home"}, "description": "Home"},
     "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
     "F3": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
+    "F4": { "action": "SelectProject", "description": "Select project"},
     "r": {"action": "Refresh", "description": "Refresh data"}
   }
 }

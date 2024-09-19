@@ -26,13 +26,22 @@ use crate::{
         cloud_select_popup::CloudSelect, compute::flavors::ComputeFlavors,
         compute::servers::ComputeServers, describe::Describe, error_popup::ErrorPopup,
         header::Header, home::Home, image::images::Images, network::networks::NetworkNetworks,
-        network::subnets::NetworkSubnets, resource_select_popup::ResourceSelect, Component,
+        network::subnets::NetworkSubnets, project_select_popup::ProjectSelect,
+        resource_select_popup::ResourceSelect, Component,
     },
     config::Config,
     mode::Mode,
     tui,
     tui::{Event, Tui},
 };
+
+#[derive(Eq, Hash, PartialEq)]
+enum Popup {
+    Error,
+    SelectResource,
+    SwitchCloud,
+    SwitchProject,
+}
 
 pub struct App {
     config: Config,
@@ -49,8 +58,11 @@ pub struct App {
     cloud_worker_tx: mpsc::UnboundedSender<Action>,
     last_tick_key_events: Vec<KeyEvent>,
     cloud_name: Option<String>,
-    popup: Option<Box<dyn Component>>,
-    available_clouds: Vec<String>,
+    cloud_connected: bool,
+    /// Currently visible popup
+    active_popup: Option<Popup>,
+    /// Initialized popup components
+    popups: HashMap<Popup, Box<dyn Component>>,
 }
 
 impl App {
@@ -100,8 +112,17 @@ impl App {
             cloud_worker_tx: cloud_worker,
             last_tick_key_events: Vec::new(),
             cloud_name,
-            popup: None,
-            available_clouds: Vec::new(),
+            cloud_connected: false,
+            active_popup: None,
+            popups: HashMap::from([
+                (
+                    Popup::SwitchProject,
+                    Box::new(ProjectSelect::new()) as Box<dyn Component>,
+                ),
+                (Popup::Error, Box::new(ErrorPopup::new())),
+                (Popup::SwitchCloud, Box::new(CloudSelect::new())),
+                (Popup::SelectResource, Box::new(ResourceSelect::new())),
+            ]),
         })
     }
 
@@ -114,15 +135,15 @@ impl App {
 
         self.header.register_config_handler(self.config.clone())?;
 
-        for (_mode, component) in self.components.iter_mut() {
+        for component in self.components.values_mut().chain(self.popups.values_mut()) {
             component.register_action_handler(self.action_tx.clone())?;
         }
 
-        for (_mode, component) in self.components.iter_mut() {
+        for component in self.components.values_mut().chain(self.popups.values_mut()) {
             component.register_config_handler(self.config.clone())?;
         }
 
-        for (_mode, component) in self.components.iter_mut() {
+        for component in self.components.values_mut().chain(self.popups.values_mut()) {
             component.init(tui.size()?)?;
         }
 
@@ -165,9 +186,11 @@ impl App {
             Event::Key(key) => self.handle_key_event(key)?,
             _ => {}
         }
-        if let Some(ref mut popup) = self.popup {
-            if let Some(action) = popup.handle_events(Some(event.clone()))? {
-                action_tx.send(action)?;
+        if let Some(popup_type) = &self.active_popup {
+            if let Some(popup) = self.popups.get_mut(&popup_type) {
+                if let Some(action) = popup.handle_events(Some(event.clone()))? {
+                    action_tx.send(action)?;
+                }
             }
         } else if let Some(component) = self.components.get_mut(&self.mode) {
             if let Some(action) = component.handle_events(Some(event.clone()))? {
@@ -186,9 +209,12 @@ impl App {
         if let Some(action) = self.config.global_keybindings.get(&vec![key]) {
             // Normal global keybinding
             action_tx.send(action.action.clone())?;
-        } else if key.code == KeyCode::Esc && self.popup.is_some() {
+        } else if key.code == KeyCode::Esc && self.active_popup.is_some() {
             // Close the popup
-            self.popup = None;
+            self.active_popup = None;
+            if !self.cloud_connected {
+                self.action_tx.send(Action::CloudSelect)?;
+            }
         } else if let Some(keymap) = self.config.mode_keybindings.get(&self.mode) {
             if let Some(action) = keymap.get(&vec![key]) {
                 action_tx.send(action.action.clone())?;
@@ -228,66 +254,94 @@ impl App {
                 Action::ClearScreen => tui.terminal.clear()?,
                 Action::Resize(w, h) => self.handle_resize(tui, w, h)?,
                 Action::Render => self.render(tui)?,
-                Action::Clouds(ref clouds) => {
-                    self.available_clouds = clouds.clone();
-                    self.available_clouds.sort();
+                Action::Clouds(_) => {
+                    // Started without any cloud selected - switch to CloudSelect mode
                     if self.cloud_name.is_none() {
                         self.action_tx.send(Action::CloudSelect)?;
                     }
                 }
+
+                Action::ConnectedToCloud(_) => {
+                    if let Some(popup) = &self.active_popup {
+                        match popup {
+                            Popup::SwitchProject => {
+                                // Hide popup
+                                self.active_popup = None;
+                            }
+                            _ => {}
+                        }
+                    }
+                    self.cloud_connected = true;
+                    self.render(tui)?;
+                }
+                Action::CloudChangeScope(ref scope) => {
+                    if let Some(popup) = &self.active_popup {
+                        match popup {
+                            Popup::SwitchProject => {
+                                // Hide popup
+                                self.active_popup = None;
+                            }
+                            _ => {}
+                        }
+                    }
+                    self.render(tui)?;
+                    self.cloud_worker_tx
+                        .send(Action::CloudChangeScope(scope.clone()))?;
+                }
                 Action::ResourceSelect => {
-                    let mut popup = Box::new(ResourceSelect::new());
-                    popup.register_config_handler(self.config.clone())?;
-                    self.popup = Some(popup);
+                    self.active_popup = Some(Popup::SelectResource);
+                    self.render(tui)?;
                 }
                 Action::CloudSelect => {
-                    let mut popup = Box::new(CloudSelect::new(self.available_clouds.clone()));
-                    popup.register_config_handler(self.config.clone())?;
-                    self.popup = Some(popup);
+                    self.active_popup = Some(Popup::SwitchCloud);
+                    self.render(tui)?;
+                }
+                Action::SelectProject => {
+                    self.active_popup = Some(Popup::SwitchProject);
+                    self.render(tui)?;
                 }
                 Action::Mode(mode) => {
-                    // Exit from the popup
-                    if self.popup.is_some() {
-                        self.popup = None;
-                    }
+                    // Hide popup
+                    self.active_popup = None;
                     self.prev_mode = Some(self.mode);
                     self.mode = mode;
+                    self.render(tui)?;
                 }
                 Action::Describe(_) => {
                     self.prev_mode = Some(self.mode);
                     self.mode = Mode::Describe;
+                    self.render(tui)?;
                 }
 
                 Action::RequestCloudResource(ref resource) => {
                     self.cloud_worker_tx
                         .send(Action::RequestCloudResource(resource.clone()))?;
+                    self.render(tui)?;
                 }
                 Action::ConnectToCloud(ref cloud) => {
                     self.cloud_worker_tx
                         .send(Action::ConnectToCloud(cloud.clone()))?;
-                    // Exit from the popup
-                    if self.popup.is_some() {
-                        self.popup = None;
-                    }
+                    // Hide popup
+                    self.active_popup = None;
+                    self.cloud_connected = false;
+                    self.render(tui)?;
                 }
-                Action::Error(ref msg) => {
-                    let mut popup = Box::new(ErrorPopup::new(msg.clone()));
-                    popup.register_config_handler(self.config.clone())?;
-                    self.popup = Some(popup);
+                Action::Error(_) => {
+                    self.active_popup = Some(Popup::Error);
+                    self.render(tui)?;
                 }
                 _ => {}
             }
 
-            if let Some(ref mut popup) = self.popup {
+            for popup in self.popups.values_mut() {
                 if let Some(action) = popup.update(action.clone(), self.mode)? {
                     self.action_tx.send(action)?
                 };
-            } else {
-                for component in self.components.values_mut() {
-                    if let Some(action) = component.update(action.clone(), self.mode)? {
-                        self.action_tx.send(action)?
-                    };
-                }
+            }
+            for component in self.components.values_mut() {
+                if let Some(action) = component.update(action.clone(), self.mode)? {
+                    self.action_tx.send(action)?
+                };
             }
             if let Some(action) = self.header.update(action.clone(), self.mode)? {
                 self.action_tx.send(action)?
@@ -321,12 +375,13 @@ impl App {
                         .unwrap();
                 }
             }
-
-            if let Some(ref mut popup) = self.popup {
-                if let Err(e) = popup.draw(f, f.area()) {
-                    self.action_tx
-                        .send(Action::Error(format!("Failed to draw: {:?}", e)))
-                        .unwrap();
+            if let Some(popup_type) = &self.active_popup {
+                if let Some(popup) = self.popups.get_mut(&popup_type) {
+                    if let Err(e) = popup.draw(f, f.area()) {
+                        self.action_tx
+                            .send(Action::Error(format!("Failed to draw: {:?}", e)))
+                            .unwrap();
+                    }
                 }
             }
         })?;
