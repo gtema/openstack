@@ -317,6 +317,11 @@ impl ServiceEndpoints {
         None
     }
 
+    /// Clear data
+    pub fn clear(&mut self) {
+        self.0.clear();
+    }
+
     #[cfg(test)]
     pub fn get_all(&self) -> &Vec<ServiceEndpoint> {
         &self.0
