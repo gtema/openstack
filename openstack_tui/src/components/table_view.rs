@@ -462,16 +462,20 @@ where
         Ok(())
     }
 
-    pub fn get_selected_raw(&self) -> &Value {
-        &self.raw_items[self.state.selected().unwrap()]
+    pub fn get_selected_raw(&self) -> Option<&Value> {
+        self.state.selected().and_then(|x| Some(&self.raw_items[x]))
     }
 
-    pub fn get_selected_resource_id(&self) -> Result<String, Report> {
+    pub fn get_selected_resource_id(&self) -> Result<Option<String>, Report> {
         self.get_selected_raw()
-            .get("id")
-            .ok_or_eyre("Resource ID must be known")?
-            .as_str()
-            .map(String::from)
-            .ok_or_eyre("Resource ID must be string")
+            .map(|entry| {
+                entry
+                    .get("id")
+                    .ok_or_eyre("Resource ID must be known")?
+                    .as_str()
+                    .map(String::from)
+                    .ok_or_eyre("Resource ID must be string")
+            })
+            .transpose()
     }
 }

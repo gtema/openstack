@@ -108,15 +108,11 @@ impl<'a> Component for NetworkNetworks<'a> {
             KeyCode::Tab => self.key_tab()?,
             KeyCode::Enter => {
                 if let Some(command_tx) = self.get_command_tx() {
-                    command_tx.send(Action::NetworkSubnetFilter(NetworkSubnetFilters {
-                        network_id: self
-                            .get_selected_raw()
-                            .get("id")
-                            .unwrap()
-                            .as_str()
-                            .map(String::from)
-                            .clone(),
-                    }))?;
+                    if let Some(x) = self.get_selected_raw() {
+                        command_tx.send(Action::NetworkSubnetFilter(NetworkSubnetFilters {
+                            network_id: x.get("id").unwrap().as_str().map(String::from).clone(),
+                        }))?;
+                    }
                 }
                 return Ok(Some(Action::Mode(Mode::NetworkSubnets)));
             }

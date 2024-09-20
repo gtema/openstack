@@ -105,7 +105,9 @@ impl<'a> Component for ComputeFlavors<'a> {
             _ => {}
         }
         if key.kind == KeyEventKind::Press && key.code == KeyCode::Enter {
-            return Ok(Some(Action::Describe(self.get_selected_raw().clone())));
+            if let Some(x) = self.get_selected_raw() {
+                return Ok(Some(Action::Describe(x.clone())));
+            }
         }
         Ok(None)
     }
