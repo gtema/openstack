@@ -93,19 +93,21 @@ impl<'a> Component for ComputeServers<'a> {
                 resource: Resource::ComputeServerConsoleOutput(id),
                 data,
             } => {
-                let server_id = self.get_selected_resource_id()?;
-                if server_id == id {
-                    return Ok(Some(Action::Describe(data)));
+                if let Some(server_id) = self.get_selected_resource_id()? {
+                    if server_id == id {
+                        return Ok(Some(Action::Describe(data)));
+                    }
                 }
             }
             Action::ServerConsoleOutput => {
-                let server_id = self.get_selected_resource_id()?;
-                if let Some(command_tx) = self.get_command_tx() {
-                    command_tx.send(Action::Mode(Mode::Describe))?;
+                if let Some(server_id) = self.get_selected_resource_id()? {
+                    if let Some(command_tx) = self.get_command_tx() {
+                        command_tx.send(Action::Mode(Mode::Describe))?;
+                    }
+                    return Ok(Some(Action::RequestCloudResource(
+                        Resource::ComputeServerConsoleOutput(server_id),
+                    )));
                 }
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeServerConsoleOutput(server_id),
-                )));
             }
             _ => {}
         };
@@ -126,7 +128,9 @@ impl<'a> Component for ComputeServers<'a> {
             _ => {}
         }
         if key.kind == KeyEventKind::Press && key.code == KeyCode::Enter {
-            return Ok(Some(Action::Describe(self.get_selected_raw().clone())));
+            if let Some(x) = self.get_selected_raw() {
+                return Ok(Some(Action::Describe(x.clone())));
+            }
         }
         Ok(None)
     }
