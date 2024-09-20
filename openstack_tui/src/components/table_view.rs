@@ -16,7 +16,6 @@ use crossterm::event::KeyEvent;
 use eyre::{OptionExt, Report, Result};
 use ratatui::{
     prelude::*,
-    style::palette::tailwind,
     widgets::{block::*, *},
 };
 use serde::de::DeserializeOwned;
@@ -420,18 +419,21 @@ where
     ) -> Result<()> {
         let mut title = vec![title.as_ref().white()];
         if self.is_loading {
-            title.push(Span::styled(" ...Loading... ", tailwind::PINK.c400));
+            title.push(Span::styled(
+                " ...Loading... ",
+                self.config.styles.title_loading_fg,
+            ));
         } else {
             title.push(Span::styled(
                 format!(" ({}) ", self.items.len()),
-                tailwind::BLUE.c400,
+                self.config.styles.title_details_fg,
             ));
         }
         let filter = self.filter.to_string();
         if !filter.is_empty() {
             title.push(Span::styled(
                 format!(" <{}> ", filter),
-                tailwind::VIOLET.c400,
+                self.config.styles.title_filters_fg,
             ));
         }
         let block = Block::default()

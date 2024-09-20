@@ -305,6 +305,8 @@ pub struct Styles {
     pub item_selected_bg: Color,
     pub item_highlight_fg: Color,
     pub title_loading_fg: Color,
+    pub title_details_fg: Color,
+    pub title_filters_fg: Color,
 }
 
 impl Default for Styles {
@@ -322,6 +324,8 @@ impl Default for Styles {
             item_selected_bg: tailwind::BLUE.c400,
             item_highlight_fg: tailwind::RED.c950,
             title_loading_fg: tailwind::PINK.c400,
+            title_details_fg: tailwind::BLUE.c400,
+            title_filters_fg: tailwind::VIOLET.c400,
         }
     }
 }

@@ -187,7 +187,7 @@ impl App {
             _ => {}
         }
         if let Some(popup_type) = &self.active_popup {
-            if let Some(popup) = self.popups.get_mut(&popup_type) {
+            if let Some(popup) = self.popups.get_mut(popup_type) {
                 if let Some(action) = popup.handle_events(Some(event.clone()))? {
                     action_tx.send(action)?;
                 }
@@ -263,12 +263,9 @@ impl App {
 
                 Action::ConnectedToCloud(_) => {
                     if let Some(popup) = &self.active_popup {
-                        match popup {
-                            Popup::SwitchProject => {
-                                // Hide popup
-                                self.active_popup = None;
-                            }
-                            _ => {}
+                        if popup == &Popup::SwitchProject {
+                            // Hide popup
+                            self.active_popup = None;
                         }
                     }
                     self.cloud_connected = true;
@@ -276,12 +273,9 @@ impl App {
                 }
                 Action::CloudChangeScope(ref scope) => {
                     if let Some(popup) = &self.active_popup {
-                        match popup {
-                            Popup::SwitchProject => {
-                                // Hide popup
-                                self.active_popup = None;
-                            }
-                            _ => {}
+                        if popup == &Popup::SwitchProject {
+                            // Hide popup
+                            self.active_popup = None;
                         }
                     }
                     self.render(tui)?;
@@ -376,7 +370,7 @@ impl App {
                 }
             }
             if let Some(popup_type) = &self.active_popup {
-                if let Some(popup) = self.popups.get_mut(&popup_type) {
+                if let Some(popup) = self.popups.get_mut(popup_type) {
                     if let Err(e) = popup.draw(f, f.area()) {
                         self.action_tx
                             .send(Action::Error(format!("Failed to draw: {:?}", e)))
