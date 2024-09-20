@@ -35,6 +35,12 @@ pub struct ErrorPopup {
     scroll: (u16, u16),
 }
 
+impl Default for ErrorPopup {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ErrorPopup {
     pub fn new() -> Self {
         Self {
@@ -69,14 +75,11 @@ impl Component for ErrorPopup {
     }
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
-        match action {
-            Action::Error(ref msg) => {
-                self.text = strip_ansi_escapes::strip_str(msg)
-                    .split("\n")
-                    .map(String::from)
-                    .collect::<Vec<_>>();
-            }
-            _ => {}
+        if let Action::Error(ref msg) = action {
+            self.text = strip_ansi_escapes::strip_str(msg)
+                .split("\n")
+                .map(String::from)
+                .collect::<Vec<_>>();
         };
         Ok(None)
     }

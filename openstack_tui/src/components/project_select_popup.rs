@@ -55,6 +55,12 @@ pub struct ProjectSelect {
     is_loading: bool,
 }
 
+impl Default for ProjectSelect {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ProjectSelect {
     pub fn new() -> Self {
         Self {

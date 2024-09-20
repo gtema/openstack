@@ -27,6 +27,7 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::debug;
 
 use crate::{
     action::{Action, Resource},
@@ -55,6 +56,7 @@ struct ComputeQuota {
 pub struct Home {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
+    is_loading: bool,
     compute_quota: ComputeQuota,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
@@ -76,6 +78,10 @@ impl Home {
     }
 
     pub fn render_tick(&mut self) {}
+
+    pub fn set_loading(&mut self, loading: bool) {
+        self.is_loading = loading;
+    }
 
     fn set_compute_data(&mut self, data: Value) -> Result<()> {
         if !data.is_null() {
@@ -101,23 +107,32 @@ impl Component for Home {
         Ok(())
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
+            Action::CloudChangeScope(_) => {
+                self.set_loading(true);
+            }
+            Action::ConnectedToCloud(_) => {
+                self.set_loading(true);
+                if let Mode::Home = current_mode {
+                    return self.refresh_data();
+                }
+            }
             Action::Mode(Mode::Home) => {
+                self.set_loading(true);
                 return self.refresh_data();
             }
             Action::Tick => {
                 self.tick();
-                //if let Mode::Home = current_mode {
-                //    return self.refresh_data();
-                //}
             }
 
             Action::ResourceData {
                 resource: Resource::ComputeQuota { .. },
                 data,
             } => {
+                debug!("Got data {:?}", data);
                 self.set_compute_data(data)?;
+                self.set_loading(false);
             }
             _ => {}
         }
@@ -126,8 +141,17 @@ impl Component for Home {
 
     fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
         //let rects = Layout::vertical([]).split(area);
+        let mut title = vec![" Usage ".white()];
+        if self.is_loading {
+            title.push(Span::styled(
+                " ...Loading... ",
+                self.config.styles.title_loading_fg,
+            ));
+        }
+
         let block = Block::default()
-            .title(Title::from(" Usage ").alignment(Alignment::Center))
+            .title(title)
+            .title_alignment(Alignment::Center)
             .borders(Borders::ALL)
             .padding(Padding::horizontal(1))
             .border_style(Style::default().fg(self.config.styles.border_fg));
@@ -178,26 +202,32 @@ impl Component for Home {
 }
 
 fn render_quota_gauge(quota: &Quota, title: &str, f: &mut Frame, area: Rect) {
-    if quota.limit > 0 {
-        let rate = quota.in_use as f64 / quota.limit as f64;
-        let color = match rate {
-            0.0..0.5 => Color::Green,
-            0.5..0.8 => Color::Yellow,
-            _ => Color::Red,
-        };
-        let gauge = Gauge::default()
-            .block(Block::bordered().title(title))
-            .label(Span::styled(
-                format!("used {}/{}", quota.in_use, quota.limit),
-                color,
-            ))
-            .gauge_style(
-                Style::default()
-                    .fg(Color::White)
-                    .bg(Color::Black)
-                    .add_modifier(Modifier::ITALIC),
-            )
-            .ratio(rate);
-        f.render_widget(gauge, area);
-    }
+    let rate = if quota.limit > 0 {
+        quota.in_use as f64 / quota.limit as f64
+    } else {
+        0.0
+    };
+    let color = match rate {
+        0.0..0.5 => Color::Green,
+        0.5..0.8 => Color::Yellow,
+        _ => Color::Red,
+    };
+    let gauge = Gauge::default()
+        .block(Block::bordered().title(title))
+        .label(Span::styled(
+            if quota.limit > 0 {
+                format!("used {}/{}", quota.in_use, quota.limit)
+            } else {
+                format!("used {}/∞", quota.in_use)
+            },
+            color,
+        ))
+        .gauge_style(
+            Style::default()
+                .fg(Color::White)
+                .bg(Color::Black)
+                .add_modifier(Modifier::ITALIC),
+        )
+        .ratio(rate);
+    f.render_widget(gauge, area);
 }

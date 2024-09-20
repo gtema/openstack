@@ -36,6 +36,12 @@ pub struct CloudSelect {
     user_input: Option<String>,
 }
 
+impl Default for CloudSelect {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CloudSelect {
     pub fn new() -> Self {
         Self {
@@ -137,11 +143,8 @@ impl Component for CloudSelect {
     }
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
-        match action {
-            Action::Clouds(ref clouds) => {
-                self.set_data(clouds.clone())?;
-            }
-            _ => {}
+        if let Action::Clouds(ref clouds) = action {
+            self.set_data(clouds.clone())?;
         };
         Ok(None)
     }

@@ -86,7 +86,7 @@ impl Cloud {
 
             Ok(session.get_auth_info())
         } else {
-            return Err(eyre!("Cannot change scope without being connected first"));
+            Err(eyre!("Cannot change scope without being connected first"))
         }
     }
 
