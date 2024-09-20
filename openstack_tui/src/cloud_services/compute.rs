@@ -18,15 +18,19 @@ use tracing::debug;
 
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
+use crate::action::{ComputeFlavorFilters, ComputeServerFilters};
 use crate::cloud_services::ComputeExt;
 use crate::cloud_worker::Cloud;
 
 impl ComputeExt for Cloud {
-    async fn get_compute_flavors(&mut self) -> Result<Vec<Value>> {
+    async fn get_compute_flavors(&mut self, _filters: &ComputeFlavorFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::compute::v2::flavor::list_detailed::Request::builder()
-                .sort_key("name")
-                .build()?;
+            let mut ep_builder =
+                openstack_sdk::api::compute::v2::flavor::list_detailed::Request::builder();
+
+            ep_builder.sort_key("name");
+
+            let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
@@ -35,12 +39,19 @@ impl ComputeExt for Cloud {
         Ok(Vec::new())
     }
 
-    async fn get_compute_servers(&mut self) -> Result<Vec<Value>> {
+    async fn get_compute_servers(&mut self, filters: &ComputeServerFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::compute::v2::server::list_detailed::Request::builder()
-                .sort_key("display_name")
-                .sort_dir("asc")
-                .build()?;
+            let mut ep_builder =
+                openstack_sdk::api::compute::v2::server::list_detailed::Request::builder();
+
+            ep_builder.sort_key("display_name");
+            ep_builder.sort_dir("asc");
+
+            if let Some(true) = &filters.all_tenants {
+                ep_builder.all_tenants("true");
+            }
+
+            let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
                 .query_async(session)
                 .await?;

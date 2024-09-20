@@ -2,6 +2,7 @@
   "mode_keybindings": {
     "Home": { },
     "ComputeServers": {
+      "1": { "action": {"ComputeServerFilter": {"all_tenants": true} }, "description": "all tenants (admin)"},
       "c": { "action": "ServerConsoleOutput", "description": "Get Console output" },
     },
     "NetworkSubnets": {

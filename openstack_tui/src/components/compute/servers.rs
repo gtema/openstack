@@ -99,6 +99,13 @@ impl<'a> Component for ComputeServers<'a> {
                     }
                 }
             }
+            Action::ComputeServerFilter(filters) => {
+                self.set_filters(filters);
+                self.set_loading(true);
+                return Ok(Some(Action::RequestCloudResource(
+                    Resource::ComputeServers(self.get_filters().clone()),
+                )));
+            }
             Action::ServerConsoleOutput => {
                 if let Some(server_id) = self.get_selected_resource_id()? {
                     if let Some(command_tx) = self.get_command_tx() {

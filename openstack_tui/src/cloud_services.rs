@@ -16,7 +16,8 @@ use eyre::Result;
 use serde_json::Value;
 
 use crate::action::{
-    IdentityAuthProjectFilters, ImageFilters, NetworkNetworkFilters, NetworkSubnetFilters,
+    ComputeFlavorFilters, ComputeServerFilters, IdentityAuthProjectFilters, ImageFilters,
+    NetworkNetworkFilters, NetworkSubnetFilters,
 };
 
 mod compute;
@@ -25,8 +26,8 @@ mod image;
 mod network;
 
 pub trait ComputeExt {
-    async fn get_compute_flavors(&mut self) -> Result<Vec<Value>>;
-    async fn get_compute_servers(&mut self) -> Result<Vec<Value>>;
+    async fn get_compute_flavors(&mut self, filters: &ComputeFlavorFilters) -> Result<Vec<Value>>;
+    async fn get_compute_servers(&mut self, filters: &ComputeServerFilters) -> Result<Vec<Value>>;
     async fn get_compute_server_console_output(&mut self, id: &String) -> Result<Value>;
     async fn get_compute_quota(&mut self) -> Result<Value>;
 }

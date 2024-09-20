@@ -67,6 +67,7 @@ pub enum Action {
     SelectProject,
     ListClouds,
     Clouds(Vec<String>),
+    ComputeServerFilter(ComputeServerFilters),
     NetworkSubnetFilter(NetworkSubnetFilters),
     ImageFilter(ImageFilters),
     ServerConsoleOutput,
@@ -81,7 +82,10 @@ impl fmt::Display for ComputeFlavorFilters {
     }
 }
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeServerFilters {}
+pub struct ComputeServerFilters {
+    pub all_tenants: Option<bool>,
+}
+
 impl fmt::Display for ComputeServerFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "")
