@@ -140,8 +140,8 @@ impl Cloud {
                         }
                     }
                     Action::RequestCloudResource(resource) => match resource {
-                        Resource::ComputeFlavors(ref _filters) => match self
-                            .get_compute_flavors()
+                        Resource::ComputeFlavors(ref filters) => match self
+                            .get_compute_flavors(filters)
                             .await
                         {
                             Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
@@ -150,8 +150,8 @@ impl Cloud {
                                 err
                             )))?,
                         },
-                        Resource::ComputeServers(ref _filters) => match self
-                            .get_compute_servers()
+                        Resource::ComputeServers(ref filters) => match self
+                            .get_compute_servers(filters)
                             .await
                         {
                             Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
