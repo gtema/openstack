@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.0...openstack_sdk-v0.11.1) - 2024-09-20
+
+### Added
+
+- Use all resource names for path param naming ([#549](https://github.com/gtema/openstack/pull/549))
+
+### Fixed
+
+- Reset catalog on reauth ([#555](https://github.com/gtema/openstack/pull/555))
+
 ## [0.11.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.10.0...openstack_sdk-v0.11.0) - 2024-09-13
 
 ### Added

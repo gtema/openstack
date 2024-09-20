@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.1...openstack_tui-v0.1.2) - 2024-09-20
+
+### Added
+
+- Add all_tenants filter in servers view ([#566](https://github.com/gtema/openstack/pull/566))
+- Add project selection ([#556](https://github.com/gtema/openstack/pull/556))
+- Separate service methods into traits ([#554](https://github.com/gtema/openstack/pull/554))
+- Add initial tui documentation ([#544](https://github.com/gtema/openstack/pull/544))
+- Add styling support ([#543](https://github.com/gtema/openstack/pull/543))
+- Support "ESC" button to exit from describe ([#541](https://github.com/gtema/openstack/pull/541))
+
+### Fixed
+
+- Process row only when selected ([#565](https://github.com/gtema/openstack/pull/565))
+- Update usage view on auth change ([#564](https://github.com/gtema/openstack/pull/564))
+
 ## [0.1.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.0...openstack_tui-v0.1.1) - 2024-09-13
 
 ### Added
