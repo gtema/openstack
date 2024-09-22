@@ -8,3 +8,10 @@ title = "OpenStack Rust tooling"
 [build]
 build-dir = "html"
 create-missing = false
+
+[output.html.fold]
+enable = true
+level = 1
+
+[preprocessor.osc-cli]
+command = "cargo run -p xtask --bin osc-cli-md"

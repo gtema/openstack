@@ -11,36 +11,11 @@ but also an enforced UX consistency.
 `python-openstackclient`. That means that it can not provide seamless migration
 from one tool to another.
 
-## Features
+Commands implementation code is being produced by
+(codegenerator)[https://opendev.org/openstack/codegenerator] what means there
+is no maintenance required for that code.
 
-- Commands implementation code is being produced by
-  (codegenerator)[https://opendev.org/openstack/codegenerator] what means there
-  is no maintenance required for that code.
-- `osc api` as an API wrapper allowing user to perform any direct API call
-  specifying service type, url, method and payload. This can be used for
-  example when certain resource is not currently implemented natively.
-- `osc auth` with subcommands for dealing explicitly with authentication
-  (showing current auth info, renewing auth, MFA/SSO support)
-- Every resource is having a service type in the command solving confusions
-  like user groups vs volume groups
-- Every multi-word resource name is "-" separated (i.e. floating-ip,
-  access-rule)
-
-### Output
-
-- `osc ... -o json` as an explicit machine readable format output. It allows
-  seeing raw resource json representation as send by the API without any
-  processing on the client side. **Note:** the result is not the raw json
-  response, but the raw json resource information found underneath expected
-  resource key. This mode can be used i.e. to see fields that are not expected
-  by the `osc` and allows further easy machine processing with tools like `jq`
-- `osc ... -o wide` for list operations to return all known fields. By default
-  list operation will only return a subset of known generic resource fields to
-  prevent multiline tables. This mode (together with not specifying `-o`
-  parameter at all) is considered as an output for humans. Field names are not
-  generally renamed and are names as the API returns them.
-
-### Microversions
+## Microversions
 
 Initially `python-openstackclient` was using lowest microversion unless
 additional argument specifying microversion was passed. Later, during switching
@@ -65,12 +40,3 @@ When a newer microversion is required user should explicitly to do "migration"
 step adapting the invocation to a newer set of parameters. Microversion (or
 functionality) deprecation is also much simpler this way and is handled by
 marking the whole command deprecated and/or drop it completely.
-
-### Shell autocompletion
-
-`osc` supports generation of the completion file for diverse shells. This can
-be enabled i.e. by executing
-
-```bash
-echo 'source <(osc completion bash)' >>~/.bashrc
-```
