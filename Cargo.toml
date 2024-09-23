@@ -8,7 +8,6 @@ members = [
   "xtask",
   "fuzz"
 ]
-exclude = ["fuzz"]
 default-members = ["openstack_cli", "openstack_sdk", "openstack_tui"]
 
 [workspace.package]
