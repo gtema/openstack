@@ -59,5 +59,6 @@ pub enum Action {
     NetworkSubnetFilter(cloud_types::NetworkSubnetFilters),
     ImageFilter(cloud_types::ImageFilters),
     ServerConsoleOutput,
+    SwitchToProject,
     ResetFilter,
 }

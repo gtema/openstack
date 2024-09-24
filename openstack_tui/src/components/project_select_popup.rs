@@ -20,13 +20,12 @@ use ratatui::{
 };
 use serde::Deserialize;
 use serde_json::Value;
-use std::cmp;
 use structable_derive::StructTable;
 
 use crate::{
     action::Action,
     cloud_worker::types::{IdentityAuthProjectFilters, Resource},
-    components::Component,
+    components::{Component, FuzzySelectList},
     config::Config,
     mode::Mode,
     utils::{centered_rect, OutputConfig, StructTable},
@@ -48,12 +47,9 @@ pub struct ProjectData {
 
 pub struct ProjectSelect {
     config: Config,
-    content_size: Size,
     items: Vec<ProjectData>,
-    state: ListState,
-    scroll_state: ScrollbarState,
-    user_input: Option<String>,
     is_loading: bool,
+    fuzzy_list: FuzzySelectList,
 }
 
 impl Default for ProjectSelect {
@@ -66,12 +62,9 @@ impl ProjectSelect {
     pub fn new() -> Self {
         Self {
             config: Config::default(),
-            content_size: Size::new(0, 0),
             items: Vec::new(),
-            state: ListState::default(),
-            scroll_state: ScrollbarState::new(0),
-            user_input: None,
             is_loading: true,
+            fuzzy_list: FuzzySelectList::new(),
         }
     }
 
@@ -85,82 +78,9 @@ impl ProjectSelect {
         items.sort_by_key(|x| x.name.clone());
 
         self.items = items;
-        self.state.select_first();
-        self.scroll_state = ScrollbarState::new(self.items.len().saturating_sub(1));
+        self.fuzzy_list
+            .set_items(self.items.iter().map(|x| x.name.clone()).collect());
         self.set_loading(false);
-        Ok(())
-    }
-
-    pub fn cursor_first(&mut self) -> Result<()> {
-        self.state.select_first();
-        self.scroll_state.first();
-        self.user_input = None;
-        Ok(())
-    }
-
-    pub fn cursor_last(&mut self) -> Result<()> {
-        self.state.select_last();
-        self.scroll_state.last();
-        self.user_input = None;
-        Ok(())
-    }
-
-    fn cursor_up(&mut self) -> Result<()> {
-        self.state.select_previous();
-        self.scroll_state.prev();
-        self.user_input = None;
-        Ok(())
-    }
-
-    fn cursor_down(&mut self) -> Result<()> {
-        self.state.select_next();
-        self.scroll_state.next();
-        self.user_input = None;
-        Ok(())
-    }
-
-    pub fn cursor_page_down(&mut self) -> Result<()> {
-        let i = match self.state.selected() {
-            Some(i) => cmp::min(
-                i.saturating_add(self.content_size.height as usize),
-                self.items.len(),
-            ),
-            None => 0,
-        };
-        self.state.select(Some(i));
-        self.scroll_state = self.scroll_state.position(i);
-        self.user_input = None;
-        Ok(())
-    }
-
-    pub fn cursor_page_up(&mut self) -> Result<()> {
-        let i = match self.state.selected() {
-            Some(i) => i.saturating_sub(self.content_size.height as usize),
-            None => 0,
-        };
-        self.state.select(Some(i));
-        self.scroll_state = self.scroll_state.position(i);
-        self.user_input = None;
-        Ok(())
-    }
-
-    pub fn select_by_filter(&mut self) -> Result<()> {
-        if let Some(input) = &self.user_input {
-            if !input.is_empty() {
-                let mut found = false;
-                for (idx, item) in self.items.iter().enumerate() {
-                    if item.name.starts_with(input) {
-                        self.state.select(Some(idx));
-                        self.scroll_state = self.scroll_state.position(idx);
-                        found = true;
-                        break;
-                    }
-                }
-                if !found {
-                    self.user_input = None;
-                }
-            }
-        }
         Ok(())
     }
 }
@@ -170,6 +90,7 @@ impl Component for ProjectSelect {
         self.config = config;
         Ok(())
     }
+
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
         match action {
             Action::ConnectToCloud(_) => {
@@ -193,44 +114,23 @@ impl Component for ProjectSelect {
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
-        match key.code {
-            KeyCode::Down => self.cursor_down()?,
-            KeyCode::Up => self.cursor_up()?,
-            KeyCode::Home => self.cursor_first()?,
-            KeyCode::End => self.cursor_last()?,
-            KeyCode::PageUp => self.cursor_page_up()?,
-            KeyCode::PageDown => self.cursor_page_down()?,
-            KeyCode::Enter => {
-                if let Some(pos) = self.state.selected() {
-                    if let Some(project) = self.items.get(pos) {
-                        let new_project = openstack_sdk::types::identity::v3::Project {
-                            id: Some(project.id.clone()),
-                            name: Some(project.name.clone()),
-                            domain: Some(openstack_sdk::types::identity::v3::Domain {
-                                id: Some(project.domain_id.clone()),
-                                name: None,
-                            }),
-                        };
-                        let new_scope =
-                            openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
-                        return Ok(Some(Action::CloudChangeScope(new_scope)));
-                    }
+        self.fuzzy_list.handle_key_events(key)?;
+        if key.code == KeyCode::Enter {
+            if let Some(selected) = self.fuzzy_list.selected() {
+                if let Some(project) = self.items.iter().find(|item| item.name == *selected) {
+                    let new_project = openstack_sdk::types::identity::v3::Project {
+                        id: Some(project.id.clone()),
+                        name: Some(project.name.clone()),
+                        domain: Some(openstack_sdk::types::identity::v3::Domain {
+                            id: Some(project.domain_id.clone()),
+                            name: None,
+                        }),
+                    };
+                    let new_scope =
+                        openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
+                    return Ok(Some(Action::CloudChangeScope(new_scope)));
                 }
             }
-            KeyCode::Backspace => {
-                if let Some(ref mut input) = self.user_input {
-                    input.pop();
-                    if input.is_empty() {
-                        self.user_input = None;
-                    }
-                };
-                self.select_by_filter()?;
-            }
-            KeyCode::Char(i) => {
-                self.user_input.get_or_insert(String::new()).push(i);
-                self.select_by_filter()?;
-            }
-            _ => {}
         }
         Ok(None)
     }
@@ -245,12 +145,6 @@ impl Component for ProjectSelect {
             ));
         }
 
-        if let Some(input) = &self.user_input {
-            title.push(Span::styled(
-                format!("(prefix: {})", input),
-                self.config.styles.popup_title_fg,
-            ));
-        }
         let popup_block = Block::default()
             .title_top(Line::from(title).centered())
             .title_bottom(
@@ -264,53 +158,11 @@ impl Component for ProjectSelect {
             .padding(Padding::horizontal(1))
             .border_style(Style::default().fg(self.config.styles.popup_border_fg));
         let inner = popup_block.inner(area);
-        self.content_size = inner.as_size();
+
         frame.render_widget(Clear, area);
+        frame.render_widget(popup_block, area);
 
-        let mut rows: Vec<ListItem> = Vec::new();
-        for item in &self.items {
-            if let Some(input) = &self.user_input {
-                if item.name.starts_with(input) {
-                    rows.push(ListItem::from(Line::from(vec![
-                        Span::styled(input.clone(), self.config.styles.item_highlight_fg),
-                        Span::raw(
-                            item.name
-                                .strip_prefix(input)
-                                .expect("Project name contains user_input prefix"),
-                        ),
-                    ])));
-                } else {
-                    rows.push(ListItem::new(
-                        item.name.clone().fg(self.config.styles.popup_item_title_fg),
-                    ));
-                }
-            } else {
-                rows.push(ListItem::new(
-                    item.name.clone().fg(self.config.styles.popup_item_title_fg),
-                ));
-            }
-        }
-        let list = List::default()
-            .items(rows)
-            .block(popup_block)
-            .style(self.config.styles.popup_item_title_fg)
-            .highlight_style(Style::new().bg(self.config.styles.item_selected_bg));
-
-        frame.render_stateful_widget(list, area, &mut self.state);
-
-        if usize::from(self.content_size.height) < self.items.len() {
-            frame.render_stateful_widget(
-                Scrollbar::default()
-                    .orientation(ScrollbarOrientation::VerticalRight)
-                    .style(Style::default().fg(self.config.styles.popup_border_fg)),
-                area.inner(Margin {
-                    vertical: 1,
-                    horizontal: 1,
-                }),
-                &mut self.scroll_state,
-            );
-        }
-
+        self.fuzzy_list.draw(frame, inner)?;
         Ok(())
     }
 }

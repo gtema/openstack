@@ -20,14 +20,12 @@ use ratatui::{
     widgets::{block::*, *},
 };
 use std::collections::HashMap;
-use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action, components::Component, config::Config, mode::Mode, utils::centered_rect,
 };
 
 pub struct ErrorPopup {
-    command_tx: Option<UnboundedSender<Action>>,
     config: Config,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
@@ -44,7 +42,6 @@ impl Default for ErrorPopup {
 impl ErrorPopup {
     pub fn new() -> Self {
         Self {
-            command_tx: None,
             config: Config::default(),
             keymap: HashMap::new(),
             text: Vec::new(),

@@ -40,7 +40,6 @@ struct Quota {
     ///
     in_use: i32,
     limit: i32,
-    reserved: i32,
 }
 
 #[derive(Deserialize, Debug, Default, Clone)]
@@ -59,7 +58,6 @@ pub struct Home {
     compute_quota: ComputeQuota,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
-    ratio_compute_servers: f64,
 }
 
 impl Home {

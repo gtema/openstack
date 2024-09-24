@@ -26,6 +26,7 @@ pub mod cloud_select_popup;
 pub mod compute;
 pub mod describe;
 pub mod error_popup;
+mod fuzzy_select_list;
 pub mod header;
 pub mod home;
 pub mod identity;
@@ -34,6 +35,8 @@ pub mod network;
 pub mod project_select_popup;
 pub mod resource_select_popup;
 pub mod table_view;
+
+pub use fuzzy_select_list::FuzzySelectList;
 
 /// `Component` is a trait that represents a visual and interactive element of the user interface.
 /// Implementors of this trait can be registered with the main application loop and will be able to receive events,

@@ -12,7 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
 use eyre::{OptionExt, Report, Result};
 use ratatui::{
     prelude::*,
@@ -33,7 +32,6 @@ use crate::{
 const ITEM_HEIGHT: usize = 1;
 const INFO_TEXT: &str = "(↑) move up | (↓) move down | (r) refresh | (tab) switch to describe";
 const INFO_TEXT_DESCRIBE: &str = "(↑) move up | (↓) move down | (tab) switch to table";
-const DESCRIBE_TITLE: &str = " Describe ";
 
 #[derive(Hash, Eq, PartialEq)]
 enum Focus {
@@ -50,7 +48,6 @@ where
 {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
-    last_events: Vec<KeyEvent>,
     output_config: OutputConfig,
 
     state: TableState,
@@ -62,7 +59,6 @@ where
 
     column_widths: Vec<usize>,
     content_size: Size,
-    describe_text: Vec<String>,
     table_headers: Row<'a>,
     table_rows: Vec<Vec<String>>,
     describe: Describe,
@@ -95,7 +91,6 @@ where
         Self {
             command_tx: None,
             config: Config::default(),
-            last_events: Vec::new(),
             state: TableState::default().with_selected(0),
             items: Vec::new(),
             raw_items: Vec::new(),
@@ -103,7 +98,6 @@ where
             scroll_state: ScrollbarState::new(0),
             column_widths: Vec::new(),
             content_size: Size::new(0, 0),
-            describe_text: Vec::new(),
             output_config: OutputConfig::default(),
             table_headers: Row::default(),
             table_rows: Vec::new(),
@@ -460,6 +454,10 @@ where
         }
 
         Ok(())
+    }
+
+    pub fn get_selected(&self) -> Option<&T> {
+        self.state.selected().map(|x| &self.items[x])
     }
 
     pub fn get_selected_raw(&self) -> Option<&Value> {

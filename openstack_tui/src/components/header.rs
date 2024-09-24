@@ -130,12 +130,12 @@ impl Component for Header {
 
         let global_shortcuts_rows = [
             Row::new(vec![
-                Span::styled("<F2>", Style::new().yellow()),
-                Span::from("Switch cloud"),
+                Span::styled("<:>", Style::new().yellow()),
+                Span::from("Select resource"),
             ]),
             Row::new(vec![
-                Span::styled("<F3>", Style::new().yellow()),
-                Span::from("Select resource"),
+                Span::styled("<F2>", Style::new().yellow()),
+                Span::from("Switch cloud"),
             ]),
             Row::new(vec![
                 Span::styled("<F4>", Style::new().yellow()),

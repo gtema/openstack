@@ -22,13 +22,11 @@ use ratatui::{
 use serde_json::Value;
 use std::cmp;
 use std::collections::HashMap;
-use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{action::Action, config::Config, mode::Mode};
 
 #[derive(Default)]
 pub struct Describe {
-    command_tx: Option<UnboundedSender<Action>>,
     config: Config,
     pub keymap: HashMap<KeyEvent, Action>,
     pub text: Vec<String>,

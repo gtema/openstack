@@ -28,9 +28,6 @@ use crate::{
 };
 
 const TITLE: &str = "Images";
-const INFO_TEXT: &str = "(Esc) quit | (↑) move up | (↓) move down";
-const EMPTY_VAL: &str = "";
-const EMPTY_VAL_STRING: String = String::new();
 
 #[derive(Deserialize, StructTable)]
 pub struct ImageData {
