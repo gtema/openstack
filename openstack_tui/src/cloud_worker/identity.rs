@@ -17,17 +17,26 @@ use serde_json::Value;
 
 use openstack_sdk::api::QueryAsync;
 
-use crate::action::{IdentityAuthProjectFilters, IdentityProjectFilters};
-use crate::cloud_services::IdentityExt;
+use crate::cloud_worker::types::{IdentityAuthProjectFilters, IdentityProjectFilters};
 use crate::cloud_worker::Cloud;
 
-impl IdentityExt for Cloud {
-    async fn get_identity_projects(
+pub trait IdentityExt {
+    async fn get_auth_projects(
         &mut self,
-        _filters: &IdentityProjectFilters,
+        filters: &IdentityAuthProjectFilters,
+    ) -> Result<Vec<Value>>;
+
+    async fn get_projects(&mut self, _filters: &IdentityProjectFilters) -> Result<Vec<Value>>;
+}
+
+impl IdentityExt for Cloud {
+    async fn get_auth_projects(
+        &mut self,
+        _filters: &IdentityAuthProjectFilters,
     ) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let ep_builder = openstack_sdk::api::identity::v3::project::list::Request::builder();
+            let ep_builder =
+                openstack_sdk::api::identity::v3::auth::project::list::Request::builder();
 
             //if let Some(vis) = &filters.visibility {
             //    ep_builder.visibility(vis);
@@ -40,13 +49,9 @@ impl IdentityExt for Cloud {
         Ok(Vec::new())
     }
 
-    async fn get_identity_auth_projects(
-        &mut self,
-        _filters: &IdentityAuthProjectFilters,
-    ) -> Result<Vec<Value>> {
+    async fn get_projects(&mut self, _filters: &IdentityProjectFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let ep_builder =
-                openstack_sdk::api::identity::v3::auth::project::list::Request::builder();
+            let ep_builder = openstack_sdk::api::identity::v3::project::list::Request::builder();
 
             //if let Some(vis) = &filters.visibility {
             //    ep_builder.visibility(vis);

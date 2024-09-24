@@ -18,8 +18,17 @@ use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{sleep, Duration};
 use tracing::debug;
 
-use crate::action::{Action, Resource};
-use crate::cloud_services::{ComputeExt, IdentityExt, ImageExt, NetworkExt};
+use crate::action::Action;
+
+mod compute;
+mod identity;
+mod image;
+mod network;
+pub mod types;
+
+use crate::cloud_worker::{
+    compute::ComputeExt, identity::IdentityExt, image::ImageExt, network::NetworkExt, types::*,
+};
 
 /// Cloud worker struct
 pub(crate) struct Cloud {
@@ -140,28 +149,30 @@ impl Cloud {
                         }
                     }
                     Action::RequestCloudResource(resource) => match resource {
-                        Resource::ComputeFlavors(ref filters) => match self
-                            .get_compute_flavors(filters)
-                            .await
-                        {
-                            Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                            Err(err) => app_tx.send(Action::Error(format!(
-                                "Failed to fetch compute flavors: {:?}",
-                                err
-                            )))?,
-                        },
-                        Resource::ComputeServers(ref filters) => match self
-                            .get_compute_servers(filters)
-                            .await
-                        {
-                            Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                            Err(err) => app_tx.send(Action::Error(format!(
-                                "Failed to fetch compute servers: {:?}",
-                                err
-                            )))?,
-                        },
+                        Resource::ComputeFlavors(ref filters) => {
+                            match <Cloud as ComputeExt>::get_flavors(self, filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch compute flavors: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
+                        Resource::ComputeServers(ref filters) => {
+                            match <Cloud as ComputeExt>::get_servers(self, filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch compute servers: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::ComputeServerConsoleOutput(ref id) => {
-                            match self.get_compute_server_console_output(id).await {
+                            match <Cloud as ComputeExt>::get_server_console_output(self, id).await {
                                 Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
                                 Err(err) => app_tx.send(Action::Error(format!(
                                     "Failed to fetch server console output: {:?}",
@@ -169,35 +180,39 @@ impl Cloud {
                                 )))?,
                             }
                         }
-                        Resource::ComputeQuota => match self.get_compute_quota().await {
-                            Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
-                            Err(err) => app_tx.send(Action::Error(format!(
-                                "Failed to fetch compute quota: {:?}",
-                                err
-                            )))?,
-                        },
-                        Resource::NetworkNetworks(ref filters) => match self
-                            .get_network_networks(filters)
-                            .await
-                        {
-                            Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                            Err(err) => app_tx.send(Action::Error(format!(
-                                "Failed to fetch networks: {:?}",
-                                err
-                            )))?,
-                        },
-                        Resource::NetworkSubnets(ref filters) => match self
-                            .get_network_subnets(filters)
-                            .await
-                        {
-                            Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                            Err(err) => app_tx.send(Action::Error(format!(
-                                "Failed to fetch subnets: {:?}",
-                                err
-                            )))?,
-                        },
+                        Resource::ComputeQuota => {
+                            match <Cloud as ComputeExt>::get_quota(self).await {
+                                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch compute quota: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
+                        Resource::NetworkNetworks(ref filters) => {
+                            match <Cloud as NetworkExt>::get_networks(self, filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch networks: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
+                        Resource::NetworkSubnets(ref filters) => {
+                            match <Cloud as NetworkExt>::get_subnets(self, filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch subnets: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::IdentityAuthProjects(ref filters) => {
-                            match self.get_identity_auth_projects(filters).await {
+                            match <Cloud as IdentityExt>::get_auth_projects(self, filters).await {
                                 Ok(data) => {
                                     app_tx.send(Action::ResourcesData { resource, data })?
                                 }
@@ -208,7 +223,7 @@ impl Cloud {
                             }
                         }
                         Resource::IdentityProjects(ref filters) => {
-                            match self.get_identity_projects(filters).await {
+                            match <Cloud as IdentityExt>::get_projects(self, filters).await {
                                 Ok(data) => {
                                     app_tx.send(Action::ResourcesData { resource, data })?
                                 }
@@ -219,7 +234,7 @@ impl Cloud {
                             }
                         }
                         Resource::ImageImages(ref filters) => {
-                            match self.get_image_images(filters).await {
+                            match <Cloud as ImageExt>::get_images(self, filters).await {
                                 Ok(data) => {
                                     app_tx.send(Action::ResourcesData { resource, data })?
                                 }

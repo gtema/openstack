@@ -24,7 +24,8 @@ use std::cmp;
 use structable_derive::StructTable;
 
 use crate::{
-    action::{Action, IdentityAuthProjectFilters, Resource},
+    action::Action,
+    cloud_worker::types::{IdentityAuthProjectFilters, Resource},
     components::Component,
     config::Config,
     mode::Mode,

@@ -20,7 +20,8 @@ use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
-    action::{Action, ComputeServerFilters, Resource},
+    action::Action,
+    cloud_worker::types::{ComputeServerFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     mode::Mode,

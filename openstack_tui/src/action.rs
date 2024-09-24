@@ -13,22 +13,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 use strum::Display;
 
-/// OpenStack "resource"
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
-pub enum Resource {
-    ComputeFlavors(ComputeFlavorFilters),
-    ComputeServers(ComputeServerFilters),
-    ComputeServerConsoleOutput(String),
-    ComputeQuota,
-    IdentityAuthProjects(IdentityAuthProjectFilters),
-    IdentityProjects(IdentityProjectFilters),
-    ImageImages(ImageFilters),
-    NetworkNetworks(NetworkNetworkFilters),
-    NetworkSubnets(NetworkSubnetFilters),
-}
+use crate::cloud_worker::types as cloud_types;
 
 /// TUI action
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
@@ -47,13 +34,13 @@ pub enum Action {
     ConnectToCloud(String),
     CloudChangeScope(openstack_sdk::auth::authtoken::AuthTokenScope),
     ConnectedToCloud(Box<openstack_sdk::types::identity::v3::AuthToken>),
-    RequestCloudResource(Resource),
+    RequestCloudResource(cloud_types::Resource),
     ResourceData {
-        resource: Resource,
+        resource: cloud_types::Resource,
         data: serde_json::Value,
     },
     ResourcesData {
-        resource: Resource,
+        resource: cloud_types::Resource,
         data: Vec<serde_json::Value>,
     },
     ResourceSelect,
@@ -68,74 +55,9 @@ pub enum Action {
     SelectProject,
     ListClouds,
     Clouds(Vec<String>),
-    ComputeServerFilter(ComputeServerFilters),
-    NetworkSubnetFilter(NetworkSubnetFilters),
-    ImageFilter(ImageFilters),
+    ComputeServerFilter(cloud_types::ComputeServerFilters),
+    NetworkSubnetFilter(cloud_types::NetworkSubnetFilters),
+    ImageFilter(cloud_types::ImageFilters),
     ServerConsoleOutput,
     ResetFilter,
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeFlavorFilters {}
-impl fmt::Display for ComputeFlavorFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeServerFilters {
-    pub all_tenants: Option<bool>,
-}
-
-impl fmt::Display for ComputeServerFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkNetworkFilters {}
-impl fmt::Display for NetworkNetworkFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkSubnetFilters {
-    pub network_id: Option<String>,
-}
-impl fmt::Display for NetworkSubnetFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(val) = &self.network_id {
-            write!(f, "network: {}", val)?;
-        }
-        Ok(())
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityAuthProjectFilters {}
-impl fmt::Display for IdentityAuthProjectFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityProjectFilters {}
-impl fmt::Display for IdentityProjectFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ImageFilters {
-    pub visibility: Option<String>,
-}
-impl fmt::Display for ImageFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(val) = &self.visibility {
-            write!(f, "{}", val)?;
-        }
-        Ok(())
-    }
 }
