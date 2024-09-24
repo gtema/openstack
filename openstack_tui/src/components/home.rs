@@ -30,9 +30,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
 use crate::{
-    action::{Action, Resource},
-    components::Component,
-    config::Config,
+    action::Action, cloud_worker::types::Resource, components::Component, config::Config,
     mode::Mode,
 };
 
@@ -57,6 +55,7 @@ pub struct Home {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
     is_loading: bool,
+    is_error: bool,
     compute_quota: ComputeQuota,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
@@ -110,17 +109,21 @@ impl Component for Home {
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
         match action {
             Action::CloudChangeScope(_) => {
+                self.is_error = false;
                 self.set_loading(true);
             }
             Action::ConnectedToCloud(_) => {
+                self.is_error = false;
                 self.set_loading(true);
                 if let Mode::Home = current_mode {
                     return self.refresh_data();
                 }
             }
             Action::Mode(Mode::Home) => {
-                self.set_loading(true);
-                return self.refresh_data();
+                if !self.is_loading {
+                    self.set_loading(true);
+                    return self.refresh_data();
+                }
             }
             Action::Tick => {
                 self.tick();
@@ -134,6 +137,13 @@ impl Component for Home {
                 self.set_compute_data(data)?;
                 self.set_loading(false);
             }
+
+            Action::Error(_) => {
+                if let Mode::Home = current_mode {
+                    self.is_error = true;
+                    self.set_loading(false);
+                }
+            }
             _ => {}
         }
         Ok(None)
@@ -145,6 +155,11 @@ impl Component for Home {
         if self.is_loading {
             title.push(Span::styled(
                 " ...Loading... ",
+                self.config.styles.title_loading_fg,
+            ));
+        } else if self.is_error {
+            title.push(Span::styled(
+                " (Can not be fetched) ",
                 self.config.styles.title_loading_fg,
             ));
         }

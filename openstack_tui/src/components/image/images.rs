@@ -19,7 +19,8 @@ use serde::Deserialize;
 use structable_derive::StructTable;
 
 use crate::{
-    action::{Action, ImageFilters, Resource},
+    action::Action,
+    cloud_worker::types::{ImageFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     mode::Mode,

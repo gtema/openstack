@@ -17,42 +17,28 @@ use serde_json::Value;
 
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
-use crate::action::{NetworkNetworkFilters, NetworkSubnetFilters};
-use crate::cloud_services::NetworkExt;
+use crate::cloud_worker::types::ImageFilters;
 use crate::cloud_worker::Cloud;
 
-impl NetworkExt for Cloud {
-    async fn get_network_networks(
-        &mut self,
-        _filters: &NetworkNetworkFilters,
-    ) -> Result<Vec<Value>> {
+pub trait ImageExt {
+    async fn get_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>>;
+}
+
+impl ImageExt for Cloud {
+    async fn get_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
+            let mut ep_builder = openstack_sdk::api::image::v2::image::list::Request::builder();
             ep_builder.sort_key("name");
             ep_builder.sort_dir("asc");
 
-            let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_network_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::subnet::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
-
-            if let Some(network_id) = &filters.network_id {
-                ep_builder.network_id(network_id.clone());
+            if let Some(vis) = &filters.visibility {
+                ep_builder.visibility(vis);
             }
             let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
                 .query_async(session)
                 .await?;
+            //let res: Vec<Value> = ep.query_async(session).await?;
             return Ok(res);
         }
         Ok(Vec::new())

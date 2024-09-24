@@ -463,7 +463,7 @@ where
     }
 
     pub fn get_selected_raw(&self) -> Option<&Value> {
-        self.state.selected().and_then(|x| Some(&self.raw_items[x]))
+        self.state.selected().map(|x| &self.raw_items[x])
     }
 
     pub fn get_selected_resource_id(&self) -> Result<Option<String>, Report> {
