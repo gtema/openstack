@@ -207,6 +207,17 @@ impl Cloud {
                                 )))?,
                             }
                         }
+                        Resource::IdentityProjects(ref filters) => {
+                            match self.get_identity_projects(filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch available projects: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::ImageImages(ref filters) => {
                             match self.get_image_images(filters).await {
                                 Ok(data) => {

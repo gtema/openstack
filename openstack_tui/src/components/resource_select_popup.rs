@@ -61,6 +61,10 @@ impl ResourceSelect {
                         ("Servers", Mode::ComputeServers),
                     ]),
                 ),
+                (
+                    "Identity",
+                    HashMap::from([("Projects", Mode::IdentityProjects)]),
+                ),
                 ("Image", HashMap::from([("Images", Mode::ImageImages)])),
                 (
                     "Network",

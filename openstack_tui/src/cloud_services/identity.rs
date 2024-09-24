@@ -17,11 +17,29 @@ use serde_json::Value;
 
 use openstack_sdk::api::QueryAsync;
 
-use crate::action::IdentityAuthProjectFilters;
+use crate::action::{IdentityAuthProjectFilters, IdentityProjectFilters};
 use crate::cloud_services::IdentityExt;
 use crate::cloud_worker::Cloud;
 
 impl IdentityExt for Cloud {
+    async fn get_identity_projects(
+        &mut self,
+        _filters: &IdentityProjectFilters,
+    ) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep_builder = openstack_sdk::api::identity::v3::project::list::Request::builder();
+
+            //if let Some(vis) = &filters.visibility {
+            //    ep_builder.visibility(vis);
+            //}
+            let ep = ep_builder.build()?;
+            let res: Vec<Value> = ep.query_async(session).await?;
+            //let res: Vec<Value> = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
     async fn get_identity_auth_projects(
         &mut self,
         _filters: &IdentityAuthProjectFilters,

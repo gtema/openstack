@@ -16,8 +16,8 @@ use eyre::Result;
 use serde_json::Value;
 
 use crate::action::{
-    ComputeFlavorFilters, ComputeServerFilters, IdentityAuthProjectFilters, ImageFilters,
-    NetworkNetworkFilters, NetworkSubnetFilters,
+    ComputeFlavorFilters, ComputeServerFilters, IdentityAuthProjectFilters, IdentityProjectFilters,
+    ImageFilters, NetworkNetworkFilters, NetworkSubnetFilters,
 };
 
 mod compute;
@@ -33,6 +33,11 @@ pub trait ComputeExt {
 }
 
 pub trait IdentityExt {
+    async fn get_identity_projects(
+        &mut self,
+        _filters: &IdentityProjectFilters,
+    ) -> Result<Vec<Value>>;
+
     async fn get_identity_auth_projects(
         &mut self,
         filters: &IdentityAuthProjectFilters,

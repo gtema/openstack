@@ -28,6 +28,7 @@ pub mod describe;
 pub mod error_popup;
 pub mod header;
 pub mod home;
+pub mod identity;
 pub mod image;
 pub mod network;
 pub mod project_select_popup;
