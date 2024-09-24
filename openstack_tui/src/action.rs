@@ -24,6 +24,7 @@ pub enum Resource {
     ComputeServerConsoleOutput(String),
     ComputeQuota,
     IdentityAuthProjects(IdentityAuthProjectFilters),
+    IdentityProjects(IdentityProjectFilters),
     ImageImages(ImageFilters),
     NetworkNetworks(NetworkNetworkFilters),
     NetworkSubnets(NetworkSubnetFilters),
@@ -114,6 +115,13 @@ impl fmt::Display for NetworkSubnetFilters {
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct IdentityAuthProjectFilters {}
 impl fmt::Display for IdentityAuthProjectFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentityProjectFilters {}
+impl fmt::Display for IdentityProjectFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "")
     }

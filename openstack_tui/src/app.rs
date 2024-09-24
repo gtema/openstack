@@ -25,9 +25,9 @@ use crate::{
     components::{
         cloud_select_popup::CloudSelect, compute::flavors::ComputeFlavors,
         compute::servers::ComputeServers, describe::Describe, error_popup::ErrorPopup,
-        header::Header, home::Home, image::images::Images, network::networks::NetworkNetworks,
-        network::subnets::NetworkSubnets, project_select_popup::ProjectSelect,
-        resource_select_popup::ResourceSelect, Component,
+        header::Header, home::Home, identity::projects::IdentityProjects, image::images::Images,
+        network::networks::NetworkNetworks, network::subnets::NetworkSubnets,
+        project_select_popup::ProjectSelect, resource_select_popup::ResourceSelect, Component,
     },
     config::Config,
     mode::Mode,
@@ -73,6 +73,7 @@ impl App {
         let describe_component: Box<dyn Component> = Box::new(Describe::new());
         let compute_servers_component: Box<dyn Component> = Box::new(ComputeServers::new());
         let compute_flavors_component: Box<dyn Component> = Box::new(ComputeFlavors::new());
+        let identity_projects_component: Box<dyn Component> = Box::new(IdentityProjects::new());
         let image_images_component: Box<dyn Component> = Box::new(Images::new());
         let network_component: Box<dyn Component> = Box::new(NetworkNetworks::new());
         let subnet_component: Box<dyn Component> = Box::new(NetworkSubnets::new());
@@ -99,6 +100,7 @@ impl App {
                 (Mode::ComputeFlavors, compute_flavors_component),
                 (Mode::NetworkNetworks, network_component),
                 (Mode::NetworkSubnets, subnet_component),
+                (Mode::IdentityProjects, identity_projects_component),
                 (Mode::ImageImages, image_images_component),
             ]),
             header: Box::new(Header::new()),

@@ -12,18 +12,4 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use serde::{Deserialize, Serialize};
-
-/// TUI Modes (screens)
-#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub enum Mode {
-    #[default]
-    Home,
-    Describe,
-    ComputeFlavors,
-    ComputeServers,
-    IdentityProjects,
-    ImageImages,
-    NetworkNetworks,
-    NetworkSubnets,
-}
+pub mod projects;
