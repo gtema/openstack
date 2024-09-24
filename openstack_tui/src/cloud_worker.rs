@@ -34,7 +34,6 @@ use crate::cloud_worker::{
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
     pub(crate) cloud: Option<AsyncOpenStack>,
-    app_tx: Option<UnboundedSender<Action>>,
     should_quit: bool,
 }
 
@@ -44,7 +43,6 @@ impl Cloud {
         Self {
             cloud_configs: cfg,
             cloud: None,
-            app_tx: None,
             should_quit: false,
         }
     }
@@ -97,11 +95,6 @@ impl Cloud {
         } else {
             Err(eyre!("Cannot change scope without being connected first"))
         }
-    }
-
-    fn register_app_tx(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
-        self.app_tx = Some(tx);
-        Ok(())
     }
 
     pub async fn run(

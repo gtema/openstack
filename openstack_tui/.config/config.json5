@@ -8,6 +8,9 @@
     "NetworkSubnets": {
       "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
     },
+    "IdentityProjects": {
+      "s": {"action": "SwitchToProject", "description": "Switch to project"},
+    },
     "ImageImages": {
       "0": { "action": {"ImageFilter": {} }, "description": "all"},
       "1": { "action": {"ImageFilter": {"visibility": "public"} },"description": "public"},
@@ -22,7 +25,7 @@
     "<Ctrl-z>": { "action": "Suspend", "description": "Suspend"},// Suspend the application
     "F1": { "action": {"Mode": "Home"}, "description": "Home"},
     "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
-    "F3": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
+    ":": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
     "F4": { "action": "SelectProject", "description": "Select project"},
     "r": {"action": "Refresh", "description": "Refresh data"}
   }

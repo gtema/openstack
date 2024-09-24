@@ -40,6 +40,8 @@ pub struct ProjectData {
     parent_id: String,
     #[structable(title = "Enabled")]
     enabled: bool,
+    #[structable(title = "Domain ID")]
+    domain_id: String,
 }
 
 pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectData, IdentityProjectFilters>;
@@ -89,6 +91,21 @@ impl<'a> Component for IdentityProjects<'a> {
                 data,
             } => {
                 self.set_data(data)?;
+            }
+            Action::SwitchToProject => {
+                if let Some(project) = self.get_selected() {
+                    let new_project = openstack_sdk::types::identity::v3::Project {
+                        id: Some(project.id.clone()),
+                        name: Some(project.name.clone()),
+                        domain: Some(openstack_sdk::types::identity::v3::Domain {
+                            id: Some(project.domain_id.clone()),
+                            name: None,
+                        }),
+                    };
+                    let new_scope =
+                        openstack_sdk::auth::authtoken::AuthTokenScope::Project(new_project);
+                    return Ok(Some(Action::CloudChangeScope(new_scope)));
+                }
             }
             _ => {}
         };

@@ -15,7 +15,7 @@
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use ratatui::{
-    layout::{Constraint, Layout, Rect},
+    layout::Rect,
     prelude::*,
     widgets::{block::*, *},
 };
@@ -23,25 +23,20 @@ use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
-    action::Action, components::Component, config::Config, mode::Mode, utils::centered_rect,
+    action::Action,
+    components::{Component, FuzzySelectList},
+    config::Config,
+    mode::Mode,
+    utils::centered_rect,
 };
-
-#[derive(Debug, Clone, Default)]
-enum CursorAt {
-    #[default]
-    Service,
-    Resource,
-}
 
 pub struct ResourceSelect {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
-    resources: HashMap<&'static str, HashMap<&'static str, Mode>>,
-    service_state: ListState,
-    resource_state: ListState,
-    cursor_at: CursorAt,
+    resources: HashMap<&'static str, Mode>,
+    fuzzy_list: FuzzySelectList,
 }
 
 impl Default for ResourceSelect {
@@ -52,36 +47,25 @@ impl Default for ResourceSelect {
 
 impl ResourceSelect {
     pub fn new() -> Self {
-        Self {
+        let mut slf = Self {
             resources: HashMap::from([
-                (
-                    "Compute",
-                    HashMap::from([
-                        ("Flavors", Mode::ComputeFlavors),
-                        ("Servers", Mode::ComputeServers),
-                    ]),
-                ),
-                (
-                    "Identity",
-                    HashMap::from([("Projects", Mode::IdentityProjects)]),
-                ),
-                ("Image", HashMap::from([("Images", Mode::ImageImages)])),
-                (
-                    "Network",
-                    HashMap::from([
-                        ("Networks", Mode::NetworkNetworks),
-                        ("Subnets", Mode::NetworkSubnets),
-                    ]),
-                ),
+                ("flavors", Mode::ComputeFlavors),
+                ("servers", Mode::ComputeServers),
+                ("projects", Mode::IdentityProjects),
+                ("images", Mode::ImageImages),
+                ("networks", Mode::NetworkNetworks),
+                ("subnets", Mode::NetworkSubnets),
             ]),
             command_tx: None,
             config: Config::default(),
             keymap: HashMap::new(),
             last_events: Vec::new(),
-            service_state: ListState::default(),
-            resource_state: ListState::default(),
-            cursor_at: CursorAt::default(),
-        }
+            fuzzy_list: FuzzySelectList::new(),
+        };
+        let mut res: Vec<&str> = slf.resources.keys().clone().copied().collect();
+        res.sort();
+        slf.fuzzy_list.set_items(res);
+        slf
     }
 
     pub fn keymap(mut self, keymap: HashMap<KeyEvent, Action>) -> Self {
@@ -94,36 +78,6 @@ impl ResourceSelect {
     }
 
     pub fn render_tick(&mut self) {}
-
-    fn cursor_up(&mut self) {
-        let state = match self.cursor_at {
-            CursorAt::Service => &mut self.service_state,
-            CursorAt::Resource => &mut self.resource_state,
-        };
-        state.select_previous();
-    }
-
-    fn cursor_down(&mut self) {
-        let state = match self.cursor_at {
-            CursorAt::Service => &mut self.service_state,
-            CursorAt::Resource => &mut self.resource_state,
-        };
-        state.select_next();
-    }
-
-    fn cursor_right(&mut self) {
-        if let CursorAt::Service = self.cursor_at {
-            self.cursor_at = CursorAt::Resource;
-            self.resource_state.select(Some(0));
-        }
-    }
-
-    fn cursor_left(&mut self) {
-        if let CursorAt::Resource = self.cursor_at {
-            self.cursor_at = CursorAt::Service;
-            self.resource_state.select(None);
-        };
-    }
 }
 
 impl Component for ResourceSelect {
@@ -138,27 +92,14 @@ impl Component for ResourceSelect {
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
-        match key.code {
-            KeyCode::Down => self.cursor_down(),
-            KeyCode::Up => self.cursor_up(),
-            KeyCode::Right => self.cursor_right(),
-            KeyCode::Left => self.cursor_left(),
-            KeyCode::Enter => {
-                if let CursorAt::Resource = self.cursor_at {
-                    if let (Some(service_pos), Some(resource_pos)) = (
-                        self.service_state.selected(),
-                        self.resource_state.selected(),
-                    ) {
-                        if let Some((_service, resources)) = self.resources.iter().nth(service_pos)
-                        {
-                            if let Some((_resource, mode)) = resources.iter().nth(resource_pos) {
-                                return Ok(Some(Action::Mode(*mode)));
-                            }
-                        }
-                    }
+        self.fuzzy_list.handle_key_events(key)?;
+        if key.code == KeyCode::Enter {
+            if let Some(selected) = self.fuzzy_list.selected() {
+                if let Some(item) = self.resources.get(selected.as_str()) {
+                    self.fuzzy_list.reset_filter()?;
+                    return Ok(Some(Action::Mode(*item)));
                 }
             }
-            _ => {}
         }
         Ok(None)
     }
@@ -179,31 +120,7 @@ impl Component for ResourceSelect {
         let inner = popup_block.inner(area);
         frame.render_widget(Clear, area);
         frame.render_widget(popup_block, area);
-        let horizontal = Layout::horizontal([Constraint::Min(9), Constraint::Min(20)]);
-
-        let [service_area, resource_area] = horizontal.areas(inner);
-
-        let service_block = Block::default().title(" Service ").borders(Borders::ALL);
-
-        let service_list = List::new(self.resources.keys().cloned())
-            .block(service_block)
-            .style(self.config.styles.popup_item_title_fg)
-            .highlight_symbol(">>")
-            .highlight_style(Style::new().add_modifier(Modifier::REVERSED));
-        frame.render_stateful_widget(service_list, service_area, &mut self.service_state);
-
-        let resource_block = Block::default().title(" Resource ").borders(Borders::ALL);
-        let mut resource_list = List::default()
-            .block(resource_block)
-            .style(self.config.styles.popup_item_title_fg)
-            .highlight_symbol(">>")
-            .highlight_style(Style::new().add_modifier(Modifier::REVERSED));
-        if let Some(service_pos) = self.service_state.selected() {
-            if let Some((_service, resources)) = self.resources.iter().nth(service_pos) {
-                resource_list = resource_list.items(resources.keys().cloned());
-            }
-        }
-        frame.render_stateful_widget(resource_list, resource_area, &mut self.resource_state);
+        self.fuzzy_list.draw(frame, inner)?;
 
         Ok(())
     }
