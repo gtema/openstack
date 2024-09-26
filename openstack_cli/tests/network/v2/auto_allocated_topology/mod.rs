@@ -12,21 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod address_group;
-mod address_scope;
-mod agent;
-mod auto_allocated_topology;
-mod availability_zone;
-mod extension;
-mod floatingip;
-mod network;
-mod port;
-mod rbac_policy;
-mod router;
-mod security_group;
-mod security_group_rule;
-mod subnet;
-mod subnetpool;
+mod create_autogen;
+mod delete_autogen;
+mod list_autogen;
+mod set_autogen;
+mod show_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -35,7 +25,9 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("network").arg("--help");
+    cmd.arg("network")
+        .arg("auto-allocated-topology")
+        .arg("--help");
     cmd.assert().success();
 
     Ok(())
