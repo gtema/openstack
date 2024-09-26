@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Load Balancing API bindings
+//! Load Balancing API (Octavia) bindings
 pub mod v2;
