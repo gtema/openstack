@@ -34,6 +34,7 @@ use crate::StructTable;
 use crate::common::BoolString;
 use openstack_sdk::api::network::v2::agent::get;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Shows details for an agent.
@@ -93,7 +94,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional)]
-    alive: Option<String>,
+    alive: Option<bool>,
 
     /// The availability zone of the agent.
     ///
@@ -112,8 +113,8 @@ struct ResponseData {
     /// semantics of which are determined by the binary name and type.
     ///
     #[serde()]
-    #[structable(optional)]
-    configurations: Option<String>,
+    #[structable(optional, pretty)]
+    configurations: Option<Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///

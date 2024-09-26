@@ -35,6 +35,7 @@ use crate::common::BoolString;
 use openstack_sdk::api::network::v2::agent::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Lists all agents.
@@ -195,8 +196,8 @@ struct ResponseData {
     /// semantics of which are determined by the binary name and type.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    configurations: Option<serde_json::Value>,
+    #[structable(optional, pretty, wide)]
+    configurations: Option<Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
