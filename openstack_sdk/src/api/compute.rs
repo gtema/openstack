@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Compute service (Nova) bindings
 pub mod v2;

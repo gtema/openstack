@@ -12,5 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Block Storage API bindings
+//! Block Storage (Cinder) API bindings
 pub mod v3;

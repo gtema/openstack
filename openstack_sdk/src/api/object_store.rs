@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Object-Store API (Swift) bindings
 pub mod v1;

@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Identity API (Keystone) bindings
 pub mod v3;

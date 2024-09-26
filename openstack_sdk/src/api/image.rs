@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Image API (Glance) bindings
 pub mod v2;

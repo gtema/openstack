@@ -12,4 +12,5 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+//! Network API (Neutron) bindings
 pub mod v2;

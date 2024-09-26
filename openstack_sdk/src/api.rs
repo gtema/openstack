@@ -54,7 +54,12 @@
 //!
 //! ## Find combinator
 //!
-//! Finding resource by `name` or `id` is possible using [`find`](fn@find) combinator.
+//! Finding resource by `name` or `id` is possible using [`find`](fn@find) combinator. First a API
+//! request to get resource directly by the identified (i.e. `flavors/<VALUE>`) is done. When it
+//! returns positive data it is used as a find response. Otherwise list API call is invoked
+//! (passing name filter parameter when available). Single operation return entry is used as find
+//! result otherwise an error is returned. Only endpoints implementing
+//! [`Findable`] trait support that.
 //!
 //! ```
 //!    use openstack_sdk::api::QueryAsync;
@@ -71,9 +76,29 @@
 //!    # }
 //! ```
 //!
+//! When identifier is clearly known to be `name` [`find`](fn@find_by_name) is more useful and is
+//! saving unnecessary API roundtrip for attempting to query resource by the identificator and
+//! immediately triggers listing operation.
+//!
+//! ```
+//!    use openstack_sdk::api::QueryAsync;
+//!    use openstack_sdk::api::find_by_name;
+//!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    # use http::Response;
+//!    # async fn func() -> Result<(), OpenStackError> {
+//!    # let cfg = ConfigFile::new().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let client = AsyncOpenStack::new(&profile).await?;
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::find::Request::builder().build().unwrap();
+//!    let data_raw: serde_json::Value = find_by_name(ep).query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
 //! ## Pagination combinator
 //!
-//! Support for querying paginated resources is covered using [`paged`](fn@paged) combinator.
+//! Support for querying paginated resources is covered using [`paged`](fn@paged) combinator. The
+//! endpoint must implement [`Pageable`] trait to support this combinator.
 //!
 //! ```
 //!    use openstack_sdk::api::{QueryAsync, Pagination};
@@ -170,7 +195,7 @@ pub use self::paged::Paged;
 pub use self::paged::Pagination;
 pub use self::paged::PaginationError;
 
-pub use self::find::{find, find_by_name};
+pub use self::find::{find, find_by_name, Findable};
 
 pub use self::params::JsonBodyParams;
 pub use self::params::ParamValue;
