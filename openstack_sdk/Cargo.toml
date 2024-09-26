@@ -75,3 +75,19 @@ tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 name = "functional"
 path = "tests/main.rs"
 test = false
+
+[[example]]
+name = "query_find"
+required-features = ["async", "compute"]
+
+[[example]]
+name = "paged"
+required-features = ["async", "compute"]
+
+[[example]]
+name = "query"
+required-features = ["async", "compute"]
+
+[[example]]
+name = "ignore"
+required-features = ["async", "compute"]

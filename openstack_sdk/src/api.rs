@@ -16,6 +16,101 @@
 //!
 //! This module provides implementation for the individual APIs as well as the necessary logic
 //!
+//! ## Query/QueryAsync trait
+//!
+//! API requests that return data should be invoked using [Query] or [QueryAsync] style.
+//!
+//! ```
+//!    use openstack_sdk::api::QueryAsync;
+//!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    # async fn func() -> Result<(), OpenStackError> {
+//!    # let cfg = ConfigFile::new().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let client = AsyncOpenStack::new(&profile).await?;
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
+//!    let data_raw: serde_json::Value = ep.query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//! ## RawQuery/RawQueryAsync trait
+//!
+//! It may be sometimes desired to get the raw API response for example to access headers. It is
+//! possible using [RawQuery]/[RawQueryAsync] trait on such endpoints.
+//!
+//! ```
+//!    use openstack_sdk::api::RawQueryAsync;
+//!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    # use http::{Response};
+//!    # use bytes::Bytes;
+//!    # async fn func() -> Result<(), OpenStackError> {
+//!    # let cfg = ConfigFile::new().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let client = AsyncOpenStack::new(&profile).await?;
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
+//!    let rsp: Response<Bytes> = ep.raw_query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
+//! ## Find combinator
+//!
+//! Finding resource by `name` or `id` is possible using [`find`](fn@find) combinator.
+//!
+//! ```
+//!    use openstack_sdk::api::QueryAsync;
+//!    use openstack_sdk::api::find;
+//!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    # use http::Response;
+//!    # async fn func() -> Result<(), OpenStackError> {
+//!    # let cfg = ConfigFile::new().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let client = AsyncOpenStack::new(&profile).await?;
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::find::Request::builder().build().unwrap();
+//!    let data_raw: serde_json::Value = find(ep).query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
+//! ## Pagination combinator
+//!
+//! Support for querying paginated resources is covered using [`paged`](fn@paged) combinator.
+//!
+//! ```
+//!    use openstack_sdk::api::{QueryAsync, Pagination};
+//!    use openstack_sdk::api::paged;
+//!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    # async fn func() -> Result<(), OpenStackError> {
+//!    # let cfg = ConfigFile::new().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let client = AsyncOpenStack::new(&profile).await?;
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::list::Request::builder().build().unwrap();
+//!    let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(100))
+//!        .query_async(&client)
+//!        .await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
+//! ## Ignoring response combinator
+//!
+//! Some APIs natively do not return any response. Trying to use [Query]/[QueryAsync] trait on them
+//! result in an error while casing the data. When API do not return any response or it is
+//! explicitly uninteresting a [`ignore`](fn@ignore) combinator can be used. When API returned an
+//! error it is properly thrown.
+//!
+//! ```
+//!    use openstack_sdk::api::{ignore, QueryAsync};
+//!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
+//!    # async fn func() -> Result<(), OpenStackError> {
+//!    # let cfg = ConfigFile::new().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let client = AsyncOpenStack::new(&profile).await?;
+//!    # let ep = openstack_sdk::api::compute::v2::flavor::delete::Request::builder().build().unwrap();
+//!    ignore(ep).query_async(&client).await?;
+//!    # Ok(())
+//!    # }
+//! ```
+//!
 #![allow(clippy::module_inception)]
 
 mod client;

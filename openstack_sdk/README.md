@@ -68,6 +68,10 @@ async fn list_flavors() -> Result<(), OpenStackError> {
 
 ## Documentation
 
+Current crate documentation is known to be very poor. It will be addressed in
+future, but for now the best way to figure out how it works is to look at
+openstack_cli and openstack_tui using it.
+
 Crate documentation [is published here](https://docs.rs/openstack_sdk)
 
 Project documentation [is available here](https://gtema.github.io/openstack)

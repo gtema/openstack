@@ -25,7 +25,12 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p openstack/openstack_sdk/src && touch openstack/openstack_sdk/src/lib.rs &&\
     mkdir -p openstack/structable_derive/src && touch openstack/structable_derive/src/lib.rs &&\
     mkdir -p /usr/src/openstack/xtask/src && touch openstack/xtask/src/lib.rs &&\
-    mkdir -p openstack/fuzz/src && touch openstack/fuzz/src/lib.rs
+    mkdir -p openstack/fuzz/src && touch openstack/fuzz/src/lib.rs &&\
+    mkdir -p openstack/openstack_sdk/examples &&\
+    touch openstack/openstack_sdk/examples/query_find.rs &&\
+    touch openstack/openstack_sdk/examples/paged.rs &&\
+    touch openstack/openstack_sdk/examples/query.rs &&\
+    touch openstack/openstack_sdk/examples/ignore.rs
 
 # Set the working directory
 WORKDIR /usr/src/openstack
