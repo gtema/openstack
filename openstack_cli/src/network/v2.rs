@@ -25,6 +25,7 @@ mod address_scope;
 mod agent;
 mod auto_allocated_topology;
 mod availability_zone;
+mod default_security_group_rule;
 mod extension;
 mod floatingip;
 mod network;
@@ -53,6 +54,7 @@ pub enum NetworkCommands {
     Agent(Box<agent::AgentCommand>),
     AutoAllocatedTopology(Box<auto_allocated_topology::AutoAllocatedTopologyCommand>),
     AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
+    DefaultSecurityGroupRule(Box<default_security_group_rule::DefaultSecurityGroupRuleCommand>),
     Extension(Box<extension::ExtensionCommand>),
     FloatingIP(Box<floatingip::FloatingIPCommand>),
     Network(Box<network::NetworkCommand>),
@@ -85,6 +87,9 @@ impl NetworkCommand {
                 cmd.take_action(parsed_args, session).await
             }
             NetworkCommands::AvailabilityZone(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::DefaultSecurityGroupRule(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             NetworkCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::FloatingIP(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Network(cmd) => cmd.take_action(parsed_args, session).await,
