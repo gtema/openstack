@@ -14,7 +14,6 @@
 
 mod create_autogen;
 mod delete_autogen;
-#[cfg(feature = "_test_net_auto-allocated-topology")]
 mod list;
 mod list_autogen;
 mod set_autogen;
@@ -28,7 +27,7 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
     cmd.arg("network")
-        .arg("auto-allocated-topology")
+        .arg("default-security-group-rule")
         .arg("--help");
     cmd.assert().success();
 

@@ -17,6 +17,7 @@ mod address_scope;
 mod agent;
 mod auto_allocated_topology;
 mod availability_zone;
+mod default_security_group_rule;
 mod extension;
 mod floatingip;
 mod network;

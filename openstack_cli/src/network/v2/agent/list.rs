@@ -176,7 +176,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, wide)]
-    alive: Option<String>,
+    alive: Option<bool>,
 
     /// The availability zone of the agent.
     ///
@@ -196,7 +196,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable(optional, wide)]
-    configurations: Option<String>,
+    configurations: Option<serde_json::Value>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
