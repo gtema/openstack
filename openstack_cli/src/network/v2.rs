@@ -22,6 +22,7 @@ use crate::{Cli, OpenStackCliError};
 
 mod address_group;
 mod address_scope;
+mod agent;
 mod availability_zone;
 mod extension;
 mod floatingip;
@@ -48,6 +49,7 @@ pub struct NetworkCommand {
 pub enum NetworkCommands {
     AddressGroup(Box<address_group::AddressGroupCommand>),
     AddressScope(Box<address_scope::AddressScopeCommand>),
+    Agent(Box<agent::AgentCommand>),
     AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
     Extension(Box<extension::ExtensionCommand>),
     FloatingIP(Box<floatingip::FloatingIPCommand>),
@@ -76,6 +78,7 @@ impl NetworkCommand {
         match &self.command {
             NetworkCommands::AddressGroup(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::AddressScope(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Agent(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::AvailabilityZone(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::FloatingIP(cmd) => cmd.take_action(parsed_args, session).await,

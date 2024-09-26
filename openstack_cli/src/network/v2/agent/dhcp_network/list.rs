@@ -33,7 +33,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::network::v2::agent::dhcp_network::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use std::collections::HashMap;
 
