@@ -74,7 +74,7 @@ struct ResponseData {
 
     #[serde()]
     #[structable(optional)]
-    alive: Option<String>,
+    alive: Option<bool>,
 
     #[serde()]
     #[structable(optional)]
@@ -85,8 +85,8 @@ struct ResponseData {
     binary: Option<String>,
 
     #[serde()]
-    #[structable(optional)]
-    configurations: Option<String>,
+    #[structable(optional, pretty)]
+    configurations: Option<Value>,
 
     #[serde()]
     #[structable(optional)]
