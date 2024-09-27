@@ -96,6 +96,7 @@ impl<'a> Component for ComputeServers<'a> {
             } => {
                 if let Some(server_id) = self.get_selected_resource_id()? {
                     if server_id == id {
+                        self.set_loading(false);
                         return Ok(Some(Action::Describe(data)));
                     }
                 }
@@ -109,9 +110,7 @@ impl<'a> Component for ComputeServers<'a> {
             }
             Action::ServerConsoleOutput => {
                 if let Some(server_id) = self.get_selected_resource_id()? {
-                    if let Some(command_tx) = self.get_command_tx() {
-                        command_tx.send(Action::Mode(Mode::Describe))?;
-                    }
+                    self.set_loading(true);
                     return Ok(Some(Action::RequestCloudResource(
                         Resource::ComputeServerConsoleOutput(server_id),
                     )));
