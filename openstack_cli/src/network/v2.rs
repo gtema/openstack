@@ -27,6 +27,7 @@ mod auto_allocated_topology;
 mod availability_zone;
 mod default_security_group_rule;
 mod extension;
+mod flavor;
 mod floatingip;
 mod network;
 mod port;
@@ -56,6 +57,7 @@ pub enum NetworkCommands {
     AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
     DefaultSecurityGroupRule(Box<default_security_group_rule::DefaultSecurityGroupRuleCommand>),
     Extension(Box<extension::ExtensionCommand>),
+    Flavor(Box<flavor::FlavorCommand>),
     FloatingIP(Box<floatingip::FloatingIPCommand>),
     Network(Box<network::NetworkCommand>),
     Port(Box<port::PortCommand>),
@@ -91,6 +93,7 @@ impl NetworkCommand {
                 cmd.take_action(parsed_args, session).await
             }
             NetworkCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
+            NetworkCommands::Flavor(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::FloatingIP(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Network(cmd) => cmd.take_action(parsed_args, session).await,
             NetworkCommands::Port(cmd) => cmd.take_action(parsed_args, session).await,
