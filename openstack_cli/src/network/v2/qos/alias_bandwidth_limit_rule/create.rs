@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::create;

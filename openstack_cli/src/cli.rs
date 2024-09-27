@@ -52,30 +52,30 @@ fn styles() -> Styles {
 /// ## Features
 ///
 ///  * `osc api` as an API wrapper allowing user to perform any direct API call specifying service
-///  type, url, method and payload. This can be used for example when certain resource is not
-///  currently implemented natively.
+///    type, url, method and payload. This can be used for example when certain resource is not
+///    currently implemented natively.
 ///
 ///  * `osc auth` with subcommands for dealing explicitly with authentication (showing current auth
-///  info, renewing auth, MFA/SSO support)
+///    info, renewing auth, MFA/SSO support)
 ///
 ///  * Every resource is having a service type in the command solving confusions like user groups
-///  vs volume groups
+///    vs volume groups
 ///
 ///  * Every multi-word resource name is "-" separated (i.e. floating-ip, access-rule)
 ///
 /// ## Output
 ///
 ///  * `osc ... -o json` as an explicit machine readable format output. It allows seeing raw
-///  resource json representation as send by the API without any processing on the client side.
+///    resource json representation as send by the API without any processing on the client side.
 ///
-///  **Note:** the result is not the raw json response, but the raw json resource information found
-///  underneath expected resource key. This mode can be used i.e. to see fields that are not
-///  expected by the `osc` and allows further easy machine processing with tools like `jq`
+///    **Note:** the result is not the raw json response, but the raw json resource information found
+///    underneath expected resource key. This mode can be used i.e. to see fields that are not
+///    expected by the `osc` and allows further easy machine processing with tools like `jq`
 ///
 ///  * `osc ... -o wide` for list operations to return all known fields. By default list operation
-///  will only return a subset of known generic resource fields to prevent multiline tables. This
-///  mode (together with not specifying `-o` parameter at all) is considered as an output for
-///  humans. Field names are not generally renamed and are names as the API returns them.
+///    will only return a subset of known generic resource fields to prevent multiline tables. This
+///    mode (together with not specifying `-o` parameter at all) is considered as an output for
+///    humans. Field names are not generally renamed and are names as the API returns them.
 ///
 /// ## Shell autocompletion
 ///

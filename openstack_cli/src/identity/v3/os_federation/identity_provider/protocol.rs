@@ -35,15 +35,15 @@ mod show;
 /// Required attributes:
 ///
 ///  - mapping_id (string): Indicates which mapping should be used to process
-///  federated authentication requests.
+///    federated authentication requests.
 ///
 /// Optional attributes:
 ///
 ///  - remote_id_attribute (string): Key to obtain the entity ID of the
-///  Identity Provider from the HTTPD environment. For mod_shib, this would be
-///  Shib-Identity-Provider. For mod_auth_openidc, this could be HTTP_OIDC_ISS.
-///  For mod_auth_mellon, this could be MELLON_IDP. This overrides the default
-///  value provided in keystone.conf.
+///    Identity Provider from the HTTPD environment. For mod_shib, this would be
+///    Shib-Identity-Provider. For mod_auth_openidc, this could be HTTP_OIDC_ISS.
+///    For mod_auth_mellon, this could be MELLON_IDP. This overrides the default
+///    value provided in keystone.conf.
 #[derive(Parser)]
 pub struct ProtocolCommand {
     #[command(subcommand)]

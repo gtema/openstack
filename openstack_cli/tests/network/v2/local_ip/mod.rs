@@ -12,33 +12,14 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod address_group;
-mod address_scope;
-mod agent;
-mod auto_allocated_topology;
-mod availability_zone;
-mod default_security_group_rule;
-mod extension;
-mod flavor;
-mod floatingip;
-mod floatingip_pool;
-mod local_ip;
-mod log;
-mod metering;
-mod ndp_proxy;
-mod network;
-mod network_ip_availability;
-mod network_segment_range;
-mod port;
-mod qos;
-mod quota;
-mod rbac_policy;
-mod router;
-mod security_group;
-mod security_group_rule;
-mod subnet;
-mod subnetpool;
-mod vpn;
+mod create_autogen;
+mod delete_autogen;
+#[cfg(feature = "_test_net_local_ips")]
+mod list;
+mod list_autogen;
+mod port_association;
+mod set_autogen;
+mod show_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -47,7 +28,7 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("network").arg("--help");
+    cmd.arg("network").arg("local-ip").arg("--help");
     cmd.assert().success();
 
     Ok(())
