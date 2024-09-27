@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.1...openstack_sdk-v0.11.2) - 2024-09-27
+
+### Added
+
+- Improve crate (interface) documentation ([#583](https://github.com/gtema/openstack/pull/583))
+- Rework doc building ([#568](https://github.com/gtema/openstack/pull/568))
+
+### Other
+
+- Further doc clarifications ([#584](https://github.com/gtema/openstack/pull/584))
+
 ## [0.11.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.0...openstack_sdk-v0.11.1) - 2024-09-20
 
 ### Added

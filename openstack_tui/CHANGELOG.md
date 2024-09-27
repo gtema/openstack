@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.2...openstack_tui-v0.1.3) - 2024-09-27
+
+### Added
+
+- Enable new fuzzy_select component ([#578](https://github.com/gtema/openstack/pull/578))
+- Reorganize cloud_worker better ([#577](https://github.com/gtema/openstack/pull/577))
+- Add identity.projects view ([#576](https://github.com/gtema/openstack/pull/576))
+- Rework doc building ([#568](https://github.com/gtema/openstack/pull/568))
+
+### Fixed
+
+- Repair go back from console output ([#589](https://github.com/gtema/openstack/pull/589))
+- Disable pagination limits ([#587](https://github.com/gtema/openstack/pull/587))
+
 ## [0.1.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.1...openstack_tui-v0.1.2) - 2024-09-20
 
 ### Added

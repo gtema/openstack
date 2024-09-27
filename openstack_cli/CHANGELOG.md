@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.2...openstack_cli-v0.7.3) - 2024-09-27
+
+### Added
+
+- Enable multiple network resources ([#593](https://github.com/gtema/openstack/pull/593))
+- Add network.flavor commands ([#585](https://github.com/gtema/openstack/pull/585))
+- Enable network.default-security-group-rule commands ([#582](https://github.com/gtema/openstack/pull/582))
+- Enable network.auto_allocated_topology command ([#580](https://github.com/gtema/openstack/pull/580))
+- Enable network.agent commands ([#579](https://github.com/gtema/openstack/pull/579))
+- Rework doc building ([#568](https://github.com/gtema/openstack/pull/568))
+- Improve crate (interface) documentation ([#583](https://github.com/gtema/openstack/pull/583))
+
+### Fixed
+
+- Fix network.agent property types ([#586](https://github.com/gtema/openstack/pull/586))
+
+### Other
+
+- Further doc clarifications ([#584](https://github.com/gtema/openstack/pull/584))
+
 ## [0.7.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.1...openstack_cli-v0.7.2) - 2024-09-20
 
 ### Added
