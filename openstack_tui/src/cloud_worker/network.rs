@@ -34,7 +34,7 @@ impl NetworkExt for Cloud {
             ep_builder.sort_dir("asc");
 
             let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
             return Ok(res);
@@ -52,7 +52,7 @@ impl NetworkExt for Cloud {
                 ep_builder.network_id(network_id.clone());
             }
             let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
             return Ok(res);

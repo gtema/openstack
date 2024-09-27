@@ -79,11 +79,6 @@ impl<'a> Component for IdentityProjects<'a> {
             }
             Action::Tick => {
                 self.app_tick()?;
-                if let Mode::IdentityProjects = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::IdentityProjects(self.get_filters().clone()),
-                    )));
-                }
             }
             Action::Render => self.render_tick()?,
             Action::ResourcesData {

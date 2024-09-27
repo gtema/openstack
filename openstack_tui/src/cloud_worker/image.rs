@@ -35,7 +35,7 @@ impl ImageExt for Cloud {
                 ep_builder.visibility(vis);
             }
             let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
             //let res: Vec<Value> = ep.query_async(session).await?;
