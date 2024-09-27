@@ -108,7 +108,7 @@ impl ComputeExt for Cloud {
                 )?
                 .build()?;
 
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::Limit(100))
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
             return Ok(res);
