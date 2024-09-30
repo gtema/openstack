@@ -11,6 +11,8 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+use assert_cmd::prelude::*;
+use std::process::Command;
 
 mod add_fixed_ip_21_autogen;
 mod add_floating_ip_21_autogen;
@@ -105,3 +107,13 @@ mod unrescue_autogen;
 mod unshelve_277_autogen;
 mod unshelve_291_autogen;
 mod volume_attachment;
+
+#[test]
+fn help() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("osc")?;
+
+    cmd.arg("compute").arg("server").arg("--help");
+    cmd.assert().success();
+
+    Ok(())
+}

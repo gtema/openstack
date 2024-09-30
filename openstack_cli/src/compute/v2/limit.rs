@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Log commands
+//! Limits
 
 use clap::{Parser, Subcommand};
 
@@ -20,31 +20,26 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[allow(clippy::module_inception)]
-mod log;
-mod loggable_resource;
+mod list;
 
-/// Logging
+/// Limits (limits)
 ///
-/// Log resource
-///
-/// The logging extension lists, creates, shows information for, and updates log resource.
+/// Shows rate and absolute limits for the project.
 #[derive(Parser)]
-pub struct LogCommand {
+pub struct LimitCommand {
     /// subcommand
     #[command(subcommand)]
-    command: LogCommands,
+    command: LimitCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum LogCommands {
-    Log(Box<log::LogCommand>),
-    LoggableResource(Box<loggable_resource::LoggableResourceCommand>),
+pub enum LimitCommands {
+    List(list::LimitCommand),
 }
 
-impl LogCommand {
+impl LimitCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -52,8 +47,7 @@ impl LogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            LogCommands::Log(cmd) => cmd.take_action(parsed_args, session).await,
-            LogCommands::LoggableResource(cmd) => cmd.take_action(parsed_args, session).await,
+            LimitCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

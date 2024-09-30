@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Log commands
+//! Services
 
 use clap::{Parser, Subcommand};
 
@@ -20,31 +20,35 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[allow(clippy::module_inception)]
-mod log;
-mod loggable_resource;
+mod delete;
+mod list;
+mod set_20;
+mod set_211;
+mod set_253;
 
-/// Logging
+/// Server groups (os-server-groups)
 ///
-/// Log resource
-///
-/// The logging extension lists, creates, shows information for, and updates log resource.
+/// Lists, shows information for, creates, and deletes server groups.
 #[derive(Parser)]
-pub struct LogCommand {
+pub struct ServiceCommand {
     /// subcommand
     #[command(subcommand)]
-    command: LogCommands,
+    command: ServiceCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum LogCommands {
-    Log(Box<log::LogCommand>),
-    LoggableResource(Box<loggable_resource::LoggableResourceCommand>),
+pub enum ServiceCommands {
+    Delete(delete::ServiceCommand),
+    List(list::ServicesCommand),
+    #[command(visible_alias = "set")]
+    Set253(set_253::ServiceCommand),
+    Set211(set_211::ServiceCommand),
+    Set20(set_20::ServiceCommand),
 }
 
-impl LogCommand {
+impl ServiceCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -52,8 +56,11 @@ impl LogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            LogCommands::Log(cmd) => cmd.take_action(parsed_args, session).await,
-            LogCommands::LoggableResource(cmd) => cmd.take_action(parsed_args, session).await,
+            ServiceCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ServiceCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ServiceCommands::Set253(cmd) => cmd.take_action(parsed_args, session).await,
+            ServiceCommands::Set211(cmd) => cmd.take_action(parsed_args, session).await,
+            ServiceCommands::Set20(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

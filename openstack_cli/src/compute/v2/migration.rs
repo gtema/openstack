@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Log commands
+//! Migration
 
 use clap::{Parser, Subcommand};
 
@@ -20,31 +20,26 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[allow(clippy::module_inception)]
-mod log;
-mod loggable_resource;
+mod get;
 
-/// Logging
+/// Migrations (os-migrations)
 ///
-/// Log resource
-///
-/// The logging extension lists, creates, shows information for, and updates log resource.
+/// Shows data on migrations.
 #[derive(Parser)]
-pub struct LogCommand {
+pub struct MigrationCommand {
     /// subcommand
     #[command(subcommand)]
-    command: LogCommands,
+    command: MigrationCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum LogCommands {
-    Log(Box<log::LogCommand>),
-    LoggableResource(Box<loggable_resource::LoggableResourceCommand>),
+pub enum MigrationCommands {
+    Get(get::MigrationCommand),
 }
 
-impl LogCommand {
+impl MigrationCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -52,8 +47,7 @@ impl LogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            LogCommands::Log(cmd) => cmd.take_action(parsed_args, session).await,
-            LogCommands::LoggableResource(cmd) => cmd.take_action(parsed_args, session).await,
+            MigrationCommands::Get(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

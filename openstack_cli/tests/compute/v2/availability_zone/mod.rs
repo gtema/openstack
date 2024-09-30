@@ -11,6 +11,18 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+use assert_cmd::prelude::*;
+use std::process::Command;
 
 mod list_autogen;
 mod list_detail_autogen;
+
+#[test]
+fn help() -> Result<(), Box<dyn std::error::Error>> {
+    let mut cmd = Command::cargo_bin("osc")?;
+
+    cmd.arg("compute").arg("availability-zone").arg("--help");
+    cmd.assert().success();
+
+    Ok(())
+}
