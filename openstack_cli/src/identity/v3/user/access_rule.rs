@@ -24,50 +24,57 @@ mod delete;
 mod list;
 mod show;
 
-/// **Application Credentials - Access Rules**
+/// Application Credentials - Access Rules
 ///
-/// Users also have the option of delegating more
-/// fine-grained access control to their application
-/// credentials by using access rules. For example, to
-/// create an application credential that is constricted
-/// to creating servers in nova, the user can add the
-/// following access rules:
+/// Users have the option of delegating more fine-grained access control to their application
+/// credentials by using access rules. For example, to create an application credential that is
+/// constricted to creating servers in nova, the user can add the following access rules:
 ///
-/// ```json { "access_rules": [{ "path": "/v2.1/servers",
-/// "method": "POST", "service": "compute" }] } ```
+/// ```json
 ///
-/// The "path" attribute of application credential access
-/// rules uses a wildcard syntax to make it more flexible.
-/// For example, to create an application credential that
-/// is constricted to listing server IP addresses, you
-/// could use either of the following access rules:
+/// { "access_rules": [{ "path": "/v2.1/servers", "method": "POST", "service": "compute" }] }
 ///
-/// ```json { "access_rules": [ { "path":
-/// "/v2.1/servers/*/ips", "method": "GET", "service":
-/// "compute" } ] } ```
+/// ```
+///
+/// The "path" attribute of application credential access rules uses a wildcard syntax to make it
+/// more flexible. For example, to create an application credential that is constricted to listing
+/// server IP addresses, you could use either of the following access rules:
+///
+/// ```json
+///
+/// { "access_rules": [ { "path": "/v2.1/servers/*/ips", "method": "GET", "service": "compute" } ] }
+///
+/// ```
 ///
 /// or equivalently:
 ///
-/// ```json { "access_rules": [ { "path":
-/// "/v2.1/servers/{server_id}/ips", "method": "GET",
-/// "service": "compute" } ] } ```
+/// ```json
 ///
-/// In both cases, a request path containing any server ID
-/// will match the access rule. For even more flexibility,
-/// the recursive wildcard ** indicates that request paths
-/// containing any number of / will be matched. For
-/// example:
+/// { "access_rules": [ { "path": "/v2.1/servers/{server_id}/ips", "method": "GET", "service": "compute" } ] }
 ///
-/// ```json { "access_rules": [ { "path": "/v2.1/**",
-/// "method": "GET", "service": "compute" } ] } ```
+/// ```
+///
+/// In both cases, a request path containing any server ID will match the access rule. For even
+/// more flexibility, the recursive wildcard ** indicates that request paths containing any number
+/// of / will be matched. For example:
+///
+/// ```json
+///
+/// { "access_rules": [ { "path": "/v2.1/**", "method": "GET", "service": "compute" } ] }
+///
+/// ```
 ///
 /// will match any nova API for version 2.1.
 ///
-/// An access rule created for one application credential
-/// can be re-used by providing its ID to another
-/// application credential, for example:
+/// An access rule created for one application credential can be re-used by providing its ID to
+/// another application credential, for example:
 ///
-/// ```json { "access_rules": [ { "id": "abcdef" } ] } ```
+/// ```json
+///
+/// { "access_rules": [ { "id": "abcdef" } ] }
+///
+///
+/// ```
 #[derive(Parser)]
 pub struct AccessRuleCommand {
     /// subcommand
