@@ -114,6 +114,24 @@ pub struct GlobalOpts {
     #[arg(long, env = "OS_PROJECT_NAME", global = true, display_order = 901)]
     pub os_project_name: Option<String>,
 
+    /// Custom path to the `clouds.yaml` config file
+    #[arg(
+        long,
+        env = "OS_CLIENT_CONFIG_FILE",
+        global = true,
+        display_order = 905
+    )]
+    pub os_client_config_file: Option<String>,
+
+    /// Custom path to the `secure.yaml` config file
+    #[arg(
+        long,
+        env = "OS_CLIENT_SECURE_FILE",
+        global = true,
+        display_order = 905
+    )]
+    pub os_client_secure_file: Option<String>,
+
     /// Output format
     #[arg(short, long, global = true, value_enum, display_order = 910)]
     pub output: Option<OutputFormat>,

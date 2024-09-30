@@ -22,6 +22,7 @@
 // }
 #![allow(clippy::enum_variant_names)]
 use std::io::{self, IsTerminal};
+use std::path::Path;
 
 use clap::{CommandFactory, Parser};
 use clap_complete::generate;
@@ -81,7 +82,15 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         })
         .init();
 
-    let cfg = openstack_sdk::config::ConfigFile::new().unwrap();
+    let mut custom_configs: Vec<&Path> = Vec::new();
+    if let Some(ref clouds) = cli.global_opts.os_client_config_file {
+        custom_configs.push(Path::new(clouds));
+    }
+    if let Some(ref secure) = cli.global_opts.os_client_secure_file {
+        custom_configs.push(Path::new(secure));
+    }
+    let cfg = openstack_sdk::config::ConfigFile::try_from(custom_configs)?;
+
     // Identify target cloud to connect to
     let cloud_name = match cli.global_opts.os_cloud {
         Some(ref cloud) => cloud.clone(),

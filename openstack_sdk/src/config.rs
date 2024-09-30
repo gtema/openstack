@@ -20,9 +20,18 @@
 //!     .get_cloud_config("devstack".to_string())
 //!     .expect("Cloud devstack not found");
 //! ```
+//!
+//! It is possible to pass list of `&Path` objects to be used as config files. Those are prepended
+//! to the regular search locations to keep compatibility to python OpenStackSDK
+//!
+//! ```rust
+//! # use std::path::Path;
+//! let custom_configs: Vec<&Path> = Vec::from([Path::new("c1.yaml"), Path::new("s1.yaml")]);
+//! let cfg = openstack_sdk::config::ConfigFile::try_from(custom_configs);
+//! ```
 
 use std::fmt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use tracing::{error, warn};
 
 use serde::Deserialize;
@@ -354,8 +363,29 @@ fn get_config_file_search_paths<S: AsRef<str> + std::fmt::Display>(filename: S) 
         .collect();
 }
 
+/// Validate whether single config file is a valid file.
+///
+/// Returns `true`, `false` with logging information or raises parse error
+fn is_config_valid(config_file: &Path) -> Result<bool, ConfigError> {
+    // Since config lib is not returning information about the file from which the
+    // error comes we try to deserialize each individual file to be user friendly
+    match config::Config::builder()
+        .add_source(File::from(config_file))
+        .build()
+    {
+        Ok(x) => match x.try_deserialize::<ConfigFile>() {
+            Ok(..) => return Ok(true),
+            Err(e) => {
+                error!("Error in file {}: {:?}", config_file.display(), e);
+                return Ok(false);
+            }
+        },
+        Err(x) => return Err(ConfigError::parse(x)),
+    }
+}
+
 impl ConfigFile {
-    /// Get new ConfigFile processor
+    /// Get new ConfigFile processor with default config file search locations.
     pub fn new() -> Result<Self, ConfigError> {
         let mut s = config::Config::builder();
         for filename in &["clouds", "secure", "clouds-public"] {
@@ -364,16 +394,10 @@ impl ConfigFile {
                 .find(|&x| x.is_file())
             {
                 if let Some(v) = path.to_str() {
-                    // Since config lib is not returning information about the file from which the error comes we try to deserialize each individual file to be user friendly
-                    match config::Config::builder()
-                        .add_source(File::with_name(v))
-                        .build()
-                    {
-                        Ok(x) => match x.try_deserialize::<ConfigFile>() {
-                            Ok(..) => s = s.add_source(File::with_name(v)),
-                            Err(e) => error!("Error in file {}: {:?}. Ignoring the file", v, e),
-                        },
-                        Err(x) => return Err(ConfigError::parse(x)),
+                    match is_config_valid(&path) {
+                        Ok(true) => s = s.add_source(File::with_name(v)),
+                        Ok(false) => error!("Ignoring file {}", v),
+                        Err(x) => return Err(x),
                     }
                 }
             }
@@ -383,7 +407,7 @@ impl ConfigFile {
 
     /// Get cloud connection configuration by name.
     ///
-    /// This method does not raise the exception when the cloud is
+    /// This method does not raise exception when the cloud is
     /// not found.
     pub fn get_cloud_config<S: AsRef<str>>(
         &self,
@@ -429,11 +453,44 @@ impl ConfigFile {
     }
 }
 
+impl TryFrom<Vec<&Path>> for ConfigFile {
+    type Error = ConfigError;
+
+    /// Get `ConfigFile` from list of &Path objects.
+    fn try_from(custom_configs: Vec<&Path>) -> Result<Self, Self::Error> {
+        let mut s = config::Config::builder();
+        for custom_config in custom_configs.iter() {
+            match is_config_valid(&custom_config) {
+                Ok(true) => s = s.add_source(File::from(*custom_config)),
+                Ok(false) => error!("Ignoring file {}", custom_config.display()),
+                Err(x) => return Err(x),
+            }
+        }
+        for filename in &["clouds", "secure", "clouds-public"] {
+            if let Some(path) = get_config_file_search_paths(filename)
+                .iter()
+                .find(|&x| x.is_file())
+            {
+                if let Some(v) = path.to_str() {
+                    match is_config_valid(&path) {
+                        Ok(true) => s = s.add_source(File::with_name(v)),
+                        Ok(false) => error!("Ignoring file {}", v),
+                        Err(x) => return Err(x),
+                    }
+                }
+            }
+        }
+        s.build()?.try_deserialize().map_err(ConfigError::parse)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::config;
     use std::env;
-    use std::path::PathBuf;
+    use std::io::Write;
+    use std::path::{Path, PathBuf};
+    use tempfile::Builder;
 
     use super::ConfigFile;
 
@@ -473,5 +530,41 @@ mod tests {
     fn test_get_available_clouds() {
         let cfg = ConfigFile::new().unwrap();
         let _ = cfg.get_available_clouds();
+    }
+
+    #[test]
+    fn test_from_custom_files() {
+        let mut cloud_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+        let mut secure_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+
+        const CLOUD_DATA: &str = r#"
+            clouds:
+              fake_cloud:
+                auth:
+                  auth_url: http://fake.com
+                  username: foo
+        "#;
+        const SECURE_DATA: &str = r#"
+            clouds:
+              fake_cloud:
+                auth:
+                  password: bar
+        "#;
+
+        write!(cloud_file, "{}", CLOUD_DATA).unwrap();
+        write!(secure_file, "{}", SECURE_DATA).unwrap();
+        let custom_configs: Vec<&Path> = Vec::from([cloud_file.path(), secure_file.path()]);
+
+        let cfg = ConfigFile::try_from(custom_configs).unwrap();
+
+        let profile = cfg
+            .get_cloud_config("fake_cloud")
+            .unwrap()
+            .expect("Profile exists");
+        let auth = profile.auth.expect("Auth defined");
+
+        assert_eq!(auth.auth_url, Some(String::from("http://fake.com")));
+        assert_eq!(auth.username, Some(String::from("foo")));
+        assert_eq!(auth.password, Some(String::from("bar")));
     }
 }
