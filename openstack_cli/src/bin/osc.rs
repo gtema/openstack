@@ -21,7 +21,7 @@ use color_eyre::eyre::{Report, Result};
 use color_eyre::owo_colors::OwoColorize;
 use color_eyre::section::PanicMessage;
 use std::env;
-use std::{fmt, panic::Location};
+use std::fmt;
 
 #[tokio::main]
 async fn main() -> Result<(), Report> {
