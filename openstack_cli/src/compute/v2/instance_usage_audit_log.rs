@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Log commands
+//! Server usage audit log commands
 
 use clap::{Parser, Subcommand};
 
@@ -20,31 +20,33 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-#[allow(clippy::module_inception)]
-mod log;
-mod loggable_resource;
+mod list;
+mod show;
 
-/// Logging
+/// Server usage audit log (os-instance-usage-audit-log)
 ///
-/// Log resource
+/// Audit server usage of the cloud. This API is dependent on the instance_usage_audit
+/// configuration option being set on all compute hosts where usage auditing is required.
 ///
-/// The logging extension lists, creates, shows information for, and updates log resource.
+/// Policy defaults enable only users with the administrative role to perform all
+/// os-instance-usage-audit-log related operations. Cloud providers can change these permissions
+/// through the policy.json file.
 #[derive(Parser)]
-pub struct LogCommand {
+pub struct InstanceUsageAuditLogCommand {
     /// subcommand
     #[command(subcommand)]
-    command: LogCommands,
+    command: InstanceUsageAuditLogCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum LogCommands {
-    Log(Box<log::LogCommand>),
-    LoggableResource(Box<loggable_resource::LoggableResourceCommand>),
+pub enum InstanceUsageAuditLogCommands {
+    List(list::InstanceUsageAuditLogsCommand),
+    Show(show::InstanceUsageAuditLogCommand),
 }
 
-impl LogCommand {
+impl InstanceUsageAuditLogCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -52,8 +54,8 @@ impl LogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            LogCommands::Log(cmd) => cmd.take_action(parsed_args, session).await,
-            LogCommands::LoggableResource(cmd) => cmd.take_action(parsed_args, session).await,
+            InstanceUsageAuditLogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            InstanceUsageAuditLogCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

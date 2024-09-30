@@ -11,32 +11,17 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
-
-mod aggregate;
-mod assisted_volume_snapshot;
-mod availability_zone;
-mod flavor;
-mod hypervisor;
-mod instance_usage_audit_log;
-mod keypair;
-mod limit;
-mod migration;
-mod quota_class_set;
-mod quota_set;
-mod server;
-mod server_external_event;
-mod server_group;
-mod service;
-mod simple_tenant_usage;
-
 use assert_cmd::prelude::*;
 use std::process::Command;
+
+mod list_autogen;
+mod show_autogen;
 
 #[test]
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("compute").arg("--help");
+    cmd.arg("compute").arg("usage").arg("--help");
     cmd.assert().success();
 
     Ok(())

@@ -21,12 +21,22 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 use crate::{Cli, OpenStackCliError};
 
 mod aggregate;
+mod assisted_volume_snapshot;
 mod availability_zone;
 mod extension;
 mod flavor;
 mod hypervisor;
+mod instance_usage_audit_log;
 mod keypair;
+mod limit;
+mod migration;
+mod quota_class_set;
+mod quota_set;
 mod server;
+mod server_external_event;
+mod server_group;
+mod service;
+mod simple_tenant_usage;
 
 /// Compute service (Nova) operations
 #[derive(Parser)]
@@ -42,19 +52,23 @@ pub struct ComputeCommand {
 pub enum ComputeCommands {
     #[command(about = "Host Aggregates")]
     Aggregate(Box<aggregate::AggregateCommand>),
-    /// Lists and gets detailed availability zone information.
-    ///
-    /// An availability zone is created or updated by setting the
-    /// availability_zone parameter in the create, update, or
-    /// create or update methods of the Host Aggregates API. See
-    /// Host Aggregates for more details.
-    #[command(about = "Availability zones")]
+    AssistedVolumeSnapshot(Box<assisted_volume_snapshot::AssistedVolumeSnapshotCommand>),
     AvailabilityZone(Box<availability_zone::AvailabilityZoneCommand>),
     Extension(Box<extension::ExtensionCommand>),
     Flavor(Box<flavor::FlavorCommand>),
     Hypervisor(Box<hypervisor::HypervisorCommand>),
+    InstanceUsageAuditLog(Box<instance_usage_audit_log::InstanceUsageAuditLogCommand>),
     Keypair(Box<keypair::KeypairCommand>),
+    Limit(Box<limit::LimitCommand>),
+    Migration(Box<migration::MigrationCommand>),
+    QuotaClassSet(Box<quota_class_set::QuotaClassSetCommand>),
+    QuotaSet(Box<quota_set::QuotaSetCommand>),
     Server(Box<server::ServerCommand>),
+    ServerExternalEvent(Box<server_external_event::ServerExternalEventCommand>),
+    ServerGroup(Box<server_group::ServerGroupCommand>),
+    Service(Box<service::ServiceCommand>),
+    #[command(visible_alias = "usage")]
+    SimpleTenantUsage(Box<simple_tenant_usage::SimpleTenantUsageCommand>),
 }
 
 impl ComputeCommand {
@@ -70,12 +84,28 @@ impl ComputeCommand {
 
         match &self.command {
             ComputeCommands::Aggregate(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::AssistedVolumeSnapshot(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             ComputeCommands::AvailabilityZone(cmd) => cmd.take_action(parsed_args, session).await,
             ComputeCommands::Extension(cmd) => cmd.take_action(parsed_args, session).await,
             ComputeCommands::Hypervisor(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::InstanceUsageAuditLog(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
             ComputeCommands::Flavor(cmd) => cmd.take_action(parsed_args, session).await,
             ComputeCommands::Keypair(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Migration(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::QuotaClassSet(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::QuotaSet(cmd) => cmd.take_action(parsed_args, session).await,
             ComputeCommands::Server(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::ServerExternalEvent(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ComputeCommands::ServerGroup(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::Service(cmd) => cmd.take_action(parsed_args, session).await,
+            ComputeCommands::SimpleTenantUsage(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
