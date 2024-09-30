@@ -20,12 +20,11 @@ repository = "https://github.com/gtema/openstack"
 
 [workspace.dependencies]
 async-trait = { version = "^0.1" } #, optional = true }
-better-panic = { version = "^0.3" }
 bytes = "^1.7"
 chrono = { version = "^0.4", default-features = false, features = ["clock", "serde"] }
 clap = { version = "^4.5", features = ["cargo", "color", "derive", "env"] }
 clap_complete = { version = "^4.5" }
-color-eyre = { version = "^0.6", features = ["default", "issue-url"] }
+color-eyre = { version = "^0.6", features = ["default", "issue-url", "track-caller"] }
 config = { version = "^0.14", default-features = false }
 dialoguer = "^0.11"
 dirs = "^5.0"
@@ -33,7 +32,6 @@ eyre = { version = "^0.6" }
 futures = "^0.3"
 futures-util = { version = "^0.3", default-features = false}
 http = "^1.1"
-human-panic = { version = "^2.0" }
 itertools = { version = "^0.13" }
 json-patch = { version = "^2.0" }
 lazy_static = { version = "^1.5" }

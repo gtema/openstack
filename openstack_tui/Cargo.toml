@@ -16,7 +16,6 @@ name = "ostui"
 path = "src/main.rs"
 
 [dependencies]
-better-panic = { workspace = true }
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
 color-eyre = { workspace = true }
 config = { workspace = true, features = ["json", "json5", "yaml"] }
@@ -25,7 +24,6 @@ derive_deref = "^1.1"
 dirs = { workspace = true }
 eyre = { workspace = true }
 futures = { workspace = true }
-human-panic = { workspace = true }
 itertools = { workspace = true }
 json5 = "^0.4"
 lazy_static = "^1.5"

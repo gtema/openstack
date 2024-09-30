@@ -20,7 +20,6 @@ use serde_json::Value;
 use std::collections::BTreeSet;
 use std::fmt;
 use std::path::PathBuf;
-use tracing::error;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{
     self, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
@@ -44,50 +43,28 @@ lazy_static! {
 
 pub fn initialize_panic_handler() -> Result<()> {
     let (panic_hook, eyre_hook) = color_eyre::config::HookBuilder::default()
-        .panic_section(format!(
-            "This is a bug. Consider reporting it at {}",
-            env!("CARGO_PKG_REPOSITORY")
-        ))
-        .capture_span_trace_by_default(false)
-        .display_location_section(false)
-        .display_env_section(false)
+        .issue_url(concat!(env!("CARGO_PKG_REPOSITORY"), "/issues/new"))
+        .issue_filter(|kind| match kind {
+            color_eyre::ErrorKind::NonRecoverable(_) => true,
+            color_eyre::ErrorKind::Recoverable(error) => !error.is::<std::fmt::Error>(),
+        })
+        .add_issue_metadata("version", env!("CARGO_PKG_VERSION"))
+        .capture_span_trace_by_default(true)
+        .display_location_section(true)
+        .display_env_section(true)
         .into_hooks();
     eyre_hook.install()?;
     std::panic::set_hook(Box::new(move |panic_info| {
-        if let Ok(mut t) = crate::tui::Tui::new() {
-            if let Err(r) = t.exit() {
-                error!("Unable to exit Terminal: {:?}", r);
-            }
-        }
-
         #[cfg(not(debug_assertions))]
         {
-            use human_panic::{handle_dump, print_msg, Metadata};
-            let meta = Metadata::new(env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"))
-                .authors(env!("CARGO_PKG_AUTHORS"))
-                .homepage(env!("CARGO_PKG_HOMEPAGE"))
-                .support(format!(
-                    "Report issue at {}/issues",
-                    env!("CARGO_PKG_HOMEPAGE")
-                ));
-
-            let file_path = handle_dump(&meta, panic_info);
-            // prints human-panic message
-            print_msg(file_path, &meta)
-                .expect("human-panic: printing error message to console failed");
-            eprintln!("{}", panic_hook.panic_report(panic_info)); // prints color-eyre stack trace to stderr
+            eprintln!("\n{}", panic_hook.panic_report(panic_info)); // prints color-eyre stack trace to stderr
         }
         let msg = format!("{}", panic_hook.panic_report(panic_info));
         tracing::error!("Error: {}", strip_ansi_escapes::strip_str(msg));
 
         #[cfg(debug_assertions)]
         {
-            // Better Panic stacktrace that is only enabled when debugging.
-            better_panic::Settings::auto()
-                .most_recent_first(false)
-                .lineno_suffix(true)
-                .verbosity(better_panic::Verbosity::Full)
-                .create_panic_handler()(panic_info);
+            eprintln!("\n{}", panic_hook.panic_report(panic_info)); // prints color-eyre stack trace to stderr
         }
 
         std::process::exit(1);

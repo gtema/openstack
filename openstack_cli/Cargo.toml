@@ -50,7 +50,6 @@ _test_net_network-segment-range = []
 _test_net_vpn = []
 
 [dependencies]
-better-panic = { workspace = true }
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
@@ -59,7 +58,6 @@ color-eyre = { workspace = true }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { workspace = true }
 http = { workspace = true }
-human-panic = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.11", default-features = false, features = ["async", "identity"] }
 indicatif = "^0.17"
