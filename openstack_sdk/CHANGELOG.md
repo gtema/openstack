@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.3](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.2...openstack_sdk-v0.11.3) - 2024-09-30
+
+### Added
+
+- Add support for --os-client-config-file ([#611](https://github.com/gtema/openstack/pull/611))
+- Enable remaining compute commands ([#606](https://github.com/gtema/openstack/pull/606))
+
 ## [0.11.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.1...openstack_sdk-v0.11.2) - 2024-09-28
 
 ### Added

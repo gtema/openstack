@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.3...openstack_tui-v0.1.4) - 2024-09-30
+
+### Other
+
+- Drop better/human-panic ([#607](https://github.com/gtema/openstack/pull/607))
+
 ## [0.1.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.2...openstack_tui-v0.1.3) - 2024-09-28
 
 ### Added
