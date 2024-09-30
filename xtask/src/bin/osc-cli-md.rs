@@ -169,7 +169,7 @@ mod osc_cli_md_lib {
         //----------------------------------
 
         if command.get_subcommands().next().is_some() {
-            writeln!(buffer, "### **Subcommands:**\n")?;
+            writeln!(buffer, "### **Available subcommands:**\n")?;
 
             for subcommand in command.get_subcommands() {
                 if subcommand.is_hide_set() {
@@ -185,8 +185,9 @@ mod osc_cli_md_lib {
 
                 writeln!(
                     buffer,
-                    "* [`{subcommand_title_name}`]({}/{}.html) — {about}",
-                    title_name, subcommand_title_name
+                    "* [`{} {subcommand_title_name}`]({}/{subcommand_title_name}.html) — {about}",
+                    command_path.join(" "),
+                    title_name
                 )?;
             }
 
