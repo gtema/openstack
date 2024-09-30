@@ -63,7 +63,7 @@ human-panic = { workspace = true }
 json-patch = { workspace = true }
 openstack_sdk = { path="../openstack_sdk", version = "^0.11", default-features = false, features = ["async", "identity"] }
 indicatif = "^0.17"
-regex = "^1.10"
+regex = { workspace = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = {workspace = true}
@@ -73,14 +73,14 @@ tokio = { workspace = true, features = ["fs", "macros", "net", "sync", "rt-multi
 tokio-util = {workspace = true}
 thiserror = { workspace = true }
 tracing = { workspace = true}
-tracing-subscriber = { version = "^0.3" }
+tracing-subscriber = { workspace = true }
 url = { workspace = true }
 
 [dev-dependencies]
 assert_cmd = "^2.0"
 file_diff = "^1.0"
 rand = "^0.8"
-tempfile = "^3.12"
+tempfile = "^3.13"
 
 [[test]]
 name = "functional"
