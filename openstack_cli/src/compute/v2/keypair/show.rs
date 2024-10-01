@@ -57,8 +57,24 @@ pub struct KeypairCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    #[arg(help_heading = "Query parameters", long)]
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
+}
+
+/// User input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct UserInput {
+    /// User Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
+    user_name: Option<String>,
+    /// User ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 
 /// Path parameters
