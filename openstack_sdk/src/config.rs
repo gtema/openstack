@@ -17,17 +17,29 @@
 //! ```rust
 //! let cfg = openstack_sdk::config::ConfigFile::new().unwrap();
 //! let profile = cfg
-//!     .get_cloud_config("devstack".to_string())
+//!     .get_cloud_config("devstack")
 //!     .expect("Cloud devstack not found");
 //! ```
 //!
-//! It is possible to pass list of `&Path` objects to be used as config files. Those are prepended
-//! to the regular search locations to keep compatibility to python OpenStackSDK
+//! It is possible to create a config by passing paths to a [builder](ConfigFileBuilder).
 //!
-//! ```rust
-//! # use std::path::Path;
-//! let custom_configs: Vec<&Path> = Vec::from([Path::new("c1.yaml"), Path::new("s1.yaml")]);
-//! let cfg = openstack_sdk::config::ConfigFile::try_from(custom_configs);
+//! ```no_run
+//! let cfg = openstack_sdk::config::ConfigFile::builder()
+//!     .add_source("c1.yaml")
+//!     .expect("Failed to load 'c1.yaml'")
+//!     .add_source("s2.yaml")
+//!     .expect("Failed to load 's2.yaml'")
+//!     .build();
+//! ```
+//!
+//! It is also possible to create a config with [`ConfigFile::new_with_user_specified_configs`].
+//! This is similar to what the python OpenStackSDK does.
+//!
+//! ```no_run
+//! let cfg = openstack_sdk::config::ConfigFile::new_with_user_specified_configs(
+//!     Some("c1.yaml"),
+//!     Some("s2.yaml"),
+//! ).expect("Failed to load the configuration files");
 //! ```
 
 use std::fmt;
@@ -42,8 +54,6 @@ use std::env;
 use std::hash::{Hash, Hasher};
 
 use thiserror::Error;
-
-use config::File;
 
 /// Errors which may occur when dealing with OpenStack connection
 /// configuration data.
@@ -70,6 +80,99 @@ pub enum ConfigError {
 impl ConfigError {
     pub fn parse(source: config::ConfigError) -> Self {
         ConfigError::Parse { source }
+    }
+}
+
+/// Errors which may occur when adding sources to the [`ConfigFileBuilder`].
+#[derive(Error)]
+#[non_exhaustive]
+pub enum ConfigFileBuilderError {
+    #[error("Failed to parse file {path:?}: {source}")]
+    FileParse {
+        source: config::ConfigError,
+        builder: ConfigFileBuilder,
+        path: PathBuf,
+    },
+    #[error("Failed to deserialize config {path:?}: {source}")]
+    ConfigDeserialize {
+        source: config::ConfigError,
+        builder: ConfigFileBuilder,
+        path: PathBuf,
+    },
+}
+
+impl fmt::Debug for ConfigFileBuilderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ConfigFileBuilderError::FileParse {
+                ref source,
+                ref path,
+                ..
+            } => f
+                .debug_struct("FileParse")
+                .field("source", source)
+                .field("path", path)
+                .finish_non_exhaustive(),
+            ConfigFileBuilderError::ConfigDeserialize {
+                ref source,
+                ref path,
+                ..
+            } => f
+                .debug_struct("ConfigDeserialize")
+                .field("source", source)
+                .field("path", path)
+                .finish_non_exhaustive(),
+        }
+    }
+}
+
+/// A builder to create a [`ConfigFile`] by specifying which files to load.
+pub struct ConfigFileBuilder {
+    sources: Vec<config::Config>,
+}
+
+impl ConfigFileBuilder {
+    /// Add a source to the builder. This will directly parse the config and check if it is valid.
+    /// Values of sources added first will be overridden by later added sources, if the keys match.
+    /// In other words, the sources will be merged, with the later taking precedence over the
+    /// earlier ones.
+    pub fn add_source(mut self, source: impl AsRef<Path>) -> Result<Self, ConfigFileBuilderError> {
+        let config = match config::Config::builder()
+            .add_source(config::File::from(source.as_ref()))
+            .build()
+        {
+            Ok(config) => config,
+            Err(error) => {
+                return Err(ConfigFileBuilderError::FileParse {
+                    source: error,
+                    builder: self,
+                    path: source.as_ref().to_owned(),
+                })
+            }
+        };
+
+        if let Err(error) = config.clone().try_deserialize::<ConfigFile>() {
+            return Err(ConfigFileBuilderError::ConfigDeserialize {
+                source: error,
+                builder: self,
+                path: source.as_ref().to_owned(),
+            });
+        }
+
+        self.sources.push(config);
+        Ok(self)
+    }
+
+    /// This will build a [`ConfigFile`] with the previously specified sources. Since
+    /// the sources have already been checked on errors, this will not fail.
+    pub fn build(self) -> ConfigFile {
+        let mut config = config::Config::builder();
+
+        for source in self.sources {
+            config = config.add_source(source);
+        }
+
+        config.build().unwrap().try_deserialize().unwrap()
     }
 }
 
@@ -341,7 +444,7 @@ impl CloudConfig {
 const CONFIG_SUFFIXES: &[&str] = &[".yaml", ".yml", ".json"];
 
 /// Get Paths in which to search for the configuration file
-fn get_config_file_search_paths<S: AsRef<str> + std::fmt::Display>(filename: S) -> Vec<PathBuf> {
+fn get_config_file_search_paths<S: AsRef<str>>(filename: S) -> Vec<PathBuf> {
     let paths: Vec<PathBuf> = vec![
         env::current_dir().expect("Cannot determine current workdir"),
         dirs::config_dir()
@@ -358,51 +461,110 @@ fn get_config_file_search_paths<S: AsRef<str> + std::fmt::Display>(filename: S) 
         .flat_map(|x| {
             CONFIG_SUFFIXES
                 .iter()
-                .map(|y| x.join(format!("{}{}", filename, y)))
+                .map(|y| x.join(format!("{}{}", filename.as_ref(), y)))
         })
         .collect();
 }
 
-/// Validate whether single config file is a valid file.
+/// Searches for a `clouds-public.{yaml,yml,json}` config file.
 ///
-/// Returns `true`, `false` with logging information or raises parse error
-fn is_config_valid(config_file: &Path) -> Result<bool, ConfigError> {
-    // Since config lib is not returning information about the file from which the
-    // error comes we try to deserialize each individual file to be user friendly
-    match config::Config::builder()
-        .add_source(File::from(config_file))
-        .build()
-    {
-        Ok(x) => match x.try_deserialize::<ConfigFile>() {
-            Ok(..) => return Ok(true),
-            Err(e) => {
-                error!("Error in file {}: {:?}", config_file.display(), e);
-                return Ok(false);
-            }
-        },
-        Err(x) => return Err(ConfigError::parse(x)),
-    }
+/// The following locations will be tried in order:
+///
+/// - `./clouds-public.{yaml,yml,json}` (current working directory)
+/// - `$XDG_CONFIG_HOME/openstack/clouds-public.{yaml,yml,json}`
+/// - `$XDG_HOME/.config/openstack/clouds-public.{yaml,yml,json}`
+/// - `/etc/openstack/clouds-public.{yaml,yml,json}`
+pub fn find_vendor_file() -> Option<PathBuf> {
+    get_config_file_search_paths("clouds-public")
+        .into_iter()
+        .find(|path| path.is_file())
+}
+
+/// Searches for a `clouds.{yaml,yml,json}` config file.
+///
+/// The following locations will be tried in order:
+///
+/// - `./clouds.{yaml,yml,json}` (current working directory)
+/// - `$XDG_CONFIG_HOME/openstack/clouds.{yaml,yml,json}`
+/// - `$XDG_HOME/.config/openstack/clouds.{yaml,yml,json}`
+/// - `/etc/openstack/clouds.{yaml,yml,json}`
+pub fn find_clouds_file() -> Option<PathBuf> {
+    get_config_file_search_paths("clouds")
+        .into_iter()
+        .find(|path| path.is_file())
+}
+
+/// Searches for a `secure.{yaml,yml,json}` config file.
+///
+/// The following locations will be tried in order:
+///
+/// - `./secure.{yaml,yml,json}` (current working directory)
+/// - `$XDG_CONFIG_HOME/openstack/secure.{yaml,yml,json}`
+/// - `$XDG_HOME/.config/openstack/secure.{yaml,yml,json}`
+/// - `/etc/openstack/secure.{yaml,yml,json}`
+pub fn find_secure_file() -> Option<PathBuf> {
+    get_config_file_search_paths("secure")
+        .into_iter()
+        .find(|path| path.is_file())
 }
 
 impl ConfigFile {
-    /// Get new ConfigFile processor with default config file search locations.
-    pub fn new() -> Result<Self, ConfigError> {
-        let mut s = config::Config::builder();
-        for filename in &["clouds", "secure", "clouds-public"] {
-            if let Some(path) = get_config_file_search_paths(filename)
-                .iter()
-                .find(|&x| x.is_file())
-            {
-                if let Some(v) = path.to_str() {
-                    match is_config_valid(&path) {
-                        Ok(true) => s = s.add_source(File::with_name(v)),
-                        Ok(false) => error!("Ignoring file {}", v),
-                        Err(x) => return Err(x),
-                    }
-                }
-            }
+    /// A builder to create a `ConfigFile` by specifying which files to load.
+    pub fn builder() -> ConfigFileBuilder {
+        ConfigFileBuilder {
+            sources: Vec::new(),
         }
-        s.build()?.try_deserialize().map_err(ConfigError::parse)
+    }
+
+    /// Create a `ConfigFile` which also loads the default sources in the following order:
+    ///
+    /// - `clouds-public.{yaml,yml,json}` (see [`find_vendor_file`] for search paths)
+    /// - `clouds.{yaml,yml,json}` (see [`find_clouds_file`] for search paths)
+    /// - the provided clouds file
+    /// - `secure.{yaml,yml,json}` (see [`find_secure_file`] for search paths)
+    /// - the provided secure file
+    ///
+    /// If a source is not a valid config it will be ignored, but if one of the sources
+    /// has syntax errors (YAML/JSON) or one of the user specified configs does not
+    /// exist, a [`ConfigError`] will be returned.
+    pub fn new_with_user_specified_configs(
+        clouds: Option<impl AsRef<Path>>,
+        secure: Option<impl AsRef<Path>>,
+    ) -> Result<Self, ConfigError> {
+        let mut builder = Self::builder();
+
+        for path in find_vendor_file()
+            .into_iter()
+            .chain(find_clouds_file())
+            .chain(clouds.map(|path| path.as_ref().to_owned()))
+            .chain(find_secure_file())
+            .chain(secure.map(|path| path.as_ref().to_owned()))
+        {
+            builder = match builder.add_source(path) {
+                Ok(builder) => builder,
+                Err(ConfigFileBuilderError::FileParse { source, .. }) => {
+                    return Err(ConfigError::parse(source));
+                }
+                Err(ConfigFileBuilderError::ConfigDeserialize {
+                    source,
+                    builder,
+                    path,
+                }) => {
+                    error!(
+                        "The file {path:?} could not be deserialized and will be ignored: {source}"
+                    );
+                    builder
+                }
+            };
+        }
+
+        Ok(builder.build())
+    }
+
+    /// A convenience function which calls [`new_with_user_specified_configs`](ConfigFile::new_with_user_specified_configs) without an
+    /// additional clouds or secret file.
+    pub fn new() -> Result<Self, ConfigError> {
+        Self::new_with_user_specified_configs(None::<PathBuf>, None::<PathBuf>)
     }
 
     /// Get cloud connection configuration by name.
@@ -453,43 +615,12 @@ impl ConfigFile {
     }
 }
 
-impl TryFrom<Vec<&Path>> for ConfigFile {
-    type Error = ConfigError;
-
-    /// Get `ConfigFile` from list of &Path objects.
-    fn try_from(custom_configs: Vec<&Path>) -> Result<Self, Self::Error> {
-        let mut s = config::Config::builder();
-        for custom_config in custom_configs.iter() {
-            match is_config_valid(&custom_config) {
-                Ok(true) => s = s.add_source(File::from(*custom_config)),
-                Ok(false) => error!("Ignoring file {}", custom_config.display()),
-                Err(x) => return Err(x),
-            }
-        }
-        for filename in &["clouds", "secure", "clouds-public"] {
-            if let Some(path) = get_config_file_search_paths(filename)
-                .iter()
-                .find(|&x| x.is_file())
-            {
-                if let Some(v) = path.to_str() {
-                    match is_config_valid(&path) {
-                        Ok(true) => s = s.add_source(File::with_name(v)),
-                        Ok(false) => error!("Ignoring file {}", v),
-                        Err(x) => return Err(x),
-                    }
-                }
-            }
-        }
-        s.build()?.try_deserialize().map_err(ConfigError::parse)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use crate::config;
     use std::env;
     use std::io::Write;
-    use std::path::{Path, PathBuf};
+    use std::path::PathBuf;
     use tempfile::Builder;
 
     use super::ConfigFile;
@@ -542,20 +673,25 @@ mod tests {
               fake_cloud:
                 auth:
                   auth_url: http://fake.com
-                  username: foo
+                  username: override_me
         "#;
         const SECURE_DATA: &str = r#"
             clouds:
               fake_cloud:
                 auth:
+                  username: foo
                   password: bar
         "#;
 
         write!(cloud_file, "{}", CLOUD_DATA).unwrap();
         write!(secure_file, "{}", SECURE_DATA).unwrap();
-        let custom_configs: Vec<&Path> = Vec::from([cloud_file.path(), secure_file.path()]);
 
-        let cfg = ConfigFile::try_from(custom_configs).unwrap();
+        let cfg = ConfigFile::builder()
+            .add_source(cloud_file.path())
+            .unwrap()
+            .add_source(secure_file.path())
+            .unwrap()
+            .build();
 
         let profile = cfg
             .get_cloud_config("fake_cloud")
