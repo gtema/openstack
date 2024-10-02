@@ -12,7 +12,7 @@ but also an enforced UX consistency.
 from one tool to another.
 
 Commands implementation code is being produced by
-(codegenerator)[https://opendev.org/openstack/codegenerator] what means there
+[codegenerator](https://opendev.org/openstack/codegenerator) what means there
 is no maintenance required for that code.
 
 ## Microversions

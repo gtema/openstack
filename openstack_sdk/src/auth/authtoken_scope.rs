@@ -123,7 +123,7 @@ pub enum AuthTokenScope {
     Unscoped,
 }
 
-/// Build [`AuthorizationScope`] data from [`CloudConfig`]
+/// Build [`AuthTokenScope`] data from [`CloudConfig`](config::CloudConfig)
 impl TryFrom<&config::CloudConfig> for AuthTokenScope {
     type Error = AuthTokenScopeError;
     fn try_from(config: &config::CloudConfig) -> Result<Self, Self::Error> {
