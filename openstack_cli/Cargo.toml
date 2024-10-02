@@ -26,6 +26,7 @@ default = [
   "openstack_sdk/async",
   "block_storage",
   "compute",
+  "dns",
   "identity",
   "image",
   "load_balancer",
@@ -34,6 +35,7 @@ default = [
 ]
 block_storage = ["openstack_sdk/block_storage"]
 compute = ["openstack_sdk/compute"]
+dns = ["openstack_sdk/dns"]
 identity = ["openstack_sdk/identity"]
 image = ["openstack_sdk/image"]
 load_balancer = ["openstack_sdk/load_balancer"]
