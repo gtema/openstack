@@ -40,6 +40,7 @@ mod block_storage;
 mod catalog;
 mod common;
 mod compute;
+mod dns;
 mod identity;
 mod image;
 mod load_balancer;
