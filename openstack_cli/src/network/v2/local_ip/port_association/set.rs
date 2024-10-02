@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::network::v2::local_ip::port_association::set;
 use openstack_sdk::api::QueryAsync;

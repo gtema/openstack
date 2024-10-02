@@ -103,6 +103,9 @@ struct DomainInput {
     /// Domain ID.
     #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_ID")]
     domain_id: Option<String>,
+    /// Current domain.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_domain: bool,
 }
 /// InheritedToProject response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -156,6 +159,15 @@ impl InheritedToProjectCommand {
                     ))
                 }
             };
+        } else if self.path.domain.current_domain {
+            ep_builder.domain_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         ep_builder.group_id(&self.path.group_id);
         ep_builder.role_id(&self.path.role_id);

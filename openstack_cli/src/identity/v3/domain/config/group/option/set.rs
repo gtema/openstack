@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
+use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::config::group::option::set;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
@@ -107,6 +108,9 @@ struct DomainInput {
     /// Domain ID.
     #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_ID")]
     domain_id: Option<String>,
+    /// Current domain.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_domain: bool,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
@@ -174,6 +178,15 @@ impl OptionCommand {
                     ))
                 }
             };
+        } else if self.path.domain.current_domain {
+            ep_builder.domain_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         ep_builder.group(&self.path.group);
         ep_builder.option(&self.path.option);

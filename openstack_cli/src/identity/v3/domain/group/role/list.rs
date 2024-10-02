@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::domain::group::role::list;
@@ -87,6 +88,9 @@ struct DomainInput {
     /// Domain ID.
     #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_ID")]
     domain_id: Option<String>,
+    /// Current domain.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_domain: bool,
 }
 /// Roles response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -158,6 +162,15 @@ impl RolesCommand {
                     ))
                 }
             };
+        } else if self.path.domain.current_domain {
+            ep_builder.domain_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         ep_builder.group_id(&self.path.group_id);
         // Set query parameters

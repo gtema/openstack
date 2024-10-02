@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
 use openstack_sdk::api::compute::v2::keypair::list;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists keypairs that are associated with the account.
 ///
@@ -67,8 +71,24 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     marker: Option<String>,
 
-    #[arg(help_heading = "Query parameters", long)]
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
+}
+
+/// User input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct UserInput {
+    /// User Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
+    user_name: Option<String>,
+    /// User ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 
 /// Path parameters
@@ -120,8 +140,46 @@ impl KeypairsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val);
+        if let Some(id) = &self.query.user.user_id {
+            // user_id is passed. No need to lookup
+            ep_builder.user_id(id);
+        } else if let Some(name) = &self.query.user.user_name {
+            // user_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_user::Request::builder();
+            warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.user_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
