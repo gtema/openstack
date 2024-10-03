@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.3...openstack_cli-v0.8.0) - 2024-10-03
+
+### Added
+
+- Start building DNS bindings ([#628](https://github.com/gtema/openstack/pull/628))
+- add the ability to specify the configs to load via a builder ([#619](https://github.com/gtema/openstack/pull/619))
+- Initialize the DNS service support ([#620](https://github.com/gtema/openstack/pull/620))
+- Add user/project/domain query param resolution ([#618](https://github.com/gtema/openstack/pull/618))
+- Add support for --os-client-config-file ([#611](https://github.com/gtema/openstack/pull/611))
+- Enable remaining compute commands ([#606](https://github.com/gtema/openstack/pull/606))
+
+### Other
+
+- Show full osc command in the doc ([#609](https://github.com/gtema/openstack/pull/609))
+- Drop better/human-panic ([#607](https://github.com/gtema/openstack/pull/607))
+- Update locked dependencies ([#605](https://github.com/gtema/openstack/pull/605))
+- *(deps)* update crate-ci/typos action to v1.25.0 ([#624](https://github.com/gtema/openstack/pull/624))
+
 ## [0.7.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.2...openstack_cli-v0.7.3) - 2024-09-28
 
 ### Added
