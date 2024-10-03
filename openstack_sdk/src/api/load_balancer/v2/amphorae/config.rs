@@ -17,7 +17,7 @@
 
 //! Update the amphora agent configuration. This will push the new
 //! configuration to the amphora agent and will update the configuration
-//! options that are mutatable.
+//! options that are mutable.
 //!
 //! If you are not an administrative user, the service returns the HTTP
 //! `Forbidden (403)` response code.
