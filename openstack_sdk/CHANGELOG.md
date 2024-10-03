@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.2...openstack_sdk-v0.12.0) - 2024-10-03
+
+### Added
+
+- Initialize the DNS service support ([#620](https://github.com/gtema/openstack/pull/620))
+- Add support for --os-client-config-file ([#611](https://github.com/gtema/openstack/pull/611))
+- Enable remaining compute commands ([#606](https://github.com/gtema/openstack/pull/606))
+
 ## [0.11.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.11.1...openstack_sdk-v0.11.2) - 2024-09-28
 
 ### Added
