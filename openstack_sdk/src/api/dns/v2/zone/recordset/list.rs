@@ -94,10 +94,10 @@ pub struct Request<'a> {
     #[builder(default)]
     ttl: Option<i32>,
 
-    /// ID of the zone
+    /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
     ///
     #[builder(default, setter(into))]
-    zone_id: Option<Cow<'a, str>>,
+    zone_id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -140,12 +140,15 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn endpoint(&self) -> Cow<'static, str> {
-        "zones/{zone_id}/recordsets".to_string().into()
+        format!(
+            "zones/{zone_id}/recordsets",
+            zone_id = self.zone_id.as_ref(),
+        )
+        .into()
     }
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("zone_id", self.zone_id.as_ref());
         params.push_opt("limit", self.limit);
         params.push_opt("market", self.market.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
@@ -214,14 +217,14 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/zones/{zone_id}/recordsets".to_string());
+                .path(format!("/zones/{zone_id}/recordsets", zone_id = "zone_id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "recordsets": {} }));
         });
 
-        let endpoint = Request::builder().build().unwrap();
+        let endpoint = Request::builder().zone_id("zone_id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -232,7 +235,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
-                .path("/zones/{zone_id}/recordsets".to_string())
+                .path(format!("/zones/{zone_id}/recordsets", zone_id = "zone_id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -241,6 +244,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
+            .zone_id("zone_id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

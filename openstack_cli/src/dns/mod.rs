@@ -13,3 +13,4 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! DNS (Designate) API bindings
+pub(super) mod v2;

@@ -122,16 +122,20 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long)]
     ttl: Option<i32>,
-
-    /// ID of the zone
-    ///
-    #[arg(help_heading = "Query parameters", long)]
-    zone_id: Option<String>,
 }
 
 /// Path parameters
 #[derive(Args)]
-struct PathParameters {}
+struct PathParameters {
+    /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
+    ///
+    #[arg(
+        help_heading = "Path parameters",
+        id = "path_param_zone_id",
+        value_name = "ZONE_ID"
+    )]
+    zone_id: String,
+}
 /// Recordsets response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
@@ -229,10 +233,8 @@ impl RecordsetsCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set path parameters
+        ep_builder.zone_id(&self.path.zone_id);
         // Set query parameters
-        if let Some(val) = &self.query.zone_id {
-            ep_builder.zone_id(val);
-        }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
         }

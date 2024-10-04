@@ -29,6 +29,7 @@ use crate::auth;
 use crate::block_storage::v3 as block_storage;
 use crate::catalog;
 use crate::compute::v2 as compute;
+use crate::dns::v2 as dns;
 use crate::identity::v3 as identity;
 use crate::image::v2 as image;
 use crate::load_balancer::v2 as load_balancer;
@@ -168,6 +169,7 @@ pub enum TopLevelCommands {
     BlockStorage(block_storage::BlockStorageCommand),
     Catalog(catalog::CatalogCommand),
     Compute(compute::ComputeCommand),
+    Dns(dns::DnsCommand),
     Identity(identity::IdentityCommand),
     Image(image::ImageCommand),
     LoadBalancer(load_balancer::LoadBalancerCommand),
@@ -202,6 +204,7 @@ impl Cli {
             TopLevelCommands::BlockStorage(args) => args.take_action(self, client).await,
             TopLevelCommands::Catalog(args) => args.take_action(self, client).await,
             TopLevelCommands::Compute(args) => args.take_action(self, client).await,
+            TopLevelCommands::Dns(args) => args.take_action(self, client).await,
             TopLevelCommands::Identity(args) => args.take_action(self, client).await,
             TopLevelCommands::Image(args) => args.take_action(self, client).await,
             TopLevelCommands::LoadBalancer(args) => args.take_action(self, client).await,
