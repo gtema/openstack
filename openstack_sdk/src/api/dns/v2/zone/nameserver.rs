@@ -16,4 +16,4 @@
 // `openstack-codegenerator`.
 
 //! `/v2/zones/{zone_id}/nameservers` REST operations of dns
-pub mod get;
+pub mod list;
