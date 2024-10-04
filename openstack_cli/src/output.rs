@@ -14,7 +14,7 @@
 
 //! Output processing module
 
-use cli_table::{print_stdout, Table};
+use comfy_table::{presets::UTF8_FULL_CONDENSED, ContentArrangement, Table};
 use eyre::WrapErr;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
@@ -115,15 +115,14 @@ impl OutputProcessor {
     /// Produce output for humans (table)
     pub(crate) fn output_human<T: StructTable>(&self, data: &T) -> Result<(), OpenStackCliError> {
         let (headers, table_data) = data.build(&self.config);
-        print_stdout(
-            table_data.table().title(headers).separator(
-                cli_table::format::Separator::builder()
-                    .column(Some(cli_table::format::VerticalLine::default()))
-                    .title(Some(cli_table::format::HorizontalLine::default()))
-                    .build(),
-            ),
-        )
-        .map_err(OpenStackCliError::from)
+        let mut table = Table::new();
+        table
+            .load_preset(UTF8_FULL_CONDENSED)
+            .set_content_arrangement(ContentArrangement::Dynamic)
+            .set_header(headers)
+            .add_rows(table_data);
+        println!("{table}");
+        Ok(())
     }
 
     /// Produce output for machine

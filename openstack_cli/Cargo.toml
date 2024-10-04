@@ -55,8 +55,8 @@ _test_net_vpn = []
 bytes = {workspace = true}
 clap = { workspace = true, features = ["color", "derive", "env"] }
 clap_complete = { workspace = true }
-cli-table = "^0.4"
 color-eyre = { workspace = true }
+comfy-table = { version = "^7.1" }
 dialoguer = { workspace = true, features=["fuzzy-select"] }
 eyre = { workspace = true }
 http = { workspace = true }
