@@ -82,7 +82,7 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// zone_id parameter for /v2/zones/{zone_id}/recordsets API
+    /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
     ///
     #[arg(
         help_heading = "Path parameters",

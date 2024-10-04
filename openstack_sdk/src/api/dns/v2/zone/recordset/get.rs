@@ -33,7 +33,7 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Cow<'a, str>,
 
-    /// zone_id parameter for /v2/zones/{zone_id}/recordsets API
+    /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
     ///
     #[builder(default, setter(into))]
     zone_id: Cow<'a, str>,

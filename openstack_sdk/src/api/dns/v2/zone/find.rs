@@ -19,8 +19,6 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::find::Findable;
 use crate::api::rest_endpoint_prelude::*;
-use crate::api::{ApiError, RestClient};
-use tracing::trace;
 
 use crate::api::dns::v2::zone::{get as Get, list as List};
 
@@ -69,7 +67,7 @@ where {
 
 impl<'a> Findable for Request<'a> {
     type G = Get::Request<'a>;
-    type L = List::Request;
+    type L = List::Request<'a>;
     fn get_ep(&self) -> Get::Request<'a> {
         let mut ep = Get::Request::builder();
         ep.id(self.id.clone());
@@ -78,35 +76,12 @@ impl<'a> Findable for Request<'a> {
         }
         ep.build().unwrap()
     }
-    fn list_ep(&self) -> List::Request {
+    fn list_ep(&self) -> List::Request<'a> {
         let mut ep = List::Request::builder();
         if let Some(headers) = &self._headers {
             ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));
         }
+        ep.name(self.id.clone());
         ep.build().unwrap()
-    }
-    /// Locate zone in a list
-    fn locate_resource_in_list<C: RestClient>(
-        &self,
-        data: Vec<serde_json::Value>,
-    ) -> Result<serde_json::Value, ApiError<C::Error>> {
-        // zone is not supporting name as query parameter to the list.
-        // Therefore it is necessary to go through complete list of results.
-        let mut maybe_result: Option<serde_json::Value> = None;
-        for item in data.iter() {
-            trace!("Validate item {:?} is what we search for", item);
-            if let Some(name_as_val) = item.get("name") {
-                if let Some(name) = name_as_val.as_str() {
-                    if name == self.id {
-                        if maybe_result.is_none() {
-                            maybe_result = Some(item.clone());
-                        } else {
-                            return Err(ApiError::IdNotUnique);
-                        }
-                    }
-                }
-            }
-        }
-        maybe_result.ok_or(ApiError::ResourceNotFound)
     }
 }
