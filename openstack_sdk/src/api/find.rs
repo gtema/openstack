@@ -107,12 +107,25 @@ where
                             status: http::StatusCode::NOT_FOUND,
                             ..
                         }
+                        | crate::api::ApiError::OpenStack {
+                            // Some services return 400 when "ID" is not ID like
+                            status: http::StatusCode::BAD_REQUEST,
+                            ..
+                        }
                         | crate::api::ApiError::OpenStackService {
                             status: http::StatusCode::NOT_FOUND,
                             ..
                         }
+                        | crate::api::ApiError::OpenStackService {
+                            status: http::StatusCode::BAD_REQUEST,
+                            ..
+                        }
                         | crate::api::ApiError::OpenStackUnrecognized {
                             status: http::StatusCode::NOT_FOUND,
+                            ..
+                        }
+                        | crate::api::ApiError::OpenStackUnrecognized {
+                            status: http::StatusCode::BAD_REQUEST,
                             ..
                         } => {
                             let list_ep = self.findable.list_ep();
@@ -162,12 +175,24 @@ where
                             status: http::StatusCode::NOT_FOUND,
                             ..
                         }
+                        | crate::api::ApiError::OpenStack {
+                            status: http::StatusCode::BAD_REQUEST,
+                            ..
+                        }
                         | crate::api::ApiError::OpenStackService {
                             status: http::StatusCode::NOT_FOUND,
                             ..
                         }
+                        | crate::api::ApiError::OpenStackService {
+                            status: http::StatusCode::BAD_REQUEST,
+                            ..
+                        }
                         | crate::api::ApiError::OpenStackUnrecognized {
                             status: http::StatusCode::NOT_FOUND,
+                            ..
+                        }
+                        | crate::api::ApiError::OpenStackUnrecognized {
+                            status: http::StatusCode::BAD_REQUEST,
                             ..
                         } => {
                             let list_ep = self.findable.list_ep();
@@ -370,6 +395,52 @@ mod tests {
         let get_mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
+        });
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [{"id": "abc"}] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
+        get_mock.assert();
+        list_mock.assert();
+        let _err = res.unwrap();
+    }
+
+    #[cfg(feature = "sync")]
+    #[test]
+    fn test_get_0_400_list_1() {
+        let client = MockServerClient::new();
+        let get_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummies/abc");
+            then.status(400);
+        });
+        let list_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET)
+                .path("/dummies")
+                .query_param("name", "abc");
+            then.status(200)
+                .header("content-type", "application/json")
+                .json_body(json!({ "resources": [{"id": "abc"}] }));
+        });
+        let ep = Dummy { id: "abc".into() };
+        let res: Result<DummyResult, _> = api::find(ep).query(&client);
+        get_mock.assert();
+        list_mock.assert();
+        let _err = res.unwrap();
+    }
+
+    #[cfg(feature = "async")]
+    #[tokio::test]
+    async fn test_get_0_400_list_1_async() {
+        let client = MockAsyncServerClient::new().await;
+        let get_mock = client.server.mock(|when, then| {
+            when.method(httpmock::Method::GET).path("/dummies/abc");
+            then.status(400);
         });
         let list_mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::GET)
