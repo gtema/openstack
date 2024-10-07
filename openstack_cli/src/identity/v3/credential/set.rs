@@ -31,11 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::credential::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Updates a credential.
 ///
@@ -53,9 +52,10 @@ pub struct CredentialCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// A `credential` object.
+    ///
+    #[command(flatten)]
+    credential: Credential,
 }
 
 /// Query parameters
@@ -74,22 +74,70 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Credential Body data
+#[derive(Args, Clone)]
+struct Credential {
+    /// The credential itself, as a serialized blob.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    blob: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The ID for the project.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    project_id: Option<String>,
+
+    /// The credential type, such as `ec2` or `cert`. The implementation
+    /// determines the list of supported types.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    _type: Option<String>,
+
+    /// The ID of the user who owns the credential.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    user_id: Option<String>,
+}
+
+/// Credential response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The credential itself, as a serialized blob.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    blob: Option<String>,
+
+    /// The UUID for the credential.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The links for the `credential` resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    /// The credential type, such as `ec2` or `cert`. The implementation
+    /// determines the list of supported types.
+    ///
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
+    _type: Option<String>,
+
+    /// The ID of the user who owns the credential.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    user_id: Option<String>,
 }
 
 impl CredentialCommand {
@@ -110,9 +158,26 @@ impl CredentialCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.credential data
+        let args = &self.credential;
+        let mut credential_builder = set::CredentialBuilder::default();
+        if let Some(val) = &args.blob {
+            credential_builder.blob(val);
         }
+
+        if let Some(val) = &args.project_id {
+            credential_builder.project_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args._type {
+            credential_builder._type(val);
+        }
+
+        if let Some(val) = &args.user_id {
+            credential_builder.user_id(val);
+        }
+
+        ep_builder.credential(credential_builder.build().unwrap());
 
         let ep = ep_builder
             .build()

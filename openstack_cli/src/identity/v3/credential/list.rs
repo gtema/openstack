@@ -31,10 +31,13 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::credential::list;
+use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists all credentials.
 ///
@@ -58,27 +61,69 @@ pub struct CredentialsCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The credential type, such as ec2 or cert. The implementation determines
+    /// the list of supported types.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    _type: Option<String>,
+
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
+}
+
+/// User input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct UserInput {
+    /// User Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
+    user_name: Option<String>,
+    /// User ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
+    user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Credentials response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The credential itself, as a serialized blob.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    blob: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The UUID for the credential.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    project_id: Option<String>,
+
+    /// The credential type, such as `ec2` or `cert`. The implementation
+    /// determines the list of supported types.
+    ///
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type", wide)]
+    _type: Option<String>,
+
+    /// The ID of the user who owns the credential.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    user_id: Option<String>,
 }
 
 impl CredentialsCommand {
@@ -93,18 +138,63 @@ impl CredentialsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(id) = &self.query.user.user_id {
+            // user_id is passed. No need to lookup
+            ep_builder.user_id(id);
+        } else if let Some(name) = &self.query.user.user_name {
+            // user_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_user::Request::builder();
+            warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.user_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
+        }
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }
