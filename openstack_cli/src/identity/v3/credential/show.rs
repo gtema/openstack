@@ -34,7 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::credential::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Shows details for a credential.
 ///
@@ -69,22 +69,45 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Credential response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The credential itself, as a serialized blob.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    blob: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The UUID for the credential.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The links for the `credential` resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    /// The credential type, such as `ec2` or `cert`. The implementation
+    /// determines the list of supported types.
+    ///
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
+    _type: Option<String>,
+
+    /// The ID of the user who owns the credential.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    user_id: Option<String>,
 }
 
 impl CredentialCommand {
