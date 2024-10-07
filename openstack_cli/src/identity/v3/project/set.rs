@@ -76,14 +76,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Options Body data
-#[derive(Args, Clone)]
-#[group(required = false, multiple = true)]
-struct Options {
-    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
-    immutable: Option<bool>,
-}
-
 /// Project Body data
 #[derive(Args, Clone)]
 struct Project {
@@ -92,42 +84,20 @@ struct Project {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The ID of the domain for the project.
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
-    is_domain: Option<bool>,
-
-    /// The name of the project.
+    /// The name of the project, which must be unique within the owning domain.
+    /// A project can have the same name as its domain.
     ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[command(flatten)]
-    options: Option<Options>,
-
-    /// The ID of the parent for the project.
-    ///
-    /// **New in version 3.4**
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    parent_id: Option<String>,
-
-    /// A list of simple strings assigned to a project.
+    /// A list of simple strings assigned to a project. Tags can be used to
+    /// classify projects into groups.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
@@ -148,8 +118,8 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     ///
     #[serde()]
     #[structable(optional)]
@@ -161,12 +131,18 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     ///
     #[serde()]
     #[structable(optional)]
     is_domain: Option<bool>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
 
     /// The name of the project.
     ///
@@ -233,20 +209,8 @@ impl ProjectCommand {
             project_builder.description(Some(val.into()));
         }
 
-        if let Some(val) = &args.domain_id {
-            project_builder.domain_id(Some(val.into()));
-        }
-
         if let Some(val) = &args.enabled {
             project_builder.enabled(*val);
-        }
-
-        if let Some(val) = &args.is_domain {
-            project_builder.is_domain(*val);
-        }
-
-        if let Some(val) = &args.parent_id {
-            project_builder.parent_id(Some(val.into()));
         }
 
         if let Some(val) = &args.name {
@@ -255,14 +219,6 @@ impl ProjectCommand {
 
         if let Some(val) = &args.tags {
             project_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        if let Some(val) = &args.options {
-            let mut options_builder = set::OptionsBuilder::default();
-            if let Some(val) = &val.immutable {
-                options_builder.immutable(*val);
-            }
-            project_builder.options(options_builder.build().expect("A valid object"));
         }
 
         ep_builder.project(project_builder.build().unwrap());

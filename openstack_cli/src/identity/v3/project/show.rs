@@ -85,8 +85,8 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     ///
     #[serde()]
     #[structable(optional)]
@@ -98,12 +98,18 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     ///
     #[serde()]
     #[structable(optional)]
     is_domain: Option<bool>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
 
     /// The name of the project.
     ///

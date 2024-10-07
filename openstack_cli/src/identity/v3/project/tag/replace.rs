@@ -50,6 +50,11 @@ pub struct TagCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// A list of simple strings assigned to a project.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    tags: Vec<String>,
 }
 
 /// Query parameters
@@ -110,6 +115,9 @@ impl TagCommand {
         ep_builder.project_id(&self.path.project_id);
         // Set query parameters
         // Set body parameters
+        // Set Request.tags data
+
+        ep_builder.tags(self.tags.iter().map(Into::into).collect::<Vec<_>>());
 
         let ep = ep_builder
             .build()
