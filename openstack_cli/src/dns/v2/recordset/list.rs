@@ -33,6 +33,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::dns::v2::recordset::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use structable_derive::StructTable;
 
 /// This lists all recordsets owned by a project in Designate
@@ -47,11 +48,86 @@ pub struct RecordsetsCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// Filter results to only show zones that have a type matching the filter
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["CATALOG","PRIMARY","SECONDARY"])]
+    _type: Option<String>,
+
+    /// Filter results to only show recordsets that have a record with data
+    /// matching the filter
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    data: Option<String>,
+
+    /// Filter results to only show zones that have a description matching the
+    /// filter
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    market: Option<String>,
+
+    /// Filter results to only show zones that have a name matching the filter
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    /// Sorts the response by the requested sort direction. A valid value is
+    /// asc (ascending) or desc (descending). Default is asc. You can specify
+    /// multiple pairs of sort key and sort direction query parameters. If you
+    /// omit the sort direction in a pair, the API uses the natural sorting
+    /// direction of the server attribute that is provided as the sort_key.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
+    sort_dir: Option<String>,
+
+    /// Sorts the response by the this attribute value. Default is id. You can
+    /// specify multiple pairs of sort key and sort direction query parameters.
+    /// If you omit the sort direction in a pair, the API uses the natural
+    /// sorting direction of the server attribute that is provided as the
+    /// sort_key.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["created_at","id","name","serial","status","tenant_id","ttl","updated_at"])]
+    sort_key: Option<String>,
+
+    /// Filter results to only show zones that have a status matching the
+    /// filter
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING","SUCCESS","ZONE"])]
+    status: Option<String>,
+
+    /// Filter results to only show zones that have a ttl matching the filter
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    ttl: Option<i32>,
+
+    /// ID for the zone
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    zone_id: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -150,17 +226,52 @@ impl RecordsetsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.zone_id {
+            ep_builder.zone_id(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.market {
+            ep_builder.market(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.ttl {
+            ep_builder.ttl(*val);
+        }
+        if let Some(val) = &self.query.data {
+            ep_builder.data(val);
+        }
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

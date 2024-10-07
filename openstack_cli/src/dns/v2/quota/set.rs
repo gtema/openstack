@@ -31,15 +31,12 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
-use crate::common::parse_key_val;
 use eyre::OptionExt;
 use openstack_sdk::api::dns::v2::quota::set;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 use tracing::warn;
 
 /// Set a projects quotas
@@ -59,9 +56,20 @@ pub struct QuotaCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    #[arg(help_heading = "Body parameters", long)]
+    api_export_size: Option<i32>,
+
+    #[arg(help_heading = "Body parameters", long)]
+    recordset_records: Option<i32>,
+
+    #[arg(help_heading = "Body parameters", long)]
+    zone_records: Option<i32>,
+
+    #[arg(help_heading = "Body parameters", long)]
+    zone_recorsets: Option<i32>,
+
+    #[arg(help_heading = "Body parameters", long)]
+    zones: Option<i32>,
 }
 
 /// Query parameters
@@ -90,22 +98,28 @@ struct ProjectInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_project: bool,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Quota response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    #[serde()]
+    #[structable(optional)]
+    api_export_size: Option<i32>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    #[serde()]
+    #[structable(optional)]
+    recordset_records: Option<i32>,
+
+    #[serde()]
+    #[structable(optional)]
+    zone_records: Option<i32>,
+
+    #[serde()]
+    #[structable(optional)]
+    zone_recorsets: Option<i32>,
+
+    #[serde()]
+    #[structable(optional)]
+    zones: Option<i32>,
 }
 
 impl QuotaCommand {
@@ -168,8 +182,29 @@ impl QuotaCommand {
         }
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.api_export_size data
+        if let Some(arg) = &self.api_export_size {
+            ep_builder.api_export_size(*arg);
+        }
+
+        // Set Request.recordset_records data
+        if let Some(arg) = &self.recordset_records {
+            ep_builder.recordset_records(*arg);
+        }
+
+        // Set Request.zone_records data
+        if let Some(arg) = &self.zone_records {
+            ep_builder.zone_records(*arg);
+        }
+
+        // Set Request.zone_recorsets data
+        if let Some(arg) = &self.zone_recorsets {
+            ep_builder.zone_recorsets(*arg);
+        }
+
+        // Set Request.zones data
+        if let Some(arg) = &self.zones {
+            ep_builder.zones(*arg);
         }
 
         let ep = ep_builder

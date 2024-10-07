@@ -34,7 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::dns::v2::reverse::floatingip::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// List FloatingIP PTR records
 ///
@@ -57,22 +57,50 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Floatingips response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// current action in progress on the resource
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    action: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The floatingip address for this PTR record.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    address: Option<String>,
+
+    /// Description for this PTR record
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// ID for PTR record in the format of \<region>:\<floatingip_id>
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// Domain name for this PTR record
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    ptrdname: Option<String>,
+
+    /// The status of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// Time to live for this PTR record
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    ttl: Option<i32>,
 }
 
 impl FloatingipsCommand {
@@ -87,7 +115,7 @@ impl FloatingipsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
@@ -97,8 +125,9 @@ impl FloatingipsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

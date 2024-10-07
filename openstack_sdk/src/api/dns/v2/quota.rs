@@ -18,5 +18,4 @@
 //! `/v2/quotas/{project_id}` REST operations of dns
 pub mod delete;
 pub mod get;
-pub mod list;
 pub mod set;

@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::recordset::find;
 use openstack_sdk::api::find;
+use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Show an single recordset
 ///
@@ -57,14 +61,9 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
-    ///
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_zone_id",
-        value_name = "ZONE_ID"
-    )]
-    zone_id: String,
+    /// Zone resource for which the operation should be performed.
+    #[command(flatten)]
+    zone: ZoneInput,
 
     /// recordset_id parameter for
     /// /v2/zones/{zone_id}/recordsets/{recordset_id} API
@@ -75,6 +74,18 @@ struct PathParameters {
         value_name = "ID"
     )]
     id: String,
+}
+
+/// Zone input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct ZoneInput {
+    /// Zone Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "ZONE_NAME")]
+    zone_name: Option<String>,
+    /// Zone ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "ZONE_ID")]
+    zone_id: Option<String>,
 }
 /// Recordset response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -102,6 +113,14 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
+
+    /// Links to the resource, and other related resources. When a response has
+    /// been broken into pages, we will include a `next` link that should be
+    /// followed to retrieve all results
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
 
     /// DNS Name for the recordset
     ///
@@ -172,7 +191,39 @@ impl RecordsetCommand {
 
         let mut find_builder = find::Request::builder();
 
-        find_builder.zone_id(&self.path.zone_id);
+        // Process path parameter `zone_id`
+        if let Some(id) = &self.path.zone.zone_id {
+            // zone_id is passed. No need to lookup
+            find_builder.zone_id(id);
+        } else if let Some(name) = &self.path.zone.zone_name {
+            // zone_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_zone::Request::builder();
+            warn!("Querying zone by name (because of `--zone-name` parameter passed) may not be definite. This may fail in which case parameter `--zone-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        find_builder.zone_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        }
         find_builder.id(&self.path.id);
         let find_ep = find_builder
             .build()
