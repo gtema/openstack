@@ -33,8 +33,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::dns::v2::limit::get;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// List project limits
 ///
@@ -57,22 +56,56 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Limit response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The max amount of items allowed per page
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_page_limit: Option<i32>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The max length of a recordset name
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_recordset_name_length: Option<i32>,
+
+    /// The max amount of records contained in a recordset
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_recordset_records: Option<i32>,
+
+    /// The max length of a zone name
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_zone_name_length: Option<i32>,
+
+    /// The max amount of records in a zone
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_zone_records: Option<i32>,
+
+    /// The max amount of recordsets per zone
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_zone_recordsets: Option<i32>,
+
+    /// The max amount of zones for this project
+    ///
+    #[serde()]
+    #[structable(optional)]
+    max_zones: Option<i32>,
+
+    /// The lowest ttl allowed on this system
+    ///
+    #[serde()]
+    #[structable(optional)]
+    min_ttl: Option<i32>,
 }
 
 impl LimitCommand {

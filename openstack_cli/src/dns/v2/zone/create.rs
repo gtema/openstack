@@ -147,6 +147,14 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
+    /// Links to the resource, and other related resources. When a response has
+    /// been broken into pages, we will include a `next` link that should be
+    /// followed to retrieve all results
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
     /// Mandatory for secondary zones. The servers to slave from to get DNS
     /// information
     ///

@@ -22,20 +22,94 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    /// Filter results to only show zones that have a type matching the filter
+    ///
+    #[builder(default, setter(into))]
+    _type: Option<Cow<'a, str>>,
+
+    /// Filter results to only show recordsets that have a record with data
+    /// matching the filter
+    ///
+    #[builder(default, setter(into))]
+    data: Option<Cow<'a, str>>,
+
+    /// Filter results to only show zones that have a description matching the
+    /// filter
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// Requests a page size of items. Returns a number of items up to a limit
+    /// value. Use the limit parameter to make an initial limited request and
+    /// use the ID of the last-seen item from the response as the marker
+    /// parameter value in a subsequent limited request.
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// The ID of the last-seen item. Use the limit parameter to make an
+    /// initial limited request and use the ID of the last-seen item from the
+    /// response as the marker parameter value in a subsequent limited request.
+    ///
+    #[builder(default, setter(into))]
+    market: Option<Cow<'a, str>>,
+
+    /// Filter results to only show zones that have a name matching the filter
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// Sorts the response by the requested sort direction. A valid value is
+    /// asc (ascending) or desc (descending). Default is asc. You can specify
+    /// multiple pairs of sort key and sort direction query parameters. If you
+    /// omit the sort direction in a pair, the API uses the natural sorting
+    /// direction of the server attribute that is provided as the sort_key.
+    ///
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    /// Sorts the response by the this attribute value. Default is id. You can
+    /// specify multiple pairs of sort key and sort direction query parameters.
+    /// If you omit the sort direction in a pair, the API uses the natural
+    /// sorting direction of the server attribute that is provided as the
+    /// sort_key.
+    ///
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
+
+    /// Filter results to only show zones that have a status matching the
+    /// filter
+    ///
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
+    /// Filter results to only show zones that have a ttl matching the filter
+    ///
+    #[builder(default)]
+    ttl: Option<i32>,
+
+    /// ID for the zone
+    ///
+    #[builder(default, setter(into))]
+    zone_id: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Recordset.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -60,7 +134,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -70,7 +144,20 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("zone_id", self.zone_id.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("market", self.market.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("type", self._type.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("ttl", self.ttl);
+        params.push_opt("data", self.data.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -91,6 +178,7 @@ impl RestEndpoint for Request {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl<'a> Pageable for Request<'a> {}
 
 #[cfg(test)]
 mod tests {

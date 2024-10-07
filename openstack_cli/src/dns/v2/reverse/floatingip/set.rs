@@ -31,12 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
-use crate::common::parse_key_val;
 use openstack_sdk::api::dns::v2::reverse::floatingip::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Set a PTR record for the given FloatingIP. The domain if it does not exist
 /// will be provisioned automatically.
@@ -52,9 +50,25 @@ pub struct FloatingipCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// The floatingip address for this PTR record.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    address: Option<String>,
+
+    /// Description for this PTR record
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// Domain name for this PTR record
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    ptrdname: Option<String>,
+
+    /// Time to live for this PTR record
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    ttl: Option<i32>,
 }
 
 /// Query parameters
@@ -73,22 +87,58 @@ struct PathParameters {
     )]
     fip_key: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Floatingip response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// current action in progress on the resource
+    ///
+    #[serde()]
+    #[structable(optional)]
+    action: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The floatingip address for this PTR record.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    address: Option<String>,
+
+    /// Description for this PTR record
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// ID for PTR record in the format of \<region>:\<floatingip_id>
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// Links to the resource, and other related resources. When a response has
+    /// been broken into pages, we will include a `next` link that should be
+    /// followed to retrieve all results
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// Domain name for this PTR record
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ptrdname: Option<String>,
+
+    /// The status of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// Time to live for this PTR record
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ttl: Option<i32>,
 }
 
 impl FloatingipCommand {
@@ -109,8 +159,24 @@ impl FloatingipCommand {
         ep_builder.fip_key(&self.path.fip_key);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.address data
+        if let Some(arg) = &self.address {
+            ep_builder.address(arg);
+        }
+
+        // Set Request.description data
+        if let Some(arg) = &self.description {
+            ep_builder.description(arg);
+        }
+
+        // Set Request.ptrdname data
+        if let Some(arg) = &self.ptrdname {
+            ep_builder.ptrdname(Some(arg.into()));
+        }
+
+        // Set Request.ttl data
+        if let Some(arg) = &self.ttl {
+            ep_builder.ttl(*arg);
         }
 
         let ep = ep_builder
