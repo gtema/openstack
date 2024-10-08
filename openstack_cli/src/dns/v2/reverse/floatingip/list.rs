@@ -33,7 +33,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::dns::v2::reverse::floatingip::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 use structable_derive::StructTable;
 
 /// List FloatingIP PTR records
@@ -115,7 +114,7 @@ impl FloatingipsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let mut ep_builder = list::Request::builder();
+        let ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters

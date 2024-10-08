@@ -12,11 +12,9 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod limit;
-mod quota;
-mod recordset;
-mod reverse;
-mod zone;
+mod list_autogen;
+mod set_autogen;
+mod show_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -25,7 +23,10 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("dns").arg("--help");
+    cmd.arg("dns")
+        .arg("reverse")
+        .arg("floatingip")
+        .arg("--help");
     cmd.assert().success();
 
     Ok(())
