@@ -81,11 +81,6 @@ pub struct Request<'a> {
     #[builder(default)]
     pub(crate) _type: Option<Type>,
 
-    /// The name of the zone that contains this recordset
-    ///
-    #[builder(default, setter(into))]
-    pub(crate) zone_name: Option<Cow<'a, str>>,
-
     /// zone_id parameter for /v2/zones/{zone_id}/recordsets/{recordset_id} API
     ///
     #[builder(default, setter(into))]
@@ -154,9 +149,6 @@ impl<'a> RestEndpoint for Request<'a> {
         }
         if let Some(val) = &self.description {
             params.push("description", serde_json::to_value(val)?);
-        }
-        if let Some(val) = &self.zone_name {
-            params.push("zone_name", serde_json::to_value(val)?);
         }
         if let Some(val) = &self._type {
             params.push("type", serde_json::to_value(val)?);
