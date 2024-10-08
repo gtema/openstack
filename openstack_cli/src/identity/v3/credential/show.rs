@@ -84,7 +84,7 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The links for the `credential` resource.
+    /// The link to the resources in question.
     ///
     #[serde()]
     #[structable(optional, pretty)]

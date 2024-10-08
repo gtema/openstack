@@ -31,6 +31,11 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// A list of simple strings assigned to a project.
+    ///
+    #[builder(setter(into))]
+    pub(crate) tags: Vec<Cow<'a, str>>,
+
     /// project_id parameter for /v3/projects/{project_id}/tags/{value} API
     ///
     #[builder(default, setter(into))]
@@ -88,6 +93,14 @@ impl<'a> RestEndpoint for Request<'a> {
         QueryParams::default()
     }
 
+    fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
+        let mut params = JsonBodyParams::default();
+
+        params.push("tags", serde_json::to_value(&self.tags)?);
+
+        params.into_body()
+    }
+
     fn service_type(&self) -> ServiceType {
         ServiceType::Identity
     }
@@ -122,7 +135,11 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .tags(Vec::from(["foo".into()]))
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Identity
         );
     }
@@ -130,7 +147,12 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert_eq!(
-            Request::builder().build().unwrap().response_key().unwrap(),
+            Request::builder()
+                .tags(Vec::from(["foo".into()]))
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
             "tags"
         );
     }
@@ -150,7 +172,11 @@ mod tests {
                 .json_body(json!({ "tags": {} }));
         });
 
-        let endpoint = Request::builder().project_id("project_id").build().unwrap();
+        let endpoint = Request::builder()
+            .project_id("project_id")
+            .tags(Vec::from(["foo".into()]))
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -174,6 +200,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .project_id("project_id")
+            .tags(Vec::from(["foo".into()]))
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

@@ -27,20 +27,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::Value;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
-
-/// The resource options for the project. Available resource options are
-/// `immutable`.
-///
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct Options {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) immutable: Option<bool>,
-}
 
 /// A `project` object
 ///
@@ -53,70 +40,26 @@ pub struct Project<'a> {
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The ID of the domain for the project.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) is_domain: Option<bool>,
-
-    /// The name of the project.
+    /// The name of the project, which must be unique within the owning domain.
+    /// A project can have the same name as its domain.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
-    /// The resource options for the project. Available resource options are
-    /// `immutable`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) options: Option<Options>,
-
-    /// The ID of the parent for the project.
-    ///
-    /// **New in version 3.4**
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) parent_id: Option<Option<Cow<'a, str>>>,
-
-    /// A list of simple strings assigned to a project.
+    /// A list of simple strings assigned to a project. Tags can be used to
+    /// classify projects into groups.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) tags: Option<Vec<Cow<'a, str>>>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    #[serde(flatten)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
-}
-
-impl<'a> ProjectBuilder<'a> {
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 #[derive(Builder, Debug, Clone)]

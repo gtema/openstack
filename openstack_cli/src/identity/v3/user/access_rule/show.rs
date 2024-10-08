@@ -36,7 +36,8 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::access_rule::get;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
-use structable_derive::StructTable;
+use serde_json::Value;
+use std::collections::HashMap;
 use tracing::warn;
 
 /// Show details of an access rule.
@@ -92,24 +93,22 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// AccessRule response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
 
-    #[serde()]
-    #[structable(optional)]
-    method: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    path: Option<String>,
-
-    #[serde()]
-    #[structable(optional)]
-    service: Option<String>,
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
 }
 
 impl AccessRuleCommand {
