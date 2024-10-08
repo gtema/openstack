@@ -20,7 +20,10 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
+mod limit;
+mod quota;
 mod recordset;
+mod reverse;
 mod zone;
 
 /// DNS service (Designate) operations
@@ -35,7 +38,10 @@ pub struct DnsCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum DnsCommands {
+    Limit(Box<limit::LimitCommand>),
+    Quota(Box<quota::QuotaCommand>),
     Recordset(Box<recordset::RecordsetCommand>),
+    Reverse(Box<reverse::ReverseCommand>),
     Zone(Box<zone::ZoneCommand>),
 }
 
@@ -49,7 +55,10 @@ impl DnsCommand {
         session.discover_service_endpoint(&ServiceType::Dns).await?;
 
         match &self.command {
+            DnsCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
+            DnsCommands::Quota(cmd) => cmd.take_action(parsed_args, session).await,
             DnsCommands::Recordset(cmd) => cmd.take_action(parsed_args, session).await,
+            DnsCommands::Reverse(cmd) => cmd.take_action(parsed_args, session).await,
             DnsCommands::Zone(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
