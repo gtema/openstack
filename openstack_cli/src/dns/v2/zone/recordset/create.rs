@@ -63,6 +63,14 @@ pub struct RecordsetCommand {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    records: Option<Vec<String>>,
+
     /// TTL (Time to Live) for the recordset.
     ///
     #[arg(help_heading = "Body parameters", long)]
@@ -162,6 +170,15 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     project_id: Option<String>,
+
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    records: Option<Value>,
 
     /// The status of the resource.
     ///
@@ -265,6 +282,11 @@ impl RecordsetCommand {
         // Set Request.name data
         if let Some(arg) = &self.name {
             ep_builder.name(arg);
+        }
+
+        // Set Request.records data
+        if let Some(arg) = &self.records {
+            ep_builder.records(arg.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         // Set Request.ttl data

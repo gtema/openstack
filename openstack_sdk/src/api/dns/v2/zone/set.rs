@@ -22,13 +22,26 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde_json::Value;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// Description for this zone
+    ///
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Cow<'a, str>>,
+
+    /// e-mail for the zone. Used in SOA records for the zone
+    ///
+    #[builder(default, setter(into))]
+    pub(crate) email: Option<Cow<'a, str>>,
+
+    /// TTL (Time to Live) for the zone.
+    ///
+    #[builder(default)]
+    pub(crate) ttl: Option<i32>,
+
     /// zone_id parameter for /v2/zones/{zone_id} API
     ///
     #[builder(default, setter(into))]
@@ -36,9 +49,6 @@ pub struct Request<'a> {
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -70,18 +80,6 @@ where {
             .extend(iter.map(Into::into));
         self
     }
-
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 impl<'a> RestEndpoint for Request<'a> {
@@ -100,8 +98,14 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        for (key, val) in &self._properties {
-            params.push(key.clone(), val.clone());
+        if let Some(val) = &self.email {
+            params.push("email", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.ttl {
+            params.push("ttl", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.description {
+            params.push("description", serde_json::to_value(val)?);
         }
 
         params.into_body()
