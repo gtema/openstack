@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::recordset::find;
 use openstack_sdk::api::dns::v2::zone::recordset::set;
@@ -39,7 +38,7 @@ use openstack_sdk::api::find;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 use tracing::warn;
 
 /// Update a recordset
@@ -55,9 +54,23 @@ pub struct RecordsetCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// Description for this recordset
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    records: Option<Vec<String>>,
+
+    /// TTL (Time to Live) for the recordset.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    ttl: Option<i32>,
 }
 
 /// Query parameters
@@ -93,22 +106,103 @@ struct ZoneInput {
     #[arg(long, help_heading = "Path parameters", value_name = "ZONE_ID")]
     zone_id: Option<String>,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Recordset response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// current action in progress on the resource
+    ///
+    #[serde()]
+    #[structable(optional)]
+    action: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// Date / Time when resource was created.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    /// Description for this recordset
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// ID for the resource
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// Links to the resource, and other related resources. When a response has
+    /// been broken into pages, we will include a `next` link that should be
+    /// followed to retrieve all results
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// DNS Name for the recordset
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// ID for the project that owns the resource
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    records: Option<Value>,
+
+    /// The status of the resource.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    status: Option<String>,
+
+    /// TTL (Time to Live) for the recordset.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    ttl: Option<i32>,
+
+    /// They RRTYPE of the recordset.
+    ///
+    #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
+    _type: Option<String>,
+
+    /// Date / Time when resource last updated.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
+
+    /// Version of the resource
+    ///
+    #[serde()]
+    #[structable(optional)]
+    version: Option<i32>,
+
+    /// ID for the zone that contains this recordset
+    ///
+    #[serde()]
+    #[structable(optional)]
+    zone_id: Option<String>,
+
+    /// The name of the zone that contains this recordset
+    ///
+    #[serde()]
+    #[structable(optional)]
+    zone_name: Option<String>,
 }
 
 impl RecordsetCommand {
@@ -208,8 +302,19 @@ impl RecordsetCommand {
         ep_builder.id(resource_id.clone());
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.description data
+        if let Some(arg) = &self.description {
+            ep_builder.description(arg);
+        }
+
+        // Set Request.records data
+        if let Some(arg) = &self.records {
+            ep_builder.records(arg.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        // Set Request.ttl data
+        if let Some(arg) = &self.ttl {
+            ep_builder.ttl(*arg);
         }
 
         let ep = ep_builder

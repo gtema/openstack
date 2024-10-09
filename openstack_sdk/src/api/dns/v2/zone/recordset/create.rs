@@ -71,6 +71,14 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
 
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[builder(default, setter(into))]
+    pub(crate) records: Option<Vec<Cow<'a, str>>>,
+
     /// TTL (Time to Live) for the recordset.
     ///
     #[builder(default)]
@@ -152,6 +160,9 @@ impl<'a> RestEndpoint for Request<'a> {
         }
         if let Some(val) = &self._type {
             params.push("type", serde_json::to_value(val)?);
+        }
+        if let Some(val) = &self.records {
+            params.push("records", serde_json::to_value(val)?);
         }
 
         params.into_body()

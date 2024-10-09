@@ -34,6 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::dns::v2::recordset::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// This lists all recordsets owned by a project in Designate
@@ -170,6 +171,15 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     project_id: Option<String>,
+
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    records: Option<Value>,
 
     /// The status of the resource.
     ///
