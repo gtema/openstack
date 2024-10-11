@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.0...openstack_cli-v0.8.1) - 2024-10-11
+
+### Added
+
+- Fix dns schema mapping names ([#648](https://github.com/gtema/openstack/pull/648))
+- Regenerate identity.project ([#646](https://github.com/gtema/openstack/pull/646))
+- Enable few more DNS commands ([#645](https://github.com/gtema/openstack/pull/645))
+- Extend Designate schemas ([#642](https://github.com/gtema/openstack/pull/642))
+- Update identity.credentials schema ([#643](https://github.com/gtema/openstack/pull/643))
+
+### Fixed
+
+- Fix dns recordset schema ([#647](https://github.com/gtema/openstack/pull/647))
+
 ## [0.8.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.7.3...openstack_cli-v0.8.0) - 2024-10-04
 
 ### Added
