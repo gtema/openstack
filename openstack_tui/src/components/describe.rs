@@ -179,10 +179,10 @@ impl Describe {
 
     fn render(&mut self, f: &mut Frame<'_>, area: Rect) {
         let block = Block::default()
-            .title(
-                Title::from(self.title.clone().unwrap_or(String::from(" Describe ")))
-                    .alignment(Alignment::Center),
-            )
+            .title(Title::from(
+                self.title.clone().unwrap_or(String::from(" Describe ")),
+            ))
+            .title_alignment(Alignment::Center)
             .title_style(match self.is_focused {
                 true => Style::new().white(),
                 false => Style::default(),

@@ -29,7 +29,7 @@ json5 = "^0.4"
 lazy_static = "^1.5"
 openstack_sdk = { path = "../openstack_sdk", version = "^0.13", default-features = false, features = ["async", "block_storage", "compute", "identity", "image", "network"] }
 pretty_assertions = "^1.4"
-ratatui = { version = "^0.28", features = ["serde", "macros"] }
+ratatui = { version = "^0.29", features = ["serde", "macros"] }
 serde = { workspace = true  }
 serde_json = { workspace = true }
 serde_yaml = "^0.9"
