@@ -361,7 +361,7 @@ where
                     .iter()
                     .map(|v| Constraint::Length((v + 1).try_into().unwrap())),
             )
-            .highlight_style(selected_style)
+            .row_highlight_style(selected_style)
             .bg(self.config.styles.buffer_bg)
             .block(block)
             .highlight_spacing(HighlightSpacing::Always);
