@@ -166,7 +166,7 @@ where
             Focus::Table => {
                 let i = match self.state.selected() {
                     Some(i) => {
-                        if i < self.items.len() {
+                        if i < self.items.len() - 1 {
                             i + 1
                         } else {
                             i
