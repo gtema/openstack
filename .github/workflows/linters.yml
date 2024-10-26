@@ -37,7 +37,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install Rust ${{ env.rust_min }}
         uses: dtolnay/rust-toolchain@7b1c307e0dcbda6122208f10795a713336a9b35a # stable
@@ -63,7 +63,7 @@ jobs:
         with:
           egress-policy: audit
 
-      - uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install Rust ${{ env.rust_min }}
         uses: dtolnay/rust-toolchain@7b1c307e0dcbda6122208f10795a713336a9b35a # stable
@@ -100,7 +100,7 @@ jobs:
         egress-policy: audit
 
     - name: Checkout Actions Repository
-      uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
     - name: Check spelling of file.txt
       uses: crate-ci/typos@0d9e0c2c1bd7f770f6eb90f87780848ca02fc12c # v1.26.8
