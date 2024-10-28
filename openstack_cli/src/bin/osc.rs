@@ -23,6 +23,8 @@ use color_eyre::section::PanicMessage;
 use std::env;
 use std::fmt;
 
+use openstack_cli::error::OpenStackCliError;
+
 #[tokio::main]
 async fn main() -> Result<(), Report> {
     initialize_panic_handler()?;
@@ -33,7 +35,11 @@ async fn main() -> Result<(), Report> {
 struct MyPanicMessage;
 
 impl PanicMessage for MyPanicMessage {
-    fn display(&self, pi: &std::panic::PanicInfo<'_>, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn display(
+        &self,
+        pi: &std::panic::PanicHookInfo<'_>,
+        f: &mut fmt::Formatter<'_>,
+    ) -> fmt::Result {
         writeln!(f, "{}", "The application panicked (crashed).".red())?;
         writeln!(
             f,
@@ -84,7 +90,16 @@ fn initialize_panic_handler() -> Result<()> {
         .issue_url(concat!(env!("CARGO_PKG_REPOSITORY"), "/issues/new"))
         .issue_filter(|kind| match kind {
             color_eyre::ErrorKind::NonRecoverable(_) => true,
-            color_eyre::ErrorKind::Recoverable(error) => !error.is::<std::fmt::Error>(),
+            color_eyre::ErrorKind::Recoverable(error) => {
+                match error.downcast_ref::<OpenStackCliError>() {
+                    Some(OpenStackCliError::Auth { .. }) => false,
+                    Some(OpenStackCliError::ConfigError { .. }) => false,
+                    Some(OpenStackCliError::ConnectionNotFound { .. }) => false,
+                    Some(OpenStackCliError::OpenStackApi { .. }) => false,
+                    Some(OpenStackCliError::ReScope { .. }) => false,
+                    _ => true,
+                }
+            }
         })
         .add_issue_metadata("version", env!("CARGO_PKG_VERSION"))
         .add_issue_metadata("command", command)
