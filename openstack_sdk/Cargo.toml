@@ -51,7 +51,7 @@ futures = {workspace = true}
 futures-util = { workspace = true }
 http = { workspace = true }
 http-body-util = "^0.1"
-hyper = { version = "^1.4", features = ["full"] }
+hyper = { version = "^1.5", features = ["full"] }
 hyper-util = { version = "^0.1", features = ["full"] }
 itertools = { workspace = true }
 json-patch = { workspace = true }
