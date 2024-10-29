@@ -85,13 +85,13 @@ with a dedicated installer in every release and can be retrieved with the
 following command:
 
 ```console
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_cli-v0.8.1/openstack_cli-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_cli-v0.8.2/openstack_cli-installer.sh | sh
 ```
 
 TUI can be installed similarly:
 
 ```console
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_tui-v0.1.5/openstack_tui-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/gtema/openstack/releases/download/openstack_tui-v0.1.6/openstack_tui-installer.sh | sh
 ```
 
 

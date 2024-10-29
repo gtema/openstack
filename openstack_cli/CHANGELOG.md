@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.1...openstack_cli-v0.8.2) - 2024-10-29
+
+### Fixed
+
+- Exclude some errors from 'report issue' ([#689](https://github.com/gtema/openstack/pull/689))
+
+### Other
+
+- Update dependencies ([#691](https://github.com/gtema/openstack/pull/691))
+
 ## [0.8.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.0...openstack_cli-v0.8.1) - 2024-10-11
 
 ### Added
