@@ -119,6 +119,11 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     project_id: Option<String>,
 
+    /// revision_number query parameter for /v2.0/address-groups API
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    revision_number: Option<String>,
+
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     ///
@@ -145,6 +150,10 @@ struct ResponseData {
     addresses: Option<Value>,
 
     #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
+    #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
@@ -165,6 +174,14 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, wide)]
     project_id: Option<String>,
+
+    #[serde()]
+    #[structable(optional, wide)]
+    revision_number: Option<i32>,
+
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
 }
 
 impl AddressGroupsCommand {
@@ -194,6 +211,9 @@ impl AddressGroupsCommand {
         }
         if let Some(val) = &self.query.project_id {
             ep_builder.project_id(val);
+        }
+        if let Some(val) = &self.query.revision_number {
+            ep_builder.revision_number(val);
         }
         if let Some(val) = &self.query.sort_key {
             ep_builder.sort_key(val);

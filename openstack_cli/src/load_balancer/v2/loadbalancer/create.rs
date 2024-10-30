@@ -113,6 +113,17 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Protocol {
+    Http,
+    Https,
+    Prometheus,
+    Sctp,
+    Tcp,
+    TerminatedHttps,
+    Udp,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum Type {
     AppCookie,
     HttpCookie,

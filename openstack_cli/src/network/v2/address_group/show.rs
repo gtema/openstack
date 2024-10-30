@@ -83,6 +83,10 @@ struct ResponseData {
     #[structable(optional, pretty)]
     addresses: Option<Value>,
 
+    #[serde()]
+    #[structable(optional)]
+    created_at: Option<String>,
+
     /// A human-readable description for the resource.
     ///
     #[serde()]
@@ -106,6 +110,14 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     project_id: Option<String>,
+
+    #[serde()]
+    #[structable(optional)]
+    revision_number: Option<i32>,
+
+    #[serde()]
+    #[structable(optional)]
+    updated_at: Option<String>,
 }
 
 impl AddressGroupCommand {
