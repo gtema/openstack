@@ -212,6 +212,11 @@ impl App {
             // Normal global keybinding
             action_tx.send(action.action.clone())?;
         } else if key.code == KeyCode::Esc && self.active_popup.is_some() {
+            if let Some(popup_type) = &self.active_popup {
+                if let Some(popup) = self.popups.get_mut(popup_type) {
+                    popup.handle_key_events(key)?;
+                }
+            }
             // Close the popup
             self.active_popup = None;
             if !self.cloud_connected {

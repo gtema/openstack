@@ -157,6 +157,10 @@ impl Component for FuzzySelectList {
                 };
                 self.filter()?;
             }
+            KeyCode::Esc => {
+                self.input = None;
+                self.filter()?;
+            }
             KeyCode::Char(i) => {
                 self.input.get_or_insert(String::new()).push(*i);
                 self.filter()?;
