@@ -89,6 +89,11 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     project_id: Option<Cow<'a, str>>,
 
+    /// revision_number query parameter for /v2.0/address-groups API
+    ///
+    #[builder(default, setter(into))]
+    revision_number: Option<Cow<'a, str>>,
+
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     ///
@@ -151,6 +156,7 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("name", self.name.as_ref());
         params.push_opt("description", self.description.as_ref());
         params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("revision_number", self.revision_number.as_ref());
         params.push_opt("sort_key", self.sort_key.as_ref());
         params.push_opt("sort_dir", self.sort_dir.as_ref());
         params.push_opt("limit", self.limit);
