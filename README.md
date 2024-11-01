@@ -1,4 +1,7 @@
-# OpenStack Rust
+# OpenStack Client Tools
+
+<img src="https://github.com/user-attachments/assets/1b8bf378-3ba1-400c-9b07-8dd406975377" width="200"/>
+
 
 Welcome to the OpenStack<->Rust project.
 
