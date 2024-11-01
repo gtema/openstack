@@ -33,6 +33,7 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
+use eyre::eyre;
 use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::user::credential::os_ec2::create;

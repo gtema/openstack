@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use bytes::Bytes;
+use eyre::eyre;
 use eyre::OptionExt;
 use http::Response;
 use openstack_sdk::api::find_by_name;
@@ -135,14 +136,19 @@ impl QuotaCommand {
                 }
             };
         } else if self.path.project.current_project {
-            ep_builder.project_id(
-                client
-                    .get_auth_info()
-                    .ok_or_eyre("Cannot determine current authentication information")?
-                    .token
-                    .user
-                    .id,
-            );
+            let token = client
+                .get_auth_info()
+                .ok_or_eyre("Cannot determine current authentication information")?
+                .token;
+            if let Some(project) = token.project {
+                ep_builder.project_id(
+                    project
+                        .id
+                        .ok_or_eyre("Project ID is missing in the project auth info")?,
+                );
+            } else {
+                return Err(eyre!("Current project information can not be identified").into());
+            }
         }
         // Set query parameters
         // Set body parameters

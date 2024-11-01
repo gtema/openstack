@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::eyre;
 use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
@@ -171,14 +172,23 @@ impl InheritedToProjectCommand {
                 }
             };
         } else if self.path.domain.current_domain {
-            ep_builder.domain_id(
-                client
-                    .get_auth_info()
-                    .ok_or_eyre("Cannot determine current authentication information")?
-                    .token
-                    .user
-                    .id,
-            );
+            let token = client
+                .get_auth_info()
+                .ok_or_eyre("Cannot determine current authentication information")?
+                .token;
+            if let Some(domain) = token.domain {
+                ep_builder.domain_id(domain.id.ok_or_eyre("Domain ID is missing in the auth")?);
+            } else if let Some(project) = token.project {
+                ep_builder.domain_id(
+                    project
+                        .domain
+                        .ok_or_eyre("Domain information is missing in the project auth info")?
+                        .id
+                        .ok_or_eyre("Domain ID is missing in the project.domain auth info")?,
+                );
+            } else {
+                return Err(eyre!("Current domain information can not be identified").into());
+            }
         }
 
         // Process path parameter `user_id`

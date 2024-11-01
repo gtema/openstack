@@ -31,10 +31,15 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::eyre;
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::project::get;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
+use tracing::warn;
 
 /// GET operation on
 /// /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}
@@ -68,16 +73,24 @@ struct PathParameters {
     )]
     endpoint_group_id: String,
 
-    /// project_id parameter for
-    /// /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}/projects/{project_id}
-    /// API
-    ///
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_id",
-        value_name = "ID"
-    )]
-    id: String,
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
@@ -113,7 +126,40 @@ impl ProjectCommand {
 
         // Set path parameters
         ep_builder.endpoint_group_id(&self.path.endpoint_group_id);
-        ep_builder.id(&self.path.id);
+
+        // Process path parameter `id`
+        if let Some(id) = &self.path.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.id(id);
+        } else if let Some(name) = &self.path.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        }
         // Set query parameters
         // Set body parameters
 
