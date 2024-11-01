@@ -32,6 +32,7 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use bytes::Bytes;
+use eyre::eyre;
 use eyre::OptionExt;
 use http::Response;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;

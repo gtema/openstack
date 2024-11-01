@@ -31,8 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::eyre;
 use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::project::user::role::list;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
@@ -63,19 +65,28 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// project_id parameter for
-    /// /v3/projects/{project_id}/users/{user_id}/roles API
-    ///
-    #[arg(
-        help_heading = "Path parameters",
-        id = "path_param_project_id",
-        value_name = "PROJECT_ID"
-    )]
-    project_id: String,
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
 
     /// User resource for which the operation should be performed.
     #[command(flatten)]
     user: UserInput,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
 }
 
 /// User input select group
@@ -129,7 +140,54 @@ impl RolesCommand {
         let mut ep_builder = list::Request::builder();
 
         // Set path parameters
-        ep_builder.project_id(&self.path.project_id);
+
+        // Process path parameter `project_id`
+        if let Some(id) = &self.path.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.path.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.path.project.current_project {
+            let token = client
+                .get_auth_info()
+                .ok_or_eyre("Cannot determine current authentication information")?
+                .token;
+            if let Some(project) = token.project {
+                ep_builder.project_id(
+                    project
+                        .id
+                        .ok_or_eyre("Project ID is missing in the project auth info")?,
+                );
+            } else {
+                return Err(eyre!("Current project information can not be identified").into());
+            }
+        }
 
         // Process path parameter `user_id`
         if let Some(id) = &self.path.user.user_id {

@@ -33,6 +33,7 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
+use eyre::eyre;
 use eyre::OptionExt;
 use openstack_sdk::api::dns::v2::zone::find as find_zone;
 use openstack_sdk::api::dns::v2::zone::task::pool_move;
