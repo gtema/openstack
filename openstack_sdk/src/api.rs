@@ -77,7 +77,7 @@
 //! ```
 //!
 //! When identifier is clearly known to be `name` [`find`](fn@find_by_name) is more useful and is
-//! saving unnecessary API roundtrip for attempting to query resource by the identificator and
+//! saving unnecessary API roundtrip for attempting to query resource by the identifier and
 //! immediately triggers listing operation.
 //!
 //! ```
