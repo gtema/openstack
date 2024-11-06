@@ -61,8 +61,6 @@ impl PlacementCommand {
             .discover_service_endpoint(&ServiceType::Placement)
             .await?;
 
-        match &self.command {
-            _ => todo!(),
-        }
+        todo!()
     }
 }
