@@ -40,10 +40,8 @@ happening in OpenStack to produce specs for majority of the services. Main
 component responsible for that is
 [codegenerator](https://opendev.org/openstack/codegenerator). Apart of
 inspecting source code of the selected OpenStack services it is also capable of
-generating of the tools in this repository.
-
-There is of course a set of the framework code, but the REST API wrapping and
-commands implementation is fully generated.
+generating tools in this repository. There is of course a set of the framework
+code, but the REST API wrapping and commands implementation is fully generated.
 
 At the end of the day it means that there is no need to touch the generated
 code at all. Once resources available in the OpenAPI spec of the service are

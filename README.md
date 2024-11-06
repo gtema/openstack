@@ -1,6 +1,16 @@
-# OpenStack Client Tools
+<div align="center">
+<img src="doc/src/logo-horizontal-crab.png" width="400"/>
+</div>
+<p align="center">Control your OpenStack cloud resources</p>
 
-<img src="doc/src/logo-horizontal-crab.png" width="200"/>
+[![Build](https://github.com/gtema/openstack/actions/workflows/functional.yml/badge.svg)](https://github.com/gtema/openstack/actions/workflows/functional.yml)
+[![Build](https://github.com/gtema/openstack/actions/workflows/ci.yml/badge.svg)](https://github.com/gtema/openstack/actions/workflows/ci.yml)
+[![crates.io](https://img.shields.io/crates/v/openstack_cli.svg)](https://crates.io/crates/openstack_cli)
+[![docs](https://docs.rs/openstack_cli/badge.svg)](https://docs.rs/openstack_cli)
+[![Rust](https://img.shields.io/badge/rust-1.76%2B-blue.svg?maxAge=3600)](https://github.com/rust-lang/rust/blob/master/RELEASES.md#version-1760-2024-02-08)
+
+
+# OpenStack Client Tools
 
 Welcome to the world of next generation OpenStack client tools written in Rust.
 
@@ -40,10 +50,8 @@ happening in OpenStack to produce specs for majority of the services. Main
 component responsible for that is
 [codegenerator](https://opendev.org/openstack/codegenerator). Apart of
 inspecting source code of the selected OpenStack services it is also capable of
-generating of the tools in this repository.
-
-There is of course a set of the framework code, but the REST API wrapping and
-commands implementation is fully generated.
+generating tools in this repository. There is of course a set of the framework
+code, but the REST API wrapping and commands implementation is fully generated.
 
 At the end of the day it means that there is no need to touch the generated
 code at all. Once resources available in the OpenAPI spec of the service are
