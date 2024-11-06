@@ -10,4 +10,12 @@ especially in the terminal this is even harder. Therefore primary goal of
 `ostui` is to provide a fast navigation through existing resources eventually
 with some operations on those.
 
-![](./tui.png)
+## Features
+
+- switching clouds within tui session
+- switching project scope without exploding `clouds.yaml`
+- resource filtering
+- navigation through dependent resources
+- k9s similar interface with (hopefully) intuitive navigation
+
+![](./tui-images.png)

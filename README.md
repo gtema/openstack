@@ -1,6 +1,8 @@
-# OpenStack Rust
+# OpenStack Client Tools
 
-Welcome to the OpenStack<->Rust project.
+<img src="doc/src/logo-horizontal-crab.png" width="200"/>
+
+Welcome to the world of next generation OpenStack client tools written in Rust.
 
 As a programming language Rust is getting more and more traction in the low
 level programming. It has very unique programming safety features what makes it
