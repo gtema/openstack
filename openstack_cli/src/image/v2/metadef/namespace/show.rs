@@ -37,22 +37,9 @@ use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
-/// Gets details for a namespace.
-///
-/// The response body shows a single namespace entity with all details
-/// including properties, objects, and resource type associations.
-///
-/// If the namespace contains a resource type association that specifies a
-/// prefix, you may optionally include the name of the resource type as a query
-/// parameter. In that case, the prefix will be applied to all property names
-/// in the response. (See below for an example.)
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Get namespace details")]
 pub struct NamespaceCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -83,75 +70,58 @@ struct PathParameters {
 /// Namespace response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of namespace creation
     ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
-    /// The description of the namespace.
+    /// Provides a user friendly description of the namespace.
     ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// User-friendly name to use in a UI to display the namespace name.
+    /// The user friendly name for the namespace. Used by UI if available.
     ///
     #[serde()]
     #[structable(optional)]
     display_name: Option<String>,
 
-    /// An identifier (a name) for the namespace. The value must be unique
-    /// across all users.
+    /// The unique namespace text.
     ///
     #[serde()]
     #[structable()]
     namespace: String,
 
-    /// One or more object definitions of the namespace.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     objects: Option<Value>,
 
-    /// An identifier for the owner of this resource, usually the tenant ID.
+    /// Owner of the namespace.
     ///
     #[serde()]
     #[structable(optional)]
     owner: Option<String>,
 
-    /// A dictionary of key:value pairs, where each value is a *property*
-    /// object as defined by the
-    /// [Metadefs Property Schema](#md-schema-property).
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     properties: Option<Value>,
 
-    /// Namespace protection for deletion, either `true` or `false`.
+    /// If true, namespace will not be deletable.
     ///
     #[serde()]
     #[structable(optional)]
     protected: Option<bool>,
 
-    /// A list, each element of which is described by the
-    /// [Metadefs Resource Type Association Schema](#md-schema-rt-assoc).
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     resource_type_associations: Option<Value>,
 
-    /// The URI of the JSON schema describing a *namespace*.
-    ///
     #[serde()]
     #[structable(optional)]
     schema: Option<String>,
 
-    /// The URI for this resource.
-    ///
     #[serde(rename = "self")]
     #[structable(optional, title = "self")]
     _self: Option<String>,
@@ -166,7 +136,7 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 
-    /// The namespace visibility, either `public` or `private`.
+    /// Scope of namespace accessibility.
     ///
     #[serde()]
     #[structable(optional)]

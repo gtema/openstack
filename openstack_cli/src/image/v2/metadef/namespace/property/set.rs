@@ -38,14 +38,9 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Updates a property definition.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 403, 404, 409
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Update property definition")]
 pub struct PropertyCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -55,101 +50,60 @@ pub struct PropertyCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// Describes extra items, if you use tuple typing. If the value of `items`
-    /// is an array (tuple typing) and the instance is longer than the list of
-    /// schemas in `items`, the additional items are described by the schema in
-    /// this property. If this value is `false`, the instance cannot be longer
-    /// than the list of schemas in `items`. If this value is `true`, that is
-    /// equivalent to the empty schema (anything goes).
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     additional_items: Option<bool>,
 
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     _default: Option<Value>,
 
-    /// The description of the namespace.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// Enumerated list of property values.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     _enum: Option<Vec<String>>,
 
-    /// Schema for the items in an array.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     items: Option<Value>,
 
-    /// Maximum allowed numerical value.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     maximum: Option<f32>,
 
-    /// Maximum allowed string length.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     max_items: Option<i32>,
 
-    /// Maximum allowed string length.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     max_length: Option<i32>,
 
-    /// Minimum allowed numerical value.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     minimum: Option<f32>,
 
-    /// Minimum allowed string length.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     min_items: Option<i32>,
 
-    /// Minimum allowed string length.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     min_length: Option<i32>,
 
-    /// The name of the property. A Name is limited to 80 chars in length.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
-    /// Operators property description.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     operators: Option<Vec<String>>,
 
-    /// A regular expression (
-    /// [ECMA 262](http://www.ecma-international.org/publications/standards/Ecma-262.htm)
-    /// ) that a string value must match.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     pattern: Option<String>,
 
-    /// Indicates whether this is a read-only property.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     readonly: Option<bool>,
 
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     required: Option<Vec<String>>,
 
-    /// The title of the property.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     title: String,
 
-    /// The property type.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Type,
 
-    /// Indicates whether all values in the array must be distinct.
-    ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     unique_items: Option<bool>,
 }
@@ -195,13 +149,6 @@ enum Type {
 /// Property response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// Describes extra items, if you use tuple typing. If the value of `items`
-    /// is an array (tuple typing) and the instance is longer than the list of
-    /// schemas in `items`, the additional items are described by the schema in
-    /// this property. If this value is `false`, the instance cannot be longer
-    /// than the list of schemas in `items`. If this value is `true`, that is
-    /// equivalent to the empty schema (anything goes).
-    ///
     #[serde(rename = "additionalItems")]
     #[structable(optional, title = "additionalItems")]
     additional_items: Option<bool>,
@@ -210,82 +157,54 @@ struct ResponseData {
     #[structable(optional, pretty, title = "default")]
     _default: Option<Value>,
 
-    /// The description of the namespace.
-    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// Enumerated list of property values.
-    ///
     #[serde(rename = "enum")]
     #[structable(optional, pretty, title = "enum")]
     _enum: Option<Value>,
 
-    /// Schema for the items in an array.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     items: Option<Value>,
 
-    /// Maximum allowed numerical value.
-    ///
     #[serde()]
     #[structable(optional)]
     maximum: Option<f32>,
 
-    /// Maximum allowed string length.
-    ///
     #[serde(rename = "maxItems")]
     #[structable(optional, title = "maxItems")]
     max_items: Option<i32>,
 
-    /// Maximum allowed string length.
-    ///
     #[serde(rename = "maxLength")]
     #[structable(optional, title = "maxLength")]
     max_length: Option<i32>,
 
-    /// Minimum allowed numerical value.
-    ///
     #[serde()]
     #[structable(optional)]
     minimum: Option<f32>,
 
-    /// Minimum allowed string length.
-    ///
     #[serde(rename = "minItems")]
     #[structable(optional, title = "minItems")]
     min_items: Option<i32>,
 
-    /// Minimum allowed string length.
-    ///
     #[serde(rename = "minLength")]
     #[structable(optional, title = "minLength")]
     min_length: Option<i32>,
 
-    /// The name of the property. A Name is limited to 80 chars in length.
-    ///
     #[serde()]
     #[structable()]
     name: String,
 
-    /// Operators property description.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     operators: Option<Value>,
 
-    /// A regular expression (
-    /// [ECMA 262](http://www.ecma-international.org/publications/standards/Ecma-262.htm)
-    /// ) that a string value must match.
-    ///
     #[serde()]
     #[structable(optional)]
     pattern: Option<String>,
 
-    /// Indicates whether this is a read-only property.
-    ///
     #[serde()]
     #[structable(optional)]
     readonly: Option<bool>,
@@ -294,20 +213,14 @@ struct ResponseData {
     #[structable(optional, pretty)]
     required: Option<Value>,
 
-    /// The title of the property.
-    ///
     #[serde()]
     #[structable()]
     title: String,
 
-    /// The property type.
-    ///
     #[serde(rename = "type")]
     #[structable(title = "type")]
     _type: String,
 
-    /// Indicates whether all values in the array must be distinct.
-    ///
     #[serde(rename = "uniqueItems")]
     #[structable(optional, title = "uniqueItems")]
     unique_items: Option<bool>,

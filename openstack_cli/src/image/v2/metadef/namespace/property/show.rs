@@ -36,21 +36,9 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// Shows the definition for a property.
-///
-/// If you use the `resource_type` query parameter, the API removes the prefix
-/// of the resource type from the property name before it submits the query.
-/// This enables you to look for a property name that starts with a prefix from
-/// an associated resource type.
-///
-/// The response body shows a single property entity.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Show property definition")]
 pub struct PropertyCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -91,13 +79,6 @@ struct PathParameters {
 /// Property response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// Describes extra items, if you use tuple typing. If the value of `items`
-    /// is an array (tuple typing) and the instance is longer than the list of
-    /// schemas in `items`, the additional items are described by the schema in
-    /// this property. If this value is `false`, the instance cannot be longer
-    /// than the list of schemas in `items`. If this value is `true`, that is
-    /// equivalent to the empty schema (anything goes).
-    ///
     #[serde(rename = "additionalItems")]
     #[structable(optional, title = "additionalItems")]
     additional_items: Option<bool>,
@@ -106,56 +87,38 @@ struct ResponseData {
     #[structable(optional, pretty, title = "default")]
     _default: Option<Value>,
 
-    /// Detailed description of the property.
-    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// Enumerated list of property values.
-    ///
     #[serde(rename = "enum")]
     #[structable(optional, pretty, title = "enum")]
     _enum: Option<Value>,
 
-    /// Schema for the items in an array.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     items: Option<Value>,
 
-    /// Maximum allowed numerical value.
-    ///
     #[serde()]
     #[structable(optional)]
     maximum: Option<f32>,
 
-    /// Maximum allowed string length.
-    ///
     #[serde(rename = "maxItems")]
     #[structable(optional, title = "maxItems")]
     max_items: Option<i32>,
 
-    /// Maximum allowed string length.
-    ///
     #[serde(rename = "maxLength")]
     #[structable(optional, title = "maxLength")]
     max_length: Option<i32>,
 
-    /// Minimum allowed numerical value.
-    ///
     #[serde()]
     #[structable(optional)]
     minimum: Option<f32>,
 
-    /// Minimum allowed string length.
-    ///
     #[serde(rename = "minItems")]
     #[structable(optional, title = "minItems")]
     min_items: Option<i32>,
 
-    /// Minimum allowed string length.
-    ///
     #[serde(rename = "minLength")]
     #[structable(optional, title = "minLength")]
     min_length: Option<i32>,
@@ -164,22 +127,14 @@ struct ResponseData {
     #[structable()]
     name: String,
 
-    /// Operators property description.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     operators: Option<Value>,
 
-    /// A regular expression (
-    /// [ECMA 262](http://www.ecma-international.org/publications/standards/Ecma-262.htm)
-    /// ) that a string value must match.
-    ///
     #[serde()]
     #[structable(optional)]
     pattern: Option<String>,
 
-    /// Indicates whether this is a read-only property.
-    ///
     #[serde()]
     #[structable(optional)]
     readonly: Option<bool>,
@@ -188,20 +143,14 @@ struct ResponseData {
     #[structable(optional, pretty)]
     required: Option<Value>,
 
-    /// The title of the property.
-    ///
     #[serde()]
     #[structable()]
     title: String,
 
-    /// The property type.
-    ///
     #[serde(rename = "type")]
     #[structable(title = "type")]
     _type: String,
 
-    /// Indicates whether all values in the array must be distinct.
-    ///
     #[serde(rename = "uniqueItems")]
     #[structable(optional, title = "uniqueItems")]
     unique_items: Option<bool>,

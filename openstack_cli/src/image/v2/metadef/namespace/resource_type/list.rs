@@ -35,14 +35,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::resource_type::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Lists resource type associations in a namespace.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "List resource type associations")]
 pub struct ResourceTypesCommand {
     /// Request Query parameters
     #[command(flatten)]

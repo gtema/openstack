@@ -35,15 +35,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::resource_type::create;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Creates a resource type association between a namespace and the resource
-/// type specified in the body of the request.
-///
-/// Normal response codes: 201
-///
-/// Error response codes: 400, 401, 403, 404, 409
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Create resource type association")]
 pub struct ResourceTypeCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -60,17 +54,18 @@ pub struct ResourceTypeCommand {
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
-    /// Prefix for any properties in the namespace that you want to apply to
-    /// the resource type. If you specify a prefix, you must append a prefix
-    /// separator, such as the colon (`:`) character.
+    /// Specifies the prefix to use for the given resource type. Any properties
+    /// in the namespace should be prefixed with this prefix when being applied
+    /// to the specified resource type. Must include prefix separator (e.g. a
+    /// colon :).
     ///
     #[arg(help_heading = "Body parameters", long)]
     prefix: Option<String>,
 
-    /// Some resource types allow more than one key and value pair for each
-    /// instance. For example, the Image service allows both user and image
-    /// metadata on volumes. The `properties_target` parameter enables a
-    /// namespace target to remove the ambiguity.
+    /// Some resource types allow more than one key / value pair per instance.
+    /// For example, Cinder allows user and image metadata on volumes. Only the
+    /// image properties metadata is evaluated by Nova (scheduling or drivers).
+    /// This property allows a namespace target to remove the ambiguity.
     ///
     #[arg(help_heading = "Body parameters", long)]
     properties_target: Option<String>,
@@ -97,10 +92,7 @@ struct PathParameters {
 /// ResourceType response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of resource type association
     ///
     #[serde()]
     #[structable(optional)]
@@ -114,27 +106,25 @@ struct ResponseData {
     #[structable()]
     name: String,
 
-    /// Prefix for any properties in the namespace that you want to apply to
-    /// the resource type. If you specify a prefix, you must append a prefix
-    /// separator, such as the colon (`:`) character.
+    /// Specifies the prefix to use for the given resource type. Any properties
+    /// in the namespace should be prefixed with this prefix when being applied
+    /// to the specified resource type. Must include prefix separator (e.g. a
+    /// colon :).
     ///
     #[serde()]
     #[structable(optional)]
     prefix: Option<String>,
 
-    /// Some resource types allow more than one key and value pair for each
-    /// instance. For example, the Image service allows both user and image
-    /// metadata on volumes. The `properties_target` parameter enables a
-    /// namespace target to remove the ambiguity.
+    /// Some resource types allow more than one key / value pair per instance.
+    /// For example, Cinder allows user and image metadata on volumes. Only the
+    /// image properties metadata is evaluated by Nova (scheduling or drivers).
+    /// This property allows a namespace target to remove the ambiguity.
     ///
     #[serde()]
     #[structable(optional)]
     properties_target: Option<String>,
 
-    /// The date and time when the resource was last updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of the last resource type association modification
     ///
     #[serde()]
     #[structable(optional)]

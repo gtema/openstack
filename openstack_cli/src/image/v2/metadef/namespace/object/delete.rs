@@ -37,17 +37,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::object::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Deletes an object definition from a namespace.
-///
-/// When you successfully delete an object from a namespace, the response is
-/// empty and the response code is `204`.
-///
-/// Normal response codes: 204
-///
-/// Error response codes: 400, 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Delete object")]
 pub struct ObjectCommand {
     /// Request Query parameters
     #[command(flatten)]

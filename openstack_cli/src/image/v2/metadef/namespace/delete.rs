@@ -37,17 +37,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Deletes a namespace and its properties, objects, and any resource type
-/// associations.
-///
-/// A successful operation returns the HTTP `204` (No Content) response code.
-///
-/// Normal response codes: 204
-///
-/// Error response codes: 400, 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Delete namespace")]
 pub struct NamespaceCommand {
     /// Request Query parameters
     #[command(flatten)]
