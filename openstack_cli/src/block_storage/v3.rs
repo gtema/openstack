@@ -34,6 +34,7 @@ mod message;
 mod os_volume_transfer;
 mod qos_spec;
 mod resource_filter;
+mod service;
 mod snapshot;
 mod snapshot_manage;
 mod r#type;
@@ -67,6 +68,7 @@ pub enum BlockStorageCommands {
     Message(message::MessageCommand),
     OsVolumeTransfer(os_volume_transfer::VolumeTransferCommand),
     QosSpec(qos_spec::QosSpecCommand),
+    Service(service::ServiceCommand),
     Snapshot(snapshot::SnapshotCommand),
     SnapshotManage(snapshot_manage::SnapshotManageCommand),
     ResourceFilter(resource_filter::ResourceFilterCommand),
@@ -106,6 +108,7 @@ impl BlockStorageCommand {
                 cmd.take_action(parsed_args, session).await
             }
             BlockStorageCommands::QosSpec(cmd) => cmd.take_action(parsed_args, session).await,
+            BlockStorageCommands::Service(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::Snapshot(cmd) => cmd.take_action(parsed_args, session).await,
             BlockStorageCommands::SnapshotManage(cmd) => {
                 cmd.take_action(parsed_args, session).await
