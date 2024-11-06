@@ -11,11 +11,13 @@ git_release_enable = true
 name = "openstack_cli"
 changelog_include = ["openstack_sdk"]
 git_release_enable = true
+version_group = "bins"
 
 [[package]]
 name = "openstack_tui"
 changelog_include = ["openstack_tui"]
 git_release_enable = true
+version_group = "bins"
 
 [[package]]
 name = "structable_derive"
