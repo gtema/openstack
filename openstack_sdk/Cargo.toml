@@ -22,7 +22,8 @@ default = [
   "image",
   "load_balancer",
   "network",
-  "object_store"
+  "object_store",
+  "placement"
 ]
 block_storage = []
 compute = []
@@ -32,6 +33,7 @@ image = []
 load_balancer = []
 network = []
 object_store = []
+placement = []
 sync = []
 async = []
 client_der = []

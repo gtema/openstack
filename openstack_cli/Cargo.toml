@@ -32,6 +32,7 @@ default = [
   "load_balancer",
   "network",
   "object_store",
+  "placement"
 ]
 block_storage = ["openstack_sdk/block_storage"]
 compute = ["openstack_sdk/compute"]
@@ -41,6 +42,7 @@ image = ["openstack_sdk/image"]
 load_balancer = ["openstack_sdk/load_balancer"]
 network = ["openstack_sdk/network"]
 object_store = ["openstack_sdk/object_store"]
+placement = ["openstack_sdk/placement"]
 _test_admin = []
 _test_net_auto-allocated-topology = []
 _test_net_dhcp_agent_scheduler = []

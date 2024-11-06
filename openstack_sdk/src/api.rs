@@ -167,6 +167,8 @@ pub mod load_balancer;
 pub mod network;
 #[cfg(feature = "object_store")]
 pub mod object_store;
+#[cfg(feature = "placement")]
+pub mod placement;
 
 pub use self::error::ApiError;
 pub use self::error::BodyError;

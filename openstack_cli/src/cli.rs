@@ -35,6 +35,7 @@ use crate::image::v2 as image;
 use crate::load_balancer::v2 as load_balancer;
 use crate::network::v2 as network;
 use crate::object_store::v1 as object_store;
+use crate::placement::v1 as placement;
 
 fn styles() -> Styles {
     Styles::styled()
@@ -175,6 +176,7 @@ pub enum TopLevelCommands {
     LoadBalancer(load_balancer::LoadBalancerCommand),
     Network(network::NetworkCommand),
     ObjectStore(object_store::ObjectStoreCommand),
+    Placement(placement::PlacementCommand),
     Completion(CompletionCommand),
 }
 
@@ -210,6 +212,7 @@ impl Cli {
             TopLevelCommands::LoadBalancer(args) => args.take_action(self, client).await,
             TopLevelCommands::Network(args) => args.take_action(self, client).await,
             TopLevelCommands::ObjectStore(args) => args.take_action(self, client).await,
+            TopLevelCommands::Placement(args) => args.take_action(self, client).await,
             TopLevelCommands::Completion(_) => unimplemented!(),
         }
     }

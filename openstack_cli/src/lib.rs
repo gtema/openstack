@@ -45,6 +45,7 @@ mod image;
 mod load_balancer;
 mod network;
 mod object_store;
+mod placement;
 
 pub mod cli;
 pub mod error;
