@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.2...openstack_cli-v0.9.0) - 2024-11-06
+
+### Added
+
+- Enable bs.service.list command ([#711](https://github.com/gtema/openstack/pull/711))
+- Prepare placement skeleton ([#710](https://github.com/gtema/openstack/pull/710))
+- Incorporate updated network schemas
+
+### Fixed
+
+- Fix identity resource link code ([#698](https://github.com/gtema/openstack/pull/698))
+
+### Other
+
+- *(deps)* update crate-ci/typos action to v1.27.0 ([#704](https://github.com/gtema/openstack/pull/704))
+
 ## [0.8.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.1...openstack_cli-v0.8.2) - 2024-10-29
 
 ### Fixed

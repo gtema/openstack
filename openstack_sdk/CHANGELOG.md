@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.2](https://github.com/gtema/openstack/compare/openstack_sdk-v0.13.1...openstack_sdk-v0.13.2) - 2024-11-06
+
+### Added
+
+- Prepare placement skeleton ([#710](https://github.com/gtema/openstack/pull/710))
+- Incorporate updated network schemas
+
+### Other
+
+- *(deps)* update crate-ci/typos action to v1.27.0 ([#704](https://github.com/gtema/openstack/pull/704))
+
 ## [0.13.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.13.0...openstack_sdk-v0.13.1) - 2024-10-29
 
 ### Other

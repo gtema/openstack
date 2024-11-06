@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.6...openstack_tui-v0.9.0) - 2024-11-06
+
+### Fixed
+
+- Reset input when resource select popup closed
+
 ## [0.1.6](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.5...openstack_tui-v0.1.6) - 2024-10-29
 
 ### Fixed
