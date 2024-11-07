@@ -53,15 +53,15 @@ pub struct VolumeTypeCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VolumeTypeCommands {
-    AddProjectAccess(add_project_access::TypeCommand),
-    Create(create::TypeCommand),
-    Delete(delete::TypeCommand),
-    Encryption(encryption::EncryptionCommand),
-    Extraspecs(extra_spec::ExtraSpecsCommand),
-    List(list::TypesCommand),
-    RemoveProjectAccess(remove_project_access::TypeCommand),
-    Set(set::TypeCommand),
-    Show(show::TypeCommand),
+    AddProjectAccess(Box<add_project_access::TypeCommand>),
+    Create(Box<create::TypeCommand>),
+    Delete(Box<delete::TypeCommand>),
+    Encryption(Box<encryption::EncryptionCommand>),
+    Extraspecs(Box<extra_spec::ExtraSpecsCommand>),
+    List(Box<list::TypesCommand>),
+    RemoveProjectAccess(Box<remove_project_access::TypeCommand>),
+    Set(Box<set::TypeCommand>),
+    Show(Box<show::TypeCommand>),
 }
 
 impl VolumeTypeCommand {

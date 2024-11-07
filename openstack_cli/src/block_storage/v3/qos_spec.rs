@@ -48,16 +48,16 @@ pub struct QosSpecCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum QosSpecCommands {
-    Association(association::AssociationCommand),
-    Associate(associate::QosSpecCommand),
-    Create(create::QosSpecCommand),
-    Delete(delete::QosSpecCommand),
-    DeleteKeys(delete_keys::QosSpecCommand),
-    Disassociate(disassociate::QosSpecCommand),
-    DisassociateAll(disassociate_all::QosSpecCommand),
-    List(list::QosSpecsCommand),
-    Set(set::QosSpecCommand),
-    Show(show::QosSpecCommand),
+    Association(Box<association::AssociationCommand>),
+    Associate(Box<associate::QosSpecCommand>),
+    Create(Box<create::QosSpecCommand>),
+    Delete(Box<delete::QosSpecCommand>),
+    DeleteKeys(Box<delete_keys::QosSpecCommand>),
+    Disassociate(Box<disassociate::QosSpecCommand>),
+    DisassociateAll(Box<disassociate_all::QosSpecCommand>),
+    List(Box<list::QosSpecsCommand>),
+    Set(Box<set::QosSpecCommand>),
+    Show(Box<show::QosSpecCommand>),
 }
 
 impl QosSpecCommand {

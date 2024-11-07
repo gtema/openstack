@@ -46,18 +46,18 @@ pub struct VolumeCommand {
 #[derive(Subcommand)]
 pub enum VolumeCommands {
     #[command(visible_alias = "create")]
-    Create353(create_353::VolumeCommand),
-    Create347(create_347::VolumeCommand),
-    Create313(create_313::VolumeCommand),
-    Create30(create_30::VolumeCommand),
-    Delete(delete::VolumeCommand),
-    Extend(os_extend::VolumeCommand),
-    List(list::VolumesCommand),
-    Metadata(metadata::MetadataCommand),
+    Create353(Box<create_353::VolumeCommand>),
+    Create347(Box<create_347::VolumeCommand>),
+    Create313(Box<create_313::VolumeCommand>),
+    Create30(Box<create_30::VolumeCommand>),
+    Delete(Box<delete::VolumeCommand>),
+    Extend(Box<os_extend::VolumeCommand>),
+    List(Box<list::VolumesCommand>),
+    Metadata(Box<metadata::MetadataCommand>),
     #[command(visible_alias = "set")]
-    Set353(set_353::VolumeCommand),
-    Set30(set_30::VolumeCommand),
-    Show(show::VolumeCommand),
+    Set353(Box<set_353::VolumeCommand>),
+    Set30(Box<set_30::VolumeCommand>),
+    Show(Box<show::VolumeCommand>),
 }
 
 impl VolumeCommand {

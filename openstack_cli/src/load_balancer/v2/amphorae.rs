@@ -39,12 +39,12 @@ pub struct AmphoraeCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AmphoraeCommands {
-    Config(config::AmphoraeCommand),
-    Delete(delete::AmphoraeCommand),
-    Failover(failover::AmphoraeCommand),
-    List(list::AmphoraesCommand),
-    Show(show::AmphoraeCommand),
-    Stats(stats::AmphoraeCommand),
+    Config(Box<config::AmphoraeCommand>),
+    Delete(Box<delete::AmphoraeCommand>),
+    Failover(Box<failover::AmphoraeCommand>),
+    List(Box<list::AmphoraesCommand>),
+    Show(Box<show::AmphoraeCommand>),
+    Stats(Box<stats::AmphoraeCommand>),
 }
 
 impl AmphoraeCommand {

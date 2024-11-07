@@ -42,12 +42,12 @@ pub struct VolumeTransferCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VolumeTransferCommands {
-    Accept(accept::VolumeTransferCommand),
+    Accept(Box<accept::VolumeTransferCommand>),
     #[command(visible_alias = "create")]
-    Create355(create_355::VolumeTransferCommand),
-    Delete(delete::VolumeTransferCommand),
-    List(list::VolumeTransfersCommand),
-    Show(show::VolumeTransferCommand),
+    Create355(Box<create_355::VolumeTransferCommand>),
+    Delete(Box<delete::VolumeTransferCommand>),
+    List(Box<list::VolumeTransfersCommand>),
+    Show(Box<show::VolumeTransferCommand>),
 }
 
 impl VolumeTransferCommand {

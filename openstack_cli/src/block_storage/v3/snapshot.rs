@@ -65,15 +65,15 @@ pub struct SnapshotCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SnapshotCommands {
-    Create(create::SnapshotCommand),
-    Delete(delete::SnapshotCommand),
-    ForceDelete(os_force_delete::SnapshotCommand),
-    List(list::SnapshotsCommand),
-    ResetStatus(os_reset_status::SnapshotCommand),
-    Set(set::SnapshotCommand),
-    Show(show::SnapshotCommand),
-    Unmanage(os_unmanage::SnapshotCommand),
-    UpdateStatus(os_update_snapshot_status::SnapshotCommand),
+    Create(Box<create::SnapshotCommand>),
+    Delete(Box<delete::SnapshotCommand>),
+    ForceDelete(Box<os_force_delete::SnapshotCommand>),
+    List(Box<list::SnapshotsCommand>),
+    ResetStatus(Box<os_reset_status::SnapshotCommand>),
+    Set(Box<set::SnapshotCommand>),
+    Show(Box<show::SnapshotCommand>),
+    Unmanage(Box<os_unmanage::SnapshotCommand>),
+    UpdateStatus(Box<os_update_snapshot_status::SnapshotCommand>),
 }
 
 impl SnapshotCommand {

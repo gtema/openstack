@@ -57,9 +57,9 @@ pub struct ClusterCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ClusterCommands {
-    List(list::ClustersCommand),
-    Set(set::ClusterCommand),
-    Show(show::ClusterCommand),
+    List(Box<list::ClustersCommand>),
+    Set(Box<set::ClusterCommand>),
+    Show(Box<show::ClusterCommand>),
 }
 
 impl ClusterCommand {

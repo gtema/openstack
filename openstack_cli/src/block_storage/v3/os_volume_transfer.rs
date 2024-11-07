@@ -41,11 +41,11 @@ pub struct VolumeTransferCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum VolumeTransferCommands {
-    Accept(accept::OsVolumeTransferCommand),
-    Create(create::OsVolumeTransferCommand),
-    Delete(delete::OsVolumeTransferCommand),
-    List(list::OsVolumeTransfersCommand),
-    Show(show::OsVolumeTransferCommand),
+    Accept(Box<accept::OsVolumeTransferCommand>),
+    Create(Box<create::OsVolumeTransferCommand>),
+    Delete(Box<delete::OsVolumeTransferCommand>),
+    List(Box<list::OsVolumeTransfersCommand>),
+    Show(Box<show::OsVolumeTransferCommand>),
 }
 
 impl VolumeTransferCommand {

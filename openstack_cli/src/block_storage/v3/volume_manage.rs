@@ -40,9 +40,9 @@ pub struct VolumeManageCommand {
 #[derive(Subcommand)]
 pub enum VolumeManageCommands {
     #[command(visible_alias = "create")]
-    Create316(create_316::VolumeManageCommand),
-    Create30(create_30::VolumeManageCommand),
-    List(list::VolumeManagesCommand),
+    Create316(Box<create_316::VolumeManageCommand>),
+    Create30(Box<create_30::VolumeManageCommand>),
+    List(Box<list::VolumeManagesCommand>),
 }
 
 impl VolumeManageCommand {

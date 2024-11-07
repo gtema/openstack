@@ -39,8 +39,8 @@ pub struct HostCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum HostCommands {
-    List(list::HostsCommand),
-    Show(show::HostCommand),
+    List(Box<list::HostsCommand>),
+    Show(Box<show::HostCommand>),
 }
 
 impl HostCommand {

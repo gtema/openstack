@@ -89,13 +89,13 @@ impl ConfigError {
 pub enum ConfigFileBuilderError {
     #[error("Failed to parse file {path:?}: {source}")]
     FileParse {
-        source: config::ConfigError,
+        source: Box<config::ConfigError>,
         builder: ConfigFileBuilder,
         path: PathBuf,
     },
     #[error("Failed to deserialize config {path:?}: {source}")]
     ConfigDeserialize {
-        source: config::ConfigError,
+        source: Box<config::ConfigError>,
         builder: ConfigFileBuilder,
         path: PathBuf,
     },
@@ -144,7 +144,7 @@ impl ConfigFileBuilder {
             Ok(config) => config,
             Err(error) => {
                 return Err(ConfigFileBuilderError::FileParse {
-                    source: error,
+                    source: Box::new(error),
                     builder: self,
                     path: source.as_ref().to_owned(),
                 })
@@ -153,7 +153,7 @@ impl ConfigFileBuilder {
 
         if let Err(error) = config.clone().try_deserialize::<ConfigFile>() {
             return Err(ConfigFileBuilderError::ConfigDeserialize {
-                source: error,
+                source: Box::new(error),
                 builder: self,
                 path: source.as_ref().to_owned(),
             });
@@ -543,7 +543,7 @@ impl ConfigFile {
             builder = match builder.add_source(path) {
                 Ok(builder) => builder,
                 Err(ConfigFileBuilderError::FileParse { source, .. }) => {
-                    return Err(ConfigError::parse(source));
+                    return Err(ConfigError::parse(*source));
                 }
                 Err(ConfigFileBuilderError::ConfigDeserialize {
                     source,

@@ -48,11 +48,11 @@ pub struct DefaultTypeCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum DefaultTypeCommands {
-    Delete(delete::DefaultTypeCommand),
-    List(list::DefaultTypesCommand),
+    Delete(Box<delete::DefaultTypeCommand>),
+    List(Box<list::DefaultTypesCommand>),
     #[command(visible_alias = "set")]
-    Set362(set_362::DefaultTypeCommand),
-    Show(show::DefaultTypeCommand),
+    Set362(Box<set_362::DefaultTypeCommand>),
+    Show(Box<show::DefaultTypeCommand>),
 }
 
 impl DefaultTypeCommand {

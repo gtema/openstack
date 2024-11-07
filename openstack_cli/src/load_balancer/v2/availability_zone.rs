@@ -38,11 +38,11 @@ pub struct AvailabilityZoneCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AvailabilityZoneCommands {
-    Create(create::AvailabilityZoneCommand),
-    Delete(delete::AvailabilityZoneCommand),
+    Create(Box<create::AvailabilityZoneCommand>),
+    Delete(Box<delete::AvailabilityZoneCommand>),
     List(Box<list::AvailabilityZonesCommand>),
-    Set(set::AvailabilityZoneCommand),
-    Show(show::AvailabilityZoneCommand),
+    Set(Box<set::AvailabilityZoneCommand>),
+    Show(Box<show::AvailabilityZoneCommand>),
 }
 
 impl AvailabilityZoneCommand {

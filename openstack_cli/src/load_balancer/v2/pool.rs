@@ -39,12 +39,12 @@ pub struct PoolCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum PoolCommands {
-    Create(create::PoolCommand),
-    Delete(delete::PoolCommand),
-    List(list::PoolsCommand),
-    Member(member::MemberCommand),
-    Set(set::PoolCommand),
-    Show(show::PoolCommand),
+    Create(Box<create::PoolCommand>),
+    Delete(Box<delete::PoolCommand>),
+    List(Box<list::PoolsCommand>),
+    Member(Box<member::MemberCommand>),
+    Set(Box<set::PoolCommand>),
+    Show(Box<show::PoolCommand>),
 }
 
 impl PoolCommand {

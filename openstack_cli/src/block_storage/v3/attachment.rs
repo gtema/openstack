@@ -63,15 +63,15 @@ pub struct AttachmentCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AttachmentCommands {
-    Complete(os_complete::AttachmentCommand),
+    Complete(Box<os_complete::AttachmentCommand>),
     #[command(visible_alias = "create")]
-    Create354(create_354::AttachmentCommand),
-    Create327(create_327::AttachmentCommand),
-    Delete(delete::AttachmentCommand),
-    List(list::AttachmentsCommand),
+    Create354(Box<create_354::AttachmentCommand>),
+    Create327(Box<create_327::AttachmentCommand>),
+    Delete(Box<delete::AttachmentCommand>),
+    List(Box<list::AttachmentsCommand>),
     #[command(visible_alias = "set")]
-    Set327(set_327::AttachmentCommand),
-    Show(show::AttachmentCommand),
+    Set327(Box<set_327::AttachmentCommand>),
+    Show(Box<show::AttachmentCommand>),
 }
 
 impl AttachmentCommand {

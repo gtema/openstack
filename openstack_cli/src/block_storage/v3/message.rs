@@ -40,9 +40,9 @@ pub struct MessageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MessageCommands {
-    Delete(delete::MessageCommand),
-    List(list::MessagesCommand),
-    Show(show::MessageCommand),
+    Delete(Box<delete::MessageCommand>),
+    List(Box<list::MessagesCommand>),
+    Show(Box<show::MessageCommand>),
 }
 
 impl MessageCommand {
