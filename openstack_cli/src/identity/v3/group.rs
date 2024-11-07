@@ -25,6 +25,7 @@ mod delete;
 mod list;
 mod set;
 mod show;
+mod user;
 
 /// Identity Group commands
 ///
@@ -53,11 +54,12 @@ pub struct GroupCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum GroupCommands {
-    Create(create::GroupCommand),
-    Delete(delete::GroupCommand),
-    List(list::GroupsCommand),
-    Set(set::GroupCommand),
-    Show(show::GroupCommand),
+    Create(Box<create::GroupCommand>),
+    Delete(Box<delete::GroupCommand>),
+    List(Box<list::GroupsCommand>),
+    Set(Box<set::GroupCommand>),
+    Show(Box<show::GroupCommand>),
+    User(Box<user::UserCommand>),
 }
 
 impl GroupCommand {
@@ -73,6 +75,7 @@ impl GroupCommand {
             GroupCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
             GroupCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             GroupCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
+            GroupCommands::User(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
