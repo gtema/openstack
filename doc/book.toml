@@ -3,7 +3,7 @@ authors = ["gtema"]
 language = "en"
 multilingual = false
 src = "src"
-title = "OpenStack Rust tooling"
+title = "OpenStack Client Tools"
 
 [build]
 build-dir = "html"
