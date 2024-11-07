@@ -37,34 +37,9 @@ use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
-/// Lists object definitions in a namespace.
-///
-/// Returns a subset of the larger collection of namespaces and a link that you
-/// can use to get the next set of namespaces. You should always check for the
-/// presence of a `next` link and use it as the URI in a subsequent HTTP GET
-/// request. You should follow this pattern until a `next` link is no longer
-/// provided. The next link preserves any query parameters that you send in
-/// your initial request. You can use the `first` link to jump back to the
-/// first page of the collection. If you prefer to paginate through namespaces
-/// manually, use the `limit` and `marker` parameters.
-///
-/// Use the `resource_types` and `visibility` query parameters to filter the
-/// response.
-///
-/// For example, set the `resource_types` query parameter to
-/// `OS::Glance::Image,OS::Nova::Flavor` to filter the response to include only
-/// namespaces that are associated with the given resource types.
-///
-/// You can sort the results of this operation by using the `sort_key` and
-/// `sort_dir` parameters. The API uses the natural sorting of whatever
-/// namespace attribute is provided as the `sort_key`.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "List objects")]
 pub struct ObjectsCommand {
     /// Request Query parameters
     #[command(flatten)]

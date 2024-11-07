@@ -36,14 +36,9 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Lists property definitions in a namespace.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "List properties")]
 pub struct PropertyCommand {
     /// Request Query parameters
     #[command(flatten)]

@@ -35,14 +35,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::tag::create;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Adds a tag to the list of namespace tag definitions.
-///
-/// Normal response codes: 201
-///
-/// Error response codes: 400, 401, 403, 404, 409
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Create tag definition")]
 pub struct TagCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -86,25 +81,17 @@ struct PathParameters {
 /// Tag response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of tag creation
     ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
-    /// The name of the tag. A Name is limited to 80 chars in length.
-    ///
     #[serde()]
     #[structable()]
     name: String,
 
-    /// The date and time when the resource was last updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of the last tag modification
     ///
     #[serde()]
     #[structable(optional)]

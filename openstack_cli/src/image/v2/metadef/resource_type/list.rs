@@ -35,18 +35,9 @@ use openstack_sdk::api::image::v2::metadef::resource_type::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Lists all available resource types.
-///
-/// Using the other API calls in this section, you can create and maintain
-/// *resource type associations* between metadata definition namespaces and the
-/// resource types that are returned by this call.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "List resource types")]
 pub struct ResourceTypesCommand {
     /// Request Query parameters
     #[command(flatten)]

@@ -37,17 +37,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::property::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Removes a property definition from a namespace.
-///
-/// When you successfully delete a property from a namespace, the response is
-/// empty and the response code is `204`.
-///
-/// Normal response codes: 204
-///
-/// Error response codes: 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Remove property definition")]
 pub struct PropertyCommand {
     /// Request Query parameters
     #[command(flatten)]

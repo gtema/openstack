@@ -86,12 +86,17 @@ pub struct ImageCommand {
     ///
     /// Values may vary based on the configuration available in a particular
     /// OpenStack cloud. See the [Image Schema](#image-schema) response from
-    /// the cloud itself for the valid values available.
+    /// the cloud itself for the valid values available. See
+    /// [Container Format](https://docs.openstack.org/glance/latest/user/formats.html#container-format)
+    /// in the Glance documentation for more information.
     ///
-    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`, or
-    /// `docker`.
+    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`,
+    /// `docker`, or `compressed`.
     ///
     /// The value might be `null` (JSON null data type).
+    ///
+    /// **Train changes**: The `compressed` container format is a supported
+    /// value.
     ///
     #[arg(help_heading = "Body parameters", long)]
     container_format: Option<ContainerFormat>,
@@ -100,7 +105,9 @@ pub struct ImageCommand {
     ///
     /// Values may vary based on the configuration available in a particular
     /// OpenStack cloud. See the [Image Schema](#image-schema) response from
-    /// the cloud itself for the valid values available.
+    /// the cloud itself for the valid values available. See
+    /// [Disk Format](https://docs.openstack.org/glance/latest/user/formats.html#disk-format)
+    /// in the Glance documentation for more information.
     ///
     /// Example formats are: `ami`, `ari`, `aki`, `vhd`, `vhdx`, `vmdk`, `raw`,
     /// `qcow2`, `vdi`, `ploop` or `iso`.
@@ -250,12 +257,17 @@ struct ResponseData {
     ///
     /// Values may vary based on the configuration available in a particular
     /// OpenStack cloud. See the [Image Schema](#image-schema) response from
-    /// the cloud itself for the valid values available.
+    /// the cloud itself for the valid values available. See
+    /// [Container Format](https://docs.openstack.org/glance/latest/user/formats.html#container-format)
+    /// in the Glance documentation for more information.
     ///
-    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`, or
-    /// `docker`.
+    /// Example formats are: `ami`, `ari`, `aki`, `bare`, `ovf`, `ova`,
+    /// `docker`, or `compressed`.
     ///
     /// The value might be `null` (JSON null data type).
+    ///
+    /// **Train changes**: The `compressed` container format is a supported
+    /// value.
     ///
     #[serde()]
     #[structable(optional)]
@@ -293,7 +305,9 @@ struct ResponseData {
     ///
     /// Values may vary based on the configuration available in a particular
     /// OpenStack cloud. See the [Image Schema](#image-schema) response from
-    /// the cloud itself for the valid values available.
+    /// the cloud itself for the valid values available. See
+    /// [Disk Format](https://docs.openstack.org/glance/latest/user/formats.html#disk-format)
+    /// in the Glance documentation for more information.
     ///
     /// Example formats are: `ami`, `ari`, `aki`, `vhd`, `vhdx`, `vmdk`, `raw`,
     /// `qcow2`, `vdi`, `ploop` or `iso`.

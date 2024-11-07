@@ -38,22 +38,9 @@ use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;
 
-/// Updates an object definition in a namespace.
-///
-/// The object resource is completely replaced by what you specify in the
-/// request body. Thus, if you leave out any of the optional parameters, and
-/// they exist in the current object, they will be eliminated by this call.
-///
-/// It is possible to change the name of the object with this call; if you do,
-/// note that the URL for the object (specified by the `self` field) will
-/// change.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401, 403, 404, 409
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Update object")]
 pub struct ObjectCommand {
     /// Request Query parameters
     #[command(flatten)]
@@ -63,24 +50,15 @@ pub struct ObjectCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// Detailed description of the object.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The name of the object, suitable for use as an identifier. A Name is
-    /// limited to 80 chars in length.
-    ///
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
-    /// A set of key:value pairs, where each value is a *property* entity.
-    ///
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     properties: Option<Vec<(String, Value)>>,
 
-    /// A list of the names of properties that are required on this object.
-    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     required: Option<Vec<String>>,
 }
@@ -115,56 +93,37 @@ struct PathParameters {
 /// Object response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The date and time when the resource was created.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of object creation
     ///
     #[serde()]
     #[structable(optional)]
     created_at: Option<String>,
 
-    /// Detailed description of the object.
-    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// The name of the object, suitable for use as an identifier. A Name is
-    /// limited to 80 chars in length.
-    ///
     #[serde()]
     #[structable()]
     name: String,
 
-    /// A set of key:value pairs, where each value is a *property* entity.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     properties: Option<Value>,
 
-    /// A list of the names of properties that are required on this object.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     required: Option<Value>,
 
-    /// The URI of the JSON schema describing an *object*.
-    ///
     #[serde()]
     #[structable(optional)]
     schema: Option<String>,
 
-    /// The URI for this resource.
-    ///
     #[serde(rename = "self")]
     #[structable(optional, title = "self")]
     _self: Option<String>,
 
-    /// The date and time when the resource was last updated.
-    ///
-    /// The date and time stamp format is
-    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
+    /// Date and time of the last object modification
     ///
     #[serde()]
     #[structable(optional)]

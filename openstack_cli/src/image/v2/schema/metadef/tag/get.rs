@@ -37,18 +37,9 @@ use openstack_sdk::api::image::v2::schema::metadef::tag::get;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Shows a JSON schema document that represents a metadata definition *tag*
-/// entity.
-///
-/// The following schema document is an example. The authoritative response is
-/// the actual response to the API call.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 400, 401
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Show metadata definition tag schema")]
 pub struct TagCommand {
     /// Request Query parameters
     #[command(flatten)]

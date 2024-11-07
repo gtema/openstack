@@ -37,17 +37,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::tag::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// Deletes a tag definition within a namespace.
-///
-/// When you successfully delete a tag from a namespace, the response is empty
-/// and the response code is `204`.
-///
-/// Normal response codes: 204
-///
-/// Error response codes: 400, 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "Delete tag definition")]
 pub struct TagCommand {
     /// Request Query parameters
     #[command(flatten)]

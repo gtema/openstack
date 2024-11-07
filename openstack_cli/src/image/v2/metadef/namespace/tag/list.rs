@@ -35,21 +35,9 @@ use openstack_sdk::api::image::v2::metadef::namespace::tag::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// Lists the tag definitions within a namespace.
-///
-/// To manually paginate through the list of tags, use the `limit` and `marker`
-/// parameters.
-///
-/// To sort the results of this operation use the `sort_key` and `sort_dir`
-/// parameters. The API uses the natural sort order of the tag attribute of the
-/// `sort_key` parameter.
-///
-/// Normal response codes: 200
-///
-/// Error response codes: 401, 403, 404
+/// Command without description in OpenAPI
 ///
 #[derive(Args)]
-#[command(about = "List tags")]
 pub struct TagsCommand {
     /// Request Query parameters
     #[command(flatten)]
