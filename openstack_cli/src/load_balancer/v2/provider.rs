@@ -36,9 +36,11 @@ pub struct ProviderCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ProviderCommands {
-    AvailabilityZoneCapability(availability_zone_capability::AvailabilityZoneCapabilityCommand),
-    FlavorCapability(flavor_capability::FlavorCapabilityCommand),
-    List(list::ProvidersCommand),
+    AvailabilityZoneCapability(
+        Box<availability_zone_capability::AvailabilityZoneCapabilityCommand>,
+    ),
+    FlavorCapability(Box<flavor_capability::FlavorCapabilityCommand>),
+    List(Box<list::ProvidersCommand>),
 }
 
 impl ProviderCommand {

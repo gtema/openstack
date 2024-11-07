@@ -37,11 +37,11 @@ pub struct ExtraSpecsCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ExtraSpecsCommands {
-    Create(create::ExtraSpecCommand),
-    Delete(delete::ExtraSpecCommand),
-    List(list::ExtraSpecsCommand),
-    Show(show::ExtraSpecCommand),
-    Set(set::ExtraSpecCommand),
+    Create(Box<create::ExtraSpecCommand>),
+    Delete(Box<delete::ExtraSpecCommand>),
+    List(Box<list::ExtraSpecsCommand>),
+    Show(Box<show::ExtraSpecCommand>),
+    Set(Box<set::ExtraSpecCommand>),
 }
 
 impl ExtraSpecsCommand {

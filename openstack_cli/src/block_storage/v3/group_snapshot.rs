@@ -41,12 +41,12 @@ pub struct GroupSnapshotCommand {
 #[derive(Subcommand)]
 pub enum GroupSnapshotCommands {
     #[command(visible_alias = "create")]
-    Create314(create_314::GroupSnapshotCommand),
-    Delete(delete::GroupSnapshotCommand),
-    List(list::GroupSnapshotsCommand),
+    Create314(Box<create_314::GroupSnapshotCommand>),
+    Delete(Box<delete::GroupSnapshotCommand>),
+    List(Box<list::GroupSnapshotsCommand>),
     #[command(visible_alias = "reset-status")]
-    ResetStatus319(reset_status_319::GroupSnapshotCommand),
-    Show(show::GroupSnapshotCommand),
+    ResetStatus319(Box<reset_status_319::GroupSnapshotCommand>),
+    Show(Box<show::GroupSnapshotCommand>),
 }
 
 impl GroupSnapshotCommand {

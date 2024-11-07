@@ -38,11 +38,11 @@ pub struct FlavorProfileCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum FlavorProfileCommands {
-    Create(create::FlavorProfileCommand),
-    Delete(delete::FlavorProfileCommand),
+    Create(Box<create::FlavorProfileCommand>),
+    Delete(Box<delete::FlavorProfileCommand>),
     List(Box<list::FlavorProfilesCommand>),
-    Set(set::FlavorProfileCommand),
-    Show(show::FlavorProfileCommand),
+    Set(Box<set::FlavorProfileCommand>),
+    Show(Box<show::FlavorProfileCommand>),
 }
 
 impl FlavorProfileCommand {

@@ -56,19 +56,19 @@ pub struct BackupCommand {
 #[derive(Subcommand)]
 pub enum BackupCommands {
     #[command(visible_alias = "create")]
-    Create351(create_351::BackupCommand),
-    Create343(create_343::BackupCommand),
-    Create30(create_30::BackupCommand),
-    Delete(delete::BackupCommand),
-    Export(export_record::get::ExportRecordCommand),
-    ForceDelete(os_force_delete::BackupCommand),
-    Import(import_record::create::ImportRecordCommand),
-    List(list::BackupsCommand),
-    ResetStatus(os_reset_status::BackupCommand),
+    Create351(Box<create_351::BackupCommand>),
+    Create343(Box<create_343::BackupCommand>),
+    Create30(Box<create_30::BackupCommand>),
+    Delete(Box<delete::BackupCommand>),
+    Export(Box<export_record::get::ExportRecordCommand>),
+    ForceDelete(Box<os_force_delete::BackupCommand>),
+    Import(Box<import_record::create::ImportRecordCommand>),
+    List(Box<list::BackupsCommand>),
+    ResetStatus(Box<os_reset_status::BackupCommand>),
     #[command(visible_alias = "set")]
-    Set343(set_343::BackupCommand),
-    Set39(set_39::BackupCommand),
-    Show(show::BackupCommand),
+    Set343(Box<set_343::BackupCommand>),
+    Set39(Box<set_39::BackupCommand>),
+    Show(Box<show::BackupCommand>),
 }
 
 impl BackupCommand {

@@ -37,10 +37,10 @@ pub struct QuotaCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum QuotaCommands {
-    Delete(delete::QuotaCommand),
-    List(list::QuotasCommand),
-    Set(set::QuotaCommand),
-    Show(show::QuotaCommand),
+    Delete(Box<delete::QuotaCommand>),
+    List(Box<list::QuotasCommand>),
+    Set(Box<set::QuotaCommand>),
+    Show(Box<show::QuotaCommand>),
 }
 
 impl QuotaCommand {

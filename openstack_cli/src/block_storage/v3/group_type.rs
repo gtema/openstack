@@ -42,13 +42,13 @@ pub struct GroupTypeCommand {
 #[derive(Subcommand)]
 pub enum GroupTypeCommands {
     #[command(visible_alias = "create")]
-    Create311(create_311::GroupTypeCommand),
-    Delete(delete::GroupTypeCommand),
-    GroupSpec(group_spec::GroupSpecCommand),
-    List(list::GroupTypesCommand),
+    Create311(Box<create_311::GroupTypeCommand>),
+    Delete(Box<delete::GroupTypeCommand>),
+    GroupSpec(Box<group_spec::GroupSpecCommand>),
+    List(Box<list::GroupTypesCommand>),
     #[command(visible_alias = "set")]
-    Set311(set_311::GroupTypeCommand),
-    Show(show::GroupTypeCommand),
+    Set311(Box<set_311::GroupTypeCommand>),
+    Show(Box<show::GroupTypeCommand>),
 }
 
 impl GroupTypeCommand {

@@ -38,11 +38,11 @@ pub struct HealthmonitorCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum HealthmonitorCommands {
-    Create(create::HealthmonitorCommand),
-    Delete(delete::HealthmonitorCommand),
-    List(list::HealthmonitorsCommand),
-    Set(set::HealthmonitorCommand),
-    Show(show::HealthmonitorCommand),
+    Create(Box<create::HealthmonitorCommand>),
+    Delete(Box<delete::HealthmonitorCommand>),
+    List(Box<list::HealthmonitorsCommand>),
+    Set(Box<set::HealthmonitorCommand>),
+    Show(Box<show::HealthmonitorCommand>),
 }
 
 impl HealthmonitorCommand {

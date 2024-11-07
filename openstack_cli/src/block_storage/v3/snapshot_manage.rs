@@ -38,8 +38,8 @@ pub struct SnapshotManageCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum SnapshotManageCommands {
-    Create(create::SnapshotManageCommand),
-    List(list::SnapshotManagesCommand),
+    Create(Box<create::SnapshotManageCommand>),
+    List(Box<list::SnapshotManagesCommand>),
 }
 
 impl SnapshotManageCommand {

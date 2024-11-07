@@ -55,24 +55,24 @@ pub struct GroupCommand {
 #[derive(Subcommand)]
 pub enum GroupCommands {
     #[command(visible_alias = "create")]
-    Create313(create_313::GroupCommand),
+    Create313(Box<create_313::GroupCommand>),
     #[command(visible_alias = "create_from_src")]
-    CreateFromSrc314(create_from_src_314::GroupCommand),
+    CreateFromSrc314(Box<create_from_src_314::GroupCommand>),
     #[command(visible_alias = "delete")]
-    Delete313(delete_313::GroupCommand),
+    Delete313(Box<delete_313::GroupCommand>),
     #[command(visible_alias = "disable-replication")]
-    DisableReplication338(disable_replication_338::GroupCommand),
+    DisableReplication338(Box<disable_replication_338::GroupCommand>),
     #[command(visible_alias = "enable-replication")]
-    EnableReplication338(enable_replication_338::GroupCommand),
+    EnableReplication338(Box<enable_replication_338::GroupCommand>),
     #[command(visible_alias = "failover-replication")]
-    FailoverReplication338(failover_replication_338::GroupCommand),
-    List(list::GroupsCommand),
+    FailoverReplication338(Box<failover_replication_338::GroupCommand>),
+    List(Box<list::GroupsCommand>),
     #[command(visible_alias = "list-replication-targets")]
-    ListReplicationTargets338(list_replication_targets_338::GroupCommand),
+    ListReplicationTargets338(Box<list_replication_targets_338::GroupCommand>),
     #[command(visible_alias = "reset-status")]
-    ResetStatus320(reset_status_320::GroupCommand),
-    Set313(set_313::GroupCommand),
-    Show(show::GroupCommand),
+    ResetStatus320(Box<reset_status_320::GroupCommand>),
+    Set313(Box<set_313::GroupCommand>),
+    Show(Box<show::GroupCommand>),
 }
 
 impl GroupCommand {

@@ -41,14 +41,14 @@ pub struct LoadbalancerCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum LoadbalancerCommands {
-    Create(create::LoadbalancerCommand),
-    Delete(delete::LoadbalancerCommand),
-    Failover(failover::LoadbalancerCommand),
-    List(list::LoadbalancersCommand),
-    Set(set::LoadbalancerCommand),
-    Show(show::LoadbalancerCommand),
-    Stats(stats::LoadbalancerCommand),
-    Status(status::LoadbalancerCommand),
+    Create(Box<create::LoadbalancerCommand>),
+    Delete(Box<delete::LoadbalancerCommand>),
+    Failover(Box<failover::LoadbalancerCommand>),
+    List(Box<list::LoadbalancersCommand>),
+    Set(Box<set::LoadbalancerCommand>),
+    Show(Box<show::LoadbalancerCommand>),
+    Stats(Box<stats::LoadbalancerCommand>),
+    Status(Box<status::LoadbalancerCommand>),
 }
 
 impl LoadbalancerCommand {

@@ -42,11 +42,11 @@ pub struct EncryptionCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum EncryptionCommands {
-    Create(create::EncryptionCommand),
-    Delete(delete::EncryptionCommand),
-    List(list::EncryptionsCommand),
-    Set(set::EncryptionCommand),
-    Show(show::EncryptionCommand),
+    Create(Box<create::EncryptionCommand>),
+    Delete(Box<delete::EncryptionCommand>),
+    List(Box<list::EncryptionsCommand>),
+    Set(Box<set::EncryptionCommand>),
+    Show(Box<show::EncryptionCommand>),
 }
 
 impl EncryptionCommand {

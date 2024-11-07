@@ -39,12 +39,12 @@ pub struct L7PolicyCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum L7PolicyCommands {
-    Create(create::L7PolicyCommand),
-    Delete(delete::L7PolicyCommand),
-    List(list::L7PoliciesCommand),
-    Rule(rule::RuleCommand),
-    Set(set::L7PolicyCommand),
-    Show(show::L7PolicyCommand),
+    Create(Box<create::L7PolicyCommand>),
+    Delete(Box<delete::L7PolicyCommand>),
+    List(Box<list::L7PoliciesCommand>),
+    Rule(Box<rule::RuleCommand>),
+    Set(Box<set::L7PolicyCommand>),
+    Show(Box<show::L7PolicyCommand>),
 }
 
 impl L7PolicyCommand {
