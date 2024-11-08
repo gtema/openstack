@@ -172,7 +172,7 @@ impl<'de> Deserialize<'de> for IntString {
     {
         struct MyVisitor;
 
-        impl<'de> Visitor<'de> for MyVisitor {
+        impl Visitor<'_> for MyVisitor {
             type Value = IntString;
 
             fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -217,7 +217,7 @@ impl<'de> Deserialize<'de> for NumString {
     {
         struct MyVisitor;
 
-        impl<'de> Visitor<'de> for MyVisitor {
+        impl Visitor<'_> for MyVisitor {
             type Value = NumString;
 
             fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -269,7 +269,7 @@ impl<'de> Deserialize<'de> for BoolString {
     {
         struct MyVisitor;
 
-        impl<'de> Visitor<'de> for MyVisitor {
+        impl Visitor<'_> for MyVisitor {
             type Value = BoolString;
 
             fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {

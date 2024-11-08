@@ -20,6 +20,14 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
+mod allocation;
+mod allocation_candidate;
+mod reshaper;
+mod resource_class;
+mod resource_provider;
+mod r#trait;
+mod usage;
+
 /// The placement API service was introduced in the 14.0.0 Newton release within the nova
 /// repository and extracted to the placement repository in the 19.0.0 Stein release. This is a
 /// REST API stack and data model used to track resource provider inventories and usages, along
@@ -48,19 +56,37 @@ pub struct PlacementCommand {
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum PlacementCommands {}
+pub enum PlacementCommands {
+    Allocation(Box<allocation::AllocationCommand>),
+    AllocationCandidate(Box<allocation_candidate::AllocationCandidateCommand>),
+    Reshaper(Box<reshaper::ReshaperCommand>),
+    ResourceClass(Box<resource_class::ResourceClassCommand>),
+    ResourceProvider(Box<resource_provider::ResourceProviderCommand>),
+    Trait(Box<r#trait::TraitCommand>),
+    Usage(Box<usage::UsageCommand>),
+}
 
 impl PlacementCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
-        _parsed_args: &Cli,
+        parsed_args: &Cli,
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         session
             .discover_service_endpoint(&ServiceType::Placement)
             .await?;
 
-        todo!()
+        match &self.command {
+            PlacementCommands::Allocation(cmd) => cmd.take_action(parsed_args, session).await,
+            PlacementCommands::AllocationCandidate(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            PlacementCommands::Reshaper(cmd) => cmd.take_action(parsed_args, session).await,
+            PlacementCommands::ResourceClass(cmd) => cmd.take_action(parsed_args, session).await,
+            PlacementCommands::ResourceProvider(cmd) => cmd.take_action(parsed_args, session).await,
+            PlacementCommands::Trait(cmd) => cmd.take_action(parsed_args, session).await,
+            PlacementCommands::Usage(cmd) => cmd.take_action(parsed_args, session).await,
+        }
     }
 }

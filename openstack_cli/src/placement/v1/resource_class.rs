@@ -12,37 +12,40 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity Catalog commands
-
+//! Placement `resource_class` command with subcommands
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod create;
+mod delete;
 mod list;
+mod show;
 
-/// Identity Catalog commands
+/// Resource Class
 ///
-/// A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
-///
-/// A service catalog lists the services that are available to the caller based upon the current
-/// authorization.
+/// Resource classes are entities that indicate standard or deployer-specific resources that can be
+/// provided by a resource provider. This group of API calls works with a single resource class
+/// identified by name. One resource class can be listed, updated and deleted.
 #[derive(Parser)]
-pub struct CatalogCommand {
-    /// subcommand
+pub struct ResourceClassCommand {
     #[command(subcommand)]
-    command: CatalogCommands,
+    command: ResourceClassCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum CatalogCommands {
-    List(list::CatalogsCommand),
+pub enum ResourceClassCommands {
+    Create(create::ResourceClassCommand),
+    Delete(delete::ResourceClassCommand),
+    List(list::ResourceClassesCommand),
+    Show(show::ResourceClassCommand),
 }
 
-impl CatalogCommand {
+impl ResourceClassCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,7 +53,10 @@ impl CatalogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

@@ -112,8 +112,8 @@ impl AllocationCommand {
         // Set Request.allocations data
 
         ep_builder.allocations(
-            &self
-                .allocations
+            self.allocations
+                .clone()
                 .into_iter()
                 .map(|(k, v)| {
                     serde_json::from_value(v.to_owned()).map(|v: set_112::Allocations| (k, v))

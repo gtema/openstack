@@ -12,8 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity Catalog commands
-
+//! Placement `allocation_candidate` command with subcommands
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
@@ -22,27 +21,21 @@ use crate::{Cli, OpenStackCliError};
 
 mod list;
 
-/// Identity Catalog commands
-///
-/// A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
-///
-/// A service catalog lists the services that are available to the caller based upon the current
-/// authorization.
+/// Allocation candidates
 #[derive(Parser)]
-pub struct CatalogCommand {
-    /// subcommand
+pub struct AllocationCandidateCommand {
     #[command(subcommand)]
-    command: CatalogCommands,
+    command: AllocationCandidateCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum CatalogCommands {
-    List(list::CatalogsCommand),
+pub enum AllocationCandidateCommands {
+    List(list::AllocationCandidateCommand),
 }
 
-impl CatalogCommand {
+impl AllocationCandidateCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,7 +43,7 @@ impl CatalogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCandidateCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }

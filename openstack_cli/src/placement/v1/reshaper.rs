@@ -12,45 +12,43 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity Catalog commands
-
+//! Placement `reshaper` command with subcommands
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
+//mod create_134;
+//mod create_138;
 
-/// Identity Catalog commands
-///
-/// A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
-///
-/// A service catalog lists the services that are available to the caller based upon the current
-/// authorization.
+/// Reshaper
 #[derive(Parser)]
-pub struct CatalogCommand {
-    /// subcommand
+pub struct ReshaperCommand {
     #[command(subcommand)]
-    command: CatalogCommands,
+    command: ReshaperCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum CatalogCommands {
-    List(list::CatalogsCommand),
+pub enum ReshaperCommands {
+    //    #[command(visible_alias = "create")]
+    //    Create138(create_138::ReshaperCommand),
+    //    Create134(create_134::ReshaperCommand),
 }
 
-impl CatalogCommand {
+impl ReshaperCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
-        parsed_args: &Cli,
-        session: &mut AsyncOpenStack,
+        _parsed_args: &Cli,
+        _session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        match &self.command {
-            CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-        }
+        todo!()
+        //match &self.command {
+        //    ReshaperCommands::Create138(cmd) => cmd.take_action(parsed_args, session).await,
+        //    ReshaperCommands::Create134(cmd) => cmd.take_action(parsed_args, session).await,
+        //}
     }
 }

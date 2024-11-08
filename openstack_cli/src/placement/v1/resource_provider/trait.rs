@@ -12,37 +12,36 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity Catalog commands
-
+//! Placement `ResourceProviderTrait` command with subcommands
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
+mod delete;
 mod list;
+mod set;
 
-/// Identity Catalog commands
+/// Resource provider traits
 ///
-/// A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
-///
-/// A service catalog lists the services that are available to the caller based upon the current
-/// authorization.
+/// This group of API requests queries/edits the association between traits and resource providers.
 #[derive(Parser)]
-pub struct CatalogCommand {
-    /// subcommand
+pub struct TraitCommand {
     #[command(subcommand)]
-    command: CatalogCommands,
+    command: TraitCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum CatalogCommands {
-    List(list::CatalogsCommand),
+pub enum TraitCommands {
+    Delete(delete::TraitCommand),
+    List(list::TraitCommand),
+    Set(set::TraitCommand),
 }
 
-impl CatalogCommand {
+impl TraitCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,7 +49,9 @@ impl CatalogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            TraitCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
