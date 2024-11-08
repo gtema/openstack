@@ -73,7 +73,7 @@ url = { workspace = true }
 [dev-dependencies]
 httpmock = "^0.7"
 reserve-port = "^2.0"
-tempfile = "^3.13"
+tempfile = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
 [[test]]
