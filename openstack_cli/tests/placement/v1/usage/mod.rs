@@ -12,12 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod allocation;
-mod allocation_candidate;
-mod resource_class;
-mod resource_provider;
-mod r#trait;
-mod usage;
+mod list_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -26,7 +21,7 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.args(["placement", "--help"]);
+    cmd.args(["placement", "usage", "--help"]);
     cmd.assert().success();
 
     Ok(())

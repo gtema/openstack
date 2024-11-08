@@ -33,7 +33,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::placement::v1::resource_provider::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 use structable_derive::StructTable;
 
 /// List an optionally filtered collection of resource providers.

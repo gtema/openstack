@@ -33,7 +33,6 @@ use crate::StructTable;
 
 use openstack_sdk::api::placement::v1::resource_class::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Return a list of all resource classes.

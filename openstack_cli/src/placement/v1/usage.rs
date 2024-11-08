@@ -12,8 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Identity Catalog commands
-
+//! Placement `usage` command with subcommands
 use clap::{Parser, Subcommand};
 
 use openstack_sdk::AsyncOpenStack;
@@ -22,27 +21,23 @@ use crate::{Cli, OpenStackCliError};
 
 mod list;
 
-/// Identity Catalog commands
+/// Usages
 ///
-/// A service is an OpenStack web service that you can access through a URL, i.e. an endpoint.
-///
-/// A service catalog lists the services that are available to the caller based upon the current
-/// authorization.
+/// Represent the consumption of resources for a project and user.
 #[derive(Parser)]
-pub struct CatalogCommand {
-    /// subcommand
+pub struct UsageCommand {
     #[command(subcommand)]
-    command: CatalogCommands,
+    command: UsageCommands,
 }
 
 /// Supported subcommands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum CatalogCommands {
-    List(list::CatalogsCommand),
+pub enum UsageCommands {
+    List(list::UsagesCommand),
 }
 
-impl CatalogCommand {
+impl UsageCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -50,7 +45,7 @@ impl CatalogCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            CatalogCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            UsageCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }
 }
