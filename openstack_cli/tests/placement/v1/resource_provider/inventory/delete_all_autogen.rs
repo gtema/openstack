@@ -25,7 +25,7 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
     cmd.arg("placement")
         .arg("resource-provider")
         .arg("inventory")
-        .arg("delete-all")
+        .arg("purge")
         .arg("--help");
     cmd.assert().success();
 

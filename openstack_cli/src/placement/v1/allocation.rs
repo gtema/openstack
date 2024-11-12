@@ -19,15 +19,16 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-//mod create_113;
-//mod create_128;
-//mod create_134;
-//mod create_138;
+mod create_113;
+mod create_128;
+mod create_134;
+mod create_138;
 mod delete;
 mod set_10;
-//mod set_112;
-//mod set_128;
-//mod set_138;
+mod set_112;
+mod set_128;
+mod set_138;
+mod set_18;
 mod show;
 
 /// Allocations
@@ -45,16 +46,17 @@ pub struct AllocationCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum AllocationCommands {
-    //    #[command(visible_alias = "create")]
-    //    Create138(create_138::AllocationCommand),
-    //    Create134(create_134::AllocationCommand),
-    //    Create128(create_128::AllocationCommand),
-    //    Create113(create_113::AllocationCommand),
+    #[command(visible_alias = "create")]
+    Create138(create_138::AllocationCommand),
+    Create134(create_134::AllocationCommand),
+    Create128(create_128::AllocationCommand),
+    Create113(create_113::AllocationCommand),
     Delete(delete::AllocationCommand),
-    //    #[command(visible_alias = "set")]
-    //    Set138(set_138::AllocationCommand),
-    //    Set128(set_128::AllocationCommand),
-    //    Set112(set_112::AllocationCommand),
+    #[command(visible_alias = "set")]
+    Set138(set_138::AllocationCommand),
+    Set128(set_128::AllocationCommand),
+    Set112(set_112::AllocationCommand),
+    Set18(set_18::AllocationCommand),
     Set10(set_10::AllocationCommand),
     Show(show::AllocationCommand),
 }
@@ -67,14 +69,15 @@ impl AllocationCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            //            AllocationCommands::Create138(cmd) => cmd.take_action(parsed_args, session).await,
-            //            AllocationCommands::Create134(cmd) => cmd.take_action(parsed_args, session).await,
-            //            AllocationCommands::Create128(cmd) => cmd.take_action(parsed_args, session).await,
-            //            AllocationCommands::Create113(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Create138(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Create134(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Create128(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Create113(cmd) => cmd.take_action(parsed_args, session).await,
             AllocationCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
-            //            AllocationCommands::Set138(cmd) => cmd.take_action(parsed_args, session).await,
-            //            AllocationCommands::Set128(cmd) => cmd.take_action(parsed_args, session).await,
-            //            AllocationCommands::Set112(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Set128(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Set138(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Set112(cmd) => cmd.take_action(parsed_args, session).await,
+            AllocationCommands::Set18(cmd) => cmd.take_action(parsed_args, session).await,
             AllocationCommands::Set10(cmd) => cmd.take_action(parsed_args, session).await,
             AllocationCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }

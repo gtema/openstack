@@ -36,7 +36,7 @@ use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Allocations<'a> {
+pub struct AllocationsItem<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) generation: Option<i32>,
@@ -46,7 +46,7 @@ pub struct Allocations<'a> {
     pub(crate) resources: BTreeMap<Cow<'a, str>, i32>,
 }
 
-impl<'a> AllocationsBuilder<'a> {
+impl<'a> AllocationsItemBuilder<'a> {
     pub fn resources<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -64,7 +64,7 @@ impl<'a> AllocationsBuilder<'a> {
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(private, setter(name = "_allocations"))]
-    pub(crate) allocations: BTreeMap<Cow<'a, str>, Allocations<'a>>,
+    pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItem<'a>>,
 
     #[builder(setter(into))]
     pub(crate) project_id: Cow<'a, str>,
@@ -92,7 +92,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Allocations<'a>>,
+        V: Into<AllocationsItem<'a>>,
     {
         self.allocations
             .get_or_insert_with(BTreeMap::new)
@@ -186,7 +186,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
+                .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
                 .project_id("foo")
                 .user_id("foo")
                 .build()
@@ -199,7 +199,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
+            .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
             .project_id("foo")
             .user_id("foo")
             .build()
@@ -225,7 +225,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .consumer_uuid("consumer_uuid")
-            .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
+            .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
             .project_id("foo")
             .user_id("foo")
             .build()
@@ -253,7 +253,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .consumer_uuid("consumer_uuid")
-            .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
+            .allocations(BTreeMap::<String, AllocationsItem<'_>>::new().into_iter())
             .project_id("foo")
             .user_id("foo")
             .headers(

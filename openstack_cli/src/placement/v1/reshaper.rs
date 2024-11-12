@@ -19,8 +19,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-//mod create_134;
-//mod create_138;
+mod create_134;
+mod create_138;
 
 /// Reshaper
 #[derive(Parser)]
@@ -33,22 +33,21 @@ pub struct ReshaperCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum ReshaperCommands {
-    //    #[command(visible_alias = "create")]
-    //    Create138(create_138::ReshaperCommand),
-    //    Create134(create_134::ReshaperCommand),
+    #[command(visible_alias = "create")]
+    Create138(create_138::ReshaperCommand),
+    Create134(create_134::ReshaperCommand),
 }
 
 impl ReshaperCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
-        _parsed_args: &Cli,
-        _session: &mut AsyncOpenStack,
+        parsed_args: &Cli,
+        session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
-        todo!()
-        //match &self.command {
-        //    ReshaperCommands::Create138(cmd) => cmd.take_action(parsed_args, session).await,
-        //    ReshaperCommands::Create134(cmd) => cmd.take_action(parsed_args, session).await,
-        //}
+        match &self.command {
+            ReshaperCommands::Create138(cmd) => cmd.take_action(parsed_args, session).await,
+            ReshaperCommands::Create134(cmd) => cmd.take_action(parsed_args, session).await,
+        }
     }
 }

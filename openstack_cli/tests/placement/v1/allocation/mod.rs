@@ -12,15 +12,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// mod create_113_autogen;
-// mod create_128_autogen;
-// mod create_134_autogen;
-// mod create_138_autogen;
+mod create_113_autogen;
+mod create_128_autogen;
+mod create_134_autogen;
+mod create_138_autogen;
 mod delete_autogen;
-// mod set_10_autogen;
-// mod set_112_autogen;
-// mod set_138_autogen;
-// mod set_18_autogen;
+mod set_10_autogen;
+mod set_112_autogen;
+mod set_138_autogen;
+mod set_18_autogen;
 mod show_autogen;
 
 use assert_cmd::prelude::*;

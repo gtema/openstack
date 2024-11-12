@@ -207,11 +207,11 @@ struct ResponseData {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAllocations {
+struct ResponseAllocationsItem {
     resources: Option<Value>,
 }
 
-impl fmt::Display for ResponseAllocations {
+impl fmt::Display for ResponseAllocationsItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([format!(
             "resources={}",
@@ -224,12 +224,12 @@ impl fmt::Display for ResponseAllocations {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseResources {
+struct ResponseResourcesItem {
     capacity: Option<i32>,
     used: Option<i32>,
 }
 
-impl fmt::Display for ResponseResources {
+impl fmt::Display for ResponseResourcesItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(
@@ -246,14 +246,14 @@ impl fmt::Display for ResponseResources {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseProviderSummaries {
+struct ResponseProviderSummariesItem {
     parent_provider_uuid: Option<String>,
     resources: Value,
     root_provider_uuid: Option<String>,
     traits: Option<Value>,
 }
 
-impl fmt::Display for ResponseProviderSummaries {
+impl fmt::Display for ResponseProviderSummariesItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(

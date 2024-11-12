@@ -12,11 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-// mod create_autogen;
-// mod delete_all_autogen;
+mod create_autogen;
+mod delete_all_autogen;
 mod delete_autogen;
 mod list_autogen;
-// mod replace_autogen;
+mod replace_autogen;
 mod set_autogen;
 mod show_autogen;
 

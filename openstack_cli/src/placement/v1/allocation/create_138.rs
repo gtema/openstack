@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
@@ -66,53 +65,9 @@ pub struct AllocationCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// A dictionary of resource allocations keyed by resource provider uuid.
-    /// If this is an empty object, allocations for this consumer will be
-    /// removed.
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    allocations: Vec<(String, Value)>,
-
-    /// The generation of the consumer. Should be set to `null` when indicating
-    /// that the caller expects the consumer does not yet exist.
-    ///
-    /// **New in version 1.28**
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    consumer_generation: Option<i32>,
-
-    /// A string that consists of numbers, `A-Z`, and `_` describing what kind
-    /// of consumer is creating, or has created, allocations using a quantity
-    /// of inventory. The string is determined by the client when writing
-    /// allocations and it is up to the client to ensure correct choices
-    /// amongst collaborating services. For example, the compute service may
-    /// choose to type some consumers ‘INSTANCE’ and others ‘MIGRATION’.
-    ///
-    /// **New in version 1.38**
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    consumer_type: String,
-
-    /// A dictionary associating request group suffixes with a list of uuids
-    /// identifying the resource providers that satisfied each group. The empty
-    /// string and `[a-zA-Z0-9_-]+` are valid suffixes. This field may be sent
-    /// when writing allocations back to the server but will be ignored; this
-    /// preserves symmetry between read and write representations.
-    ///
-    /// **New in version 1.34**
-    ///
-    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    mappings: Option<Vec<(String, Value)>>,
-
-    /// The uuid of a project.
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    project_id: String,
-
-    /// The uuid of a user.
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    user_id: String,
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
+    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -144,35 +99,17 @@ impl AllocationCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        // Set Request.allocations data
-
-        ep_builder.allocations(
-            &self
-                .allocations
-                .into_iter()
-                .map(|(k, v)| {
-                    serde_json::from_value(v.to_owned()).map(|v: create_138::Allocations| (k, v))
-                })
-                .collect::<Result<Vec<_>, _>>()?
-                .into_iter(),
-        );
-
-        // Set Request.consumer_generation data
-        ep_builder.consumer_generation(*&self.consumer_generation);
-
-        // Set Request.consumer_type data
-        ep_builder.consumer_type(&self.consumer_type);
-
-        // Set Request.mappings data
-        if let Some(arg) = &self.mappings {
-            ep_builder.mappings(arg.iter().cloned());
+        if let Some(properties) = &self.properties {
+            ep_builder.properties(
+                properties
+                    .iter()
+                    .map(|(k, v)| {
+                        serde_json::from_value(v.to_owned()).map(|v: create_138::Item| (k, v))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?
+                    .into_iter(),
+            );
         }
-
-        // Set Request.project_id data
-        ep_builder.project_id(&self.project_id);
-
-        // Set Request.user_id data
-        ep_builder.user_id(&self.user_id);
 
         let ep = ep_builder
             .build()
