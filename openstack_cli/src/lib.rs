@@ -27,7 +27,10 @@ use clap::{CommandFactory, Parser};
 use clap_complete::generate;
 use dialoguer::FuzzySelect;
 use eyre::eyre;
-use tracing::{warn, Level};
+use std::sync::{Arc, Mutex};
+use tracing::warn;
+use tracing_subscriber::filter::LevelFilter;
+use tracing_subscriber::{prelude::*, Layer};
 
 use openstack_sdk::{
     auth::authtoken::AuthTokenScope, types::identity::v3::Project, AsyncOpenStack,
@@ -47,11 +50,14 @@ mod network;
 mod object_store;
 mod placement;
 
+mod tracing_stats;
+
 pub mod cli;
 pub mod error;
 pub mod output;
 
 use crate::error::OpenStackCliError;
+use crate::tracing_stats::{HttpRequestStats, RequestTracingCollector};
 
 pub use cli::Cli;
 use cli::TopLevelCommands;
@@ -59,11 +65,16 @@ use cli::TopLevelCommands;
 pub(crate) use output::OutputConfig;
 pub(crate) use output::StructTable;
 
+use comfy_table::presets::UTF8_FULL_CONDENSED;
+use comfy_table::ContentArrangement;
+use comfy_table::Table;
+
 /// Entry point for the CLI wrapper
 pub async fn entry_point() -> Result<(), OpenStackCliError> {
     let cli = Cli::parse();
 
     if let TopLevelCommands::Completion(args) = &cli.command {
+        // generate completion output
         generate(
             args.shell,
             &mut Cli::command(),
@@ -73,16 +84,32 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
         return Ok(());
     }
 
-    tracing_subscriber::fmt()
+    // Initialize tracing layers
+    // fmt for console logging
+    let log_layer = tracing_subscriber::fmt::layer()
         .with_writer(io::stderr)
-        .with_max_level(match cli.global_opts.verbose {
-            0 => Level::WARN,
-            1 => Level::INFO,
-            2 => Level::DEBUG,
-            _ => Level::TRACE,
+        .with_filter(match cli.global_opts.verbose {
+            0 => LevelFilter::WARN,
+            1 => LevelFilter::INFO,
+            2 => LevelFilter::DEBUG,
+            _ => LevelFilter::TRACE,
         })
+        .boxed();
+
+    // RequestTracingCollector for capturing http statistics
+    let request_stats = Arc::new(Mutex::new(HttpRequestStats::default()));
+    let rtl = RequestTracingCollector {
+        stats: request_stats.clone(),
+    }
+    .boxed();
+
+    // build the tracing registry
+    tracing_subscriber::registry()
+        .with(log_layer)
+        .with(rtl)
         .init();
 
+    // build configs
     let cfg = openstack_sdk::config::ConfigFile::new_with_user_specified_configs(
         cli.global_opts.os_client_config_file.as_deref(),
         cli.global_opts.os_client_secure_file.as_deref(),
@@ -135,6 +162,7 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
             .await
             .map_err(|err| OpenStackCliError::Auth { source: err })?;
     }
+    // Does the user want to connect to different project?
     if cli.global_opts.os_project_id.is_some() || cli.global_opts.os_project_name.is_some() {
         warn!(
             "Cloud config is being chosen with arguments overriding project. Result may be not as expected."
@@ -167,5 +195,33 @@ pub async fn entry_point() -> Result<(), OpenStackCliError> {
     }
 
     // Invoke the command
-    cli.take_action(&mut session).await
+    let res = cli.take_action(&mut session).await;
+
+    // If HTTP timing was requested dump stats into STDERR
+    if cli.global_opts.timing {
+        if let Ok(data) = request_stats.lock() {
+            let table = build_http_requests_timing_table(&data);
+            eprintln!("\nHTTP statistics:");
+            eprintln!("{table}");
+        }
+    }
+
+    res
+}
+
+/// Build a table of HTTP request timings
+fn build_http_requests_timing_table(data: &HttpRequestStats) -> Table {
+    let mut table = Table::new();
+    table
+        .load_preset(UTF8_FULL_CONDENSED)
+        .set_content_arrangement(ContentArrangement::Dynamic)
+        .set_header(Vec::from(["Url", "Method", "Duration (ms)"]));
+
+    let mut total_http_duration: u128 = 0;
+    for rec in data.summarize_by_url_method() {
+        total_http_duration += rec.2;
+        table.add_row(vec![rec.0, rec.1, rec.2.to_string()]);
+    }
+    table.add_row(vec!["Total", "", &total_http_duration.to_string()]);
+    table
 }

@@ -149,6 +149,10 @@ pub struct GlobalOpts {
     /// Verbosity level. Repeat to increase level.
     #[arg(short, long, global=true, action = clap::ArgAction::Count, display_order = 920)]
     pub verbose: u8,
+
+    /// Record HTTP request timings
+    #[arg(long, global=true, action = clap::ArgAction::SetTrue, display_order = 920)]
+    pub timing: bool,
 }
 
 /// Output format

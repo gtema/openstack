@@ -18,7 +18,7 @@ use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
-use tracing::{debug, error, info, span, trace, warn, Level};
+use tracing::{debug, error, event, info, instrument, trace, warn, Level};
 
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -171,9 +171,6 @@ impl api::AsyncClient for AsyncOpenStack {
 impl AsyncOpenStack {
     /// Basic constructor
     fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
-        let span = span!(Level::DEBUG, "new_impl");
-        let _enter = span.enter();
-
         let mut client_builder = AsyncClient::builder();
 
         if let Some(cacert) = &config.cacert {
@@ -234,10 +231,8 @@ impl AsyncOpenStack {
     }
 
     /// Create a new OpenStack API session from CloudConfig
+    #[instrument(name = "connect", level = "trace", skip(config))]
     pub async fn new(config: &CloudConfig) -> OpenStackResult<Self> {
-        let span = span!(Level::DEBUG, "Session span");
-        let _enter = span.enter();
-        debug!("Building new session");
         let mut session = Self::new_impl(config, Auth::None)?;
 
         // Ensure we resolve identity endpoint using version discovery
@@ -251,10 +246,8 @@ impl AsyncOpenStack {
     }
 
     /// Create a new OpenStack API session from CloudConfig
+    #[instrument(name = "connect", level = "trace", skip(config))]
     pub async fn new_interactive(config: &CloudConfig, renew_auth: bool) -> OpenStackResult<Self> {
-        let span = span!(Level::DEBUG, "Session span");
-        let _enter = span.enter();
-        debug!("Building new session");
         let mut session = Self::new_impl(config, Auth::None)?;
 
         // Ensure we resolve identity endpoint using version discovery
@@ -450,6 +443,7 @@ where {
     }
 
     /// Perform version discovery of a service
+    #[instrument(skip(self))]
     pub async fn discover_service_endpoint(
         &mut self,
         service_type: &ServiceType,
@@ -551,22 +545,30 @@ where {
     }
 
     /// Perform HTTP request with given request and return raw response.
+    #[instrument(name="request", skip_all, fields(http.uri = request.url().as_str(), http.method = request.method().as_str(), openstack.ver=request.headers().get("openstack-api-version").map(|v| v.to_str().unwrap_or(""))))]
     async fn execute_request(&self, request: Request) -> Result<Response, reqwest::Error> {
         info!("Sending request {:?}", request);
         // Body may contain sensitive info.
+        let url = request.url().clone();
+        let method = request.method().clone();
         if let Some(body) = request.body() {
-            trace!(
-                "Request Body: {:?}",
-                std::str::from_utf8(body.as_bytes().unwrap())
-            );
+            if let Some(bytes) = body.as_bytes() {
+                trace!("Request Body: {:?}", std::str::from_utf8(bytes));
+            }
         }
         let start = SystemTime::now();
         let rsp = self.client.execute(request).await?;
-        let elapsed = SystemTime::now().duration_since(start);
-        info!(
-            "Request completed with status {} in {}ms",
+        let elapsed = SystemTime::now().duration_since(start).unwrap_or_default();
+        event!(
+            name: "http_request",
+            Level::INFO,
+            url=url.as_str(),
+            duration_ms=elapsed.as_millis(),
+            status=rsp.status().as_u16(),
+            method=method.as_str(),
+            request_id=rsp.headers().get("x-openstack-request-id").map(|v| v.to_str().unwrap_or("")),
+            "Request completed with status {}",
             rsp.status(),
-            elapsed.unwrap_or_default().as_millis()
         );
         Ok(rsp)
     }
