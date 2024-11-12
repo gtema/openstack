@@ -6,6 +6,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.2...openstack_cli-v0.9.0) - 2024-11-12
+
+### Added
+
+- Add `--timing` argument ([#731](https://github.com/gtema/openstack/pull/731))
+- Update dependencies ([#722](https://github.com/gtema/openstack/pull/722))
+- Enable placement commands ([#721](https://github.com/gtema/openstack/pull/721))
+- New content for placement ([#720](https://github.com/gtema/openstack/pull/720))
+- Add identity.group.user commands ([#719](https://github.com/gtema/openstack/pull/719))
+- Restore generating image service code ([#716](https://github.com/gtema/openstack/pull/716))
+- Enable bs.service.list command ([#711](https://github.com/gtema/openstack/pull/711))
+- Prepare placement skeleton ([#710](https://github.com/gtema/openstack/pull/710))
+- Incorporate updated network schemas
+
+### Fixed
+
+- Fix identity resource link code ([#698](https://github.com/gtema/openstack/pull/698))
+
+### Other
+
+- Optimize code addressing new clippy suggestions ([#717](https://github.com/gtema/openstack/pull/717))
+- New generated content ([#714](https://github.com/gtema/openstack/pull/714))
+- *(deps)* update crate-ci/typos action to v1.27.0 ([#704](https://github.com/gtema/openstack/pull/704))
+
 ## [0.8.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.1...openstack_cli-v0.8.2) - 2024-10-29
 
 ### Fixed
