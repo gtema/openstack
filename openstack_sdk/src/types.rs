@@ -102,6 +102,12 @@ impl BoxedAsyncRead {
     }
 }
 
+impl fmt::Debug for BoxedAsyncRead {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "_data_")
+    }
+}
+
 impl AsyncRead for BoxedAsyncRead {
     fn poll_read(
         mut self: Pin<&mut Self>,

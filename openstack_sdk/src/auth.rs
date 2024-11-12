@@ -21,7 +21,7 @@
 
 use http::{HeaderMap, HeaderValue};
 
-use std::fmt::Debug;
+use std::fmt::{self, Debug};
 use tracing::error;
 
 use thiserror::Error;
@@ -110,6 +110,19 @@ impl Auth {
         }
 
         Ok(headers)
+    }
+}
+
+impl fmt::Debug for Auth {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Auth {}",
+            match self {
+                Auth::AuthToken(_) => "Token",
+                Auth::None => "unauthed",
+            }
+        )
     }
 }
 

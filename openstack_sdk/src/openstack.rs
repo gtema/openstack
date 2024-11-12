@@ -20,12 +20,15 @@ use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
-use tracing::{debug, error, info, span, trace, warn, Level};
+use tracing::{debug, error, event, info, instrument, trace, warn, Level};
 
 use bytes::Bytes;
 use http::{Response as HttpResponse, StatusCode};
 
-use reqwest::{blocking::Client, Certificate};
+use reqwest::{
+    blocking::{Client, Request, Response},
+    Certificate, Url,
+};
 
 use crate::config::CloudConfig;
 
@@ -133,9 +136,6 @@ enum CertPolicy {
 impl OpenStack {
     /// Basic constructor
     fn new_impl(config: &CloudConfig, auth: Auth) -> OpenStackResult<Self> {
-        let span = span!(Level::DEBUG, "new_impl");
-        let _enter = span.enter();
-
         let mut client_builder = Client::builder();
 
         if let Some(cacert) = &config.cacert {
@@ -196,11 +196,8 @@ impl OpenStack {
     }
 
     /// Create a new OpenStack API session from CloudConfig
+    #[instrument(name = "connect", level = "trace", skip(config))]
     pub fn new(config: &CloudConfig) -> OpenStackResult<Self> {
-        trace!("Building new session");
-        let span = span!(Level::TRACE, "Session span");
-        let _enter = span.enter();
-
         let mut session = Self::new_impl(config, Auth::None)?;
 
         // Ensure we resolve identity endpoint using version discovery
@@ -367,6 +364,7 @@ impl OpenStack {
         Ok(())
     }
 
+    #[instrument(skip(self))]
     pub fn discover_service_endpoint(
         &mut self,
         service_type: &ServiceType,
@@ -440,8 +438,32 @@ impl OpenStack {
         None
     }
 
+    /// Perform HTTP request with given request and return raw response.
+    #[instrument(name="request", skip_all, fields(http.uri = request.url().as_str(), http.method = request.method().as_str(), openstack.ver=request.headers().get("openstack-api-version").map(|v| v.to_str().unwrap_or(""))))]
+    fn execute_request(&self, request: Request) -> Result<Response, reqwest::Error> {
+        info!("Sending request {:?}", request);
+        let url: Url = request.url().clone();
+        let method = request.method().clone();
+
+        let start = SystemTime::now();
+        let rsp = self.client.execute(request)?;
+        let elapsed = SystemTime::now().duration_since(start).unwrap_or_default();
+        event!(
+            name: "http_request",
+            Level::INFO,
+            url=url.as_str(),
+            duration_ms=elapsed.as_millis(),
+            status=rsp.status().as_u16(),
+            method=method.as_str(),
+            request_id=rsp.headers().get("x-openstack-request-id").map(|v| v.to_str().unwrap_or("")),
+            "Request completed with status {}",
+            rsp.status(),
+        );
+        Ok(rsp)
+    }
+
     /// Perform a REST query with a given auth.
-    pub fn rest_with_auth(
+    fn rest_with_auth(
         &self,
         mut request: http::request::Builder,
         body: Vec<u8>,
@@ -452,15 +474,7 @@ impl OpenStack {
             let http_request = request.body(body)?;
             let request = http_request.try_into()?;
 
-            info!("Sending request {:?}", request);
-            let start = SystemTime::now();
-            let rsp = self.client.execute(request)?;
-            let elapsed = SystemTime::now().duration_since(start);
-            info!(
-                "Request completed with status {} in {}ms",
-                rsp.status(),
-                elapsed.unwrap_or_default().as_millis()
-            );
+            let rsp = self.execute_request(request)?;
 
             let mut http_rsp = HttpResponse::builder()
                 .status(rsp.status())

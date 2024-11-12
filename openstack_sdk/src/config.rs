@@ -273,7 +273,7 @@ impl fmt::Debug for Auth {
 }
 
 /// CloudConfig structure
-#[derive(Deserialize, Default, Debug, Clone)]
+#[derive(Deserialize, Default, Clone)]
 pub struct CloudConfig {
     /// Authorization data
     pub(crate) auth: Option<Auth>,
@@ -297,6 +297,14 @@ pub struct CloudConfig {
     /// All other options
     #[serde(flatten)]
     pub options: HashMap<String, config::Value>,
+}
+
+impl fmt::Debug for CloudConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("CloudConfig")
+            .field("auth", &self.auth)
+            .finish()
+    }
 }
 
 /// Get a user authentication hash

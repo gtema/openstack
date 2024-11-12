@@ -40,3 +40,8 @@ When a newer microversion is required user should explicitly to do "migration"
 step adapting the invocation to a newer set of parameters. Microversion (or
 functionality) deprecation is also much simpler this way and is handled by
 marking the whole command deprecated and/or drop it completely.
+
+## Request timing
+
+`osc` supports `--timing` argument that enables capturing of all HTTP requests
+and outputs timings grouped by URL (ignoring the query parameters) and method.
