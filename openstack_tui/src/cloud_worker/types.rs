@@ -30,6 +30,7 @@ pub enum Resource {
     ImageImages(ImageFilters),
     NetworkNetworks(NetworkNetworkFilters),
     NetworkSubnets(NetworkSubnetFilters),
+    NetworkQuota,
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]

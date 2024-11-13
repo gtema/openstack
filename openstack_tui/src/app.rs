@@ -328,8 +328,10 @@ impl App {
                     self.render(tui)?;
                 }
                 Action::Error(_) => {
-                    self.active_popup = Some(Popup::Error);
-                    self.render(tui)?;
+                    if self.mode != Mode::Home {
+                        self.active_popup = Some(Popup::Error);
+                        self.render(tui)?;
+                    }
                 }
                 _ => {}
             }

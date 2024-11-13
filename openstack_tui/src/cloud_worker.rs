@@ -182,6 +182,15 @@ impl Cloud {
                                 )))?,
                             }
                         }
+                        Resource::NetworkQuota => {
+                            match <Cloud as NetworkExt>::get_quota(self).await {
+                                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch network quota: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::NetworkNetworks(ref filters) => {
                             match <Cloud as NetworkExt>::get_networks(self, filters).await {
                                 Ok(data) => {
