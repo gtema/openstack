@@ -24,6 +24,8 @@ pub trait NetworkExt {
     async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>>;
 
     async fn get_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>>;
+
+    async fn get_quota(&mut self) -> Result<Value>;
 }
 
 impl NetworkExt for Cloud {
@@ -58,5 +60,28 @@ impl NetworkExt for Cloud {
             return Ok(res);
         }
         Ok(Vec::new())
+    }
+
+    async fn get_quota(&mut self) -> Result<Value> {
+        if let Some(session) = &self.cloud {
+            let mut ep_builder =
+                openstack_sdk::api::network::v2::quota::details::Request::builder();
+
+            ep_builder.id(self
+                .cloud
+                .as_ref()
+                .expect("Connected")
+                .get_auth_info()
+                .expect("Authorized")
+                .token
+                .project
+                .expect("Project scoped")
+                .id
+                .expect("ID is known"));
+            let ep = ep_builder.build()?;
+            let res: Value = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Value::Null)
     }
 }

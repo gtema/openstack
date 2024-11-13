@@ -27,26 +27,36 @@ use serde::Deserialize;
 use serde_json::Value;
 use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
-use tracing::debug;
 
 use crate::{
     action::Action, cloud_worker::types::Resource, components::Component, config::Config,
     mode::Mode,
 };
 
+/// Single resource quota details
 #[derive(Deserialize, Debug, Default, Clone)]
 struct Quota {
-    /// The number of allowed members for each server group.
-    ///
-    in_use: i32,
+    #[serde(alias = "in_use")]
+    used: i32,
     limit: i32,
 }
 
+/// Copmute quota details
 #[derive(Deserialize, Debug, Default, Clone)]
 struct ComputeQuota {
-    instances: Quota,
-    cores: Quota,
-    ram: Quota,
+    instances: Option<Quota>,
+    cores: Option<Quota>,
+    ram: Option<Quota>,
+}
+
+/// Network quota details
+#[derive(Deserialize, Debug, Default, Clone)]
+struct NetworkQuota {
+    floatingip: Option<Quota>,
+    network: Option<Quota>,
+    subnet: Option<Quota>,
+    port: Option<Quota>,
+    router: Option<Quota>,
 }
 
 #[derive(Default)]
@@ -55,7 +65,8 @@ pub struct Home {
     config: Config,
     is_loading: bool,
     is_error: bool,
-    compute_quota: ComputeQuota,
+    compute_quota: Option<ComputeQuota>,
+    network_quota: Option<NetworkQuota>,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
 }
@@ -83,13 +94,25 @@ impl Home {
     fn set_compute_data(&mut self, data: Value) -> Result<()> {
         if !data.is_null() {
             let data: ComputeQuota = serde_json::from_value(data.clone())?;
-            self.compute_quota = data;
+            self.compute_quota = Some(data);
+        }
+        Ok(())
+    }
+
+    fn set_network_data(&mut self, data: Value) -> Result<()> {
+        if !data.is_null() {
+            let data: NetworkQuota = serde_json::from_value(data.clone())?;
+            self.network_quota = Some(data);
         }
         Ok(())
     }
 
     fn refresh_data(&mut self) -> Result<Option<Action>> {
-        Ok(Some(Action::RequestCloudResource(Resource::ComputeQuota)))
+        if let Some(command_tx) = &self.command_tx {
+            command_tx.send(Action::RequestCloudResource(Resource::ComputeQuota))?;
+            command_tx.send(Action::RequestCloudResource(Resource::NetworkQuota))?;
+        }
+        Ok(None)
     }
 }
 
@@ -113,6 +136,8 @@ impl Component for Home {
             Action::ConnectedToCloud(_) => {
                 self.is_error = false;
                 self.set_loading(true);
+                self.compute_quota = None;
+                self.network_quota = None;
                 if let Mode::Home = current_mode {
                     return self.refresh_data();
                 }
@@ -131,8 +156,14 @@ impl Component for Home {
                 resource: Resource::ComputeQuota { .. },
                 data,
             } => {
-                debug!("Got data {:?}", data);
                 self.set_compute_data(data)?;
+                self.set_loading(false);
+            }
+            Action::ResourceData {
+                resource: Resource::NetworkQuota { .. },
+                data,
+            } => {
+                self.set_network_data(data)?;
                 self.set_loading(false);
             }
 
@@ -157,7 +188,7 @@ impl Component for Home {
             ));
         } else if self.is_error {
             title.push(Span::styled(
-                " (Can not be fetched) ",
+                " (Cannot be fetched) ",
                 self.config.styles.title_loading_fg,
             ));
         }
@@ -201,25 +232,39 @@ impl Component for Home {
             })
             .collect_vec();
 
-        render_quota_gauge(
-            &self.compute_quota.instances,
-            "Server instances",
-            f,
-            areas[0],
-        );
-        render_quota_gauge(&self.compute_quota.cores, "CPU", f, areas[1]);
-        render_quota_gauge(&self.compute_quota.ram, "RAM (Mb)", f, areas[2]);
+        if let Some(compute_quota) = &self.compute_quota {
+            render_quota_gauge(
+                compute_quota.instances.as_ref(),
+                "Server instances",
+                f,
+                areas[0],
+            );
+            render_quota_gauge(compute_quota.cores.as_ref(), "CPU", f, areas[1]);
+            render_quota_gauge(compute_quota.ram.as_ref(), "RAM (Mb)", f, areas[2]);
+        }
+        if let Some(network_quota) = &self.network_quota {
+            render_quota_gauge(network_quota.floatingip.as_ref(), "IP", f, areas[3]);
+            render_quota_gauge(network_quota.router.as_ref(), "Routers", f, areas[4]);
+            render_quota_gauge(network_quota.network.as_ref(), "Networks", f, areas[5]);
+            render_quota_gauge(network_quota.subnet.as_ref(), "Subnets", f, areas[6]);
+            render_quota_gauge(network_quota.port.as_ref(), "Ports", f, areas[7]);
+        }
 
         Ok(())
     }
 }
 
-fn render_quota_gauge(quota: &Quota, title: &str, f: &mut Frame, area: Rect) {
-    let rate = if quota.limit > 0 {
-        quota.in_use as f64 / quota.limit as f64
-    } else {
-        0.0
-    };
+fn render_quota_gauge(quota: Option<&Quota>, title: &str, f: &mut Frame, area: Rect) {
+    let mut rate: f64 = 1.0;
+    let mut used: i32 = 0;
+    let mut limit: i32 = 0;
+    if let Some(quota) = &quota {
+        used = quota.used;
+        limit = quota.limit;
+        if limit > 0 {
+            rate = used as f64 / limit as f64;
+        }
+    }
     let color = match rate {
         0.0..0.5 => Color::Green,
         0.5..0.8 => Color::Yellow,
@@ -228,10 +273,14 @@ fn render_quota_gauge(quota: &Quota, title: &str, f: &mut Frame, area: Rect) {
     let gauge = Gauge::default()
         .block(Block::bordered().title(title))
         .label(Span::styled(
-            if quota.limit > 0 {
-                format!("used {}/{}", quota.in_use, quota.limit)
+            if quota.is_some() {
+                if limit > 0 {
+                    format!("used {}/{}", used, limit)
+                } else {
+                    format!("used {}/∞", used)
+                }
             } else {
-                format!("used {}/∞", quota.in_use)
+                String::from("N/A")
             },
             color,
         ))
