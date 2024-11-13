@@ -20,7 +20,7 @@ use bytes::Bytes;
 use std::borrow::Cow;
 use std::collections::HashMap;
 
-use tracing::{instrument, trace, Level};
+use tracing::{instrument, trace};
 use url::Url;
 
 use http::{

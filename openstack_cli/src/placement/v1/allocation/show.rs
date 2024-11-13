@@ -125,12 +125,12 @@ struct ResponseData {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseAllocations {
+struct ResponseAllocationsItem {
     generation: Option<i32>,
     resources: Value,
 }
 
-impl fmt::Display for ResponseAllocations {
+impl fmt::Display for ResponseAllocationsItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(

@@ -19,11 +19,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-//mod create;
+mod create;
 mod delete;
 mod delete_all;
 mod list;
-//mod replace;
+mod replace;
 mod set;
 mod show;
 
@@ -42,11 +42,11 @@ pub struct InventoryCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum InventoryCommands {
-    //    Create(create::InventoryCommand),
+    Create(create::InventoryCommand),
     Delete(delete::InventoryCommand),
     Purge(delete_all::InventoryCommand),
     List(list::InventoriesCommand),
-    //    Replace(replace::InventoryCommand),
+    Replace(replace::InventoryCommand),
     Set(set::InventoryCommand),
     Show(show::InventoryCommand),
 }
@@ -59,11 +59,11 @@ impl InventoryCommand {
         session: &mut AsyncOpenStack,
     ) -> Result<(), OpenStackCliError> {
         match &self.command {
-            //            InventoryCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
+            InventoryCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Purge(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
-            //            InventoryCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
+            InventoryCommands::Replace(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Set(cmd) => cmd.take_action(parsed_args, session).await,
             InventoryCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }

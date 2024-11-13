@@ -15,6 +15,7 @@
 mod create_autogen;
 mod delete_autogen;
 mod list_autogen;
+mod set_17_autogen;
 mod show_autogen;
 
 use assert_cmd::prelude::*;

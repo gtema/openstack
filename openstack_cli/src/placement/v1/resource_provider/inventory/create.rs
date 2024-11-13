@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use openstack_sdk::api::placement::v1::resource_provider::inventory::create;
 use openstack_sdk::api::QueryAsync;
@@ -101,7 +100,7 @@ struct ResponseData {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseInventories {
+struct ResponseInventoriesItem {
     allocation_ratio: Option<f32>,
     max_unit: Option<i32>,
     min_unit: Option<i32>,
@@ -110,7 +109,7 @@ struct ResponseInventories {
     total: i32,
 }
 
-impl fmt::Display for ResponseInventories {
+impl fmt::Display for ResponseInventoriesItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(
@@ -161,11 +160,10 @@ impl InventoryCommand {
         // Set Request.inventories data
 
         ep_builder.inventories(
-            &self
-                .inventories
-                .into_iter()
+            self.inventories
+                .iter()
                 .map(|(k, v)| {
-                    serde_json::from_value(v.to_owned()).map(|v: create::Inventories| (k, v))
+                    serde_json::from_value(v.to_owned()).map(|v: create::InventoriesItem| (k, v))
                 })
                 .collect::<Result<Vec<_>, _>>()?
                 .into_iter(),

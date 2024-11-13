@@ -22,6 +22,7 @@ use crate::{Cli, OpenStackCliError};
 mod create;
 mod delete;
 mod list;
+mod set_17;
 mod show;
 
 /// Resource Class
@@ -42,6 +43,8 @@ pub enum ResourceClassCommands {
     Create(create::ResourceClassCommand),
     Delete(delete::ResourceClassCommand),
     List(list::ResourceClassesCommand),
+    #[command(visible_alias = "set")]
+    Set17(set_17::ResourceClassCommand),
     Show(show::ResourceClassCommand),
 }
 
@@ -56,6 +59,7 @@ impl ResourceClassCommand {
             ResourceClassCommands::Create(cmd) => cmd.take_action(parsed_args, session).await,
             ResourceClassCommands::Delete(cmd) => cmd.take_action(parsed_args, session).await,
             ResourceClassCommands::List(cmd) => cmd.take_action(parsed_args, session).await,
+            ResourceClassCommands::Set17(cmd) => cmd.take_action(parsed_args, session).await,
             ResourceClassCommands::Show(cmd) => cmd.take_action(parsed_args, session).await,
         }
     }

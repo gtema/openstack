@@ -42,7 +42,7 @@ use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Allocations<'a> {
+pub struct AllocationsItem<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) generation: Option<i32>,
@@ -52,7 +52,7 @@ pub struct Allocations<'a> {
     pub(crate) resources: BTreeMap<Cow<'a, str>, i32>,
 }
 
-impl<'a> AllocationsBuilder<'a> {
+impl<'a> AllocationsItemBuilder<'a> {
     pub fn resources<I, K, V>(&mut self, iter: I) -> &mut Self
     where
         I: Iterator<Item = (K, V)>,
@@ -66,23 +66,48 @@ impl<'a> AllocationsBuilder<'a> {
     }
 }
 
-#[derive(Builder, Debug, Clone)]
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Request<'a> {
+pub struct Item<'a> {
+    #[serde()]
     #[builder(private, setter(name = "_allocations"))]
-    pub(crate) allocations: BTreeMap<Cow<'a, str>, Allocations<'a>>,
+    pub(crate) allocations: BTreeMap<Cow<'a, str>, AllocationsItem<'a>>,
 
+    #[serde()]
     #[builder(setter(into))]
     pub(crate) consumer_generation: Option<i32>,
 
+    #[serde()]
     #[builder(setter(into))]
     pub(crate) project_id: Cow<'a, str>,
 
+    #[serde()]
     #[builder(setter(into))]
     pub(crate) user_id: Cow<'a, str>,
+}
 
+impl<'a> ItemBuilder<'a> {
+    pub fn allocations<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<AllocationsItem<'a>>,
+    {
+        self.allocations
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+}
+
+#[derive(Builder, Debug, Clone)]
+#[builder(setter(strip_option))]
+pub struct Request<'a> {
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    _properties: BTreeMap<Cow<'a, str>, Item<'a>>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -92,18 +117,6 @@ impl<'a> Request<'a> {
 }
 
 impl<'a> RequestBuilder<'a> {
-    pub fn allocations<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Allocations<'a>>,
-    {
-        self.allocations
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
-
     /// Add a single header to the Allocation.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -126,6 +139,18 @@ where {
             .extend(iter.map(Into::into));
         self
     }
+
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Item<'a>>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 impl<'a> RestEndpoint for Request<'a> {
@@ -144,13 +169,9 @@ impl<'a> RestEndpoint for Request<'a> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("allocations", serde_json::to_value(&self.allocations)?);
-        params.push("project_id", serde_json::to_value(&self.project_id)?);
-        params.push("user_id", serde_json::to_value(&self.user_id)?);
-        params.push(
-            "consumer_generation",
-            serde_json::to_value(self.consumer_generation)?,
-        );
+        for (key, val) in &self._properties {
+            params.push(key.clone(), serde_json::to_value(val)?);
+        }
 
         params.into_body()
     }
@@ -189,29 +210,14 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder()
-                .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
-                .project_id("foo")
-                .user_id("foo")
-                .consumer_generation(123)
-                .build()
-                .unwrap()
-                .service_type(),
+            Request::builder().build().unwrap().service_type(),
             ServiceType::Placement
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
-            .consumer_generation(123)
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert!(Request::builder().build().unwrap().response_key().is_none())
     }
 
     #[cfg(feature = "sync")]
@@ -227,13 +233,7 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder()
-            .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
-            .consumer_generation(123)
-            .build()
-            .unwrap();
+        let endpoint = Request::builder().build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -253,10 +253,6 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .allocations(BTreeMap::<String, Allocations<'_>>::new().into_iter())
-            .project_id("foo")
-            .user_id("foo")
-            .consumer_generation(123)
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

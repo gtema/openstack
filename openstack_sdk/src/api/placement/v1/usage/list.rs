@@ -47,7 +47,7 @@ pub struct Request<'a> {
     /// The uuid of a project.
     ///
     #[builder(default, setter(into))]
-    project_id: Option<Cow<'a, str>>,
+    project_id: Cow<'a, str>,
 
     /// The uuid of a user.
     ///
@@ -100,7 +100,7 @@ impl<'a> RestEndpoint for Request<'a> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("project_id", self.project_id.as_ref());
+        params.push("project_id", self.project_id.as_ref());
         params.push_opt("user_id", self.user_id.as_ref());
         params.push_opt("consumer_type", self.consumer_type.as_ref());
 

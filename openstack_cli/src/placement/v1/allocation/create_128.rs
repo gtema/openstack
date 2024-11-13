@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
@@ -66,17 +65,9 @@ pub struct AllocationCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    allocations: Vec<(String, Value)>,
-
-    #[arg(help_heading = "Body parameters", long)]
-    consumer_generation: Option<i32>,
-
-    #[arg(help_heading = "Body parameters", long)]
-    project_id: String,
-
-    #[arg(help_heading = "Body parameters", long)]
-    user_id: String,
+    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    #[arg(help_heading = "Body parameters")]
+    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -108,27 +99,17 @@ impl AllocationCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        // Set Request.allocations data
-
-        ep_builder.allocations(
-            &self
-                .allocations
-                .into_iter()
-                .map(|(k, v)| {
-                    serde_json::from_value(v.to_owned()).map(|v: create_128::Allocations| (k, v))
-                })
-                .collect::<Result<Vec<_>, _>>()?
-                .into_iter(),
-        );
-
-        // Set Request.consumer_generation data
-        ep_builder.consumer_generation(*&self.consumer_generation);
-
-        // Set Request.project_id data
-        ep_builder.project_id(&self.project_id);
-
-        // Set Request.user_id data
-        ep_builder.user_id(&self.user_id);
+        if let Some(properties) = &self.properties {
+            ep_builder.properties(
+                properties
+                    .iter()
+                    .map(|(k, v)| {
+                        serde_json::from_value(v.to_owned()).map(|v: create_128::Item| (k, v))
+                    })
+                    .collect::<Result<Vec<_>, _>>()?
+                    .into_iter(),
+            );
+        }
 
         let ep = ep_builder
             .build()

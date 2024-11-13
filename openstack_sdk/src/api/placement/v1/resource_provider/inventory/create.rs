@@ -32,7 +32,7 @@ use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Inventories {
+pub struct InventoriesItem {
     /// It is used in determining whether consumption of the resource of the
     /// provider can exceed physical constraints.
     ///
@@ -89,7 +89,7 @@ pub struct Request<'a> {
     /// A dictionary of inventories keyed by resource classes.
     ///
     #[builder(private, setter(name = "_inventories"))]
-    pub(crate) inventories: BTreeMap<Cow<'a, str>, Inventories>,
+    pub(crate) inventories: BTreeMap<Cow<'a, str>, InventoriesItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
@@ -120,7 +120,7 @@ impl<'a> RequestBuilder<'a> {
     where
         I: Iterator<Item = (K, V)>,
         K: Into<Cow<'a, str>>,
-        V: Into<Inventories>,
+        V: Into<InventoriesItem>,
     {
         self.inventories
             .get_or_insert_with(BTreeMap::new)
@@ -211,7 +211,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .inventories(BTreeMap::<String, Inventories>::new().into_iter())
+                .inventories(BTreeMap::<String, InventoriesItem>::new().into_iter())
                 .resource_provider_generation(123)
                 .build()
                 .unwrap()
@@ -223,7 +223,7 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .inventories(BTreeMap::<String, Inventories>::new().into_iter())
+            .inventories(BTreeMap::<String, InventoriesItem>::new().into_iter())
             .resource_provider_generation(123)
             .build()
             .unwrap()
@@ -248,7 +248,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .uuid("uuid")
-            .inventories(BTreeMap::<String, Inventories>::new().into_iter())
+            .inventories(BTreeMap::<String, InventoriesItem>::new().into_iter())
             .resource_provider_generation(123)
             .build()
             .unwrap();
@@ -275,7 +275,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .uuid("uuid")
-            .inventories(BTreeMap::<String, Inventories>::new().into_iter())
+            .inventories(BTreeMap::<String, InventoriesItem>::new().into_iter())
             .resource_provider_generation(123)
             .headers(
                 [(

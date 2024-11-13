@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
@@ -113,10 +112,9 @@ impl AllocationCommand {
 
         ep_builder.allocations(
             self.allocations
-                .clone()
-                .into_iter()
+                .iter()
                 .map(|(k, v)| {
-                    serde_json::from_value(v.to_owned()).map(|v: set_112::Allocations| (k, v))
+                    serde_json::from_value(v.to_owned()).map(|v: set_112::AllocationsItem| (k, v))
                 })
                 .collect::<Result<Vec<_>, _>>()?
                 .into_iter(),

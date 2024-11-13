@@ -31,9 +31,15 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
+use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::placement::v1::usage::list;
 use openstack_sdk::api::QueryAsync;
-use structable_derive::StructTable;
+use std::collections::HashMap;
+use std::fmt;
+use tracing::warn;
 
 /// Return a report of usage information for resources associated with the
 /// project identified by project_id and user identified by user_id. The value
@@ -69,28 +75,78 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     consumer_type: Option<String>,
 
-    /// The uuid of a project.
-    ///
-    #[arg(help_heading = "Query parameters", long)]
-    project_id: Option<String>,
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
 
-    /// The uuid of a user.
-    ///
-    #[arg(help_heading = "Query parameters", long)]
+    /// User resource for which the operation should be performed.
+    #[command(flatten)]
+    user: UserInput,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = true, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
+
+/// User input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct UserInput {
+    /// User Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_NAME")]
+    user_name: Option<String>,
+    /// User ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "USER_ID")]
     user_id: Option<String>,
+    /// Current authenticated user.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_user: bool,
 }
 
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Usages response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {
-    /// The number of consumers of a particular consumer_type.
-    ///
-    #[serde()]
-    #[structable()]
-    consumer_count: i32,
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, ResponseItem>);
+
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(
+            self.0
+                .iter()
+                .map(|(k, v)| Vec::from([k.clone(), v.to_string()])),
+        );
+        (headers, rows)
+    }
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseItem {
+    consumer_count: Option<i32>,
+}
+
+impl fmt::Display for ResponseItem {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([format!(
+            "consumer_count={}",
+            self.consumer_count.map_or(String::new(), |v| v.to_string())
+        )]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 
 impl UsagesCommand {
@@ -109,11 +165,87 @@ impl UsagesCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.project_id {
-            ep_builder.project_id(val);
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
-        if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val);
+        if let Some(id) = &self.query.user.user_id {
+            // user_id is passed. No need to lookup
+            ep_builder.user_id(id);
+        } else if let Some(name) = &self.query.user.user_name {
+            // user_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_user::Request::builder();
+            warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.user_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.user.current_user {
+            ep_builder.user_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
         }
         if let Some(val) = &self.query.consumer_type {
             ep_builder.consumer_type(val);
@@ -124,9 +256,8 @@ impl UsagesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
-
-        op.output_list::<ResponseData>(data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

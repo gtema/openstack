@@ -88,7 +88,7 @@ struct ResponseData {
 }
 /// `struct` response type
 #[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseInventories {
+struct ResponseInventoriesItem {
     allocation_ratio: Option<f32>,
     max_unit: Option<i32>,
     min_unit: Option<i32>,
@@ -97,7 +97,7 @@ struct ResponseInventories {
     total: i32,
 }
 
-impl fmt::Display for ResponseInventories {
+impl fmt::Display for ResponseInventoriesItem {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let data = Vec::from([
             format!(

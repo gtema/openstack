@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
@@ -112,12 +111,11 @@ impl ReshaperCommand {
         // Set Request.allocations data
 
         ep_builder.allocations(
-            &self
-                .allocations
-                .into_iter()
+            self.allocations
+                .iter()
                 .map(|(k, v)| {
                     serde_json::from_value(v.to_owned())
-                        .map(|v: create_134::AllocationsStructInput| (k, v))
+                        .map(|v: create_134::AllocationsItemStruct| (k, v))
                 })
                 .collect::<Result<Vec<_>, _>>()?
                 .into_iter(),
@@ -126,12 +124,11 @@ impl ReshaperCommand {
         // Set Request.inventories data
 
         ep_builder.inventories(
-            &self
-                .inventories
-                .into_iter()
+            self.inventories
+                .iter()
                 .map(|(k, v)| {
                     serde_json::from_value(v.to_owned())
-                        .map(|v: create_134::InventoriesStructInput| (k, v))
+                        .map(|v: create_134::InventoriesItemStruct| (k, v))
                 })
                 .collect::<Result<Vec<_>, _>>()?
                 .into_iter(),
