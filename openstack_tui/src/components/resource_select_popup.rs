@@ -51,6 +51,7 @@ impl ResourceSelect {
             resources: HashMap::from([
                 ("aggregates (compute)", Mode::ComputeAggregates),
                 ("flavors", Mode::ComputeFlavors),
+                ("groups (identity)", Mode::IdentityGroups),
                 ("host-aggregates (compute)", Mode::ComputeAggregates),
                 ("hypervisors (compute)", Mode::ComputeHypervisors),
                 ("images", Mode::ImageImages),
