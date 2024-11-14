@@ -46,7 +46,7 @@ pub struct ProjectData {
 
 pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectData, IdentityProjectFilters>;
 
-impl<'a> Component for IdentityProjects<'a> {
+impl Component for IdentityProjects<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }
