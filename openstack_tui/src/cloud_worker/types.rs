@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 use std::fmt;
 use strum::Display;
 
-pub use crate::cloud_worker::compute::{ComputeFlavorFilters, ComputeServerFilters};
+pub use crate::cloud_worker::compute::*;
 
 /// OpenStack "resource"
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
@@ -24,6 +24,8 @@ pub enum Resource {
     ComputeFlavors(ComputeFlavorFilters),
     ComputeServers(ComputeServerFilters),
     ComputeServerConsoleOutput(String),
+    ComputeAggregates(ComputeAggregateFilters),
+    ComputeHypervisors(ComputeHypervisorFilters),
     ComputeQuota,
     IdentityAuthProjects(IdentityAuthProjectFilters),
     IdentityProjects(IdentityProjectFilters),

@@ -12,5 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+pub mod aggregates;
 pub mod flavors;
+pub mod hypervisors;
 pub mod servers;

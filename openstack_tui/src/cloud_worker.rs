@@ -182,6 +182,28 @@ impl Cloud {
                                 )))?,
                             }
                         }
+                        Resource::ComputeAggregates(ref filters) => {
+                            match <Cloud as ComputeExt>::get_aggregates(self, filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch compute aggregates: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
+                        Resource::ComputeHypervisors(ref filters) => {
+                            match <Cloud as ComputeExt>::get_hypervisors(self, filters).await {
+                                Ok(data) => {
+                                    app_tx.send(Action::ResourcesData { resource, data })?
+                                }
+                                Err(err) => app_tx.send(Action::Error(format!(
+                                    "Failed to fetch compute hypervisors: {:?}",
+                                    err
+                                )))?,
+                            }
+                        }
                         Resource::NetworkQuota => {
                             match <Cloud as NetworkExt>::get_quota(self).await {
                                 Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,

@@ -22,6 +22,8 @@ pub enum Mode {
     Describe,
     ComputeFlavors,
     ComputeServers,
+    ComputeAggregates,
+    ComputeHypervisors,
     IdentityProjects,
     ImageImages,
     NetworkNetworks,

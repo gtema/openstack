@@ -27,6 +27,8 @@ pub trait ComputeExt {
     async fn get_servers(&mut self, filters: &ComputeServerFilters) -> Result<Vec<Value>>;
     async fn get_server_console_output<S: AsRef<str>>(&mut self, id: S) -> Result<Value>;
     async fn get_quota(&mut self) -> Result<Value>;
+    async fn get_hypervisors(&mut self, filters: &ComputeHypervisorFilters) -> Result<Vec<Value>>;
+    async fn get_aggregates(&mut self, filters: &ComputeAggregateFilters) -> Result<Vec<Value>>;
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -83,6 +85,42 @@ impl TryFrom<&ComputeServerFilters>
     }
 }
 
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComputeHypervisorFilters {}
+
+impl fmt::Display for ComputeHypervisorFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+impl TryFrom<&ComputeHypervisorFilters>
+    for openstack_sdk::api::compute::v2::hypervisor::list_detailed::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(_value: &ComputeHypervisorFilters) -> Result<Self, Self::Error> {
+        Ok(openstack_sdk::api::compute::v2::hypervisor::list_detailed::Request::builder())
+    }
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComputeAggregateFilters {}
+
+impl fmt::Display for ComputeAggregateFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+impl TryFrom<&ComputeAggregateFilters>
+    for openstack_sdk::api::compute::v2::aggregate::list::RequestBuilder
+{
+    type Error = eyre::Report;
+
+    fn try_from(_value: &ComputeAggregateFilters) -> Result<Self, Self::Error> {
+        Ok(openstack_sdk::api::compute::v2::aggregate::list::Request::builder())
+    }
+}
+
 impl ComputeExt for Cloud {
     async fn get_flavors(&mut self, _filters: &ComputeFlavorFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
@@ -129,6 +167,35 @@ impl ComputeExt for Cloud {
             return Ok(res.get("output").unwrap_or(&Value::Null).to_owned());
         }
         Ok(Value::Null)
+    }
+
+    async fn get_hypervisors(&mut self, filters: &ComputeHypervisorFilters) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep =
+                openstack_sdk::api::compute::v2::hypervisor::list_detailed::RequestBuilder::try_from(
+                    filters,
+                )?
+                .build()?;
+
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
+                .query_async(session)
+                .await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
+    async fn get_aggregates(&mut self, filters: &ComputeAggregateFilters) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep = openstack_sdk::api::compute::v2::aggregate::list::RequestBuilder::try_from(
+                filters,
+            )?
+            .build()?;
+
+            let res: Vec<Value> = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
     }
 
     async fn get_quota(&mut self) -> Result<Value> {
