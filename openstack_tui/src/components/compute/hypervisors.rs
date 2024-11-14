@@ -45,7 +45,7 @@ pub struct HypervisorData {
 pub type ComputeHypervisors<'a> =
     TableViewComponentBase<'a, HypervisorData, ComputeHypervisorFilters>;
 
-impl<'a> Component for ComputeHypervisors<'a> {
+impl Component for ComputeHypervisors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }

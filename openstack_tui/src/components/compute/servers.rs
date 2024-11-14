@@ -44,7 +44,7 @@ pub struct ServerData {
 
 pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerFilters>;
 
-impl<'a> Component for ComputeServers<'a> {
+impl Component for ComputeServers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }
