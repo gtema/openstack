@@ -23,12 +23,21 @@ use crate::{
     action::Action,
     cloud_worker::Cloud,
     components::{
-        cloud_select_popup::CloudSelect, compute::aggregates::ComputeAggregates,
-        compute::flavors::ComputeFlavors, compute::hypervisors::ComputeHypervisors,
-        compute::servers::ComputeServers, describe::Describe, error_popup::ErrorPopup,
-        header::Header, home::Home, identity::projects::IdentityProjects, image::images::Images,
-        network::networks::NetworkNetworks, network::subnets::NetworkSubnets,
-        project_select_popup::ProjectSelect, resource_select_popup::ResourceSelect, Component,
+        cloud_select_popup::CloudSelect,
+        compute::{
+            aggregates::ComputeAggregates, flavors::ComputeFlavors,
+            hypervisors::ComputeHypervisors, servers::ComputeServers,
+        },
+        describe::Describe,
+        error_popup::ErrorPopup,
+        header::Header,
+        home::Home,
+        identity::{projects::IdentityProjects, users::IdentityUsers},
+        image::images::Images,
+        network::{networks::NetworkNetworks, subnets::NetworkSubnets},
+        project_select_popup::ProjectSelect,
+        resource_select_popup::ResourceSelect,
+        Component,
     },
     config::Config,
     mode::Mode,
@@ -77,6 +86,7 @@ impl App {
         let compute_aggregates_component: Box<dyn Component> = Box::new(ComputeAggregates::new());
         let compute_hypervisors_component: Box<dyn Component> = Box::new(ComputeHypervisors::new());
         let identity_projects_component: Box<dyn Component> = Box::new(IdentityProjects::new());
+        let identity_users_component: Box<dyn Component> = Box::new(IdentityUsers::new());
         let image_images_component: Box<dyn Component> = Box::new(Images::new());
         let network_component: Box<dyn Component> = Box::new(NetworkNetworks::new());
         let subnet_component: Box<dyn Component> = Box::new(NetworkSubnets::new());
@@ -106,6 +116,7 @@ impl App {
                 (Mode::NetworkNetworks, network_component),
                 (Mode::NetworkSubnets, subnet_component),
                 (Mode::IdentityProjects, identity_projects_component),
+                (Mode::IdentityUsers, identity_users_component),
                 (Mode::ImageImages, image_images_component),
             ]),
             header: Box::new(Header::new()),

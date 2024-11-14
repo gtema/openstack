@@ -49,15 +49,16 @@ impl ResourceSelect {
     pub fn new() -> Self {
         let mut slf = Self {
             resources: HashMap::from([
-                ("flavors", Mode::ComputeFlavors),
-                ("servers", Mode::ComputeServers),
-                ("projects", Mode::IdentityProjects),
-                ("images", Mode::ImageImages),
-                ("networks", Mode::NetworkNetworks),
-                ("subnets", Mode::NetworkSubnets),
                 ("aggregates (compute)", Mode::ComputeAggregates),
+                ("flavors", Mode::ComputeFlavors),
                 ("host-aggregates (compute)", Mode::ComputeAggregates),
                 ("hypervisors (compute)", Mode::ComputeHypervisors),
+                ("images", Mode::ImageImages),
+                ("networks", Mode::NetworkNetworks),
+                ("projects", Mode::IdentityProjects),
+                ("servers", Mode::ComputeServers),
+                ("subnets", Mode::NetworkSubnets),
+                ("users (identity)", Mode::IdentityUsers),
             ]),
             command_tx: None,
             config: Config::default(),
