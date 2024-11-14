@@ -181,20 +181,16 @@ impl ComputeExt for Cloud {
             let mut ep_builder =
                 openstack_sdk::api::compute::v2::quota_set::details::Request::builder();
 
-            ep_builder.id(self
-                .cloud
-                .as_ref()
-                .expect("Connected")
-                .get_auth_info()
-                .expect("Authorized")
-                .token
-                .project
-                .expect("Project scoped")
-                .id
-                .expect("ID is known"));
-            let ep = ep_builder.build()?;
-            let res: Value = ep.query_async(session).await?;
-            return Ok(res);
+            if let Some(auth) = session.get_auth_info() {
+                if let Some(project) = auth.token.project {
+                    if let Some(pid) = project.id {
+                        ep_builder.id(pid);
+                        let ep = ep_builder.build()?;
+                        let res: Value = ep.query_async(session).await?;
+                        return Ok(res);
+                    }
+                }
+            }
         }
         Ok(Value::Null)
     }
