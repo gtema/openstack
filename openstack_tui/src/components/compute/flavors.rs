@@ -46,7 +46,7 @@ pub struct FlavorData {
 
 pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorFilters>;
 
-impl<'a> Component for ComputeFlavors<'a> {
+impl Component for ComputeFlavors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }

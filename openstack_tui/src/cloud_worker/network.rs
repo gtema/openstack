@@ -14,13 +14,23 @@
 
 use eyre::Result;
 use serde_json::Value;
+use tokio::sync::mpsc::UnboundedSender;
 
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
-use crate::cloud_worker::types::{NetworkNetworkFilters, NetworkSubnetFilters};
-use crate::cloud_worker::Cloud;
+use crate::action::Action;
+use crate::cloud_worker::{Cloud, Resource};
+
+pub mod types;
+use types::*;
 
 pub trait NetworkExt {
+    async fn query_resource(
+        &mut self,
+        app_tx: &UnboundedSender<Action>,
+        resource: Resource,
+    ) -> Result<()>;
+
     async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>>;
 
     async fn get_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>>;
@@ -29,6 +39,44 @@ pub trait NetworkExt {
 }
 
 impl NetworkExt for Cloud {
+    async fn query_resource(
+        &mut self,
+        app_tx: &UnboundedSender<Action>,
+        resource: Resource,
+    ) -> Result<()> {
+        match resource {
+            Resource::NetworkQuota => match <Cloud as NetworkExt>::get_quota(self).await {
+                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch network quota: {:?}",
+                    err
+                )))?,
+            },
+            Resource::NetworkNetworks(ref filters) => {
+                match <Cloud as NetworkExt>::get_networks(self, filters).await {
+                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch networks: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            Resource::NetworkSubnets(ref filters) => {
+                match <Cloud as NetworkExt>::get_subnets(self, filters).await {
+                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Err(err) => {
+                        app_tx.send(Action::Error(format!("Failed to fetch subnets: {:?}", err)))?
+                    }
+                }
+            }
+
+            _ => {
+                todo!()
+            }
+        }
+        Ok(())
+    }
+
     async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();

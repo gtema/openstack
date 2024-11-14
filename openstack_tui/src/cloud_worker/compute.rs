@@ -13,16 +13,25 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use eyre::Result;
-use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::fmt;
+use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
-use crate::cloud_worker::Cloud;
+use crate::action::Action;
+use crate::cloud_worker::{Cloud, Resource};
+
+pub mod types;
+use types::*;
 
 pub trait ComputeExt {
+    async fn query_resource(
+        &mut self,
+        app_tx: &UnboundedSender<Action>,
+        resource: Resource,
+    ) -> Result<()>;
+
     async fn get_flavors(&mut self, filters: &ComputeFlavorFilters) -> Result<Vec<Value>>;
     async fn get_servers(&mut self, filters: &ComputeServerFilters) -> Result<Vec<Value>>;
     async fn get_server_console_output<S: AsRef<str>>(&mut self, id: S) -> Result<Value>;
@@ -31,97 +40,66 @@ pub trait ComputeExt {
     async fn get_aggregates(&mut self, filters: &ComputeAggregateFilters) -> Result<Vec<Value>>;
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeFlavorFilters {}
-
-impl fmt::Display for ComputeFlavorFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl TryFrom<&ComputeFlavorFilters>
-    for openstack_sdk::api::compute::v2::flavor::list_detailed::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &ComputeFlavorFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::compute::v2::flavor::list_detailed::Request::builder();
-
-        ep_builder.sort_key("name");
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeServerFilters {
-    pub all_tenants: Option<bool>,
-}
-
-impl fmt::Display for ComputeServerFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl TryFrom<&ComputeServerFilters>
-    for openstack_sdk::api::compute::v2::server::list_detailed::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &ComputeServerFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::compute::v2::server::list_detailed::Request::builder();
-
-        ep_builder.sort_key("display_name");
-        ep_builder.sort_dir("asc");
-
-        if let Some(true) = &value.all_tenants {
-            ep_builder.all_tenants("true");
-        }
-
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeHypervisorFilters {}
-
-impl fmt::Display for ComputeHypervisorFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-impl TryFrom<&ComputeHypervisorFilters>
-    for openstack_sdk::api::compute::v2::hypervisor::list_detailed::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &ComputeHypervisorFilters) -> Result<Self, Self::Error> {
-        Ok(openstack_sdk::api::compute::v2::hypervisor::list_detailed::Request::builder())
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ComputeAggregateFilters {}
-
-impl fmt::Display for ComputeAggregateFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-impl TryFrom<&ComputeAggregateFilters>
-    for openstack_sdk::api::compute::v2::aggregate::list::RequestBuilder
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &ComputeAggregateFilters) -> Result<Self, Self::Error> {
-        Ok(openstack_sdk::api::compute::v2::aggregate::list::Request::builder())
-    }
-}
-
 impl ComputeExt for Cloud {
+    async fn query_resource(
+        &mut self,
+        app_tx: &UnboundedSender<Action>,
+        resource: Resource,
+    ) -> Result<()> {
+        match resource {
+            Resource::ComputeFlavors(ref filters) => match self.get_flavors(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch compute flavors: {:?}",
+                    err
+                )))?,
+            },
+            Resource::ComputeServers(ref filters) => match self.get_servers(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch compute servers: {:?}",
+                    err
+                )))?,
+            },
+            Resource::ComputeServerConsoleOutput(ref id) => {
+                match self.get_server_console_output(id).await {
+                    Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch server console output: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            Resource::ComputeQuota => match self.get_quota().await {
+                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch compute quota: {:?}",
+                    err
+                )))?,
+            },
+            Resource::ComputeAggregates(ref filters) => match self.get_aggregates(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch compute aggregates: {:?}",
+                    err
+                )))?,
+            },
+            Resource::ComputeHypervisors(ref filters) => {
+                match self.get_hypervisors(filters).await {
+                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch compute hypervisors: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            _ => {
+                todo!()
+            }
+        }
+        Ok(())
+    }
+
     async fn get_flavors(&mut self, _filters: &ComputeFlavorFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let ep =

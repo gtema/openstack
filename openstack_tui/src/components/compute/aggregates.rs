@@ -44,7 +44,7 @@ pub struct AggregateData {
 
 pub type ComputeAggregates<'a> = TableViewComponentBase<'a, AggregateData, ComputeAggregateFilters>;
 
-impl<'a> Component for ComputeAggregates<'a> {
+impl Component for ComputeAggregates<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }

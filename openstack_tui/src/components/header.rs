@@ -41,12 +41,20 @@ impl Default for Header {
 
 /// Ensure string is smaller than the length otherwise truncate it adding ".." as a suffix to
 /// indicate truncation has happened
-fn ensure_max_width(value: &String, max_len: usize) -> String {
-    let mut res = value.clone();
-    if res.len() > max_len {
-        res.replace_range(max_len - 2.., "..")
+fn ensure_max_length(value: &str, max_length: usize) -> String {
+    if value.len() <= max_length {
+        value.to_owned()
+    } else if max_length == 0 {
+        String::from("")
+    } else if max_length == 1 {
+        return String::from(".");
+    } else if max_length == 2 {
+        return format!("{}.", value.get(0..1).unwrap_or("."));
+    } else {
+        let mut result = value.to_owned();
+        result.replace_range(max_length - 2.., "..");
+        return result;
     }
-    res
 }
 
 impl Header {
@@ -118,15 +126,15 @@ impl Component for Header {
         let connect_info_rows = [
             Row::new(vec![
                 Span::styled("Cloud:", Style::new().yellow()),
-                Span::from(ensure_max_width(&self.cloud_name, 30)),
+                Span::from(ensure_max_length(&self.cloud_name, 30)),
             ]),
             Row::new(vec![
                 Span::styled("Domain:", Style::new().yellow()),
-                Span::from(ensure_max_width(&self.domain_name, 30)),
+                Span::from(ensure_max_length(&self.domain_name, 30)),
             ]),
             Row::new(vec![
                 Span::styled("Project:", Style::new().yellow()),
-                Span::from(ensure_max_width(&self.project_name, 30)),
+                Span::from(ensure_max_length(&self.project_name, 30)),
             ]),
         ];
         // Columns widths are constrained in the same way as Layout...
@@ -187,5 +195,27 @@ impl Component for Header {
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_ensure_max_length() {
+        let original = String::from("123456789");
+        assert_eq!(String::from(""), ensure_max_length(&original, 0));
+        assert_eq!(String::from("."), ensure_max_length(&original, 1));
+        assert_eq!(String::from("1."), ensure_max_length(&original, 2));
+        assert_eq!(String::from("1.."), ensure_max_length(&original, 3));
+        assert_eq!(String::from("12.."), ensure_max_length(&original, 4));
+        assert_eq!(String::from("123.."), ensure_max_length(&original, 5));
+        assert_eq!(String::from("1234.."), ensure_max_length(&original, 6));
+        assert_eq!(String::from("12345.."), ensure_max_length(&original, 7));
+        assert_eq!(String::from("123456.."), ensure_max_length(&original, 8));
+        assert_eq!(original, ensure_max_length(&original, 9));
+        assert_eq!(original, ensure_max_length(&original, 10));
+        assert_eq!(original, ensure_max_length(&original, 20));
     }
 }

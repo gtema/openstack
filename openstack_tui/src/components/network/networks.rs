@@ -46,7 +46,7 @@ pub struct NetworkData {
 
 pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkFilters>;
 
-impl<'a> Component for NetworkNetworks<'a> {
+impl Component for NetworkNetworks<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }
@@ -90,18 +90,15 @@ impl<'a> Component for NetworkNetworks<'a> {
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
-        match key.code {
-            KeyCode::Enter => {
-                if let Some(command_tx) = self.get_command_tx() {
-                    if let Some(x) = self.get_selected_raw() {
-                        command_tx.send(Action::NetworkSubnetFilter(NetworkSubnetFilters {
-                            network_id: x.get("id").unwrap().as_str().map(String::from).clone(),
-                        }))?;
-                    }
+        if key.code == KeyCode::Enter {
+            if let Some(command_tx) = self.get_command_tx() {
+                if let Some(x) = self.get_selected_raw() {
+                    command_tx.send(Action::NetworkSubnetFilter(NetworkSubnetFilters {
+                        network_id: x.get("id").unwrap().as_str().map(String::from).clone(),
+                    }))?;
                 }
-                return Ok(Some(Action::Mode(Mode::NetworkSubnets)));
             }
-            _ => {}
+            return Ok(Some(Action::Mode(Mode::NetworkSubnets)));
         }
         self.handle_key_events(key)
     }

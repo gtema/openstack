@@ -13,10 +13,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 use strum::Display;
 
-pub use crate::cloud_worker::compute::*;
+use openstack_sdk::types::ServiceType;
+
+pub use crate::cloud_worker::compute::types::*;
+pub use crate::cloud_worker::identity::types::*;
+pub use crate::cloud_worker::image::types::*;
+pub use crate::cloud_worker::network::types::*;
 
 /// OpenStack "resource"
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
@@ -35,50 +39,20 @@ pub enum Resource {
     NetworkQuota,
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkNetworkFilters {}
-impl fmt::Display for NetworkNetworkFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkSubnetFilters {
-    pub network_id: Option<String>,
-}
-impl fmt::Display for NetworkSubnetFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(val) = &self.network_id {
-            write!(f, "network: {}", val)?;
+impl From<Resource> for ServiceType {
+    fn from(item: Resource) -> Self {
+        match item {
+            Resource::ComputeServers(_)
+            | Resource::ComputeServerConsoleOutput(_)
+            | Resource::ComputeFlavors(_)
+            | Resource::ComputeQuota
+            | Resource::ComputeAggregates(_)
+            | Resource::ComputeHypervisors(_) => Self::Compute,
+            Resource::IdentityAuthProjects(_) | Resource::IdentityProjects(_) => Self::Identity,
+            Resource::ImageImages(_) => Self::Image,
+            Resource::NetworkNetworks(_) | Resource::NetworkSubnets(_) | Resource::NetworkQuota => {
+                Self::Network
+            }
         }
-        Ok(())
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityAuthProjectFilters {}
-impl fmt::Display for IdentityAuthProjectFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityProjectFilters {}
-impl fmt::Display for IdentityProjectFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ImageFilters {
-    pub visibility: Option<String>,
-}
-impl fmt::Display for ImageFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(val) = &self.visibility {
-            write!(f, "{}", val)?;
-        }
-        Ok(())
     }
 }

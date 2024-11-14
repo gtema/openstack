@@ -45,7 +45,7 @@ pub struct SubnetData {
 
 pub type NetworkSubnets<'a> = TableViewComponentBase<'a, SubnetData, NetworkSubnetFilters>;
 
-impl<'a> Component for NetworkSubnets<'a> {
+impl Component for NetworkSubnets<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }
@@ -88,13 +88,10 @@ impl<'a> Component for NetworkSubnets<'a> {
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
-        match key.code {
-            KeyCode::Char('0') => {
-                return Ok(Some(Action::NetworkSubnetFilter(NetworkSubnetFilters {
-                    network_id: None,
-                })));
-            }
-            _ => {}
+        if let KeyCode::Char('0') = key.code {
+            return Ok(Some(Action::NetworkSubnetFilter(NetworkSubnetFilters {
+                network_id: None,
+            })));
         }
 
         self.handle_key_events(key)
