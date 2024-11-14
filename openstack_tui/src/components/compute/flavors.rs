@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
@@ -48,8 +48,7 @@ pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlav
 
 impl<'a> Component for ComputeFlavors<'a> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
-        self.set_config(config)?;
-        Ok(())
+        self.set_config(config)
     }
 
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
@@ -93,31 +92,10 @@ impl<'a> Component for ComputeFlavors<'a> {
     }
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
-        match key.code {
-            KeyCode::Down => self.cursor_down()?,
-            KeyCode::Up => self.cursor_up()?,
-            KeyCode::Home => self.cursor_first()?,
-            KeyCode::End => self.cursor_last()?,
-            KeyCode::PageUp => self.cursor_page_up()?,
-            KeyCode::PageDown => self.cursor_page_down()?,
-            KeyCode::Left => self.cursor_left()?,
-            KeyCode::Right => self.cursor_right()?,
-            KeyCode::Tab => self.key_tab()?,
-            _ => {}
-        }
-        if key.kind == KeyEventKind::Press && key.code == KeyCode::Enter {
-            if let Some(x) = self.get_selected_raw() {
-                return Ok(Some(Action::Describe(x.clone())));
-            }
-        }
-        Ok(None)
+        self.handle_key_events(key)
     }
 
     fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
-        let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
-
-        self.render_content(TITLE, f, areas[0])?;
-        self.render_footer(f, areas[1]);
-        Ok(())
+        self.draw(f, area, TITLE)
     }
 }

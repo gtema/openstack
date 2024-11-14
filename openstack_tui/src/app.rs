@@ -341,10 +341,14 @@ impl App {
                     self.action_tx.send(action)?
                 };
             }
-            for component in self.components.values_mut() {
-                if let Some(action) = component.update(action.clone(), self.mode)? {
-                    self.action_tx.send(action)?
-                };
+            for (mode, component) in self.components.iter_mut() {
+                // only update component if it belongs to the current mode or it is not refresh
+                // event
+                if *mode == self.mode || action != Action::Refresh {
+                    if let Some(action) = component.update(action.clone(), self.mode)? {
+                        self.action_tx.send(action)?
+                    };
+                }
             }
             if let Some(action) = self.header.update(action.clone(), self.mode)? {
                 self.action_tx.send(action)?

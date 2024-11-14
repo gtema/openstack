@@ -2,6 +2,7 @@
   "mode_keybindings": {
     "Home": { },
     "ComputeServers": {
+      "0": { "action": {"ComputeServerFilter": {} }, "description": "default filters"},
       "1": { "action": {"ComputeServerFilter": {"all_tenants": true} }, "description": "all tenants (admin)"},
       "c": { "action": "ServerConsoleOutput", "description": "Get Console output" },
     },
@@ -12,7 +13,7 @@
       "s": {"action": "SwitchToProject", "description": "Switch to project"},
     },
     "ImageImages": {
-      "0": { "action": {"ImageFilter": {} }, "description": "all"},
+      "0": { "action": {"ImageFilter": {} }, "description": "default filtersall"},
       "1": { "action": {"ImageFilter": {"visibility": "public"} },"description": "public"},
       "2": { "action": {"ImageFilter": {"visibility": "shared"} },"description": "shared"},
       "3": { "action": {"ImageFilter": {"visibility": "private"} },"description": "private"},

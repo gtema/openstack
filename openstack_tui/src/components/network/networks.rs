@@ -48,9 +48,9 @@ pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNe
 
 impl<'a> Component for NetworkNetworks<'a> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
-        self.set_config(config)?;
-        Ok(())
+        self.set_config(config)
     }
+
     fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
         self.set_command_tx(tx);
         Ok(())
@@ -76,14 +76,7 @@ impl<'a> Component for NetworkNetworks<'a> {
                     Resource::NetworkNetworks(self.get_filters().clone()),
                 )));
             }
-            Action::Tick => {
-                self.app_tick()?;
-                //if let Mode::NetworkNetworks = current_mode {
-                //    return Ok(Some(Action::RequestCloudResource(
-                //        Resource::NetworkNetworks(self.get_filters().clone()),
-                //    )));
-                //}
-            }
+            Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
                 resource: Resource::NetworkNetworks(_),
@@ -98,15 +91,6 @@ impl<'a> Component for NetworkNetworks<'a> {
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
         match key.code {
-            KeyCode::Down => self.cursor_down()?,
-            KeyCode::Up => self.cursor_up()?,
-            KeyCode::Home => self.cursor_first()?,
-            KeyCode::End => self.cursor_last()?,
-            KeyCode::PageUp => self.cursor_page_up()?,
-            KeyCode::PageDown => self.cursor_page_down()?,
-            KeyCode::Left => self.cursor_left()?,
-            KeyCode::Right => self.cursor_right()?,
-            KeyCode::Tab => self.key_tab()?,
             KeyCode::Enter => {
                 if let Some(command_tx) = self.get_command_tx() {
                     if let Some(x) = self.get_selected_raw() {
@@ -119,14 +103,10 @@ impl<'a> Component for NetworkNetworks<'a> {
             }
             _ => {}
         }
-        Ok(None)
+        self.handle_key_events(key)
     }
 
     fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
-        let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
-
-        self.render_content(TITLE, f, areas[0])?;
-        self.render_footer(f, areas[1]);
-        Ok(())
+        self.draw(f, area, TITLE)
     }
 }

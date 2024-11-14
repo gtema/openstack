@@ -148,7 +148,7 @@ impl Component for FuzzySelectList {
             KeyCode::End => self.cursor_last()?,
             KeyCode::PageUp => self.cursor_page_up()?,
             KeyCode::PageDown => self.cursor_page_down()?,
-            KeyCode::Backspace => {
+            KeyCode::Backspace | KeyCode::Delete => {
                 if let Some(ref mut input) = self.input {
                     input.pop();
                     if input.is_empty() {
