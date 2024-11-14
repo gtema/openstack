@@ -49,7 +49,7 @@ pub struct ImageData {
 
 pub type Images<'a> = TableViewComponentBase<'a, ImageData, ImageFilters>;
 
-impl<'a> Component for Images<'a> {
+impl Component for Images<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }

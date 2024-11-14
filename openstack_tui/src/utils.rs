@@ -168,7 +168,7 @@ impl<'de> Deserialize<'de> for IntString {
     {
         struct MyVisitor;
 
-        impl<'de> Visitor<'de> for MyVisitor {
+        impl Visitor<'_> for MyVisitor {
             type Value = IntString;
 
             fn expecting(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {

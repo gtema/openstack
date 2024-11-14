@@ -14,13 +14,23 @@
 
 use eyre::Result;
 use serde_json::Value;
+use tokio::sync::mpsc::UnboundedSender;
 
 use openstack_sdk::api::QueryAsync;
 
-use crate::cloud_worker::types::{IdentityAuthProjectFilters, IdentityProjectFilters};
-use crate::cloud_worker::Cloud;
+use crate::action::Action;
+use crate::cloud_worker::{Cloud, Resource};
+
+pub mod types;
+use types::*;
 
 pub trait IdentityExt {
+    async fn query_resource(
+        &mut self,
+        app_tx: &UnboundedSender<Action>,
+        resource: Resource,
+    ) -> Result<()>;
+
     async fn get_auth_projects(
         &mut self,
         filters: &IdentityAuthProjectFilters,
@@ -30,6 +40,35 @@ pub trait IdentityExt {
 }
 
 impl IdentityExt for Cloud {
+    async fn query_resource(
+        &mut self,
+        app_tx: &UnboundedSender<Action>,
+        resource: Resource,
+    ) -> Result<()> {
+        match resource {
+            Resource::IdentityAuthProjects(ref filters) => {
+                match self.get_auth_projects(filters).await {
+                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch available project scopes: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            Resource::IdentityProjects(ref filters) => match self.get_projects(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch available projects: {:?}",
+                    err
+                )))?,
+            },
+            _ => {
+                todo!()
+            }
+        }
+        Ok(())
+    }
+
     async fn get_auth_projects(
         &mut self,
         _filters: &IdentityAuthProjectFilters,
