@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.6...openstack_tui-v0.9.0) - 2024-11-14
+
+### Added
+
+- Add users view ([#745](https://github.com/gtema/openstack/pull/745))
+- Add nova hypervisors and aggregates views ([#743](https://github.com/gtema/openstack/pull/743))
+- Minor improvements ([#742](https://github.com/gtema/openstack/pull/742))
+- Add network quota ([#740](https://github.com/gtema/openstack/pull/740))
+
+### Fixed
+
+- Reset input when resource select popup closed
+
+### Other
+
+- Beter modularize cloud worker services ([#744](https://github.com/gtema/openstack/pull/744))
+- Optimize code addressing new clippy suggestions ([#717](https://github.com/gtema/openstack/pull/717))
+
 ## [0.1.6](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.5...openstack_tui-v0.1.6) - 2024-10-29
 
 ### Fixed
