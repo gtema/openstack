@@ -150,7 +150,7 @@ impl Component for ProjectSelect {
             .title_bottom(
                 Line::from(" (↑) move up | (↓) move down | (Enter) to select | (Esc) to close ")
                     .gray()
-                    .right_aligned(), //.alignment(Alignment::Right),
+                    .right_aligned(),
             )
             .borders(Borders::ALL)
             .border_type(BorderType::Thick)

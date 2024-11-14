@@ -39,6 +39,16 @@ impl Default for Header {
     }
 }
 
+/// Ensure string is smaller than the length otherwise truncate it adding ".." as a suffix to
+/// indicate truncation has happened
+fn ensure_max_width(value: &String, max_len: usize) -> String {
+    let mut res = value.clone();
+    if res.len() > max_len {
+        res.replace_range(max_len - 2.., "..")
+    }
+    res
+}
+
 impl Header {
     pub fn new() -> Self {
         Self {
@@ -98,7 +108,7 @@ impl Component for Header {
         let rects = Layout::default()
             .direction(Direction::Horizontal)
             .constraints(vec![
-                Constraint::Min(50), // first column
+                Constraint::Min(40), // first column
                 Constraint::Min(30), // second column
                 Constraint::Min(30), // second column
                 Constraint::Percentage(100),
@@ -108,19 +118,19 @@ impl Component for Header {
         let connect_info_rows = [
             Row::new(vec![
                 Span::styled("Cloud:", Style::new().yellow()),
-                Span::from(&self.cloud_name),
+                Span::from(ensure_max_width(&self.cloud_name, 30)),
             ]),
             Row::new(vec![
                 Span::styled("Domain:", Style::new().yellow()),
-                Span::from(&self.domain_name),
+                Span::from(ensure_max_width(&self.domain_name, 30)),
             ]),
             Row::new(vec![
                 Span::styled("Project:", Style::new().yellow()),
-                Span::from(&self.project_name),
+                Span::from(ensure_max_width(&self.project_name, 30)),
             ]),
         ];
         // Columns widths are constrained in the same way as Layout...
-        let widths = [Constraint::Length(8), Constraint::Length(20)];
+        let widths = [Constraint::Length(8), Constraint::Length(30)];
 
         let connect_info_table = Table::new(connect_info_rows, widths)
             .column_spacing(1)

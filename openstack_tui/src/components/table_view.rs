@@ -12,6 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
 use eyre::{OptionExt, Report, Result};
 use ratatui::{
     prelude::*,
@@ -288,6 +289,27 @@ where
         Ok(())
     }
 
+    pub fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+        match key.code {
+            KeyCode::Down => self.cursor_down()?,
+            KeyCode::Up => self.cursor_up()?,
+            KeyCode::Home => self.cursor_first()?,
+            KeyCode::End => self.cursor_last()?,
+            KeyCode::PageUp => self.cursor_page_up()?,
+            KeyCode::PageDown => self.cursor_page_down()?,
+            KeyCode::Left => self.cursor_left()?,
+            KeyCode::Right => self.cursor_right()?,
+            KeyCode::Tab => self.key_tab()?,
+            _ => {}
+        }
+        if key.kind == KeyEventKind::Press && key.code == KeyCode::Enter {
+            if let Some(x) = self.get_selected_raw() {
+                return Ok(Some(Action::Describe(x.clone())));
+            }
+        }
+        Ok(None)
+    }
+
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<()> {
         let items: Vec<T> = serde_json::from_value(serde_json::Value::Array(data.clone()))?;
         if data != self.raw_items {
@@ -321,6 +343,14 @@ where
 
     pub fn set_filters(&mut self, filters: F) {
         self.filter = filters;
+    }
+
+    pub fn draw(&mut self, f: &mut Frame<'_>, area: Rect, title: &str) -> Result<()> {
+        let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
+
+        self.render_content(title, f, areas[0])?;
+        self.render_footer(f, areas[1]);
+        Ok(())
     }
 
     pub fn render_table(&mut self, f: &mut Frame, area: Rect) {

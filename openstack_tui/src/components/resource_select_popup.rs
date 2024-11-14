@@ -109,7 +109,7 @@ impl Component for ResourceSelect {
         let popup_block = Block::default()
             .title_top(Line::from(" Select resource to display ").centered())
             .title_bottom(
-                Line::from("(↑) move up | (↓) move down | (←|→) switch")
+                Line::from(" (↑) move up | (↓) move down | (Enter) to select | (Esc) to close ")
                     .gray()
                     .right_aligned(),
             )
