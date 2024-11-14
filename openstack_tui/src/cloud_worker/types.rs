@@ -33,6 +33,7 @@ pub enum Resource {
     ComputeQuota,
     IdentityAuthProjects(IdentityAuthProjectFilters),
     IdentityProjects(IdentityProjectFilters),
+    IdentityUsers(IdentityUserFilters),
     ImageImages(ImageFilters),
     NetworkNetworks(NetworkNetworkFilters),
     NetworkSubnets(NetworkSubnetFilters),
@@ -48,7 +49,9 @@ impl From<Resource> for ServiceType {
             | Resource::ComputeQuota
             | Resource::ComputeAggregates(_)
             | Resource::ComputeHypervisors(_) => Self::Compute,
-            Resource::IdentityAuthProjects(_) | Resource::IdentityProjects(_) => Self::Identity,
+            Resource::IdentityAuthProjects(_)
+            | Resource::IdentityProjects(_)
+            | Resource::IdentityUsers(_) => Self::Identity,
             Resource::ImageImages(_) => Self::Image,
             Resource::NetworkNetworks(_) | Resource::NetworkSubnets(_) | Resource::NetworkQuota => {
                 Self::Network

@@ -29,3 +29,11 @@ impl fmt::Display for IdentityProjectFilters {
         write!(f, "")
     }
 }
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentityUserFilters {}
+impl fmt::Display for IdentityUserFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}

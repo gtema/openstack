@@ -37,6 +37,7 @@ pub trait IdentityExt {
     ) -> Result<Vec<Value>>;
 
     async fn get_projects(&mut self, _filters: &IdentityProjectFilters) -> Result<Vec<Value>>;
+    async fn get_users(&mut self, _filters: &IdentityUserFilters) -> Result<Vec<Value>>;
 }
 
 impl IdentityExt for Cloud {
@@ -59,6 +60,13 @@ impl IdentityExt for Cloud {
                 Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available projects: {:?}",
+                    err
+                )))?,
+            },
+            Resource::IdentityUsers(ref filters) => match self.get_users(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch available users\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
@@ -91,6 +99,21 @@ impl IdentityExt for Cloud {
     async fn get_projects(&mut self, _filters: &IdentityProjectFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let ep_builder = openstack_sdk::api::identity::v3::project::list::Request::builder();
+
+            //if let Some(vis) = &filters.visibility {
+            //    ep_builder.visibility(vis);
+            //}
+            let ep = ep_builder.build()?;
+            let res: Vec<Value> = ep.query_async(session).await?;
+            //let res: Vec<Value> = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
+    async fn get_users(&mut self, _filters: &IdentityUserFilters) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep_builder = openstack_sdk::api::identity::v3::user::list::Request::builder();
 
             //if let Some(vis) = &filters.visibility {
             //    ep_builder.visibility(vis);

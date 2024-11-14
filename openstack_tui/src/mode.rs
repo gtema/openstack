@@ -25,6 +25,7 @@ pub enum Mode {
     ComputeAggregates,
     ComputeHypervisors,
     IdentityProjects,
+    IdentityUsers,
     ImageImages,
     NetworkNetworks,
     NetworkSubnets,
