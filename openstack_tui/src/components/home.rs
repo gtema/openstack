@@ -18,7 +18,7 @@ use itertools::Itertools;
 use ratatui::{
     layout::{
         Constraint::{Length, Min},
-        Layout, Rect,
+        Flex, Layout, Rect,
     },
     prelude::*,
     widgets::{block::*, *},
@@ -248,6 +248,14 @@ impl Component for Home {
             render_quota_gauge(network_quota.network.as_ref(), "Networks", f, areas[5]);
             render_quota_gauge(network_quota.subnet.as_ref(), "Subnets", f, areas[6]);
             render_quota_gauge(network_quota.port.as_ref(), "Ports", f, areas[7]);
+        }
+        if self.compute_quota.is_none() && self.network_quota.is_none() {
+            let layout = Layout::vertical([5]).flex(Flex::Center);
+            let [area] = layout.areas(inner);
+            let paragraph = Paragraph::new("Not available")
+                .style(Style::new().red().on_black())
+                .alignment(Alignment::Center);
+            f.render_widget(paragraph, area);
         }
 
         Ok(())
