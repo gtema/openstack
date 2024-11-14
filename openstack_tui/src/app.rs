@@ -23,7 +23,8 @@ use crate::{
     action::Action,
     cloud_worker::Cloud,
     components::{
-        cloud_select_popup::CloudSelect, compute::flavors::ComputeFlavors,
+        cloud_select_popup::CloudSelect, compute::aggregates::ComputeAggregates,
+        compute::flavors::ComputeFlavors, compute::hypervisors::ComputeHypervisors,
         compute::servers::ComputeServers, describe::Describe, error_popup::ErrorPopup,
         header::Header, home::Home, identity::projects::IdentityProjects, image::images::Images,
         network::networks::NetworkNetworks, network::subnets::NetworkSubnets,
@@ -73,6 +74,8 @@ impl App {
         let describe_component: Box<dyn Component> = Box::new(Describe::new());
         let compute_servers_component: Box<dyn Component> = Box::new(ComputeServers::new());
         let compute_flavors_component: Box<dyn Component> = Box::new(ComputeFlavors::new());
+        let compute_aggregates_component: Box<dyn Component> = Box::new(ComputeAggregates::new());
+        let compute_hypervisors_component: Box<dyn Component> = Box::new(ComputeHypervisors::new());
         let identity_projects_component: Box<dyn Component> = Box::new(IdentityProjects::new());
         let image_images_component: Box<dyn Component> = Box::new(Images::new());
         let network_component: Box<dyn Component> = Box::new(NetworkNetworks::new());
@@ -98,6 +101,8 @@ impl App {
                 (Mode::Describe, describe_component),
                 (Mode::ComputeServers, compute_servers_component),
                 (Mode::ComputeFlavors, compute_flavors_component),
+                (Mode::ComputeAggregates, compute_aggregates_component),
+                (Mode::ComputeHypervisors, compute_hypervisors_component),
                 (Mode::NetworkNetworks, network_component),
                 (Mode::NetworkSubnets, subnet_component),
                 (Mode::IdentityProjects, identity_projects_component),
