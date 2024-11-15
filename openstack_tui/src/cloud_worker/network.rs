@@ -25,16 +25,32 @@ pub mod types;
 use types::*;
 
 pub trait NetworkExt {
+    /// Perform network request
     async fn query_resource(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
     ) -> Result<()>;
 
+    /// List networks
     async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>>;
 
+    /// List Security Groups
+    async fn get_security_groups(
+        &mut self,
+        filters: &NetworkSecurityGroupFilters,
+    ) -> Result<Vec<Value>>;
+
+    /// List Security Group Rules
+    async fn get_security_group_rules(
+        &mut self,
+        filters: &NetworkSecurityGroupRuleFilters,
+    ) -> Result<Vec<Value>>;
+
+    /// List subnets
     async fn get_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>>;
 
+    /// Get network quota
     async fn get_quota(&mut self) -> Result<Value>;
 }
 
@@ -45,30 +61,44 @@ impl NetworkExt for Cloud {
         resource: Resource,
     ) -> Result<()> {
         match resource {
-            Resource::NetworkQuota => match <Cloud as NetworkExt>::get_quota(self).await {
+            Resource::NetworkNetworks(ref filters) => match self.get_networks(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch networks: {:?}",
+                    err
+                )))?,
+            },
+            Resource::NetworkQuota => match self.get_quota().await {
                 Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch network quota: {:?}",
                     err
                 )))?,
             },
-            Resource::NetworkNetworks(ref filters) => {
-                match <Cloud as NetworkExt>::get_networks(self, filters).await {
+            Resource::NetworkSecurityGroups(ref filters) => {
+                match self.get_security_groups(filters).await {
                     Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
-                        "Failed to fetch networks: {:?}",
+                        "Failed to fetch security groups: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::NetworkSubnets(ref filters) => {
-                match <Cloud as NetworkExt>::get_subnets(self, filters).await {
+            Resource::NetworkSecurityGroupRules(ref filters) => {
+                match self.get_security_group_rules(filters).await {
                     Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                    Err(err) => {
-                        app_tx.send(Action::Error(format!("Failed to fetch subnets: {:?}", err)))?
-                    }
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch security group rules: {:?}",
+                        err
+                    )))?,
                 }
             }
+            Resource::NetworkSubnets(ref filters) => match self.get_subnets(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => {
+                    app_tx.send(Action::Error(format!("Failed to fetch subnets: {:?}", err)))?
+                }
+            },
 
             _ => {
                 todo!()
@@ -82,6 +112,48 @@ impl NetworkExt for Cloud {
             let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
             ep_builder.sort_key("name");
             ep_builder.sort_dir("asc");
+
+            let ep = ep_builder.build()?;
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
+                .query_async(session)
+                .await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
+    async fn get_security_groups(
+        &mut self,
+        _filters: &NetworkSecurityGroupFilters,
+    ) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let mut ep_builder =
+                openstack_sdk::api::network::v2::security_group::list::Request::builder();
+            ep_builder.sort_key("name");
+            ep_builder.sort_dir("asc");
+
+            let ep = ep_builder.build()?;
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
+                .query_async(session)
+                .await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
+    async fn get_security_group_rules(
+        &mut self,
+        filters: &NetworkSecurityGroupRuleFilters,
+    ) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let mut ep_builder =
+                openstack_sdk::api::network::v2::security_group_rule::list::Request::builder();
+            ep_builder.sort_key("ethertype");
+            ep_builder.sort_dir("asc");
+
+            if let Some(security_group_id) = &filters.security_group_id {
+                ep_builder.security_group_id(security_group_id.clone());
+            }
 
             let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)

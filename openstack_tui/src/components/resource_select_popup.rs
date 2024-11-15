@@ -60,6 +60,16 @@ impl ResourceSelect {
                 ("hypervisors (compute)", Mode::ComputeHypervisors),
                 ("images", Mode::ImageImages),
                 ("networks", Mode::NetworkNetworks),
+                ("security groups (network)", Mode::NetworkSecurityGroups),
+                ("sg (security groups)", Mode::NetworkSecurityGroups),
+                (
+                    "security group rule (network)",
+                    Mode::NetworkSecurityGroupRules,
+                ),
+                (
+                    "sgr (security group rules)",
+                    Mode::NetworkSecurityGroupRules,
+                ),
                 ("projects", Mode::IdentityProjects),
                 ("servers", Mode::ComputeServers),
                 ("subnets", Mode::NetworkSubnets),

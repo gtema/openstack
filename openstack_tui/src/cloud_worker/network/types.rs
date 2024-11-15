@@ -15,6 +15,7 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+/// Network filters
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetworkNetworkFilters {}
 impl fmt::Display for NetworkNetworkFilters {
@@ -22,6 +23,8 @@ impl fmt::Display for NetworkNetworkFilters {
         write!(f, "")
     }
 }
+
+/// Subnet filters
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetworkSubnetFilters {
     pub network_id: Option<String>,
@@ -30,6 +33,37 @@ impl fmt::Display for NetworkSubnetFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if let Some(val) = &self.network_id {
             write!(f, "network: {}", val)?;
+        }
+        Ok(())
+    }
+}
+
+/// Security groups
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NetworkSecurityGroupFilters {}
+impl fmt::Display for NetworkSecurityGroupFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
+/// Security group rules
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NetworkSecurityGroupRuleFilters {
+    pub security_group_id: Option<String>,
+    pub security_group_name: Option<String>,
+}
+impl fmt::Display for NetworkSecurityGroupRuleFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.security_group_id.is_some() || self.security_group_name.is_some() {
+            write!(
+                f,
+                "security_group: {}",
+                self.security_group_name
+                    .as_ref()
+                    .or(self.security_group_id.as_ref())
+                    .unwrap_or(&String::new())
+            )?;
         }
         Ok(())
     }
