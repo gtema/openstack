@@ -70,6 +70,7 @@ impl Describe {
         } else if data.is_null() {
             self.text.clear();
         } else {
+            self.text.clear();
             let data: serde_yaml::Value = serde_json::from_value(data)?;
             self.text = serde_yaml::to_string(&data)?
                 .split("\n")
@@ -77,6 +78,7 @@ impl Describe {
                 .collect::<Vec<_>>();
         }
         self.max_row_length = self.text.iter().map(String::len).max().unwrap_or(0) as u16;
+        self.content_scroll = (0, 0);
         self.vscroll_state = ScrollbarState::default().content_length(
             self.text
                 .len()
