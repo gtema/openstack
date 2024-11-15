@@ -26,6 +26,7 @@
       "d": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
       "a": {"action": "IdentityUserCreate", "description": "Create new user (todo!)"},
       "p": {"action": "IdentityUserSetPassword", "description": "Set user password (todo!)"},
+      "c": {"action": "IdentityUserApplicationCredentials", "description": "Application credentials"},
     },
     "ImageImages": {
       "0": { "action": {"ImageFilter": {} }, "description": "default filtersall"},

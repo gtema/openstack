@@ -33,6 +33,7 @@ use crate::{
         header::Header,
         home::Home,
         identity::{
+            application_credentials::IdentityApplicationCredentials,
             group_users::IdentityGroupUsers, groups::IdentityGroups, projects::IdentityProjects,
             users::IdentityUsers,
         },
@@ -89,6 +90,8 @@ impl App {
         let compute_aggregates_component: Box<dyn Component> = Box::new(ComputeAggregates::new());
         let compute_hypervisors_component: Box<dyn Component> = Box::new(ComputeHypervisors::new());
         let identity_projects_component: Box<dyn Component> = Box::new(IdentityProjects::new());
+        let identity_appcred_component: Box<dyn Component> =
+            Box::new(IdentityApplicationCredentials::new());
         let identity_groups_component: Box<dyn Component> = Box::new(IdentityGroups::new());
         let identity_group_users_component: Box<dyn Component> =
             Box::new(IdentityGroupUsers::new());
@@ -121,6 +124,10 @@ impl App {
                 (Mode::ComputeHypervisors, compute_hypervisors_component),
                 (Mode::NetworkNetworks, network_component),
                 (Mode::NetworkSubnets, subnet_component),
+                (
+                    Mode::IdentityApplicationCredentials,
+                    identity_appcred_component,
+                ),
                 (Mode::IdentityGroups, identity_groups_component),
                 (Mode::IdentityGroupUsers, identity_group_users_component),
                 (Mode::IdentityProjects, identity_projects_component),

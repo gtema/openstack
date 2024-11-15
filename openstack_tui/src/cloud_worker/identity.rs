@@ -15,6 +15,7 @@
 use eyre::Result;
 use serde_json::Value;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::debug;
 
 use openstack_sdk::api::QueryAsync;
 
@@ -43,6 +44,11 @@ pub trait IdentityExt {
     async fn get_users(&mut self, _filters: &IdentityUserFilters) -> Result<Vec<Value>>;
     /// Update user
     async fn update_user(&mut self, data: &IdentityUserUpdate) -> Result<Value>;
+    /// Get user application credentials
+    async fn get_user_application_credentials(
+        &mut self,
+        _filters: &IdentityApplicationCredentialFilters,
+    ) -> Result<Vec<Value>>;
 }
 
 impl IdentityExt for Cloud {
@@ -95,6 +101,26 @@ impl IdentityExt for Cloud {
                     "Failed to update user\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
+            },
+            Resource::IdentityApplicationCredentials(ref filters) => {
+                let mut maybe_changed_filters = filters.clone();
+                if maybe_changed_filters.user_id.is_empty() {
+                    if let Some(session) = &self.cloud {
+                        if let Some(auth) = session.get_auth_info() {
+                            maybe_changed_filters.user_id = auth.token.user.id;
+                            maybe_changed_filters.user_name = Some(auth.token.user.name);
+                            app_tx.send(Action::IdentityApplicationCredentialFilter(maybe_changed_filters))?;
+                        }
+                    }
+                } else {
+                    match self.get_user_application_credentials(&maybe_changed_filters).await {
+                        Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                        Err(err) => app_tx.send(Action::Error(format!(
+                            "Failed to fetch available application credentials\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
+                            err
+                        )))?,
+                    }
+                }
             },
             _ => {
                 todo!()
@@ -151,6 +177,7 @@ impl IdentityExt for Cloud {
         }
         Ok(Vec::new())
     }
+
     async fn get_group_users(&mut self, filters: &IdentityGroupUserFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let ep = openstack_sdk::api::identity::v3::group::user::list::Request::builder()
@@ -162,6 +189,7 @@ impl IdentityExt for Cloud {
         }
         Ok(Vec::new())
     }
+
     async fn get_users(&mut self, _filters: &IdentityUserFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let ep_builder = openstack_sdk::api::identity::v3::user::list::Request::builder();
@@ -193,8 +221,31 @@ impl IdentityExt for Cloud {
 
             let ep = ep_builder.build()?;
             let res: Value = ep.query_async(session).await?;
+            debug!("Updated user information: {:?}", res);
             return Ok(res);
         }
         Ok(Value::Null)
+    }
+
+    async fn get_user_application_credentials(
+        &mut self,
+        filters: &IdentityApplicationCredentialFilters,
+    ) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let mut ep_builder = openstack_sdk::api::identity::v3::user::application_credential::list::Request::builder();
+            if filters.user_id.is_empty() {
+                if let Some(auth) = session.get_auth_info() {
+                    ep_builder.user_id(auth.token.user.id);
+                }
+            } else {
+                ep_builder.user_id(filters.user_id.clone());
+            }
+
+            let ep = ep_builder.build()?;
+
+            let res: Vec<Value> = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
     }
 }

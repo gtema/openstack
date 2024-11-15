@@ -74,3 +74,21 @@ pub struct IdentityUserUpdate {
     /// Enabled
     pub enabled: Option<bool>,
 }
+
+/// User Application Credentials filter
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentityApplicationCredentialFilters {
+    /// User id (used by API)
+    pub user_id: String,
+    /// User name (Set by caller for display only)
+    pub user_name: Option<String>,
+}
+impl fmt::Display for IdentityApplicationCredentialFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "user: {}",
+            self.user_name.as_ref().unwrap_or(&self.user_id)
+        )
+    }
+}
