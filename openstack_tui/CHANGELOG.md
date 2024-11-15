@@ -6,6 +6,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.6...openstack_tui-v0.9.0) - 2024-11-15
+
+### Added
+
+- Add security group(rules) mode ([#758](https://github.com/gtema/openstack/pull/758))
+- Add application credentials mode ([#757](https://github.com/gtema/openstack/pull/757))
+- Implement user enable/disable ([#756](https://github.com/gtema/openstack/pull/756))
+- Add group_users mode ([#754](https://github.com/gtema/openstack/pull/754))
+- Add identity groups view ([#748](https://github.com/gtema/openstack/pull/748))
+- Add users view ([#745](https://github.com/gtema/openstack/pull/745))
+- Add nova hypervisors and aggregates views ([#743](https://github.com/gtema/openstack/pull/743))
+- Minor improvements ([#742](https://github.com/gtema/openstack/pull/742))
+- Add network quota ([#740](https://github.com/gtema/openstack/pull/740))
+
+### Fixed
+
+- Clear the describe on reset ([#759](https://github.com/gtema/openstack/pull/759))
+- Do not crash when connected with domain_scope ([#746](https://github.com/gtema/openstack/pull/746))
+- Reset input when resource select popup closed
+
+### Other
+
+- Better modularize cloud worker services ([#744](https://github.com/gtema/openstack/pull/744))
+- Optimize code addressing new clippy suggestions ([#717](https://github.com/gtema/openstack/pull/717))
+
 ## [0.1.6](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.5...openstack_tui-v0.1.6) - 2024-10-29
 
 ### Fixed
