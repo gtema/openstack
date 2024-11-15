@@ -22,7 +22,7 @@
       "s": {"action": "SwitchToProject", "description": "Switch to project"},
     },
     "IdentityUsers": {
-      "e": {"action": "IdentityUserFlipEnable", "description": "Toggle enabled property (todo!)"},
+      "e": {"action": "IdentityUserFlipEnable", "description": "Enable/Disable user"},
       "d": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
       "a": {"action": "IdentityUserCreate", "description": "Create new user (todo!)"},
       "p": {"action": "IdentityUserSetPassword", "description": "Set user password (todo!)"},

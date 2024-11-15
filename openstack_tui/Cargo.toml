@@ -37,6 +37,7 @@ signal-hook = "^0.3"
 strip-ansi-escapes = "^0.2"
 structable_derive = { path = "../structable_derive", version = "^0.1" }
 strum = { version = "^0.26", features = ["derive"] }
+thiserror = { workspace = true }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 tracing = { workspace = true }

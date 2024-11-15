@@ -39,7 +39,10 @@ pub trait IdentityExt {
     async fn get_groups(&mut self, _filters: &IdentityGroupFilters) -> Result<Vec<Value>>;
     async fn get_group_users(&mut self, _filters: &IdentityGroupUserFilters) -> Result<Vec<Value>>;
     async fn get_projects(&mut self, _filters: &IdentityProjectFilters) -> Result<Vec<Value>>;
+    /// Get all users
     async fn get_users(&mut self, _filters: &IdentityUserFilters) -> Result<Vec<Value>>;
+    /// Update user
+    async fn update_user(&mut self, data: &IdentityUserUpdate) -> Result<Value>;
 }
 
 impl IdentityExt for Cloud {
@@ -83,6 +86,13 @@ impl IdentityExt for Cloud {
                 Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available users\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
+                    err
+                )))?,
+            },
+            Resource::IdentityUserUpdate(ref data) => match self.update_user(data).await {
+                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to update user\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
@@ -165,5 +175,26 @@ impl IdentityExt for Cloud {
             return Ok(res);
         }
         Ok(Vec::new())
+    }
+
+    async fn update_user(&mut self, data: &IdentityUserUpdate) -> Result<Value> {
+        if let Some(session) = &self.cloud {
+            let mut ep_builder = openstack_sdk::api::identity::v3::user::set::Request::builder();
+            let mut user_builder =
+                openstack_sdk::api::identity::v3::user::set::UserBuilder::default();
+            ep_builder.id(data.id.clone());
+            if let Some(name) = &data.name {
+                user_builder.name(name);
+            }
+            if let Some(enabled) = &data.enabled {
+                user_builder.enabled(*enabled);
+            }
+            ep_builder.user(user_builder.build()?);
+
+            let ep = ep_builder.build()?;
+            let res: Value = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Value::Null)
     }
 }

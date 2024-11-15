@@ -29,6 +29,7 @@ pub mod cli;
 mod cloud_worker;
 pub mod components;
 pub mod config;
+mod error;
 pub mod mode;
 pub mod tui;
 pub mod utils;
