@@ -32,6 +32,7 @@ pub enum Resource {
     ComputeHypervisors(ComputeHypervisorFilters),
     ComputeQuota,
     IdentityAuthProjects(IdentityAuthProjectFilters),
+    IdentityApplicationCredentials(IdentityApplicationCredentialFilters),
     IdentityGroups(IdentityGroupFilters),
     IdentityGroupUsers(IdentityGroupUserFilters),
     IdentityProjects(IdentityProjectFilters),
@@ -53,6 +54,7 @@ impl From<Resource> for ServiceType {
             | Resource::ComputeAggregates(_)
             | Resource::ComputeHypervisors(_) => Self::Compute,
             Resource::IdentityAuthProjects(_)
+            | Resource::IdentityApplicationCredentials(_)
             | Resource::IdentityGroups(_)
             | Resource::IdentityGroupUsers(_)
             | Resource::IdentityProjects(_)

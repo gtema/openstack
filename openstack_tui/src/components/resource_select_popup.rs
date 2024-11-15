@@ -49,6 +49,10 @@ impl ResourceSelect {
     pub fn new() -> Self {
         let mut slf = Self {
             resources: HashMap::from([
+                (
+                    "application credentials (identity)",
+                    Mode::IdentityApplicationCredentials,
+                ),
                 ("aggregates (compute)", Mode::ComputeAggregates),
                 ("flavors", Mode::ComputeFlavors),
                 ("groups (identity)", Mode::IdentityGroups),

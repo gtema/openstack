@@ -76,6 +76,9 @@ pub enum Action {
     /// Remove user from the group
     IdentityGroupUserRemove,
     //  users
+    // Set ApplicationCredentials filters
+    IdentityUserApplicationCredentials,
+    IdentityApplicationCredentialFilter(cloud_types::IdentityApplicationCredentialFilters),
     /// Toggle user enabled property
     IdentityUserFlipEnable,
     /// Remove user
