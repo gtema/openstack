@@ -18,38 +18,35 @@ use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
+//use tracing::info;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{IdentityGroupFilters, IdentityGroupUserFilters, Resource},
+    cloud_worker::types::{IdentityGroupUserFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, StructTable},
 };
 
-const TITLE: &str = "Identity Groups";
+const TITLE: &str = "Identity Group Users";
 
-/// Group resource data
 #[derive(Deserialize, StructTable)]
-pub struct GroupData {
-    /// Group ID (not shown by default but necessary for fetching related resources)
-    #[structable(title = "Id", wide)]
-    id: String,
-    /// Name
+pub struct UserData {
     #[structable(title = "Name")]
     name: String,
-    /// Domain ID
     #[structable(title = "Domain")]
     domain_id: String,
-    /// Group description
-    #[structable(title = "Description")]
-    description: String,
+    #[structable(title = "Enabled")]
+    enabled: bool,
+    #[serde(default, deserialize_with = "as_string")]
+    #[structable(title = "Pwd expiry")]
+    password_expires_at: String,
 }
 
-pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupData, IdentityGroupFilters>;
+pub type IdentityGroupUsers<'a> = TableViewComponentBase<'a, UserData, IdentityGroupUserFilters>;
 
-impl Component for IdentityGroups<'_> {
+impl Component for IdentityGroupUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
         self.set_config(config)
     }
@@ -67,42 +64,30 @@ impl Component for IdentityGroups<'_> {
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
-                if let Mode::IdentityGroups = current_mode {
+                if let Mode::IdentityUsers = current_mode {
                     return Ok(Some(Action::RequestCloudResource(
-                        Resource::IdentityGroups(self.get_filters().clone()),
+                        Resource::IdentityGroupUsers(self.get_filters().clone()),
                     )));
                 }
             }
-            Action::Mode(Mode::IdentityGroups) | Action::Refresh => {
+            Action::Mode(Mode::IdentityGroupUsers) | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityGroups(self.get_filters().clone()),
+                    Resource::IdentityGroupUsers(self.get_filters().clone()),
                 )));
             }
-            Action::IdentityGroupUsers => {
-                // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::IdentityGroups {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
-                            // send action to set GroupUserFilters
-                            command_tx.send(Action::IdentityGroupUserFilter(
-                                IdentityGroupUserFilters {
-                                    group_id: group_row.id.clone(),
-                                    group_name: Some(group_row.name.clone()),
-                                },
-                            ))?;
-                            // and switch mode
-                            command_tx.send(Action::Mode(Mode::IdentityGroupUsers))?;
-                        }
-                    }
-                }
+            Action::IdentityGroupUserFilter(filters) => {
+                self.set_filters(filters);
+                self.set_data(Vec::new())?;
+                self.set_loading(true);
+                return Ok(Some(Action::RequestCloudResource(
+                    Resource::IdentityGroupUsers(self.get_filters().clone()),
+                )));
             }
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
-                resource: Resource::IdentityGroups(_),
+                resource: Resource::IdentityGroupUsers(_),
                 data,
             } => {
                 self.set_data(data)?;

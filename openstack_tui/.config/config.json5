@@ -9,8 +9,23 @@
     "NetworkSubnets": {
       "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
     },
+    "IdentityGroups": {
+      "u": {"action": "IdentityGroupUsers", "description": "Group users"},
+      "d": {"action": "IdentityGroupDelete", "description": "Delete (todo!)"},
+      "a": {"action": "IdentityGroupCreate", "description": "Create new group (todo!)"},
+    },
+    "IdentityGroupUsers": {
+      "a": {"action": "IdentityGroupUserAdd", "description": "Add new user into group (todo!)"},
+      "d": {"action": "IdentityGroupUserRemove", "description": "Remove user from group (todo!)"},
+    },
     "IdentityProjects": {
       "s": {"action": "SwitchToProject", "description": "Switch to project"},
+    },
+    "IdentityUsers": {
+      "e": {"action": "IdentityUserFlipEnable", "description": "Toggle enabled property (todo!)"},
+      "d": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
+      "a": {"action": "IdentityUserCreate", "description": "Create new user (todo!)"},
+      "p": {"action": "IdentityUserSetPassword", "description": "Set user password (todo!)"},
     },
     "ImageImages": {
       "0": { "action": {"ImageFilter": {} }, "description": "default filtersall"},
@@ -27,7 +42,7 @@
     "F1": { "action": {"Mode": "Home"}, "description": "Home"},
     "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
     ":": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
-    "F4": { "action": "SelectProject", "description": "Select project"},
-    "r": {"action": "Refresh", "description": "Refresh data"}
+    "<F4>": { "action": "SelectProject", "description": "Select project"},
+    "<r>": {"action": "Refresh", "description": "Refresh data"}
   }
 }

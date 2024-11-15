@@ -55,10 +55,38 @@ pub enum Action {
     SelectProject,
     ListClouds,
     Clouds(Vec<String>),
+
+    // Compute (neutron)
     ComputeServerFilter(cloud_types::ComputeServerFilters),
-    NetworkSubnetFilter(cloud_types::NetworkSubnetFilters),
-    ImageFilter(cloud_types::ImageFilters),
     ServerConsoleOutput,
+
+    // Identity (keystone)
+    //  Groups
+    /// Create new identity group
+    IdentityGroupCreate,
+    /// Delete identity group
+    IdentityGroupDelete,
+    //  Group users
+    /// Action user invokes to switch mode for selected entity
+    IdentityGroupUsers,
+    /// Set GroupUser filters
+    IdentityGroupUserFilter(cloud_types::IdentityGroupUserFilters),
+    /// Add user into the group
+    IdentityGroupUserAdd,
+    /// Remove user from the group
+    IdentityGroupUserRemove,
+    //  users
+    IdentityUserFlipEnable,
+    IdentityUserDelete,
+    IdentityUserCreate,
+    IdentityUserSetPassword,
+
+    // Image (glance)
+    ImageFilter(cloud_types::ImageFilters),
+
+    // Network (neutron)
+    NetworkSubnetFilter(cloud_types::NetworkSubnetFilters),
+
     SwitchToProject,
     ResetFilter,
 }
