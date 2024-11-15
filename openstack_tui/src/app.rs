@@ -17,7 +17,7 @@ use eyre::Result;
 use ratatui::prelude::{Rect, *};
 use std::collections::HashMap;
 use tokio::sync::mpsc;
-use tracing::error;
+use tracing::{debug, error, instrument};
 
 use crate::{
     action::Action,
@@ -32,7 +32,10 @@ use crate::{
         error_popup::ErrorPopup,
         header::Header,
         home::Home,
-        identity::{groups::IdentityGroups, projects::IdentityProjects, users::IdentityUsers},
+        identity::{
+            group_users::IdentityGroupUsers, groups::IdentityGroups, projects::IdentityProjects,
+            users::IdentityUsers,
+        },
         image::images::Images,
         network::{networks::NetworkNetworks, subnets::NetworkSubnets},
         project_select_popup::ProjectSelect,
@@ -87,6 +90,8 @@ impl App {
         let compute_hypervisors_component: Box<dyn Component> = Box::new(ComputeHypervisors::new());
         let identity_projects_component: Box<dyn Component> = Box::new(IdentityProjects::new());
         let identity_groups_component: Box<dyn Component> = Box::new(IdentityGroups::new());
+        let identity_group_users_component: Box<dyn Component> =
+            Box::new(IdentityGroupUsers::new());
         let identity_users_component: Box<dyn Component> = Box::new(IdentityUsers::new());
         let image_images_component: Box<dyn Component> = Box::new(Images::new());
         let network_component: Box<dyn Component> = Box::new(NetworkNetworks::new());
@@ -117,6 +122,7 @@ impl App {
                 (Mode::NetworkNetworks, network_component),
                 (Mode::NetworkSubnets, subnet_component),
                 (Mode::IdentityGroups, identity_groups_component),
+                (Mode::IdentityGroupUsers, identity_group_users_component),
                 (Mode::IdentityProjects, identity_projects_component),
                 (Mode::IdentityUsers, identity_users_component),
                 (Mode::ImageImages, image_images_component),
@@ -224,7 +230,9 @@ impl App {
         Ok(())
     }
 
+    #[instrument(level = "debug", skip(self))]
     fn handle_key_event(&mut self, key: KeyEvent) -> Result<()> {
+        debug!("Key event received");
         let action_tx = self.action_tx.clone();
         if let Some(action) = self.config.global_keybindings.get(&vec![key]) {
             // Normal global keybinding
@@ -251,12 +259,18 @@ impl App {
                 // Check for multi-key combinations
                 if let Some(action) = keymap.get(&self.last_tick_key_events) {
                     self.action_tx.send(action.action.clone())?;
+                } else if key.code == KeyCode::Esc {
+                    if let Some(prev_mode) = self.prev_mode {
+                        debug!("Switching to the previous mode {:?}", prev_mode);
+                        self.mode = prev_mode;
+                    }
                 }
             }
         } else if key == KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
             action_tx.send(Action::Quit)?;
         } else if key.code == KeyCode::Esc {
             if let Some(prev_mode) = self.prev_mode {
+                debug!("Switching to the previous mode {:?}", prev_mode);
                 self.mode = prev_mode;
             }
         }
@@ -375,6 +389,7 @@ impl App {
         Ok(())
     }
 
+    #[instrument(level = "trace", skip(self, tui))]
     fn handle_resize(&mut self, tui: &mut Tui, w: u16, h: u16) -> Result<()> {
         tui.resize(Rect::new(0, 0, w, h))?;
         self.render(tui)?;

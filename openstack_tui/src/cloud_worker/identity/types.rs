@@ -45,3 +45,21 @@ impl fmt::Display for IdentityGroupFilters {
         write!(f, "")
     }
 }
+
+/// Group Users filter
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentityGroupUserFilters {
+    /// Group id (used by API)
+    pub group_id: String,
+    /// Group name (Set by caller for display only)
+    pub group_name: Option<String>,
+}
+impl fmt::Display for IdentityGroupUserFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "group: {}",
+            self.group_name.as_ref().unwrap_or(&self.group_id)
+        )
+    }
+}

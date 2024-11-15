@@ -117,8 +117,8 @@ impl Component for Header {
             .direction(Direction::Horizontal)
             .constraints(vec![
                 Constraint::Min(40), // first column
-                Constraint::Min(30), // second column
-                Constraint::Min(30), // second column
+                Constraint::Min(40), // second column
+                Constraint::Min(40), // second column
                 Constraint::Percentage(100),
             ])
             .split(rect);
@@ -139,6 +139,7 @@ impl Component for Header {
         ];
         // Columns widths are constrained in the same way as Layout...
         let widths = [Constraint::Length(8), Constraint::Length(30)];
+        let widths2 = [Constraint::Min(4), Constraint::Fill(35)];
 
         let connect_info_table = Table::new(connect_info_rows, widths)
             .column_spacing(1)
@@ -160,7 +161,7 @@ impl Component for Header {
                 Span::from("Select project scope"),
             ]),
         ];
-        let global_shortcuts_table = Table::new(global_shortcuts_rows, widths)
+        let global_shortcuts_table = Table::new(global_shortcuts_rows, widths2)
             .column_spacing(1)
             .style(Style::new().white());
 
@@ -187,7 +188,7 @@ impl Component for Header {
                     v.into(),
                 ]));
             }
-            let shortcuts_table = Table::new(shortcuts_rows, widths)
+            let shortcuts_table = Table::new(shortcuts_rows, widths2)
                 .column_spacing(1)
                 .style(Style::new().white());
 

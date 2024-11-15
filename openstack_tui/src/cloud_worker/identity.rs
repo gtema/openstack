@@ -37,6 +37,7 @@ pub trait IdentityExt {
     ) -> Result<Vec<Value>>;
 
     async fn get_groups(&mut self, _filters: &IdentityGroupFilters) -> Result<Vec<Value>>;
+    async fn get_group_users(&mut self, _filters: &IdentityGroupUserFilters) -> Result<Vec<Value>>;
     async fn get_projects(&mut self, _filters: &IdentityProjectFilters) -> Result<Vec<Value>>;
     async fn get_users(&mut self, _filters: &IdentityUserFilters) -> Result<Vec<Value>>;
 }
@@ -61,6 +62,13 @@ impl IdentityExt for Cloud {
                 Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available groups\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
+                    err
+                )))?,
+            },
+            Resource::IdentityGroupUsers(ref filters) => match self.get_group_users(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to fetch available group users\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
@@ -129,6 +137,17 @@ impl IdentityExt for Cloud {
             let ep = ep_builder.build()?;
             let res: Vec<Value> = ep.query_async(session).await?;
             //let res: Vec<Value> = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+    async fn get_group_users(&mut self, filters: &IdentityGroupUserFilters) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep = openstack_sdk::api::identity::v3::group::user::list::Request::builder()
+                .group_id(&filters.group_id)
+                .build()?;
+
+            let res: Vec<Value> = ep.query_async(session).await?;
             return Ok(res);
         }
         Ok(Vec::new())
