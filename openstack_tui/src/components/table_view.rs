@@ -22,11 +22,13 @@ use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::instrument;
 
 use crate::{
     action::Action,
     components::{describe::Describe, Component, Frame},
     config::Config,
+    error::TuiError,
     utils::{OutputConfig, StructTable},
 };
 
@@ -318,20 +320,49 @@ where
             self.state.select_first();
             self.scroll_state =
                 ScrollbarState::new(self.items.len().saturating_sub(1) * ITEM_HEIGHT);
-            let (headers, rows) = self.items.build(&self.output_config);
-            self.column_widths.clear();
-            self.column_widths.resize(headers.len(), 1);
-            self.table_headers = headers.clone().into_iter().map(Cell::from).collect::<Row>();
-            self.table_rows = rows;
-            for row in &self.table_rows {
-                for (i, val) in row.iter().enumerate() {
-                    self.column_widths[i] = cmp::max(
-                        headers[i].len(),
-                        cmp::max(*self.column_widths.get(i).unwrap_or(&0), val.len()),
-                    );
+            self.sync_table_data()?;
+        }
+        self.set_loading(false);
+        Ok(())
+    }
+
+    /// Synchronize table data from internal vector of typed entries
+    pub fn sync_table_data(&mut self) -> Result<()> {
+        let (headers, rows) = self.items.build(&self.output_config);
+        self.column_widths.clear();
+        self.column_widths.resize(headers.len(), 1);
+        self.table_headers = headers.clone().into_iter().map(Cell::from).collect::<Row>();
+        self.table_rows = rows;
+        for row in &self.table_rows {
+            for (i, val) in row.iter().enumerate() {
+                self.column_widths[i] = cmp::max(
+                    headers[i].len(),
+                    cmp::max(*self.column_widths.get(i).unwrap_or(&0), val.len()),
+                );
+            }
+        }
+        self.set_describe_content()?;
+        Ok(())
+    }
+
+    /// Update single record with the new data
+    pub fn update_row_data(&mut self, data: Value) -> Result<(), TuiError> {
+        let updated_item: T = serde_json::from_value(data.clone())?;
+        let updated_entry_id = data
+            .get("id")
+            .or(data.get("uuid"))
+            .ok_or_else(|| TuiError::EntryIdNotPresent(data.clone()))?;
+        for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
+            if let Some(row_id) = raw_item.get("id").or(raw_item.get("uuid")) {
+                if row_id == updated_entry_id {
+                    *raw_item = data.clone();
+                    if let Some(typed_row) = self.items.get_mut(idx) {
+                        *typed_row = updated_item;
+                        self.sync_table_data()?;
+                        break;
+                    }
                 }
             }
-            self.set_describe_content()?;
         }
         self.set_loading(false);
         Ok(())
@@ -488,6 +519,19 @@ where
 
     pub fn get_selected(&self) -> Option<&T> {
         self.state.selected().map(|x| &self.items[x])
+    }
+
+    /// Get mutable reference to the row with the typed data matching resource id
+    #[instrument(level = "debug", skip(self))]
+    pub fn get_item_row_by_res_id_mut(&mut self, search_id: &String) -> Option<&mut T> {
+        for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
+            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid")) {
+                if row_item_id == search_id {
+                    return self.items.get_mut(idx);
+                }
+            }
+        }
+        None
     }
 
     pub fn get_selected_raw(&self) -> Option<&Value> {

@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{IdentityUserFilters, Resource},
+    cloud_worker::types::{IdentityUserFilters, IdentityUserUpdate, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     mode::Mode,
@@ -32,6 +32,9 @@ const TITLE: &str = "Identity Users";
 
 #[derive(Deserialize, StructTable)]
 pub struct UserData {
+    /// User id (used for related operations)
+    #[structable(title = "Id", wide)]
+    id: String,
     #[structable(title = "Name")]
     name: String,
     #[serde(default, deserialize_with = "as_string")]
@@ -78,6 +81,26 @@ impl Component for IdentityUsers<'_> {
                     self.get_filters().clone(),
                 ))));
             }
+            Action::IdentityUserFlipEnable => {
+                // only if we are currently in the proper mode
+                if current_mode == Mode::IdentityUsers {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(group_row) = self.get_selected() {
+                            // send action to set GroupUserFilters
+                            command_tx.send(Action::RequestCloudResource(
+                                Resource::IdentityUserUpdate(IdentityUserUpdate {
+                                    id: group_row.id.clone(),
+                                    name: None,
+                                    enabled: Some(!group_row.enabled),
+                                }),
+                            ))?;
+                            self.set_loading(true);
+                        }
+                    }
+                }
+            }
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
@@ -85,6 +108,20 @@ impl Component for IdentityUsers<'_> {
                 data,
             } => {
                 self.set_data(data)?;
+            }
+            Action::ResourceData {
+                resource: Resource::IdentityUserUpdate(_),
+                data,
+            } => {
+                // Since user update only returns some info (i.e. it doesn't contain email) we need
+                // to update record manually
+                let updated_user: UserData = serde_json::from_value(data.clone())?;
+                if let Some(item_row) = self.get_item_row_by_res_id_mut(&updated_user.id) {
+                    item_row.enabled = updated_user.enabled;
+                    item_row.name = updated_user.name;
+                    self.sync_table_data()?;
+                }
+                self.set_loading(false);
             }
             _ => {}
         };

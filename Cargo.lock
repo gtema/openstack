@@ -2219,6 +2219,7 @@ dependencies = [
  "strip-ansi-escapes",
  "structable_derive",
  "strum",
+ "thiserror 2.0.3",
  "tokio",
  "tokio-util",
  "tracing",

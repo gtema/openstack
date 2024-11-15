@@ -76,9 +76,13 @@ pub enum Action {
     /// Remove user from the group
     IdentityGroupUserRemove,
     //  users
+    /// Toggle user enabled property
     IdentityUserFlipEnable,
+    /// Remove user
     IdentityUserDelete,
+    /// Create new user
     IdentityUserCreate,
+    /// Update user password
     IdentityUserSetPassword,
 
     // Image (glance)

@@ -63,3 +63,14 @@ impl fmt::Display for IdentityGroupUserFilters {
         )
     }
 }
+
+/// Update user properties
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct IdentityUserUpdate {
+    /// User ID
+    pub id: String,
+    /// New user name
+    pub name: Option<String>,
+    /// Enabled
+    pub enabled: Option<bool>,
+}
