@@ -6,9 +6,6 @@
       "1": { "action": {"ComputeServerFilter": {"all_tenants": true} }, "description": "all tenants (admin)"},
       "c": { "action": "ServerConsoleOutput", "description": "Get Console output" },
     },
-    "NetworkSubnets": {
-      "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
-    },
     "IdentityGroups": {
       "u": {"action": "IdentityGroupUsers", "description": "Group users"},
       "d": {"action": "IdentityGroupDelete", "description": "Delete (todo!)"},
@@ -33,6 +30,15 @@
       "1": { "action": {"ImageFilter": {"visibility": "public"} },"description": "public"},
       "2": { "action": {"ImageFilter": {"visibility": "shared"} },"description": "shared"},
       "3": { "action": {"ImageFilter": {"visibility": "private"} },"description": "private"},
+    },
+    "NetworkSubnets": {
+      "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
+    },
+    "NetworkSecurityGroups": {
+      "l": { "action": "NetworkSecurityGroupRules", "description": "rules"},
+    },
+    "NetworkSecurityGroupRules": {
+      "0": { "action": {"NetworkSecurityGroupRuleFilter": {}}, "description": "all"},
     }
   },
   "global_keybindings": {

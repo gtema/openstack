@@ -31,5 +31,7 @@ pub enum Mode {
     IdentityUsers,
     ImageImages,
     NetworkNetworks,
+    NetworkSecurityGroups,
+    NetworkSecurityGroupRules,
     NetworkSubnets,
 }

@@ -38,7 +38,10 @@ use crate::{
             users::IdentityUsers,
         },
         image::images::Images,
-        network::{networks::NetworkNetworks, subnets::NetworkSubnets},
+        network::{
+            networks::NetworkNetworks, security_group_rules::NetworkSecurityGroupRules,
+            security_groups::NetworkSecurityGroups, subnets::NetworkSubnets,
+        },
         project_select_popup::ProjectSelect,
         resource_select_popup::ResourceSelect,
         Component,
@@ -98,6 +101,8 @@ impl App {
         let identity_users_component: Box<dyn Component> = Box::new(IdentityUsers::new());
         let image_images_component: Box<dyn Component> = Box::new(Images::new());
         let network_component: Box<dyn Component> = Box::new(NetworkNetworks::new());
+        let sg_component: Box<dyn Component> = Box::new(NetworkSecurityGroups::new());
+        let sgr_component: Box<dyn Component> = Box::new(NetworkSecurityGroupRules::new());
         let subnet_component: Box<dyn Component> = Box::new(NetworkSubnets::new());
 
         let (action_tx, action_rx) = mpsc::unbounded_channel();
@@ -122,8 +127,6 @@ impl App {
                 (Mode::ComputeFlavors, compute_flavors_component),
                 (Mode::ComputeAggregates, compute_aggregates_component),
                 (Mode::ComputeHypervisors, compute_hypervisors_component),
-                (Mode::NetworkNetworks, network_component),
-                (Mode::NetworkSubnets, subnet_component),
                 (
                     Mode::IdentityApplicationCredentials,
                     identity_appcred_component,
@@ -133,6 +136,10 @@ impl App {
                 (Mode::IdentityProjects, identity_projects_component),
                 (Mode::IdentityUsers, identity_users_component),
                 (Mode::ImageImages, image_images_component),
+                (Mode::NetworkNetworks, network_component),
+                (Mode::NetworkSubnets, subnet_component),
+                (Mode::NetworkSecurityGroups, sg_component),
+                (Mode::NetworkSecurityGroupRules, sgr_component),
             ]),
             header: Box::new(Header::new()),
             should_quit: false,

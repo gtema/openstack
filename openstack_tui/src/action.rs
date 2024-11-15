@@ -92,6 +92,12 @@ pub enum Action {
     ImageFilter(cloud_types::ImageFilters),
 
     // Network (neutron)
+    /// Set Security group filters
+    NetworkSecurityGroupFilter(cloud_types::NetworkSecurityGroupFilters),
+    /// Switch to NetworkSecurityGroupRules
+    NetworkSecurityGroupRules,
+    /// Set Security group rule filters
+    NetworkSecurityGroupRuleFilter(cloud_types::NetworkSecurityGroupRuleFilters),
     NetworkSubnetFilter(cloud_types::NetworkSubnetFilters),
 
     SwitchToProject,

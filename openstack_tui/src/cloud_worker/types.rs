@@ -41,6 +41,8 @@ pub enum Resource {
     ImageImages(ImageFilters),
     NetworkNetworks(NetworkNetworkFilters),
     NetworkSubnets(NetworkSubnetFilters),
+    NetworkSecurityGroups(NetworkSecurityGroupFilters),
+    NetworkSecurityGroupRules(NetworkSecurityGroupRuleFilters),
     NetworkQuota,
 }
 
@@ -61,9 +63,11 @@ impl From<Resource> for ServiceType {
             | Resource::IdentityUserUpdate(_)
             | Resource::IdentityUsers(_) => Self::Identity,
             Resource::ImageImages(_) => Self::Image,
-            Resource::NetworkNetworks(_) | Resource::NetworkSubnets(_) | Resource::NetworkQuota => {
-                Self::Network
-            }
+            Resource::NetworkNetworks(_)
+            | Resource::NetworkQuota
+            | Resource::NetworkSecurityGroups(_)
+            | Resource::NetworkSecurityGroupRules(_)
+            | Resource::NetworkSubnets(_) => Self::Network,
         }
     }
 }
