@@ -79,7 +79,7 @@ impl ProjectSelect {
 
         self.items = items;
         self.fuzzy_list
-            .set_items(self.items.iter().map(|x| x.name.clone()).collect());
+            .set_items(self.items.iter().map(|x| x.name.clone()));
         self.set_loading(false);
         Ok(())
     }

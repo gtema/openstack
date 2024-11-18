@@ -52,8 +52,15 @@ impl FuzzySelectList {
         }
     }
 
-    pub fn set_items<S: AsRef<str>>(&mut self, items: Vec<S>) -> &mut Self {
-        self.all_items = items.iter().map(|x| x.as_ref().to_string()).collect();
+    pub fn set_items<I, S>(&mut self, items: I) -> &mut Self
+    where
+        I: IntoIterator<Item = S>,
+        S: AsRef<str>,
+    {
+        self.all_items = items
+            .into_iter()
+            .map(|x| x.as_ref().to_string())
+            .collect::<Vec<_>>();
         self.filtered_items = self.all_items.clone();
         self.input = None;
         self
