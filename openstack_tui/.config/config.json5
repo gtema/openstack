@@ -44,14 +44,14 @@
     },
     "ImageImages": {
       "d": { "action": "DescribeResource", "description": "Describe"},
-      "0": { "action": {"SetImageFilters": {} }, "description": "default filtersall"},
+      "0": { "action": {"SetImageFilters": {} }, "description": "default filters"},
       "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public"},
       "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared"},
       "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private"},
     },
     "NetworkNetworks": {
       "d": { "action": "DescribeResource", "description": "Describe"},
-      "<enter>": { "action": "ShowNetworkSubnets", "description": "subnetworks"},
+      "<enter>": { "action": "ShowNetworkSubnets", "description": "Subnets"},
     },
     "NetworkSubnets": {
       "d": { "action": "DescribeResource", "description": "Describe"},

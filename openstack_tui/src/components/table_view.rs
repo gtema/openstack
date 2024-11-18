@@ -326,8 +326,11 @@ where
     /// Synchronize table data from internal vector of typed entries
     pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
         let (headers, rows) = self.items.build(&self.output_config);
-        self.column_widths.clear();
-        self.column_widths.resize(headers.len(), 1);
+        self.column_widths = headers
+            .clone()
+            .into_iter()
+            .map(|col| col.len() + 1)
+            .collect::<Vec<usize>>();
         self.table_headers = headers.clone().into_iter().map(Cell::from).collect::<Row>();
         self.table_rows = rows;
         for row in &self.table_rows {
@@ -500,7 +503,7 @@ where
 
         if self.describe_enabled {
             let content_layout =
-                Layout::horizontal([Constraint::Percentage(50), Constraint::Percentage(50)]);
+                Layout::horizontal([Constraint::Ratio(1, 2), Constraint::Ratio(1, 2)]);
             let [content, describe] = content_layout.areas(inner);
 
             self.render_table(frame, content);
