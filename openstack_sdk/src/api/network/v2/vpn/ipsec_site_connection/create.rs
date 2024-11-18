@@ -122,14 +122,14 @@ pub struct IpsecSiteConnection<'a> {
     pub(crate) peer_address: Option<Cow<'a, str>>,
 
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
-    /// net_address > / \< prefix > .
+    /// net_address > / < prefix > .
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) peer_cidrs: Option<Vec<Cow<'a, str>>>,
 
     /// The ID for the endpoint group that contains private CIDRs in the form
-    /// \< net_address > / \< prefix > for the peer side of the connection. You
+    /// \< net_address > / < prefix > for the peer side of the connection. You
     /// must specify this parameter with the `local_ep_group_id` parameter
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.

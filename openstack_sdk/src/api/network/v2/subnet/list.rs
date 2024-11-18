@@ -46,6 +46,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use crate::api::common::CommaSeparatedList;
 use std::borrow::Cow;
+use std::collections::BTreeSet;
 
 use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
@@ -154,14 +155,14 @@ pub struct Request<'a> {
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     ///
-    #[builder(default, setter(into))]
-    sort_dir: Option<Cow<'a, str>>,
+    #[builder(default, private, setter(name = "_sort_dir"))]
+    sort_dir: BTreeSet<Cow<'a, str>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
     ///
-    #[builder(default, setter(into))]
-    sort_key: Option<Cow<'a, str>>,
+    #[builder(default, private, setter(name = "_sort_key"))]
+    sort_key: BTreeSet<Cow<'a, str>>,
 
     /// subnetpool_id query parameter for /v2.0/subnets API
     ///
@@ -250,6 +251,34 @@ impl<'a> RequestBuilder<'a> {
         self
     }
 
+    /// Sort results by the attribute. This is an optional feature and may be
+    /// silently ignored by the server.
+    ///
+    pub fn sort_key<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.sort_key
+            .get_or_insert_with(BTreeSet::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
+    /// Sort direction. This is an optional feature and may be silently ignored
+    /// by the server.
+    ///
+    pub fn sort_dir<I, T>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = T>,
+        T: Into<Cow<'a, str>>,
+    {
+        self.sort_dir
+            .get_or_insert_with(BTreeSet::new)
+            .extend(iter.map(Into::into));
+        self
+    }
+
     /// Add a single header to the Subnet.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -305,8 +334,8 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
         params.push_opt("description", self.description.as_ref());
         params.push_opt("segment_id", self.segment_id.as_ref());
-        params.push_opt("sort_key", self.sort_key.as_ref());
-        params.push_opt("sort_dir", self.sort_dir.as_ref());
+        params.extend(self.sort_key.iter().map(|value| ("sort_key", value)));
+        params.extend(self.sort_dir.iter().map(|value| ("sort_dir", value)));
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);

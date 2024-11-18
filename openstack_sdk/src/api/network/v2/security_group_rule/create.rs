@@ -98,9 +98,9 @@ pub struct SecurityGroupRule<'a> {
     /// `ipv6-opts` or `60`, `ipv6-route` or `43`, `ospf` or `89`, `pgm` or
     /// `113`, `rsvp` or `46`, `sctp` or `132`, `tcp` or `6`, `udp` or `17`,
     /// `udplite` or `136`, `vrrp` or `112`. Additionally, any integer value
-    /// between \[0-255\] is also valid. The string `any` (or integer `0`)
-    /// means `all` IP protocols. See the constants in `neutron_lib.constants`
-    /// for the most up-to-date list of supported strings.
+    /// between [0-255] is also valid. The string `any` (or integer `0`) means
+    /// `all` IP protocols. See the constants in `neutron_lib.constants` for
+    /// the most up-to-date list of supported strings.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
