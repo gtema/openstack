@@ -35,3 +35,15 @@ pub enum Mode {
     NetworkSecurityGroupRules,
     NetworkSubnets,
 }
+
+impl TryFrom<&str> for Mode {
+    type Error = &'static str;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        match s {
+            "Home" => Ok(Self::Home),
+            "Describe" => Ok(Self::Describe),
+            _ => Err("Unknown Mode"),
+        }
+    }
+}

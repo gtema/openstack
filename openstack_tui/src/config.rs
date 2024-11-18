@@ -12,7 +12,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use std::{collections::HashMap, path::PathBuf};
+use std::{
+    collections::{BTreeMap, HashMap},
+    path::PathBuf,
+};
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use derive_deref::{Deref, DerefMut};
@@ -40,6 +43,9 @@ pub struct Config {
     pub mode_keybindings: HashMap<Mode, KeyBindings>,
     #[serde(default)]
     pub global_keybindings: KeyBindings,
+    /// Aliases for the mode (for use in the mode selector)
+    #[serde(default)]
+    pub mode_aliases: BTreeMap<String, Mode>,
     #[serde(default)]
     pub styles: Styles,
 }
@@ -87,6 +93,10 @@ impl Config {
             cfg.global_keybindings
                 .entry(key.clone())
                 .or_insert_with(|| cmd.clone());
+        }
+
+        for (key, mode) in default_config.mode_aliases.iter() {
+            cfg.mode_aliases.entry(key.clone()).or_insert_with(|| *mode);
         }
         Ok(cfg)
     }
@@ -290,6 +300,18 @@ pub fn parse_key_sequence(raw: &str) -> Result<Vec<KeyEvent>, String> {
 
     sequences.into_iter().map(parse_key_event).collect()
 }
+
+//impl<'de> Deserialize<'de> for Mode {
+//    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+//    where
+//        D: Deserializer<'de>,
+//    {
+//        let parsed = String::deserialize(deserializer)?;
+//        let mode = Mode::try_from(parsed)?;
+//
+//        Ok(mode)
+//    }
+//}
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Styles {

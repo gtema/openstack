@@ -26,65 +26,21 @@ use crate::{
     action::Action,
     components::{Component, FuzzySelectList},
     config::Config,
-    mode::Mode,
     utils::centered_rect,
 };
 
+#[derive(Default)]
 pub struct ResourceSelect {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
     pub keymap: HashMap<KeyEvent, Action>,
     pub last_events: Vec<KeyEvent>,
-    resources: HashMap<&'static str, Mode>,
     fuzzy_list: FuzzySelectList,
-}
-
-impl Default for ResourceSelect {
-    fn default() -> Self {
-        Self::new()
-    }
 }
 
 impl ResourceSelect {
     pub fn new() -> Self {
-        let mut slf = Self {
-            resources: HashMap::from([
-                (
-                    "application credentials (identity)",
-                    Mode::IdentityApplicationCredentials,
-                ),
-                ("aggregates (compute)", Mode::ComputeAggregates),
-                ("flavors", Mode::ComputeFlavors),
-                ("groups (identity)", Mode::IdentityGroups),
-                ("host-aggregates (compute)", Mode::ComputeAggregates),
-                ("hypervisors (compute)", Mode::ComputeHypervisors),
-                ("images", Mode::ImageImages),
-                ("networks", Mode::NetworkNetworks),
-                ("security groups (network)", Mode::NetworkSecurityGroups),
-                ("sg (security groups)", Mode::NetworkSecurityGroups),
-                (
-                    "security group rule (network)",
-                    Mode::NetworkSecurityGroupRules,
-                ),
-                (
-                    "sgr (security group rules)",
-                    Mode::NetworkSecurityGroupRules,
-                ),
-                ("projects", Mode::IdentityProjects),
-                ("servers", Mode::ComputeServers),
-                ("subnets", Mode::NetworkSubnets),
-                ("users (identity)", Mode::IdentityUsers),
-            ]),
-            command_tx: None,
-            config: Config::default(),
-            keymap: HashMap::new(),
-            last_events: Vec::new(),
-            fuzzy_list: FuzzySelectList::new(),
-        };
-        let mut res: Vec<&str> = slf.resources.keys().clone().copied().collect();
-        res.sort();
-        slf.fuzzy_list.set_items(res);
-        slf
+        Self::default()
     }
 
     pub fn keymap(mut self, keymap: HashMap<KeyEvent, Action>) -> Self {
@@ -106,6 +62,7 @@ impl Component for ResourceSelect {
     }
 
     fn register_config_handler(&mut self, config: Config) -> Result<()> {
+        self.fuzzy_list.set_items(config.mode_aliases.keys());
         self.config = config;
         Ok(())
     }
@@ -114,7 +71,7 @@ impl Component for ResourceSelect {
         self.fuzzy_list.handle_key_events(key)?;
         if key.code == KeyCode::Enter {
             if let Some(selected) = self.fuzzy_list.selected() {
-                if let Some(item) = self.resources.get(selected.as_str()) {
+                if let Some(item) = self.config.mode_aliases.get(selected.as_str()) {
                     self.fuzzy_list.reset_filter()?;
                     return Ok(Some(Action::Mode(*item)));
                 }

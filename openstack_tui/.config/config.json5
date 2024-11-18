@@ -51,5 +51,24 @@
     ":": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
     "<F4>": { "action": "SelectProject", "description": "Select project"},
     "<r>": {"action": "Refresh", "description": "Refresh data"}
+  },
+  "mode_aliases": {
+    "aggregates (compute)": "ComputeAggregates",
+    "application credentials (identity)": "IdentityApplicationCredentials",
+    "flavors": "ComputeFlavors",
+    "groups (identity)": "IdentityGroups",
+    "host-aggregates (compute)": "ComputeAggregates",
+    "hypervisors (compute)": "ComputeHypervisors",
+    "images": "ImageImages",
+    "nets": "NetworkNetworks",
+    "networks": "NetworkNetworks",
+    "projects": "IdentityProjects",
+    "security groups (network)": "NetworkSecurityGroups",
+    "security group rules (network)": "NetworkSecurityGroupRules",
+    "servers": "ComputeServers",
+    "sg": "NetworkSecurityGroups",
+    "sgr": "NetworkSecurityGroupRules",
+    "subnets (network)": "NetworkSubnets",
+    "users": "IdentityUsers"
   }
 }

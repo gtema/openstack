@@ -86,25 +86,6 @@ impl App {
     pub fn new(tick_rate: f64, frame_rate: f64, cloud_name: Option<String>) -> Result<Self> {
         let config = Config::new()?;
         let mode = Mode::Home;
-        let home_components: Box<dyn Component> = Box::new(Home::new());
-        let describe_component: Box<dyn Component> = Box::new(Describe::new());
-        let compute_servers_component: Box<dyn Component> = Box::new(ComputeServers::new());
-        let compute_flavors_component: Box<dyn Component> = Box::new(ComputeFlavors::new());
-        let compute_aggregates_component: Box<dyn Component> = Box::new(ComputeAggregates::new());
-        let compute_hypervisors_component: Box<dyn Component> = Box::new(ComputeHypervisors::new());
-        let identity_projects_component: Box<dyn Component> = Box::new(IdentityProjects::new());
-        let identity_appcred_component: Box<dyn Component> =
-            Box::new(IdentityApplicationCredentials::new());
-        let identity_groups_component: Box<dyn Component> = Box::new(IdentityGroups::new());
-        let identity_group_users_component: Box<dyn Component> =
-            Box::new(IdentityGroupUsers::new());
-        let identity_users_component: Box<dyn Component> = Box::new(IdentityUsers::new());
-        let image_images_component: Box<dyn Component> = Box::new(Images::new());
-        let network_component: Box<dyn Component> = Box::new(NetworkNetworks::new());
-        let sg_component: Box<dyn Component> = Box::new(NetworkSecurityGroups::new());
-        let sgr_component: Box<dyn Component> = Box::new(NetworkSecurityGroupRules::new());
-        let subnet_component: Box<dyn Component> = Box::new(NetworkSubnets::new());
-
         let (action_tx, action_rx) = mpsc::unbounded_channel();
 
         let (cloud_worker, mut cloud_worker_receiver) = mpsc::unbounded_channel();
@@ -117,30 +98,48 @@ impl App {
                 .unwrap();
         });
 
+        // Is there a way to initialize HashMap with Box<dyn Foo> as keys in one operation?
+        let mut components: HashMap<Mode, Box<dyn Component>> = HashMap::new();
+        components.insert(Mode::Home, Box::new(Home::new()));
+        components.insert(Mode::Describe, Box::new(Describe::new()));
+
+        components.insert(Mode::ComputeServers, Box::new(ComputeServers::new()));
+        components.insert(Mode::ComputeFlavors, Box::new(ComputeFlavors::new()));
+        components.insert(Mode::ComputeAggregates, Box::new(ComputeAggregates::new()));
+        components.insert(
+            Mode::ComputeHypervisors,
+            Box::new(ComputeHypervisors::new()),
+        );
+
+        components.insert(
+            Mode::IdentityApplicationCredentials,
+            Box::new(IdentityApplicationCredentials::new()),
+        );
+        components.insert(Mode::IdentityGroups, Box::new(IdentityGroups::new()));
+        components.insert(
+            Mode::IdentityGroupUsers,
+            Box::new(IdentityGroupUsers::new()),
+        );
+        components.insert(Mode::IdentityProjects, Box::new(IdentityProjects::new()));
+        components.insert(Mode::IdentityUsers, Box::new(IdentityUsers::new()));
+
+        components.insert(Mode::ImageImages, Box::new(Images::new()));
+
+        components.insert(Mode::NetworkNetworks, Box::new(NetworkNetworks::new()));
+        components.insert(
+            Mode::NetworkSecurityGroups,
+            Box::new(NetworkSecurityGroups::new()),
+        );
+        components.insert(
+            Mode::NetworkSecurityGroupRules,
+            Box::new(NetworkSecurityGroupRules::new()),
+        );
+        components.insert(Mode::NetworkSubnets, Box::new(NetworkSubnets::new()));
+
         Ok(Self {
             tick_rate,
             frame_rate,
-            components: HashMap::from([
-                (Mode::Home, home_components),
-                (Mode::Describe, describe_component),
-                (Mode::ComputeServers, compute_servers_component),
-                (Mode::ComputeFlavors, compute_flavors_component),
-                (Mode::ComputeAggregates, compute_aggregates_component),
-                (Mode::ComputeHypervisors, compute_hypervisors_component),
-                (
-                    Mode::IdentityApplicationCredentials,
-                    identity_appcred_component,
-                ),
-                (Mode::IdentityGroups, identity_groups_component),
-                (Mode::IdentityGroupUsers, identity_group_users_component),
-                (Mode::IdentityProjects, identity_projects_component),
-                (Mode::IdentityUsers, identity_users_component),
-                (Mode::ImageImages, image_images_component),
-                (Mode::NetworkNetworks, network_component),
-                (Mode::NetworkSubnets, subnet_component),
-                (Mode::NetworkSecurityGroups, sg_component),
-                (Mode::NetworkSecurityGroupRules, sgr_component),
-            ]),
+            components,
             header: Box::new(Header::new()),
             should_quit: false,
             should_suspend: false,
