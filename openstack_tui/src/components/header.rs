@@ -105,7 +105,11 @@ impl Component for Header {
                             self.domain_name = name.clone();
                         }
                     }
-                };
+                } else if let Some(domain) = &auth_token.domain {
+                    if let Some(name) = &domain.name {
+                        self.domain_name = name.clone();
+                    }
+                }
             }
             _ => {}
         };
