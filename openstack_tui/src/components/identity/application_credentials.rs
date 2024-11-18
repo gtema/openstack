@@ -24,6 +24,7 @@ use crate::{
     cloud_worker::types::{IdentityApplicationCredentialFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
+    error::TuiError,
     mode::Mode,
     utils::{as_string, OutputConfig, StructTable},
 };
@@ -40,37 +41,33 @@ pub struct ApplicationCredentialData {
     #[serde(default, deserialize_with = "as_string")]
     #[structable(title = "Expires as")]
     expires_at: String,
-    #[structable(title = "Unrestricted")]
-    unrestricted: bool,
+    #[structable(title = "Unrestricted", optional)]
+    #[serde(default)]
+    unrestricted: Option<bool>,
 }
 
 pub type IdentityApplicationCredentials<'a> =
     TableViewComponentBase<'a, ApplicationCredentialData, IdentityApplicationCredentialFilters>;
 
 impl Component for IdentityApplicationCredentials<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
-        self.set_command_tx(tx);
-        Ok(())
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.set_command_tx(tx)
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
-                self.set_data(Vec::new())?;
                 // Unset the filters since in new cloud everything is different
-                if let Some(command_tx) = self.get_command_tx() {
-                    command_tx.send(Action::SetIdentityApplicationCredentialFilters(
-                        IdentityApplicationCredentialFilters {
-                            user_id: String::new(),
-                            user_name: None,
-                        },
-                    ))?;
-                }
+                self.set_data(Vec::new())?;
+                self.set_filters(IdentityApplicationCredentialFilters {
+                    user_id: String::new(),
+                    user_name: None,
+                });
             }
             Action::Mode(Mode::IdentityApplicationCredentials) | Action::Refresh => {
                 self.set_loading(true);
@@ -86,6 +83,7 @@ impl Component for IdentityApplicationCredentials<'_> {
                     Resource::IdentityApplicationCredentials(self.get_filters().clone()),
                 )));
             }
+            Action::DescribeResource => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
@@ -99,11 +97,11 @@ impl Component for IdentityApplicationCredentials<'_> {
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.handle_key_events(key)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         self.draw(f, area, TITLE)
     }
 }

@@ -26,6 +26,7 @@ use crate::{
     action::Action,
     components::{Component, FuzzySelectList},
     config::Config,
+    error::TuiError,
     utils::centered_rect,
 };
 
@@ -56,18 +57,18 @@ impl ResourceSelect {
 }
 
 impl Component for ResourceSelect {
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         self.command_tx = Some(tx);
         Ok(())
     }
 
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.fuzzy_list.set_items(config.mode_aliases.keys());
         self.config = config;
         Ok(())
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.fuzzy_list.handle_key_events(key)?;
         if key.code == KeyCode::Enter {
             if let Some(selected) = self.fuzzy_list.selected() {
@@ -80,7 +81,7 @@ impl Component for ResourceSelect {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<()> {
+    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
         let area = centered_rect(25, 25, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(" Select resource to display ").centered())

@@ -24,6 +24,7 @@ use crate::{
     cloud_worker::types::{ComputeAggregateFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
+    error::TuiError,
     mode::Mode,
     utils::{OutputConfig, StructTable},
 };
@@ -45,16 +46,15 @@ pub struct AggregateData {
 pub type ComputeAggregates<'a> = TableViewComponentBase<'a, AggregateData, ComputeAggregateFilters>;
 
 impl Component for ComputeAggregates<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
-        self.set_command_tx(tx);
-        Ok(())
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.set_command_tx(tx)
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
             Action::CloudChangeScope(_) => {
                 self.set_loading(true);
@@ -74,9 +74,8 @@ impl Component for ComputeAggregates<'_> {
                     Resource::ComputeAggregates(self.get_filters().clone()),
                 )));
             }
-            Action::Tick => {
-                self.app_tick()?;
-            }
+            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
                 resource: Resource::ComputeAggregates(_),
@@ -89,11 +88,11 @@ impl Component for ComputeAggregates<'_> {
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.handle_key_events(key)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         self.draw(f, area, TITLE)
     }
 }

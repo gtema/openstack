@@ -19,7 +19,8 @@ use ratatui::{prelude::*, widgets::*};
 use crate::{
     action::Action,
     components::Component,
-    config::{key_event_to_string, Config},
+    config::{key_event_to_string_with_unicode, Config},
+    error::TuiError,
     mode::Mode,
 };
 
@@ -79,12 +80,12 @@ impl Header {
 }
 
 impl Component for Header {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         self.current_mode = current_mode;
         match action {
             Action::Tick => self.app_tick()?,
@@ -116,7 +117,7 @@ impl Component for Header {
         Ok(None)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, rect: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, rect: Rect) -> Result<(), TuiError> {
         let rects = Layout::default()
             .direction(Direction::Horizontal)
             .constraints(vec![
@@ -179,7 +180,7 @@ impl Component for Header {
                 .map(|(k, v)| {
                     (
                         k.iter()
-                            .map(key_event_to_string)
+                            .map(key_event_to_string_with_unicode)
                             .collect::<Vec<_>>()
                             .join(""),
                         v.description.clone().unwrap_or(String::from("")),

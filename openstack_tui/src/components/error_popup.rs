@@ -22,7 +22,8 @@ use ratatui::{
 use std::collections::HashMap;
 
 use crate::{
-    action::Action, components::Component, config::Config, mode::Mode, utils::centered_rect,
+    action::Action, components::Component, config::Config, error::TuiError, mode::Mode,
+    utils::centered_rect,
 };
 
 pub struct ErrorPopup {
@@ -66,12 +67,12 @@ impl ErrorPopup {
 }
 
 impl Component for ErrorPopup {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
         if let Action::Error(ref msg) = action {
             self.text = strip_ansi_escapes::strip_str(msg)
                 .split("\n")
@@ -81,7 +82,7 @@ impl Component for ErrorPopup {
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         match key.code {
             KeyCode::Down => self.scroll_down(),
             KeyCode::Up => self.scroll_up(),
@@ -92,7 +93,7 @@ impl Component for ErrorPopup {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<()> {
+    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
         let ar = centered_rect(30, 25, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(" Error ").red().centered())

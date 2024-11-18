@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::{KeyCode, KeyEvent};
+use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
@@ -24,6 +24,7 @@ use crate::{
     cloud_worker::types::{NetworkNetworkFilters, NetworkSubnetFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
+    error::TuiError,
     mode::Mode,
     utils::{OutputConfig, StructTable},
 };
@@ -32,6 +33,8 @@ const TITLE: &str = "Networks";
 
 #[derive(Deserialize, StructTable)]
 pub struct NetworkData {
+    #[structable(title = "Id", wide)]
+    id: String,
     #[structable(title = "Name")]
     name: String,
     #[structable(title = "Status")]
@@ -47,16 +50,15 @@ pub struct NetworkData {
 pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkFilters>;
 
 impl Component for NetworkNetworks<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
     }
 
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
-        self.set_command_tx(tx);
-        Ok(())
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.set_command_tx(tx)
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
             Action::CloudChangeScope(_) => {
                 self.set_loading(true);
@@ -76,6 +78,25 @@ impl Component for NetworkNetworks<'_> {
                     Resource::NetworkNetworks(self.get_filters().clone()),
                 )));
             }
+            Action::ShowNetworkSubnets => {
+                // only if we are currently in the IdentityGroup mode
+                if current_mode == Mode::NetworkNetworks {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(group_row) = self.get_selected() {
+                            command_tx.send(Action::SetNetworkSubnetFilters(
+                                NetworkSubnetFilters {
+                                    network_id: Some(group_row.id.clone()),
+                                    network_name: Some(group_row.name.clone()),
+                                },
+                            ))?;
+                            return Ok(Some(Action::Mode(Mode::NetworkSubnets)));
+                        }
+                    }
+                }
+            }
+            Action::DescribeResource => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
@@ -89,21 +110,11 @@ impl Component for NetworkNetworks<'_> {
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
-        if key.code == KeyCode::Enter {
-            if let Some(command_tx) = self.get_command_tx() {
-                if let Some(x) = self.get_selected_raw() {
-                    command_tx.send(Action::SetNetworkSubnetFilters(NetworkSubnetFilters {
-                        network_id: x.get("id").unwrap().as_str().map(String::from).clone(),
-                    }))?;
-                }
-            }
-            return Ok(Some(Action::Mode(Mode::NetworkSubnets)));
-        }
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.handle_key_events(key)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         self.draw(f, area, TITLE)
     }
 }

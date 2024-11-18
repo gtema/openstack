@@ -28,11 +28,20 @@ impl fmt::Display for NetworkNetworkFilters {
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetworkSubnetFilters {
     pub network_id: Option<String>,
+    /// Name of the parent network
+    pub network_name: Option<String>,
 }
 impl fmt::Display for NetworkSubnetFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(val) = &self.network_id {
-            write!(f, "network: {}", val)?;
+        if self.network_id.is_some() || self.network_name.is_some() {
+            write!(
+                f,
+                "network: {}",
+                self.network_name
+                    .as_ref()
+                    .or(self.network_id.as_ref())
+                    .unwrap_or(&String::new())
+            )?;
         }
         Ok(())
     }

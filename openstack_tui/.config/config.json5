@@ -1,43 +1,68 @@
 {
   "mode_keybindings": {
     "Home": { },
+    "ComputeAggregates": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
     "ComputeServers": {
       "0": { "action": {"SetComputeServerFilters": {} }, "description": "default filters"},
       "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "all tenants (admin)"},
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "c": { "action": "ShowServerConsoleOutput", "description": "Get Console output" },
     },
+    "ComputeFlavors": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
+    "ComputeHypervisors": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
+    "IdentityApplicationCredentials": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
     "IdentityGroups": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "u": {"action": "ShowIdentityGroupUsers", "description": "Group users"},
       "d": {"action": "IdentityGroupDelete", "description": "Delete (todo!)"},
       "a": {"action": "IdentityGroupCreate", "description": "Create new group (todo!)"},
     },
     "IdentityGroupUsers": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "a": {"action": "IdentityGroupUserAdd", "description": "Add new user into group (todo!)"},
-      "d": {"action": "IdentityGroupUserRemove", "description": "Remove user from group (todo!)"},
+      "r": {"action": "IdentityGroupUserRemove", "description": "Remove user from group (todo!)"},
     },
     "IdentityProjects": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "s": {"action": "SwitchToProject", "description": "Switch to project"},
     },
     "IdentityUsers": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "e": {"action": "IdentityUserFlipEnable", "description": "Enable/Disable user"},
-      "d": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
+      "r": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
       "a": {"action": "IdentityUserCreate", "description": "Create new user (todo!)"},
       "p": {"action": "IdentityUserSetPassword", "description": "Set user password (todo!)"},
       "c": {"action": "ShowIdentityUserApplicationCredentials", "description": "Application credentials"},
     },
     "ImageImages": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "0": { "action": {"SetImageFilters": {} }, "description": "default filtersall"},
       "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public"},
       "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared"},
       "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private"},
     },
+    "NetworkNetworks": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+      "<enter>": { "action": "ShowNetworkSubnets", "description": "subnetworks"},
+    },
     "NetworkSubnets": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "all"},
     },
     "NetworkSecurityGroups": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "l": { "action": "ShowNetworkSecurityGroupRules", "description": "rules"},
     },
     "NetworkSecurityGroupRules": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
       "0": { "action": {"SetNetworkSecurityGroupRuleFilters": {}}, "description": "all"},
     }
   },
@@ -50,7 +75,7 @@
     "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
     ":": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
     "<F4>": { "action": "SelectProject", "description": "Select project"},
-    "<r>": {"action": "Refresh", "description": "Refresh data"}
+    "<ctrl-r>": {"action": "Refresh", "description": "Reload data"}
   },
   "mode_aliases": {
     "aggregates (compute)": "ComputeAggregates",

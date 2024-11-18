@@ -12,8 +12,8 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
-use eyre::{OptionExt, Report, Result};
+use crossterm::event::{KeyCode, KeyEvent}; //, KeyEventKind};
+use eyre::Result;
 use ratatui::{
     prelude::*,
     widgets::{block::*, *},
@@ -22,13 +22,14 @@ use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
 use tokio::sync::mpsc::UnboundedSender;
-use tracing::instrument;
+use tracing::{debug, instrument};
 
 use crate::{
     action::Action,
     components::{describe::Describe, Component, Frame},
     config::Config,
     error::TuiError,
+    mode::Mode,
     utils::{OutputConfig, StructTable},
 };
 
@@ -111,7 +112,7 @@ where
         }
     }
 
-    pub fn set_config(&mut self, config: Config) -> Result<()> {
+    pub fn set_config(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())
     }
@@ -120,23 +121,24 @@ where
         self.command_tx.as_ref()
     }
 
-    pub fn set_command_tx(&mut self, tx: UnboundedSender<Action>) {
+    pub fn set_command_tx(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         self.command_tx = Some(tx);
+        Ok(())
     }
 
     pub fn set_loading(&mut self, loading: bool) {
         self.is_loading = loading;
     }
 
-    pub fn app_tick(&mut self) -> Result<()> {
+    pub fn app_tick(&mut self) -> Result<(), TuiError> {
         Ok(())
     }
 
-    pub fn render_tick(&mut self) -> Result<()> {
+    pub fn render_tick(&mut self) -> Result<(), TuiError> {
         Ok(())
     }
 
-    pub fn cursor_first(&mut self) -> Result<()> {
+    pub fn cursor_first(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
                 self.state.select_first();
@@ -150,7 +152,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_last(&mut self) -> Result<()> {
+    pub fn cursor_last(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
                 self.state.select(Some(self.items.len().saturating_sub(1)));
@@ -164,7 +166,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_down(&mut self) -> Result<()> {
+    pub fn cursor_down(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
                 let i = match self.state.selected() {
@@ -188,7 +190,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_up(&mut self) -> Result<()> {
+    pub fn cursor_up(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
                 let i = match self.state.selected() {
@@ -206,7 +208,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_page_down(&mut self) -> Result<()> {
+    pub fn cursor_page_down(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
                 let i = match self.state.selected() {
@@ -227,7 +229,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_page_up(&mut self) -> Result<()> {
+    pub fn cursor_page_up(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {
                 let i = match self.state.selected() {
@@ -245,7 +247,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_left(&mut self) -> Result<()> {
+    pub fn cursor_left(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {}
             Focus::Describe => {
@@ -255,7 +257,7 @@ where
         Ok(())
     }
 
-    pub fn cursor_right(&mut self) -> Result<()> {
+    pub fn cursor_right(&mut self) -> Result<(), TuiError> {
         match self.focus {
             Focus::Table => {}
             Focus::Describe => {
@@ -265,7 +267,7 @@ where
         Ok(())
     }
 
-    pub fn key_tab(&mut self) -> Result<()> {
+    pub fn key_tab(&mut self) -> Result<(), TuiError> {
         if self.describe_enabled {
             self.focus = match self.focus {
                 Focus::Table => Focus::Describe,
@@ -277,7 +279,7 @@ where
         Ok(())
     }
 
-    pub fn set_describe_content(&mut self) -> Result<()> {
+    pub fn set_describe_content(&mut self) -> Result<(), TuiError> {
         if let Some(selected_idx) = self.state.selected() {
             if selected_idx < self.raw_items.len() {
                 self.describe
@@ -291,7 +293,7 @@ where
         Ok(())
     }
 
-    pub fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    pub fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         match key.code {
             KeyCode::Down => self.cursor_down()?,
             KeyCode::Up => self.cursor_up()?,
@@ -304,15 +306,10 @@ where
             KeyCode::Tab => self.key_tab()?,
             _ => {}
         }
-        if key.kind == KeyEventKind::Press && key.code == KeyCode::Enter {
-            if let Some(x) = self.get_selected_raw() {
-                return Ok(Some(Action::Describe(x.clone())));
-            }
-        }
         Ok(None)
     }
 
-    pub fn set_data(&mut self, data: Vec<Value>) -> Result<()> {
+    pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
         let items: Vec<T> = serde_json::from_value(serde_json::Value::Array(data.clone()))?;
         if data != self.raw_items {
             self.items = items;
@@ -327,7 +324,7 @@ where
     }
 
     /// Synchronize table data from internal vector of typed entries
-    pub fn sync_table_data(&mut self) -> Result<()> {
+    pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
         let (headers, rows) = self.items.build(&self.output_config);
         self.column_widths.clear();
         self.column_widths.resize(headers.len(), 1);
@@ -376,7 +373,7 @@ where
         self.filter = filters;
     }
 
-    pub fn draw(&mut self, f: &mut Frame<'_>, area: Rect, title: &str) -> Result<()> {
+    pub fn draw(&mut self, f: &mut Frame<'_>, area: Rect, title: &str) -> Result<(), TuiError> {
         let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
 
         self.render_content(title, f, areas[0])?;
@@ -471,7 +468,7 @@ where
         title: S,
         frame: &mut Frame,
         area: Rect,
-    ) -> Result<()> {
+    ) -> Result<(), TuiError> {
         let mut title = vec![title.as_ref().white()];
         if self.is_loading {
             title.push(Span::styled(
@@ -538,16 +535,29 @@ where
         self.state.selected().map(|x| &self.raw_items[x])
     }
 
-    pub fn get_selected_resource_id(&self) -> Result<Option<String>, Report> {
+    pub fn get_selected_resource_id(&self) -> Result<Option<String>, TuiError> {
         self.get_selected_raw()
             .map(|entry| {
                 entry
                     .get("id")
-                    .ok_or_eyre("Resource ID must be known")?
-                    .as_str()
-                    .map(String::from)
-                    .ok_or_eyre("Resource ID must be string")
+                    .and_then(|x| x.as_str().map(String::from))
+                    .ok_or_else(|| TuiError::EntryIdNotPresent(entry.clone()))
             })
             .transpose()
+    }
+
+    pub fn describe_selected_entry(&self) -> Result<(), TuiError> {
+        if let Some(command_tx) = self.get_command_tx() {
+            // and have a selected entry
+            if let Some(raw_value) = self.get_selected_raw() {
+                command_tx.send(Action::DescribeResourceData(raw_value.clone()))?;
+                command_tx.send(Action::Mode(Mode::Describe))?;
+            } else {
+                debug!("No current selected entry");
+            }
+        } else {
+            debug!("No command_tx");
+        }
+        Ok(())
     }
 }

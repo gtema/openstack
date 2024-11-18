@@ -58,7 +58,11 @@ pub enum Action {
     // PageUp,
     // PageDown,
     /// Open describe view with the details
-    Describe(serde_json::Value),
+    DescribeResourceData(serde_json::Value),
+    /// Describe resource under cursor
+    DescribeResource,
+    /// Set describe mode loading
+    SetDescribeLoading(bool),
     /// Open cloud connection popup
     CloudSelect,
     /// Open project selection popup
@@ -113,4 +117,6 @@ pub enum Action {
     /// Set Security group rule filters
     SetNetworkSecurityGroupRuleFilters(cloud_types::NetworkSecurityGroupRuleFilters),
     SetNetworkSubnetFilters(cloud_types::NetworkSubnetFilters),
+    /// Show Subnetworks of a network
+    ShowNetworkSubnets,
 }

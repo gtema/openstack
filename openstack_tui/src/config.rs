@@ -211,6 +211,69 @@ fn parse_key_code_with_modifiers(
     Ok(KeyEvent::new(c, modifiers))
 }
 
+pub fn key_event_to_string_with_unicode(key_event: &KeyEvent) -> String {
+    let char;
+    let key_code = match key_event.code {
+        KeyCode::Backspace => "⌫",
+        KeyCode::Enter => "↵",
+        KeyCode::Left => "←",
+        KeyCode::Right => "→",
+        KeyCode::Up => "↑",
+        KeyCode::Down => "↓",
+        KeyCode::Home => "home",
+        KeyCode::End => "end",
+        KeyCode::PageUp => "pageup",
+        KeyCode::PageDown => "pagedown",
+        KeyCode::Tab => "↹",
+        KeyCode::BackTab => "backtab",
+        KeyCode::Delete => "⌦",
+        KeyCode::Insert => "insert",
+        KeyCode::F(c) => {
+            char = format!("f({c})");
+            &char
+        }
+        KeyCode::Char(' ') => "⎵",
+        KeyCode::Char(c) => {
+            char = c.to_string();
+            &char
+        }
+        KeyCode::Esc => "␛",
+        KeyCode::Null => "",
+        KeyCode::CapsLock => "",
+        KeyCode::Menu => "",
+        KeyCode::ScrollLock => "",
+        KeyCode::Media(_) => "",
+        KeyCode::NumLock => "",
+        KeyCode::PrintScreen => "",
+        KeyCode::Pause => "",
+        KeyCode::KeypadBegin => "",
+        KeyCode::Modifier(_) => "",
+    };
+
+    let mut modifiers = Vec::with_capacity(3);
+
+    if key_event.modifiers.intersects(KeyModifiers::CONTROL) {
+        modifiers.push("ctrl");
+    }
+
+    if key_event.modifiers.intersects(KeyModifiers::SHIFT) {
+        modifiers.push("⇧");
+    }
+
+    if key_event.modifiers.intersects(KeyModifiers::ALT) {
+        modifiers.push("alt");
+    }
+
+    let mut key = modifiers.join("-");
+
+    if !key.is_empty() {
+        key.push('-');
+    }
+    key.push_str(key_code);
+
+    key
+}
+
 pub fn key_event_to_string(key_event: &KeyEvent) -> String {
     let char;
     let key_code = match key_event.code {
