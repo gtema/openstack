@@ -109,9 +109,9 @@ impl NetworkExt for Cloud {
 
     async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
+            let ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
+            //ep_builder.sort_key("name");
+            //ep_builder.sort_dir("asc");
 
             let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
@@ -127,10 +127,10 @@ impl NetworkExt for Cloud {
         _filters: &NetworkSecurityGroupFilters,
     ) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let mut ep_builder =
+            let ep_builder =
                 openstack_sdk::api::network::v2::security_group::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
+            //ep_builder.sort_key("name");
+            //ep_builder.sort_dir("asc");
 
             let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
@@ -148,8 +148,8 @@ impl NetworkExt for Cloud {
         if let Some(session) = &self.cloud {
             let mut ep_builder =
                 openstack_sdk::api::network::v2::security_group_rule::list::Request::builder();
-            ep_builder.sort_key("ethertype");
-            ep_builder.sort_dir("asc");
+            //ep_builder.sort_key("ethertype");
+            //ep_builder.sort_dir("asc");
 
             if let Some(security_group_id) = &filters.security_group_id {
                 ep_builder.security_group_id(security_group_id.clone());
@@ -167,8 +167,8 @@ impl NetworkExt for Cloud {
     async fn get_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let mut ep_builder = openstack_sdk::api::network::v2::subnet::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
+            //ep_builder.sort_key("name");
+            //ep_builder.sort_dir("asc");
 
             if let Some(network_id) = &filters.network_id {
                 ep_builder.network_id(network_id.clone());
