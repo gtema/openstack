@@ -82,7 +82,7 @@ impl Component for Images<'_> {
             } => {
                 self.set_data(data)?;
             }
-            Action::ImageFilter(filters) => {
+            Action::SetImageFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(Resource::ImageImages(

@@ -100,14 +100,14 @@ impl Component for ComputeServers<'_> {
                     }
                 }
             }
-            Action::ComputeServerFilter(filters) => {
+            Action::SetComputeServerFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
                     Resource::ComputeServers(self.get_filters().clone()),
                 )));
             }
-            Action::ServerConsoleOutput => {
+            Action::ShowServerConsoleOutput => {
                 if let Some(server_id) = self.get_selected_resource_id()? {
                     self.set_loading(true);
                     return Ok(Some(Action::RequestCloudResource(

@@ -25,7 +25,7 @@ pub mod types;
 use types::*;
 
 pub trait ImageExt {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
@@ -35,7 +35,7 @@ pub trait ImageExt {
 }
 
 impl ImageExt for Cloud {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,

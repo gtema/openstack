@@ -79,7 +79,7 @@ impl Component for IdentityGroups<'_> {
                     Resource::IdentityGroups(self.get_filters().clone()),
                 )));
             }
-            Action::IdentityGroupUsers => {
+            Action::ShowIdentityGroupUsers => {
                 // only if we are currently in the IdentityGroup mode
                 if current_mode == Mode::IdentityGroups {
                     // and have command_tx
@@ -87,7 +87,7 @@ impl Component for IdentityGroups<'_> {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
                             // send action to set GroupUserFilters
-                            command_tx.send(Action::IdentityGroupUserFilter(
+                            command_tx.send(Action::SetIdentityGroupUserFilters(
                                 IdentityGroupUserFilters {
                                     group_id: group_row.id.clone(),
                                     group_name: Some(group_row.name.clone()),

@@ -2,12 +2,12 @@
   "mode_keybindings": {
     "Home": { },
     "ComputeServers": {
-      "0": { "action": {"ComputeServerFilter": {} }, "description": "default filters"},
-      "1": { "action": {"ComputeServerFilter": {"all_tenants": true} }, "description": "all tenants (admin)"},
-      "c": { "action": "ServerConsoleOutput", "description": "Get Console output" },
+      "0": { "action": {"SetComputeServerFilters": {} }, "description": "default filters"},
+      "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "all tenants (admin)"},
+      "c": { "action": "ShowServerConsoleOutput", "description": "Get Console output" },
     },
     "IdentityGroups": {
-      "u": {"action": "IdentityGroupUsers", "description": "Group users"},
+      "u": {"action": "ShowIdentityGroupUsers", "description": "Group users"},
       "d": {"action": "IdentityGroupDelete", "description": "Delete (todo!)"},
       "a": {"action": "IdentityGroupCreate", "description": "Create new group (todo!)"},
     },
@@ -23,22 +23,22 @@
       "d": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
       "a": {"action": "IdentityUserCreate", "description": "Create new user (todo!)"},
       "p": {"action": "IdentityUserSetPassword", "description": "Set user password (todo!)"},
-      "c": {"action": "IdentityUserApplicationCredentials", "description": "Application credentials"},
+      "c": {"action": "ShowIdentityUserApplicationCredentials", "description": "Application credentials"},
     },
     "ImageImages": {
-      "0": { "action": {"ImageFilter": {} }, "description": "default filtersall"},
-      "1": { "action": {"ImageFilter": {"visibility": "public"} },"description": "public"},
-      "2": { "action": {"ImageFilter": {"visibility": "shared"} },"description": "shared"},
-      "3": { "action": {"ImageFilter": {"visibility": "private"} },"description": "private"},
+      "0": { "action": {"SetImageFilters": {} }, "description": "default filtersall"},
+      "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public"},
+      "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared"},
+      "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private"},
     },
     "NetworkSubnets": {
-      "0": { "action": {"NetworkSubnetFilter": {} }, "description": "all"},
+      "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "all"},
     },
     "NetworkSecurityGroups": {
-      "l": { "action": "NetworkSecurityGroupRules", "description": "rules"},
+      "l": { "action": "ShowNetworkSecurityGroupRules", "description": "rules"},
     },
     "NetworkSecurityGroupRules": {
-      "0": { "action": {"NetworkSecurityGroupRuleFilter": {}}, "description": "all"},
+      "0": { "action": {"SetNetworkSecurityGroupRuleFilters": {}}, "description": "all"},
     }
   },
   "global_keybindings": {

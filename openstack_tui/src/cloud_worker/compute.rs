@@ -26,7 +26,7 @@ pub mod types;
 use types::*;
 
 pub trait ComputeExt {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
@@ -41,7 +41,7 @@ pub trait ComputeExt {
 }
 
 impl ComputeExt for Cloud {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
