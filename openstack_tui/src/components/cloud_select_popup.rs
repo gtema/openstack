@@ -23,6 +23,7 @@ use crate::{
     action::Action,
     components::{Component, FuzzySelectList},
     config::Config,
+    error::TuiError,
     mode::Mode,
     utils::centered_rect,
 };
@@ -50,20 +51,20 @@ impl CloudSelect {
 }
 
 impl Component for CloudSelect {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config.clone();
         self.fuzzy_list.register_config_handler(config.clone())?;
         Ok(())
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
         if let Action::Clouds(ref clouds) = action {
             self.fuzzy_list.set_items(clouds.clone());
         };
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.fuzzy_list.handle_key_events(key)?;
         if key.code == KeyCode::Enter {
             if let Some(cloud) = self.fuzzy_list.selected() {
@@ -73,7 +74,7 @@ impl Component for CloudSelect {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<()> {
+    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
         let area = centered_rect(25, 25, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(TITLE.white()).centered())

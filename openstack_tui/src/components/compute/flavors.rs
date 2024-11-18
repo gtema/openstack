@@ -17,12 +17,14 @@ use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
+use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::types::{ComputeFlavorFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
+    error::TuiError,
     mode::Mode,
     utils::{as_string, OutputConfig, StructTable},
 };
@@ -47,11 +49,15 @@ pub struct FlavorData {
 pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorFilters>;
 
 impl Component for ComputeFlavors<'_> {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
+        self.set_command_tx(tx)
+    }
+
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
             Action::CloudChangeScope(_) => {
                 self.set_loading(true);
@@ -71,14 +77,8 @@ impl Component for ComputeFlavors<'_> {
                     Resource::ComputeFlavors(self.get_filters().clone()),
                 )));
             }
-            Action::Tick => {
-                self.app_tick()?;
-                if let Mode::ComputeFlavors = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeFlavors(self.get_filters().clone()),
-                    )));
-                }
-            }
+            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
                 resource: Resource::ComputeFlavors(_),
@@ -91,11 +91,11 @@ impl Component for ComputeFlavors<'_> {
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.handle_key_events(key)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         self.draw(f, area, TITLE)
     }
 }

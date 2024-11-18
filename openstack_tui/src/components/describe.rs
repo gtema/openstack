@@ -23,7 +23,7 @@ use serde_json::Value;
 use std::cmp;
 use std::collections::HashMap;
 
-use crate::{action::Action, config::Config, mode::Mode};
+use crate::{action::Action, config::Config, error::TuiError, mode::Mode};
 
 #[derive(Default)]
 pub struct Describe {
@@ -33,6 +33,7 @@ pub struct Describe {
     pub last_events: Vec<KeyEvent>,
     title: Option<String>,
     is_focused: bool,
+    is_loading: bool,
     max_row_length: u16,
     content_scroll: (u16, u16),
     content_size: Size,
@@ -58,6 +59,10 @@ impl Describe {
     }
 
     pub fn render_tick(&mut self) {}
+
+    pub fn set_loading(&mut self, loading: bool) {
+        self.is_loading = loading;
+    }
 
     pub fn set_data(&mut self, data: Value) -> Result<()> {
         if data.is_string() {
@@ -180,10 +185,19 @@ impl Describe {
     }
 
     fn render(&mut self, f: &mut Frame<'_>, area: Rect) {
+        let mut title = vec![self
+            .title
+            .clone()
+            .unwrap_or(String::from(" Describe "))
+            .white()];
+        if self.is_loading {
+            title.push(Span::styled(
+                " ...Loading... ",
+                self.config.styles.title_loading_fg,
+            ));
+        }
         let block = Block::default()
-            .title(Title::from(
-                self.title.clone().unwrap_or(String::from(" Describe ")),
-            ))
+            .title(Title::from(title))
             .title_alignment(Alignment::Center)
             .title_style(match self.is_focused {
                 true => Style::new().white(),
@@ -259,7 +273,7 @@ impl Describe {
 }
 
 impl Component for Describe {
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         if key.kind == KeyEventKind::Press {
             match key.code {
                 KeyCode::Char('j') | KeyCode::Down => self.cursor_down()?,
@@ -279,14 +293,22 @@ impl Component for Describe {
         Ok(None)
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
-        if let Action::Describe(data) = action {
-            self.set_data(data)?;
-        };
+    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
+        match action {
+            Action::SetDescribeLoading(val) => {
+                self.set_data(Value::Null)?;
+                self.set_loading(val);
+            }
+            Action::DescribeResourceData(data) => {
+                self.set_loading(false);
+                self.set_data(data)?;
+            }
+            _ => {}
+        }
         Ok(None)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         self.render(f, area);
         Ok(())
     }

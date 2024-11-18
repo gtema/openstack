@@ -347,18 +347,17 @@ impl App {
                     self.render(tui)?;
                 }
                 Action::Mode(mode) => {
-                    // Hide popup
-                    self.active_popup = None;
-                    self.prev_mode = Some(self.mode);
-                    self.mode = mode;
-                    self.render(tui)?;
+                    if self.mode != mode {
+                        debug!("Switching from {:?} to {:?}", self.mode, mode);
+                        // Hide popup
+                        self.active_popup = None;
+                        if self.prev_mode != Some(mode) {
+                            self.prev_mode = Some(self.mode);
+                        }
+                        self.mode = mode;
+                        self.render(tui)?;
+                    }
                 }
-                Action::Describe(_) => {
-                    self.prev_mode = Some(self.mode);
-                    self.mode = Mode::Describe;
-                    self.render(tui)?;
-                }
-
                 Action::RequestCloudResource(ref resource) => {
                     self.cloud_worker_tx
                         .send(Action::RequestCloudResource(resource.clone()))?;
@@ -389,7 +388,9 @@ impl App {
             for (mode, component) in self.components.iter_mut() {
                 // only update component if it belongs to the current mode or it is not refresh
                 // event
-                if *mode == self.mode || action != Action::Refresh {
+                if *mode == self.mode
+                    || (action != Action::Refresh && action != Action::DescribeResource)
+                {
                     if let Some(action) = component.update(action.clone(), self.mode)? {
                         self.action_tx.send(action)?
                     };

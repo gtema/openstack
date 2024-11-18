@@ -14,17 +14,26 @@
 
 use thiserror::Error;
 
+use crate::action;
+
 #[derive(Error, Debug)]
 pub enum TuiError {
     #[error("ID of entry cannot be determined")]
     EntryIdNotPresent(serde_json::Value),
 
     /// Json serialization error.
-    #[error("json ser/deser error: {}", source)]
+    #[error("json serde error: {}", source)]
     JsonError {
         /// The source of the error.
         #[from]
         source: serde_json::Error,
+    },
+
+    #[error("error sending action: {}", source)]
+    SenderError {
+        /// The source of the error.
+        #[from]
+        source: tokio::sync::mpsc::error::SendError<action::Action>,
     },
 
     /// Others.

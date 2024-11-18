@@ -20,10 +20,10 @@ pub enum Mode {
     #[default]
     Home,
     Describe,
-    ComputeFlavors,
-    ComputeServers,
     ComputeAggregates,
+    ComputeFlavors,
     ComputeHypervisors,
+    ComputeServers,
     IdentityApplicationCredentials,
     IdentityGroups,
     IdentityGroupUsers,

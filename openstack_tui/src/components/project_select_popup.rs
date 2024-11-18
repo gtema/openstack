@@ -27,6 +27,7 @@ use crate::{
     cloud_worker::types::{IdentityAuthProjectFilters, Resource},
     components::{Component, FuzzySelectList},
     config::Config,
+    error::TuiError,
     mode::Mode,
     utils::{centered_rect, OutputConfig, StructTable},
 };
@@ -72,7 +73,7 @@ impl ProjectSelect {
         self.is_loading = loading;
     }
 
-    fn set_data(&mut self, data: Vec<Value>) -> Result<()> {
+    fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
         let mut items: Vec<ProjectData> =
             serde_json::from_value(serde_json::Value::Array(data.clone()))?;
         items.sort_by_key(|x| x.name.clone());
@@ -86,12 +87,12 @@ impl ProjectSelect {
 }
 
 impl Component for ProjectSelect {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())
     }
 
-    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
             Action::ConnectToCloud(_) => {
                 self.set_loading(true);
@@ -113,7 +114,7 @@ impl Component for ProjectSelect {
         Ok(None)
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         self.fuzzy_list.handle_key_events(key)?;
         if key.code == KeyCode::Enter {
             if let Some(selected) = self.fuzzy_list.selected() {
@@ -135,7 +136,7 @@ impl Component for ProjectSelect {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<()> {
+    fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
         let area = centered_rect(25, 25, frame.area());
         let mut title = vec![TITLE.white()];
         if self.is_loading {

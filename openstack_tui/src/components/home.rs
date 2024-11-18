@@ -30,7 +30,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action, cloud_worker::types::Resource, components::Component, config::Config,
-    mode::Mode,
+    error::TuiError, mode::Mode,
 };
 
 /// Single resource quota details
@@ -91,7 +91,7 @@ impl Home {
         self.is_loading = loading;
     }
 
-    fn set_compute_data(&mut self, data: Value) -> Result<()> {
+    fn set_compute_data(&mut self, data: Value) -> Result<(), TuiError> {
         if !data.is_null() {
             let data: ComputeQuota = serde_json::from_value(data.clone())?;
             self.compute_quota = Some(data);
@@ -99,7 +99,7 @@ impl Home {
         Ok(())
     }
 
-    fn set_network_data(&mut self, data: Value) -> Result<()> {
+    fn set_network_data(&mut self, data: Value) -> Result<(), TuiError> {
         if !data.is_null() {
             let data: NetworkQuota = serde_json::from_value(data.clone())?;
             self.network_quota = Some(data);
@@ -107,7 +107,7 @@ impl Home {
         Ok(())
     }
 
-    fn refresh_data(&mut self) -> Result<Option<Action>> {
+    fn refresh_data(&mut self) -> Result<Option<Action>, TuiError> {
         if let Some(command_tx) = &self.command_tx {
             command_tx.send(Action::RequestCloudResource(Resource::ComputeQuota))?;
             command_tx.send(Action::RequestCloudResource(Resource::NetworkQuota))?;
@@ -117,17 +117,17 @@ impl Home {
 }
 
 impl Component for Home {
-    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<()> {
+    fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         self.command_tx = Some(tx);
         Ok(())
     }
 
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())
     }
 
-    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>> {
+    fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
             Action::CloudChangeScope(_) => {
                 self.is_error = false;
@@ -178,7 +178,7 @@ impl Component for Home {
         Ok(None)
     }
 
-    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, f: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         //let rects = Layout::vertical([]).split(area);
         let mut title = vec![" Usage ".white()];
         if self.is_loading {

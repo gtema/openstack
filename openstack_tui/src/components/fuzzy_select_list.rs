@@ -20,7 +20,7 @@ use ratatui::{
 };
 use std::cmp;
 
-use crate::{action::Action, components::Component, config::Config};
+use crate::{action::Action, components::Component, config::Config, error::TuiError};
 
 /// List with fuzzy searching and scroll
 pub struct FuzzySelectList {
@@ -142,12 +142,12 @@ impl FuzzySelectList {
 }
 
 impl Component for FuzzySelectList {
-    fn register_config_handler(&mut self, config: Config) -> Result<()> {
+    fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.config = config;
         Ok(())
     }
 
-    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
+    fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>, TuiError> {
         match &key.code {
             KeyCode::Down => self.cursor_down()?,
             KeyCode::Up => self.cursor_up()?,
@@ -177,7 +177,7 @@ impl Component for FuzzySelectList {
         Ok(None)
     }
 
-    fn draw(&mut self, frame: &mut Frame<'_>, area: Rect) -> Result<()> {
+    fn draw(&mut self, frame: &mut Frame<'_>, area: Rect) -> Result<(), TuiError> {
         self.area_size = area.as_size();
 
         let layout =
