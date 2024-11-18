@@ -31,34 +31,46 @@ pub enum Action {
     Mode(crate::mode::Mode),
     Error(String),
     Help,
+    /// Trigger connection to the cloud
     ConnectToCloud(String),
+    /// Request rescoping current connection
     CloudChangeScope(openstack_sdk::auth::authtoken::AuthTokenScope),
+    /// New cloud connection established
     ConnectedToCloud(Box<openstack_sdk::types::identity::v3::AuthToken>),
+    /// Perform API request
     RequestCloudResource(cloud_types::Resource),
+    /// Propagate single resource data to components
     ResourceData {
         resource: cloud_types::Resource,
         data: serde_json::Value,
     },
+    /// Propagate resources list to components
     ResourcesData {
         resource: cloud_types::Resource,
         data: Vec<serde_json::Value>,
     },
+    /// Open resource(mode) select popup
     ResourceSelect,
     Refresh,
-    Next,
-    Prev,
-    End,
-    PageUp,
-    PageDown,
+    // Next,
+    // Prev,
+    // End,
+    // PageUp,
+    // PageDown,
+    /// Open describe view with the details
     Describe(serde_json::Value),
+    /// Open cloud connection popup
     CloudSelect,
+    /// Open project selection popup
     SelectProject,
+    /// Query list of configured cloud connections
     ListClouds,
+    /// List of configured cloud connections
     Clouds(Vec<String>),
 
     // Compute (neutron)
-    ComputeServerFilter(cloud_types::ComputeServerFilters),
-    ServerConsoleOutput,
+    SetComputeServerFilters(cloud_types::ComputeServerFilters),
+    ShowServerConsoleOutput,
 
     // Identity (keystone)
     //  Groups
@@ -68,17 +80,17 @@ pub enum Action {
     IdentityGroupDelete,
     //  Group users
     /// Action user invokes to switch mode for selected entity
-    IdentityGroupUsers,
+    ShowIdentityGroupUsers,
     /// Set GroupUser filters
-    IdentityGroupUserFilter(cloud_types::IdentityGroupUserFilters),
+    SetIdentityGroupUserFilters(cloud_types::IdentityGroupUserFilters),
     /// Add user into the group
     IdentityGroupUserAdd,
     /// Remove user from the group
     IdentityGroupUserRemove,
-    //  users
+    //  Users
     // Set ApplicationCredentials filters
-    IdentityUserApplicationCredentials,
-    IdentityApplicationCredentialFilter(cloud_types::IdentityApplicationCredentialFilters),
+    ShowIdentityUserApplicationCredentials,
+    SetIdentityApplicationCredentialFilters(cloud_types::IdentityApplicationCredentialFilters),
     /// Toggle user enabled property
     IdentityUserFlipEnable,
     /// Remove user
@@ -87,19 +99,18 @@ pub enum Action {
     IdentityUserCreate,
     /// Update user password
     IdentityUserSetPassword,
+    /// Switch current project scope to the selected project
+    SwitchToProject,
 
     // Image (glance)
-    ImageFilter(cloud_types::ImageFilters),
+    SetImageFilters(cloud_types::ImageFilters),
 
     // Network (neutron)
     /// Set Security group filters
-    NetworkSecurityGroupFilter(cloud_types::NetworkSecurityGroupFilters),
+    SetNetworkSecurityGroupFilters(cloud_types::NetworkSecurityGroupFilters),
     /// Switch to NetworkSecurityGroupRules
-    NetworkSecurityGroupRules,
+    ShowNetworkSecurityGroupRules,
     /// Set Security group rule filters
-    NetworkSecurityGroupRuleFilter(cloud_types::NetworkSecurityGroupRuleFilters),
-    NetworkSubnetFilter(cloud_types::NetworkSubnetFilters),
-
-    SwitchToProject,
-    ResetFilter,
+    SetNetworkSecurityGroupRuleFilters(cloud_types::NetworkSecurityGroupRuleFilters),
+    SetNetworkSubnetFilters(cloud_types::NetworkSubnetFilters),
 }

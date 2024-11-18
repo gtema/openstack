@@ -76,7 +76,7 @@ impl Component for IdentityGroupUsers<'_> {
                     Resource::IdentityGroupUsers(self.get_filters().clone()),
                 )));
             }
-            Action::IdentityGroupUserFilter(filters) => {
+            Action::SetIdentityGroupUserFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);

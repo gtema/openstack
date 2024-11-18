@@ -84,7 +84,7 @@ impl Component for NetworkSecurityGroupRules<'_> {
                     Resource::NetworkSecurityGroupRules(self.get_filters().clone()),
                 )));
             }
-            Action::NetworkSecurityGroupRuleFilter(filters) => {
+            Action::SetNetworkSecurityGroupRuleFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);

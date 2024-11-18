@@ -103,7 +103,7 @@ impl Component for IdentityUsers<'_> {
                     }
                 }
             }
-            Action::IdentityUserApplicationCredentials => {
+            Action::ShowIdentityUserApplicationCredentials => {
                 // only if we are currently in the proper mode
                 if current_mode == Mode::IdentityUsers {
                     // and have command_tx
@@ -111,7 +111,7 @@ impl Component for IdentityUsers<'_> {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
                             // send action to set GroupUserFilters
-                            command_tx.send(Action::IdentityApplicationCredentialFilter(
+                            command_tx.send(Action::SetIdentityApplicationCredentialFilters(
                                 IdentityApplicationCredentialFilters {
                                     user_id: group_row.id.clone(),
                                     user_name: Some(group_row.name.clone()),

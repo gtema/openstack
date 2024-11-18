@@ -59,12 +59,12 @@ impl Component for IdentityApplicationCredentials<'_> {
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>> {
         match action {
-            Action::CloudChangeScope(_) | Action::ConnectedToCloud(_) => {
+            Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 // Unset the filters since in new cloud everything is different
                 if let Some(command_tx) = self.get_command_tx() {
-                    command_tx.send(Action::IdentityApplicationCredentialFilter(
+                    command_tx.send(Action::SetIdentityApplicationCredentialFilters(
                         IdentityApplicationCredentialFilters {
                             user_id: String::new(),
                             user_name: None,
@@ -78,7 +78,7 @@ impl Component for IdentityApplicationCredentials<'_> {
                     Resource::IdentityApplicationCredentials(self.get_filters().clone()),
                 )));
             }
-            Action::IdentityApplicationCredentialFilter(filters) => {
+            Action::SetIdentityApplicationCredentialFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);

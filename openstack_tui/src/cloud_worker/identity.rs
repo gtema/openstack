@@ -26,7 +26,7 @@ pub mod types;
 use types::*;
 
 pub trait IdentityExt {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
@@ -52,7 +52,7 @@ pub trait IdentityExt {
 }
 
 impl IdentityExt for Cloud {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
@@ -109,7 +109,7 @@ impl IdentityExt for Cloud {
                         if let Some(auth) = session.get_auth_info() {
                             maybe_changed_filters.user_id = auth.token.user.id;
                             maybe_changed_filters.user_name = Some(auth.token.user.name);
-                            app_tx.send(Action::IdentityApplicationCredentialFilter(maybe_changed_filters))?;
+                            app_tx.send(Action::SetIdentityApplicationCredentialFilters(maybe_changed_filters))?;
                         }
                     }
                 } else {

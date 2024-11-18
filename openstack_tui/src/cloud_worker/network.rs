@@ -26,7 +26,7 @@ use types::*;
 
 pub trait NetworkExt {
     /// Perform network request
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,
@@ -55,7 +55,7 @@ pub trait NetworkExt {
 }
 
 impl NetworkExt for Cloud {
-    async fn query_resource(
+    async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
         resource: Resource,

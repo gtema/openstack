@@ -77,7 +77,7 @@ impl Component for NetworkSecurityGroups<'_> {
                     Resource::NetworkSecurityGroups(self.get_filters().clone()),
                 )));
             }
-            Action::NetworkSecurityGroupRules => {
+            Action::ShowNetworkSecurityGroupRules => {
                 // only if we are currently in the IdentityGroup mode
                 if current_mode == Mode::NetworkSecurityGroups {
                     // and have command_tx
@@ -85,7 +85,7 @@ impl Component for NetworkSecurityGroups<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::NetworkSecurityGroupRuleFilter(
+                            command_tx.send(Action::SetNetworkSecurityGroupRuleFilters(
                                 NetworkSecurityGroupRuleFilters {
                                     security_group_id: Some(selected_entry.id.clone()),
                                     security_group_name: Some(selected_entry.name.clone()),

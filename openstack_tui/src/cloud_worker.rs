@@ -147,18 +147,19 @@ impl Cloud {
                         // Request the resource using the service extension trait
                         match ServiceType::from(resource.clone()) {
                             ServiceType::Compute => {
-                                <Cloud as ComputeExt>::query_resource(self, &app_tx, resource)
+                                <Cloud as ComputeExt>::perform_api_request(self, &app_tx, resource)
                                     .await?
                             }
                             ServiceType::Identity => {
-                                <Cloud as IdentityExt>::query_resource(self, &app_tx, resource)
+                                <Cloud as IdentityExt>::perform_api_request(self, &app_tx, resource)
                                     .await?
                             }
                             ServiceType::Image => {
-                                <Cloud as ImageExt>::query_resource(self, &app_tx, resource).await?
+                                <Cloud as ImageExt>::perform_api_request(self, &app_tx, resource)
+                                    .await?
                             }
                             ServiceType::Network => {
-                                <Cloud as NetworkExt>::query_resource(self, &app_tx, resource)
+                                <Cloud as NetworkExt>::perform_api_request(self, &app_tx, resource)
                                     .await?
                             }
                             _ => todo!(),

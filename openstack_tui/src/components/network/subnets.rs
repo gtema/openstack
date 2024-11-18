@@ -78,7 +78,7 @@ impl Component for NetworkSubnets<'_> {
             } => {
                 self.set_data(data)?;
             }
-            Action::NetworkSubnetFilter(filters) => {
+            Action::SetNetworkSubnetFilters(filters) => {
                 self.set_filters(filters);
                 return Ok(Some(Action::Refresh));
             }
@@ -89,9 +89,9 @@ impl Component for NetworkSubnets<'_> {
 
     fn handle_key_events(&mut self, key: KeyEvent) -> Result<Option<Action>> {
         if let KeyCode::Char('0') = key.code {
-            return Ok(Some(Action::NetworkSubnetFilter(NetworkSubnetFilters {
-                network_id: None,
-            })));
+            return Ok(Some(Action::SetNetworkSubnetFilters(
+                NetworkSubnetFilters { network_id: None },
+            )));
         }
 
         self.handle_key_events(key)

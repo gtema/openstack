@@ -93,7 +93,7 @@ impl Component for NetworkNetworks<'_> {
         if key.code == KeyCode::Enter {
             if let Some(command_tx) = self.get_command_tx() {
                 if let Some(x) = self.get_selected_raw() {
-                    command_tx.send(Action::NetworkSubnetFilter(NetworkSubnetFilters {
+                    command_tx.send(Action::SetNetworkSubnetFilters(NetworkSubnetFilters {
                         network_id: x.get("id").unwrap().as_str().map(String::from).clone(),
                     }))?;
                 }
