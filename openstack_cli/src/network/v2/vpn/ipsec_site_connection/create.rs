@@ -147,13 +147,13 @@ struct IpsecSiteConnection {
     peer_address: Option<String>,
 
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
-    /// net_address > / \< prefix > .
+    /// net_address > / < prefix > .
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     peer_cidrs: Option<Vec<String>>,
 
     /// The ID for the endpoint group that contains private CIDRs in the form
-    /// \< net_address > / \< prefix > for the peer side of the connection. You
+    /// \< net_address > / < prefix > for the peer side of the connection. You
     /// must specify this parameter with the `local_ep_group_id` parameter
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.
@@ -278,14 +278,14 @@ struct ResponseData {
     peer_address: Option<String>,
 
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
-    /// net_address > / \< prefix > .
+    /// net_address > / < prefix > .
     ///
     #[serde()]
     #[structable(optional, pretty)]
     peer_cidrs: Option<Value>,
 
     /// The ID for the endpoint group that contains private CIDRs in the form
-    /// \< net_address > / \< prefix > for the peer side of the connection. You
+    /// \< net_address > / < prefix > for the peer side of the connection. You
     /// must specify this parameter with the `local_ep_group_id` parameter
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.

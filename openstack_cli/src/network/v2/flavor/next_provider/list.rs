@@ -79,14 +79,14 @@ struct QueryParameters {
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     ///
-    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
-    sort_dir: Option<String>,
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
+    sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
     ///
-    #[arg(help_heading = "Query parameters", long)]
-    sort_key: Option<String>,
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
+    sort_key: Option<Vec<String>>,
 }
 
 /// Path parameters
@@ -136,10 +136,10 @@ impl NextProvidersCommand {
         ep_builder.flavor_id(&self.path.flavor_id);
         // Set query parameters
         if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val);
+            ep_builder.sort_key(val.iter());
         }
         if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val);
+            ep_builder.sort_dir(val.iter());
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);

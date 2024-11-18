@@ -100,14 +100,14 @@ struct QueryParameters {
     /// Sort direction. This is an optional feature and may be silently ignored
     /// by the server.
     ///
-    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
-    sort_dir: Option<String>,
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
+    sort_dir: Option<Vec<String>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
     ///
-    #[arg(help_heading = "Query parameters", long)]
-    sort_key: Option<String>,
+    #[arg(action=clap::ArgAction::Append, help_heading = "Query parameters", long)]
+    sort_key: Option<Vec<String>>,
 }
 
 /// Path parameters
@@ -207,14 +207,14 @@ struct ResponseData {
     peer_address: Option<String>,
 
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
-    /// net_address > / \< prefix > .
+    /// net_address > / < prefix > .
     ///
     #[serde()]
     #[structable(optional, pretty, wide)]
     peer_cidrs: Option<Value>,
 
     /// The ID for the endpoint group that contains private CIDRs in the form
-    /// \< net_address > / \< prefix > for the peer side of the connection. You
+    /// \< net_address > / < prefix > for the peer side of the connection. You
     /// must specify this parameter with the `local_ep_group_id` parameter
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.
@@ -281,10 +281,10 @@ impl IpsecSiteConnectionsCommand {
         // Set path parameters
         // Set query parameters
         if let Some(val) = &self.query.sort_key {
-            ep_builder.sort_key(val);
+            ep_builder.sort_key(val.iter());
         }
         if let Some(val) = &self.query.sort_dir {
-            ep_builder.sort_dir(val);
+            ep_builder.sort_dir(val.iter());
         }
         if let Some(val) = &self.query.limit {
             ep_builder.limit(*val);
