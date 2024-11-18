@@ -39,11 +39,11 @@ pub struct NetworkData {
     #[structable(title = "Ethertype")]
     ethertype: String,
     #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Protocol")]
-    protocol: String,
-    #[serde(default, deserialize_with = "as_string")]
     #[structable(title = "Direction")]
     direction: String,
+    #[serde(default, deserialize_with = "as_string")]
+    #[structable(title = "Protocol")]
+    protocol: String,
     #[serde(default, deserialize_with = "as_string")]
     #[structable(title = "Range Min")]
     port_range_min: String,
