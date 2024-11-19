@@ -88,7 +88,7 @@ struct QueryParameters {
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
-    /// form of \< key > \[: \< direction > \]. A valid direction is asc
+    /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
     ///
     #[arg(help_heading = "Query parameters", long)]

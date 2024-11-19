@@ -42,7 +42,6 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
-use std::collections::BTreeSet;
 
 use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
@@ -92,13 +91,13 @@ pub struct Request<'a> {
     /// by the server.
     ///
     #[builder(default, private, setter(name = "_sort_dir"))]
-    sort_dir: BTreeSet<Cow<'a, str>>,
+    sort_dir: Option<Vec<Cow<'a, str>>>,
 
     /// Sort results by the attribute. This is an optional feature and may be
     /// silently ignored by the server.
     ///
     #[builder(default, private, setter(name = "_sort_key"))]
-    sort_key: BTreeSet<Cow<'a, str>>,
+    sort_key: Option<Vec<Cow<'a, str>>>,
 
     /// tenant_id query parameter for /v2.0/metering/metering-labels API
     ///
@@ -125,7 +124,8 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.sort_key
-            .get_or_insert_with(BTreeSet::new)
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -139,7 +139,8 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.sort_dir
-            .get_or_insert_with(BTreeSet::new)
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -184,8 +185,12 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("description", self.description.as_ref());
         params.push_opt("tenant_id", self.tenant_id.as_ref());
         params.push_opt("shared", self.shared);
-        params.extend(self.sort_key.iter().map(|value| ("sort_key", value)));
-        params.extend(self.sort_dir.iter().map(|value| ("sort_dir", value)));
+        if let Some(val) = &self.sort_key {
+            params.extend(val.iter().map(|value| ("sort_key", value)));
+        }
+        if let Some(val) = &self.sort_dir {
+            params.extend(val.iter().map(|value| ("sort_dir", value)));
+        }
         params.push_opt("limit", self.limit);
         params.push_opt("marker", self.marker.as_ref());
         params.push_opt("page_reverse", self.page_reverse);

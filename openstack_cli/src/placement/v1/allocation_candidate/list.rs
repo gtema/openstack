@@ -178,7 +178,7 @@ struct QueryParameters {
     /// A comma-separated list of request group suffix strings ($S). Each must
     /// exactly match a suffix on a granular group somewhere else in the
     /// request. Importantly, the identified request groups need not have a
-    /// resources\[$S\]. If this is provided, at least one of the resource
+    /// resources[$S]. If this is provided, at least one of the resource
     /// providers satisfying a specified request group must be an ancestor of
     /// the rest. The same_subtree query parameter can be repeated and each
     /// repeat group is treated independently.
