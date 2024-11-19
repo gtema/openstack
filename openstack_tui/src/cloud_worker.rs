@@ -22,6 +22,7 @@ use tracing::debug;
 
 use crate::action::Action;
 
+mod block_storage;
 mod compute;
 mod identity;
 mod image;
@@ -29,7 +30,8 @@ mod network;
 pub mod types;
 
 use crate::cloud_worker::{
-    compute::ComputeExt, identity::IdentityExt, image::ImageExt, network::NetworkExt, types::*,
+    block_storage::BlockStorageExt, compute::ComputeExt, identity::IdentityExt, image::ImageExt,
+    network::NetworkExt, types::*,
 };
 
 /// Cloud worker struct
@@ -146,6 +148,12 @@ impl Cloud {
                     Action::RequestCloudResource(resource) => {
                         // Request the resource using the service extension trait
                         match ServiceType::from(resource.clone()) {
+                            ServiceType::BlockStorage => {
+                                <Cloud as BlockStorageExt>::perform_api_request(
+                                    self, &app_tx, resource,
+                                )
+                                .await?
+                            }
                             ServiceType::Compute => {
                                 <Cloud as ComputeExt>::perform_api_request(self, &app_tx, resource)
                                     .await?

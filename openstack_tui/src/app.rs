@@ -23,6 +23,10 @@ use crate::{
     action::Action,
     cloud_worker::Cloud,
     components::{
+        block_storage::{
+            backups::BlockStorageBackups, snapshots::BlockStorageSnapshots,
+            volumes::BlockStorageVolumes,
+        },
         cloud_select_popup::CloudSelect,
         compute::{
             aggregates::ComputeAggregates, flavors::ComputeFlavors,
@@ -103,6 +107,19 @@ impl App {
         let mut components: HashMap<Mode, Box<dyn Component>> = HashMap::new();
         components.insert(Mode::Home, Box::new(Home::new()));
         components.insert(Mode::Describe, Box::new(Describe::new()));
+
+        components.insert(
+            Mode::BlockStorageBackups,
+            Box::new(BlockStorageBackups::new()),
+        );
+        components.insert(
+            Mode::BlockStorageSnapshots,
+            Box::new(BlockStorageSnapshots::new()),
+        );
+        components.insert(
+            Mode::BlockStorageVolumes,
+            Box::new(BlockStorageVolumes::new()),
+        );
 
         components.insert(Mode::ComputeServers, Box::new(ComputeServers::new()));
         components.insert(Mode::ComputeFlavors, Box::new(ComputeFlavors::new()));
