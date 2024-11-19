@@ -160,7 +160,7 @@ pub struct AllocationsItemStruct<'a> {
 
     /// A dictionary associating request group suffixes with a list of uuids
     /// identifying the resource providers that satisfied each group. The empty
-    /// string and \[a-zA-Z0-9\_-\]+ are valid suffixes. This field may be sent
+    /// string and [a-zA-Z0-9\_-]+ are valid suffixes. This field may be sent
     /// when writing allocations back to the server but will be ignored; this
     /// preserves symmetry between read and write representations.
     ///
@@ -200,7 +200,7 @@ impl<'a> AllocationsItemStructBuilder<'a> {
 
     /// A dictionary associating request group suffixes with a list of uuids
     /// identifying the resource providers that satisfied each group. The empty
-    /// string and \[a-zA-Z0-9\_-\]+ are valid suffixes. This field may be sent
+    /// string and [a-zA-Z0-9\_-]+ are valid suffixes. This field may be sent
     /// when writing allocations back to the server but will be ignored; this
     /// preserves symmetry between read and write representations.
     ///

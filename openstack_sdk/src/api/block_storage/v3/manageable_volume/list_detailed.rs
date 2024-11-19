@@ -50,7 +50,7 @@ pub struct Request<'a> {
     offset: Option<i32>,
 
     /// Comma-separated list of sort keys and optional sort directions in the
-    /// form of \< key > \[: \< direction > \]. A valid direction is asc
+    /// form of < key > [: < direction > ]. A valid direction is asc
     /// (ascending) or desc (descending).
     ///
     #[builder(default, setter(into))]

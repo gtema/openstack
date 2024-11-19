@@ -118,7 +118,6 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
-use std::collections::BTreeSet;
 
 use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
@@ -225,7 +224,7 @@ pub struct Request<'a> {
     /// containing all the tags specified will appear in the response.
     ///
     #[builder(default, private, setter(name = "_tag"))]
-    tag: BTreeSet<Cow<'a, str>>,
+    tag: Option<Vec<Cow<'a, str>>>,
 
     /// Specify a comparison filter based on the date and time when the
     /// resource was most recently modified.
@@ -265,7 +264,8 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.tag
-            .get_or_insert_with(BTreeSet::new)
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -312,7 +312,9 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("owner", self.owner.as_ref());
         params.push_opt("protected", self.protected);
         params.push_opt("status", self.status.as_ref());
-        params.extend(self.tag.iter().map(|value| ("tag", value)));
+        if let Some(val) = &self.tag {
+            params.extend(val.iter().map(|value| ("tag", value)));
+        }
         params.push_opt("visibility", self.visibility.as_ref());
         params.push_opt("os_hidden", self.os_hidden);
         params.push_opt("member_status", self.member_status.as_ref());

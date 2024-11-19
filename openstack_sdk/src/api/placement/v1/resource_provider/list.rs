@@ -30,7 +30,6 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
-use std::collections::BTreeSet;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
@@ -75,7 +74,7 @@ pub struct Request<'a> {
     /// resource providers that are NOT in AGGA but in AGGB.
     ///
     #[builder(default, private, setter(name = "_member_of"))]
-    member_of: BTreeSet<Cow<'a, str>>,
+    member_of: Option<Vec<Cow<'a, str>>>,
 
     /// The name of a resource provider to filter the list.
     ///
@@ -104,7 +103,7 @@ pub struct Request<'a> {
     /// not T2 and (T3 or T4).
     ///
     #[builder(default, private, setter(name = "_required"))]
-    required: BTreeSet<Cow<'a, str>>,
+    required: Option<Vec<Cow<'a, str>>>,
 
     /// A comma-separated list of strings indicating an amount of resource of a
     /// specified class that providers in each allocation request must
@@ -159,7 +158,8 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.required
-            .get_or_insert_with(BTreeSet::new)
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -202,7 +202,8 @@ impl<'a> RequestBuilder<'a> {
         T: Into<Cow<'a, str>>,
     {
         self.member_of
-            .get_or_insert_with(BTreeSet::new)
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
             .extend(iter.map(Into::into));
         self
     }
@@ -245,8 +246,12 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("name", self.name.as_ref());
         params.push_opt("uuid", self.uuid.as_ref());
         params.push_opt("resources", self.resources.as_ref());
-        params.extend(self.required.iter().map(|value| ("required", value)));
-        params.extend(self.member_of.iter().map(|value| ("member_of", value)));
+        if let Some(val) = &self.required {
+            params.extend(val.iter().map(|value| ("required", value)));
+        }
+        if let Some(val) = &self.member_of {
+            params.extend(val.iter().map(|value| ("member_of", value)));
+        }
         params.push_opt("in_tree", self.in_tree.as_ref());
 
         params
