@@ -13,6 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 pub mod networks;
+pub mod routers;
 pub mod security_group_rules;
 pub mod security_groups;
 pub mod subnets;

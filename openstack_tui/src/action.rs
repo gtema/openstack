@@ -114,6 +114,8 @@ pub enum Action {
     SetNetworkSecurityGroupFilters(cloud_types::NetworkSecurityGroupFilters),
     /// Switch to NetworkSecurityGroupRules
     ShowNetworkSecurityGroupRules,
+    /// Switch to routers view
+    ShowNetworkRouters,
     /// Set Security group rule filters
     SetNetworkSecurityGroupRuleFilters(cloud_types::NetworkSecurityGroupRuleFilters),
     SetNetworkSubnetFilters(cloud_types::NetworkSubnetFilters),

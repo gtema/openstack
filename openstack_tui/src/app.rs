@@ -39,7 +39,8 @@ use crate::{
         },
         image::images::Images,
         network::{
-            networks::NetworkNetworks, security_group_rules::NetworkSecurityGroupRules,
+            networks::NetworkNetworks, routers::NetworkRouters,
+            security_group_rules::NetworkSecurityGroupRules,
             security_groups::NetworkSecurityGroups, subnets::NetworkSubnets,
         },
         project_select_popup::ProjectSelect,
@@ -126,6 +127,7 @@ impl App {
         components.insert(Mode::ImageImages, Box::new(Images::new()));
 
         components.insert(Mode::NetworkNetworks, Box::new(NetworkNetworks::new()));
+        components.insert(Mode::NetworkRouters, Box::new(NetworkRouters::new()));
         components.insert(
             Mode::NetworkSecurityGroups,
             Box::new(NetworkSecurityGroups::new()),
