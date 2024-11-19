@@ -20,16 +20,32 @@ pub enum Mode {
     #[default]
     Home,
     Describe,
+
+    // Cinder
+    /// Cinder backups
+    BlockStorageBackups,
+    /// Cinder snapshots
+    BlockStorageSnapshots,
+    /// Cinder volumes
+    BlockStorageVolumes,
+
+    // Nova
     ComputeAggregates,
     ComputeFlavors,
     ComputeHypervisors,
     ComputeServers,
+
+    // Keystone
     IdentityApplicationCredentials,
     IdentityGroups,
     IdentityGroupUsers,
     IdentityProjects,
     IdentityUsers,
+
+    // Glance
     ImageImages,
+
+    // Neutron
     NetworkNetworks,
     NetworkRouters,
     NetworkSecurityGroups,

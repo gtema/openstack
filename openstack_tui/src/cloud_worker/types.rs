@@ -17,6 +17,7 @@ use strum::Display;
 
 use openstack_sdk::types::ServiceType;
 
+pub use crate::cloud_worker::block_storage::types::*;
 pub use crate::cloud_worker::compute::types::*;
 pub use crate::cloud_worker::identity::types::*;
 pub use crate::cloud_worker::image::types::*;
@@ -25,6 +26,14 @@ pub use crate::cloud_worker::network::types::*;
 /// OpenStack "resource"
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
 pub enum Resource {
+    // Block storage resources
+    /// Cinder backup
+    BlockStorageBackups(BlockStorageBackupFilters),
+    /// Cinder snapshot
+    BlockStorageSnapshots(BlockStorageSnapshotFilters),
+    /// Cinder volume
+    BlockStorageVolumes(BlockStorageVolumeFilters),
+    // Compute resources
     ComputeFlavors(ComputeFlavorFilters),
     ComputeServers(ComputeServerFilters),
     ComputeServerConsoleOutput(String),
@@ -50,6 +59,9 @@ pub enum Resource {
 impl From<Resource> for ServiceType {
     fn from(item: Resource) -> Self {
         match item {
+            Resource::BlockStorageBackups(_)
+            | Resource::BlockStorageSnapshots(_)
+            | Resource::BlockStorageVolumes(_) => Self::BlockStorage,
             Resource::ComputeServers(_)
             | Resource::ComputeServerConsoleOutput(_)
             | Resource::ComputeFlavors(_)

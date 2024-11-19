@@ -22,6 +22,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{action::Action, config::Config, error::TuiError, mode::Mode, tui::Event};
 
+pub mod block_storage;
 pub mod cloud_select_popup;
 pub mod compute;
 pub mod describe;

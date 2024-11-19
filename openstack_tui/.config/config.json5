@@ -1,6 +1,15 @@
 {
   "mode_keybindings": {
     "Home": { },
+    "BlockStorageBackups": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
+    "BlockStorageSnapshots": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
+    "BlockStorageVolumes": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
     "ComputeAggregates": {
       "d": { "action": "DescribeResource", "description": "Describe"},
     },
@@ -83,6 +92,7 @@
   "mode_aliases": {
     "aggregates (compute)": "ComputeAggregates",
     "application credentials (identity)": "IdentityApplicationCredentials",
+    "backups": "BlockStorageBackups",
     "flavors": "ComputeFlavors",
     "groups (identity)": "IdentityGroups",
     "host-aggregates (compute)": "ComputeAggregates",
@@ -97,7 +107,9 @@
     "servers": "ComputeServers",
     "sg": "NetworkSecurityGroups",
     "sgr": "NetworkSecurityGroupRules",
+    "snapshots": "BlockStorageSnapshots",
     "subnets (network)": "NetworkSubnets",
+    "volumes": "BlockStorageVolumes",
     "users": "IdentityUsers"
   }
 }
