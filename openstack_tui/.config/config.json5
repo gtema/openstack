@@ -53,6 +53,9 @@
       "d": { "action": "DescribeResource", "description": "Describe"},
       "<enter>": { "action": "ShowNetworkSubnets", "description": "Subnets"},
     },
+    "NetworkRouters": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+    },
     "NetworkSubnets": {
       "d": { "action": "DescribeResource", "description": "Describe"},
       "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "all"},
@@ -88,6 +91,7 @@
     "nets": "NetworkNetworks",
     "networks": "NetworkNetworks",
     "projects": "IdentityProjects",
+    "routers": "NetworkRouters",
     "security groups (network)": "NetworkSecurityGroups",
     "security group rules (network)": "NetworkSecurityGroupRules",
     "servers": "ComputeServers",

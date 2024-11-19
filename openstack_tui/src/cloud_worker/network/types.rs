@@ -24,6 +24,45 @@ impl fmt::Display for NetworkNetworkFilters {
     }
 }
 
+impl TryFrom<&NetworkNetworkFilters>
+    for openstack_sdk::api::network::v2::network::list::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(_value: &NetworkNetworkFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
+
+        ep_builder.sort_key(["name"].into_iter());
+        ep_builder.sort_dir(["asc"].into_iter());
+
+        Ok(ep_builder)
+    }
+}
+
+/// Router filters
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct NetworkRouterFilters {}
+impl fmt::Display for NetworkRouterFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
+impl TryFrom<&NetworkRouterFilters>
+    for openstack_sdk::api::network::v2::router::list::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(_value: &NetworkRouterFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder = openstack_sdk::api::network::v2::router::list::Request::builder();
+
+        ep_builder.sort_key(["name"].into_iter());
+        ep_builder.sort_dir(["asc"].into_iter());
+
+        Ok(ep_builder)
+    }
+}
+
 /// Subnet filters
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetworkSubnetFilters {
@@ -47,6 +86,25 @@ impl fmt::Display for NetworkSubnetFilters {
     }
 }
 
+impl TryFrom<&NetworkSubnetFilters>
+    for openstack_sdk::api::network::v2::subnet::list::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(value: &NetworkSubnetFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder = openstack_sdk::api::network::v2::subnet::list::Request::builder();
+
+        ep_builder.sort_key(["name"].into_iter());
+        ep_builder.sort_dir(["asc"].into_iter());
+
+        if let Some(network_id) = &value.network_id {
+            ep_builder.network_id(network_id.clone());
+        }
+
+        Ok(ep_builder)
+    }
+}
+
 /// Security groups
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetworkSecurityGroupFilters {}
@@ -56,12 +114,29 @@ impl fmt::Display for NetworkSecurityGroupFilters {
     }
 }
 
+impl TryFrom<&NetworkSecurityGroupFilters>
+    for openstack_sdk::api::network::v2::security_group::list::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(_value: &NetworkSecurityGroupFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder =
+            openstack_sdk::api::network::v2::security_group::list::Request::builder();
+
+        ep_builder.sort_key(["name"].into_iter());
+        ep_builder.sort_dir(["asc"].into_iter());
+
+        Ok(ep_builder)
+    }
+}
+
 /// Security group rules
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NetworkSecurityGroupRuleFilters {
     pub security_group_id: Option<String>,
     pub security_group_name: Option<String>,
 }
+
 impl fmt::Display for NetworkSecurityGroupRuleFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.security_group_id.is_some() || self.security_group_name.is_some() {
@@ -75,5 +150,29 @@ impl fmt::Display for NetworkSecurityGroupRuleFilters {
             )?;
         }
         Ok(())
+    }
+}
+
+impl TryFrom<&NetworkSecurityGroupRuleFilters>
+    for openstack_sdk::api::network::v2::security_group_rule::list::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(value: &NetworkSecurityGroupRuleFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder =
+            openstack_sdk::api::network::v2::security_group_rule::list::Request::builder();
+
+        ep_builder.sort_key(["name"].into_iter());
+        ep_builder.sort_dir(["asc"].into_iter());
+
+        if let Some(security_group_id) = &value.security_group_id {
+            ep_builder.security_group_id(security_group_id.clone());
+        }
+
+        if let Some(security_group_id) = &value.security_group_id {
+            ep_builder.security_group_id(security_group_id.clone());
+        }
+
+        Ok(ep_builder)
     }
 }

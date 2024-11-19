@@ -35,6 +35,9 @@ pub trait NetworkExt {
     /// List networks
     async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>>;
 
+    /// List routers
+    async fn get_routers(&mut self, _filters: &NetworkRouterFilters) -> Result<Vec<Value>>;
+
     /// List Security Groups
     async fn get_security_groups(
         &mut self,
@@ -67,6 +70,12 @@ impl NetworkExt for Cloud {
                     "Failed to fetch networks: {:?}",
                     err
                 )))?,
+            },
+            Resource::NetworkRouters(ref filters) => match self.get_routers(filters).await {
+                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                Err(err) => {
+                    app_tx.send(Action::Error(format!("Failed to fetch routers: {:?}", err)))?
+                }
             },
             Resource::NetworkQuota => match self.get_quota().await {
                 Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
@@ -107,13 +116,26 @@ impl NetworkExt for Cloud {
         Ok(())
     }
 
-    async fn get_networks(&mut self, _filters: &NetworkNetworkFilters) -> Result<Vec<Value>> {
+    async fn get_networks(&mut self, filters: &NetworkNetworkFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
-            ep_builder.sort_key(["name"].into_iter());
-            ep_builder.sort_dir(["asc"].into_iter());
+            let ep =
+                openstack_sdk::api::network::v2::network::list::RequestBuilder::try_from(filters)?
+                    .build()?;
 
-            let ep = ep_builder.build()?;
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
+                .query_async(session)
+                .await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
+    async fn get_routers(&mut self, filters: &NetworkRouterFilters) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep =
+                openstack_sdk::api::network::v2::router::list::RequestBuilder::try_from(filters)?
+                    .build()?;
+
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
@@ -146,16 +168,9 @@ impl NetworkExt for Cloud {
         filters: &NetworkSecurityGroupRuleFilters,
     ) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let mut ep_builder =
-                openstack_sdk::api::network::v2::security_group_rule::list::Request::builder();
-            ep_builder.sort_key(["ethertype"].into_iter());
-            ep_builder.sort_dir(["asc"].into_iter());
+            let ep =
+                openstack_sdk::api::network::v2::security_group_rule::list::RequestBuilder::try_from(filters)?.build()?;
 
-            if let Some(security_group_id) = &filters.security_group_id {
-                ep_builder.security_group_id(security_group_id.clone());
-            }
-
-            let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
@@ -166,14 +181,10 @@ impl NetworkExt for Cloud {
 
     async fn get_subnets(&mut self, filters: &NetworkSubnetFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::network::v2::subnet::list::Request::builder();
-            ep_builder.sort_key(["name"].into_iter());
-            ep_builder.sort_dir(["asc"].into_iter());
+            let ep =
+                openstack_sdk::api::network::v2::subnet::list::RequestBuilder::try_from(filters)?
+                    .build()?;
 
-            if let Some(network_id) = &filters.network_id {
-                ep_builder.network_id(network_id.clone());
-            }
-            let ep = ep_builder.build()?;
             let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
                 .query_async(session)
                 .await?;
