@@ -162,8 +162,8 @@ impl TryFrom<&NetworkSecurityGroupRuleFilters>
         let mut ep_builder =
             openstack_sdk::api::network::v2::security_group_rule::list::Request::builder();
 
-        ep_builder.sort_key(["name"].into_iter());
-        ep_builder.sort_dir(["asc"].into_iter());
+        ep_builder.sort_key(["ethertype", "direction", "protocol", "port_range_min"].into_iter());
+        ep_builder.sort_dir(["asc", "asc", "asc", "asc"].into_iter());
 
         if let Some(security_group_id) = &value.security_group_id {
             ep_builder.security_group_id(security_group_id.clone());
