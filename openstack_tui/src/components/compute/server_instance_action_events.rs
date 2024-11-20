@@ -26,7 +26,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, StructTable},
 };
 
 const TITLE: &str = "InstanceAction Events";
@@ -36,6 +36,7 @@ pub struct ServerInstanceActionEventData {
     #[structable(title = "Event")]
     event: String,
     #[structable(title = "Result")]
+    #[serde(deserialize_with = "as_string")]
     result: String,
     #[structable(title = "Started", optional)]
     start_time: Option<String>,
