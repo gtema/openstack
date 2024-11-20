@@ -34,6 +34,10 @@ pub enum Mode {
     ComputeFlavors,
     ComputeHypervisors,
     ComputeServers,
+    /// Server os-instance-actions
+    ComputeServerInstanceActions,
+    /// Server os-instance-action events
+    ComputeServerInstanceActionEvents,
 
     // Keystone
     IdentityApplicationCredentials,

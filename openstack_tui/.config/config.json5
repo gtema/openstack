@@ -18,6 +18,11 @@
       "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "all tenants (admin)"},
       "d": { "action": "DescribeResource", "description": "Describe"},
       "c": { "action": "ShowServerConsoleOutput", "description": "Get Console output" },
+      "a": { "action": "ShowComputeServerInstanceActions", "description": "Instance actions"},
+    },
+    "ComputeServerInstanceActions": {
+      "d": { "action": "DescribeResource", "description": "Describe"},
+      "e": { "action": "ShowComputeServerInstanceActionEvents", "description": "Events" },
     },
     "ComputeFlavors": {
       "d": { "action": "DescribeResource", "description": "Describe"},

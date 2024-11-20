@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
+use eyre::{OptionExt, Result};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
@@ -71,6 +71,77 @@ impl TryFrom<&ComputeServerFilters>
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComputeServerInstanceActionFilters {
+    /// Server ID
+    pub server_id: Option<String>,
+    /// Server name
+    pub server_name: Option<String>,
+    /// Request id
+    pub request_id: Option<String>,
+}
+
+impl fmt::Display for ComputeServerInstanceActionFilters {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.server_id.is_some() || self.server_name.is_some() {
+            write!(
+                f,
+                "server: {}",
+                self.server_name
+                    .as_ref()
+                    .or(self.server_name.as_ref())
+                    .unwrap_or(&String::new())
+            )?;
+        }
+
+        write!(f, "")
+    }
+}
+
+impl TryFrom<&ComputeServerInstanceActionFilters>
+    for openstack_sdk::api::compute::v2::server::instance_action::list::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(filters: &ComputeServerInstanceActionFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder =
+            openstack_sdk::api::compute::v2::server::instance_action::list::Request::builder();
+
+        ep_builder.server_id(
+            filters
+                .server_id
+                .clone()
+                .ok_or_eyre("Server ID must be set")?,
+        );
+
+        Ok(ep_builder)
+    }
+}
+
+impl TryFrom<&ComputeServerInstanceActionFilters>
+    for openstack_sdk::api::compute::v2::server::instance_action::get::RequestBuilder<'_>
+{
+    type Error = eyre::Report;
+
+    fn try_from(filters: &ComputeServerInstanceActionFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder =
+            openstack_sdk::api::compute::v2::server::instance_action::get::Request::builder();
+
+        ep_builder.server_id(
+            filters
+                .server_id
+                .clone()
+                .ok_or_eyre("Server ID must be set")?,
+        );
+        ep_builder.id(filters
+            .request_id
+            .clone()
+            .ok_or_eyre("InstanceAction ID must be set")?);
+
+        Ok(ep_builder)
+    }
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComputeHypervisorFilters {}
 
 impl fmt::Display for ComputeHypervisorFilters {
@@ -78,6 +149,7 @@ impl fmt::Display for ComputeHypervisorFilters {
         write!(f, "")
     }
 }
+
 impl TryFrom<&ComputeHypervisorFilters>
     for openstack_sdk::api::compute::v2::hypervisor::list_detailed::RequestBuilder<'_>
 {

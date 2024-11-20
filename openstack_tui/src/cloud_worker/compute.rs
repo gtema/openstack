@@ -34,6 +34,16 @@ pub trait ComputeExt {
 
     async fn get_flavors(&mut self, filters: &ComputeFlavorFilters) -> Result<Vec<Value>>;
     async fn get_servers(&mut self, filters: &ComputeServerFilters) -> Result<Vec<Value>>;
+    /// Fetch server actions
+    async fn get_server_instance_actions(
+        &mut self,
+        filters: &ComputeServerInstanceActionFilters,
+    ) -> Result<Vec<Value>>;
+    /// Fetch server action details
+    async fn get_server_instance_action(
+        &mut self,
+        filters: &ComputeServerInstanceActionFilters,
+    ) -> Result<Value>;
     async fn get_server_console_output<S: AsRef<str>>(&mut self, id: S) -> Result<Value>;
     async fn get_quota(&mut self) -> Result<Value>;
     async fn get_hypervisors(&mut self, filters: &ComputeHypervisorFilters) -> Result<Vec<Value>>;
@@ -61,6 +71,24 @@ impl ComputeExt for Cloud {
                     err
                 )))?,
             },
+            Resource::ComputeServerInstanceActions(ref filters) => {
+                match self.get_server_instance_actions(filters).await {
+                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch compute server instance actions: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            Resource::ComputeServerInstanceAction(ref filters) => {
+                match self.get_server_instance_action(filters).await {
+                    Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch compute server instance action info: {:?}",
+                        err
+                    )))?,
+                }
+            }
             Resource::ComputeServerConsoleOutput(ref id) => {
                 match self.get_server_console_output(id).await {
                     Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
@@ -130,6 +158,36 @@ impl ComputeExt for Cloud {
             return Ok(res);
         }
         Ok(Vec::new())
+    }
+
+    async fn get_server_instance_actions(
+        &mut self,
+        filters: &ComputeServerInstanceActionFilters,
+    ) -> Result<Vec<Value>> {
+        if let Some(session) = &self.cloud {
+            let ep =
+                openstack_sdk::api::compute::v2::server::instance_action::list::RequestBuilder::try_from(filters)?.build()?;
+
+            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
+                .query_async(session)
+                .await?;
+            return Ok(res);
+        }
+        Ok(Vec::new())
+    }
+
+    async fn get_server_instance_action(
+        &mut self,
+        filters: &ComputeServerInstanceActionFilters,
+    ) -> Result<Value> {
+        if let Some(session) = &self.cloud {
+            let ep =
+                openstack_sdk::api::compute::v2::server::instance_action::get::RequestBuilder::try_from(filters)?.build()?;
+
+            let res: Value = ep.query_async(session).await?;
+            return Ok(res);
+        }
+        Ok(Value::Null)
     }
 
     async fn get_server_console_output<S: AsRef<str>>(&mut self, id: S) -> Result<Value> {

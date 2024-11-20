@@ -74,7 +74,13 @@ pub enum Action {
 
     // Compute (neutron)
     SetComputeServerFilters(cloud_types::ComputeServerFilters),
+    SetComputeServerInstanceActionFilters(cloud_types::ComputeServerInstanceActionFilters),
+    /// Show console output of the selected entry
     ShowServerConsoleOutput,
+    /// Show selected server instance actions
+    ShowComputeServerInstanceActions,
+    /// Show selected server instance action events
+    ShowComputeServerInstanceActionEvents,
 
     // Identity (keystone)
     //  Groups
