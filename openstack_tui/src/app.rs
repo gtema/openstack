@@ -291,20 +291,24 @@ impl App {
                 self.action_tx.send(Action::CloudSelect)?;
             }
         } else if let Some(keymap) = self.config.mode_keybindings.get(&self.mode) {
-            if let Some(action) = keymap.get(&vec![key]) {
-                action_tx.send(action.action.clone())?;
-            } else {
-                // If the key was not handled as a single key action,
-                // then consider it r multi-key combinations.
-                self.last_tick_key_events.push(key);
+            // If there is popup open do not try to convert key event to actions (since any
+            // keypress may collide with shortcuts of the current mode)
+            if self.active_popup.is_none() {
+                if let Some(action) = keymap.get(&vec![key]) {
+                    action_tx.send(action.action.clone())?;
+                } else {
+                    // If the key was not handled as a single key action,
+                    // then consider it r multi-key combinations.
+                    self.last_tick_key_events.push(key);
 
-                // Check for multi-key combinations
-                if let Some(action) = keymap.get(&self.last_tick_key_events) {
-                    self.action_tx.send(action.action.clone())?;
-                } else if key.code == KeyCode::Esc {
-                    if let Some(prev_mode) = self.prev_mode {
-                        debug!("Switching to the previous mode {:?}", prev_mode);
-                        self.mode = prev_mode;
+                    // Check for multi-key combinations
+                    if let Some(action) = keymap.get(&self.last_tick_key_events) {
+                        self.action_tx.send(action.action.clone())?;
+                    } else if key.code == KeyCode::Esc {
+                        if let Some(prev_mode) = self.prev_mode {
+                            debug!("Switching to the previous mode {:?}", prev_mode);
+                            self.mode = prev_mode;
+                        }
                     }
                 }
             }
