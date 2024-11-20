@@ -18,11 +18,10 @@ use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
-use tracing::debug;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ComputeServerFilters, ComputeServerInstanceActionFilters, Resource},
+    cloud_worker::types::{ComputeServerInstanceActionFilters, Resource},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -30,25 +29,27 @@ use crate::{
     utils::{OutputConfig, StructTable},
 };
 
-const TITLE: &str = "Compute Servers";
+const TITLE: &str = "ServerInstanceAction Actions";
 
 #[derive(Deserialize, StructTable)]
-pub struct ServerData {
+pub struct ServerInstanceActionData {
     #[structable(title = "Id", wide)]
+    #[serde(rename = "request_id")]
     id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    created: String,
-    #[structable(title = "Updated")]
-    updated: String,
+    #[structable(title = "Action")]
+    action: String,
+    #[structable(title = "Message", optional)]
+    message: Option<String>,
+    #[structable(title = "Started")]
+    start_time: String,
+    #[structable(title = "User")]
+    user_id: String,
 }
 
-pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerFilters>;
+pub type ComputeServerInstanceActions<'a> =
+    TableViewComponentBase<'a, ServerInstanceActionData, ComputeServerInstanceActionFilters>;
 
-impl Component for ComputeServers<'_> {
+impl Component for ComputeServerInstanceActions<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
     }
@@ -65,79 +66,55 @@ impl Component for ComputeServers<'_> {
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
-                if let Mode::ComputeServers = current_mode {
+                if let Mode::ComputeServerInstanceActions = current_mode {
                     return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeServers(self.get_filters().clone()),
+                        Resource::ComputeServerInstanceActions(self.get_filters().clone()),
                     )));
                 }
             }
-            Action::Mode(Mode::ComputeServers) | Action::Refresh => {
+            Action::Mode(Mode::ComputeServerInstanceActions) | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeServers(self.get_filters().clone()),
+                    Resource::ComputeServerInstanceActions(self.get_filters().clone()),
                 )));
             }
             Action::DescribeResource => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ResourcesData {
-                resource: Resource::ComputeServers(_),
+                resource: Resource::ComputeServerInstanceActions(_),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::ResourceData {
-                resource: Resource::ComputeServerConsoleOutput(_),
-                data,
-            } => {
-                if let Some(command_tx) = &self.get_command_tx() {
-                    command_tx.send(Action::DescribeResourceData(data.clone()))?;
-                    command_tx.send(Action::Mode(Mode::Describe))?;
-                    self.set_loading(false);
-                } else {
-                    debug!("No command_tx");
-                }
-            }
-            Action::SetComputeServerFilters(filters) => {
+            Action::SetComputeServerInstanceActionFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeServers(self.get_filters().clone()),
+                    Resource::ComputeServerInstanceActions(self.get_filters().clone()),
                 )));
             }
-            Action::ShowServerConsoleOutput => {
-                if let Some(server_id) = self.get_selected_resource_id()? {
-                    if let Some(command_tx) = &self.get_command_tx() {
-                        command_tx.send(Action::SetDescribeLoading(true))?;
-                        command_tx.send(Action::Mode(Mode::Describe))?;
-                    }
-                    //self.set_loading(true);
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeServerConsoleOutput(server_id),
-                    )));
-                }
-            }
-            Action::ShowComputeServerInstanceActions => {
+            Action::ShowComputeServerInstanceActionEvents => {
                 // only if we are currently in the IdentityGroup mode
-                if current_mode == Mode::ComputeServers {
+                if current_mode == Mode::ComputeServerInstanceActions {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::SetComputeServerInstanceActionFilters(
-                                ComputeServerInstanceActionFilters {
-                                    server_id: Some(selected_entry.id.clone()),
-                                    server_name: Some(selected_entry.name.clone()),
-                                    request_id: None,
-                                },
-                            ))?;
+                            let mut filter = self.get_filters().clone();
+                            filter.request_id = Some(selected_entry.id.clone());
+
+                            command_tx
+                                .send(Action::SetComputeServerInstanceActionFilters(filter))?;
                             // and switch mode
-                            command_tx.send(Action::Mode(Mode::ComputeServerInstanceActions))?;
+                            command_tx
+                                .send(Action::Mode(Mode::ComputeServerInstanceActionEvents))?;
                         }
                     }
                 }
             }
+
             _ => {}
         };
         Ok(None)

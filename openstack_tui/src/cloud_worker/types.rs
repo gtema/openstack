@@ -36,6 +36,8 @@ pub enum Resource {
     // Compute resources
     ComputeFlavors(ComputeFlavorFilters),
     ComputeServers(ComputeServerFilters),
+    ComputeServerInstanceActions(ComputeServerInstanceActionFilters),
+    ComputeServerInstanceAction(ComputeServerInstanceActionFilters),
     ComputeServerConsoleOutput(String),
     ComputeAggregates(ComputeAggregateFilters),
     ComputeHypervisors(ComputeHypervisorFilters),
@@ -64,6 +66,8 @@ impl From<Resource> for ServiceType {
             | Resource::BlockStorageVolumes(_) => Self::BlockStorage,
             Resource::ComputeServers(_)
             | Resource::ComputeServerConsoleOutput(_)
+            | Resource::ComputeServerInstanceAction(_)
+            | Resource::ComputeServerInstanceActions(_)
             | Resource::ComputeFlavors(_)
             | Resource::ComputeQuota
             | Resource::ComputeAggregates(_)

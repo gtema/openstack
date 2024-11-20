@@ -30,7 +30,9 @@ use crate::{
         cloud_select_popup::CloudSelect,
         compute::{
             aggregates::ComputeAggregates, flavors::ComputeFlavors,
-            hypervisors::ComputeHypervisors, servers::ComputeServers,
+            hypervisors::ComputeHypervisors,
+            server_instance_action_events::ComputeServerInstanceActionEvents,
+            server_instance_actions::ComputeServerInstanceActions, servers::ComputeServers,
         },
         describe::Describe,
         error_popup::ErrorPopup,
@@ -122,6 +124,14 @@ impl App {
         );
 
         components.insert(Mode::ComputeServers, Box::new(ComputeServers::new()));
+        components.insert(
+            Mode::ComputeServerInstanceActions,
+            Box::new(ComputeServerInstanceActions::new()),
+        );
+        components.insert(
+            Mode::ComputeServerInstanceActionEvents,
+            Box::new(ComputeServerInstanceActionEvents::new()),
+        );
         components.insert(Mode::ComputeFlavors, Box::new(ComputeFlavors::new()));
         components.insert(Mode::ComputeAggregates, Box::new(ComputeAggregates::new()));
         components.insert(
