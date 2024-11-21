@@ -102,10 +102,24 @@ impl Config {
     }
 }
 
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Eq, Ord, PartialOrd)]
+pub enum CommandType {
+    /// Resource action
+    #[default]
+    ResourceAction,
+    /// Filter command
+    Filter,
+}
+
 #[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct Command {
+    /// Action
     pub action: Action,
+    /// Action description
     pub description: Option<String>,
+    /// Type
+    #[serde(default)]
+    pub r#type: CommandType,
 }
 
 #[derive(Clone, Debug, Default, Deref, DerefMut)]
