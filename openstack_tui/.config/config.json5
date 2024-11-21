@@ -2,54 +2,54 @@
   "mode_keybindings": {
     "Home": { },
     "BlockStorageBackups": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "BlockStorageSnapshots": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "BlockStorageVolumes": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "ComputeAggregates": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "ComputeServers": {
-      "0": { "action": {"SetComputeServerFilters": {} }, "description": "default filters"},
-      "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "all tenants (admin)"},
-      "d": { "action": "DescribeResource", "description": "Describe"},
-      "c": { "action": "ShowServerConsoleOutput", "description": "Get Console output" },
+      "y": { "action": "DescribeResource", "description": "YAML"},
+      "0": { "action": {"SetComputeServerFilters": {} }, "description": "Default filters", "type": "Filter"},
+      "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "All tenants (admin)", "type": "Filter"},
+      "c": { "action": "ShowServerConsoleOutput", "description": "Console output" },
       "a": { "action": "ShowComputeServerInstanceActions", "description": "Instance actions"},
     },
     "ComputeServerInstanceActions": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
       "e": { "action": "ShowComputeServerInstanceActionEvents", "description": "Events" },
     },
     "ComputeFlavors": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "ComputeHypervisors": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "IdentityApplicationCredentials": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "IdentityGroups": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
       "u": {"action": "ShowIdentityGroupUsers", "description": "Group users"},
       "d": {"action": "IdentityGroupDelete", "description": "Delete (todo!)"},
       "a": {"action": "IdentityGroupCreate", "description": "Create new group (todo!)"},
     },
     "IdentityGroupUsers": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
       "a": {"action": "IdentityGroupUserAdd", "description": "Add new user into group (todo!)"},
       "r": {"action": "IdentityGroupUserRemove", "description": "Remove user from group (todo!)"},
     },
     "IdentityProjects": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
       "s": {"action": "SwitchToProject", "description": "Switch to project"},
     },
     "IdentityUsers": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
       "e": {"action": "IdentityUserFlipEnable", "description": "Enable/Disable user"},
       "r": {"action": "IdentityUserDelete", "description": "Delete user (todo!)"},
       "a": {"action": "IdentityUserCreate", "description": "Create new user (todo!)"},
@@ -57,30 +57,30 @@
       "c": {"action": "ShowIdentityUserApplicationCredentials", "description": "Application credentials"},
     },
     "ImageImages": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
-      "0": { "action": {"SetImageFilters": {} }, "description": "default filters"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
+      "0": { "action": {"SetImageFilters": {} }, "description": "Default filters"},
       "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public"},
       "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared"},
       "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private"},
     },
     "NetworkNetworks": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
       "<enter>": { "action": "ShowNetworkSubnets", "description": "Subnets"},
     },
     "NetworkRouters": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
     },
     "NetworkSubnets": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
-      "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "all"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
+      "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "All"},
     },
     "NetworkSecurityGroups": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
-      "l": { "action": "ShowNetworkSecurityGroupRules", "description": "rules"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
+      "l": { "action": "ShowNetworkSecurityGroupRules", "description": "Rules"},
     },
     "NetworkSecurityGroupRules": {
-      "d": { "action": "DescribeResource", "description": "Describe"},
-      "0": { "action": {"SetNetworkSecurityGroupRuleFilters": {}}, "description": "all"},
+      "y": { "action": "DescribeResource", "description": "YAML"},
+      "0": { "action": {"SetNetworkSecurityGroupRuleFilters": {}}, "description": "All"},
     }
   },
   "global_keybindings": {

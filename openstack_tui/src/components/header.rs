@@ -24,7 +24,7 @@ use tracing::debug;
 use crate::{
     action::Action,
     components::Component,
-    config::{key_event_to_string_with_unicode, Config},
+    config::{key_event_to_string_with_unicode, CommandType, Config},
     error::TuiError,
     mode::Mode,
 };
@@ -41,8 +41,10 @@ pub struct Header {
     connection_data_rows: Vec<(String, String)>,
     /// Global bindings rows
     global_bindings_rows: Vec<(String, String)>,
-    /// Keybindings of the current mode
-    mode_keybindings: Vec<(String, String)>,
+    /// Keybindings of the current mode (filters)
+    mode_filter_keybindings: Vec<(String, String)>,
+    /// Keybindings of the current mode (actions)
+    mode_action_keybindings: Vec<(String, String)>,
     size: Size,
 }
 
@@ -62,7 +64,8 @@ impl Header {
             cloud_name: String::new(),
             project_name: String::new(),
             domain_name: String::new(),
-            mode_keybindings: Vec::new(),
+            mode_action_keybindings: Vec::new(),
+            mode_filter_keybindings: Vec::new(),
             connection_data_rows: Vec::new(),
             global_bindings_rows: vec![
                 (String::from("<:>"), String::from("Select resource")),
@@ -78,6 +81,57 @@ impl Header {
 
     fn render_tick(&mut self) -> Result<()> {
         Ok(())
+    }
+
+    /// Render keybindings with given style and count of rows as 2 columns
+    ///
+    /// Returns remainder area
+    fn draw_keybindings<'a, I>(
+        &self,
+        keybindings: I,
+        style: Style,
+        count_rows: usize,
+        f: &mut Frame<'_>,
+        rect: Rect,
+    ) -> Result<Rect, TuiError>
+    where
+        I: Iterator<Item = &'a (String, String)>,
+    {
+        let mut remainder: Rect = rect;
+        for col_bindings in &keybindings.chunks(count_rows) {
+            let mut bindings_width: usize = 0;
+            let mut descriptions_width: usize = 0;
+            // Collect data into rows simultaneously counting max widths
+            let (bindings, descriptions): (Vec<ListItem>, Vec<ListItem>) = col_bindings
+                .map(|x| (x.0.clone().into(), x.1.clone().into()))
+                .map(|(k, d): (ListItem, ListItem)| {
+                    bindings_width = max(bindings_width, k.width());
+                    descriptions_width = max(descriptions_width, d.width());
+                    (k, d)
+                })
+                .collect();
+
+            let bindings_list = List::default().items(bindings.clone()).style(style);
+            let descriptions_list = List::default()
+                .items(descriptions.clone())
+                .style(Style::new());
+
+            // Split current area into 3 (binding, description, remainder)
+            let cols = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints(vec![
+                    Constraint::Length(bindings_width as u16),
+                    Constraint::Length(descriptions_width as u16),
+                    Constraint::Percentage(100),
+                ])
+                .spacing(2)
+                .split(remainder);
+            f.render_widget(bindings_list, cols[0]);
+            f.render_widget(descriptions_list, cols[1]);
+            // Update the remainder pointer
+            remainder = cols[2];
+        }
+        Ok(remainder)
     }
 }
 
@@ -105,7 +159,7 @@ impl Component for Header {
                 self.current_mode = mode;
                 if let Some(keymap) = self.config.mode_keybindings.get(&self.current_mode) {
                     // Update mode keybindings rows with the current mode bindings
-                    self.mode_keybindings = keymap
+                    keymap
                         .iter()
                         .map(|(k, v)| {
                             (
@@ -117,10 +171,18 @@ impl Component for Header {
                                         .join("")
                                 ),
                                 v.description.clone().unwrap_or(String::from("")),
+                                v.r#type.clone(),
                             )
                         })
                         .sorted()
-                        .collect();
+                        .for_each(|(k, v, t)| match t {
+                            CommandType::ResourceAction => {
+                                self.mode_action_keybindings.push((k, v));
+                            }
+                            CommandType::Filter => {
+                                self.mode_filter_keybindings.push((k, v));
+                            }
+                        });
                 }
             }
             Action::ConnectedToCloud(ref auth_token) => {
@@ -157,6 +219,8 @@ impl Component for Header {
     fn draw(&mut self, f: &mut Frame<'_>, rect: Rect) -> Result<(), TuiError> {
         debug!("Header size is {:?}", rect.as_size());
         self.size = rect.as_size();
+        // Count number of rows (-1 to keep some spacing)
+        let count_rows: usize = (self.size.height - 1).into();
         // Split whole area first into 3 columns
         let rects = Layout::default()
             .direction(Direction::Horizontal)
@@ -182,77 +246,43 @@ impl Component for Header {
 
         let cols = Layout::default()
             .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Length(5), Constraint::Percentage(100)])
+            .constraints(vec![Constraint::Length(8), Constraint::Percentage(100)])
             .spacing(2)
             .split(rects[0]);
         f.render_widget(c1_list, cols[0]);
         f.render_widget(c2_list, cols[1]);
 
         // Global keybindings column
-        let (c1, c2): (Vec<ListItem>, Vec<ListItem>) = self
-            .global_bindings_rows
-            .iter()
-            .map(|x| (x.0.clone().into(), x.1.clone().into()))
-            .collect();
-
-        let c1_list = List::default()
-            .items(c1.clone())
-            .style(Style::new().fg(Color::Red));
-        let c2_list = List::default().items(c2.clone()).style(Style::new());
-
-        let cols = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Length(4), Constraint::Percentage(100)])
-            .spacing(2)
-            .split(rects[1]);
-        f.render_widget(c1_list, cols[0]);
-        f.render_widget(c2_list, cols[1]);
+        self.draw_keybindings(
+            self.global_bindings_rows.iter(),
+            Style::new().fg(Color::Magenta),
+            count_rows,
+            f,
+            rects[1],
+        )?;
 
         let mut remainder = rects[2];
-
-        // Mode keybindings
-        if !self.mode_keybindings.is_empty() {
-            // Count number of rows (-1 to keep some spacing)
-            let count_rows: usize = (self.size.height - 1).into();
-
-            // Iterate in chunks of the rows count
-            for col_bindings in &self.mode_keybindings.iter().chunks(count_rows) {
-                let mut bindings_width: usize = 0;
-                let mut descriptions_width: usize = 0;
-                // Collect data into rows simultaneously counting max widths
-                let (bindings, descriptions): (Vec<ListItem>, Vec<ListItem>) = col_bindings
-                    .map(|x| (x.0.clone().into(), x.1.clone().into()))
-                    .map(|(k, d): (ListItem, ListItem)| {
-                        bindings_width = max(bindings_width, k.width());
-                        descriptions_width = max(descriptions_width, d.width());
-                        (k, d)
-                    })
-                    .collect();
-
-                let bindings_list = List::default()
-                    .items(bindings.clone())
-                    .style(Style::new().fg(Color::LightBlue));
-                let descriptions_list = List::default()
-                    .items(descriptions.clone())
-                    .style(Style::new());
-
-                // Split current area into 3 (binding, description, remainder)
-                let cols = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .constraints(vec![
-                        Constraint::Length(bindings_width as u16),
-                        Constraint::Length(descriptions_width as u16),
-                        Constraint::Percentage(100),
-                    ])
-                    .spacing(2)
-                    .split(remainder);
-                f.render_widget(bindings_list, cols[0]);
-                f.render_widget(descriptions_list, cols[1]);
-                // Update the remainder pointer
-                remainder = cols[2];
-            }
+        // Mode filter keybindings
+        if !self.mode_filter_keybindings.is_empty() {
+            remainder = self.draw_keybindings(
+                self.mode_filter_keybindings.iter(),
+                Style::new().fg(Color::LightBlue),
+                count_rows,
+                f,
+                remainder,
+            )?;
         }
 
+        // Mode action keybindings
+        if !self.mode_action_keybindings.is_empty() {
+            self.draw_keybindings(
+                self.mode_action_keybindings.iter(),
+                Style::new().fg(Color::Red),
+                count_rows,
+                f,
+                remainder,
+            )?;
+        }
         Ok(())
     }
 }
