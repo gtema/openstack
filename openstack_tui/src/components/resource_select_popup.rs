@@ -27,7 +27,7 @@ use crate::{
     components::{Component, FuzzySelectList},
     config::Config,
     error::TuiError,
-    utils::centered_rect,
+    utils::centered_rect_fixed,
 };
 
 #[derive(Default)]
@@ -85,7 +85,7 @@ impl Component for ApiRequestSelect {
     }
 
     fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let area = centered_rect(25, 25, frame.area());
+        let area = centered_rect_fixed(50, 35, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(" Select resource to display ").centered())
             .title_bottom(

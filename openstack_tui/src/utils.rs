@@ -220,7 +220,7 @@ pub trait StructTable {
 }
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`
-pub fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
+pub fn centered_rect_percent(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
     let popup_layout = Layout::vertical([
         Constraint::Percentage((100 - percent_y) / 2),
         Constraint::Percentage(percent_y),
@@ -232,6 +232,23 @@ pub fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
         Constraint::Percentage((100 - percent_x) / 2),
         Constraint::Percentage(percent_x),
         Constraint::Percentage((100 - percent_x) / 2),
+    ])
+    .split(popup_layout[1])[1]
+}
+
+/// helper function to create a centered rect using up certain percentage of the available rect `r`
+pub fn centered_rect_fixed(width: u16, height: u16, r: Rect) -> Rect {
+    let popup_layout = Layout::vertical([
+        Constraint::Fill(1),
+        Constraint::Length(height),
+        Constraint::Fill(1),
+    ])
+    .split(r);
+
+    Layout::horizontal([
+        Constraint::Fill(1),
+        Constraint::Length(width),
+        Constraint::Fill(1),
     ])
     .split(popup_layout[1])[1]
 }

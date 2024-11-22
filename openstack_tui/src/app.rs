@@ -481,13 +481,22 @@ impl App {
 
     fn render(&mut self, tui: &mut Tui) -> Result<()> {
         tui.draw(|f| {
+            let draw_header = if f.area().height > 30 { true } else { false };
             let rects = Layout::default()
-                .constraints([Constraint::Min(6), Constraint::Percentage(100)].as_ref())
+                .constraints(
+                    [
+                        Constraint::Min(if draw_header { 6 } else { 0 }),
+                        Constraint::Percentage(100),
+                    ]
+                    .as_ref(),
+                )
                 .split(f.area());
-            if let Err(e) = self.header.draw(f, rects[0]) {
-                self.action_tx
-                    .send(Action::Error(format!("Failed to draw: {:?}", e)))
-                    .unwrap();
+            if draw_header {
+                if let Err(e) = self.header.draw(f, rects[0]) {
+                    self.action_tx
+                        .send(Action::Error(format!("Failed to draw: {:?}", e)))
+                        .unwrap();
+                }
             }
 
             if let Some(component) = self.components.get_mut(&self.mode) {

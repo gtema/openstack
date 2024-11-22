@@ -31,7 +31,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::centered_rect,
+    utils::centered_rect_fixed,
     widgets::{
         button::Button,
         button_group::{ButtonGroup, ButtonGroupState},
@@ -108,7 +108,7 @@ impl Component for ConfirmPopup {
     }
 
     fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let ar = centered_rect(30, 20, frame.area());
+        let ar = centered_rect_fixed(50, 10, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(" Confirm ").light_yellow().centered())
             .borders(Borders::ALL)

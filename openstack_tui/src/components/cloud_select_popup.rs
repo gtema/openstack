@@ -25,7 +25,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::centered_rect,
+    utils::centered_rect_fixed,
 };
 
 const TITLE: &str = " Select cloud to connect: ";
@@ -75,7 +75,7 @@ impl Component for CloudSelect {
     }
 
     fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let area = centered_rect(25, 25, frame.area());
+        let area = centered_rect_fixed(50, 35, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(TITLE.white()).centered())
             .title_bottom(
