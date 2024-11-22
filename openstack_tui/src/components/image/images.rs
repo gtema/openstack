@@ -74,7 +74,11 @@ impl Component for Images<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::ImageImages) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ImageImages,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::ImageImages(
                     self.get_filters().clone(),

@@ -72,7 +72,11 @@ impl Component for ComputeServerInstanceActions<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::ComputeServerInstanceActions) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ComputeServerInstanceActions,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::ComputeServerInstanceActions(self.get_filters().clone()),
@@ -108,8 +112,10 @@ impl Component for ComputeServerInstanceActions<'_> {
                             command_tx
                                 .send(Action::SetComputeServerInstanceActionFilters(filter))?;
                             // and switch mode
-                            command_tx
-                                .send(Action::Mode(Mode::ComputeServerInstanceActionEvents))?;
+                            command_tx.send(Action::Mode {
+                                mode: Mode::ComputeServerInstanceActionEvents,
+                                stack: true,
+                            })?;
                         }
                     }
                 }

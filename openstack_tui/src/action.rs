@@ -28,7 +28,12 @@ pub enum Action {
     Resume,
     Quit,
     ClearScreen,
-    Mode(crate::mode::Mode),
+    Mode {
+        mode: crate::mode::Mode,
+        stack: bool,
+    },
+    /// Switched to previous mode
+    PrevMode,
     Error(String),
     Help,
     /// Trigger connection to the cloud

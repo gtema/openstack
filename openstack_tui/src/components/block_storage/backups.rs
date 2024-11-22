@@ -73,7 +73,11 @@ impl Component for BlockStorageBackups<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::BlockStorageBackups) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::BlockStorageBackups,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::BlockStorageBackups(self.get_filters().clone()),

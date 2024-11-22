@@ -70,7 +70,11 @@ impl Component for NetworkSubnets<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::NetworkSubnets) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::NetworkSubnets,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::NetworkSubnets(
                     self.get_filters().clone(),

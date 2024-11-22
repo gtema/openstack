@@ -70,7 +70,11 @@ impl Component for IdentityProjects<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::IdentityProjects) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::IdentityProjects,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::IdentityProjects(self.get_filters().clone()),

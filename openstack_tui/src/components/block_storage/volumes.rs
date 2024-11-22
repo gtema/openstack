@@ -73,7 +73,11 @@ impl Component for BlockStorageVolumes<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::BlockStorageVolumes) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::BlockStorageVolumes,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::BlockStorageVolumes(self.get_filters().clone()),

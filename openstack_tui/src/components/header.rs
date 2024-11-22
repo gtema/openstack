@@ -154,8 +154,8 @@ impl Component for Header {
                 self.connection_data_rows
                     .extend([(String::from("Cloud:"), self.cloud_name.clone())]);
             }
-            Action::Mode(mode) => {
-                self.current_mode = mode;
+            Action::Mode { .. } | Action::PrevMode => {
+                self.current_mode = current_mode;
                 self.mode_filter_keybindings.clear();
                 self.mode_action_keybindings.clear();
                 if let Some(keymap) = self.config.mode_keybindings.get(&self.current_mode) {

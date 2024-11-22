@@ -554,7 +554,10 @@ where
             // and have a selected entry
             if let Some(raw_value) = self.get_selected_raw() {
                 command_tx.send(Action::SetDescribeApiResponseData(raw_value.clone()))?;
-                command_tx.send(Action::Mode(Mode::Describe))?;
+                command_tx.send(Action::Mode {
+                    mode: Mode::Describe,
+                    stack: true,
+                })?;
             } else {
                 debug!("No current selected entry");
             }

@@ -89,11 +89,11 @@
     "<q>": { "action": "Quit", "description": "Quit"}, // Quit the application
     "<Ctrl-c>": { "action": "Quit", "description": "Quit"},// Yet another way to quit
     "<Ctrl-z>": { "action": "Suspend", "description": "Suspend"},// Suspend the application
-    "F1": { "action": {"Mode": "Home"}, "description": "Home"},
+    "F1": { "action": {"Mode": {"mode": "Home", "stack": false}}, "description": "Home"},
     "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
     ":": { "action": "ApiRequestSelect", "description": "Select resource"},// Select the resource
     "<F4>": { "action": "SelectProject", "description": "Select project"},
-    "<ctrl-r>": {"action": "Refresh", "description": "Reload data"}
+    "<ctrl-r>": {"action": "Refresh", "description": "Reload data"},
   },
   "mode_aliases": {
     "aggregates (compute)": "ComputeAggregates",

@@ -68,7 +68,11 @@ impl Component for ComputeServerInstanceActionEvents<'_> {
                 self.set_loading(false);
                 self.set_data(Vec::new())?;
             }
-            Action::Mode(Mode::ComputeServerInstanceActionEvents) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ComputeServerInstanceActionEvents,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::ComputeServerInstanceAction(self.get_filters().clone()),

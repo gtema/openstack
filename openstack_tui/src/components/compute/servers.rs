@@ -76,7 +76,11 @@ impl Component for ComputeServers<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::ComputeServers) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ComputeServers,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
                     self.get_filters().clone(),
@@ -97,7 +101,10 @@ impl Component for ComputeServers<'_> {
             } => {
                 if let Some(command_tx) = &self.get_command_tx() {
                     command_tx.send(Action::SetDescribeApiResponseData(data.clone()))?;
-                    command_tx.send(Action::Mode(Mode::Describe))?;
+                    command_tx.send(Action::Mode {
+                        mode: Mode::Describe,
+                        stack: true,
+                    })?;
                     self.set_loading(false);
                 } else {
                     debug!("No command_tx");
@@ -114,7 +121,10 @@ impl Component for ComputeServers<'_> {
                 if let Some(server_id) = self.get_selected_resource_id()? {
                     if let Some(command_tx) = &self.get_command_tx() {
                         command_tx.send(Action::SetDescribeLoading(true))?;
-                        command_tx.send(Action::Mode(Mode::Describe))?;
+                        command_tx.send(Action::Mode {
+                            mode: Mode::Describe,
+                            stack: true,
+                        })?;
                     }
                     //self.set_loading(true);
                     return Ok(Some(Action::PerformApiRequest(
@@ -138,7 +148,10 @@ impl Component for ComputeServers<'_> {
                                 },
                             ))?;
                             // and switch mode
-                            command_tx.send(Action::Mode(Mode::ComputeServerInstanceActions))?;
+                            command_tx.send(Action::Mode {
+                                mode: Mode::ComputeServerInstanceActions,
+                                stack: true,
+                            })?;
                         }
                     }
                 }

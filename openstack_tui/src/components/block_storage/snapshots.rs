@@ -69,7 +69,11 @@ impl Component for BlockStorageSnapshots<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::BlockStorageSnapshots) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::BlockStorageSnapshots,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::BlockStorageSnapshots(self.get_filters().clone()),

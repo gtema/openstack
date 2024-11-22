@@ -72,7 +72,11 @@ impl Component for NetworkRouters<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::NetworkRouters) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::NetworkRouters,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::NetworkRouters(
                     self.get_filters().clone(),

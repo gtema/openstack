@@ -78,7 +78,11 @@ impl Component for NetworkSecurityGroupRules<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::NetworkSecurityGroupRules) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::NetworkSecurityGroupRules,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
