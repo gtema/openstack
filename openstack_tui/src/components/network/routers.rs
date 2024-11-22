@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{NetworkRouterFilters, Resource},
+    cloud_worker::types::{ApiRequest, NetworkRouterFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -67,16 +67,16 @@ impl Component for NetworkRouters<'_> {
                 if let Mode::NetworkRouters = current_mode {
                     self.set_loading(true);
                     self.set_data(Vec::new())?;
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::NetworkRouters(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::NetworkRouters(
+                        self.get_filters().clone(),
+                    ))));
                 }
             }
             Action::Mode(Mode::NetworkRouters) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::NetworkRouters(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::NetworkRouters(
+                    self.get_filters().clone(),
+                ))));
             }
             // Action::ShowRouterSubnets => {
             //     // only if we are currently in the IdentityGroup mode
@@ -96,11 +96,11 @@ impl Component for NetworkRouters<'_> {
             //         }
             //     }
             // }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::NetworkRouters(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::NetworkRouters(_),
                 data,
             } => {
                 self.set_data(data)?;

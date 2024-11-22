@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{BlockStorageBackupFilters, Resource},
+    cloud_worker::types::{ApiRequest, BlockStorageBackupFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -68,22 +68,22 @@ impl Component for BlockStorageBackups<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::BlockStorageBackups = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::BlockStorageBackups(self.get_filters().clone()),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::BlockStorageBackups(self.get_filters().clone()),
                     )));
                 }
             }
             Action::Mode(Mode::BlockStorageBackups) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::BlockStorageBackups(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::BlockStorageBackups(self.get_filters().clone()),
                 )));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::BlockStorageBackups(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::BlockStorageBackups(_),
                 data,
             } => {
                 self.set_data(data)?;

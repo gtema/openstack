@@ -19,7 +19,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
 use crate::action::Action;
-use crate::cloud_worker::{Cloud, Resource};
+use crate::cloud_worker::{ApiRequest, Cloud};
 
 pub mod types;
 use types::*;
@@ -28,7 +28,7 @@ pub trait ImageExt {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()>;
 
     async fn get_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>>;
@@ -38,11 +38,11 @@ impl ImageExt for Cloud {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()> {
-        match resource {
-            Resource::ImageImages(ref filters) => match self.get_images(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+        match request {
+            ApiRequest::ImageImages(ref filters) => match self.get_images(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => {
                     app_tx.send(Action::Error(format!("Failed to fetch images: {:?}", err)))?
                 }

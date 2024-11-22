@@ -23,7 +23,7 @@ use tracing::debug;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ComputeServerDelete, ComputeServerFilters, ComputeServerInstanceActionFilters, Resource,
+        ApiRequest, ComputeServerDelete, ComputeServerFilters, ComputeServerInstanceActionFilters,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -71,32 +71,32 @@ impl Component for ComputeServers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeServers = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeServers(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
+                        self.get_filters().clone(),
+                    ))));
                 }
             }
             Action::Mode(Mode::ComputeServers) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeServers(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
+                    self.get_filters().clone(),
+                ))));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::ComputeServers(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::ComputeServers(_),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::ResourceData {
-                resource: Resource::ComputeServerConsoleOutput(_),
+            Action::ApiResponseData {
+                request: ApiRequest::ComputeServerConsoleOutput(_),
                 data,
             } => {
                 if let Some(command_tx) = &self.get_command_tx() {
-                    command_tx.send(Action::DescribeResourceData(data.clone()))?;
+                    command_tx.send(Action::SetDescribeApiResponseData(data.clone()))?;
                     command_tx.send(Action::Mode(Mode::Describe))?;
                     self.set_loading(false);
                 } else {
@@ -106,9 +106,9 @@ impl Component for ComputeServers<'_> {
             Action::SetComputeServerFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeServers(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
+                    self.get_filters().clone(),
+                ))));
             }
             Action::ShowServerConsoleOutput => {
                 if let Some(server_id) = self.get_selected_resource_id()? {
@@ -117,8 +117,8 @@ impl Component for ComputeServers<'_> {
                         command_tx.send(Action::Mode(Mode::Describe))?;
                     }
                     //self.set_loading(true);
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeServerConsoleOutput(server_id),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::ComputeServerConsoleOutput(server_id),
                     )));
                 }
             }
@@ -151,7 +151,7 @@ impl Component for ComputeServers<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::Confirm(Resource::ComputeServerDelete(
+                            command_tx.send(Action::Confirm(ApiRequest::ComputeServerDelete(
                                 ComputeServerDelete {
                                     server_id: selected_entry.id.clone(),
                                     server_name: Some(selected_entry.name.clone()),

@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ImageFilters, Resource},
+    cloud_worker::types::{ApiRequest, ImageFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -69,22 +69,22 @@ impl Component for Images<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ImageImages = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(Resource::ImageImages(
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::ImageImages(
                         self.get_filters().clone(),
                     ))));
                 }
             }
             Action::Mode(Mode::ImageImages) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(Resource::ImageImages(
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::ImageImages(
                     self.get_filters().clone(),
                 ))));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::ImageImages(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::ImageImages(_),
                 data,
             } => {
                 self.set_data(data)?;
@@ -92,7 +92,7 @@ impl Component for Images<'_> {
             Action::SetImageFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(Resource::ImageImages(
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::ImageImages(
                     self.get_filters().clone(),
                 ))));
             }

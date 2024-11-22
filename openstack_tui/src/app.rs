@@ -51,7 +51,7 @@ use crate::{
             security_groups::NetworkSecurityGroups, subnets::NetworkSubnets,
         },
         project_select_popup::ProjectSelect,
-        resource_select_popup::ResourceSelect,
+        resource_select_popup::ApiRequestSelect,
         Component,
     },
     config::Config,
@@ -63,7 +63,7 @@ use crate::{
 #[derive(Eq, Hash, PartialEq)]
 enum Popup {
     Error,
-    SelectResource,
+    SelectApiRequest,
     SwitchCloud,
     SwitchProject,
     Confirm,
@@ -191,7 +191,7 @@ impl App {
                 ),
                 (Popup::Error, Box::new(ErrorPopup::new())),
                 (Popup::SwitchCloud, Box::new(CloudSelect::new())),
-                (Popup::SelectResource, Box::new(ResourceSelect::new())),
+                (Popup::SelectApiRequest, Box::new(ApiRequestSelect::new())),
             ]),
         })
     }
@@ -369,8 +369,8 @@ impl App {
                     self.cloud_worker_tx
                         .send(Action::CloudChangeScope(scope.clone()))?;
                 }
-                Action::ResourceSelect => {
-                    self.active_popup = Some(Popup::SelectResource);
+                Action::ApiRequestSelect => {
+                    self.active_popup = Some(Popup::SelectApiRequest);
                     self.render(tui)?;
                 }
                 Action::CloudSelect => {
@@ -393,9 +393,9 @@ impl App {
                         self.render(tui)?;
                     }
                 }
-                Action::RequestCloudResource(ref resource) => {
+                Action::PerformApiRequest(ref request) => {
                     self.cloud_worker_tx
-                        .send(Action::RequestCloudResource(resource.clone()))?;
+                        .send(Action::PerformApiRequest(request.clone()))?;
                     self.render(tui)?;
                 }
                 Action::ConnectToCloud(ref cloud) => {
@@ -423,7 +423,7 @@ impl App {
                 Action::ConfirmAccepted(ref request) => {
                     debug!("Action confirmed");
                     self.cloud_worker_tx
-                        .send(Action::RequestCloudResource(request.clone()))?;
+                        .send(Action::PerformApiRequest(request.clone()))?;
 
                     self.active_popup = None;
                     self.popups.remove(&Popup::Confirm);
@@ -447,7 +447,7 @@ impl App {
                 // only update component if it belongs to the current mode or it is not refresh
                 // event
                 if *mode == self.mode
-                    || (action != Action::Refresh && action != Action::DescribeResource)
+                    || (action != Action::Refresh && action != Action::DescribeApiResponse)
                 {
                     if let Some(action) = component.update(action.clone(), self.mode)? {
                         self.action_tx.send(action)?

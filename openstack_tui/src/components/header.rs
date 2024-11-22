@@ -177,7 +177,7 @@ impl Component for Header {
                         })
                         .sorted()
                         .for_each(|(k, v, t)| match t {
-                            CommandType::ResourceAction => {
+                            CommandType::ApiRequestAction => {
                                 self.mode_action_keybindings.push((k, v));
                             }
                             CommandType::Filter => {

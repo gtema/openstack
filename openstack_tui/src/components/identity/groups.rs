@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{IdentityGroupFilters, IdentityGroupUserFilters, Resource},
+    cloud_worker::types::{ApiRequest, IdentityGroupFilters, IdentityGroupUserFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -68,16 +68,16 @@ impl Component for IdentityGroups<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityGroups = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::IdentityGroups(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityGroups(
+                        self.get_filters().clone(),
+                    ))));
                 }
             }
             Action::Mode(Mode::IdentityGroups) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityGroups(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityGroups(
+                    self.get_filters().clone(),
+                ))));
             }
             Action::ShowIdentityGroupUsers => {
                 // only if we are currently in the IdentityGroup mode
@@ -99,11 +99,11 @@ impl Component for IdentityGroups<'_> {
                     }
                 }
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::IdentityGroups(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::IdentityGroups(_),
                 data,
             } => {
                 self.set_data(data)?;

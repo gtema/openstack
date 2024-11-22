@@ -20,7 +20,7 @@ use tracing::debug;
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
 use crate::action::Action;
-use crate::cloud_worker::{Cloud, Resource};
+use crate::cloud_worker::{ApiRequest, Cloud};
 
 pub mod types;
 use types::*;
@@ -29,7 +29,7 @@ pub trait ComputeExt {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()>;
 
     async fn get_flavors(&mut self, filters: &ComputeFlavorFilters) -> Result<Vec<Value>>;
@@ -57,74 +57,77 @@ impl ComputeExt for Cloud {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()> {
-        match resource {
-            Resource::ComputeFlavors(ref filters) => match self.get_flavors(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+        match request {
+            ApiRequest::ComputeFlavors(ref filters) => match self.get_flavors(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch compute flavors: {:?}",
                     err
                 )))?,
             },
-            Resource::ComputeServers(ref filters) => match self.get_servers(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::ComputeServers(ref filters) => match self.get_servers(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch compute servers: {:?}",
                     err
                 )))?,
             },
-            Resource::ComputeServerDelete(ref request) => match self.delete_server(request).await {
+            ApiRequest::ComputeServerDelete(ref request) => match self.delete_server(request).await
+            {
                 Ok(_) => app_tx.send(Action::Refresh)?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to delete compute server: {:?}",
                     err
                 )))?,
             },
-            Resource::ComputeServerInstanceActions(ref filters) => {
+            ApiRequest::ComputeServerInstanceActions(ref filters) => {
                 match self.get_server_instance_actions(filters).await {
-                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch compute server instance actions: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::ComputeServerInstanceAction(ref filters) => {
+            ApiRequest::ComputeServerInstanceAction(ref filters) => {
                 match self.get_server_instance_action(filters).await {
-                    Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponseData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch compute server instance action info: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::ComputeServerConsoleOutput(ref id) => {
+            ApiRequest::ComputeServerConsoleOutput(ref id) => {
                 match self.get_server_console_output(id).await {
-                    Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponseData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch server console output: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::ComputeQuota => match self.get_quota().await {
-                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+            ApiRequest::ComputeQuota => match self.get_quota().await {
+                Ok(data) => app_tx.send(Action::ApiResponseData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch compute quota: {:?}",
                     err
                 )))?,
             },
-            Resource::ComputeAggregates(ref filters) => match self.get_aggregates(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                Err(err) => app_tx.send(Action::Error(format!(
-                    "Failed to fetch compute aggregates: {:?}",
-                    err
-                )))?,
-            },
-            Resource::ComputeHypervisors(ref filters) => {
+            ApiRequest::ComputeAggregates(ref filters) => {
+                match self.get_aggregates(filters).await {
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch compute aggregates: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            ApiRequest::ComputeHypervisors(ref filters) => {
                 match self.get_hypervisors(filters).await {
-                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch compute hypervisors: {:?}",
                         err

@@ -19,7 +19,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
 use crate::action::Action;
-use crate::cloud_worker::{Cloud, Resource};
+use crate::cloud_worker::{ApiRequest, Cloud};
 
 pub mod types;
 use types::*;
@@ -29,7 +29,7 @@ pub trait NetworkExt {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()>;
 
     /// List networks
@@ -61,49 +61,49 @@ impl NetworkExt for Cloud {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()> {
-        match resource {
-            Resource::NetworkNetworks(ref filters) => match self.get_networks(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+        match request {
+            ApiRequest::NetworkNetworks(ref filters) => match self.get_networks(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch networks: {:?}",
                     err
                 )))?,
             },
-            Resource::NetworkRouters(ref filters) => match self.get_routers(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::NetworkRouters(ref filters) => match self.get_routers(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => {
                     app_tx.send(Action::Error(format!("Failed to fetch routers: {:?}", err)))?
                 }
             },
-            Resource::NetworkQuota => match self.get_quota().await {
-                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+            ApiRequest::NetworkQuota => match self.get_quota().await {
+                Ok(data) => app_tx.send(Action::ApiResponseData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch network quota: {:?}",
                     err
                 )))?,
             },
-            Resource::NetworkSecurityGroups(ref filters) => {
+            ApiRequest::NetworkSecurityGroups(ref filters) => {
                 match self.get_security_groups(filters).await {
-                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch security groups: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::NetworkSecurityGroupRules(ref filters) => {
+            ApiRequest::NetworkSecurityGroupRules(ref filters) => {
                 match self.get_security_group_rules(filters).await {
-                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch security group rules: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::NetworkSubnets(ref filters) => match self.get_subnets(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::NetworkSubnets(ref filters) => match self.get_subnets(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => {
                     app_tx.send(Action::Error(format!("Failed to fetch subnets: {:?}", err)))?
                 }

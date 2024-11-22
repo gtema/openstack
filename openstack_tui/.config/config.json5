@@ -2,19 +2,19 @@
   "mode_keybindings": {
     "Home": { },
     "BlockStorageBackups": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "BlockStorageSnapshots": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "BlockStorageVolumes": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "ComputeAggregates": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "ComputeServers": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "0": { "action": {"SetComputeServerFilters": {} }, "description": "Default filters", "type": "Filter"},
       "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "All tenants (admin)", "type": "Filter"},
       "ctrl-d": { "action": "DeleteComputeServer", "description": "Delete" },
@@ -22,35 +22,35 @@
       "a": { "action": "ShowComputeServerInstanceActions", "description": "Instance actions"},
     },
     "ComputeServerInstanceActions": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "e": { "action": "ShowComputeServerInstanceActionEvents", "description": "Events" },
     },
     "ComputeFlavors": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "ComputeHypervisors": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "IdentityApplicationCredentials": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "IdentityGroups": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "u": { "action": "ShowIdentityGroupUsers", "description": "Group users"},
       "d": { "action": "IdentityGroupDelete", "description": "Delete (todo!)"},
       "a": { "action": "IdentityGroupCreate", "description": "Create new group (todo!)"},
     },
     "IdentityGroupUsers": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "a": { "action": "IdentityGroupUserAdd", "description": "Add new user into group (todo!)"},
       "r": { "action": "IdentityGroupUserRemove", "description": "Remove user from group (todo!)"},
     },
     "IdentityProjects": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "s": { "action": "SwitchToProject", "description": "Switch to project"},
     },
     "IdentityUsers": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "e": { "action": "IdentityUserFlipEnable", "description": "Enable/Disable user"},
       "r": { "action": "IdentityUserDelete", "description": "Delete user (todo!)"},
       "a": { "action": "IdentityUserCreate", "description": "Create new user (todo!)"},
@@ -58,29 +58,29 @@
       "c": { "action": "ShowIdentityUserApplicationCredentials", "description": "Application credentials"},
     },
     "ImageImages": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "0": { "action": {"SetImageFilters": {} }, "description": "Default filters", "type": "Filter"},
       "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public", "type": "Filter"},
       "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared", "type": "Filter"},
       "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private", "type": "Filter"},
     },
     "NetworkNetworks": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "<enter>": { "action": "ShowNetworkSubnets", "description": "Subnets"},
     },
     "NetworkRouters": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
     "NetworkSubnets": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "All", "type": "Filter"},
     },
     "NetworkSecurityGroups": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "l": { "action": "ShowNetworkSecurityGroupRules", "description": "Rules"},
     },
     "NetworkSecurityGroupRules": {
-      "y": { "action": "DescribeResource", "description": "YAML"},
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "0": { "action": {"SetNetworkSecurityGroupRuleFilters": {}}, "description": "All", "type": "Filter"},
     }
   },
@@ -90,7 +90,7 @@
     "<Ctrl-z>": { "action": "Suspend", "description": "Suspend"},// Suspend the application
     "F1": { "action": {"Mode": "Home"}, "description": "Home"},
     "F2": { "action": "CloudSelect", "description": "Select cloud"},// Switch cloud
-    ":": { "action": "ResourceSelect", "description": "Select resource"},// Select the resource
+    ":": { "action": "ApiRequestSelect", "description": "Select resource"},// Select the resource
     "<F4>": { "action": "SelectProject", "description": "Select project"},
     "<ctrl-r>": {"action": "Refresh", "description": "Reload data"}
   },

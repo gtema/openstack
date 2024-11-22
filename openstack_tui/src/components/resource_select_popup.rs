@@ -31,7 +31,7 @@ use crate::{
 };
 
 #[derive(Default)]
-pub struct ResourceSelect {
+pub struct ApiRequestSelect {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
     pub keymap: HashMap<KeyEvent, Action>,
@@ -39,7 +39,7 @@ pub struct ResourceSelect {
     fuzzy_list: FuzzySelectList,
 }
 
-impl ResourceSelect {
+impl ApiRequestSelect {
     pub fn new() -> Self {
         Self::default()
     }
@@ -56,7 +56,7 @@ impl ResourceSelect {
     pub fn render_tick(&mut self) {}
 }
 
-impl Component for ResourceSelect {
+impl Component for ApiRequestSelect {
     fn register_action_handler(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
         self.command_tx = Some(tx);
         Ok(())

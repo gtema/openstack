@@ -19,7 +19,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::{api::Pagination, api::QueryAsync};
 
 use crate::action::Action;
-use crate::cloud_worker::{Cloud, Resource};
+use crate::cloud_worker::{ApiRequest, Cloud};
 
 pub mod types;
 use types::*;
@@ -28,7 +28,7 @@ pub trait BlockStorageExt {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()>;
 
     /// List Backups
@@ -43,26 +43,27 @@ impl BlockStorageExt for Cloud {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()> {
-        match resource {
-            Resource::BlockStorageBackups(ref filters) => match self.get_backups(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+        match request {
+            ApiRequest::BlockStorageBackups(ref filters) => match self.get_backups(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch block-storage backups: {:?}",
                     err
                 )))?,
             },
-            Resource::BlockStorageSnapshots(ref filters) => match self.get_snapshots(filters).await
-            {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
-                Err(err) => app_tx.send(Action::Error(format!(
-                    "Failed to fetch block-storage snapshots: {:?}",
-                    err
-                )))?,
-            },
-            Resource::BlockStorageVolumes(ref filters) => match self.get_volumes(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::BlockStorageSnapshots(ref filters) => {
+                match self.get_snapshots(filters).await {
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to fetch block-storage snapshots: {:?}",
+                        err
+                    )))?,
+                }
+            }
+            ApiRequest::BlockStorageVolumes(ref filters) => match self.get_volumes(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch block-storage volumes: {:?}",
                     err

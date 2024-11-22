@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ComputeServerInstanceActionFilters, Resource},
+    cloud_worker::types::{ApiRequest, ComputeServerInstanceActionFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -70,15 +70,15 @@ impl Component for ComputeServerInstanceActionEvents<'_> {
             }
             Action::Mode(Mode::ComputeServerInstanceActionEvents) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeServerInstanceAction(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::ComputeServerInstanceAction(self.get_filters().clone()),
                 )));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourceData {
-                resource: Resource::ComputeServerInstanceAction(_),
+            Action::ApiResponseData {
+                request: ApiRequest::ComputeServerInstanceAction(_),
                 data,
             } => {
                 if let Some(events) = data.get("events") {
@@ -91,8 +91,8 @@ impl Component for ComputeServerInstanceActionEvents<'_> {
                 if filters.request_id.is_some() {
                     self.set_filters(filters);
                     self.set_loading(true);
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeServerInstanceAction(self.get_filters().clone()),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::ComputeServerInstanceAction(self.get_filters().clone()),
                     )));
                 }
             }

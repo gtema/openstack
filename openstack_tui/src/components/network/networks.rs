@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{NetworkNetworkFilters, NetworkSubnetFilters, Resource},
+    cloud_worker::types::{ApiRequest, NetworkNetworkFilters, NetworkSubnetFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -67,15 +67,15 @@ impl Component for NetworkNetworks<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkNetworks = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::NetworkNetworks(self.get_filters().clone()),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::NetworkNetworks(self.get_filters().clone()),
                     )));
                 }
             }
             Action::Mode(Mode::NetworkNetworks) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::NetworkNetworks(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::NetworkNetworks(self.get_filters().clone()),
                 )));
             }
             Action::ShowNetworkSubnets => {
@@ -96,11 +96,11 @@ impl Component for NetworkNetworks<'_> {
                     }
                 }
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::NetworkNetworks(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::NetworkNetworks(_),
                 data,
             } => {
                 self.set_data(data)?;

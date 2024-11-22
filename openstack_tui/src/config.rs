@@ -104,9 +104,9 @@ impl Config {
 
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Eq, Ord, PartialOrd)]
 pub enum CommandType {
-    /// Resource action
+    /// ApiRequest action
     #[default]
-    ResourceAction,
+    ApiRequestAction,
     /// Filter command
     Filter,
 }
