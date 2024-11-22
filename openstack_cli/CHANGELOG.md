@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.0...openstack_cli-v0.9.1) - 2024-11-22
+
+### Added
+
+- Use Array for serialized param instead of Set ([#774](https://github.com/gtema/openstack/pull/774))
+- Make sort_key and sort_dir in neutron array ([#769](https://github.com/gtema/openstack/pull/769))
+
 ## [0.9.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.8.2...openstack_cli-v0.9.0) - 2024-11-15
 
 ### Added

@@ -6,6 +6,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.0...openstack_tui-v0.9.1) - 2024-11-22
+
+### Added
+
+- Enable listing servers of flavor ([#786](https://github.com/gtema/openstack/pull/786))
+- Add server deletion ([#782](https://github.com/gtema/openstack/pull/782))
+- Separate keybindings into actions and filters ([#781](https://github.com/gtema/openstack/pull/781))
+- Add server instance_actions view ([#777](https://github.com/gtema/openstack/pull/777))
+- Add few volume views ([#776](https://github.com/gtema/openstack/pull/776))
+- Better sort security group rules ([#775](https://github.com/gtema/openstack/pull/775))
+- Add routers view ([#773](https://github.com/gtema/openstack/pull/773))
+- Make describe a resource action ([#768](https://github.com/gtema/openstack/pull/768))
+
+### Fixed
+
+- Improve responsiveness ([#790](https://github.com/gtema/openstack/pull/790))
+- Ensure esc properly work on deep stacks ([#787](https://github.com/gtema/openstack/pull/787))
+- Result in instance action event can be null ([#779](https://github.com/gtema/openstack/pull/779))
+- Prevent actions when popup is open ([#778](https://github.com/gtema/openstack/pull/778))
+- Set proper default column width ([#770](https://github.com/gtema/openstack/pull/770))
+- Fill domain name in the domain scope ([#763](https://github.com/gtema/openstack/pull/763))
+
+### Other
+
+- Add VHS tape file to capture TUI sample ([#785](https://github.com/gtema/openstack/pull/785))
+- Normalize certain names ([#783](https://github.com/gtema/openstack/pull/783))
+- Update the header component ([#780](https://github.com/gtema/openstack/pull/780))
+- Re-enable sorting in network ([#771](https://github.com/gtema/openstack/pull/771))
+- Improve action names ([#767](https://github.com/gtema/openstack/pull/767))
+- Temporary disable sorting in network resources ([#766](https://github.com/gtema/openstack/pull/766))
+- Change components map initialization ([#765](https://github.com/gtema/openstack/pull/765))
+
 ## [0.9.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.1.6...openstack_tui-v0.9.0) - 2024-11-15
 
 ### Added
