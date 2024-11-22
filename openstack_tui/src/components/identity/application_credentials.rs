@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{IdentityApplicationCredentialFilters, Resource},
+    cloud_worker::types::{ApiRequest, IdentityApplicationCredentialFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -71,23 +71,23 @@ impl Component for IdentityApplicationCredentials<'_> {
             }
             Action::Mode(Mode::IdentityApplicationCredentials) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityApplicationCredentials(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::IdentityApplicationCredentials(self.get_filters().clone()),
                 )));
             }
             Action::SetIdentityApplicationCredentialFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityApplicationCredentials(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::IdentityApplicationCredentials(self.get_filters().clone()),
                 )));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::IdentityApplicationCredentials(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::IdentityApplicationCredentials(_),
                 data,
             } => {
                 self.set_data(data)?;

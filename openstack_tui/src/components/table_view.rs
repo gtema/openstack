@@ -553,7 +553,7 @@ where
         if let Some(command_tx) = self.get_command_tx() {
             // and have a selected entry
             if let Some(raw_value) = self.get_selected_raw() {
-                command_tx.send(Action::DescribeResourceData(raw_value.clone()))?;
+                command_tx.send(Action::SetDescribeApiResponseData(raw_value.clone()))?;
                 command_tx.send(Action::Mode(Mode::Describe))?;
             } else {
                 debug!("No current selected entry");

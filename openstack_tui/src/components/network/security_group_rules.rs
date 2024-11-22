@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{NetworkSecurityGroupRuleFilters, Resource},
+    cloud_worker::types::{ApiRequest, NetworkSecurityGroupRuleFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -73,30 +73,30 @@ impl Component for NetworkSecurityGroupRules<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkSecurityGroupRules = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::NetworkSecurityGroupRules(self.get_filters().clone()),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
                     )));
                 }
             }
             Action::Mode(Mode::NetworkSecurityGroupRules) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::NetworkSecurityGroupRules(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
                 )));
             }
             Action::SetNetworkSecurityGroupRuleFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::NetworkSecurityGroupRules(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
                 )));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::NetworkSecurityGroupRules(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::NetworkSecurityGroupRules(_),
                 data,
             } => {
                 self.set_data(data)?;

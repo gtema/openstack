@@ -29,7 +29,7 @@ use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
-    action::Action, cloud_worker::types::Resource, components::Component, config::Config,
+    action::Action, cloud_worker::types::ApiRequest, components::Component, config::Config,
     error::TuiError, mode::Mode,
 };
 
@@ -109,8 +109,8 @@ impl Home {
 
     fn refresh_data(&mut self) -> Result<Option<Action>, TuiError> {
         if let Some(command_tx) = &self.command_tx {
-            command_tx.send(Action::RequestCloudResource(Resource::ComputeQuota))?;
-            command_tx.send(Action::RequestCloudResource(Resource::NetworkQuota))?;
+            command_tx.send(Action::PerformApiRequest(ApiRequest::ComputeQuota))?;
+            command_tx.send(Action::PerformApiRequest(ApiRequest::NetworkQuota))?;
         }
         Ok(None)
     }
@@ -152,15 +152,15 @@ impl Component for Home {
                 self.tick();
             }
 
-            Action::ResourceData {
-                resource: Resource::ComputeQuota { .. },
+            Action::ApiResponseData {
+                request: ApiRequest::ComputeQuota { .. },
                 data,
             } => {
                 self.set_compute_data(data)?;
                 self.set_loading(false);
             }
-            Action::ResourceData {
-                resource: Resource::NetworkQuota { .. },
+            Action::ApiResponseData {
+                request: ApiRequest::NetworkQuota { .. },
                 data,
             } => {
                 self.set_network_data(data)?;

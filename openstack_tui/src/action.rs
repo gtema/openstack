@@ -38,29 +38,26 @@ pub enum Action {
     /// New cloud connection established
     ConnectedToCloud(Box<openstack_sdk::types::identity::v3::AuthToken>),
     /// Perform API request
-    RequestCloudResource(cloud_types::Resource),
+    PerformApiRequest(cloud_types::ApiRequest),
     /// Propagate single resource data to components
-    ResourceData {
-        resource: cloud_types::Resource,
+    ApiResponseData {
+        request: cloud_types::ApiRequest,
         data: serde_json::Value,
     },
     /// Propagate resources list to components
-    ResourcesData {
-        resource: cloud_types::Resource,
+    ApiResponsesData {
+        request: cloud_types::ApiRequest,
         data: Vec<serde_json::Value>,
     },
     /// Open resource(mode) select popup
-    ResourceSelect,
+    ApiRequestSelect,
+    /// Refresh data
     Refresh,
-    // Next,
-    // Prev,
-    // End,
-    // PageUp,
-    // PageDown,
+
     /// Open describe view with the details
-    DescribeResourceData(serde_json::Value),
+    SetDescribeApiResponseData(serde_json::Value),
     /// Describe resource under cursor
-    DescribeResource,
+    DescribeApiResponse,
     /// Set describe mode loading
     SetDescribeLoading(bool),
     /// Open cloud connection popup
@@ -73,11 +70,11 @@ pub enum Action {
     Clouds(Vec<String>),
 
     /// Confirm operation
-    Confirm(cloud_types::Resource),
+    Confirm(cloud_types::ApiRequest),
     /// Reject (close) Confirmation prompt
-    ConfirmRejected(cloud_types::Resource),
+    ConfirmRejected(cloud_types::ApiRequest),
     /// Close confirmation prompt
-    ConfirmAccepted(cloud_types::Resource),
+    ConfirmAccepted(cloud_types::ApiRequest),
 
     // Compute (neutron)
     SetComputeServerFilters(cloud_types::ComputeServerFilters),

@@ -24,7 +24,7 @@ use structable_derive::StructTable;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{IdentityAuthProjectFilters, Resource},
+    cloud_worker::types::{ApiRequest, IdentityAuthProjectFilters},
     components::{Component, FuzzySelectList},
     config::Config,
     error::TuiError,
@@ -99,12 +99,12 @@ impl Component for ProjectSelect {
             }
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityAuthProjects(IdentityAuthProjectFilters {}),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::IdentityAuthProjects(IdentityAuthProjectFilters {}),
                 )));
             }
-            Action::ResourcesData {
-                resource: Resource::IdentityAuthProjects(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::IdentityAuthProjects(_),
                 data,
             } => {
                 self.set_data(data)?;

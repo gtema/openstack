@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ComputeHypervisorFilters, Resource},
+    cloud_worker::types::{ApiRequest, ComputeHypervisorFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -64,22 +64,22 @@ impl Component for ComputeHypervisors<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeHypervisors = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeHypervisors(self.get_filters().clone()),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::ComputeHypervisors(self.get_filters().clone()),
                     )));
                 }
             }
             Action::Mode(Mode::ComputeHypervisors) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeHypervisors(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::ComputeHypervisors(self.get_filters().clone()),
                 )));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::ComputeHypervisors(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::ComputeHypervisors(_),
                 data,
             } => {
                 self.set_data(data)?;

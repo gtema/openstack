@@ -26,7 +26,7 @@ pub use crate::cloud_worker::network::types::*;
 
 /// OpenStack "resource"
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
-pub enum Resource {
+pub enum ApiRequest {
     // Block storage resources
     /// Cinder backup
     BlockStorageBackups(BlockStorageBackupFilters),
@@ -61,43 +61,43 @@ pub enum Resource {
     NetworkQuota,
 }
 
-impl From<Resource> for ServiceType {
-    fn from(item: Resource) -> Self {
+impl From<ApiRequest> for ServiceType {
+    fn from(item: ApiRequest) -> Self {
         match item {
-            Resource::BlockStorageBackups(_)
-            | Resource::BlockStorageSnapshots(_)
-            | Resource::BlockStorageVolumes(_) => Self::BlockStorage,
-            Resource::ComputeServers(_)
-            | Resource::ComputeServerDelete(_)
-            | Resource::ComputeServerConsoleOutput(_)
-            | Resource::ComputeServerInstanceAction(_)
-            | Resource::ComputeServerInstanceActions(_)
-            | Resource::ComputeFlavors(_)
-            | Resource::ComputeQuota
-            | Resource::ComputeAggregates(_)
-            | Resource::ComputeHypervisors(_) => Self::Compute,
-            Resource::IdentityAuthProjects(_)
-            | Resource::IdentityApplicationCredentials(_)
-            | Resource::IdentityGroups(_)
-            | Resource::IdentityGroupUsers(_)
-            | Resource::IdentityProjects(_)
-            | Resource::IdentityUserUpdate(_)
-            | Resource::IdentityUsers(_) => Self::Identity,
-            Resource::ImageImages(_) => Self::Image,
-            Resource::NetworkNetworks(_)
-            | Resource::NetworkRouters(_)
-            | Resource::NetworkQuota
-            | Resource::NetworkSecurityGroups(_)
-            | Resource::NetworkSecurityGroupRules(_)
-            | Resource::NetworkSubnets(_) => Self::Network,
+            ApiRequest::BlockStorageBackups(_)
+            | ApiRequest::BlockStorageSnapshots(_)
+            | ApiRequest::BlockStorageVolumes(_) => Self::BlockStorage,
+            ApiRequest::ComputeServers(_)
+            | ApiRequest::ComputeServerDelete(_)
+            | ApiRequest::ComputeServerConsoleOutput(_)
+            | ApiRequest::ComputeServerInstanceAction(_)
+            | ApiRequest::ComputeServerInstanceActions(_)
+            | ApiRequest::ComputeFlavors(_)
+            | ApiRequest::ComputeQuota
+            | ApiRequest::ComputeAggregates(_)
+            | ApiRequest::ComputeHypervisors(_) => Self::Compute,
+            ApiRequest::IdentityAuthProjects(_)
+            | ApiRequest::IdentityApplicationCredentials(_)
+            | ApiRequest::IdentityGroups(_)
+            | ApiRequest::IdentityGroupUsers(_)
+            | ApiRequest::IdentityProjects(_)
+            | ApiRequest::IdentityUserUpdate(_)
+            | ApiRequest::IdentityUsers(_) => Self::Identity,
+            ApiRequest::ImageImages(_) => Self::Image,
+            ApiRequest::NetworkNetworks(_)
+            | ApiRequest::NetworkRouters(_)
+            | ApiRequest::NetworkQuota
+            | ApiRequest::NetworkSecurityGroups(_)
+            | ApiRequest::NetworkSecurityGroupRules(_)
+            | ApiRequest::NetworkSubnets(_) => Self::Network,
         }
     }
 }
 
-impl ConfirmableRequest for Resource {
+impl ConfirmableRequest for ApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
-            Resource::ComputeServerDelete(x) => x.get_confirm_message(),
+            ApiRequest::ComputeServerDelete(x) => x.get_confirm_message(),
             _ => None,
         }
     }

@@ -20,7 +20,7 @@ use tracing::debug;
 use openstack_sdk::api::QueryAsync;
 
 use crate::action::Action;
-use crate::cloud_worker::{Cloud, Resource};
+use crate::cloud_worker::{ApiRequest, Cloud};
 
 pub mod types;
 use types::*;
@@ -29,7 +29,7 @@ pub trait IdentityExt {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()>;
 
     async fn get_auth_projects(
@@ -55,54 +55,54 @@ impl IdentityExt for Cloud {
     async fn perform_api_request(
         &mut self,
         app_tx: &UnboundedSender<Action>,
-        resource: Resource,
+        request: ApiRequest,
     ) -> Result<()> {
-        match resource {
-            Resource::IdentityAuthProjects(ref filters) => {
+        match request {
+            ApiRequest::IdentityAuthProjects(ref filters) => {
                 match self.get_auth_projects(filters).await {
-                    Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                     Err(err) => app_tx.send(Action::Error(format!(
                         "Failed to fetch available project scopes: {:?}",
                         err
                     )))?,
                 }
             }
-            Resource::IdentityGroups(ref filters) => match self.get_groups(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::IdentityGroups(ref filters) => match self.get_groups(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available groups\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
-            Resource::IdentityGroupUsers(ref filters) => match self.get_group_users(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::IdentityGroupUsers(ref filters) => match self.get_group_users(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available group users\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
-            Resource::IdentityProjects(ref filters) => match self.get_projects(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::IdentityProjects(ref filters) => match self.get_projects(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available projects: {:?}",
                     err
                 )))?,
             },
-            Resource::IdentityUsers(ref filters) => match self.get_users(filters).await {
-                Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+            ApiRequest::IdentityUsers(ref filters) => match self.get_users(filters).await {
+                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch available users\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
-            Resource::IdentityUserUpdate(ref data) => match self.update_user(data).await {
-                Ok(data) => app_tx.send(Action::ResourceData { resource, data })?,
+            ApiRequest::IdentityUserUpdate(ref data) => match self.update_user(data).await {
+                Ok(data) => app_tx.send(Action::ApiResponseData { request, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to update user\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                     err
                 )))?,
             },
-            Resource::IdentityApplicationCredentials(ref filters) => {
+            ApiRequest::IdentityApplicationCredentials(ref filters) => {
                 let mut maybe_changed_filters = filters.clone();
                 if maybe_changed_filters.user_id.is_empty() {
                     if let Some(session) = &self.cloud {
@@ -114,7 +114,7 @@ impl IdentityExt for Cloud {
                     }
                 } else {
                     match self.get_user_application_credentials(&maybe_changed_filters).await {
-                        Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
+                        Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                         Err(err) => app_tx.send(Action::Error(format!(
                             "Failed to fetch available application credentials\n\nSome clouds require to use domain scope with the user having `manager` role\n{:?}",
                             err

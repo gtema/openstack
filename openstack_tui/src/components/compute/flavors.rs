@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ComputeFlavorFilters, Resource},
+    cloud_worker::types::{ApiRequest, ComputeFlavorFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -66,22 +66,22 @@ impl Component for ComputeFlavors<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeFlavors = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::ComputeFlavors(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeFlavors(
+                        self.get_filters().clone(),
+                    ))));
                 }
             }
             Action::Mode(Mode::ComputeFlavors) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::ComputeFlavors(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeFlavors(
+                    self.get_filters().clone(),
+                ))));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::ComputeFlavors(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::ComputeFlavors(_),
                 data,
             } => {
                 self.set_data(data)?;

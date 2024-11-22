@@ -299,7 +299,7 @@ impl Component for Describe {
                 self.set_data(Value::Null)?;
                 self.set_loading(val);
             }
-            Action::DescribeResourceData(data) => {
+            Action::SetDescribeApiResponseData(data) => {
                 self.set_loading(false);
                 self.set_data(data)?;
             }

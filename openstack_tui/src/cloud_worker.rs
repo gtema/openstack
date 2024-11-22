@@ -146,29 +146,29 @@ impl Cloud {
                             )))?,
                         }
                     }
-                    Action::RequestCloudResource(resource) => {
+                    Action::PerformApiRequest(request) => {
                         // Request the resource using the service extension trait
-                        match ServiceType::from(resource.clone()) {
+                        match ServiceType::from(request.clone()) {
                             ServiceType::BlockStorage => {
                                 <Cloud as BlockStorageExt>::perform_api_request(
-                                    self, &app_tx, resource,
+                                    self, &app_tx, request,
                                 )
                                 .await?
                             }
                             ServiceType::Compute => {
-                                <Cloud as ComputeExt>::perform_api_request(self, &app_tx, resource)
+                                <Cloud as ComputeExt>::perform_api_request(self, &app_tx, request)
                                     .await?
                             }
                             ServiceType::Identity => {
-                                <Cloud as IdentityExt>::perform_api_request(self, &app_tx, resource)
+                                <Cloud as IdentityExt>::perform_api_request(self, &app_tx, request)
                                     .await?
                             }
                             ServiceType::Image => {
-                                <Cloud as ImageExt>::perform_api_request(self, &app_tx, resource)
+                                <Cloud as ImageExt>::perform_api_request(self, &app_tx, request)
                                     .await?
                             }
                             ServiceType::Network => {
-                                <Cloud as NetworkExt>::perform_api_request(self, &app_tx, resource)
+                                <Cloud as NetworkExt>::perform_api_request(self, &app_tx, request)
                                     .await?
                             }
                             _ => todo!(),

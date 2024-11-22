@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{IdentityGroupUserFilters, Resource},
+    cloud_worker::types::{ApiRequest, IdentityGroupUserFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -64,30 +64,30 @@ impl Component for IdentityGroupUsers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityUsers = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(
-                        Resource::IdentityGroupUsers(self.get_filters().clone()),
+                    return Ok(Some(Action::PerformApiRequest(
+                        ApiRequest::IdentityGroupUsers(self.get_filters().clone()),
                     )));
                 }
             }
             Action::Mode(Mode::IdentityGroupUsers) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityGroupUsers(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::IdentityGroupUsers(self.get_filters().clone()),
                 )));
             }
             Action::SetIdentityGroupUserFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(
-                    Resource::IdentityGroupUsers(self.get_filters().clone()),
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::IdentityGroupUsers(self.get_filters().clone()),
                 )));
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::IdentityGroupUsers(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::IdentityGroupUsers(_),
                 data,
             } => {
                 self.set_data(data)?;

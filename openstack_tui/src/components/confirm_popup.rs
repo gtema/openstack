@@ -26,7 +26,7 @@ use tracing::debug;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ConfirmableRequest, Resource},
+    cloud_worker::types::{ApiRequest, ConfirmableRequest},
     components::Component,
     config::Config,
     error::TuiError,
@@ -40,14 +40,14 @@ use crate::{
 
 pub struct ConfirmPopup {
     command_tx: Option<UnboundedSender<Action>>,
-    request: Resource,
+    request: ApiRequest,
     config: Config,
     button_group: ButtonGroup<'static>,
     button_group_state: ButtonGroupState,
 }
 
 impl ConfirmPopup {
-    pub fn new(request: &Resource) -> Self {
+    pub fn new(request: &ApiRequest) -> Self {
         Self {
             command_tx: None,
             request: request.clone(),

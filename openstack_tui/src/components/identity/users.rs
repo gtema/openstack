@@ -22,7 +22,7 @@ use tokio::sync::mpsc::UnboundedSender;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        IdentityApplicationCredentialFilters, IdentityUserFilters, IdentityUserUpdate, Resource,
+        ApiRequest, IdentityApplicationCredentialFilters, IdentityUserFilters, IdentityUserUpdate,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -72,14 +72,14 @@ impl Component for IdentityUsers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityUsers = current_mode {
-                    return Ok(Some(Action::RequestCloudResource(Resource::IdentityUsers(
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityUsers(
                         self.get_filters().clone(),
                     ))));
                 }
             }
             Action::Mode(Mode::IdentityUsers) | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::RequestCloudResource(Resource::IdentityUsers(
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityUsers(
                     self.get_filters().clone(),
                 ))));
             }
@@ -91,8 +91,8 @@ impl Component for IdentityUsers<'_> {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
                             // send action to set GroupUserFilters
-                            command_tx.send(Action::RequestCloudResource(
-                                Resource::IdentityUserUpdate(IdentityUserUpdate {
+                            command_tx.send(Action::PerformApiRequest(
+                                ApiRequest::IdentityUserUpdate(IdentityUserUpdate {
                                     id: group_row.id.clone(),
                                     name: None,
                                     enabled: Some(!group_row.enabled),
@@ -122,17 +122,17 @@ impl Component for IdentityUsers<'_> {
                     }
                 }
             }
-            Action::DescribeResource => self.describe_selected_entry()?,
+            Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
-            Action::ResourcesData {
-                resource: Resource::IdentityUsers(_),
+            Action::ApiResponsesData {
+                request: ApiRequest::IdentityUsers(_),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::ResourceData {
-                resource: Resource::IdentityUserUpdate(_),
+            Action::ApiResponseData {
+                request: ApiRequest::IdentityUserUpdate(_),
                 data,
             } => {
                 // Since user update only returns some info (i.e. it doesn't contain email) we need
