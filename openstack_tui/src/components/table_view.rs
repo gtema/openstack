@@ -379,6 +379,12 @@ where
     pub fn draw(&mut self, f: &mut Frame<'_>, area: Rect, title: &str) -> Result<(), TuiError> {
         let areas = Layout::vertical([Constraint::Min(5), Constraint::Length(3)]).split(area);
 
+        if area.as_size().width < 140 {
+            self.describe_enabled = false;
+        } else {
+            self.describe_enabled = true;
+        }
+
         self.render_content(title, f, areas[0])?;
         self.render_footer(f, areas[1]);
         Ok(())

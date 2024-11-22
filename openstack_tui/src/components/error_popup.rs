@@ -23,7 +23,7 @@ use std::collections::HashMap;
 
 use crate::{
     action::Action, components::Component, config::Config, error::TuiError, mode::Mode,
-    utils::centered_rect,
+    utils::centered_rect_fixed,
 };
 
 pub struct ErrorPopup {
@@ -94,7 +94,7 @@ impl Component for ErrorPopup {
     }
 
     fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let ar = centered_rect(30, 25, frame.area());
+        let ar = centered_rect_fixed(70, 20, frame.area());
         let popup_block = Block::default()
             .title_top(Line::from(" Error ").red().centered())
             .title_bottom(Line::from("(Esc) to close").gray().right_aligned())

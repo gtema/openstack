@@ -29,7 +29,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{centered_rect, OutputConfig, StructTable},
+    utils::{centered_rect_fixed, OutputConfig, StructTable},
 };
 
 const TITLE: &str = " Select project to switch to: ";
@@ -137,7 +137,7 @@ impl Component for ProjectSelect {
     }
 
     fn draw(&mut self, frame: &mut Frame<'_>, _area: Rect) -> Result<(), TuiError> {
-        let area = centered_rect(25, 25, frame.area());
+        let area = centered_rect_fixed(50, 35, frame.area());
         let mut title = vec![TITLE.white()];
         if self.is_loading {
             title.push(Span::styled(

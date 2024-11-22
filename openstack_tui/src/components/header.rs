@@ -220,68 +220,69 @@ impl Component for Header {
     fn draw(&mut self, f: &mut Frame<'_>, rect: Rect) -> Result<(), TuiError> {
         self.size = rect.as_size();
         // Count number of rows (-1 to keep some spacing)
-        let count_rows: usize = (self.size.height - 1).into();
-        // Split whole area first into 3 columns
-        let rects = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![
-                Constraint::Min(40),         // Connection stats
-                Constraint::Length(25),      // Global keybindings
-                Constraint::Percentage(100), // Mode keybindings
-            ])
-            .spacing(2)
-            .split(rect);
+        if let Some(count_rows) = (self.size.height as usize).checked_sub(1) {
+            // Split whole area first into 3 columns
+            let rects = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints(vec![
+                    Constraint::Min(40),         // Connection stats
+                    Constraint::Length(25),      // Global keybindings
+                    Constraint::Percentage(100), // Mode keybindings
+                ])
+                .spacing(2)
+                .split(rect);
 
-        // Connection info column
-        let (c1, c2): (Vec<ListItem>, Vec<ListItem>) = self
-            .connection_data_rows
-            .iter()
-            .map(|x| (x.0.clone().into(), x.1.clone().into()))
-            .collect();
+            // Connection info column
+            let (c1, c2): (Vec<ListItem>, Vec<ListItem>) = self
+                .connection_data_rows
+                .iter()
+                .map(|x| (x.0.clone().into(), x.1.clone().into()))
+                .collect();
 
-        let c1_list = List::default()
-            .items(c1.clone())
-            .style(Style::new().fg(Color::Yellow));
-        let c2_list = List::default().items(c2.clone()).style(Style::new());
+            let c1_list = List::default()
+                .items(c1.clone())
+                .style(Style::new().fg(Color::Yellow));
+            let c2_list = List::default().items(c2.clone()).style(Style::new());
 
-        let cols = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints(vec![Constraint::Length(8), Constraint::Percentage(100)])
-            .spacing(2)
-            .split(rects[0]);
-        f.render_widget(c1_list, cols[0]);
-        f.render_widget(c2_list, cols[1]);
+            let cols = Layout::default()
+                .direction(Direction::Horizontal)
+                .constraints(vec![Constraint::Length(8), Constraint::Percentage(100)])
+                .spacing(2)
+                .split(rects[0]);
+            f.render_widget(c1_list, cols[0]);
+            f.render_widget(c2_list, cols[1]);
 
-        // Global keybindings column
-        self.draw_keybindings(
-            self.global_bindings_rows.iter(),
-            Style::new().fg(Color::Magenta),
-            count_rows,
-            f,
-            rects[1],
-        )?;
-
-        let mut remainder = rects[2];
-        // Mode filter keybindings
-        if !self.mode_filter_keybindings.is_empty() {
-            remainder = self.draw_keybindings(
-                self.mode_filter_keybindings.iter(),
-                Style::new().fg(Color::LightBlue),
-                count_rows,
-                f,
-                remainder,
-            )?;
-        }
-
-        // Mode action keybindings
-        if !self.mode_action_keybindings.is_empty() {
+            // Global keybindings column
             self.draw_keybindings(
-                self.mode_action_keybindings.iter(),
-                Style::new().fg(Color::Red),
+                self.global_bindings_rows.iter(),
+                Style::new().fg(Color::Magenta),
                 count_rows,
                 f,
-                remainder,
+                rects[1],
             )?;
+
+            let mut remainder = rects[2];
+            // Mode filter keybindings
+            if !self.mode_filter_keybindings.is_empty() {
+                remainder = self.draw_keybindings(
+                    self.mode_filter_keybindings.iter(),
+                    Style::new().fg(Color::LightBlue),
+                    count_rows,
+                    f,
+                    remainder,
+                )?;
+            }
+
+            // Mode action keybindings
+            if !self.mode_action_keybindings.is_empty() {
+                self.draw_keybindings(
+                    self.mode_action_keybindings.iter(),
+                    Style::new().fg(Color::Red),
+                    count_rows,
+                    f,
+                    remainder,
+                )?;
+            }
         }
         Ok(())
     }
