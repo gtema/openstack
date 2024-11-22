@@ -26,6 +26,8 @@ included in documentation.
 
 ![](./images/tui/tui-images.png)
 
+![](./images/tui/ostui.gif)
+
 ## Installation
 
 Compiled binaries are always uploaded as release artifacts for every
