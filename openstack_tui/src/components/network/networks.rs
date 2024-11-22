@@ -72,7 +72,11 @@ impl Component for NetworkNetworks<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::NetworkNetworks) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::NetworkNetworks,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::NetworkNetworks(self.get_filters().clone()),
@@ -91,7 +95,10 @@ impl Component for NetworkNetworks<'_> {
                                     network_name: Some(group_row.name.clone()),
                                 },
                             ))?;
-                            return Ok(Some(Action::Mode(Mode::NetworkSubnets)));
+                            return Ok(Some(Action::Mode {
+                                mode: Mode::NetworkSubnets,
+                                stack: true,
+                            }));
                         }
                     }
                 }

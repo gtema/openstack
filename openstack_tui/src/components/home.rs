@@ -142,7 +142,9 @@ impl Component for Home {
                     return self.refresh_data();
                 }
             }
-            Action::Mode(Mode::Home) => {
+            Action::Mode {
+                mode: Mode::Home, ..
+            } => {
                 if !self.is_loading {
                     self.set_loading(true);
                     return self.refresh_data();

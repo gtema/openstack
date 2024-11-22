@@ -73,7 +73,11 @@ impl Component for ComputeFlavors<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::ComputeFlavors) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ComputeFlavors,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeFlavors(
                     self.get_filters().clone(),
@@ -104,7 +108,10 @@ impl Component for ComputeFlavors<'_> {
                                 },
                             ))?;
                             // and switch mode
-                            command_tx.send(Action::Mode(Mode::ComputeServers))?;
+                            command_tx.send(Action::Mode {
+                                mode: Mode::ComputeServers,
+                                stack: true,
+                            })?;
                         }
                     }
                 }

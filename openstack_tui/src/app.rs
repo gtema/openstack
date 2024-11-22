@@ -78,7 +78,8 @@ pub struct App {
     should_quit: bool,
     should_suspend: bool,
     mode: Mode,
-    prev_mode: Option<Mode>,
+    /// Stack of the mode changes so that <Esc> brings user back in connected modes
+    mode_switch_stack: Vec<Mode>,
     action_tx: mpsc::UnboundedSender<Action>,
     action_rx: mpsc::UnboundedReceiver<Action>,
     cloud_worker_tx: mpsc::UnboundedSender<Action>,
@@ -176,7 +177,7 @@ impl App {
             should_suspend: false,
             config,
             mode,
-            prev_mode: None,
+            mode_switch_stack: Vec::new(),
             action_tx,
             action_rx,
             cloud_worker_tx: cloud_worker,
@@ -223,7 +224,10 @@ impl App {
         if let Some(cloud_name) = &self.cloud_name {
             action_tx.send(Action::ConnectToCloud(cloud_name.clone()))?;
         }
-        action_tx.send(Action::Mode(Mode::Home))?;
+        action_tx.send(Action::Mode {
+            mode: Mode::Home,
+            stack: false,
+        })?;
         loop {
             self.handle_events(&mut tui).await?;
             self.handle_actions(&mut tui)?;
@@ -306,20 +310,26 @@ impl App {
                     // Check for multi-key combinations
                     if let Some(action) = keymap.get(&self.last_tick_key_events) {
                         self.action_tx.send(action.action.clone())?;
-                    } else if key.code == KeyCode::Esc {
-                        if let Some(prev_mode) = self.prev_mode {
+                    } else if key.code == KeyCode::Esc && self.mode_switch_stack.len() > 1 {
+                        // remove the current mode from the stack
+                        self.mode_switch_stack.pop();
+                        if let Some(prev_mode) = self.mode_switch_stack.last() {
                             debug!("Switching to the previous mode {:?}", prev_mode);
-                            self.mode = prev_mode;
+                            self.mode = *prev_mode;
+                            self.action_tx.send(Action::PrevMode)?;
                         }
                     }
                 }
             }
         } else if key == KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL) {
             action_tx.send(Action::Quit)?;
-        } else if key.code == KeyCode::Esc {
-            if let Some(prev_mode) = self.prev_mode {
+        } else if key.code == KeyCode::Esc && self.mode_switch_stack.len() > 1 {
+            // remove the current mode from the stack
+            self.mode_switch_stack.pop();
+            if let Some(prev_mode) = self.mode_switch_stack.last() {
                 debug!("Switching to the previous mode {:?}", prev_mode);
-                self.mode = prev_mode;
+                self.mode = *prev_mode;
+                self.action_tx.send(Action::PrevMode)?;
             }
         }
         action_tx.send(Action::Render)?;
@@ -381,14 +391,15 @@ impl App {
                     self.active_popup = Some(Popup::SwitchProject);
                     self.render(tui)?;
                 }
-                Action::Mode(mode) => {
+                Action::Mode { mode, stack } => {
                     if self.mode != mode {
                         debug!("Switching from {:?} to {:?}", self.mode, mode);
                         // Hide popup
                         self.active_popup = None;
-                        if self.prev_mode != Some(mode) {
-                            self.prev_mode = Some(self.mode);
+                        if !stack {
+                            self.mode_switch_stack.clear();
                         }
+                        self.mode_switch_stack.push(mode);
                         self.mode = mode;
                         self.render(tui)?;
                     }

@@ -69,7 +69,11 @@ impl Component for IdentityApplicationCredentials<'_> {
                     user_name: None,
                 });
             }
-            Action::Mode(Mode::IdentityApplicationCredentials) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::IdentityApplicationCredentials,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::IdentityApplicationCredentials(self.get_filters().clone()),

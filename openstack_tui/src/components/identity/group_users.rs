@@ -69,7 +69,11 @@ impl Component for IdentityGroupUsers<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::IdentityGroupUsers) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::IdentityGroupUsers,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::IdentityGroupUsers(self.get_filters().clone()),

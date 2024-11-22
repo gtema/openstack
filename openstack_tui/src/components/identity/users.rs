@@ -77,7 +77,11 @@ impl Component for IdentityUsers<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::IdentityUsers) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::IdentityUsers,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityUsers(
                     self.get_filters().clone(),
@@ -117,7 +121,10 @@ impl Component for IdentityUsers<'_> {
                                     user_name: Some(group_row.name.clone()),
                                 },
                             ))?;
-                            command_tx.send(Action::Mode(Mode::IdentityApplicationCredentials))?;
+                            command_tx.send(Action::Mode {
+                                mode: Mode::IdentityApplicationCredentials,
+                                stack: true,
+                            })?;
                         }
                     }
                 }

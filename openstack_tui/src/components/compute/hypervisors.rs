@@ -69,7 +69,11 @@ impl Component for ComputeHypervisors<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::ComputeHypervisors) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ComputeHypervisors,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::ComputeHypervisors(self.get_filters().clone()),

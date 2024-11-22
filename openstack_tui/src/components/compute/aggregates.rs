@@ -68,7 +68,11 @@ impl Component for ComputeAggregates<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::ComputeAggregates) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::ComputeAggregates,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::ComputeAggregates(self.get_filters().clone()),

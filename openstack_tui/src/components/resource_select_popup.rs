@@ -74,7 +74,10 @@ impl Component for ApiRequestSelect {
             if let Some(selected) = self.fuzzy_list.selected() {
                 if let Some(item) = self.config.mode_aliases.get(selected.as_str()) {
                     self.fuzzy_list.reset_filter()?;
-                    return Ok(Some(Action::Mode(*item)));
+                    return Ok(Some(Action::Mode {
+                        mode: *item,
+                        stack: false,
+                    }));
                 }
             }
         }

@@ -73,7 +73,11 @@ impl Component for IdentityGroups<'_> {
                     ))));
                 }
             }
-            Action::Mode(Mode::IdentityGroups) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::IdentityGroups,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityGroups(
                     self.get_filters().clone(),
@@ -94,7 +98,10 @@ impl Component for IdentityGroups<'_> {
                                 },
                             ))?;
                             // and switch mode
-                            command_tx.send(Action::Mode(Mode::IdentityGroupUsers))?;
+                            command_tx.send(Action::Mode {
+                                mode: Mode::IdentityGroupUsers,
+                                stack: true,
+                            })?;
                         }
                     }
                 }

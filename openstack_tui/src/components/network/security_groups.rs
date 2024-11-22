@@ -73,7 +73,11 @@ impl Component for NetworkSecurityGroups<'_> {
                     )));
                 }
             }
-            Action::Mode(Mode::NetworkSecurityGroups) | Action::Refresh => {
+            Action::Mode {
+                mode: Mode::NetworkSecurityGroups,
+                ..
+            }
+            | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
                     ApiRequest::NetworkSecurityGroups(self.get_filters().clone()),
@@ -94,7 +98,10 @@ impl Component for NetworkSecurityGroups<'_> {
                                 },
                             ))?;
                             // and switch mode
-                            command_tx.send(Action::Mode(Mode::NetworkSecurityGroupRules))?;
+                            command_tx.send(Action::Mode {
+                                mode: Mode::NetworkSecurityGroupRules,
+                                stack: true,
+                            })?;
                         }
                     }
                 }
