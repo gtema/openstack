@@ -33,6 +33,7 @@ mod error;
 pub mod mode;
 pub mod tui;
 pub mod utils;
+pub mod widgets;
 
 async fn tokio_main() -> Result<()> {
     initialize_logging()?;

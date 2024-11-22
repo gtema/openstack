@@ -12,7 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::{KeyCode, KeyEvent}; //, KeyEventKind};
+use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
 use ratatui::{
     prelude::*,

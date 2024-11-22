@@ -16,6 +16,8 @@ use eyre::{OptionExt, Result};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+use crate::cloud_worker::common::ConfirmableRequest;
+
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComputeFlavorFilters {}
 
@@ -67,6 +69,27 @@ impl TryFrom<&ComputeServerFilters>
         }
 
         Ok(ep_builder)
+    }
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ComputeServerDelete {
+    pub server_id: String,
+    pub server_name: Option<String>,
+}
+
+impl fmt::Display for ComputeServerDelete {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
+impl ConfirmableRequest for ComputeServerDelete {
+    fn get_confirm_message(&self) -> Option<String> {
+        Some(format!(
+            "Delete server {} ?",
+            self.server_name.clone().unwrap_or(self.server_id.clone())
+        ))
     }
 }
 

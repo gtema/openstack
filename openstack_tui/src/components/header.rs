@@ -19,7 +19,6 @@ use itertools::Itertools;
 use ratatui::{prelude::*, widgets::*};
 use std::cmp::max;
 //use ratatui::{layout::Flex, prelude::*, widgets::*};
-use tracing::debug;
 
 use crate::{
     action::Action,
@@ -157,6 +156,8 @@ impl Component for Header {
             }
             Action::Mode(mode) => {
                 self.current_mode = mode;
+                self.mode_filter_keybindings.clear();
+                self.mode_action_keybindings.clear();
                 if let Some(keymap) = self.config.mode_keybindings.get(&self.current_mode) {
                     // Update mode keybindings rows with the current mode bindings
                     keymap
@@ -217,7 +218,6 @@ impl Component for Header {
     }
 
     fn draw(&mut self, f: &mut Frame<'_>, rect: Rect) -> Result<(), TuiError> {
-        debug!("Header size is {:?}", rect.as_size());
         self.size = rect.as_size();
         // Count number of rows (-1 to keep some spacing)
         let count_rows: usize = (self.size.height - 1).into();

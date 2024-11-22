@@ -72,9 +72,18 @@ pub enum Action {
     /// List of configured cloud connections
     Clouds(Vec<String>),
 
+    /// Confirm operation
+    Confirm(cloud_types::Resource),
+    /// Reject (close) Confirmation prompt
+    ConfirmRejected(cloud_types::Resource),
+    /// Close confirmation prompt
+    ConfirmAccepted(cloud_types::Resource),
+
     // Compute (neutron)
     SetComputeServerFilters(cloud_types::ComputeServerFilters),
     SetComputeServerInstanceActionFilters(cloud_types::ComputeServerInstanceActionFilters),
+    /// Delete selected server
+    DeleteComputeServer,
     /// Show console output of the selected entry
     ShowServerConsoleOutput,
     /// Show selected server instance actions
