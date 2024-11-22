@@ -79,6 +79,8 @@ pub enum Action {
     // Compute (neutron)
     SetComputeServerFilters(cloud_types::ComputeServerFilters),
     SetComputeServerInstanceActionFilters(cloud_types::ComputeServerInstanceActionFilters),
+    /// Show servers provisioned with selected flavor
+    ShowComputeServersWithFlavor,
     /// Delete selected server
     DeleteComputeServer,
     /// Show console output of the selected entry

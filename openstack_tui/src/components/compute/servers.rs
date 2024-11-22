@@ -123,7 +123,7 @@ impl Component for ComputeServers<'_> {
                 }
             }
             Action::ShowComputeServerInstanceActions => {
-                // only if we are currently in the IdentityGroup mode
+                // only if we are currently in the servers mode
                 if current_mode == Mode::ComputeServers {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {

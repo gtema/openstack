@@ -43,12 +43,30 @@ impl TryFrom<&ComputeFlavorFilters>
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ComputeServerFilters {
+    /// All tenants (admin only)
     pub all_tenants: Option<bool>,
+    /// List servers with specific flavor
+    pub flavor_id: Option<String>,
+    /// Flavor name (used only for display)
+    pub flavor_name: Option<String>,
 }
 
 impl fmt::Display for ComputeServerFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+        let mut parts: Vec<String> = Vec::new();
+        if self.all_tenants.is_some() {
+            parts.push(String::from("all"));
+        }
+        if self.flavor_id.is_some() || self.flavor_name.is_some() {
+            parts.push(format!(
+                "flavor: {}",
+                self.flavor_name
+                    .as_ref()
+                    .or(self.flavor_name.as_ref())
+                    .unwrap_or(&String::new())
+            ));
+        }
+        write!(f, "{}", parts.join(","))
     }
 }
 
@@ -66,6 +84,10 @@ impl TryFrom<&ComputeServerFilters>
 
         if let Some(true) = &value.all_tenants {
             ep_builder.all_tenants("true");
+        }
+
+        if let Some(flavor_id) = &value.flavor_id {
+            ep_builder.flavor(flavor_id.clone());
         }
 
         Ok(ep_builder)

@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, ComputeFlavorFilters},
+    cloud_worker::types::{ApiRequest, ComputeFlavorFilters, ComputeServerFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -33,6 +33,8 @@ const TITLE: &str = "Compute Flavors";
 
 #[derive(Deserialize, StructTable)]
 pub struct FlavorData {
+    #[structable(title = "Id", wide)]
+    id: String,
     #[structable(title = "Name")]
     name: String,
     #[structable(title = "vCPU")]
@@ -85,6 +87,27 @@ impl Component for ComputeFlavors<'_> {
                 data,
             } => {
                 self.set_data(data)?;
+            }
+            Action::ShowComputeServersWithFlavor => {
+                // only if we are currently in the flavors mode
+                if current_mode == Mode::ComputeFlavors {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(selected_entry) = self.get_selected() {
+                            // send action to set SecurityGroupRulesFilters
+                            command_tx.send(Action::SetComputeServerFilters(
+                                ComputeServerFilters {
+                                    all_tenants: None,
+                                    flavor_id: Some(selected_entry.id.clone()),
+                                    flavor_name: Some(selected_entry.name.clone()),
+                                },
+                            ))?;
+                            // and switch mode
+                            command_tx.send(Action::Mode(Mode::ComputeServers))?;
+                        }
+                    }
+                }
             }
             _ => {}
         };

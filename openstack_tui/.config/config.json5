@@ -27,6 +27,7 @@
     },
     "ComputeFlavors": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
+      "s": { "action": "ShowComputeServersWithFlavor", "description": "Servers"},
     },
     "ComputeHypervisors": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
