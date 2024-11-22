@@ -18,6 +18,7 @@ use strum::Display;
 use openstack_sdk::types::ServiceType;
 
 pub use crate::cloud_worker::block_storage::types::*;
+pub use crate::cloud_worker::common::ConfirmableRequest;
 pub use crate::cloud_worker::compute::types::*;
 pub use crate::cloud_worker::identity::types::*;
 pub use crate::cloud_worker::image::types::*;
@@ -36,6 +37,8 @@ pub enum Resource {
     // Compute resources
     ComputeFlavors(ComputeFlavorFilters),
     ComputeServers(ComputeServerFilters),
+    /// Delete server request
+    ComputeServerDelete(ComputeServerDelete),
     ComputeServerInstanceActions(ComputeServerInstanceActionFilters),
     ComputeServerInstanceAction(ComputeServerInstanceActionFilters),
     ComputeServerConsoleOutput(String),
@@ -65,6 +68,7 @@ impl From<Resource> for ServiceType {
             | Resource::BlockStorageSnapshots(_)
             | Resource::BlockStorageVolumes(_) => Self::BlockStorage,
             Resource::ComputeServers(_)
+            | Resource::ComputeServerDelete(_)
             | Resource::ComputeServerConsoleOutput(_)
             | Resource::ComputeServerInstanceAction(_)
             | Resource::ComputeServerInstanceActions(_)
@@ -86,6 +90,15 @@ impl From<Resource> for ServiceType {
             | Resource::NetworkSecurityGroups(_)
             | Resource::NetworkSecurityGroupRules(_)
             | Resource::NetworkSubnets(_) => Self::Network,
+        }
+    }
+}
+
+impl ConfirmableRequest for Resource {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            Resource::ComputeServerDelete(x) => x.get_confirm_message(),
+            _ => None,
         }
     }
 }

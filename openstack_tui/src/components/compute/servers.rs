@@ -22,7 +22,9 @@ use tracing::debug;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ComputeServerFilters, ComputeServerInstanceActionFilters, Resource},
+    cloud_worker::types::{
+        ComputeServerDelete, ComputeServerFilters, ComputeServerInstanceActionFilters, Resource,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -48,6 +50,8 @@ pub struct ServerData {
 
 pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerFilters>;
 
+impl ComputeServers<'_> {}
+
 impl Component for ComputeServers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
@@ -59,8 +63,9 @@ impl Component for ComputeServers<'_> {
 
     fn update(&mut self, action: Action, current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
-            Action::CloudChangeScope(_) => {
+            Action::CloudChangeScope(_) | Action::ConnectToCloud(_) => {
                 self.set_loading(true);
+                self.set_data(Vec::new())?;
             }
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
@@ -134,6 +139,24 @@ impl Component for ComputeServers<'_> {
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode(Mode::ComputeServerInstanceActions))?;
+                        }
+                    }
+                }
+            }
+            Action::DeleteComputeServer => {
+                // only if we are currently in the IdentityGroup mode
+                if current_mode == Mode::ComputeServers {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(selected_entry) = self.get_selected() {
+                            // send action to set SecurityGroupRulesFilters
+                            command_tx.send(Action::Confirm(Resource::ComputeServerDelete(
+                                ComputeServerDelete {
+                                    server_id: selected_entry.id.clone(),
+                                    server_name: Some(selected_entry.name.clone()),
+                                },
+                            )))?;
                         }
                     }
                 }

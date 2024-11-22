@@ -23,6 +23,7 @@ use tracing::debug;
 use crate::action::Action;
 
 mod block_storage;
+mod common;
 mod compute;
 mod identity;
 mod image;

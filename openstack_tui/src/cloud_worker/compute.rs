@@ -34,6 +34,9 @@ pub trait ComputeExt {
 
     async fn get_flavors(&mut self, filters: &ComputeFlavorFilters) -> Result<Vec<Value>>;
     async fn get_servers(&mut self, filters: &ComputeServerFilters) -> Result<Vec<Value>>;
+    /// Delete server
+    async fn delete_server(&mut self, request: &ComputeServerDelete) -> Result<()>;
+
     /// Fetch server actions
     async fn get_server_instance_actions(
         &mut self,
@@ -68,6 +71,13 @@ impl ComputeExt for Cloud {
                 Ok(data) => app_tx.send(Action::ResourcesData { resource, data })?,
                 Err(err) => app_tx.send(Action::Error(format!(
                     "Failed to fetch compute servers: {:?}",
+                    err
+                )))?,
+            },
+            Resource::ComputeServerDelete(ref request) => match self.delete_server(request).await {
+                Ok(_) => app_tx.send(Action::Refresh)?,
+                Err(err) => app_tx.send(Action::Error(format!(
+                    "Failed to delete compute server: {:?}",
                     err
                 )))?,
             },
@@ -158,6 +168,18 @@ impl ComputeExt for Cloud {
             return Ok(res);
         }
         Ok(Vec::new())
+    }
+
+    async fn delete_server(&mut self, request: &ComputeServerDelete) -> Result<()> {
+        if let Some(session) = &self.cloud {
+            let ep = openstack_sdk::api::compute::v2::server::delete::Request::builder()
+                .id(request.server_id.clone())
+                .build()?;
+
+            openstack_sdk::api::ignore(ep).query_async(session).await?;
+            return Ok(());
+        }
+        Ok(())
     }
 
     async fn get_server_instance_actions(

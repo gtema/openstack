@@ -25,6 +25,7 @@ use crate::{action::Action, config::Config, error::TuiError, mode::Mode, tui::Ev
 pub mod block_storage;
 pub mod cloud_select_popup;
 pub mod compute;
+pub mod confirm_popup;
 pub mod describe;
 pub mod error_popup;
 mod fuzzy_select_list;

@@ -34,6 +34,7 @@ use crate::{
             server_instance_action_events::ComputeServerInstanceActionEvents,
             server_instance_actions::ComputeServerInstanceActions, servers::ComputeServers,
         },
+        confirm_popup::ConfirmPopup,
         describe::Describe,
         error_popup::ErrorPopup,
         header::Header,
@@ -65,6 +66,7 @@ enum Popup {
     SelectResource,
     SwitchCloud,
     SwitchProject,
+    Confirm,
 }
 
 pub struct App {
@@ -402,6 +404,29 @@ impl App {
                     // Hide popup
                     self.active_popup = None;
                     self.cloud_connected = false;
+                    self.render(tui)?;
+                }
+                Action::Confirm(ref request) => {
+                    debug!("Need to confirm {:?}", request);
+                    self.active_popup = Some(Popup::Confirm);
+                    let mut popup = ConfirmPopup::new(request);
+                    popup.register_action_handler(self.action_tx.clone())?;
+                    self.popups.insert(Popup::Confirm, Box::new(popup));
+                    self.render(tui)?;
+                }
+                Action::ConfirmRejected(ref _request) => {
+                    debug!("Action not confirmed");
+                    self.active_popup = None;
+                    self.popups.remove(&Popup::Confirm);
+                    self.render(tui)?;
+                }
+                Action::ConfirmAccepted(ref request) => {
+                    debug!("Action confirmed");
+                    self.cloud_worker_tx
+                        .send(Action::RequestCloudResource(request.clone()))?;
+
+                    self.active_popup = None;
+                    self.popups.remove(&Popup::Confirm);
                     self.render(tui)?;
                 }
                 Action::Error(_) => {
