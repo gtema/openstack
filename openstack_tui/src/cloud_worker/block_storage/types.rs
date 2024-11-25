@@ -16,6 +16,8 @@ use eyre::Result;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+use crate::cloud_worker::common::ConfirmableRequest;
+
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct BlockStorageBackupFilters {}
 
@@ -84,5 +86,26 @@ impl TryFrom<&BlockStorageVolumeFilters>
 
         ep_builder.sort_key("name");
         Ok(ep_builder)
+    }
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct BlockStorageVolumeDelete {
+    pub volume_id: String,
+    pub volume_name: Option<String>,
+}
+
+impl fmt::Display for BlockStorageVolumeDelete {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
+impl ConfirmableRequest for BlockStorageVolumeDelete {
+    fn get_confirm_message(&self) -> Option<String> {
+        Some(format!(
+            "Delete volume {} ?",
+            self.volume_name.clone().unwrap_or(self.volume_id.clone())
+        ))
     }
 }

@@ -481,7 +481,7 @@ impl App {
 
     fn render(&mut self, tui: &mut Tui) -> Result<()> {
         tui.draw(|f| {
-            let draw_header = if f.area().height > 30 { true } else { false };
+            let draw_header = f.area().height > 30;
             let rects = Layout::default()
                 .constraints(
                     [

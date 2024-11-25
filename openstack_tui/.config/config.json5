@@ -9,6 +9,7 @@
     },
     "BlockStorageVolumes": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
+      "ctrl-d": { "action": "DeleteBlockStorageVolume", "description": "Delete"},
     },
     "ComputeAggregates": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
@@ -64,6 +65,7 @@
       "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public", "type": "Filter"},
       "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared", "type": "Filter"},
       "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private", "type": "Filter"},
+      "ctrl-d": { "action": "DeleteImage", "description": "Delete"},
     },
     "NetworkNetworks": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},

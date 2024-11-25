@@ -37,6 +37,8 @@ pub trait BlockStorageExt {
     async fn get_snapshots(&mut self, filters: &BlockStorageSnapshotFilters) -> Result<Vec<Value>>;
     /// List Volumes
     async fn get_volumes(&mut self, filters: &BlockStorageVolumeFilters) -> Result<Vec<Value>>;
+    /// Delete Volume
+    async fn delete_volume(&mut self, request: &BlockStorageVolumeDelete) -> Result<()>;
 }
 
 impl BlockStorageExt for Cloud {
@@ -69,6 +71,15 @@ impl BlockStorageExt for Cloud {
                     err
                 )))?,
             },
+            ApiRequest::BlockStorageVolumeDelete(ref request) => {
+                match self.delete_volume(request).await {
+                    Ok(_data) => app_tx.send(Action::Refresh)?,
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to delete block-storage volume: {:?}",
+                        err
+                    )))?,
+                }
+            }
             _ => {
                 todo!()
             }
@@ -122,5 +133,17 @@ impl BlockStorageExt for Cloud {
             return Ok(res);
         }
         Ok(Vec::new())
+    }
+
+    async fn delete_volume(&mut self, request: &BlockStorageVolumeDelete) -> Result<()> {
+        if let Some(session) = &self.cloud {
+            let ep = openstack_sdk::api::block_storage::v3::volume::delete::Request::builder()
+                .id(request.volume_id.clone())
+                .build()?;
+
+            openstack_sdk::api::ignore(ep).query_async(session).await?;
+            return Ok(());
+        }
+        Ok(())
     }
 }

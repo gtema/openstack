@@ -32,6 +32,7 @@ pub trait ImageExt {
     ) -> Result<()>;
 
     async fn get_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>>;
+    async fn delete_image(&mut self, request: &ImageImageDelete) -> Result<()>;
 }
 
 impl ImageExt for Cloud {
@@ -45,6 +46,12 @@ impl ImageExt for Cloud {
                 Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
                 Err(err) => {
                     app_tx.send(Action::Error(format!("Failed to fetch images: {:?}", err)))?
+                }
+            },
+            ApiRequest::ImageImageDelete(ref request) => match self.delete_image(request).await {
+                Ok(_data) => app_tx.send(Action::Refresh)?,
+                Err(err) => {
+                    app_tx.send(Action::Error(format!("Failed to delete image: {:?}", err)))?
                 }
             },
             _ => {
@@ -70,5 +77,17 @@ impl ImageExt for Cloud {
             return Ok(res);
         }
         Ok(Vec::new())
+    }
+
+    async fn delete_image(&mut self, request: &ImageImageDelete) -> Result<()> {
+        if let Some(session) = &self.cloud {
+            let ep = openstack_sdk::api::image::v2::image::delete::Request::builder()
+                .id(request.image_id.clone())
+                .build()?;
+
+            openstack_sdk::api::ignore(ep).query_async(session).await?;
+            return Ok(());
+        }
+        Ok(())
     }
 }
