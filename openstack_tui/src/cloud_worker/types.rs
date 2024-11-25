@@ -34,6 +34,8 @@ pub enum ApiRequest {
     BlockStorageSnapshots(BlockStorageSnapshotFilters),
     /// Cinder volume
     BlockStorageVolumes(BlockStorageVolumeFilters),
+    /// Delete Cinder volume
+    BlockStorageVolumeDelete(BlockStorageVolumeDelete),
     // Compute resources
     ComputeFlavors(ComputeFlavorFilters),
     ComputeServers(ComputeServerFilters),
@@ -53,6 +55,8 @@ pub enum ApiRequest {
     IdentityUsers(IdentityUserFilters),
     IdentityUserUpdate(IdentityUserUpdate),
     ImageImages(ImageFilters),
+    /// Delete image
+    ImageImageDelete(ImageImageDelete),
     NetworkNetworks(NetworkNetworkFilters),
     NetworkRouters(NetworkRouterFilters),
     NetworkSubnets(NetworkSubnetFilters),
@@ -66,7 +70,8 @@ impl From<ApiRequest> for ServiceType {
         match item {
             ApiRequest::BlockStorageBackups(_)
             | ApiRequest::BlockStorageSnapshots(_)
-            | ApiRequest::BlockStorageVolumes(_) => Self::BlockStorage,
+            | ApiRequest::BlockStorageVolumes(_)
+            | ApiRequest::BlockStorageVolumeDelete(_) => Self::BlockStorage,
             ApiRequest::ComputeServers(_)
             | ApiRequest::ComputeServerDelete(_)
             | ApiRequest::ComputeServerConsoleOutput(_)
@@ -83,7 +88,7 @@ impl From<ApiRequest> for ServiceType {
             | ApiRequest::IdentityProjects(_)
             | ApiRequest::IdentityUserUpdate(_)
             | ApiRequest::IdentityUsers(_) => Self::Identity,
-            ApiRequest::ImageImages(_) => Self::Image,
+            ApiRequest::ImageImages(_) | ApiRequest::ImageImageDelete(_) => Self::Image,
             ApiRequest::NetworkNetworks(_)
             | ApiRequest::NetworkRouters(_)
             | ApiRequest::NetworkQuota
@@ -97,7 +102,9 @@ impl From<ApiRequest> for ServiceType {
 impl ConfirmableRequest for ApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
+            ApiRequest::BlockStorageVolumeDelete(x) => x.get_confirm_message(),
             ApiRequest::ComputeServerDelete(x) => x.get_confirm_message(),
+            ApiRequest::ImageImageDelete(x) => x.get_confirm_message(),
             _ => None,
         }
     }

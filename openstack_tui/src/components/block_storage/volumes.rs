@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, BlockStorageVolumeFilters},
+    cloud_worker::types::{ApiRequest, BlockStorageVolumeDelete, BlockStorageVolumeFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -91,6 +91,24 @@ impl Component for BlockStorageVolumes<'_> {
                 data,
             } => {
                 self.set_data(data)?;
+            }
+            Action::DeleteBlockStorageVolume => {
+                // only if we are currently in the Volumes mode
+                if current_mode == Mode::BlockStorageVolumes {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(selected_entry) = self.get_selected() {
+                            // send action to set SecurityGroupRulesFilters
+                            command_tx.send(Action::Confirm(
+                                ApiRequest::BlockStorageVolumeDelete(BlockStorageVolumeDelete {
+                                    volume_id: selected_entry.id.clone(),
+                                    volume_name: Some(selected_entry.name.clone()),
+                                }),
+                            ))?;
+                        }
+                    }
+                }
             }
             _ => {}
         };

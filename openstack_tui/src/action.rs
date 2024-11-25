@@ -81,6 +81,10 @@ pub enum Action {
     /// Close confirmation prompt
     ConfirmAccepted(cloud_types::ApiRequest),
 
+    // Block Storage (Cinder)
+    /// Delete volume
+    DeleteBlockStorageVolume,
+
     // Compute (neutron)
     SetComputeServerFilters(cloud_types::ComputeServerFilters),
     SetComputeServerInstanceActionFilters(cloud_types::ComputeServerInstanceActionFilters),
@@ -127,6 +131,8 @@ pub enum Action {
 
     // Image (glance)
     SetImageFilters(cloud_types::ImageFilters),
+    /// Delete image
+    DeleteImage,
 
     // Network (neutron)
     /// Set Security group filters

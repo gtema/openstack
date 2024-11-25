@@ -15,6 +15,8 @@
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+use crate::cloud_worker::common::ConfirmableRequest;
+
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ImageFilters {
     pub visibility: Option<String>,
@@ -25,5 +27,26 @@ impl fmt::Display for ImageFilters {
             write!(f, "{}", val)?;
         }
         Ok(())
+    }
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ImageImageDelete {
+    pub image_id: String,
+    pub image_name: Option<String>,
+}
+
+impl fmt::Display for ImageImageDelete {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
+impl ConfirmableRequest for ImageImageDelete {
+    fn get_confirm_message(&self) -> Option<String> {
+        Some(format!(
+            "Delete image {} ?",
+            self.image_name.clone().unwrap_or(self.image_id.clone())
+        ))
     }
 }

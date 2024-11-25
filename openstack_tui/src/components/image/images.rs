@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, ImageFilters},
+    cloud_worker::types::{ApiRequest, ImageFilters, ImageImageDelete},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -33,6 +33,8 @@ const TITLE: &str = "Images";
 
 #[derive(Deserialize, StructTable)]
 pub struct ImageData {
+    #[structable(title = "Id", wide)]
+    id: String,
     #[structable(title = "Name")]
     name: String,
     #[structable(title = "Distro")]
@@ -99,6 +101,24 @@ impl Component for Images<'_> {
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::ImageImages(
                     self.get_filters().clone(),
                 ))));
+            }
+            Action::DeleteImage => {
+                // only if we are currently in the right mode
+                if current_mode == Mode::ImageImages {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(selected_entry) = self.get_selected() {
+                            // send action to set SecurityGroupRulesFilters
+                            command_tx.send(Action::Confirm(ApiRequest::ImageImageDelete(
+                                ImageImageDelete {
+                                    image_id: selected_entry.id.clone(),
+                                    image_name: Some(selected_entry.name.clone()),
+                                },
+                            )))?;
+                        }
+                    }
+                }
             }
             _ => {}
         };
