@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.1...openstack_tui-v0.9.2) - 2024-11-25
+
+### Added
+
+- Add volume and image deletion ([#798](https://github.com/gtema/openstack/pull/798))
+
 ## [0.9.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.0...openstack_tui-v0.9.1) - 2024-11-22
 
 ### Added
