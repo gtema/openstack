@@ -39,6 +39,12 @@ pub enum Mode {
     /// Server os-instance-action events
     ComputeServerInstanceActionEvents,
 
+    // DNS
+    /// DNS Zones
+    DnsZones,
+    /// DNS Zone recordsets
+    DnsRecordsets,
+
     // Keystone
     IdentityApplicationCredentials,
     IdentityGroups,

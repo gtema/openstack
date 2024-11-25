@@ -33,6 +33,15 @@
     "ComputeHypervisors": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
+    "DnsRecordsets": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+      "0": { "action": {"SetDnsRecordsetFilters": {} }, "description": "Default filters", "type": "Filter"},
+    },
+    "DnsZones": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+      "r": { "action": "ShowDnsZoneRecordsets", "description": "Recordsets"},
+      "ctrl-d": { "action": "DeleteDnsZone", "description": "Delete"},
+    },
     "IdentityApplicationCredentials": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
     },
@@ -109,6 +118,7 @@
     "nets": "NetworkNetworks",
     "networks": "NetworkNetworks",
     "projects": "IdentityProjects",
+    "recordsets (dns)": "DnsRecordsets",
     "routers": "NetworkRouters",
     "security groups (network)": "NetworkSecurityGroups",
     "security group rules (network)": "NetworkSecurityGroupRules",
@@ -118,6 +128,7 @@
     "snapshots": "BlockStorageSnapshots",
     "subnets (network)": "NetworkSubnets",
     "volumes": "BlockStorageVolumes",
-    "users": "IdentityUsers"
+    "users": "IdentityUsers",
+    "zones (dns)": "DnsZones",
   }
 }

@@ -27,6 +27,7 @@ pub mod cloud_select_popup;
 pub mod compute;
 pub mod confirm_popup;
 pub mod describe;
+pub mod dns;
 pub mod error_popup;
 mod fuzzy_select_list;
 pub mod header;
