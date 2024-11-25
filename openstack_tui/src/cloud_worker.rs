@@ -25,14 +25,15 @@ use crate::action::Action;
 mod block_storage;
 mod common;
 mod compute;
+mod dns;
 mod identity;
 mod image;
 mod network;
 pub mod types;
 
 use crate::cloud_worker::{
-    block_storage::BlockStorageExt, compute::ComputeExt, identity::IdentityExt, image::ImageExt,
-    network::NetworkExt, types::*,
+    block_storage::BlockStorageExt, compute::ComputeExt, dns::DnsExt, identity::IdentityExt,
+    image::ImageExt, network::NetworkExt, types::*,
 };
 
 /// Cloud worker struct
@@ -64,9 +65,11 @@ impl Cloud {
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
             .await?;
         session
+            .discover_service_endpoint(&openstack_sdk::types::ServiceType::Dns)
+            .await?;
+        session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Image)
             .await?;
-
         session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Network)
             .await?;
@@ -157,6 +160,10 @@ impl Cloud {
                             }
                             ServiceType::Compute => {
                                 <Cloud as ComputeExt>::perform_api_request(self, &app_tx, request)
+                                    .await?
+                            }
+                            ServiceType::Dns => {
+                                <Cloud as DnsExt>::perform_api_request(self, &app_tx, request)
                                     .await?
                             }
                             ServiceType::Identity => {

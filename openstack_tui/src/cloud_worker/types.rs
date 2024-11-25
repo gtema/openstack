@@ -20,6 +20,7 @@ use openstack_sdk::types::ServiceType;
 pub use crate::cloud_worker::block_storage::types::*;
 pub use crate::cloud_worker::common::ConfirmableRequest;
 pub use crate::cloud_worker::compute::types::*;
+pub use crate::cloud_worker::dns::types::*;
 pub use crate::cloud_worker::identity::types::*;
 pub use crate::cloud_worker::image::types::*;
 pub use crate::cloud_worker::network::types::*;
@@ -47,6 +48,16 @@ pub enum ApiRequest {
     ComputeAggregates(ComputeAggregateFilters),
     ComputeHypervisors(ComputeHypervisorFilters),
     ComputeQuota,
+
+    // DNS
+    /// DNS Recordsets
+    DnsRecordsets(DnsRecordsetFilters),
+    /// DNS Zones
+    DnsZones(DnsZoneFilters),
+    /// Delete DNS zone
+    DnsZoneDelete(DnsZoneDelete),
+
+    // Identity (Keystone)
     IdentityAuthProjects(IdentityAuthProjectFilters),
     IdentityApplicationCredentials(IdentityApplicationCredentialFilters),
     IdentityGroups(IdentityGroupFilters),
@@ -81,6 +92,9 @@ impl From<ApiRequest> for ServiceType {
             | ApiRequest::ComputeQuota
             | ApiRequest::ComputeAggregates(_)
             | ApiRequest::ComputeHypervisors(_) => Self::Compute,
+            ApiRequest::DnsRecordsets(_)
+            | ApiRequest::DnsZones(_)
+            | ApiRequest::DnsZoneDelete(_) => Self::Dns,
             ApiRequest::IdentityAuthProjects(_)
             | ApiRequest::IdentityApplicationCredentials(_)
             | ApiRequest::IdentityGroups(_)
@@ -104,6 +118,7 @@ impl ConfirmableRequest for ApiRequest {
         match &self {
             ApiRequest::BlockStorageVolumeDelete(x) => x.get_confirm_message(),
             ApiRequest::ComputeServerDelete(x) => x.get_confirm_message(),
+            ApiRequest::DnsZoneDelete(x) => x.get_confirm_message(),
             ApiRequest::ImageImageDelete(x) => x.get_confirm_message(),
             _ => None,
         }

@@ -85,7 +85,7 @@ pub enum Action {
     /// Delete volume
     DeleteBlockStorageVolume,
 
-    // Compute (neutron)
+    // Compute (Nova)
     SetComputeServerFilters(cloud_types::ComputeServerFilters),
     SetComputeServerInstanceActionFilters(cloud_types::ComputeServerInstanceActionFilters),
     /// Show servers provisioned with selected flavor
@@ -98,6 +98,16 @@ pub enum Action {
     ShowComputeServerInstanceActions,
     /// Show selected server instance action events
     ShowComputeServerInstanceActionEvents,
+
+    // DNS (Designate)
+    /// Set DNS Zone filters
+    SetDnsZoneFilters(cloud_types::DnsZoneFilters),
+    /// Delete DNS zone
+    DeleteDnsZone,
+    /// Set DNS Recordset filters
+    SetDnsRecordsetFilters(cloud_types::DnsRecordsetFilters),
+    /// Zone recordsets
+    ShowDnsZoneRecordsets,
 
     // Identity (keystone)
     //  Groups

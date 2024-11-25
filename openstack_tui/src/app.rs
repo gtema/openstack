@@ -36,6 +36,7 @@ use crate::{
         },
         confirm_popup::ConfirmPopup,
         describe::Describe,
+        dns::{recordsets::DnsRecordsets, zones::DnsZones},
         error_popup::ErrorPopup,
         header::Header,
         home::Home,
@@ -141,6 +142,9 @@ impl App {
             Mode::ComputeHypervisors,
             Box::new(ComputeHypervisors::new()),
         );
+
+        components.insert(Mode::DnsRecordsets, Box::new(DnsRecordsets::new()));
+        components.insert(Mode::DnsZones, Box::new(DnsZones::new()));
 
         components.insert(
             Mode::IdentityApplicationCredentials,
