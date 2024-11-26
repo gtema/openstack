@@ -55,6 +55,18 @@ pub enum Mode {
     // Glance
     ImageImages,
 
+    // Octavia
+    /// LB Loadbalancers
+    LoadBalancers,
+    /// LB Listeners
+    LoadBalancerListeners,
+    /// LB Pools
+    LoadBalancerPools,
+    /// LB pool members
+    LoadBalancerPoolMembers,
+    /// LB HealthMonitors
+    LoadBalancerHealthMonitors,
+
     // Neutron
     NetworkNetworks,
     NetworkRouters,

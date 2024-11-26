@@ -23,6 +23,7 @@ pub use crate::cloud_worker::compute::types::*;
 pub use crate::cloud_worker::dns::types::*;
 pub use crate::cloud_worker::identity::types::*;
 pub use crate::cloud_worker::image::types::*;
+pub use crate::cloud_worker::load_balancer::types::*;
 pub use crate::cloud_worker::network::types::*;
 
 /// OpenStack "resource"
@@ -65,9 +66,20 @@ pub enum ApiRequest {
     IdentityProjects(IdentityProjectFilters),
     IdentityUsers(IdentityUserFilters),
     IdentityUserUpdate(IdentityUserUpdate),
+
+    // Image (Glance)
     ImageImages(ImageFilters),
     /// Delete image
     ImageImageDelete(ImageImageDelete),
+
+    // Load Balancer
+    LoadBalancers(LoadBalancerFilters),
+    LoadBalancerListeners(LoadBalancerListenerFilters),
+    LoadBalancerPools(LoadBalancerPoolFilters),
+    LoadBalancerPoolMembers(LoadBalancerPoolMemberFilters),
+    LoadBalancerHealthMonitors(LoadBalancerHealthMonitorFilters),
+
+    // Network (Neutron)
     NetworkNetworks(NetworkNetworkFilters),
     NetworkRouters(NetworkRouterFilters),
     NetworkSubnets(NetworkSubnetFilters),
@@ -103,6 +115,11 @@ impl From<ApiRequest> for ServiceType {
             | ApiRequest::IdentityUserUpdate(_)
             | ApiRequest::IdentityUsers(_) => Self::Identity,
             ApiRequest::ImageImages(_) | ApiRequest::ImageImageDelete(_) => Self::Image,
+            ApiRequest::LoadBalancers(_)
+            | ApiRequest::LoadBalancerListeners(_)
+            | ApiRequest::LoadBalancerHealthMonitors(_)
+            | ApiRequest::LoadBalancerPools(_)
+            | ApiRequest::LoadBalancerPoolMembers(_) => Self::LoadBalancer,
             ApiRequest::NetworkNetworks(_)
             | ApiRequest::NetworkRouters(_)
             | ApiRequest::NetworkQuota

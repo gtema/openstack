@@ -34,6 +34,7 @@ pub mod header;
 pub mod home;
 pub mod identity;
 pub mod image;
+pub mod load_balancer;
 pub mod network;
 pub mod project_select_popup;
 pub mod resource_select_popup;

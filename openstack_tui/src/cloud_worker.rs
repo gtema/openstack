@@ -28,12 +28,13 @@ mod compute;
 mod dns;
 mod identity;
 mod image;
+mod load_balancer;
 mod network;
 pub mod types;
 
 use crate::cloud_worker::{
     block_storage::BlockStorageExt, compute::ComputeExt, dns::DnsExt, identity::IdentityExt,
-    image::ImageExt, network::NetworkExt, types::*,
+    image::ImageExt, load_balancer::LoadBalancerExt, network::NetworkExt, types::*,
 };
 
 /// Cloud worker struct
@@ -69,6 +70,9 @@ impl Cloud {
             .await?;
         session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Image)
+            .await?;
+        session
+            .discover_service_endpoint(&openstack_sdk::types::ServiceType::LoadBalancer)
             .await?;
         session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Network)
@@ -173,6 +177,12 @@ impl Cloud {
                             ServiceType::Image => {
                                 <Cloud as ImageExt>::perform_api_request(self, &app_tx, request)
                                     .await?
+                            }
+                            ServiceType::LoadBalancer => {
+                                <Cloud as LoadBalancerExt>::perform_api_request(
+                                    self, &app_tx, request,
+                                )
+                                .await?
                             }
                             ServiceType::Network => {
                                 <Cloud as NetworkExt>::perform_api_request(self, &app_tx, request)
