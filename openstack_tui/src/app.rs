@@ -46,6 +46,11 @@ use crate::{
             users::IdentityUsers,
         },
         image::images::Images,
+        load_balancer::{
+            health_monitors::LoadBalancerHealthMonitors, listeners::LoadBalancerListeners,
+            loadbalancers::LoadBalancers, pool_members::LoadBalancerPoolMembers,
+            pools::LoadBalancerPools,
+        },
         network::{
             networks::NetworkNetworks, routers::NetworkRouters,
             security_group_rules::NetworkSecurityGroupRules,
@@ -159,6 +164,21 @@ impl App {
         components.insert(Mode::IdentityUsers, Box::new(IdentityUsers::new()));
 
         components.insert(Mode::ImageImages, Box::new(Images::new()));
+
+        components.insert(Mode::LoadBalancers, Box::new(LoadBalancers::new()));
+        components.insert(
+            Mode::LoadBalancerListeners,
+            Box::new(LoadBalancerListeners::new()),
+        );
+        components.insert(Mode::LoadBalancerPools, Box::new(LoadBalancerPools::new()));
+        components.insert(
+            Mode::LoadBalancerPoolMembers,
+            Box::new(LoadBalancerPoolMembers::new()),
+        );
+        components.insert(
+            Mode::LoadBalancerHealthMonitors,
+            Box::new(LoadBalancerHealthMonitors::new()),
+        );
 
         components.insert(Mode::NetworkNetworks, Box::new(NetworkNetworks::new()));
         components.insert(Mode::NetworkRouters, Box::new(NetworkRouters::new()));

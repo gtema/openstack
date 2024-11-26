@@ -144,6 +144,22 @@ pub enum Action {
     /// Delete image
     DeleteImage,
 
+    // LB
+    /// Set LB filters
+    SetLoadBalancerFilters(cloud_types::LoadBalancerFilters),
+    /// Set LB Listener filters
+    SetLoadBalancerListenerFilters(cloud_types::LoadBalancerListenerFilters),
+    /// Show LB Listeners
+    ShowLoadBalancerListeners,
+    /// Set LB Pool filters
+    SetLoadBalancerPoolFilters(cloud_types::LoadBalancerPoolFilters),
+    /// Set LB Member filters
+    SetLoadBalancerPoolMemberFilters(cloud_types::LoadBalancerPoolMemberFilters),
+    /// Show LB Pool members
+    ShowLoadBalancerPoolMembers,
+    /// Set LB Healthmonitor filters
+    SetLoadBalancerHealthMonitorFilters(cloud_types::LoadBalancerHealthMonitorFilters),
+
     // Network (neutron)
     /// Set Security group filters
     SetNetworkSecurityGroupFilters(cloud_types::NetworkSecurityGroupFilters),

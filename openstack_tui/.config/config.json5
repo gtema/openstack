@@ -76,6 +76,22 @@
       "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private", "type": "Filter"},
       "ctrl-d": { "action": "DeleteImage", "description": "Delete"},
     },
+    "LoadBalancers": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+    },
+    "LoadBalancerListeners": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+    },
+    "LoadBalancerPools": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+      "<enter>": { "action": "ShowLoadBalancerPoolMembers", "description": "Members"},
+    },
+    "LoadBalancerPoolMembers": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+    },
+    "LoadBalancerHealthMonitors": {
+      "y": { "action": "DescribeApiResponse", "description": "YAML"},
+    },
     "NetworkNetworks": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "<enter>": { "action": "ShowNetworkSubnets", "description": "Subnets"},
@@ -115,6 +131,14 @@
     "host-aggregates (compute)": "ComputeAggregates",
     "hypervisors (compute)": "ComputeHypervisors",
     "images": "ImageImages",
+    "loadbalancers": "LoadBalancers",
+    "lb (loadbalancers)": "LoadBalancers",
+    "listeners (loadbalancer)": "LoadBalancerListeners",
+    "lbl (loadbalancer listeners)": "LoadBalancerListeners",
+    "pool (loadbalancer)": "LoadBalancerPools",
+    "lbp (loadbalancer pools)": "LoadBalancerPools",
+    "healthmonitors (loadbalancer)": "LoadBalancerHealthMonitors",
+    "lbhm (loadbalancer health monitors)": "LoadBalancerHealthMonitors",
     "nets": "NetworkNetworks",
     "networks": "NetworkNetworks",
     "projects": "IdentityProjects",

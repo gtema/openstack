@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, NetworkNetworkFilters, NetworkSubnetFilters},
+    cloud_worker::types::{ApiRequest, LoadBalancerPoolMemberFilters},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -29,27 +29,24 @@ use crate::{
     utils::{OutputConfig, StructTable},
 };
 
-const TITLE: &str = "Networks";
+const TITLE: &str = "LB Pool Members";
 
 #[derive(Deserialize, StructTable)]
-pub struct NetworkData {
+pub struct MemberData {
     #[structable(title = "Id", wide)]
     id: String,
     #[structable(title = "Name")]
     name: String,
     #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    #[serde(rename = "created_at")]
-    created: String,
-    #[structable(title = "Updated")]
-    #[serde(rename = "updated_at")]
-    updated: String,
+    operating_status: String,
+    #[structable(title = "Port")]
+    protocol_port: usize,
 }
 
-pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkFilters>;
+pub type LoadBalancerPoolMembers<'a> =
+    TableViewComponentBase<'a, MemberData, LoadBalancerPoolMemberFilters>;
 
-impl Component for NetworkNetworks<'_> {
+impl Component for LoadBalancerPoolMembers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
     }
@@ -66,52 +63,56 @@ impl Component for NetworkNetworks<'_> {
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
-                if let Mode::NetworkNetworks = current_mode {
+                if let Mode::LoadBalancerPoolMembers = current_mode {
                     return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::NetworkNetworks(self.get_filters().clone()),
+                        ApiRequest::LoadBalancerPoolMembers(self.get_filters().clone()),
                     )));
                 }
             }
             Action::Mode {
-                mode: Mode::NetworkNetworks,
+                mode: Mode::LoadBalancerPoolMembers,
                 ..
             }
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::NetworkNetworks(self.get_filters().clone()),
+                    ApiRequest::LoadBalancerPoolMembers(self.get_filters().clone()),
                 )));
-            }
-            Action::ShowNetworkSubnets => {
-                // only if we are currently in the expected mode
-                if current_mode == Mode::NetworkNetworks {
-                    // and have command_tx
-                    if let Some(command_tx) = self.get_command_tx() {
-                        // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
-                            command_tx.send(Action::SetNetworkSubnetFilters(
-                                NetworkSubnetFilters {
-                                    network_id: Some(group_row.id.clone()),
-                                    network_name: Some(group_row.name.clone()),
-                                },
-                            ))?;
-                            return Ok(Some(Action::Mode {
-                                mode: Mode::NetworkSubnets,
-                                stack: true,
-                            }));
-                        }
-                    }
-                }
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::NetworkNetworks(_),
+                request: ApiRequest::LoadBalancerPoolMembers(_),
                 data,
             } => {
                 self.set_data(data)?;
             }
+            Action::SetLoadBalancerPoolMemberFilters(filters) => {
+                self.set_filters(filters);
+                self.set_loading(true);
+                return Ok(Some(Action::PerformApiRequest(
+                    ApiRequest::LoadBalancerPoolMembers(self.get_filters().clone()),
+                )));
+            }
+            // Action::DeleteLoadBalancer => {
+            //     // only if we are currently in the right mode
+            //     if current_mode == Mode::LoadBalancerLoadBalancers {
+            //         // and have command_tx
+            //         if let Some(command_tx) = self.get_command_tx() {
+            //             // and have a selected entry
+            //             if let Some(selected_entry) = self.get_selected() {
+            //                 // send action to set SecurityGroupRulesFilters
+            //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
+            //                     LoadBalancerLoadBalancerDelete {
+            //                         image_id: selected_entry.id.clone(),
+            //                         image_name: Some(selected_entry.name.clone()),
+            //                     },
+            //                 )))?;
+            //             }
+            //         }
+            //     }
+            // }
             _ => {}
         };
         Ok(None)
