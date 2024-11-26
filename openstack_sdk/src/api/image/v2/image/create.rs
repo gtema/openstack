@@ -269,7 +269,7 @@ pub struct Request<'a> {
     /// an image `public`. Some sites may restrict what users can make an image
     /// `community`. Some sites may restrict what users can perform member
     /// operations on a `shared` image. *Since the Image API v2.5, the default
-    /// value is \`\`shared\`\`.*
+    /// value is `shared`.*
     ///
     #[builder(default)]
     pub(crate) visibility: Option<Visibility>,

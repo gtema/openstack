@@ -313,7 +313,7 @@ struct ResponseData {
     timeout_tcp_inspect: Option<i32>,
 
     /// List of ciphers in OpenSSL format (colon-separated). See
-    /// [https://www.openssl.org/docs/man1.1.1/man1/ciphers.html](https://www.openssl.org/docs/man1.1.1/man1/ciphers.html)
+    /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
     ///
     /// **New in version 2.15**
     ///

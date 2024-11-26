@@ -28,9 +28,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
-use serde_json::Value;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
@@ -39,8 +37,6 @@ pub struct Roles<'a> {
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
-    /// The name of the application credential. Must be unique to a user.
-    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
@@ -96,6 +92,14 @@ pub struct ApplicationCredential<'a> {
     #[builder(setter(into))]
     pub(crate) name: Cow<'a, str>,
 
+    /// The ID of the project the application credential was created for and
+    /// that authentication requests using this application credential will be
+    /// scoped to.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) project_id: Option<Cow<'a, str>>,
+
     /// An optional list of role objects, identified by ID or name. The list
     /// may only contain roles that the user has assigned on the project. If
     /// not provided, the roles assigned to the application credential will be
@@ -110,7 +114,7 @@ pub struct ApplicationCredential<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) secret: Option<Option<Cow<'a, str>>>,
+    pub(crate) secret: Option<Cow<'a, str>>,
 
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
@@ -119,24 +123,6 @@ pub struct ApplicationCredential<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) unrestricted: Option<bool>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    #[serde(flatten)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
-}
-
-impl<'a> ApplicationCredentialBuilder<'a> {
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -30,6 +30,8 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// The ID of the domain.
+    ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 

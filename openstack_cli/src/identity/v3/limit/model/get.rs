@@ -33,8 +33,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::limit::model::get;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Return the configured limit enforcement model.
 ///
@@ -60,22 +59,20 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Model response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// A short description of the enforcement model used
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The name of the enforcement model
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
 }
 
 impl ModelCommand {

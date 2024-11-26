@@ -31,11 +31,11 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
+use crate::common::parse_json;
 use openstack_sdk::api::identity::v3::limit::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Creates limits. It supports to create more than one limit in one request.
 ///
@@ -53,9 +53,10 @@ pub struct LimitCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// A list of `limits` objects
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    limits: Vec<Value>,
 }
 
 /// Query parameters
@@ -65,22 +66,63 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Limit response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The limit description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    domain_id: Option<String>,
+
+    /// The limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    region_id: Option<String>,
+
+    /// The override limit.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_limit: Option<i32>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    service_id: Option<String>,
 }
 
 impl LimitCommand {
@@ -100,9 +142,14 @@ impl LimitCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
+        // Set Request.limits data
+
+        let limits_builder: Vec<create::Limits> = self
+            .limits
+            .iter()
+            .flat_map(|v| serde_json::from_value::<create::Limits>(v.to_owned()))
+            .collect::<Vec<create::Limits>>();
+        ep_builder.limits(limits_builder);
 
         let ep = ep_builder
             .build()

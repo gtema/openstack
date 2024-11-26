@@ -178,7 +178,7 @@ pub struct ImageCommand {
     /// an image `public`. Some sites may restrict what users can make an image
     /// `community`. Some sites may restrict what users can perform member
     /// operations on a `shared` image. *Since the Image API v2.5, the default
-    /// value is \`\`shared\`\`.*
+    /// value is `shared`.*
     ///
     #[arg(help_heading = "Body parameters", long)]
     visibility: Option<Visibility>,

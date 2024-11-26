@@ -114,6 +114,13 @@ struct ApplicationCredential {
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
+    /// The ID of the project the application credential was created for and
+    /// that authentication requests using this application credential will be
+    /// scoped to.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    project_id: Option<String>,
+
     /// An optional list of role objects, identified by ID or name. The list
     /// may only contain roles that the user has assigned on the project. If
     /// not provided, the roles assigned to the application credential will be
@@ -139,14 +146,21 @@ struct ApplicationCredential {
 /// ApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// A list of `access_rules` objects
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     access_rules: Option<Value>,
 
+    /// A description of the application credential’s purpose.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
+    /// An optional expiry time for the application credential. If unset, the
+    /// application credential does not expire.
+    ///
     #[serde()]
     #[structable(optional)]
     expires_at: Option<String>,
@@ -157,6 +171,8 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
+    /// The name of the application credential. Must be unique to a user.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
@@ -169,6 +185,11 @@ struct ResponseData {
     #[structable(optional)]
     project_id: Option<String>,
 
+    /// An optional list of role objects, identified by ID or name. The list
+    /// may only contain roles that the user has assigned on the project. If
+    /// not provided, the roles assigned to the application credential will be
+    /// the same as the roles in the current token.
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     roles: Option<Value>,
@@ -182,6 +203,10 @@ struct ResponseData {
     #[structable(optional)]
     secret: Option<String>,
 
+    /// An optional flag to restrict whether the application credential may be
+    /// used for the creation or destruction of other application credentials
+    /// or trusts. Defaults to false.
+    ///
     #[serde()]
     #[structable(optional)]
     unrestricted: Option<bool>,
@@ -250,15 +275,18 @@ impl ApplicationCredentialCommand {
         // Set Request.application_credential data
         let args = &self.application_credential;
         let mut application_credential_builder = create::ApplicationCredentialBuilder::default();
+        if let Some(val) = &args.secret {
+            application_credential_builder.secret(val);
+        }
+
+        if let Some(val) = &args.project_id {
+            application_credential_builder.project_id(val);
+        }
 
         application_credential_builder.name(&args.name);
 
         if let Some(val) = &args.description {
             application_credential_builder.description(Some(val.into()));
-        }
-
-        if let Some(val) = &args.secret {
-            application_credential_builder.secret(Some(val.into()));
         }
 
         if let Some(val) = &args.expires_at {

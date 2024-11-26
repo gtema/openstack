@@ -37,7 +37,7 @@ use openstack_sdk::api::identity::v3::user::access_rule::get;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 use tracing::warn;
 
 /// Show details of an access rule.
@@ -93,22 +93,41 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// AccessRule response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The UUID of the access rule
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The request method that the application credential is permitted to use
+    /// for a given API endpoint.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    method: Option<String>,
+
+    /// The API path that the application credential is permitted to access.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    path: Option<String>,
+
+    /// The service type identifier for the service that the application
+    /// credential is permitted to access. Must be a service type that is
+    /// listed in the service catalog and not a code name for a service.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    service: Option<String>,
 }
 
 impl AccessRuleCommand {

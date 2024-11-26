@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::limit::list;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists Limits.
 ///
@@ -55,27 +59,115 @@ pub struct LimitsCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// Domain resource for which the operation should be performed.
+    #[command(flatten)]
+    domain: DomainInput,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+
+    /// The ID of the region.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    region_id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    resource_name: Option<String>,
+
+    /// Filters the response by a service ID.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    service_id: Option<String>,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
+
+/// Domain input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct DomainInput {
+    /// Domain Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_NAME")]
+    domain_name: Option<String>,
+    /// Domain ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_ID")]
+    domain_id: Option<String>,
+    /// Current domain.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_domain: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Limits response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The limit description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    domain_id: Option<String>,
+
+    /// The limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    project_id: Option<String>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    region_id: Option<String>,
+
+    /// The override limit.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    resource_limit: Option<i32>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    service_id: Option<String>,
 }
 
 impl LimitsCommand {
@@ -90,18 +182,110 @@ impl LimitsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.service_id {
+            ep_builder.service_id(val);
+        }
+        if let Some(val) = &self.query.region_id {
+            ep_builder.region_id(val);
+        }
+        if let Some(val) = &self.query.resource_name {
+            ep_builder.resource_name(val);
+        }
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(id) = &self.query.domain.domain_id {
+            // domain_id is passed. No need to lookup
+            ep_builder.domain_id(id);
+        } else if let Some(name) = &self.query.domain.domain_name {
+            // domain_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_domain::Request::builder();
+            warn!("Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.domain_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.domain.current_domain {
+            ep_builder.domain_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }
