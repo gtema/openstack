@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists all load balancers for the project.
 ///
@@ -62,7 +66,113 @@ pub struct LoadbalancersCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// An availability zone name.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    availability_zone: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// The ID of the flavor.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    flavor_id: Option<String>,
+
+    /// The ID of the resource
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags: Option<String>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags_any: Option<String>,
+
+    /// The operating status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
+    operating_status: Option<String>,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+
+    /// Provider name for the load balancer.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    provider: Option<String>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
+    provisioning_status: Option<String>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags: Option<String>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags_any: Option<String>,
+
+    /// The IP address of the Virtual IP (VIP).
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    vip_address: Option<String>,
+
+    /// The ID of the network for the Virtual IP (VIP).
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    vip_network_id: Option<String>,
+
+    /// The ID of the Virtual IP (VIP) port.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    vip_port_id: Option<String>,
+
+    /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    vip_qos_policy_id: Option<String>,
+
+    /// The ID of the subnet for the Virtual IP (VIP).
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    vip_subnet_id: Option<String>,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -233,10 +343,102 @@ impl LoadbalancersCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.flavor_id {
+            ep_builder.flavor_id(val);
+        }
+        if let Some(val) = &self.query.provider {
+            ep_builder.provider(val);
+        }
+        if let Some(val) = &self.query.vip_address {
+            ep_builder.vip_address(val);
+        }
+        if let Some(val) = &self.query.vip_network_id {
+            ep_builder.vip_network_id(val);
+        }
+        if let Some(val) = &self.query.vip_port_id {
+            ep_builder.vip_port_id(val);
+        }
+        if let Some(val) = &self.query.vip_subnet_id {
+            ep_builder.vip_subnet_id(val);
+        }
+        if let Some(val) = &self.query.vip_qos_policy_id {
+            ep_builder.vip_qos_policy_id(val);
+        }
+        if let Some(val) = &self.query.availability_zone {
+            ep_builder.availability_zone(val);
+        }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

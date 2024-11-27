@@ -37,10 +37,113 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// The IP address of the backend member server.
+    ///
+    #[builder(default, setter(into))]
+    address: Option<Cow<'a, str>>,
+
+    /// The administrative state of the resource
+    ///
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    /// Is the member a backup?
+    ///
+    #[builder(default)]
+    backup: Option<bool>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// The ID of the resource
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// An alternate IP address used for health monitoring a backend member.
+    ///
+    #[builder(default, setter(into))]
+    monitor_address: Option<Cow<'a, str>>,
+
+    /// An alternate protocol port used for health monitoring a backend member.
+    ///
+    #[builder(default, setter(into))]
+    monitor_port: Option<Cow<'a, str>>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags_any: Option<Cow<'a, str>>,
+
+    /// The operating status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    operating_status: Option<Cow<'a, str>>,
+
     /// pool_id parameter for /v2/lbaas/pools/{pool_id}/members/{member_id} API
     ///
     #[builder(default, setter(into))]
     pool_id: Cow<'a, str>,
+
+    /// The ID of the project owning this resource.
+    ///
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    /// The protocol port number the backend member server is listening on.
+    ///
+    #[builder(default)]
+    protocol_port: Option<i32>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    provisioning_status: Option<Cow<'a, str>>,
+
+    /// The subnet ID the member service is accessible from.
+    ///
+    #[builder(default, setter(into))]
+    subnet_id: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[builder(default, setter(into))]
+    tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[builder(default, setter(into))]
+    tags_any: Option<Cow<'a, str>>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[builder(default, setter(into))]
+    updated_at: Option<Cow<'a, str>>,
+
+    /// The weight of a member determines the portion of requests or
+    /// connections it services compared to the other members of the pool.
+    ///
+    #[builder(default)]
+    weight: Option<i32>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -91,7 +194,29 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("admin_state_up", self.admin_state_up);
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("address", self.address.as_ref());
+        params.push_opt("protocol_port", self.protocol_port);
+        params.push_opt("subnet_id", self.subnet_id.as_ref());
+        params.push_opt("weight", self.weight);
+        params.push_opt("monitor_address", self.monitor_address.as_ref());
+        params.push_opt("monitor_port", self.monitor_port.as_ref());
+        params.push_opt("backup", self.backup);
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

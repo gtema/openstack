@@ -56,7 +56,13 @@ pub struct ProvidersCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -89,10 +95,16 @@ impl ProvidersCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

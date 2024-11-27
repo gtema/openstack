@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::pool::member::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists all members for the project.
 ///
@@ -62,7 +66,124 @@ pub struct MembersCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The IP address of the backend member server.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    address: Option<String>,
+
+    /// The administrative state of the resource
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    admin_state_up: Option<bool>,
+
+    /// Is the member a backup?
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    backup: Option<bool>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// The ID of the resource
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// An alternate IP address used for health monitoring a backend member.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    monitor_address: Option<String>,
+
+    /// An alternate protocol port used for health monitoring a backend member.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    monitor_port: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags: Option<String>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags_any: Option<String>,
+
+    /// The operating status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
+    operating_status: Option<String>,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+
+    /// The protocol port number the backend member server is listening on.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    protocol_port: Option<i32>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
+    provisioning_status: Option<String>,
+
+    /// The subnet ID the member service is accessible from.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    subnet_id: Option<String>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags: Option<String>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags_any: Option<String>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    updated_at: Option<String>,
+
+    /// The weight of a member determines the portion of requests or
+    /// connections it services compared to the other members of the pool.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    weight: Option<i32>,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -212,6 +333,104 @@ impl MembersCommand {
         // Set path parameters
         ep_builder.pool_id(&self.path.pool_id);
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.query.address {
+            ep_builder.address(val);
+        }
+        if let Some(val) = &self.query.protocol_port {
+            ep_builder.protocol_port(*val);
+        }
+        if let Some(val) = &self.query.subnet_id {
+            ep_builder.subnet_id(val);
+        }
+        if let Some(val) = &self.query.weight {
+            ep_builder.weight(*val);
+        }
+        if let Some(val) = &self.query.monitor_address {
+            ep_builder.monitor_address(val);
+        }
+        if let Some(val) = &self.query.monitor_port {
+            ep_builder.monitor_port(val);
+        }
+        if let Some(val) = &self.query.backup {
+            ep_builder.backup(*val);
+        }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

@@ -61,7 +61,67 @@ pub struct AmphoraesCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    #[arg(help_heading = "Query parameters", long)]
+    cached_zone: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    cert_busy: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    cert_expiration: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    compute_flavor: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    compute_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    created_at: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    ha_ip: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    ha_port_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    image_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    lb_network_ip: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    loadbalancer_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    role: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    status: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    updated_at: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    vrrp_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    vrrp_interface: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    vrrp_ip: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    vrrp_port_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    vrrp_priority: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -209,10 +269,70 @@ impl AmphoraesCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.loadbalancer_id {
+            ep_builder.loadbalancer_id(val);
+        }
+        if let Some(val) = &self.query.compute_id {
+            ep_builder.compute_id(val);
+        }
+        if let Some(val) = &self.query.lb_network_ip {
+            ep_builder.lb_network_ip(val);
+        }
+        if let Some(val) = &self.query.vrrp_ip {
+            ep_builder.vrrp_ip(val);
+        }
+        if let Some(val) = &self.query.ha_ip {
+            ep_builder.ha_ip(val);
+        }
+        if let Some(val) = &self.query.vrrp_port_id {
+            ep_builder.vrrp_port_id(val);
+        }
+        if let Some(val) = &self.query.ha_port_id {
+            ep_builder.ha_port_id(val);
+        }
+        if let Some(val) = &self.query.cert_expiration {
+            ep_builder.cert_expiration(val);
+        }
+        if let Some(val) = &self.query.cert_busy {
+            ep_builder.cert_busy(val);
+        }
+        if let Some(val) = &self.query.role {
+            ep_builder.role(val);
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
+        if let Some(val) = &self.query.vrrp_interface {
+            ep_builder.vrrp_interface(val);
+        }
+        if let Some(val) = &self.query.vrrp_id {
+            ep_builder.vrrp_id(val);
+        }
+        if let Some(val) = &self.query.vrrp_priority {
+            ep_builder.vrrp_priority(val);
+        }
+        if let Some(val) = &self.query.cached_zone {
+            ep_builder.cached_zone(val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.query.image_id {
+            ep_builder.image_id(val);
+        }
+        if let Some(val) = &self.query.compute_flavor {
+            ep_builder.compute_flavor(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

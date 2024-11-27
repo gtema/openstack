@@ -32,20 +32,82 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    #[builder(default, setter(into))]
+    cached_zone: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    cert_busy: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    cert_expiration: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    compute_flavor: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    compute_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    ha_ip: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    ha_port_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    image_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    lb_network_ip: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    loadbalancer_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    role: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    status: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    updated_at: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    vrrp_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    vrrp_interface: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    vrrp_ip: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    vrrp_port_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    vrrp_priority: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Amphorae.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -70,7 +132,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -80,7 +142,29 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("loadbalancer_id", self.loadbalancer_id.as_ref());
+        params.push_opt("compute_id", self.compute_id.as_ref());
+        params.push_opt("lb_network_ip", self.lb_network_ip.as_ref());
+        params.push_opt("vrrp_ip", self.vrrp_ip.as_ref());
+        params.push_opt("ha_ip", self.ha_ip.as_ref());
+        params.push_opt("vrrp_port_id", self.vrrp_port_id.as_ref());
+        params.push_opt("ha_port_id", self.ha_port_id.as_ref());
+        params.push_opt("cert_expiration", self.cert_expiration.as_ref());
+        params.push_opt("cert_busy", self.cert_busy.as_ref());
+        params.push_opt("role", self.role.as_ref());
+        params.push_opt("status", self.status.as_ref());
+        params.push_opt("vrrp_interface", self.vrrp_interface.as_ref());
+        params.push_opt("vrrp_id", self.vrrp_id.as_ref());
+        params.push_opt("vrrp_priority", self.vrrp_priority.as_ref());
+        params.push_opt("cached_zone", self.cached_zone.as_ref());
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("image_id", self.image_id.as_ref());
+        params.push_opt("compute_flavor", self.compute_flavor.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

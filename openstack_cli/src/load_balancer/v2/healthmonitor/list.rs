@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists all health monitors for the project.
 ///
@@ -62,7 +66,139 @@ pub struct HealthmonitorsCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The type of health monitor.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["HTTP","HTTPS","PING","SCTP","TCP","TLS-HELLO","UDP-CONNECT"])]
+    _type: Option<String>,
+
+    /// The administrative state of the resource
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    admin_state_up: Option<bool>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    created_at: Option<String>,
+
+    /// The time, in seconds, between sending probes to members.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    delay: Option<i32>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// The list of HTTP status codes expected in response from the member to
+    /// declare it healthy.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    expected_codes: Option<String>,
+
+    /// The HTTP method that the health monitor uses for requests.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["CONNECT","DELETE","GET","HEAD","OPTIONS","PATCH","POST","PUT","TRACE"])]
+    http_method: Option<String>,
+
+    /// The ID of the resource
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// The number of successful checks before changing the operating status of
+    /// the member to ONLINE. A valid value is from 1 to 10.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    max_retries: Option<i32>,
+
+    /// The number of allowed check failures before changing the operating
+    /// status of the member to ERROR. A valid value is from 1 to 10.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    max_retries_down: Option<i32>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags: Option<String>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags_any: Option<String>,
+
+    /// The operating status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
+    operating_status: Option<String>,
+
+    /// The ID of the pool.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    pool_id: Option<String>,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+
+    /// The provisioning status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
+    provisioning_status: Option<String>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags: Option<String>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags_any: Option<String>,
+
+    /// The maximum time, in seconds, that a monitor waits to connect before it
+    /// times out.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    timeout: Option<i32>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    updated_at: Option<String>,
+
+    /// The HTTP URL path of the request sent by the monitor to test the health
+    /// of a backend member. Must be a string that begins with a forward slash
+    /// (/).
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    url_path: Option<String>,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -229,10 +365,114 @@ impl HealthmonitorsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.query.delay {
+            ep_builder.delay(*val);
+        }
+        if let Some(val) = &self.query.expected_codes {
+            ep_builder.expected_codes(val);
+        }
+        if let Some(val) = &self.query.http_method {
+            ep_builder.http_method(val);
+        }
+        if let Some(val) = &self.query.max_retries {
+            ep_builder.max_retries(*val);
+        }
+        if let Some(val) = &self.query.max_retries_down {
+            ep_builder.max_retries_down(*val);
+        }
+        if let Some(val) = &self.query.pool_id {
+            ep_builder.pool_id(val);
+        }
+        if let Some(val) = &self.query.timeout {
+            ep_builder.timeout(*val);
+        }
+        if let Some(val) = &self.query._type {
+            ep_builder._type(val);
+        }
+        if let Some(val) = &self.query.url_path {
+            ep_builder.url_path(val);
+        }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

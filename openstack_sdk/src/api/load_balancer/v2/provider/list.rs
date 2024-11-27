@@ -27,20 +27,28 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Provider.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -65,7 +73,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -75,7 +83,11 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("name", self.name.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

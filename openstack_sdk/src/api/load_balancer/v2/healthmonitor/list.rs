@@ -32,20 +32,140 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    /// The type of health monitor.
+    ///
+    #[builder(default, setter(into))]
+    _type: Option<Cow<'a, str>>,
+
+    /// The administrative state of the resource
+    ///
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    /// The time, in seconds, between sending probes to members.
+    ///
+    #[builder(default)]
+    delay: Option<i32>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// The list of HTTP status codes expected in response from the member to
+    /// declare it healthy.
+    ///
+    #[builder(default, setter(into))]
+    expected_codes: Option<Cow<'a, str>>,
+
+    /// The HTTP method that the health monitor uses for requests.
+    ///
+    #[builder(default, setter(into))]
+    http_method: Option<Cow<'a, str>>,
+
+    /// The ID of the resource
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// The number of successful checks before changing the operating status of
+    /// the member to ONLINE. A valid value is from 1 to 10.
+    ///
+    #[builder(default)]
+    max_retries: Option<i32>,
+
+    /// The number of allowed check failures before changing the operating
+    /// status of the member to ERROR. A valid value is from 1 to 10.
+    ///
+    #[builder(default)]
+    max_retries_down: Option<i32>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags_any: Option<Cow<'a, str>>,
+
+    /// The operating status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    operating_status: Option<Cow<'a, str>>,
+
+    /// The ID of the pool.
+    ///
+    #[builder(default, setter(into))]
+    pool_id: Option<Cow<'a, str>>,
+
+    /// The ID of the project owning this resource.
+    ///
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    provisioning_status: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[builder(default, setter(into))]
+    tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[builder(default, setter(into))]
+    tags_any: Option<Cow<'a, str>>,
+
+    /// The maximum time, in seconds, that a monitor waits to connect before it
+    /// times out.
+    ///
+    #[builder(default)]
+    timeout: Option<i32>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[builder(default, setter(into))]
+    updated_at: Option<Cow<'a, str>>,
+
+    /// The HTTP URL path of the request sent by the monitor to test the health
+    /// of a backend member. Must be a string that begins with a forward slash
+    /// (/).
+    ///
+    #[builder(default, setter(into))]
+    url_path: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Healthmonitor.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -70,7 +190,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -80,7 +200,31 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("admin_state_up", self.admin_state_up);
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("delay", self.delay);
+        params.push_opt("expected_codes", self.expected_codes.as_ref());
+        params.push_opt("http_method", self.http_method.as_ref());
+        params.push_opt("max_retries", self.max_retries);
+        params.push_opt("max_retries_down", self.max_retries_down);
+        params.push_opt("pool_id", self.pool_id.as_ref());
+        params.push_opt("timeout", self.timeout);
+        params.push_opt("type", self._type.as_ref());
+        params.push_opt("url_path", self.url_path.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

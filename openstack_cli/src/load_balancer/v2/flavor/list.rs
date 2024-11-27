@@ -50,7 +50,22 @@ pub struct FlavorsCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    enabled: Option<bool>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    flavor_profile_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -91,10 +106,25 @@ impl FlavorsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.flavor_profile_id {
+            ep_builder.flavor_profile_id(val);
+        }
+        if let Some(val) = &self.query.enabled {
+            ep_builder.enabled(*val);
+        }
         // Set body parameters
 
         let ep = ep_builder

@@ -32,20 +32,114 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    /// An availability zone name.
+    ///
+    #[builder(default, setter(into))]
+    availability_zone: Option<Cow<'a, str>>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// The ID of the flavor.
+    ///
+    #[builder(default, setter(into))]
+    flavor_id: Option<Cow<'a, str>>,
+
+    /// The ID of the resource
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags_any: Option<Cow<'a, str>>,
+
+    /// The operating status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    operating_status: Option<Cow<'a, str>>,
+
+    /// The ID of the project owning this resource.
+    ///
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    /// Provider name for the load balancer.
+    ///
+    #[builder(default, setter(into))]
+    provider: Option<Cow<'a, str>>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    provisioning_status: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[builder(default, setter(into))]
+    tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[builder(default, setter(into))]
+    tags_any: Option<Cow<'a, str>>,
+
+    /// The IP address of the Virtual IP (VIP).
+    ///
+    #[builder(default, setter(into))]
+    vip_address: Option<Cow<'a, str>>,
+
+    /// The ID of the network for the Virtual IP (VIP).
+    ///
+    #[builder(default, setter(into))]
+    vip_network_id: Option<Cow<'a, str>>,
+
+    /// The ID of the Virtual IP (VIP) port.
+    ///
+    #[builder(default, setter(into))]
+    vip_port_id: Option<Cow<'a, str>>,
+
+    /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
+    ///
+    #[builder(default, setter(into))]
+    vip_qos_policy_id: Option<Cow<'a, str>>,
+
+    /// The ID of the subnet for the Virtual IP (VIP).
+    ///
+    #[builder(default, setter(into))]
+    vip_subnet_id: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Loadbalancer.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -70,7 +164,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -80,7 +174,27 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("flavor_id", self.flavor_id.as_ref());
+        params.push_opt("provider", self.provider.as_ref());
+        params.push_opt("vip_address", self.vip_address.as_ref());
+        params.push_opt("vip_network_id", self.vip_network_id.as_ref());
+        params.push_opt("vip_port_id", self.vip_port_id.as_ref());
+        params.push_opt("vip_subnet_id", self.vip_subnet_id.as_ref());
+        params.push_opt("vip_qos_policy_id", self.vip_qos_policy_id.as_ref());
+        params.push_opt("availability_zone", self.availability_zone.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

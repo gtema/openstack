@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::l7policy::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists all L7 policies for the project.
 ///
@@ -62,7 +66,59 @@ pub struct L7PoliciesCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    #[arg(help_heading = "Query parameters", long)]
+    action: Option<String>,
+
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    admin_state_up: Option<bool>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    listener_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    operating_status: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    position: Option<String>,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+
+    #[arg(help_heading = "Query parameters", long)]
+    provisioning_status: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    redirect_pool_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    redirect_prefix: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    redirect_url: Option<String>,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -211,10 +267,84 @@ impl L7PoliciesCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.action {
+            ep_builder.action(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.listener_id {
+            ep_builder.listener_id(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.position {
+            ep_builder.position(val);
+        }
+        if let Some(val) = &self.query.redirect_pool_id {
+            ep_builder.redirect_pool_id(val);
+        }
+        if let Some(val) = &self.query.redirect_url {
+            ep_builder.redirect_url(val);
+        }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
+        if let Some(val) = &self.query.redirect_prefix {
+            ep_builder.redirect_prefix(val);
+        }
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
         // Set body parameters
 
         let ep = ep_builder

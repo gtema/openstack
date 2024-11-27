@@ -69,7 +69,7 @@ where {
 
 impl<'a> Findable for Request<'a> {
     type G = Get::Request<'a>;
-    type L = List::Request;
+    type L = List::Request<'a>;
     fn get_ep(&self) -> Get::Request<'a> {
         let mut ep = Get::Request::builder();
         ep.id(self.id.clone());
@@ -78,7 +78,7 @@ impl<'a> Findable for Request<'a> {
         }
         ep.build().unwrap()
     }
-    fn list_ep(&self) -> List::Request {
+    fn list_ep(&self) -> List::Request<'a> {
         let mut ep = List::Request::builder();
         if let Some(headers) = &self._headers {
             ep.headers(headers.iter().map(|(k, v)| (Some(k.clone()), v.clone())));

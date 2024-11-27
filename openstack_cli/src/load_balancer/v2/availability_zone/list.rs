@@ -50,7 +50,19 @@ pub struct AvailabilityZonesCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    #[arg(help_heading = "Query parameters", long)]
+    availability_zone_profile_id: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    #[arg(help_heading = "Query parameters", long)]
+    status: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -87,10 +99,22 @@ impl AvailabilityZonesCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.availability_zone_profile_id {
+            ep_builder.availability_zone_profile_id(val);
+        }
+        if let Some(val) = &self.query.status {
+            ep_builder.status(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

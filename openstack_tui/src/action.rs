@@ -153,12 +153,16 @@ pub enum Action {
     ShowLoadBalancerListeners,
     /// Set LB Pool filters
     SetLoadBalancerPoolFilters(cloud_types::LoadBalancerPoolFilters),
+    /// Show LB Listener Pools
+    ShowLoadBalancerListenerPools,
     /// Set LB Member filters
     SetLoadBalancerPoolMemberFilters(cloud_types::LoadBalancerPoolMemberFilters),
     /// Show LB Pool members
     ShowLoadBalancerPoolMembers,
     /// Set LB Healthmonitor filters
     SetLoadBalancerHealthMonitorFilters(cloud_types::LoadBalancerHealthMonitorFilters),
+    /// Show LB Listener Pools
+    ShowLoadBalancerPoolHealthMonitors,
 
     // Network (neutron)
     /// Set Security group filters
