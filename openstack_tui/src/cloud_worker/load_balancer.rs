@@ -109,9 +109,10 @@ impl LoadBalancerExt for Cloud {
     async fn get_listeners(&mut self, filters: &LoadBalancerListenerFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let ep =
-                openstack_sdk::api::load_balancer::v2::listener::list::RequestBuilder::try_from(
-                    filters,
-                )?
+                //openstack_sdk::api::load_balancer::v2::listener::list::RequestBuilder::try_from(
+                //    filters,
+                //)?
+                openstack_sdk::api::load_balancer::v2::listener::list::RequestBuilder::default()
                 .build()?;
 
             let res: Vec<Value> = ep.query_async(session).await?;
@@ -133,10 +134,11 @@ impl LoadBalancerExt for Cloud {
 
     async fn get_pools(&mut self, filters: &LoadBalancerPoolFilters) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::load_balancer::v2::pool::list::RequestBuilder::try_from(
-                filters,
-            )?
-            .build()?;
+            //let ep = openstack_sdk::api::load_balancer::v2::pool::list::RequestBuilder::try_from(
+            //   filters,
+            //)?
+            let ep = openstack_sdk::api::load_balancer::v2::pool::list::RequestBuilder::default()
+                .build()?;
 
             let res: Vec<Value> = ep.query_async(session).await?;
             return Ok(res);
@@ -167,9 +169,10 @@ impl LoadBalancerExt for Cloud {
     ) -> Result<Vec<Value>> {
         if let Some(session) = &self.cloud {
             let ep =
-                openstack_sdk::api::load_balancer::v2::healthmonitor::list::RequestBuilder::try_from(
-                    filters,
-                )?
+                //openstack_sdk::api::load_balancer::v2::healthmonitor::list::RequestBuilder::try_from(
+                //    filters,
+                //)?
+                openstack_sdk::api::load_balancer::v2::healthmonitor::list::RequestBuilder::default()
                 .build()?;
 
             let res: Vec<Value> = ep.query_async(session).await?;
