@@ -34,7 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::limit::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Shows details for a limit.
 ///
@@ -69,22 +69,63 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Limit response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The limit description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    domain_id: Option<String>,
+
+    /// The limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID for the project.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    region_id: Option<String>,
+
+    /// The override limit.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_limit: Option<i32>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    service_id: Option<String>,
 }
 
 impl LimitCommand {

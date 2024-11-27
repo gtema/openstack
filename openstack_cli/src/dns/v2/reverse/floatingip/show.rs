@@ -87,7 +87,7 @@ struct ResponseData {
     #[structable(optional)]
     description: Option<String>,
 
-    /// ID for PTR record in the format of \<region>:\<floatingip_id>
+    /// ID for PTR record in the format of <region>:\<floatingip_id>
     ///
     #[serde()]
     #[structable(optional)]

@@ -98,10 +98,14 @@ struct UserInput {
 /// ApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// A list of access_rules objects
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     access_rules: Option<Value>,
 
+    /// A description of the application credential's purpose.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
@@ -116,6 +120,8 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
+    /// The name of the application credential. Must be unique to a user.
+    ///
     #[serde()]
     #[structable(optional)]
     name: Option<String>,
@@ -128,10 +134,19 @@ struct ResponseData {
     #[structable(optional)]
     project_id: Option<String>,
 
+    /// An optional list of role objects, identified by ID or name. The list
+    /// may only contain roles that the user has assigned on the project. If
+    /// not provided, the roles assigned to the application credential will be
+    /// the same as the roles in the current token.
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     roles: Option<Value>,
 
+    /// An optional flag to restrict whether the application credential may be
+    /// used for the creation or destruction of other application credentials
+    /// or trusts. Defaults to false.
+    ///
     #[serde()]
     #[structable(optional)]
     unrestricted: Option<bool>,
