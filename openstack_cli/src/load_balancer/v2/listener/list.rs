@@ -31,10 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::listener::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists all listeners for the project.
 ///
@@ -62,7 +66,169 @@ pub struct ListenersCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The administrative state of the resource
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    admin_state_up: Option<bool>,
+
+    /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    alpn_protocols: Option<String>,
+
+    /// The maximum number of connections permitted for this listener. Default
+    /// value is -1 which represents infinite connections or a default value
+    /// defined by the provider driver.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    connection_limit: Option<String>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    created_at: Option<String>,
+
+    /// The ID of the pool used by the listener if no L7 policies match.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    default_pool_id: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    description: Option<String>,
+
+    /// Defines whether the includeSubDomains directive should be added to the
+    /// Strict-Transport-Security HTTP response header.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    hsts_include_subdomains: Option<bool>,
+
+    /// The value of the max_age directive for the Strict-Transport-Security
+    /// HTTP response header.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    hsts_max_age: Option<i32>,
+
+    /// Defines whether the preload directive should be added to the
+    /// Strict-Transport-Security HTTP response header.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    hsts_preload: Option<bool>,
+
+    /// The ID of the resource
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+
+    /// Load balancer ID
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    load_balancer_id: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags: Option<String>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    not_tags_any: Option<String>,
+
+    /// The operating status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
+    operating_status: Option<String>,
+
+    /// Project resource for which the operation should be performed.
+    #[command(flatten)]
+    project: ProjectInput,
+
+    /// The protocol for the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["HTTP","HTTPS","PROMETHEUS","SCTP","TCP","TERMINATED_HTTPS","UDP"])]
+    protocol: Option<String>,
+
+    /// The protocol port number for the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    protocol_port: Option<i32>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["ACTIVE","DELETED","ERROR","PENDING_CREATE","PENDING_DELETE","PENDING_UPDATE"])]
+    provisioning_status: Option<String>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags: Option<String>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tags_any: Option<String>,
+
+    /// Frontend client inactivity timeout in milliseconds.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    timeout_client_data: Option<i32>,
+
+    /// Backend member connection timeout in milliseconds.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    timeout_member_connect: Option<i32>,
+
+    /// Backend member inactivity timeout in milliseconds.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    timeout_member_data: Option<i32>,
+
+    /// Time, in milliseconds, to wait for additional TCP packets for content
+    /// inspection.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    timeout_tcp_inspect: Option<i32>,
+
+    /// List of ciphers in OpenSSL format
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tls_ciphers: Option<String>,
+
+    /// A list of TLS protocol versions.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    tls_versions: Option<String>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    updated_at: Option<String>,
+}
+
+/// Project input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct ProjectInput {
+    /// Project Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_NAME")]
+    project_name: Option<String>,
+    /// Project ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "PROJECT_ID")]
+    project_id: Option<String>,
+    /// Current project.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_project: bool,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -349,10 +515,132 @@ impl ListenersCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.description {
+            ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(id) = &self.query.project.project_id {
+            // project_id is passed. No need to lookup
+            ep_builder.project_id(id);
+        } else if let Some(name) = &self.query.project.project_name {
+            // project_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_project::Request::builder();
+            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.project_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.project.current_project {
+            ep_builder.project_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.connection_limit {
+            ep_builder.connection_limit(val);
+        }
+        if let Some(val) = &self.query.default_pool_id {
+            ep_builder.default_pool_id(val);
+        }
+        if let Some(val) = &self.query.protocol {
+            ep_builder.protocol(val);
+        }
+        if let Some(val) = &self.query.protocol_port {
+            ep_builder.protocol_port(*val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.query.load_balancer_id {
+            ep_builder.load_balancer_id(val);
+        }
+        if let Some(val) = &self.query.timeout_client_data {
+            ep_builder.timeout_client_data(*val);
+        }
+        if let Some(val) = &self.query.timeout_member_connect {
+            ep_builder.timeout_member_connect(*val);
+        }
+        if let Some(val) = &self.query.timeout_member_data {
+            ep_builder.timeout_member_data(*val);
+        }
+        if let Some(val) = &self.query.timeout_tcp_inspect {
+            ep_builder.timeout_tcp_inspect(*val);
+        }
+        if let Some(val) = &self.query.tls_ciphers {
+            ep_builder.tls_ciphers(val);
+        }
+        if let Some(val) = &self.query.tls_versions {
+            ep_builder.tls_versions(val);
+        }
+        if let Some(val) = &self.query.alpn_protocols {
+            ep_builder.alpn_protocols(val);
+        }
+        if let Some(val) = &self.query.hsts_max_age {
+            ep_builder.hsts_max_age(*val);
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.hsts_include_subdomains {
+            ep_builder.hsts_include_subdomains(*val);
+        }
+        if let Some(val) = &self.query.hsts_preload {
+            ep_builder.hsts_preload(*val);
+        }
+        if let Some(val) = &self.query.provisioning_status {
+            ep_builder.provisioning_status(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
+        if let Some(val) = &self.query.tags {
+            ep_builder.tags(val);
+        }
+        if let Some(val) = &self.query.tags_any {
+            ep_builder.tags_any(val);
+        }
+        if let Some(val) = &self.query.not_tags {
+            ep_builder.not_tags(val);
+        }
+        if let Some(val) = &self.query.not_tags_any {
+            ep_builder.not_tags_any(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

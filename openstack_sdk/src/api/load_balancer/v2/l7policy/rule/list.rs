@@ -37,11 +37,44 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    #[builder(default, setter(into))]
+    _type: Option<Cow<'a, str>>,
+
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    #[builder(default, setter(into))]
+    compare_type: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    invert: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    key: Option<Cow<'a, str>>,
+
     /// l7policy_id parameter for
     /// /v2/lbaas/l7policies/{l7policy_id}/rules/{rule_id} API
     ///
     #[builder(default, setter(into))]
     l7policy_id: Cow<'a, str>,
+
+    #[builder(default, setter(into))]
+    operating_status: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    provisioning_status: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    rule_value: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    updated_at: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -92,7 +125,20 @@ impl<'a> RestEndpoint for Request<'a> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("compare_type", self.compare_type.as_ref());
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("invert", self.invert.as_ref());
+        params.push_opt("key", self.key.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("type", self._type.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("rule_value", self.rule_value.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("admin_state_up", self.admin_state_up);
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

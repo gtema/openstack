@@ -32,20 +32,107 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    /// The administrative state of the resource
+    ///
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
+    ///
+    #[builder(default, setter(into))]
+    alpn_protocols: Option<Cow<'a, str>>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[builder(default, setter(into))]
+    created_at: Option<Cow<'a, str>>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    /// The ID of the resource
+    ///
+    #[builder(default, setter(into))]
+    id: Option<Cow<'a, str>>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have one or more of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that do not have at least one of the given
+    /// tags.
+    ///
+    #[builder(default, setter(into))]
+    not_tags_any: Option<Cow<'a, str>>,
+
+    /// The operating status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    operating_status: Option<Cow<'a, str>>,
+
+    /// The ID of the project owning this resource.
+    ///
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    /// The provisioning status of the resource.
+    ///
+    #[builder(default, setter(into))]
+    provisioning_status: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have this tag or tags.
+    ///
+    #[builder(default, setter(into))]
+    tags: Option<Cow<'a, str>>,
+
+    /// Return the list of entities that have one or more of the given tags.
+    ///
+    #[builder(default, setter(into))]
+    tags_any: Option<Cow<'a, str>>,
+
+    /// List of ciphers in OpenSSL format
+    ///
+    #[builder(default, setter(into))]
+    tls_ciphers: Option<Cow<'a, str>>,
+
+    #[builder(default)]
+    tls_enabled: Option<bool>,
+
+    /// A list of TLS protocol versions.
+    ///
+    #[builder(default, setter(into))]
+    tls_versions: Option<Cow<'a, str>>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[builder(default, setter(into))]
+    updated_at: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the Pool.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -70,7 +157,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -80,7 +167,26 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("admin_state_up", self.admin_state_up);
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("tls_enabled", self.tls_enabled);
+        params.push_opt("tls_ciphers", self.tls_ciphers.as_ref());
+        params.push_opt("tls_versions", self.tls_versions.as_ref());
+        params.push_opt("alpn_protocols", self.alpn_protocols.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("tags", self.tags.as_ref());
+        params.push_opt("tags-any", self.tags_any.as_ref());
+        params.push_opt("not-tags", self.not_tags.as_ref());
+        params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

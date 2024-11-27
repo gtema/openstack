@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, LoadBalancerPoolFilters, LoadBalancerPoolMemberFilters},
+    cloud_worker::types::{
+        ApiRequest, LoadBalancerHealthMonitorFilters, LoadBalancerPoolFilters,
+        LoadBalancerPoolMemberFilters,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -109,6 +112,27 @@ impl Component for LoadBalancerPools<'_> {
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerPoolMembers,
+                                stack: true,
+                            }));
+                        }
+                    }
+                }
+            }
+            Action::ShowLoadBalancerPoolHealthMonitors => {
+                // only if we are currently in the expected mode
+                if current_mode == Mode::LoadBalancerPools {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(group_row) = self.get_selected() {
+                            command_tx.send(Action::SetLoadBalancerHealthMonitorFilters(
+                                LoadBalancerHealthMonitorFilters {
+                                    pool_id: Some(group_row.id.clone()),
+                                    pool_name: Some(group_row.name.clone()),
+                                },
+                            ))?;
+                            return Ok(Some(Action::Mode {
+                                mode: Mode::LoadBalancerHealthMonitors,
                                 stack: true,
                             }));
                         }

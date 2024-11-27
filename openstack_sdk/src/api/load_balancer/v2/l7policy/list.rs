@@ -32,20 +32,58 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    #[builder(default, setter(into))]
+    action: Option<Cow<'a, str>>,
+
+    #[builder(default)]
+    admin_state_up: Option<bool>,
+
+    #[builder(default, setter(into))]
+    description: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    listener_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    operating_status: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    position: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    project_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    provisioning_status: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    redirect_pool_id: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    redirect_prefix: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    redirect_url: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl<'a> RequestBuilder<'a> {
     /// Add a single header to the L7Policy.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -70,7 +108,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl<'a> RestEndpoint for Request<'a> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -80,7 +118,21 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("action", self.action.as_ref());
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("listener_id", self.listener_id.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("position", self.position.as_ref());
+        params.push_opt("redirect_pool_id", self.redirect_pool_id.as_ref());
+        params.push_opt("redirect_url", self.redirect_url.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("redirect_prefix", self.redirect_prefix.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("admin_state_up", self.admin_state_up);
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
