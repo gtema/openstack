@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, LoadBalancerFilters, LoadBalancerListenerFilters},
+    cloud_worker::types::{
+        ApiRequest, LoadBalancerFilters, LoadBalancerListenerFilters, LoadBalancerPoolFilters,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -101,7 +103,7 @@ impl Component for LoadBalancers<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
+                            // send action to set filters
                             command_tx.send(Action::SetLoadBalancerListenerFilters(
                                 LoadBalancerListenerFilters {
                                     loadbalancer_id: Some(selected_entry.id.clone()),
@@ -110,6 +112,28 @@ impl Component for LoadBalancers<'_> {
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerListeners,
+                                stack: true,
+                            }));
+                        }
+                    }
+                }
+            }
+            Action::ShowLoadBalancerPools => {
+                // only if we are currently in the right mode
+                if current_mode == Mode::LoadBalancers {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(selected_entry) = self.get_selected() {
+                            // send action to set filters
+                            command_tx.send(Action::SetLoadBalancerPoolFilters(
+                                LoadBalancerPoolFilters {
+                                    loadbalancer_id: Some(selected_entry.id.clone()),
+                                    loadbalancer_name: Some(selected_entry.name.clone()),
+                                },
+                            ))?;
+                            return Ok(Some(Action::Mode {
+                                mode: Mode::LoadBalancerPools,
                                 stack: true,
                             }));
                         }

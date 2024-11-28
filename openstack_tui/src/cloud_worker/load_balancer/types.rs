@@ -80,33 +80,22 @@ impl TryFrom<&LoadBalancerListenerFilters>
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LoadBalancerPoolFilters {
-    // pub loadbalancer_id: Option<String>,
-    // pub loadbalancer_name: Option<String>,
-    // pub listener_id: Option<String>,
-    // pub listener_name: Option<String>,
+    pub loadbalancer_id: Option<String>,
+    pub loadbalancer_name: Option<String>,
 }
 
 impl fmt::Display for LoadBalancerPoolFilters {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let parts: Vec<String> = Vec::new();
-        // if self.loadbalancer_id.is_some() || self.loadbalancer_name.is_some() {
-        //     parts.push(format!(
-        //         "lb: {}",
-        //         self.loadbalancer_name
-        //             .as_ref()
-        //             .or(self.loadbalancer_id.as_ref())
-        //             .unwrap_or(&String::new())
-        //     ));
-        // }
-        // if self.listener_id.is_some() || self.listener_name.is_some() {
-        //     parts.push(format!(
-        //         "lsnr: {}",
-        //         self.listener_name
-        //             .as_ref()
-        //             .or(self.listener_id.as_ref())
-        //             .unwrap_or(&String::new())
-        //     ));
-        // }
+        let mut parts: Vec<String> = Vec::new();
+        if self.loadbalancer_id.is_some() || self.loadbalancer_name.is_some() {
+            parts.push(format!(
+                "lb: {}",
+                self.loadbalancer_name
+                    .as_ref()
+                    .or(self.loadbalancer_id.as_ref())
+                    .unwrap_or(&String::new())
+            ));
+        }
         write!(f, "{}", parts.join(","))
     }
 }
@@ -116,12 +105,12 @@ impl TryFrom<&LoadBalancerPoolFilters>
 {
     type Error = eyre::Report;
 
-    fn try_from(_value: &LoadBalancerPoolFilters) -> Result<Self, Self::Error> {
-        let ep_builder = openstack_sdk::api::load_balancer::v2::pool::list::Request::builder();
+    fn try_from(value: &LoadBalancerPoolFilters) -> Result<Self, Self::Error> {
+        let mut ep_builder = openstack_sdk::api::load_balancer::v2::pool::list::Request::builder();
 
-        // if let Some(val) = &value.loadbalancer_id {
-        //     ep_builder.load_balancer_id(val.clone());
-        // }
+        if let Some(val) = &value.loadbalancer_id {
+            ep_builder.loadbalancer_id(val.clone());
+        }
 
         Ok(ep_builder)
     }

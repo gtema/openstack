@@ -92,6 +92,11 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
+    /// The ID of the load balancer for the pool.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    loadbalancer_id: Option<String>,
+
     /// Human-readable name of the resource.
     ///
     #[arg(help_heading = "Query parameters", long)]
@@ -430,6 +435,9 @@ impl PoolsCommand {
         }
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
+        }
+        if let Some(val) = &self.query.loadbalancer_id {
+            ep_builder.loadbalancer_id(val);
         }
         if let Some(val) = &self.query.tls_enabled {
             ep_builder.tls_enabled(*val);
