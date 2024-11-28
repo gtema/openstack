@@ -162,7 +162,7 @@ where
     }
 }
 
-impl<'a, E> PagedState<'a, E> {
+impl<E> PagedState<'_, E> {
     fn next_page(&self, last_page_size: usize, next_url: Option<Url>, marker: Option<String>) {
         let mut page_state = self.page_state.write().expect("poisoned next_page");
         page_state.total_results += last_page_size;
@@ -179,7 +179,7 @@ impl<'a, E> PagedState<'a, E> {
     }
 }
 
-impl<'a, E> PagedState<'a, E>
+impl<E> PagedState<'_, E>
 where
     E: RestEndpoint,
 {
@@ -331,7 +331,7 @@ where
 }
 
 #[cfg(feature = "sync")]
-impl<'a, E, T, C> Query<Vec<T>, C> for PagedState<'a, E>
+impl<E, T, C> Query<Vec<T>, C> for PagedState<'_, E>
 where
     E: RestEndpoint,
     E: Pageable,
@@ -361,7 +361,7 @@ where
 
 #[cfg(feature = "async")]
 #[async_trait]
-impl<'a, E, T, C> QueryAsync<Vec<T>, C> for PagedState<'a, E>
+impl<E, T, C> QueryAsync<Vec<T>, C> for PagedState<'_, E>
 where
     E: RestEndpoint + Pageable + Sync,
     T: DeserializeOwned + 'static,
@@ -414,7 +414,7 @@ where
 }
 
 #[cfg(feature = "sync")]
-impl<'a, E, C, T> Iterator for PagedIter<'a, E, C, T>
+impl<E, C, T> Iterator for PagedIter<'_, E, C, T>
 where
     E: RestEndpoint,
     E: Pageable,

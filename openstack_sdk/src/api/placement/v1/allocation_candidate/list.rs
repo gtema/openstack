@@ -271,7 +271,7 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request<'_> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }

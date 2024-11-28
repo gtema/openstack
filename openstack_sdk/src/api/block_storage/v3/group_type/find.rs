@@ -42,7 +42,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder<'_> {
     /// Add a single header to the Volume.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

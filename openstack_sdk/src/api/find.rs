@@ -251,7 +251,7 @@ mod tests {
         }
     }
 
-    impl<'a> RestEndpoint for GetDummy<'a> {
+    impl RestEndpoint for GetDummy<'_> {
         fn method(&self) -> http::Method {
             http::Method::GET
         }
@@ -279,7 +279,7 @@ mod tests {
         }
     }
 
-    impl<'a> RestEndpoint for ListDummies<'a> {
+    impl RestEndpoint for ListDummies<'_> {
         fn method(&self) -> http::Method {
             http::Method::GET
         }
