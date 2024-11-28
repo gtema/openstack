@@ -271,12 +271,11 @@ impl ServiceEndpoints {
     /// returned.
     pub fn get_by_region<S: AsRef<str>>(&self, region_name: Option<S>) -> Option<&ServiceEndpoint> {
         if let Some(region) = &region_name {
-            return self
-                .0
+            self.0
                 .iter()
-                .find(|&ep| ep.region == Some(region.as_ref().to_string()));
+                .find(|&ep| ep.region == Some(region.as_ref().to_string()))
         } else {
-            return self.0.first();
+            self.0.first()
         }
     }
 

@@ -37,7 +37,7 @@ impl HttpRequestStats {
         for rec in &self.requests {
             let url: String = rec
                 .url
-                .get(0..rec.url.find("?").unwrap_or(rec.url.len()))
+                .get(0..rec.url.find('?').unwrap_or(rec.url.len()))
                 .unwrap_or(&rec.url)
                 .to_string();
             timings

@@ -464,14 +464,14 @@ fn get_config_file_search_paths<S: AsRef<str>>(filename: S) -> Vec<PathBuf> {
         PathBuf::from("/etc/openstack"),
     ];
 
-    return paths
+    paths
         .iter()
         .flat_map(|x| {
             CONFIG_SUFFIXES
                 .iter()
                 .map(|y| x.join(format!("{}{}", filename.as_ref(), y)))
         })
-        .collect();
+        .collect()
 }
 
 /// Searches for a `clouds-public.{yaml,yml,json}` config file.

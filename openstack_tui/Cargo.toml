@@ -5,11 +5,11 @@ version = "0.9.1"
 keywords = ["tui", "openstack"]
 categories = ["command-line-utilities"]
 authors = ["Artem Goncharov (gtema)"]
-rust-version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
+rust-version = "1.80" # MSRV
 
 [[bin]]
 name = "ostui"

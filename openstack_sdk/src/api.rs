@@ -137,6 +137,7 @@
 //! ```
 //!
 #![allow(clippy::module_inception)]
+#![allow(clippy::needless_lifetimes)]
 
 mod client;
 mod common;

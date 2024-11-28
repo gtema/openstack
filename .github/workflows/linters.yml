@@ -79,15 +79,58 @@ jobs:
           tool: cargo-binstall
 
       - name: Install required cargo
-        run: cargo binstall clippy-sarif sarif-fmt
+        run: cargo binstall clippy-sarif sarif-fmt --force
 
       - name: Run rust-clippy
         run:
           cargo clippy
           --lib --tests
-          --all-features
-          --message-format=json | clippy-sarif | tee rust-clippy-results.sarif | sarif-fmt
-        continue-on-error: true
+          --all-features -p openstack_sdk -p openstack_cli
+          --message-format=json | ${CARGO_HOME}/bin/clippy-sarif | tee rust-clippy-results.sarif | ${CARGO_HOME}/bin/sarif-fmt
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@f09c1c0a94de965c15400f5634aa42fac8fb8f88 # v3.27.5
+        with:
+          sarif_file: rust-clippy-results.sarif
+          wait-for-processing: true
+
+  clippy-tui:
+    name: Run clippy for TUI on the minimum supported toolchain
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+
+      - name: Harden Runner
+        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Rust 1.80
+        uses: dtolnay/rust-toolchain@315e265cd78dad1e1dcf3a5074f6d6c47029d5aa # stable
+        with:
+          toolchain: "1.80"
+          components: rustfmt, clippy
+
+      - uses: swatinem/rust-cache@82a92a6e8fbeee089604da2575dc567ae9ddeaab # v2.7.5
+
+      - name: Install cargo-binstall
+        uses: taiki-e/install-action@678b06b887cdbf44fa0601e5915f865e17c2241d # v2.44.60
+        with:
+          tool: cargo-binstall
+
+      - name: Install required cargo
+        run: cargo binstall clippy-sarif sarif-fmt --force
+
+      - name: Run rust-clippy
+        run:
+          cargo clippy
+          --tests
+          --all-features -p openstack_tui
+          --message-format=json | ${CARGO_HOME}/bin/clippy-sarif | tee rust-clippy-results.sarif | ${CARGO_HOME}/bin/sarif-fmt
 
       - name: Upload analysis results to GitHub
         uses: github/codeql-action/upload-sarif@f09c1c0a94de965c15400f5634aa42fac8fb8f88 # v3.27.5
