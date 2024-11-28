@@ -38,11 +38,11 @@ pub struct MemberCommand {
 #[allow(missing_docs)]
 #[derive(Subcommand)]
 pub enum MemberCommands {
-    Create(create::MemberCommand),
-    Delete(delete::MemberCommand),
-    List(list::MembersCommand),
-    Set(set::MemberCommand),
-    Show(show::MemberCommand),
+    Create(Box<create::MemberCommand>),
+    Delete(Box<delete::MemberCommand>),
+    List(Box<list::MembersCommand>),
+    Set(Box<set::MemberCommand>),
+    Show(Box<show::MemberCommand>),
 }
 
 impl MemberCommand {

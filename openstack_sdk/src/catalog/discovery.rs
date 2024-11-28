@@ -145,7 +145,7 @@ impl EndpointVersion {
         service_type: S,
     ) -> Result<ServiceEndpoint, CatalogError> {
         if let Some(link) = self.links.iter().find(|&x| x.rel == "self") {
-            return Ok(ServiceEndpoint::new(
+            Ok(ServiceEndpoint::new(
                 expand_link(&link.href, base_url, &service_type)
                     .inspect_err(|e| {error!("Service version discovery error: {:?}. Using catalog endpoint. Consider setting `{}_endpoint_override` when necessary. Please inform your cloud provider.", e, service_type.as_ref())})
                     .unwrap_or(base_url.clone())
@@ -155,7 +155,7 @@ impl EndpointVersion {
             .set_min_version(self.min_version.clone())
             .set_max_version(self.max_version.clone())
             .set_status(Some(self.status.clone()))
-            .to_owned());
+            .to_owned())
         } else {
             Err(CatalogError::VersionSelfLinkMissing {
                 id: self.id.clone(),
