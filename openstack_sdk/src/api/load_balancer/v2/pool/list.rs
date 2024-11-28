@@ -62,6 +62,11 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
+    /// The ID of the load balancer for the pool.
+    ///
+    #[builder(default, setter(into))]
+    loadbalancer_id: Option<Cow<'a, str>>,
+
     /// Human-readable name of the resource.
     ///
     #[builder(default, setter(into))]
@@ -175,6 +180,7 @@ impl<'a> RestEndpoint for Request<'a> {
         params.push_opt("admin_state_up", self.admin_state_up);
         params.push_opt("created_at", self.created_at.as_ref());
         params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("loadbalancer_id", self.loadbalancer_id.as_ref());
         params.push_opt("tls_enabled", self.tls_enabled);
         params.push_opt("tls_ciphers", self.tls_ciphers.as_ref());
         params.push_opt("tls_versions", self.tls_versions.as_ref());

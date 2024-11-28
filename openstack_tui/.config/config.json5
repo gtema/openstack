@@ -79,6 +79,7 @@
     "LoadBalancers": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "l": { "action": "ShowLoadBalancerListeners", "description": "Listeners"},
+      "p": { "action": "ShowLoadBalancerPools", "description": "Pools"},
     },
     "LoadBalancerListeners": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},

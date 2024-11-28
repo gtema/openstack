@@ -151,6 +151,8 @@ pub enum Action {
     SetLoadBalancerListenerFilters(cloud_types::LoadBalancerListenerFilters),
     /// Show LB Listeners
     ShowLoadBalancerListeners,
+    /// Show LB Pools
+    ShowLoadBalancerPools,
     /// Set LB Pool filters
     SetLoadBalancerPoolFilters(cloud_types::LoadBalancerPoolFilters),
     /// Show LB Listener Pools
