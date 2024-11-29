@@ -132,7 +132,13 @@ impl TryFrom<&config::CloudConfig> for AuthTokenScope {
             // Project scope
             Ok(AuthTokenScope::Project(Project {
                 id: auth.project_id.clone(),
-                name: auth.project_name.clone(),
+                // Keystone checks for presence of project_name before project_id therefore it fail
+                // when project_domain is not set. project_id alone is sufficient.
+                name: if auth.project_id.is_none() {
+                    auth.project_name.clone()
+                } else {
+                    None
+                },
                 domain: types_v3::get_domain(auth.project_domain_id, auth.project_domain_name),
             }))
         } else if auth.domain_id.is_some() || auth.domain_name.is_some() {

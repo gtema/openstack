@@ -115,6 +115,7 @@ pub struct ApplicationCredential {
     /// of other application credentials or trusts.
     pub restricted: Option<bool>,
 }
+
 /// Build Domain type if id or name are given
 #[inline]
 pub(crate) fn get_domain(id: Option<String>, name: Option<String>) -> Option<Domain> {
