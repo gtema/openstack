@@ -140,7 +140,7 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request<'_> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -185,7 +185,7 @@ impl<'a> RestEndpoint for Request<'a> {
         Some(ApiVersion::new(2, 0))
     }
 }
-impl<'a> Pageable for Request<'a> {}
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

@@ -70,7 +70,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder<'_> {
     /// Add a single header to the Password.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -95,7 +95,7 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request<'_> {
     fn method(&self) -> http::Method {
         http::Method::POST
     }

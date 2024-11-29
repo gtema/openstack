@@ -86,7 +86,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder<'_> {
     /// Add a single header to the Group_Snapshot.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -111,7 +111,7 @@ where {
     }
 }
 
-impl<'a> RestEndpoint for Request<'a> {
+impl RestEndpoint for Request<'_> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -151,7 +151,7 @@ impl<'a> RestEndpoint for Request<'a> {
         Some(ApiVersion::new(3, 0))
     }
 }
-impl<'a> Pageable for Request<'a> {}
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

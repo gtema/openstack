@@ -83,7 +83,7 @@ where
     }
 }
 
-impl<'a, 'b, T> ParamValue<'a> for &'b CommaSeparatedList<T>
+impl<'a, T> ParamValue<'a> for &CommaSeparatedList<T>
 where
     T: ParamValue<'a>,
 {
