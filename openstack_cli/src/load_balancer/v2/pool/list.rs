@@ -36,6 +36,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::pool::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use structable_derive::StructTable;
 use tracing::warn;
@@ -62,6 +63,10 @@ pub struct PoolsCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -92,10 +97,20 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
+    /// Page size
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
     /// The ID of the load balancer for the pool.
     ///
     #[arg(help_heading = "Query parameters", long)]
     loadbalancer_id: Option<String>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
 
     /// Human-readable name of the resource.
     ///
@@ -118,6 +133,11 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
+
+    /// The page direction.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 
     /// Project resource for which the operation should be performed.
     #[command(flatten)]
@@ -377,14 +397,35 @@ impl PoolsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.alpn_protocols {
+            ep_builder.alpn_protocols(val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
         }
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
         }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.loadbalancer_id {
+            ep_builder.loadbalancer_id(val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -427,18 +468,6 @@ impl PoolsCommand {
                     .id,
             );
         }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
-        }
-        if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val);
-        }
-        if let Some(val) = &self.query.updated_at {
-            ep_builder.updated_at(val);
-        }
-        if let Some(val) = &self.query.loadbalancer_id {
-            ep_builder.loadbalancer_id(val);
-        }
         if let Some(val) = &self.query.tls_enabled {
             ep_builder.tls_enabled(*val);
         }
@@ -448,8 +477,8 @@ impl PoolsCommand {
         if let Some(val) = &self.query.tls_versions {
             ep_builder.tls_versions(val);
         }
-        if let Some(val) = &self.query.alpn_protocols {
-            ep_builder.alpn_protocols(val);
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
         }
         if let Some(val) = &self.query.provisioning_status {
             ep_builder.provisioning_status(val);
@@ -475,7 +504,9 @@ impl PoolsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

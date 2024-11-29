@@ -34,6 +34,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -70,8 +71,23 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     lb_network_ip: Option<Cow<'a, str>>,
 
+    /// Page size
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
     #[builder(default, setter(into))]
     loadbalancer_id: Option<Cow<'a, str>>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
+    /// The page direction.
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
 
     #[builder(default, setter(into))]
     role: Option<Cow<'a, str>>,
@@ -143,26 +159,29 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("id", self.id.as_ref());
-        params.push_opt("loadbalancer_id", self.loadbalancer_id.as_ref());
-        params.push_opt("compute_id", self.compute_id.as_ref());
-        params.push_opt("lb_network_ip", self.lb_network_ip.as_ref());
-        params.push_opt("vrrp_ip", self.vrrp_ip.as_ref());
-        params.push_opt("ha_ip", self.ha_ip.as_ref());
-        params.push_opt("vrrp_port_id", self.vrrp_port_id.as_ref());
-        params.push_opt("ha_port_id", self.ha_port_id.as_ref());
-        params.push_opt("cert_expiration", self.cert_expiration.as_ref());
+        params.push_opt("cached_zone", self.cached_zone.as_ref());
         params.push_opt("cert_busy", self.cert_busy.as_ref());
+        params.push_opt("cert_expiration", self.cert_expiration.as_ref());
+        params.push_opt("compute_id", self.compute_id.as_ref());
+        params.push_opt("compute_flavor", self.compute_flavor.as_ref());
+        params.push_opt("created_at", self.created_at.as_ref());
+        params.push_opt("ha_ip", self.ha_ip.as_ref());
+        params.push_opt("ha_port_id", self.ha_port_id.as_ref());
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("image_id", self.image_id.as_ref());
+        params.push_opt("lb_network_ip", self.lb_network_ip.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("loadbalancer_id", self.loadbalancer_id.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
         params.push_opt("role", self.role.as_ref());
         params.push_opt("status", self.status.as_ref());
+        params.push_opt("updated_at", self.updated_at.as_ref());
+        params.push_opt("vrrp_ip", self.vrrp_ip.as_ref());
+        params.push_opt("vrrp_port_id", self.vrrp_port_id.as_ref());
         params.push_opt("vrrp_interface", self.vrrp_interface.as_ref());
         params.push_opt("vrrp_id", self.vrrp_id.as_ref());
         params.push_opt("vrrp_priority", self.vrrp_priority.as_ref());
-        params.push_opt("cached_zone", self.cached_zone.as_ref());
-        params.push_opt("created_at", self.created_at.as_ref());
-        params.push_opt("updated_at", self.updated_at.as_ref());
-        params.push_opt("image_id", self.image_id.as_ref());
-        params.push_opt("compute_flavor", self.compute_flavor.as_ref());
 
         params
     }
@@ -185,6 +204,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

@@ -33,6 +33,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use structable_derive::StructTable;
 
 /// Lists all Availability Zone Profiles.
@@ -46,6 +47,10 @@ pub struct AvailabilityZoneProfilesCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -57,8 +62,23 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
+    /// Page size
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
+
     #[arg(help_heading = "Query parameters", long)]
     name: Option<String>,
+
+    /// The page direction.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 
     #[arg(help_heading = "Query parameters", long)]
     provider_name: Option<String>,
@@ -103,17 +123,26 @@ impl AvailabilityZoneProfilesCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.availability_zone_data {
+            ep_builder.availability_zone_data(val);
+        }
         if let Some(val) = &self.query.id {
             ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
+        }
         if let Some(val) = &self.query.provider_name {
             ep_builder.provider_name(val);
-        }
-        if let Some(val) = &self.query.availability_zone_data {
-            ep_builder.availability_zone_data(val);
         }
         // Set body parameters
 
@@ -121,7 +150,9 @@ impl AvailabilityZoneProfilesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

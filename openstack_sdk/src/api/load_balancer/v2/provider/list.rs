@@ -29,14 +29,30 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
+    /// Page size
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
+
+    /// The page direction.
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -85,7 +101,10 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("description", self.description.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
         params.push_opt("name", self.name.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
 
         params
     }
@@ -108,6 +127,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {
