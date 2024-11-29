@@ -24,6 +24,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -33,8 +34,23 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     id: Option<Cow<'a, str>>,
 
+    /// Page size
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
+
+    /// The page direction.
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
 
     #[builder(default, setter(into))]
     provider_name: Option<Cow<'a, str>>,
@@ -85,13 +101,16 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("id", self.id.as_ref());
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("provider_name", self.provider_name.as_ref());
         params.push_opt(
             "availability_zone_data",
             self.availability_zone_data.as_ref(),
         );
+        params.push_opt("id", self.id.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
+        params.push_opt("provider_name", self.provider_name.as_ref());
 
         params
     }
@@ -114,6 +133,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

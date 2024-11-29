@@ -36,6 +36,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::l7policy::rule::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use structable_derive::StructTable;
 use tracing::warn;
@@ -62,6 +63,10 @@ pub struct RulesCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -85,8 +90,23 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     key: Option<String>,
 
+    /// Page size
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
+
     #[arg(help_heading = "Query parameters", long)]
     operating_status: Option<String>,
+
+    /// The page direction.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 
     /// Project resource for which the operation should be performed.
     #[command(flatten)]
@@ -243,6 +263,9 @@ impl RulesCommand {
         // Set path parameters
         ep_builder.l7policy_id(&self.path.l7policy_id);
         // Set query parameters
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
         if let Some(val) = &self.query.compare_type {
             ep_builder.compare_type(val);
         }
@@ -254,6 +277,18 @@ impl RulesCommand {
         }
         if let Some(val) = &self.query.key {
             ep_builder.key(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.operating_status {
+            ep_builder.operating_status(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -299,20 +334,14 @@ impl RulesCommand {
         if let Some(val) = &self.query.provisioning_status {
             ep_builder.provisioning_status(val);
         }
+        if let Some(val) = &self.query.rule_value {
+            ep_builder.rule_value(val);
+        }
         if let Some(val) = &self.query._type {
             ep_builder._type(val);
         }
         if let Some(val) = &self.query.updated_at {
             ep_builder.updated_at(val);
-        }
-        if let Some(val) = &self.query.rule_value {
-            ep_builder.rule_value(val);
-        }
-        if let Some(val) = &self.query.operating_status {
-            ep_builder.operating_status(val);
-        }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
         }
         // Set body parameters
 
@@ -320,7 +349,9 @@ impl RulesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

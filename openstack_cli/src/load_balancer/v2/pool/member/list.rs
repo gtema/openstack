@@ -36,6 +36,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::pool::member::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use structable_derive::StructTable;
 use tracing::warn;
@@ -62,6 +63,10 @@ pub struct MembersCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -97,6 +102,16 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
+    /// Page size
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
+
     /// An alternate IP address used for health monitoring a backend member.
     ///
     #[arg(help_heading = "Query parameters", long)]
@@ -128,6 +143,11 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
+
+    /// The page direction.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 
     /// Project resource for which the operation should be performed.
     #[command(flatten)]
@@ -333,14 +353,41 @@ impl MembersCommand {
         // Set path parameters
         ep_builder.pool_id(&self.path.pool_id);
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.address {
+            ep_builder.address(val);
+        }
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.backup {
+            ep_builder.backup(*val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
         }
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
         }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.monitor_address {
+            ep_builder.monitor_address(val);
+        }
+        if let Some(val) = &self.query.monitor_port {
+            ep_builder.monitor_port(val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -383,35 +430,17 @@ impl MembersCommand {
                     .id,
             );
         }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
-        }
-        if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val);
-        }
-        if let Some(val) = &self.query.updated_at {
-            ep_builder.updated_at(val);
-        }
-        if let Some(val) = &self.query.address {
-            ep_builder.address(val);
-        }
         if let Some(val) = &self.query.protocol_port {
             ep_builder.protocol_port(*val);
         }
         if let Some(val) = &self.query.subnet_id {
             ep_builder.subnet_id(val);
         }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
+        }
         if let Some(val) = &self.query.weight {
             ep_builder.weight(*val);
-        }
-        if let Some(val) = &self.query.monitor_address {
-            ep_builder.monitor_address(val);
-        }
-        if let Some(val) = &self.query.monitor_port {
-            ep_builder.monitor_port(val);
-        }
-        if let Some(val) = &self.query.backup {
-            ep_builder.backup(*val);
         }
         if let Some(val) = &self.query.provisioning_status {
             ep_builder.provisioning_status(val);
@@ -437,7 +466,9 @@ impl MembersCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

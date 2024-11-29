@@ -36,6 +36,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::healthmonitor::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use structable_derive::StructTable;
 use tracing::warn;
@@ -62,6 +63,10 @@ pub struct HealthmonitorsCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -108,6 +113,16 @@ struct QueryParameters {
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
 
+    /// Page size
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
+
     /// The number of successful checks before changing the operating status of
     /// the member to ONLINE. A valid value is from 1 to 10.
     ///
@@ -141,6 +156,11 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
+
+    /// The page direction.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 
     /// The ID of the pool.
     ///
@@ -369,14 +389,47 @@ impl HealthmonitorsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.admin_state_up {
+            ep_builder.admin_state_up(*val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
+        if let Some(val) = &self.query.delay {
+            ep_builder.delay(*val);
         }
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
         }
+        if let Some(val) = &self.query.expected_codes {
+            ep_builder.expected_codes(val);
+        }
+        if let Some(val) = &self.query.http_method {
+            ep_builder.http_method(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.max_retries {
+            ep_builder.max_retries(*val);
+        }
+        if let Some(val) = &self.query.max_retries_down {
+            ep_builder.max_retries_down(*val);
+        }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.pool_id {
+            ep_builder.pool_id(val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -419,38 +472,14 @@ impl HealthmonitorsCommand {
                     .id,
             );
         }
-        if let Some(val) = &self.query.admin_state_up {
-            ep_builder.admin_state_up(*val);
-        }
-        if let Some(val) = &self.query.created_at {
-            ep_builder.created_at(val);
-        }
-        if let Some(val) = &self.query.updated_at {
-            ep_builder.updated_at(val);
-        }
-        if let Some(val) = &self.query.delay {
-            ep_builder.delay(*val);
-        }
-        if let Some(val) = &self.query.expected_codes {
-            ep_builder.expected_codes(val);
-        }
-        if let Some(val) = &self.query.http_method {
-            ep_builder.http_method(val);
-        }
-        if let Some(val) = &self.query.max_retries {
-            ep_builder.max_retries(*val);
-        }
-        if let Some(val) = &self.query.max_retries_down {
-            ep_builder.max_retries_down(*val);
-        }
-        if let Some(val) = &self.query.pool_id {
-            ep_builder.pool_id(val);
-        }
         if let Some(val) = &self.query.timeout {
             ep_builder.timeout(*val);
         }
         if let Some(val) = &self.query._type {
             ep_builder._type(val);
+        }
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
         }
         if let Some(val) = &self.query.url_path {
             ep_builder.url_path(val);
@@ -479,7 +508,9 @@ impl HealthmonitorsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

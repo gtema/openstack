@@ -34,6 +34,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -46,14 +47,29 @@ pub struct Request<'a> {
     #[builder(default, setter(into))]
     description: Option<Cow<'a, str>>,
 
+    /// Page size
+    ///
+    #[builder(default)]
+    limit: Option<i32>,
+
     #[builder(default, setter(into))]
     listener_id: Option<Cow<'a, str>>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     #[builder(default, setter(into))]
     operating_status: Option<Cow<'a, str>>,
+
+    /// The page direction.
+    ///
+    #[builder(default)]
+    page_reverse: Option<bool>,
 
     #[builder(default, setter(into))]
     position: Option<Cow<'a, str>>,
@@ -120,17 +136,20 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("action", self.action.as_ref());
-        params.push_opt("description", self.description.as_ref());
-        params.push_opt("listener_id", self.listener_id.as_ref());
-        params.push_opt("name", self.name.as_ref());
-        params.push_opt("position", self.position.as_ref());
-        params.push_opt("redirect_pool_id", self.redirect_pool_id.as_ref());
-        params.push_opt("redirect_url", self.redirect_url.as_ref());
-        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
-        params.push_opt("operating_status", self.operating_status.as_ref());
-        params.push_opt("redirect_prefix", self.redirect_prefix.as_ref());
-        params.push_opt("project_id", self.project_id.as_ref());
         params.push_opt("admin_state_up", self.admin_state_up);
+        params.push_opt("description", self.description.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("listener_id", self.listener_id.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("operating_status", self.operating_status.as_ref());
+        params.push_opt("page_reverse", self.page_reverse);
+        params.push_opt("position", self.position.as_ref());
+        params.push_opt("project_id", self.project_id.as_ref());
+        params.push_opt("provisioning_status", self.provisioning_status.as_ref());
+        params.push_opt("redirect_pool_id", self.redirect_pool_id.as_ref());
+        params.push_opt("redirect_prefix", self.redirect_prefix.as_ref());
+        params.push_opt("redirect_url", self.redirect_url.as_ref());
 
         params
     }
@@ -153,6 +172,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(2, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

@@ -36,6 +36,7 @@ use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use serde_json::Value;
 use structable_derive::StructTable;
 use tracing::warn;
@@ -62,6 +63,10 @@ pub struct LoadbalancersCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
@@ -71,6 +76,11 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long)]
     availability_zone: Option<String>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
@@ -86,6 +96,16 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,
+
+    /// Page size
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// ID of the last item in the previous list
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
 
     /// Human-readable name of the resource.
     ///
@@ -108,6 +128,11 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["DEGRADED","DRAINING","ERROR","NO_MONITOR","OFFLINE","ONLINE"])]
     operating_status: Option<String>,
+
+    /// The page direction.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    page_reverse: Option<bool>,
 
     /// Project resource for which the operation should be performed.
     #[command(flatten)]
@@ -132,6 +157,11 @@ struct QueryParameters {
     ///
     #[arg(help_heading = "Query parameters", long)]
     tags_any: Option<String>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
     ///
@@ -347,14 +377,35 @@ impl LoadbalancersCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.availability_zone {
+            ep_builder.availability_zone(val);
+        }
+        if let Some(val) = &self.query.created_at {
+            ep_builder.created_at(val);
+        }
         if let Some(val) = &self.query.description {
             ep_builder.description(val);
+        }
+        if let Some(val) = &self.query.flavor_id {
+            ep_builder.flavor_id(val);
+        }
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);
         }
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.page_reverse {
+            ep_builder.page_reverse(*val);
+        }
+        if let Some(val) = &self.query.provider {
+            ep_builder.provider(val);
         }
         if let Some(id) = &self.query.project.project_id {
             // project_id is passed. No need to lookup
@@ -397,11 +448,8 @@ impl LoadbalancersCommand {
                     .id,
             );
         }
-        if let Some(val) = &self.query.flavor_id {
-            ep_builder.flavor_id(val);
-        }
-        if let Some(val) = &self.query.provider {
-            ep_builder.provider(val);
+        if let Some(val) = &self.query.updated_at {
+            ep_builder.updated_at(val);
         }
         if let Some(val) = &self.query.vip_address {
             ep_builder.vip_address(val);
@@ -417,9 +465,6 @@ impl LoadbalancersCommand {
         }
         if let Some(val) = &self.query.vip_qos_policy_id {
             ep_builder.vip_qos_policy_id(val);
-        }
-        if let Some(val) = &self.query.availability_zone {
-            ep_builder.availability_zone(val);
         }
         if let Some(val) = &self.query.provisioning_status {
             ep_builder.provisioning_status(val);
@@ -445,7 +490,9 @@ impl LoadbalancersCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())
