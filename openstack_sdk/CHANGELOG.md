@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.14.1...openstack_sdk-v0.15.0) - 2024-11-30
+
+### Added
+
+- Add pagination QP to octavia resources ([#816](https://github.com/gtema/openstack/pull/816))
+- Address clippy suggestions ([#813](https://github.com/gtema/openstack/pull/813))
+- Add loadbalancer_id QP to octavia pools ([#809](https://github.com/gtema/openstack/pull/809))
+- Add octavia query parameters ([#808](https://github.com/gtema/openstack/pull/808))
+- Synchronize generated content ([#806](https://github.com/gtema/openstack/pull/806))
+
+### Fixed
+
+- Auth with project_id and no domain info set ([#815](https://github.com/gtema/openstack/pull/815))
+
+### Other
+
+- Address clippy complains ([#812](https://github.com/gtema/openstack/pull/812))
+
 ## [0.14.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.14.0...openstack_sdk-v0.14.1) - 2024-11-22
 
 ### Added
