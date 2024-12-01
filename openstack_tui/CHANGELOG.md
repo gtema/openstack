@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.1...openstack_tui-v0.9.2) - 2024-12-01
+
+### Added
+
+- Add loadbalancer_id QP to octavia pools ([#809](https://github.com/gtema/openstack/pull/809))
+- Add octavia query parameters ([#808](https://github.com/gtema/openstack/pull/808))
+- Add LB views ([#805](https://github.com/gtema/openstack/pull/805))
+- Add few basic DNS views ([#803](https://github.com/gtema/openstack/pull/803))
+- Add volume and image deletion ([#798](https://github.com/gtema/openstack/pull/798))
+
+### Other
+
+- Address clippy complains ([#812](https://github.com/gtema/openstack/pull/812))
+- Prepare for octavia filters ([#807](https://github.com/gtema/openstack/pull/807))
+
 ## [0.9.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.0...openstack_tui-v0.9.1) - 2024-11-22
 
 ### Added
