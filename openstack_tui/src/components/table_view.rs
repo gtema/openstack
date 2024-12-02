@@ -14,6 +14,7 @@
 
 use crossterm::event::{KeyCode, KeyEvent};
 use eyre::Result;
+use openstack_sdk::types::EntryStatus;
 use ratatui::{
     prelude::*,
     widgets::{block::*, *},
@@ -65,6 +66,7 @@ where
     content_size: Size,
     table_headers: Row<'a>,
     table_rows: Vec<Vec<String>>,
+    table_row_styles: Vec<Style>,
     describe: Describe,
 
     is_loading: bool,
@@ -105,6 +107,7 @@ where
             output_config: OutputConfig::default(),
             table_headers: Row::default(),
             table_rows: Vec::new(),
+            table_row_styles: Vec::new(),
             describe: Describe::new(),
             is_loading: false,
             describe_enabled: true,
@@ -325,22 +328,49 @@ where
 
     /// Synchronize table data from internal vector of typed entries
     pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
-        let (headers, rows) = self.items.build(&self.output_config);
-        self.column_widths = headers
+        let (table_headers, table_rows) = self.items.build(&self.output_config);
+        let mut statuses = self.items.status();
+
+        // Ensure we have as many statuses as rows to zip them properly
+        statuses.resize_with(table_rows.len(), Default::default);
+
+        self.column_widths = table_headers
             .clone()
             .into_iter()
             .map(|col| col.len() + 1)
             .collect::<Vec<usize>>();
-        self.table_headers = headers.clone().into_iter().map(Cell::from).collect::<Row>();
-        self.table_rows = rows;
+        self.table_headers = table_headers
+            .clone()
+            .into_iter()
+            .map(Cell::from)
+            .collect::<Row>();
+        self.table_rows = table_rows;
         for row in &self.table_rows {
             for (i, val) in row.iter().enumerate() {
                 self.column_widths[i] = cmp::max(
-                    headers[i].len(),
+                    table_headers[i].len(),
                     cmp::max(*self.column_widths.get(i).unwrap_or(&0), val.len()),
                 );
             }
         }
+        self.table_row_styles = statuses
+            .iter()
+            .enumerate()
+            .map(|(i, status)| {
+                Style::new()
+                    .fg(match EntryStatus::from(status.as_ref()) {
+                        EntryStatus::Error => self.config.styles.table.row_fg_error,
+                        EntryStatus::Pending => self.config.styles.table.row_fg_processing,
+                        EntryStatus::Inactive => self.config.styles.table.row_fg_inactive,
+                        _ => self.config.styles.table.row_fg,
+                    })
+                    .bg(match i % 2 {
+                        0 => self.config.styles.table.row_bg_normal,
+                        _ => self.config.styles.table.row_bg_alt,
+                    })
+            })
+            .collect();
+
         self.set_describe_content()?;
         Ok(())
     }
@@ -404,17 +434,17 @@ where
             .row_fg_selected);
 
         let header = self.table_headers.clone().style(header_style).height(1);
-        let rows = self.table_rows.iter().enumerate().map(|(i, data)| {
-            let color = match i % 2 {
-                0 => self.config.styles.table.row_bg_normal,
-                _ => self.config.styles.table.row_bg_alt,
-            };
-            data.iter()
-                .map(|content| Cell::from(Text::from(content.to_string())))
-                .collect::<Row>()
-                .style(Style::new().fg(self.config.styles.table.row_fg).bg(color))
-                .height(1)
-        });
+        let rows = self
+            .table_rows
+            .iter()
+            .zip(self.table_row_styles.clone())
+            .map(|(data, row_style)| {
+                data.iter()
+                    .map(|content| Cell::from(Text::from(content.to_string())))
+                    .collect::<Row>()
+                    .style(row_style)
+                    .height(1)
+            });
         let t = Table::default()
             .header(header)
             .rows(rows)
