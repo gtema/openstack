@@ -145,7 +145,7 @@ struct ResponseData {
     /// `unavailable`.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, status)]
     state: Option<String>,
 }
 
