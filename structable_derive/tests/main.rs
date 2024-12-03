@@ -3,7 +3,7 @@ use serde_json::{json, Value};
 use std::collections::BTreeSet;
 use structable_derive::StructTable;
 
-#[derive(Deserialize, Serialize, StructTable)]
+#[derive(Default, Deserialize, Serialize, StructTable)]
 struct User {
     #[structable(title = "ID")]
     id: u64,
@@ -17,6 +17,21 @@ struct User {
     dummy: Option<String>,
 }
 
+#[derive(Deserialize, Serialize, StructTable)]
+struct StatusStruct {
+    #[structable(title = "ID")]
+    id: u64,
+    #[structable(status)]
+    status: String,
+}
+#[derive(Deserialize, Serialize, StructTable)]
+struct OptionStatusStruct {
+    #[structable(title = "ID")]
+    id: u64,
+    #[structable(status, optional)]
+    status: Option<String>,
+}
+
 struct OutputConfig {
     /// Limit fields (their titles) to be returned
     fields: BTreeSet<String>,
@@ -28,6 +43,7 @@ struct OutputConfig {
 
 trait StructTable {
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+    fn status(&self) -> Vec<Option<String>>;
 }
 
 #[test]
@@ -168,13 +184,13 @@ fn test_list() {
                     "1".to_string(),
                     "Scooby".to_string(),
                     "Doo".to_string(),
-                    "".to_string()
+                    " ".to_string()
                 ],
                 vec![
                     "2".to_string(),
                     "John".to_string(),
                     "Cena".to_string(),
-                    "".to_string()
+                    " ".to_string()
                 ],
             ]
         )
@@ -226,14 +242,14 @@ fn test_list_wide() {
                     "Doo".to_string(),
                     "Foo".to_string(),
                     "{\n  \"a\": \"b\",\n  \"c\": \"d\"\n}".to_string(),
-                    "".to_string()
+                    " ".to_string()
                 ],
                 vec![
                     "2".to_string(),
                     "John".to_string(),
                     "Cena".to_string(),
                     "Bar".to_string(),
-                    "".to_string(),
+                    " ".to_string(),
                     "foo".to_string()
                 ],
             ]
@@ -268,4 +284,62 @@ fn test_deser() {
             vec![vec!["ID".to_string(), "1".to_string()],]
         )
     );
+}
+
+#[test]
+fn test_list_status() {
+    let raw = vec![
+        StatusStruct {
+            id: 1,
+            status: String::from("foo"),
+        },
+        StatusStruct {
+            id: 2,
+            status: String::from("bar"),
+        },
+    ];
+
+    let data = raw.status();
+    assert_eq!(
+        data,
+        vec![Some(String::from("foo")), Some(String::from("bar"))]
+    );
+}
+
+#[test]
+fn test_list_status_no_status() {
+    let raw = vec![User::default(), User::default()];
+
+    let data = raw.status();
+    assert_eq!(data, vec![None, None]);
+}
+
+#[test]
+fn test_single_status() {
+    let raw = StatusStruct {
+        id: 1,
+        status: String::from("foo"),
+    };
+
+    let data = raw.status();
+    assert_eq!(data, vec![Some(String::from("foo")),]);
+}
+
+#[test]
+fn test_single_no_status() {
+    let raw = User::default();
+
+    let data = raw.status();
+    assert_eq!(data, vec![None]);
+}
+
+#[test]
+fn test_single_option_status() {
+    let raw = OptionStatusStruct {
+        id: 1,
+        status: Some(String::from("foo")),
+    };
+
+    let data = raw.status();
+    assert_eq!(data, vec![Some(String::from("foo")),]);
 }

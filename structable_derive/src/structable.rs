@@ -44,6 +44,10 @@ pub(crate) struct TableStructFieldReceiver {
     /// apply `to_string_pretty` instead of `to_string` for the value
     #[darling(default)]
     pretty: bool,
+
+    /// `status` field
+    #[darling(default)]
+    status: bool,
 }
 
 impl ToTokens for TableStructInputReceiver {
@@ -64,8 +68,10 @@ impl ToTokens for TableStructInputReceiver {
         let mut struct_fields = Vec::new();
         let mut vec_struct_headers = Vec::new();
         let mut vec_struct_fields = Vec::new();
+        let mut status_field: Option<&TableStructFieldReceiver> = None;
+        let mut status_alt_field: Option<&TableStructFieldReceiver> = None;
 
-        for field in fields.into_iter() {
+        for field in fields.iter() {
             let field_ident = field.ident.as_ref().unwrap();
             let field_title = field.title.clone().unwrap_or(field_ident.to_string());
 
@@ -183,7 +189,61 @@ impl ToTokens for TableStructInputReceiver {
             struct_fields.push(struct_row);
             vec_struct_fields.push(vec_struct_row);
             vec_struct_headers.push(vec_struct_header_row);
+
+            // Save the status or status_alt (the one with name `status`) field
+            if field.status {
+                status_field = Some(field);
+            }
+            if field_title.to_lowercase() == "status" {
+                status_alt_field = Some(field);
+            }
         }
+
+        // Set status_field to status_alt if no explicit `status` set
+        if status_alt_field.is_some() && status_field.is_none() {
+            status_field = status_alt_field;
+        }
+        // Construct code for the `status` trait method for single struct and vec
+        let (item_status, struct_status) = match status_field {
+            Some(field) => {
+                let field_ident = field.ident.as_ref().unwrap();
+
+                match field.optional {
+                    true => (
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    self.iter().map(|item| item. #field_ident .clone().map(|val| val.to_string())).collect()
+                        }),
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    Vec::from([self. #field_ident .clone().map(|val| val.to_string())])
+                        }),
+                    ),
+                    false => (
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    self.iter().map(|item| Some(item. #field_ident .to_string())).collect()
+                        }),
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    Vec::from([Some(self. #field_ident .to_string())])
+                        }),
+                    ),
+                }
+            }
+            _ => (
+                quote!(
+                    fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                        return std::iter::repeat_with(|| None).take(self.len()).collect();
+                    }
+                ),
+                quote!(
+                    fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                        Vec::from([None])
+                    }
+                ),
+            ),
+        };
 
         tokens.extend(quote! {
             impl #imp StructTable for #ident #ty #wher {
@@ -193,6 +253,8 @@ impl ToTokens for TableStructInputReceiver {
                     #(#struct_fields)*
                     (headers, res)
                 }
+
+                #struct_status
             }
 
             impl #imp StructTable for Vec<#ident> #ty #wher {
@@ -209,6 +271,8 @@ impl ToTokens for TableStructInputReceiver {
                     }
                     (headers, res)
                 }
+
+                #item_status
             }
         });
     }

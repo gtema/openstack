@@ -14,8 +14,9 @@
 
 //! Output processing module
 
-use comfy_table::{presets::UTF8_FULL_CONDENSED, ContentArrangement, Table};
+use comfy_table::{presets::UTF8_FULL_CONDENSED, Cell, Color, ContentArrangement, Table};
 use eyre::WrapErr;
+use openstack_sdk::types::EntryStatus;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
 use std::io::{self, Write};
@@ -38,6 +39,11 @@ pub struct OutputConfig {
 pub trait StructTable {
     /// Build a vector of headers and rows from the data
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+
+    /// Get a status of entry
+    fn status(&self) -> Vec<Option<String>> {
+        Vec::from([None])
+    }
 }
 
 /// Output Processor
@@ -114,13 +120,36 @@ impl OutputProcessor {
 
     /// Produce output for humans (table)
     pub(crate) fn output_human<T: StructTable>(&self, data: &T) -> Result<(), OpenStackCliError> {
-        let (headers, table_data) = data.build(&self.config);
+        let (headers, table_rows) = data.build(&self.config);
+        let mut statuses = data.status();
+
+        // Ensure we have as many statuses as rows to zip them properly
+        statuses.resize_with(table_rows.len(), Default::default);
+
+        let rows = table_rows
+            .iter()
+            .zip(statuses.iter())
+            .map(|(data, status)| {
+                let color = match EntryStatus::from(status.as_ref()) {
+                    EntryStatus::Error => Some(Color::Red),
+                    EntryStatus::Pending => Some(Color::Yellow),
+                    EntryStatus::Inactive => Some(Color::Cyan),
+                    _ => None,
+                };
+                data.iter().map(move |cell| {
+                    if let Some(color) = color {
+                        Cell::new(cell).fg(color)
+                    } else {
+                        Cell::new(cell)
+                    }
+                })
+            });
         let mut table = Table::new();
         table
             .load_preset(UTF8_FULL_CONDENSED)
             .set_content_arrangement(ContentArrangement::Dynamic)
             .set_header(headers)
-            .add_rows(table_data);
+            .add_rows(rows);
         println!("{table}");
         Ok(())
     }

@@ -216,7 +216,10 @@ pub struct OutputConfig {
 }
 
 pub trait StructTable {
+    /// Build a vector of headers and rows from the data
     fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+    /// Get a status of entry
+    fn status(&self) -> Vec<Option<String>>;
 }
 
 /// helper function to create a centered rect using up certain percentage of the available rect `r`

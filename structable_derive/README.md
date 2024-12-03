@@ -37,6 +37,7 @@ Depending on the OutputConfig it is possible to build a tuple (headers, rows) wi
 
     trait StructTable {
         fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+        fn status(&self) -> Vec<Option<String>>;
     }
 ```
 
@@ -59,6 +60,7 @@ Example
 
     trait StructTable {
         fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+        fn status(&self) -> Vec<Option<String>>;
     }
 
     #[derive(Serialize, StructTable)]

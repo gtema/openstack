@@ -137,3 +137,165 @@ pub enum NameOrId {
     #[serde(rename = "name")]
     Name(String),
 }
+
+/// Status of the resource
+#[derive(Debug, Default, PartialEq)]
+pub enum EntryStatus {
+    /// Normal status
+    #[default]
+    Normal,
+    /// Any Error
+    Error,
+    /// Some Action is in progress
+    Pending,
+    /// Inactive
+    Inactive,
+}
+
+impl From<Option<&String>> for EntryStatus {
+    fn from(input: Option<&String>) -> EntryStatus {
+        match input {
+            Some(val) => match val.to_lowercase().as_str() {
+                // Statuses treated as an error
+                "degraded" | "error" | "error_deleting" | "error_backing-up"
+                | "error_restoring" | "error_extending" | "killed" => Self::Error,
+                // Statuses treated as an currently in progress
+                "attaching" | "backing-up" | "build" | "building" | "creating" | "detaching"
+                | "downloading" | "extending" | "importing" | "pending" | "queued"
+                | "restoring" | "restoring-backup" | "saving" | "uploading" => Self::Pending,
+                // inactive
+                "available" | "deleted" | "no_monitor" | "offline" | "reserved" | "shutoff" => {
+                    Self::Inactive
+                }
+                _ => Self::Normal,
+            },
+            None => Self::Normal,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_entry_status() {
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("DEGRADED")))
+        );
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("error")))
+        );
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("error_backing-up")))
+        );
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("error_deleting")))
+        );
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("error_restoring")))
+        );
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("error_extending")))
+        );
+        assert_eq!(
+            EntryStatus::Error,
+            EntryStatus::from(Some(&String::from("killed")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("attaching")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("backing-up")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("build")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("building")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("creating")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("detaching")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("downloading")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("extending")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("importing")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("pending")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("queued")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("restoring")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("restoring-backup")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("saving")))
+        );
+        assert_eq!(
+            EntryStatus::Pending,
+            EntryStatus::from(Some(&String::from("uploading")))
+        );
+        assert_eq!(
+            EntryStatus::Inactive,
+            EntryStatus::from(Some(&String::from("available")))
+        );
+        assert_eq!(
+            EntryStatus::Inactive,
+            EntryStatus::from(Some(&String::from("deleted")))
+        );
+        assert_eq!(
+            EntryStatus::Inactive,
+            EntryStatus::from(Some(&String::from("no_monitor")))
+        );
+        assert_eq!(
+            EntryStatus::Inactive,
+            EntryStatus::from(Some(&String::from("offline")))
+        );
+        assert_eq!(
+            EntryStatus::Inactive,
+            EntryStatus::from(Some(&String::from("reserved")))
+        );
+        assert_eq!(
+            EntryStatus::Inactive,
+            EntryStatus::from(Some(&String::from("shutoff")))
+        );
+        assert_eq!(
+            EntryStatus::Normal,
+            EntryStatus::from(Some(&String::from("foobar")))
+        );
+        assert_eq!(EntryStatus::Normal, EntryStatus::from(None));
+    }
+}
