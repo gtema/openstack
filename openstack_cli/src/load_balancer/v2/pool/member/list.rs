@@ -278,7 +278,7 @@ struct ResponseData {
     /// [Operating Status Codes](#op-status).
     ///
     #[serde()]
-    #[structable(optional, wide)]
+    #[structable(optional, status)]
     operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
