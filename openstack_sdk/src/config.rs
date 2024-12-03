@@ -242,6 +242,9 @@ pub struct Auth {
     pub(crate) application_credential_name: Option<String>,
     /// `Application Credential` Secret
     pub(crate) application_credential_secret: Option<String>,
+
+    /// `System scope`
+    pub(crate) system_scope: Option<String>,
 }
 
 impl fmt::Debug for Auth {
@@ -268,6 +271,7 @@ impl fmt::Debug for Auth {
                 "application_credential_secret",
                 &self.application_credential_secret,
             )
+            .field("system_scope", &self.system_scope)
             .finish()
     }
 }
@@ -337,6 +341,9 @@ pub fn get_config_identity_hash(config: &CloudConfig) -> u64 {
             data.hash(&mut s);
         }
         if let Some(data) = &auth.application_credential_id {
+            data.hash(&mut s);
+        }
+        if let Some(data) = &auth.system_scope {
             data.hash(&mut s);
         }
     }
@@ -418,6 +425,9 @@ impl CloudConfig {
             {
                 auth.application_credential_secret
                     .clone_from(&update_auth.application_credential_secret);
+            }
+            if auth.system_scope.is_none() && update_auth.system_scope.is_some() {
+                auth.system_scope.clone_from(&update_auth.system_scope);
             }
         }
         if self.auth_type.is_none() && update.auth_type.is_some() {

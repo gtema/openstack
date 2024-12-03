@@ -213,6 +213,14 @@ impl State {
                         }
                     }
                 }
+                AuthTokenScope::System(system) => {
+                    if let AuthTokenScope::System(cached) = k {
+                        // Scope type matches
+                        if system.all == cached.all {
+                            return Some((k.clone(), v.clone()));
+                        }
+                    }
+                }
                 AuthTokenScope::Unscoped => {
                     if let AuthTokenScope::Unscoped = k {
                         return Some((k.clone(), v.clone()));
