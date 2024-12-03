@@ -36,6 +36,7 @@ pub struct AuthToken {
     pub user: User,
     pub project: Option<Project>,
     pub domain: Option<Domain>,
+    pub system: Option<System>,
     pub issued_at: Option<DateTime<Local>>,
     pub expires_at: DateTime<Local>,
 }
@@ -86,6 +87,13 @@ pub struct Project {
 pub struct Domain {
     pub id: Option<String>,
     pub name: Option<String>,
+}
+
+/// System Scope
+///
+#[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
+pub struct System {
+    pub all: Option<bool>,
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq)]

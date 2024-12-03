@@ -29,7 +29,7 @@ use tracing::error;
 use crate::api::identity::v3::auth::token::create as token_v3;
 use crate::auth::authtoken::AuthTokenError;
 use crate::config;
-use crate::types::identity::v3::{self as types_v3, AuthResponse, Domain, Project};
+use crate::types::identity::v3::{self as types_v3, AuthResponse, Domain, Project, System};
 
 /// AuthToken (X-Auth-Token) Scope based auth errors
 #[derive(Debug, Error)]
@@ -73,6 +73,14 @@ pub enum AuthTokenScopeError {
         source: token_v3::ScopeDomainBuilderError,
     },
 
+    /// Scope System cannot be build
+    #[error("Cannot construct system scope information from config: {}", source)]
+    ScopeSystemBuild {
+        /// The error source
+        #[from]
+        source: token_v3::SystemBuilderError,
+    },
+
     /// Scope data cannot be build
     #[error("Cannot construct auth scope information from config: {}", source)]
     ScopeBuild {
@@ -107,6 +115,14 @@ impl From<token_v3::ScopeDomainBuilderError> for AuthTokenError {
     }
 }
 
+impl From<token_v3::SystemBuilderError> for AuthTokenError {
+    fn from(source: token_v3::SystemBuilderError) -> Self {
+        Self::Scope {
+            source: source.into(),
+        }
+    }
+}
+
 impl From<token_v3::ScopeBuilderError> for AuthTokenError {
     fn from(source: token_v3::ScopeBuilderError) -> Self {
         Self::Scope {
@@ -118,8 +134,13 @@ impl From<token_v3::ScopeBuilderError> for AuthTokenError {
 /// Represents AuthToken authorization scope
 #[derive(Clone, Deserialize, Eq, Hash, PartialEq, Serialize, Debug)]
 pub enum AuthTokenScope {
+    /// Project
     Project(Project),
+    /// Domain
     Domain(Domain),
+    /// System
+    System(System),
+    /// Unscoped
     Unscoped,
 }
 
@@ -147,6 +168,11 @@ impl TryFrom<&config::CloudConfig> for AuthTokenScope {
                 id: auth.domain_id.clone(),
                 name: auth.domain_name.clone(),
             }))
+        } else if let Some(system) = auth.system_scope {
+            // System scope
+            Ok(AuthTokenScope::System(System {
+                all: Some(system == "all"),
+            }))
         } else {
             Ok(AuthTokenScope::Unscoped)
         }
@@ -160,6 +186,8 @@ impl From<&AuthResponse> for AuthTokenScope {
             Self::Project(project.clone())
         } else if let Some(domain) = &auth.token.domain {
             Self::Domain(domain.clone())
+        } else if let Some(system) = &auth.token.system {
+            Self::System(system.clone())
         } else {
             Self::Unscoped
         }
@@ -201,6 +229,13 @@ impl TryFrom<&AuthTokenScope> for token_v3::Scope<'_> {
                     domain_builder.name(val.clone());
                 }
                 scope_builder.domain(domain_builder.build()?);
+            }
+            AuthTokenScope::System(system) => {
+                let mut system_builder = token_v3::SystemBuilder::default();
+                if let Some(all) = system.all {
+                    system_builder.all(all);
+                }
+                scope_builder.system(system_builder.build()?);
             }
             AuthTokenScope::Unscoped => {}
         }
@@ -244,6 +279,11 @@ impl TryFrom<&config::CloudConfig> for token_v3::Scope<'_> {
                 domain_scope.name(val);
             }
             scope.domain(domain_scope.build()?);
+        } else if let Some(system) = auth.system_scope {
+            // System scope
+            let mut system_scope = token_v3::SystemBuilder::default();
+            system_scope.all(system == "all");
+            scope.system(system_scope.build()?);
         } else {
             return Err(Self::Error::Scope {
                 source: AuthTokenScopeError::MissingScope,
