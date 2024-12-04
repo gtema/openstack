@@ -25,6 +25,7 @@ mod domain;
 mod endpoint;
 mod group;
 mod limit;
+mod os_ep_filter;
 mod os_federation;
 mod project;
 mod region;
@@ -66,6 +67,8 @@ pub enum IdentityCommands {
     Credential(credential::CredentialCommand),
     Domain(domain::DomainCommand),
     Endpoint(endpoint::EndpointCommand),
+    #[command(alias = "OS-EP-FILTER")]
+    EndpointFilter(os_ep_filter::EndpointFilterCommand),
     Federation(os_federation::FederationCommand),
     Group(group::GroupCommand),
     Limit(limit::LimitCommand),
@@ -95,6 +98,7 @@ impl IdentityCommand {
             IdentityCommands::Credential(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Domain(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Endpoint(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::EndpointFilter(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Federation(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Group(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
