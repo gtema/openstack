@@ -28,6 +28,7 @@ mod limit;
 mod os_federation;
 mod project;
 mod region;
+mod registered_limit;
 mod role;
 mod role_assignment;
 mod role_inference;
@@ -35,6 +36,19 @@ mod service;
 mod user;
 
 /// Identity (Keystone) commands
+///
+/// The Identity service generates authentication tokens that permit access to the OpenStack
+/// services REST APIs. Clients obtain this token and the URL endpoints for other service APIs by
+/// supplying their valid credentials to the authentication service.
+///
+/// Each time you make a REST API request to an OpenStack service, you supply your authentication
+/// token in the X-Auth-Token request header.
+///
+/// Like most OpenStack projects, OpenStack Identity protects its APIs by defining policy rules
+/// based on a role-based access control (RBAC) approach.
+///
+/// The Identity service configuration file sets the name and location of a JSON policy file that
+/// stores these rules.
 #[derive(Parser)]
 pub struct IdentityCommand {
     /// subcommand
@@ -57,6 +71,7 @@ pub enum IdentityCommands {
     Limit(limit::LimitCommand),
     Project(project::ProjectCommand),
     Region(region::RegionCommand),
+    RegisteredLimit(Box<registered_limit::RegisteredLimitCommand>),
     Role(role::RoleCommand),
     RoleAssignment(role_assignment::RoleAssignmentCommand),
     RoleInference(role_inference::RoleInferenceCommand),
@@ -85,6 +100,7 @@ impl IdentityCommand {
             IdentityCommands::Limit(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Project(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Region(cmd) => cmd.take_action(parsed_args, session).await,
+            IdentityCommands::RegisteredLimit(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::RoleAssignment(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::RoleInference(cmd) => cmd.take_action(parsed_args, session).await,
             IdentityCommands::Role(cmd) => cmd.take_action(parsed_args, session).await,
