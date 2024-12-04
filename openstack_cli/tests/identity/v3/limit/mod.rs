@@ -12,22 +12,11 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-mod auth;
-// mod catalog;
-mod credential;
-mod domain;
-mod endpoint;
-mod group;
-mod limit;
-mod os_federation;
-mod project;
-mod region;
-mod registered_limit;
-mod role;
-mod role_assignment;
-mod role_inference;
-mod service;
-mod user;
+mod create_autogen;
+mod delete_autogen;
+mod list_autogen;
+mod set_autogen;
+mod show_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -36,7 +25,7 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("identity").arg("--help");
+    cmd.args(["identity", "limit", "--help"]);
     cmd.assert().success();
 
     Ok(())
