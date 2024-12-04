@@ -31,10 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_json;
 use crate::common::parse_key_val;
-use eyre::eyre;
-use eyre::OptionExt;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::project::set;
 use openstack_sdk::api::identity::v3::project::find as find_project;
