@@ -67,7 +67,6 @@ pub enum IdentityCommands {
     Credential(credential::CredentialCommand),
     Domain(domain::DomainCommand),
     Endpoint(endpoint::EndpointCommand),
-    #[command(alias = "OS-EP-FILTER")]
     EndpointFilter(os_ep_filter::EndpointFilterCommand),
     Federation(os_federation::FederationCommand),
     Group(group::GroupCommand),

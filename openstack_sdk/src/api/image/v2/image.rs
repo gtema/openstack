@@ -24,6 +24,7 @@ pub mod find;
 pub mod get;
 pub mod import;
 pub mod list;
+pub mod location;
 pub mod member;
 pub mod patch;
 pub mod reactivate;

@@ -23,7 +23,7 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
     cmd.arg("identity")
-        .arg("OS-EP-FILTER")
+        .arg("endpoint-filter")
         .arg("project")
         .arg("endpoint-group")
         .arg("get")
