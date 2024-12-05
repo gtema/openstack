@@ -441,7 +441,7 @@ where
 // Instead of implementing Stream directly, we implement this "async" next method and use it with
 // `stream::unfold` to return an anonymous Stream impl.
 #[cfg(feature = "async")]
-impl<'a, E, C, T> PagedIter<'a, E, C, T>
+impl<E, C, T> PagedIter<'_, E, C, T>
 where
     E: RestEndpoint + Pageable + Sync,
     T: DeserializeOwned + 'static,
