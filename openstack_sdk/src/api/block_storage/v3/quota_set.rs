@@ -16,6 +16,7 @@
 // `openstack-codegenerator`.
 
 //! `/v3/os-quota-sets/{id}/defaults` REST operations of block_storage
+pub mod defaults;
 pub mod delete;
 pub mod get;
 pub mod set;

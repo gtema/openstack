@@ -24,8 +24,7 @@ fn help() -> Result<(), Box<dyn std::error::Error>> {
 
     cmd.arg("block-storage")
         .arg("quota-set")
-        .arg("default")
-        .arg("get")
+        .arg("defaults")
         .arg("--help");
     cmd.assert().success();
 
