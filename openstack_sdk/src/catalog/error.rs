@@ -82,11 +82,11 @@ impl CatalogError {
     pub fn url_parse<S: AsRef<str>>(source: url::ParseError, url: S) -> Self {
         Self::UrlParse {
             source,
-            url: url.as_ref().to_string(),
+            url: url.as_ref().into(),
         }
     }
 
     pub fn cannot_be_base(url: &Url) -> Self {
-        Self::UrlCannotBeBase(url.as_str().to_string())
+        Self::UrlCannotBeBase(url.as_str().into())
     }
 }

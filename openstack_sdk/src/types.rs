@@ -72,7 +72,7 @@ impl From<&str> for ServiceType {
             "load-balancer" => ServiceType::LoadBalancer,
             "network" => ServiceType::Network,
             "object-store" => ServiceType::ObjectStore,
-            _ => ServiceType::Other(val.to_string()),
+            _ => ServiceType::Other(val.into()),
         }
     }
 }

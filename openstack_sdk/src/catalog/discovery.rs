@@ -111,7 +111,7 @@ pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
         return Err(CatalogError::cannot_be_base(&url));
     }
     url.set_scheme(base_url.scheme())
-        .map_err(|_| CatalogError::UrlScheme(base_url.as_ref().to_string()))?;
+        .map_err(|_| CatalogError::UrlScheme(base_url.as_ref().into()))?;
     url.set_host(base_url.host_str())
         .map_err(|x| CatalogError::url_parse(x, url.as_ref()))?;
     if !url.as_str().ends_with('/') {
@@ -183,11 +183,11 @@ mod tests {
               "id": "v2.1"
         }))
         .unwrap();
-        assert_eq!("v2.1".to_string(), ev.id);
+        assert_eq!("v2.1", ev.id);
         assert_eq!(EndpointVersionStatus::Current, ev.status);
         assert_eq!(None, ev.version);
         assert_eq!(None, ev.min_version);
-        assert_eq!(Some("2.38".to_string()), ev.max_version);
+        assert_eq!(Some("2.38".into()), ev.max_version);
         assert_eq!(ApiVersion::new(2, 38), ev.get_api_version().unwrap());
 
         let ev: EndpointVersion = serde_json::from_value(json!({
@@ -203,15 +203,15 @@ mod tests {
               "id": "v2.1"
         }))
         .unwrap();
-        assert_eq!("v2.1".to_string(), ev.id);
+        assert_eq!("v2.1", ev.id);
         assert_eq!(EndpointVersionStatus::Current, ev.status);
-        assert_eq!(Some("2.38".to_string()), ev.version);
-        assert_eq!(Some("2.1".to_string()), ev.min_version);
+        assert_eq!(Some("2.38".into()), ev.version);
+        assert_eq!(Some("2.1".into()), ev.min_version);
         assert_eq!(None, ev.max_version);
         assert_eq!(
             Vec::from([Link {
-                href: "http://compute.example.com/v2.1/".to_string(),
-                rel: "self".to_string(),
+                href: "http://compute.example.com/v2.1/".into(),
+                rel: "self".into(),
             },]),
             ev.links
         );
@@ -227,14 +227,14 @@ mod tests {
     #[test]
     fn test_endpoint_version_normalize() {
         let version = EndpointVersion {
-            id: "v2.0".to_string(),
+            id: "v2.0".into(),
             status: EndpointVersionStatus::Supported,
-            version: Some("2.0".to_string()),
+            version: Some("2.0".into()),
             min_version: None,
             max_version: None,
             links: Vec::from([Link {
-                href: "http:///localhost/v2/".to_string(),
-                rel: "self".to_string(),
+                href: "http:///localhost/v2/".into(),
+                rel: "self".into(),
             }]),
         };
         let base_url = Url::parse("https://compute.example.com/").unwrap();
@@ -283,14 +283,14 @@ mod tests {
     #[test]
     fn test_endpoint_version_as_endpoint() {
         let version = EndpointVersion {
-            id: "v2.0".to_string(),
+            id: "v2.0".into(),
             status: EndpointVersionStatus::Supported,
-            version: Some("2.0".to_string()),
+            version: Some("2.0".into()),
             min_version: None,
             max_version: None,
             links: Vec::from([Link {
-                href: "http://compute.example.com/v2/".to_string(),
-                rel: "self".to_string(),
+                href: "http://compute.example.com/v2/".into(),
+                rel: "self".into(),
             }]),
         };
         let base_url = Url::parse("https://compute.example.com/").unwrap();
@@ -301,9 +301,9 @@ mod tests {
     #[test]
     fn test_endpoint_version_as_endpoint_no_self_link() {
         let version = EndpointVersion {
-            id: "v2.0".to_string(),
+            id: "v2.0".into(),
             status: EndpointVersionStatus::Supported,
-            version: Some("2.0".to_string()),
+            version: Some("2.0".into()),
             min_version: None,
             max_version: None,
             links: Vec::new(),
@@ -321,14 +321,14 @@ mod tests {
     #[test]
     fn test_endpoint_version_as_endpoint_bad_self_link() {
         let version = EndpointVersion {
-            id: "v2.0".to_string(),
+            id: "v2.0".into(),
             status: EndpointVersionStatus::Supported,
-            version: Some("2.0".to_string()),
+            version: Some("2.0".into()),
             min_version: None,
             max_version: None,
             links: Vec::from([Link {
-                href: "http://".to_string(),
-                rel: "self".to_string(),
+                href: "http://".into(),
+                rel: "self".into(),
             }]),
         };
         let base_url = Url::parse("https://compute.example.com/").unwrap();

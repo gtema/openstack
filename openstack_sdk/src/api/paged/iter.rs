@@ -118,8 +118,7 @@ impl Page {
                 }
             }
             Self::Number(page) => {
-                let page_str = page.to_string();
-                pairs.append_pair("page", &page_str);
+                pairs.append_pair("page", page.to_string().as_ref());
             }
             Self::Keyset(_) => {}
             Self::Done => {
@@ -274,7 +273,7 @@ where
         };
 
         if let Some(root_key) = self.paged.endpoint.response_key() {
-            v = v[root_key.to_string()].take();
+            v = v[root_key.as_ref()].take();
         }
 
         let mut marker: Option<String> = None;
@@ -305,7 +304,7 @@ where
             v.as_array_mut(),
         ) {
             for elem in array {
-                *elem = elem[item_key.to_string()].take();
+                *elem = elem[item_key.as_ref()].take();
             }
         }
 

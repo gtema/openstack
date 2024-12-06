@@ -55,9 +55,9 @@ fn test_single() {
     };
     let user = User {
         id: 1,
-        first_name: "Scooby".to_string(),
-        last_name: "Doo".to_string(),
-        extra: "XYZ".to_string(),
+        first_name: "Scooby".into(),
+        last_name: "Doo".into(),
+        extra: "XYZ".into(),
         complex_data: Some(json!({"a": "b", "c": "d"})),
         dummy: None,
     };
@@ -65,11 +65,11 @@ fn test_single() {
     assert_eq!(
         data,
         (
-            vec!["Attribute".to_string(), "Value".to_string()],
+            vec!["Attribute".into(), "Value".into()],
             vec![
-                vec!["ID".to_string(), "1".to_string()],
-                vec!["first_name".to_string(), "Scooby".to_string()],
-                vec!["last_name".to_string(), "Doo".to_string()],
+                vec!["ID".into(), "1".into()],
+                vec!["first_name".into(), "Scooby".into()],
+                vec!["last_name".into(), "Doo".into()],
             ]
         )
     );
@@ -84,9 +84,9 @@ fn test_single_wide() {
     };
     let user = User {
         id: 1,
-        first_name: "Scooby".to_string(),
-        last_name: "Doo".to_string(),
-        extra: "XYZ".to_string(),
+        first_name: "Scooby".into(),
+        last_name: "Doo".into(),
+        extra: "XYZ".into(),
         complex_data: Some(json!({"a": "b", "c": "d"})),
         dummy: None,
     };
@@ -94,14 +94,14 @@ fn test_single_wide() {
     assert_eq!(
         data,
         (
-            vec!["Attribute".to_string(), "Value".to_string()],
+            vec!["Attribute".into(), "Value".into()],
             vec![
-                vec!["ID".to_string(), "1".to_string()],
-                vec!["first_name".to_string(), "Scooby".to_string()],
-                vec!["last_name".to_string(), "Doo".to_string()],
-                vec!["Long".to_string(), "XYZ".to_string()],
+                vec!["ID".into(), "1".into()],
+                vec!["first_name".into(), "Scooby".into()],
+                vec!["last_name".into(), "Doo".into()],
+                vec!["Long".into(), "XYZ".into()],
                 vec![
-                    "complex_data".to_string(),
+                    "complex_data".into(),
                     "{\"a\":\"b\",\"c\":\"d\"}".to_string()
                 ],
             ]
@@ -118,9 +118,9 @@ fn test_single_wide_pretty() {
     };
     let user = User {
         id: 1,
-        first_name: "Scooby".to_string(),
-        last_name: "Doo".to_string(),
-        extra: "XYZ".to_string(),
+        first_name: "Scooby".into(),
+        last_name: "Doo".into(),
+        extra: "XYZ".into(),
         complex_data: Some(json!({"a": "b", "c": "d"})),
         dummy: None,
     };
@@ -128,14 +128,14 @@ fn test_single_wide_pretty() {
     assert_eq!(
         data,
         (
-            vec!["Attribute".to_string(), "Value".to_string()],
+            vec!["Attribute".into(), "Value".into()],
             vec![
-                vec!["ID".to_string(), "1".to_string()],
-                vec!["first_name".to_string(), "Scooby".to_string()],
-                vec!["last_name".to_string(), "Doo".to_string()],
-                vec!["Long".to_string(), "XYZ".to_string()],
+                vec!["ID".into(), "1".into()],
+                vec!["first_name".into(), "Scooby".into()],
+                vec!["last_name".into(), "Doo".into()],
+                vec!["Long".into(), "XYZ".into()],
                 vec![
-                    "complex_data".to_string(),
+                    "complex_data".into(),
                     "{\n  \"a\": \"b\",\n  \"c\": \"d\"\n}".to_string()
                 ],
             ]
@@ -153,17 +153,17 @@ fn test_list() {
     let users = vec![
         User {
             id: 1,
-            first_name: "Scooby".to_string(),
-            last_name: "Doo".to_string(),
-            extra: "Foo".to_string(),
+            first_name: "Scooby".into(),
+            last_name: "Doo".into(),
+            extra: "Foo".into(),
             complex_data: Some(json!({"a": "b", "c": "d"})),
             dummy: None,
         },
         User {
             id: 2,
-            first_name: "John".to_string(),
-            last_name: "Cena".to_string(),
-            extra: "Bar".to_string(),
+            first_name: "John".into(),
+            last_name: "Cena".into(),
+            extra: "Bar".into(),
             complex_data: None,
             dummy: None,
         },
@@ -174,24 +174,14 @@ fn test_list() {
         data,
         (
             vec![
-                "ID".to_string(),
-                "first_name".to_string(),
-                "last_name".to_string(),
-                "dummy".to_string()
+                "ID".into(),
+                "first_name".into(),
+                "last_name".into(),
+                "dummy".into()
             ],
             vec![
-                vec![
-                    "1".to_string(),
-                    "Scooby".to_string(),
-                    "Doo".to_string(),
-                    " ".to_string()
-                ],
-                vec![
-                    "2".to_string(),
-                    "John".to_string(),
-                    "Cena".to_string(),
-                    " ".to_string()
-                ],
+                vec!["1".into(), "Scooby".into(), "Doo".into(), " ".into()],
+                vec!["2".into(), "John".into(), "Cena".into(), " ".into()],
             ]
         )
     );
@@ -207,19 +197,19 @@ fn test_list_wide() {
     let users = vec![
         User {
             id: 1,
-            first_name: "Scooby".to_string(),
-            last_name: "Doo".to_string(),
-            extra: "Foo".to_string(),
+            first_name: "Scooby".into(),
+            last_name: "Doo".into(),
+            extra: "Foo".into(),
             complex_data: Some(json!({"a": "b", "c": "d"})),
             dummy: None,
         },
         User {
             id: 2,
-            first_name: "John".to_string(),
-            last_name: "Cena".to_string(),
-            extra: "Bar".to_string(),
+            first_name: "John".into(),
+            last_name: "Cena".into(),
+            extra: "Bar".into(),
             complex_data: None,
-            dummy: Some("foo".to_string()),
+            dummy: Some("foo".into()),
         },
     ];
 
@@ -228,29 +218,29 @@ fn test_list_wide() {
         data,
         (
             vec![
-                "ID".to_string(),
-                "first_name".to_string(),
-                "last_name".to_string(),
-                "Long".to_string(),
-                "complex_data".to_string(),
-                "dummy".to_string()
+                "ID".into(),
+                "first_name".into(),
+                "last_name".into(),
+                "Long".into(),
+                "complex_data".into(),
+                "dummy".into()
             ],
             vec![
                 vec![
-                    "1".to_string(),
-                    "Scooby".to_string(),
-                    "Doo".to_string(),
-                    "Foo".to_string(),
+                    "1".into(),
+                    "Scooby".into(),
+                    "Doo".into(),
+                    "Foo".into(),
                     "{\n  \"a\": \"b\",\n  \"c\": \"d\"\n}".to_string(),
                     " ".to_string()
                 ],
                 vec![
-                    "2".to_string(),
-                    "John".to_string(),
-                    "Cena".to_string(),
-                    "Bar".to_string(),
+                    "2".into(),
+                    "John".into(),
+                    "Cena".into(),
+                    "Bar".into(),
                     " ".to_string(),
-                    "foo".to_string()
+                    "foo".into()
                 ],
             ]
         )
@@ -280,8 +270,8 @@ fn test_deser() {
     assert_eq!(
         data,
         (
-            vec!["Attribute".to_string(), "Value".to_string()],
-            vec![vec!["ID".to_string(), "1".to_string()],]
+            vec!["Attribute".into(), "Value".into()],
+            vec![vec!["ID".into(), "1".into()],]
         )
     );
 }
@@ -291,19 +281,16 @@ fn test_list_status() {
     let raw = vec![
         StatusStruct {
             id: 1,
-            status: String::from("foo"),
+            status: "foo".into(),
         },
         StatusStruct {
             id: 2,
-            status: String::from("bar"),
+            status: "bar".into(),
         },
     ];
 
     let data = raw.status();
-    assert_eq!(
-        data,
-        vec![Some(String::from("foo")), Some(String::from("bar"))]
-    );
+    assert_eq!(data, vec![Some("foo".into()), Some("bar".into())]);
 }
 
 #[test]
@@ -318,11 +305,11 @@ fn test_list_status_no_status() {
 fn test_single_status() {
     let raw = StatusStruct {
         id: 1,
-        status: String::from("foo"),
+        status: "foo".into(),
     };
 
     let data = raw.status();
-    assert_eq!(data, vec![Some(String::from("foo")),]);
+    assert_eq!(data, vec![Some("foo".into()),]);
 }
 
 #[test]
@@ -337,9 +324,9 @@ fn test_single_no_status() {
 fn test_single_option_status() {
     let raw = OptionStatusStruct {
         id: 1,
-        status: Some(String::from("foo")),
+        status: Some("foo".into()),
     };
 
     let data = raw.status();
-    assert_eq!(data, vec![Some(String::from("foo")),]);
+    assert_eq!(data, vec![Some("foo".into()),]);
 }

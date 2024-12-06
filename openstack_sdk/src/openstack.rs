@@ -81,7 +81,7 @@ enum ClientCert {
 ///
 ///     let cfg = ConfigFile::new().unwrap();
 ///     // Get connection config from clouds.yaml/secure.yaml
-///     let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+///     let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 ///     // Establish connection
 ///     let mut session = OpenStack::new(&profile)?;
 ///
@@ -143,12 +143,12 @@ impl OpenStack {
             File::open(expand_tilde(cacert).unwrap_or(cacert.into()))
                 .map_err(|e| OpenStackError::IO {
                     source: e,
-                    path: cacert.to_string(),
+                    path: cacert.into(),
                 })?
                 .read_to_end(&mut buf)
                 .map_err(|e| OpenStackError::IO {
                     source: e,
-                    path: cacert.to_string(),
+                    path: cacert.into(),
                 })?;
             for cert in Certificate::from_pem_bundle(&buf)? {
                 client_builder = client_builder.add_root_certificate(cert);
@@ -323,7 +323,7 @@ impl OpenStack {
                     }
                     other => {
                         return Err(AuthTokenError::IdentityMethodSync {
-                            auth_type: other.as_str().to_string(),
+                            auth_type: other.as_str().into(),
                         })?
                     }
                 }
@@ -339,7 +339,7 @@ impl OpenStack {
                 .to_str()
                 .expect("x-subject-token is a string");
 
-            self.set_token_auth(token.to_string(), Some(data));
+            self.set_token_auth(token.into(), Some(data));
         }
 
         if let auth::Auth::AuthToken(token_data) = &self.auth {
@@ -406,10 +406,10 @@ impl OpenStack {
                     } else {
                         return Err(OpenStackError::Discovery {
                             service: service_type.to_string(),
-                            url: orig_url.to_string(),
+                            url: orig_url.into(),
                             msg: match service_type {
-                                ServiceType::Identity => "Service is not working.".to_string(),
-                                _ => "No Version document found. Either service is not supporting version discovery, or API is not working".to_string(),
+                                ServiceType::Identity => "Service is not working.".into(),
+                                _ => "No Version document found. Either service is not supporting version discovery, or API is not working".into(),
                             }
                         });
                     }
@@ -421,8 +421,8 @@ impl OpenStack {
                 }
                 return Err(OpenStackError::Discovery {
                     service: service_type.to_string(),
-                    url: orig_url.to_string(),
-                    msg: "Unknown".to_string(),
+                    url: orig_url.into(),
+                    msg: "Unknown".into(),
                 });
             }
             return Ok(());

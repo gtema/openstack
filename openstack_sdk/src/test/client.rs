@@ -350,7 +350,7 @@ impl MockServerClient {
     pub fn new() -> Self {
         let server = MockServer::start();
         let client = HttpClient::new();
-        let base_url = Url::parse(&server.base_url().to_string()).unwrap();
+        let base_url = Url::parse(server.base_url().as_ref()).unwrap();
         Self {
             server,
             client,
@@ -416,7 +416,7 @@ impl MockAsyncServerClient {
     pub async fn new() -> Self {
         let server = MockServer::start_async().await;
         let client = AsyncHttpClient::new();
-        let base_url = Url::parse(&server.base_url().to_string()).unwrap();
+        let base_url = Url::parse(server.base_url().as_ref()).unwrap();
         Self {
             server,
             client,

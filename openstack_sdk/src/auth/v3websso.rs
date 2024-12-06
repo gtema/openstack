@@ -252,12 +252,7 @@ async fn handle_request(
             cancel_token.cancel();
 
             Ok(Response::builder()
-                .body(
-                    Full::new(Bytes::from(
-                        include_str!("../../static/callback.html").to_string(),
-                    ))
-                    .boxed(),
-                )
+                .body(Full::new(Bytes::from(include_str!("../../static/callback.html"))).boxed())
                 .unwrap())
         }
         _ => {
@@ -312,7 +307,7 @@ mod tests {
             .unwrap();
 
         websso_handle.await.unwrap().unwrap();
-        assert_eq!(*state.lock().unwrap(), Some(params[0].1.to_string()));
+        assert_eq!(*state.lock().unwrap(), Some(params[0].1.into()));
     }
 
     #[tokio::test]

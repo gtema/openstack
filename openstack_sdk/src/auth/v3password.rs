@@ -115,7 +115,7 @@ pub fn fill_identity(
             .with_prompt("User Password")
             .interact()
             .unwrap();
-        user.password(password.to_string());
+        user.password(password);
     } else {
         return Err(PasswordError::MissingPassword);
     }
@@ -150,7 +150,7 @@ mod tests {
     #[test]
     fn test_fill_raise_no_user_id_or_name() {
         let config = config::Auth {
-            password: Some("pass".to_string()),
+            password: Some("pass".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -166,7 +166,7 @@ mod tests {
     #[test]
     fn test_fill_raise_no_password() {
         let config = config::Auth {
-            user_id: Some("uid".to_string()),
+            user_id: Some("uid".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -182,11 +182,11 @@ mod tests {
     #[test]
     fn test_fill() {
         let config = config::Auth {
-            user_id: Some("uid".to_string()),
-            username: Some("un".to_string()),
-            user_domain_id: Some("udi".to_string()),
-            user_domain_name: Some("udn".to_string()),
-            password: Some("pass".to_string()),
+            user_id: Some("uid".into()),
+            username: Some("un".into()),
+            user_domain_id: Some("udi".into()),
+            user_domain_name: Some("udn".into()),
+            password: Some("pass".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();

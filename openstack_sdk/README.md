@@ -49,7 +49,7 @@ async fn list_flavors() -> Result<(), OpenStackError> {
 
     let cfg = ConfigFile::new().unwrap();
     // Get connection config from clouds.yaml/secure.yaml
-    let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+    let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
     // Establish connection
     let mut session = AsyncOpenStack::new(&profile).await?;
 
