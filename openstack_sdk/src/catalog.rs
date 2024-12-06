@@ -76,7 +76,7 @@ impl Default for Catalog {
             endpoint_overrides: HashMap::new(),
             service_authority: ServiceAuthority::from_official_data().unwrap_or_default(),
             catalog_endpoints: HashMap::new(),
-            skip_discovery: HashSet::from(["object-store".to_string()]),
+            skip_discovery: HashSet::from(["object-store".into()]),
         }
     }
 }
@@ -101,7 +101,7 @@ impl Catalog {
         interface: Option<S3>,
     ) -> Result<&mut Self, CatalogError> {
         self.catalog_endpoints
-            .entry(service_type.as_ref().to_string())
+            .entry(service_type.as_ref().into())
             .or_default()
             .push(
                 ServiceEndpoint::from_url_string(url, self.project_id.as_ref())?
@@ -228,7 +228,7 @@ impl Catalog {
         // containing `alias` and request for the main service
         for cat_type in self
             .service_authority
-            .get_all_types_by_service_type(&main_service_type)?
+            .get_all_types_by_service_type(main_service_type)?
         {
             if let Some(catalog_eps) = &self.catalog_endpoints.get(&cat_type) {
                 if let Some(catalog_ep) =
@@ -259,7 +259,7 @@ impl Catalog {
         }
 
         Err(CatalogError::ServiceNotConfigured(
-            service_type.as_ref().to_string(),
+            service_type.as_ref().into(),
         ))
     }
 
@@ -286,7 +286,7 @@ impl Catalog {
         // Get all known service aliases
         let catalog_types = self
             .service_authority
-            .get_all_types_by_service_type(&main_service_type.to_string())?;
+            .get_all_types_by_service_type(main_service_type)?;
         for ep in
             discovery::extract_discovery_endpoints(url, data, service_type.to_string())?.iter_mut()
         {
@@ -378,12 +378,12 @@ mod tests {
         let mut cat = Catalog::default();
         assert!(cat.project_id.is_none());
         assert_eq!(
-            Some("foo".to_string()),
-            cat.set_project_id(Some("foo")).project_id
+            Some("foo"),
+            cat.set_project_id(Some("foo")).project_id.as_deref()
         );
         assert_eq!(
-            Some("bar".to_string()),
-            cat.set_project_id(Some("bar".to_string())).project_id
+            Some("bar"),
+            cat.set_project_id(Some("bar")).project_id.as_deref()
         );
         assert!(cat.set_project_id(None::<String>).project_id.is_none());
     }
@@ -394,29 +394,29 @@ mod tests {
         let conf = CloudConfig {
             options: HashMap::from([
                 (
-                    "s1_endpoint_override".to_string(),
+                    "s1_endpoint_override".into(),
                     config::Value::from("http://foo.bar/v3/wrong"),
                 ),
                 (
-                    "s2_endpoint_override".to_string(),
+                    "s2_endpoint_override".into(),
                     config::Value::from("http://foo.bar/v3"),
                 ),
                 (
-                    "s3_endpoint_override".to_string(),
+                    "s3_endpoint_override".into(),
                     config::Value::from("http://foo.bar"),
                 ),
                 (
-                    "s4_endpoint_override".to_string(),
+                    "s4_endpoint_override".into(),
                     config::Value::from("uni://foo/bar"),
                 ),
                 (
-                    "s5_endpoint_override".to_string(),
+                    "s5_endpoint_override".into(),
                     config::Value::from("http://foo.bar/z_PROJECT_ID"),
                 ),
             ]),
             ..Default::default()
         };
-        cat.set_project_id(Some("PROJECT_ID".to_string()));
+        cat.set_project_id(Some("PROJECT_ID"));
         cat.configure(&conf).unwrap();
         let val = cat.endpoint_overrides.get("s1").unwrap();
         assert_eq!("http://foo.bar/v3/wrong", val.url_str());
@@ -434,7 +434,7 @@ mod tests {
         let val = cat.endpoint_overrides.get("s5").unwrap();
         assert_eq!("http://foo.bar/z_PROJECT_ID", val.url_str());
         assert_eq!(
-            &Some("z_PROJECT_ID".to_string()),
+            &Some("z_PROJECT_ID".into()),
             val.last_segment_with_project_id()
         );
     }
@@ -530,12 +530,12 @@ mod tests {
         let mut cat = Catalog::default();
         let conf = CloudConfig {
             options: HashMap::from([(
-                "volumev3_endpoint_override".to_string(),
+                "volumev3_endpoint_override".into(),
                 config::Value::from("http://another.foo.bar/v3/z_PROJECT_ID"),
             )]),
             ..Default::default()
         };
-        cat.set_project_id(Some("PROJECT_ID".to_string()));
+        cat.set_project_id(Some("PROJECT_ID"));
         cat.configure(&conf).unwrap();
         cat.register_catalog_endpoint(
             "volumev2",
@@ -582,7 +582,7 @@ mod tests {
             .unwrap();
         assert_eq!("http://foo.bar/v3/", ep.url_str(), "Versioned endpoint");
         assert_eq!(
-            &Some("z_PROJECT_ID".to_string()),
+            &Some("z_PROJECT_ID".into()),
             ep.last_segment_with_project_id(),
             "Contains project_id suffix of the endpoint override"
         );
@@ -591,7 +591,7 @@ mod tests {
             .unwrap();
         assert_eq!("http://foo.bar/v2/", ep.url_str());
         assert_eq!(
-            &Some("y_PROJECT_ID".to_string()),
+            &Some("y_PROJECT_ID".into()),
             ep.last_segment_with_project_id(),
             "Contains project_id suffix of the catalog endpoint"
         );
@@ -609,7 +609,7 @@ mod tests {
     #[test]
     fn test_process_endpoint_discovery_with_multiversion() {
         let mut cat = Catalog::default();
-        cat.set_project_id(Some("PROJECT_ID".to_string()));
+        cat.set_project_id(Some("PROJECT_ID"));
         cat.register_catalog_endpoint(
             "compute",
             "http://foo.bar/v2/y_PROJECT_ID",
@@ -658,7 +658,7 @@ mod tests {
             .unwrap();
         assert_eq!("http://foo.bar/v2/", ep.url_str());
         assert_eq!(
-            &Some("y_PROJECT_ID".to_string()),
+            &Some("y_PROJECT_ID".into()),
             ep.last_segment_with_project_id(),
             "base version"
         );
@@ -667,7 +667,7 @@ mod tests {
             .unwrap();
         assert_eq!("http://foo.bar/v2.1/", ep.url_str());
         assert_eq!(
-            &Some("y_PROJECT_ID".to_string()),
+            &Some("y_PROJECT_ID".into()),
             ep.last_segment_with_project_id(),
             "newest microversion"
         );
@@ -755,12 +755,12 @@ mod tests {
         let mut cat = Catalog::default();
         let conf = CloudConfig {
             options: HashMap::from([(
-                "volumev3_endpoint_override".to_string(),
+                "volumev3_endpoint_override".into(),
                 config::Value::from("http://another.foo.bar/v3/z_PROJECT_ID"),
             )]),
             ..Default::default()
         };
-        cat.set_project_id(Some("PROJECT_ID".to_string()));
+        cat.set_project_id(Some("PROJECT_ID"));
         cat.configure(&conf).unwrap();
         cat.register_catalog_endpoint(
             "volumev2",
@@ -869,7 +869,7 @@ mod tests {
             "endpoint as in catalog but with discovery url"
         );
         assert_eq!(
-            &Some("y_PROJECT_ID".to_string()),
+            &Some("y_PROJECT_ID".into()),
             ep.last_segment_with_project_id(),
             "discovered service url with discovery url and project_id as in catalog"
         );
@@ -886,12 +886,12 @@ mod tests {
             "endpoint as in catalog but with discovery url"
         );
         assert_eq!(
-            &Some("z_PROJECT_ID".to_string()),
+            &Some("z_PROJECT_ID".into()),
             ep.last_segment_with_project_id(),
             "discovered service url with discovery url and project_id as in catalog"
         );
         assert_eq!(
-            &Some("3.15".to_string()),
+            &Some("3.15".into()),
             ep.max_version(),
             "discovered service from catalog contain microversion info"
         );
@@ -900,7 +900,7 @@ mod tests {
     #[test]
     fn test_get_service_endpoint_no_discovery() {
         let mut cat = Catalog::default();
-        cat.set_project_id(Some("PROJECT_ID".to_string()));
+        cat.set_project_id(Some("PROJECT_ID"));
         cat.register_catalog_endpoint(
             "volume",
             "http://foo.bar/v1/PROJECT_ID",

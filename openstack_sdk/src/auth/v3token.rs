@@ -113,7 +113,7 @@ mod tests {
     #[test]
     fn test_fill() {
         let config = config::Auth {
-            token: Some("foo".to_string()),
+            token: Some("foo".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();

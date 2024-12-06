@@ -119,7 +119,7 @@ impl ApiVersion {
             }
             return Ok(res);
         }
-        Err(ApiVersionError::Invalid(data.as_ref().to_string()))
+        Err(ApiVersionError::Invalid(data.as_ref().into()))
     }
 
     /// Determine the api version from the [RestEndpoint](crate::api::RestEndpoint)

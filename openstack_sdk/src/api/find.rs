@@ -260,7 +260,7 @@ mod tests {
             format!("dummies/{}", self.id.as_ref()).into()
         }
         fn service_type(&self) -> ServiceType {
-            ServiceType::Other("dummy".to_string())
+            ServiceType::from("dummy")
         }
         fn response_key(&self) -> Option<Cow<'static, str>> {
             Some("resource".into())
@@ -285,10 +285,10 @@ mod tests {
         }
 
         fn endpoint(&self) -> Cow<'static, str> {
-            "dummies".to_string().into()
+            "dummies".into()
         }
         fn service_type(&self) -> ServiceType {
-            ServiceType::Other("dummy".to_string())
+            ServiceType::from("dummy")
         }
         fn response_key(&self) -> Option<Cow<'static, str>> {
             Some("resources".into())

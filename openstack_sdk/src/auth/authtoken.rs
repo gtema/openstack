@@ -237,7 +237,7 @@ impl FromStr for AuthType {
             "v3multifactor" => Ok(Self::V3Multifactor),
             "v3websso" => Ok(Self::V3WebSso),
             other => Err(Self::Err::IdentityMethod {
-                auth_type: other.to_string(),
+                auth_type: other.into(),
             }),
         }
     }
@@ -288,7 +288,7 @@ fn process_auth_type(
         }
         other => {
             return Err(AuthTokenError::IdentityMethod {
-                auth_type: other.as_str().to_string(),
+                auth_type: other.as_str().into(),
             });
         }
     };

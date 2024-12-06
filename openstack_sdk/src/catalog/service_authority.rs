@@ -82,14 +82,16 @@ impl ServiceAuthority {
     }
 
     /// Get all known types of the service
-    pub fn get_all_types_by_service_type(
+    pub fn get_all_types_by_service_type<S: AsRef<str>>(
         &self,
-        service_type: &String,
+        service_type: S,
     ) -> Result<Vec<String>, ServiceAuthorityError> {
         match &self.all_types_by_service_type {
             Some(data) => data
-                .get(service_type)
-                .ok_or(ServiceAuthorityError::ServiceUnknown(service_type.clone()))
+                .get(service_type.as_ref())
+                .ok_or(ServiceAuthorityError::ServiceUnknown(
+                    service_type.as_ref().into(),
+                ))
                 .cloned(),
             None => {
                 warn!(
@@ -98,8 +100,10 @@ impl ServiceAuthority {
                 let service = self
                     .services
                     .iter()
-                    .find(|x| x.service_type == *service_type)
-                    .ok_or(ServiceAuthorityError::ServiceUnknown(service_type.clone()))?;
+                    .find(|x| x.service_type == service_type.as_ref())
+                    .ok_or(ServiceAuthorityError::ServiceUnknown(
+                        service_type.as_ref().into(),
+                    ))?;
                 let mut res = Vec::new();
                 res.push(service.service_type.clone());
                 if let Some(aliases) = &service.aliases {
@@ -120,23 +124,23 @@ impl ServiceAuthority {
     ) -> Result<String, ServiceAuthorityError> {
         // Try forward lookup (it is the service itself)
         if self.forward.contains_key(service_type.as_ref()) {
-            return Ok(service_type.as_ref().to_string());
+            return Ok(service_type.as_ref().into());
         }
 
         // Lookup all_types_by_service_type
         if let Some(atbst) = &self.all_types_by_service_type {
             if atbst.contains_key(service_type.as_ref()) {
-                return Ok(service_type.as_ref().to_string());
+                return Ok(service_type.as_ref().into());
             }
         }
 
         // Reverse lookup
         if let Some(srv) = self.reverse.get(service_type.as_ref()) {
-            return Ok(srv.to_string());
+            return Ok(srv.into());
         }
 
         Err(ServiceAuthorityError::ServiceUnknown(
-            service_type.as_ref().to_string(),
+            service_type.as_ref().into(),
         ))
     }
 }
@@ -158,51 +162,38 @@ mod tests {
         let mut authority = ServiceAuthority {
             services: Vec::from([
                 Service {
-                    service_type: "foo".to_string(),
+                    service_type: "foo".into(),
                     aliases: None,
                 },
                 Service {
-                    service_type: "foo1".to_string(),
-                    aliases: Some(Vec::from(["alias".to_string()])),
+                    service_type: "foo1".into(),
+                    aliases: Some(Vec::from(["alias".into()])),
                 },
             ]),
             all_types_by_service_type: Some(HashMap::from([
-                ("foo".to_string(), Vec::from(["foo".to_string()])),
-                (
-                    "foo1".to_string(),
-                    Vec::from(["foo1".to_string(), "alias".to_string()]),
-                ),
+                ("foo".into(), Vec::from(["foo".into()])),
+                ("foo1".into(), Vec::from(["foo1".into(), "alias".into()])),
             ])),
             ..Default::default()
         };
         assert_eq!(
-            authority
-                .get_all_types_by_service_type(&"foo".to_string())
-                .unwrap(),
-            Vec::from(["foo"])
+            Vec::from(["foo"]),
+            authority.get_all_types_by_service_type("foo").unwrap(),
         );
         assert_eq!(
-            authority
-                .get_all_types_by_service_type(&"foo1".to_string())
-                .unwrap(),
-            Vec::from(["foo1".to_string(), "alias".to_string()])
+            Vec::from(["foo1", "alias"]),
+            authority.get_all_types_by_service_type("foo1").unwrap(),
         );
-        assert!(authority
-            .get_all_types_by_service_type(&"foo2".to_string())
-            .is_err());
+        assert!(authority.get_all_types_by_service_type("foo2").is_err());
         // And now test the reconstruction path
         authority.all_types_by_service_type = None;
         assert_eq!(
-            authority
-                .get_all_types_by_service_type(&"foo".to_string())
-                .unwrap(),
-            Vec::from(["foo"])
+            Vec::from(["foo"]),
+            authority.get_all_types_by_service_type("foo").unwrap(),
         );
         assert_eq!(
-            authority
-                .get_all_types_by_service_type(&"foo1".to_string())
-                .unwrap(),
-            Vec::from(["foo1".to_string(), "alias".to_string()])
+            Vec::from(["foo1", "alias"]),
+            authority.get_all_types_by_service_type("foo1").unwrap(),
         );
     }
 
@@ -211,41 +202,38 @@ mod tests {
         let authority = ServiceAuthority {
             services: Vec::from([
                 Service {
-                    service_type: "foo".to_string(),
+                    service_type: "foo".into(),
                     aliases: None,
                 },
                 Service {
-                    service_type: "foo1".to_string(),
-                    aliases: Some(Vec::from(["alias".to_string()])),
+                    service_type: "foo1".into(),
+                    aliases: Some(Vec::from(["alias".into()])),
                 },
             ]),
-            forward: HashMap::from([("foo1".to_string(), Vec::from(["alias".to_string()]))]),
-            reverse: HashMap::from([("alias".to_string(), "foo1".to_string())]),
+            forward: HashMap::from([("foo1".into(), Vec::from(["alias".into()]))]),
+            reverse: HashMap::from([("alias".into(), "foo1".into())]),
             all_types_by_service_type: Some(HashMap::from([
-                ("foo".to_string(), Vec::from(["foo".to_string()])),
-                (
-                    "foo1".to_string(),
-                    Vec::from(["foo1".to_string(), "alias".to_string()]),
-                ),
+                ("foo".into(), Vec::from(["foo".into()])),
+                ("foo1".into(), Vec::from(["foo1".into(), "alias".into()])),
             ])),
             ..Default::default()
         };
 
         assert_eq!(
-            "foo".to_string(),
+            "foo",
             authority
                 .get_service_type_by_service_type_or_alias("foo")
                 .unwrap()
         );
         // Test service_type with alias and using &str instead of String
         assert_eq!(
-            "foo1".to_string(),
+            "foo1",
             authority
                 .get_service_type_by_service_type_or_alias("foo1")
                 .unwrap()
         );
         assert_eq!(
-            "foo1".to_string(),
+            "foo1",
             authority
                 .get_service_type_by_service_type_or_alias("alias")
                 .unwrap()

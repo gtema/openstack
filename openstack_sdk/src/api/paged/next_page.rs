@@ -224,7 +224,7 @@ mod tests {
     #[test]
     fn test_body_nova_links() {
         let data = json!({"flavors_links": [{"rel": "next", "href": "http://foo.bar"}]});
-        let key: Cow<'static, str> = Cow::Owned("flavors".to_string());
+        let key: Cow<'static, str> = Cow::Owned("flavors".into());
         let res = next_page_from_body(&data, &Some(key), Url::parse("http://dummy").unwrap());
         assert_eq!(res.unwrap().unwrap(), Url::parse("http://foo.bar").unwrap());
     }
@@ -232,7 +232,7 @@ mod tests {
     #[test]
     fn test_body_no_links() {
         let data = json!({});
-        let key: Cow<'static, str> = Cow::Owned("flavors".to_string());
+        let key: Cow<'static, str> = Cow::Owned("flavors".into());
         let res = next_page_from_body(&data, &Some(key), Url::parse("http://dummy").unwrap());
         assert_eq!(res.unwrap(), None);
     }

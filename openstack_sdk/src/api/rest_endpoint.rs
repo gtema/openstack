@@ -212,7 +212,7 @@ where
         //.with_context(|| format!("Request to `{}` failed", url))?;
 
         if let Some(root_key) = self.response_key() {
-            v = v[root_key.to_string()].take();
+            v = v[root_key.as_ref()].take();
         }
 
         let headers = rsp.headers();
@@ -249,7 +249,7 @@ where
         let mut v = get_json::<C>(&rsp, query_uri)?;
 
         if let Some(root_key) = self.response_key() {
-            v = v[root_key.to_string()].take();
+            v = v[root_key.as_ref()].take();
         }
 
         let headers = rsp.headers();
@@ -386,7 +386,7 @@ mod tests {
         }
 
         fn service_type(&self) -> ServiceType {
-            ServiceType::Other("dummy".to_string())
+            ServiceType::from("dummy")
         }
     }
 

@@ -25,7 +25,7 @@
 //!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
 //!    let data_raw: serde_json::Value = ep.query_async(&client).await?;
@@ -44,7 +44,7 @@
 //!    # use bytes::Bytes;
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::get::Request::builder().build().unwrap();
 //!    let rsp: Response<Bytes> = ep.raw_query_async(&client).await?;
@@ -68,7 +68,7 @@
 //!    # use http::Response;
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::find::Request::builder().build().unwrap();
 //!    let data_raw: serde_json::Value = find(ep).query_async(&client).await?;
@@ -87,7 +87,7 @@
 //!    # use http::Response;
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::find::Request::builder().build().unwrap();
 //!    let data_raw: serde_json::Value = find_by_name(ep).query_async(&client).await?;
@@ -106,7 +106,7 @@
 //!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::list::Request::builder().build().unwrap();
 //!    let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(100))
@@ -128,7 +128,7 @@
 //!    # use openstack_sdk::{AsyncOpenStack, config::ConfigFile, OpenStackError};
 //!    # async fn func() -> Result<(), OpenStackError> {
 //!    # let cfg = ConfigFile::new().unwrap();
-//!    # let profile = cfg.get_cloud_config("devstack".to_string()).unwrap().unwrap();
+//!    # let profile = cfg.get_cloud_config("devstack").unwrap().unwrap();
 //!    # let client = AsyncOpenStack::new(&profile).await?;
 //!    # let ep = openstack_sdk::api::compute::v2::flavor::delete::Request::builder().build().unwrap();
 //!    ignore(ep).query_async(&client).await?;

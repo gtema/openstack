@@ -174,7 +174,7 @@ where
 
             debug!("raw data = {:?}", v.clone());
             if let Some(root_key) = self.endpoint.response_key() {
-                v = v[root_key.to_string()].take();
+                v = v[root_key.as_ref()].take();
             }
 
             if next_url.is_none() {
@@ -186,11 +186,11 @@ where
                     if let Some(last_page_element) = data.last() {
                         if let Some(id) = last_page_element.get("id") {
                             if let Some(val) = id.as_str() {
-                                marker = Some(String::from(val));
+                                marker = Some(val.into());
                             }
                         } else if let Some(id) = last_page_element.get("name") {
                             if let Some(val) = id.as_str() {
-                                marker = Some(String::from(val));
+                                marker = Some(val.into());
                             }
                         }
                     }
@@ -201,7 +201,7 @@ where
                 (self.endpoint.response_list_item_key(), v.as_array_mut())
             {
                 for elem in array {
-                    *elem = elem[item_key.to_string()].take();
+                    *elem = elem[item_key.as_ref()].take();
                 }
             }
             trace!("items data = {:?}", v.clone());

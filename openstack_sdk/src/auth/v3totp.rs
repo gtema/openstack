@@ -141,7 +141,7 @@ mod tests {
     #[test]
     fn test_fill_raise_no_user_id() {
         let config = config::Auth {
-            passcode: Some("pass".to_string()),
+            passcode: Some("pass".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -157,7 +157,7 @@ mod tests {
     #[test]
     fn test_fill_raise_no_user_passcode() {
         let config = config::Auth {
-            user_id: Some("uid".to_string()),
+            user_id: Some("uid".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -173,11 +173,11 @@ mod tests {
     #[test]
     fn test_fill() {
         let config = config::Auth {
-            user_id: Some("uid".to_string()),
-            username: Some("un".to_string()),
-            user_domain_id: Some("udi".to_string()),
-            user_domain_name: Some("udn".to_string()),
-            passcode: Some("pass".to_string()),
+            user_id: Some("uid".into()),
+            username: Some("un".into()),
+            user_domain_id: Some("udi".into()),
+            user_domain_name: Some("udn".into()),
+            passcode: Some("pass".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();

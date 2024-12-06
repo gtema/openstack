@@ -140,7 +140,7 @@ mod tests {
         }
 
         fn service_type(&self) -> ServiceType {
-            ServiceType::Other("dummy".to_string())
+            ServiceType::from("dummy")
         }
     }
 

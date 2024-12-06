@@ -72,10 +72,10 @@ impl ServiceEndpoint {
     ) -> Result<Self, CatalogError> {
         let url = Url::parse(url.as_ref()).map_err(|x| CatalogError::url_parse(x, url.as_ref()))?;
         if url.cannot_be_a_base() {
-            return Err(CatalogError::UrlCannotBeBase(url.as_ref().to_string()));
+            return Err(CatalogError::UrlCannotBeBase(url.as_ref().into()));
         }
         if !["http", "https"].contains(&url.scheme()) {
-            return Err(CatalogError::UrlScheme(url.as_ref().to_string()));
+            return Err(CatalogError::UrlScheme(url.as_ref().into()));
         }
         let version = ApiVersion::from_url(&url, project_id.as_ref())?;
 
@@ -108,30 +108,30 @@ impl ServiceEndpoint {
 
     /// Set service type
     pub fn set_service_type<S: AsRef<str>>(&mut self, service_type: Option<S>) -> &mut Self {
-        self.service_type = service_type.map(|x| x.as_ref().to_string());
+        self.service_type = service_type.map(|x| x.as_ref().into());
         self
     }
 
     /// Set endpoint region
     pub fn set_region<S: AsRef<str>>(&mut self, region: Option<S>) -> &mut Self {
-        self.region = region.map(|x| x.as_ref().to_string());
+        self.region = region.map(|x| x.as_ref().into());
         self
     }
 
     /// Set endpoint interface
     pub fn set_interface<S: AsRef<str>>(&mut self, interface: Option<S>) -> &mut Self {
-        self.interface = interface.map(|x| x.as_ref().to_string());
+        self.interface = interface.map(|x| x.as_ref().into());
         self
     }
 
     /// Set min_version
     pub fn set_min_version<S: AsRef<str>>(&mut self, version: Option<S>) -> &mut Self {
-        self.min_version = version.map(|x| x.as_ref().to_string());
+        self.min_version = version.map(|x| x.as_ref().into());
         self
     }
     /// Set min_version
     pub fn set_max_version<S: AsRef<str>>(&mut self, version: Option<S>) -> &mut Self {
-        self.max_version = version.map(|x| x.as_ref().to_string());
+        self.max_version = version.map(|x| x.as_ref().into());
         self
     }
     /// Set status
@@ -273,7 +273,7 @@ impl ServiceEndpoints {
         if let Some(region) = &region_name {
             self.0
                 .iter()
-                .find(|&ep| ep.region == Some(region.as_ref().to_string()))
+                .find(|&ep| ep.region == Some(region.as_ref().into()))
         } else {
             self.0.first()
         }

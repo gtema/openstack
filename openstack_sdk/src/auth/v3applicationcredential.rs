@@ -156,7 +156,7 @@ mod tests {
     #[test]
     fn test_fill_raise_no_secret() {
         let config = config::Auth {
-            application_credential_id: Some("foo".to_string()),
+            application_credential_id: Some("foo".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -172,7 +172,7 @@ mod tests {
     #[test]
     fn test_fill_raise_neither_id_nor_name() {
         let config = config::Auth {
-            application_credential_secret: Some("foo".to_string()),
+            application_credential_secret: Some("foo".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -188,8 +188,8 @@ mod tests {
     #[test]
     fn test_fill_raise_no_user_when_name() {
         let config = config::Auth {
-            application_credential_secret: Some("foo".to_string()),
-            application_credential_name: Some("bar".to_string()),
+            application_credential_secret: Some("foo".into()),
+            application_credential_name: Some("bar".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -205,8 +205,8 @@ mod tests {
     #[test]
     fn test_fill_id_and_secret() {
         let config = config::Auth {
-            application_credential_id: Some("foo".to_string()),
-            application_credential_secret: Some("bar".to_string()),
+            application_credential_id: Some("foo".into()),
+            application_credential_secret: Some("bar".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
@@ -226,12 +226,12 @@ mod tests {
     #[test]
     fn test_fill_name_and_secret_and_user() {
         let config = config::Auth {
-            application_credential_name: Some("foo".to_string()),
-            application_credential_secret: Some("bar".to_string()),
-            user_id: Some("uid".to_string()),
-            username: Some("un".to_string()),
-            user_domain_id: Some("udi".to_string()),
-            user_domain_name: Some("udn".to_string()),
+            application_credential_name: Some("foo".into()),
+            application_credential_secret: Some("bar".into()),
+            user_id: Some("uid".into()),
+            username: Some("un".into()),
+            user_domain_id: Some("udi".into()),
+            user_domain_name: Some("udn".into()),
             ..Default::default()
         };
         let mut identity = token_v3::IdentityBuilder::default();
