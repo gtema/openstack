@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.2...openstack_tui-v0.9.3) - 2024-12-07
+
+### Added
+
+- Colorize output rows based on the entity status ([#824](https://github.com/gtema/openstack/pull/824))
+
 ## [0.9.2](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.1...openstack_tui-v0.9.2) - 2024-12-01
 
 ### Added
