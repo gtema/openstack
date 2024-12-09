@@ -31,13 +31,17 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::load_balancer::v2::amphorae::failover;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Request of the octavia/amphorae/amphora_id/failover:put operation
+/// Force an amphora to failover.
+///
+/// If you are not an administrative user, the service returns the HTTP
+/// `Forbidden (403)` response code.
+///
+/// This operation does not require a request body.
 ///
 #[derive(Args)]
 #[command(about = "Failover Amphora")]
@@ -49,10 +53,6 @@ pub struct AmphoraeCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -107,9 +107,6 @@ impl AmphoraeCommand {
         ep_builder.amphora_id(&self.path.amphora_id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
 
         let ep = ep_builder
             .build()
