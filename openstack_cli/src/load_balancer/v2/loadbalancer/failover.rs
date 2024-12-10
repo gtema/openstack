@@ -31,13 +31,15 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::failover;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Request of the lbaas/loadbalancers/loadbalancer_id/failover:put operation
+/// Performs a failover of a load balancer.
+///
+/// This operation is only available to users with load balancer administrative
+/// rights.
 ///
 #[derive(Args)]
 #[command(about = "Failover a load balancer")]
@@ -49,10 +51,6 @@ pub struct LoadbalancerCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -108,9 +106,6 @@ impl LoadbalancerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
 
         let ep = ep_builder
             .build()
