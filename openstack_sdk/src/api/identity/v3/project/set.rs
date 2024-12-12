@@ -29,6 +29,17 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
+/// The resource options for the project. Available resource options are
+/// `immutable`.
+///
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Options {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) immutable: Option<bool>,
+}
+
 /// A `project` object
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -53,6 +64,13 @@ pub struct Project<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
+
+    /// The resource options for the project. Available resource options are
+    /// `immutable`.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) options: Option<Options>,
 
     /// A list of simple strings assigned to a project. Tags can be used to
     /// classify projects into groups.

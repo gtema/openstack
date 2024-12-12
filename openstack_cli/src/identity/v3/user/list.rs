@@ -67,10 +67,10 @@ struct QueryParameters {
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
-    /// Filter for Identity Providers’ ID attribute
+    /// Filters the response by IDP ID.
     ///
     #[arg(help_heading = "Query parameters", long)]
-    id: Option<String>,
+    idp_id: Option<String>,
 
     /// Filters the response by a resource name.
     ///
@@ -198,8 +198,8 @@ impl UsersCommand {
         if let Some(val) = &self.query.enabled {
             ep_builder.enabled(*val);
         }
-        if let Some(val) = &self.query.id {
-            ep_builder.id(val);
+        if let Some(val) = &self.query.idp_id {
+            ep_builder.idp_id(val);
         }
         if let Some(val) = &self.query.name {
             ep_builder.name(val);

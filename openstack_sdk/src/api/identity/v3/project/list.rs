@@ -27,6 +27,7 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
@@ -41,6 +42,16 @@ pub struct Request<'a> {
     #[builder(default)]
     is_domain: Option<bool>,
 
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// ID of the last fetched entry
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
+    /// The resource name.
+    ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
@@ -114,6 +125,8 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("tags-any", self.tags_any.as_ref());
         params.push_opt("not-tags", self.not_tags.as_ref());
         params.push_opt("not-tags-any", self.not_tags_any.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("limit", self.limit);
 
         params
     }
@@ -136,6 +149,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(3, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

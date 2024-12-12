@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::domain::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -66,6 +65,14 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
+/// Options Body data
+#[derive(Args, Clone)]
+#[group(required = false, multiple = true)]
+struct Options {
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    immutable: Option<bool>,
+}
+
 /// Domain Body data
 #[derive(Args, Clone)]
 struct Domain {
@@ -74,22 +81,35 @@ struct Domain {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// If set to `true`, domain is enabled. If set to `false`, domain is
-    /// disabled.
+    /// If set to `true`, domain is created enabled. If set to `false`, domain
+    /// is created disabled. The default is `true`.
+    ///
+    /// Users can only authorize against an enabled domain (and any of its
+    /// projects). In addition, users can only authenticate if the domain that
+    /// owns them is also enabled. Disabling a domain prevents both of these
+    /// things.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
+    /// The ID of the domain. A domain created this way will not use an
+    /// auto-generated ID, but will use the ID passed in instead. Identifiers
+    /// passed in this way must conform to the existing ID generation scheme:
+    /// UUID4 without dashes.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    explicit_domain_id: Option<String>,
+
     /// The name of the domain.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
+    name: String,
 
-    /// The resource options for the role. Available resource options are
+    /// The resource options for the domain. Available resource options are
     /// `immutable`.
     ///
-    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    options: Option<Vec<(String, Value)>>,
+    #[command(flatten)]
+    options: Option<Options>,
 
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
@@ -117,7 +137,13 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The name of the domain.
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The name of the project.
     ///
     #[serde()]
     #[structable(optional)]
@@ -130,6 +156,8 @@ struct ResponseData {
     #[structable(optional, pretty)]
     options: Option<Value>,
 
+    /// A list of simple strings assigned to a project.
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     tags: Option<Value>,
@@ -155,24 +183,30 @@ impl DomainCommand {
         // Set Request.domain data
         let args = &self.domain;
         let mut domain_builder = create::DomainBuilder::default();
-        if let Some(val) = &args.name {
-            domain_builder.name(val);
+        if let Some(val) = &args.explicit_domain_id {
+            domain_builder.explicit_domain_id(val);
         }
 
         if let Some(val) = &args.description {
-            domain_builder.description(val);
+            domain_builder.description(Some(val.into()));
         }
 
         if let Some(val) = &args.enabled {
             domain_builder.enabled(*val);
         }
 
-        if let Some(val) = &args.tags {
-            domain_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
+        domain_builder.name(&args.name);
 
         if let Some(val) = &args.options {
-            domain_builder.options(val.iter().cloned());
+            let mut options_builder = create::OptionsBuilder::default();
+            if let Some(val) = &val.immutable {
+                options_builder.immutable(*val);
+            }
+            domain_builder.options(options_builder.build().expect("A valid object"));
+        }
+
+        if let Some(val) = &args.tags {
+            domain_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         ep_builder.domain(domain_builder.build().unwrap());
