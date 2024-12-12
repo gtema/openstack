@@ -13,166 +13,63 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 
-/// Network filters
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkNetworkFilters {}
-impl fmt::Display for NetworkNetworkFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+pub use crate::cloud_worker::network::network::*;
+pub use crate::cloud_worker::network::quota::*;
+pub use crate::cloud_worker::network::router::*;
+pub use crate::cloud_worker::network::security_group::*;
+pub use crate::cloud_worker::network::security_group_rule::*;
+pub use crate::cloud_worker::network::subnet::*;
+
+/// Network operations
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum NetworkApiRequest {
+    /// Networks
+    Network(NetworkNetworkApiRequest),
+    /// Quota
+    Quota(NetworkQuotaApiRequest),
+    /// Routers
+    Router(NetworkRouterApiRequest),
+    /// Security groups
+    SecurityGroup(NetworkSecurityGroupApiRequest),
+    /// Security group rules
+    SecurityGroupRule(NetworkSecurityGroupRuleApiRequest),
+    /// Subnets
+    Subnet(NetworkSubnetApiRequest),
+}
+
+impl From<NetworkNetworkApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkNetworkApiRequest) -> Self {
+        NetworkApiRequest::Network(item)
     }
 }
 
-impl TryFrom<&NetworkNetworkFilters>
-    for openstack_sdk::api::network::v2::network::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &NetworkNetworkFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder = openstack_sdk::api::network::v2::network::list::Request::builder();
-
-        ep_builder.sort_key(["name"].into_iter());
-        ep_builder.sort_dir(["asc"].into_iter());
-
-        Ok(ep_builder)
+impl From<NetworkQuotaApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkQuotaApiRequest) -> Self {
+        NetworkApiRequest::Quota(item)
     }
 }
 
-/// Router filters
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkRouterFilters {}
-impl fmt::Display for NetworkRouterFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+impl From<NetworkRouterApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkRouterApiRequest) -> Self {
+        NetworkApiRequest::Router(item)
     }
 }
 
-impl TryFrom<&NetworkRouterFilters>
-    for openstack_sdk::api::network::v2::router::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &NetworkRouterFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder = openstack_sdk::api::network::v2::router::list::Request::builder();
-
-        ep_builder.sort_key(["name"].into_iter());
-        ep_builder.sort_dir(["asc"].into_iter());
-
-        Ok(ep_builder)
+impl From<NetworkSecurityGroupApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkSecurityGroupApiRequest) -> Self {
+        NetworkApiRequest::SecurityGroup(item)
     }
 }
 
-/// Subnet filters
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkSubnetFilters {
-    pub network_id: Option<String>,
-    /// Name of the parent network
-    pub network_name: Option<String>,
-}
-impl fmt::Display for NetworkSubnetFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.network_id.is_some() || self.network_name.is_some() {
-            write!(
-                f,
-                "network: {}",
-                self.network_name
-                    .as_ref()
-                    .or(self.network_id.as_ref())
-                    .unwrap_or(&String::new())
-            )?;
-        }
-        Ok(())
+impl From<NetworkSecurityGroupRuleApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkSecurityGroupRuleApiRequest) -> Self {
+        NetworkApiRequest::SecurityGroupRule(item)
     }
 }
 
-impl TryFrom<&NetworkSubnetFilters>
-    for openstack_sdk::api::network::v2::subnet::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &NetworkSubnetFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder = openstack_sdk::api::network::v2::subnet::list::Request::builder();
-
-        ep_builder.sort_key(["name"].into_iter());
-        ep_builder.sort_dir(["asc"].into_iter());
-
-        if let Some(network_id) = &value.network_id {
-            ep_builder.network_id(network_id.clone());
-        }
-
-        Ok(ep_builder)
-    }
-}
-
-/// Security groups
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkSecurityGroupFilters {}
-impl fmt::Display for NetworkSecurityGroupFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl TryFrom<&NetworkSecurityGroupFilters>
-    for openstack_sdk::api::network::v2::security_group::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &NetworkSecurityGroupFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::network::v2::security_group::list::Request::builder();
-
-        ep_builder.sort_key(["name"].into_iter());
-        ep_builder.sort_dir(["asc"].into_iter());
-
-        Ok(ep_builder)
-    }
-}
-
-/// Security group rules
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct NetworkSecurityGroupRuleFilters {
-    pub security_group_id: Option<String>,
-    pub security_group_name: Option<String>,
-}
-
-impl fmt::Display for NetworkSecurityGroupRuleFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if self.security_group_id.is_some() || self.security_group_name.is_some() {
-            write!(
-                f,
-                "security_group: {}",
-                self.security_group_name
-                    .as_ref()
-                    .or(self.security_group_id.as_ref())
-                    .unwrap_or(&String::new())
-            )?;
-        }
-        Ok(())
-    }
-}
-
-impl TryFrom<&NetworkSecurityGroupRuleFilters>
-    for openstack_sdk::api::network::v2::security_group_rule::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &NetworkSecurityGroupRuleFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::network::v2::security_group_rule::list::Request::builder();
-
-        ep_builder.sort_key(["ethertype", "direction", "protocol", "port_range_min"].into_iter());
-        ep_builder.sort_dir(["asc", "asc", "asc", "asc"].into_iter());
-
-        if let Some(security_group_id) = &value.security_group_id {
-            ep_builder.security_group_id(security_group_id.clone());
-        }
-
-        if let Some(security_group_id) = &value.security_group_id {
-            ep_builder.security_group_id(security_group_id.clone());
-        }
-
-        Ok(ep_builder)
+impl From<NetworkSubnetApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkSubnetApiRequest) -> Self {
+        NetworkApiRequest::Subnet(item)
     }
 }

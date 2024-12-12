@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, IdentityGroupUserFilters},
+    cloud_worker::types::{
+        ApiRequest, IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -44,7 +46,7 @@ pub struct UserData {
     password_expires_at: String,
 }
 
-pub type IdentityGroupUsers<'a> = TableViewComponentBase<'a, UserData, IdentityGroupUserFilters>;
+pub type IdentityGroupUsers<'a> = TableViewComponentBase<'a, UserData, IdentityGroupUserList>;
 
 impl Component for IdentityGroupUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -64,9 +66,9 @@ impl Component for IdentityGroupUsers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityUsers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::IdentityGroupUsers(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        IdentityGroupApiRequest::UserList(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -75,23 +77,26 @@ impl Component for IdentityGroupUsers<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::IdentityGroupUsers(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityGroupApiRequest::UserList(self.get_filters().clone()),
+                ))));
             }
-            Action::SetIdentityGroupUserFilters(filters) => {
+            Action::SetIdentityGroupUserListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::IdentityGroupUsers(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityGroupApiRequest::UserList(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::IdentityGroupUsers(_),
+                request:
+                    ApiRequest::Identity(IdentityApiRequest::Group(IdentityGroupApiRequest::UserList(
+                        _,
+                    ))),
                 data,
             } => {
                 self.set_data(data)?;

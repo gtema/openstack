@@ -11,9 +11,34 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+use thiserror::Error;
+
+use crate::action;
 
 pub trait ConfirmableRequest {
     fn get_confirm_message(&self) -> Option<String> {
         None
     }
+}
+
+#[derive(Error, Debug)]
+pub enum CloudWorkerError {
+    /// OpenStack API error.
+    #[error(transparent)]
+    OpenStackApi {
+        /// The source of the error.
+        #[from]
+        source: openstack_sdk::api::ApiError<openstack_sdk::RestError>,
+    },
+
+    #[error("error sending action: {}", source)]
+    SenderError {
+        /// The source of the error.
+        #[from]
+        source: tokio::sync::mpsc::error::SendError<action::Action>,
+    },
+
+    /// Others.
+    #[error(transparent)]
+    Other(#[from] eyre::Report),
 }

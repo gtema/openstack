@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, IdentityApplicationCredentialFilters},
+    cloud_worker::types::{
+        ApiRequest, IdentityApiRequest, IdentityApplicationCredentialApiRequest,
+        IdentityApplicationCredentialList, IdentityUserApiRequest,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -47,7 +50,7 @@ pub struct ApplicationCredentialData {
 }
 
 pub type IdentityApplicationCredentials<'a> =
-    TableViewComponentBase<'a, ApplicationCredentialData, IdentityApplicationCredentialFilters>;
+    TableViewComponentBase<'a, ApplicationCredentialData, IdentityApplicationCredentialList>;
 
 impl Component for IdentityApplicationCredentials<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -60,13 +63,13 @@ impl Component for IdentityApplicationCredentials<'_> {
 
     fn update(&mut self, action: Action, _current_mode: Mode) -> Result<Option<Action>, TuiError> {
         match action {
-            Action::ConnectedToCloud(_) => {
+            Action::ConnectedToCloud(auth) => {
                 self.set_loading(true);
                 // Unset the filters since in new cloud everything is different
                 self.set_data(Vec::new())?;
-                self.set_filters(IdentityApplicationCredentialFilters {
-                    user_id: String::new(),
-                    user_name: None,
+                self.set_filters(IdentityApplicationCredentialList {
+                    user_id: auth.user.id,
+                    user_name: Some(auth.user.name),
                 });
             }
             Action::Mode {
@@ -75,23 +78,28 @@ impl Component for IdentityApplicationCredentials<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::IdentityApplicationCredentials(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityApplicationCredentialApiRequest::List(self.get_filters().clone()),
+                ))));
             }
-            Action::SetIdentityApplicationCredentialFilters(filters) => {
+            Action::SetIdentityApplicationCredentialListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::IdentityApplicationCredentials(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityApplicationCredentialApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::IdentityApplicationCredentials(_),
+                request:
+                    ApiRequest::Identity(IdentityApiRequest::User(
+                        IdentityUserApiRequest::ApplicationCredential(
+                            IdentityApplicationCredentialApiRequest::List(_),
+                        ),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;

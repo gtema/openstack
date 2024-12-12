@@ -22,7 +22,8 @@ use tokio::sync::mpsc::UnboundedSender;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, IdentityApplicationCredentialFilters, IdentityUserFilters, IdentityUserUpdate,
+        ApiRequest, IdentityApiRequest, IdentityApplicationCredentialList, IdentityUserApiRequest,
+        IdentityUserList, IdentityUserUpdate,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -52,7 +53,7 @@ pub struct UserData {
     password_expires_at: String,
 }
 
-pub type IdentityUsers<'a> = TableViewComponentBase<'a, UserData, IdentityUserFilters>;
+pub type IdentityUsers<'a> = TableViewComponentBase<'a, UserData, IdentityUserList>;
 
 impl Component for IdentityUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -72,8 +73,8 @@ impl Component for IdentityUsers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityUsers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityUsers(
-                        self.get_filters().clone(),
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        IdentityUserApiRequest::List(self.get_filters().clone()),
                     ))));
                 }
             }
@@ -83,8 +84,8 @@ impl Component for IdentityUsers<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityUsers(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityUserApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::IdentityUserFlipEnable => {
@@ -94,14 +95,14 @@ impl Component for IdentityUsers<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
-                            // send action to set GroupUserFilters
-                            command_tx.send(Action::PerformApiRequest(
-                                ApiRequest::IdentityUserUpdate(IdentityUserUpdate {
+                            // send action to set GroupUserListFilters
+                            command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                                IdentityUserApiRequest::Update(IdentityUserUpdate {
                                     id: group_row.id.clone(),
                                     name: None,
                                     enabled: Some(!group_row.enabled),
                                 }),
-                            ))?;
+                            )))?;
                             self.set_loading(true);
                         }
                     }
@@ -114,13 +115,15 @@ impl Component for IdentityUsers<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
-                            // send action to set GroupUserFilters
-                            command_tx.send(Action::SetIdentityApplicationCredentialFilters(
-                                IdentityApplicationCredentialFilters {
-                                    user_id: group_row.id.clone(),
-                                    user_name: Some(group_row.name.clone()),
-                                },
-                            ))?;
+                            // send action to set GroupUserListFilters
+                            command_tx.send(
+                                Action::SetIdentityApplicationCredentialListFilters(
+                                    IdentityApplicationCredentialList {
+                                        user_id: group_row.id.clone(),
+                                        user_name: Some(group_row.name.clone()),
+                                    },
+                                ),
+                            )?;
                             command_tx.send(Action::Mode {
                                 mode: Mode::IdentityApplicationCredentials,
                                 stack: true,
@@ -133,13 +136,15 @@ impl Component for IdentityUsers<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::IdentityUsers(_),
+                request:
+                    ApiRequest::Identity(IdentityApiRequest::User(IdentityUserApiRequest::List(_))),
                 data,
             } => {
                 self.set_data(data)?;
             }
             Action::ApiResponseData {
-                request: ApiRequest::IdentityUserUpdate(_),
+                request:
+                    ApiRequest::Identity(IdentityApiRequest::User(IdentityUserApiRequest::Update(_))),
                 data,
             } => {
                 // Since user update only returns some info (i.e. it doesn't contain email) we need

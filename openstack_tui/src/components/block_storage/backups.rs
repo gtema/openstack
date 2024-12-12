@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, BlockStorageBackupFilters},
+    cloud_worker::types::{
+        ApiRequest, BlockStorageApiRequest, BlockStorageBackupApiRequest, BlockStorageBackupList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -35,20 +37,24 @@ const TITLE: &str = "Backups";
 pub struct BackupData {
     #[structable(title = "Id", wide)]
     id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "AZ")]
-    availability_zone: String,
+    #[structable(title = "Name", optional)]
+    #[serde(default)]
+    name: Option<String>,
+    #[structable(title = "AZ", optional)]
+    #[serde(default)]
+    availability_zone: Option<String>,
     #[structable(title = "Size")]
+    #[serde(default)]
     size: u32,
     #[structable(title = "Status")]
+    #[serde(default)]
     status: String,
     #[structable(title = "Created")]
+    #[serde(default)]
     created_at: String,
 }
 
-pub type BlockStorageBackups<'a> =
-    TableViewComponentBase<'a, BackupData, BlockStorageBackupFilters>;
+pub type BlockStorageBackups<'a> = TableViewComponentBase<'a, BackupData, BlockStorageBackupList>;
 
 impl Component for BlockStorageBackups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -68,9 +74,9 @@ impl Component for BlockStorageBackups<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::BlockStorageBackups = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::BlockStorageBackups(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        BlockStorageBackupApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -79,15 +85,18 @@ impl Component for BlockStorageBackups<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::BlockStorageBackups(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    BlockStorageBackupApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::BlockStorageBackups(_),
+                request:
+                    ApiRequest::BlockStorage(BlockStorageApiRequest::Backup(
+                        BlockStorageBackupApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;

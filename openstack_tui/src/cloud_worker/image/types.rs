@@ -13,40 +13,26 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 
 use crate::cloud_worker::common::ConfirmableRequest;
+pub use crate::cloud_worker::image::image::*;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ImageFilters {
-    pub visibility: Option<String>,
+/// Image operations
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ImageApiRequest {
+    Image(ImageImageApiRequest),
 }
-impl fmt::Display for ImageFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(val) = &self.visibility {
-            write!(f, "{}", val)?;
-        }
-        Ok(())
+
+impl From<ImageImageApiRequest> for ImageApiRequest {
+    fn from(item: ImageImageApiRequest) -> Self {
+        ImageApiRequest::Image(item)
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct ImageImageDelete {
-    pub image_id: String,
-    pub image_name: Option<String>,
-}
-
-impl fmt::Display for ImageImageDelete {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl ConfirmableRequest for ImageImageDelete {
+impl ConfirmableRequest for ImageApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
-        Some(format!(
-            "Delete image {} ?",
-            self.image_name.clone().unwrap_or(self.image_id.clone())
-        ))
+        match &self {
+            ImageApiRequest::Image(req) => req.get_confirm_message(),
+        }
     }
 }

@@ -22,7 +22,8 @@ use tokio::sync::mpsc::UnboundedSender;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, LoadBalancerFilters, LoadBalancerListenerFilters, LoadBalancerPoolFilters,
+        ApiRequest, LoadBalancerApiRequest, LoadBalancerListenerList,
+        LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList, LoadBalancerPoolList,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -45,7 +46,8 @@ pub struct LoadBalancerData {
     vip_address: Option<String>,
 }
 
-pub type LoadBalancers<'a> = TableViewComponentBase<'a, LoadBalancerData, LoadBalancerFilters>;
+pub type LoadBalancers<'a> =
+    TableViewComponentBase<'a, LoadBalancerData, LoadBalancerLoadbalancerList>;
 
 impl Component for LoadBalancers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -65,8 +67,8 @@ impl Component for LoadBalancers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::LoadBalancers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::LoadBalancers(
-                        self.get_filters().clone(),
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        LoadBalancerLoadbalancerApiRequest::List(self.get_filters().clone()),
                     ))));
                 }
             }
@@ -76,24 +78,27 @@ impl Component for LoadBalancers<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::LoadBalancers(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerLoadbalancerApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::LoadBalancers(_),
+                request:
+                    ApiRequest::LoadBalancer(LoadBalancerApiRequest::Loadbalancer(
+                        LoadBalancerLoadbalancerApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::SetLoadBalancerFilters(filters) => {
+            Action::SetLoadBalancerListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::LoadBalancers(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerLoadbalancerApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::ShowLoadBalancerListeners => {
@@ -104,8 +109,8 @@ impl Component for LoadBalancers<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
-                            command_tx.send(Action::SetLoadBalancerListenerFilters(
-                                LoadBalancerListenerFilters {
+                            command_tx.send(Action::SetLoadBalancerListenerListFilters(
+                                LoadBalancerListenerList {
                                     loadbalancer_id: Some(selected_entry.id.clone()),
                                     loadbalancer_name: Some(selected_entry.name.clone()),
                                 },
@@ -126,8 +131,8 @@ impl Component for LoadBalancers<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
-                            command_tx.send(Action::SetLoadBalancerPoolFilters(
-                                LoadBalancerPoolFilters {
+                            command_tx.send(Action::SetLoadBalancerPoolListFilters(
+                                LoadBalancerPoolList {
                                     loadbalancer_id: Some(selected_entry.id.clone()),
                                     loadbalancer_name: Some(selected_entry.name.clone()),
                                 },
@@ -147,7 +152,7 @@ impl Component for LoadBalancers<'_> {
             //         if let Some(command_tx) = self.get_command_tx() {
             //             // and have a selected entry
             //             if let Some(selected_entry) = self.get_selected() {
-            //                 // send action to set SecurityGroupRulesFilters
+            //                 // send action to set SecurityGroupRulesListFilters
             //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
             //                     LoadBalancerLoadBalancerDelete {
             //                         image_id: selected_entry.id.clone(),

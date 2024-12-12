@@ -22,7 +22,8 @@ use tokio::sync::mpsc::UnboundedSender;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, NetworkSecurityGroupFilters, NetworkSecurityGroupRuleFilters,
+        ApiRequest, NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
+        NetworkSecurityGroupRuleList,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -48,7 +49,7 @@ pub struct NetworkData {
 }
 
 pub type NetworkSecurityGroups<'a> =
-    TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupFilters>;
+    TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupList>;
 
 impl Component for NetworkSecurityGroups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -68,9 +69,9 @@ impl Component for NetworkSecurityGroups<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkSecurityGroups = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::NetworkSecurityGroups(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        NetworkSecurityGroupApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -79,9 +80,9 @@ impl Component for NetworkSecurityGroups<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::NetworkSecurityGroups(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    NetworkSecurityGroupApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::ShowNetworkSecurityGroupRules => {
                 // only if we are currently in the IdentityGroup mode
@@ -90,9 +91,9 @@ impl Component for NetworkSecurityGroups<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::SetNetworkSecurityGroupRuleFilters(
-                                NetworkSecurityGroupRuleFilters {
+                            // send action to set SecurityGroupRulesListFilters
+                            command_tx.send(Action::SetNetworkSecurityGroupRuleListFilters(
+                                NetworkSecurityGroupRuleList {
                                     security_group_id: Some(selected_entry.id.clone()),
                                     security_group_name: Some(selected_entry.name.clone()),
                                 },
@@ -110,7 +111,10 @@ impl Component for NetworkSecurityGroups<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::NetworkSecurityGroups(_),
+                request:
+                    ApiRequest::Network(NetworkApiRequest::SecurityGroup(
+                        NetworkSecurityGroupApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;

@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, BlockStorageSnapshotFilters},
+    cloud_worker::types::{
+        ApiRequest, BlockStorageApiRequest, BlockStorageSnapshotApiRequest,
+        BlockStorageSnapshotList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -44,7 +47,7 @@ pub struct SnapshotData {
 }
 
 pub type BlockStorageSnapshots<'a> =
-    TableViewComponentBase<'a, SnapshotData, BlockStorageSnapshotFilters>;
+    TableViewComponentBase<'a, SnapshotData, BlockStorageSnapshotList>;
 
 impl Component for BlockStorageSnapshots<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -64,9 +67,9 @@ impl Component for BlockStorageSnapshots<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::BlockStorageSnapshots = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::BlockStorageSnapshots(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        BlockStorageSnapshotApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -75,15 +78,18 @@ impl Component for BlockStorageSnapshots<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::BlockStorageSnapshots(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    BlockStorageSnapshotApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::BlockStorageSnapshots(_),
+                request:
+                    ApiRequest::BlockStorage(BlockStorageApiRequest::Snapshot(
+                        BlockStorageSnapshotApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;

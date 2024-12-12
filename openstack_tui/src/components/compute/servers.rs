@@ -23,7 +23,8 @@ use tracing::debug;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, ComputeServerDelete, ComputeServerFilters, ComputeServerInstanceActionFilters,
+        ApiRequest, ComputeApiRequest, ComputeServerApiRequest, ComputeServerDelete,
+        ComputeServerGetConsoleOutput, ComputeServerInstanceActionList, ComputeServerList,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -48,7 +49,7 @@ pub struct ServerData {
     updated: String,
 }
 
-pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerFilters>;
+pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerList>;
 
 impl ComputeServers<'_> {}
 
@@ -71,8 +72,8 @@ impl Component for ComputeServers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeServers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
-                        self.get_filters().clone(),
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        ComputeServerApiRequest::List(self.get_filters().clone()),
                     ))));
                 }
             }
@@ -82,21 +83,25 @@ impl Component for ComputeServers<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeServerApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::ComputeServers(_),
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::Server(ComputeServerApiRequest::List(_))),
                 data,
             } => {
                 self.set_data(data)?;
             }
             Action::ApiResponseData {
-                request: ApiRequest::ComputeServerConsoleOutput(_),
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::Server(
+                        ComputeServerApiRequest::GetConsoleOutput(_),
+                    )),
                 data,
             } => {
                 if let Some(command_tx) = &self.get_command_tx() {
@@ -110,11 +115,11 @@ impl Component for ComputeServers<'_> {
                     debug!("No command_tx");
                 }
             }
-            Action::SetComputeServerFilters(filters) => {
+            Action::SetComputeServerListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeServers(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeServerApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::ShowServerConsoleOutput => {
@@ -127,9 +132,12 @@ impl Component for ComputeServers<'_> {
                         })?;
                     }
                     //self.set_loading(true);
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::ComputeServerConsoleOutput(server_id),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        ComputeServerApiRequest::GetConsoleOutput(ComputeServerGetConsoleOutput {
+                            server_id,
+                            length: Some(1000),
+                        }),
+                    ))));
                 }
             }
             Action::ShowComputeServerInstanceActions => {
@@ -139,9 +147,9 @@ impl Component for ComputeServers<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::SetComputeServerInstanceActionFilters(
-                                ComputeServerInstanceActionFilters {
+                            // send action to set SecurityGroupRulesList
+                            command_tx.send(Action::SetComputeServerInstanceActionListFilters(
+                                ComputeServerInstanceActionList {
                                     server_id: Some(selected_entry.id.clone()),
                                     server_name: Some(selected_entry.name.clone()),
                                     request_id: None,
@@ -163,12 +171,12 @@ impl Component for ComputeServers<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::Confirm(ApiRequest::ComputeServerDelete(
-                                ComputeServerDelete {
+                            // send action to set SecurityGroupRulesList
+                            command_tx.send(Action::Confirm(ApiRequest::from(
+                                ComputeServerApiRequest::Delete(ComputeServerDelete {
                                     server_id: selected_entry.id.clone(),
                                     server_name: Some(selected_entry.name.clone()),
-                                },
+                                }),
                             )))?;
                         }
                     }

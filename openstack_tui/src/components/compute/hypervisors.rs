@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, ComputeHypervisorFilters},
+    cloud_worker::types::{
+        ApiRequest, ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -43,8 +45,7 @@ pub struct HypervisorData {
     state: String,
 }
 
-pub type ComputeHypervisors<'a> =
-    TableViewComponentBase<'a, HypervisorData, ComputeHypervisorFilters>;
+pub type ComputeHypervisors<'a> = TableViewComponentBase<'a, HypervisorData, ComputeHypervisorList>;
 
 impl Component for ComputeHypervisors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -64,9 +65,9 @@ impl Component for ComputeHypervisors<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeHypervisors = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::ComputeHypervisors(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        ComputeHypervisorApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -75,15 +76,18 @@ impl Component for ComputeHypervisors<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::ComputeHypervisors(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeHypervisorApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::ComputeHypervisors(_),
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::Hypervisor(
+                        ComputeHypervisorApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;

@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, ComputeAggregateFilters},
+    cloud_worker::types::{
+        ApiRequest, ComputeAggregateApiRequest, ComputeAggregateList, ComputeApiRequest,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -43,7 +45,7 @@ pub struct AggregateData {
     updated_at: String,
 }
 
-pub type ComputeAggregates<'a> = TableViewComponentBase<'a, AggregateData, ComputeAggregateFilters>;
+pub type ComputeAggregates<'a> = TableViewComponentBase<'a, AggregateData, ComputeAggregateList>;
 
 impl Component for ComputeAggregates<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -63,9 +65,9 @@ impl Component for ComputeAggregates<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeAggregates = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::ComputeAggregates(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        ComputeAggregateApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -74,15 +76,18 @@ impl Component for ComputeAggregates<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::ComputeAggregates(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeAggregateApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::ComputeAggregates(_),
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::Aggregate(ComputeAggregateApiRequest::List(
+                        _,
+                    ))),
                 data,
             } => {
                 self.set_data(data)?;

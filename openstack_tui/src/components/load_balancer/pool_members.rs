@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, LoadBalancerPoolMemberFilters},
+    cloud_worker::types::{
+        ApiRequest, LoadBalancerApiRequest, LoadBalancerPoolApiRequest,
+        LoadBalancerPoolMemberApiRequest, LoadBalancerPoolMemberList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -44,7 +47,7 @@ pub struct MemberData {
 }
 
 pub type LoadBalancerPoolMembers<'a> =
-    TableViewComponentBase<'a, MemberData, LoadBalancerPoolMemberFilters>;
+    TableViewComponentBase<'a, MemberData, LoadBalancerPoolMemberList>;
 
 impl Component for LoadBalancerPoolMembers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -64,9 +67,9 @@ impl Component for LoadBalancerPoolMembers<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::LoadBalancerPoolMembers = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::LoadBalancerPoolMembers(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        LoadBalancerPoolMemberApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -75,25 +78,31 @@ impl Component for LoadBalancerPoolMembers<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::LoadBalancerPoolMembers(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerPoolMemberApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::LoadBalancerPoolMembers(_),
+                request:
+                    ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(
+                        LoadBalancerPoolApiRequest::Member(LoadBalancerPoolMemberApiRequest::List(
+                            _,
+                        )),
+                    )),
+
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::SetLoadBalancerPoolMemberFilters(filters) => {
+            Action::SetLoadBalancerPoolMemberListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::LoadBalancerPoolMembers(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerPoolMemberApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             // Action::DeleteLoadBalancer => {
             //     // only if we are currently in the right mode
@@ -102,7 +111,7 @@ impl Component for LoadBalancerPoolMembers<'_> {
             //         if let Some(command_tx) = self.get_command_tx() {
             //             // and have a selected entry
             //             if let Some(selected_entry) = self.get_selected() {
-            //                 // send action to set SecurityGroupRulesFilters
+            //                 // send action to set SecurityGroupRulesListFilters
             //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
             //                     LoadBalancerLoadBalancerDelete {
             //                         image_id: selected_entry.id.clone(),

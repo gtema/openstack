@@ -54,6 +54,11 @@ pub enum Action {
         request: cloud_types::ApiRequest,
         data: Vec<serde_json::Value>,
     },
+    /// Propagate resources list to components
+    ApiResponsesData1 {
+        request: cloud_types::ApiRequest,
+        data: Vec<serde_json::Value>,
+    },
     /// Open resource(mode) select popup
     ApiRequestSelect,
     /// Refresh data
@@ -86,8 +91,8 @@ pub enum Action {
     DeleteBlockStorageVolume,
 
     // Compute (Nova)
-    SetComputeServerFilters(cloud_types::ComputeServerFilters),
-    SetComputeServerInstanceActionFilters(cloud_types::ComputeServerInstanceActionFilters),
+    SetComputeServerListFilters(cloud_types::ComputeServerList),
+    SetComputeServerInstanceActionListFilters(cloud_types::ComputeServerInstanceActionList),
     /// Show servers provisioned with selected flavor
     ShowComputeServersWithFlavor,
     /// Delete selected server
@@ -101,11 +106,11 @@ pub enum Action {
 
     // DNS (Designate)
     /// Set DNS Zone filters
-    SetDnsZoneFilters(cloud_types::DnsZoneFilters),
+    SetDnsZoneListFilters(cloud_types::DnsZoneList),
     /// Delete DNS zone
     DeleteDnsZone,
     /// Set DNS Recordset filters
-    SetDnsRecordsetFilters(cloud_types::DnsRecordsetFilters),
+    SetDnsRecordsetListFilters(cloud_types::DnsRecordsetList),
     /// Zone recordsets
     ShowDnsZoneRecordsets,
 
@@ -119,7 +124,7 @@ pub enum Action {
     /// Action user invokes to switch mode for selected entity
     ShowIdentityGroupUsers,
     /// Set GroupUser filters
-    SetIdentityGroupUserFilters(cloud_types::IdentityGroupUserFilters),
+    SetIdentityGroupUserListFilters(cloud_types::IdentityGroupUserList),
     /// Add user into the group
     IdentityGroupUserAdd,
     /// Remove user from the group
@@ -127,7 +132,7 @@ pub enum Action {
     //  Users
     // Set ApplicationCredentials filters
     ShowIdentityUserApplicationCredentials,
-    SetIdentityApplicationCredentialFilters(cloud_types::IdentityApplicationCredentialFilters),
+    SetIdentityApplicationCredentialListFilters(cloud_types::IdentityApplicationCredentialList),
     /// Toggle user enabled property
     IdentityUserFlipEnable,
     /// Remove user
@@ -140,42 +145,42 @@ pub enum Action {
     SwitchToProject,
 
     // Image (glance)
-    SetImageFilters(cloud_types::ImageFilters),
+    SetImageListFilters(cloud_types::ImageImageList),
     /// Delete image
     DeleteImage,
 
     // LB
     /// Set LB filters
-    SetLoadBalancerFilters(cloud_types::LoadBalancerFilters),
+    SetLoadBalancerListFilters(cloud_types::LoadBalancerLoadbalancerList),
     /// Set LB Listener filters
-    SetLoadBalancerListenerFilters(cloud_types::LoadBalancerListenerFilters),
+    SetLoadBalancerListenerListFilters(cloud_types::LoadBalancerListenerList),
     /// Show LB Listeners
     ShowLoadBalancerListeners,
     /// Show LB Pools
     ShowLoadBalancerPools,
     /// Set LB Pool filters
-    SetLoadBalancerPoolFilters(cloud_types::LoadBalancerPoolFilters),
+    SetLoadBalancerPoolListFilters(cloud_types::LoadBalancerPoolList),
     /// Show LB Listener Pools
     ShowLoadBalancerListenerPools,
     /// Set LB Member filters
-    SetLoadBalancerPoolMemberFilters(cloud_types::LoadBalancerPoolMemberFilters),
+    SetLoadBalancerPoolMemberListFilters(cloud_types::LoadBalancerPoolMemberList),
     /// Show LB Pool members
     ShowLoadBalancerPoolMembers,
     /// Set LB Healthmonitor filters
-    SetLoadBalancerHealthMonitorFilters(cloud_types::LoadBalancerHealthMonitorFilters),
+    SetLoadBalancerHealthMonitorListFilters(cloud_types::LoadBalancerHealthmonitorList),
     /// Show LB Listener Pools
     ShowLoadBalancerPoolHealthMonitors,
 
     // Network (neutron)
     /// Set Security group filters
-    SetNetworkSecurityGroupFilters(cloud_types::NetworkSecurityGroupFilters),
+    SetNetworkSecurityGroupListFilters(cloud_types::NetworkSecurityGroupList),
     /// Switch to NetworkSecurityGroupRules
     ShowNetworkSecurityGroupRules,
     /// Switch to routers view
     ShowNetworkRouters,
     /// Set Security group rule filters
-    SetNetworkSecurityGroupRuleFilters(cloud_types::NetworkSecurityGroupRuleFilters),
-    SetNetworkSubnetFilters(cloud_types::NetworkSubnetFilters),
+    SetNetworkSecurityGroupRuleListFilters(cloud_types::NetworkSecurityGroupRuleList),
+    SetNetworkSubnetListFilters(cloud_types::NetworkSubnetList),
     /// Show Subnetworks of a network
     ShowNetworkSubnets,
 }

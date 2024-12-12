@@ -16,8 +16,8 @@
     },
     "ComputeServers": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
-      "0": { "action": {"SetComputeServerFilters": {} }, "description": "Default filters", "type": "Filter"},
-      "1": { "action": {"SetComputeServerFilters": {"all_tenants": true} }, "description": "All tenants (admin)", "type": "Filter"},
+      "0": { "action": {"SetComputeServerListFilters": {} }, "description": "Default filters", "type": "Filter"},
+      "1": { "action": {"SetComputeServerListFilters": {"all_tenants": true} }, "description": "All tenants (admin)", "type": "Filter"},
       "ctrl-d": { "action": "DeleteComputeServer", "description": "Delete" },
       "c": { "action": "ShowServerConsoleOutput", "description": "Console output" },
       "a": { "action": "ShowComputeServerInstanceActions", "description": "Instance actions"},
@@ -35,7 +35,7 @@
     },
     "DnsRecordsets": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
-      "0": { "action": {"SetDnsRecordsetFilters": {} }, "description": "Default filters", "type": "Filter"},
+      "0": { "action": {"SetDnsRecordsetListFilters": {} }, "description": "Default filters", "type": "Filter"},
     },
     "DnsZones": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
@@ -70,10 +70,10 @@
     },
     "ImageImages": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
-      "0": { "action": {"SetImageFilters": {} }, "description": "Default filters", "type": "Filter"},
-      "1": { "action": {"SetImageFilters": {"visibility": "public"} },"description": "public", "type": "Filter"},
-      "2": { "action": {"SetImageFilters": {"visibility": "shared"} },"description": "shared", "type": "Filter"},
-      "3": { "action": {"SetImageFilters": {"visibility": "private"} },"description": "private", "type": "Filter"},
+      "0": { "action": {"SetImageListFilters": {} }, "description": "Default filters", "type": "Filter"},
+      "1": { "action": {"SetImageListFilters": {"visibility": "public"} },"description": "public", "type": "Filter"},
+      "2": { "action": {"SetImageListFilters": {"visibility": "shared"} },"description": "shared", "type": "Filter"},
+      "3": { "action": {"SetImageListFilters": {"visibility": "private"} },"description": "private", "type": "Filter"},
       "ctrl-d": { "action": "DeleteImage", "description": "Delete"},
     },
     "LoadBalancers": {
@@ -104,7 +104,7 @@
     },
     "NetworkSubnets": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
-      "0": { "action": {"SetNetworkSubnetFilters": {} }, "description": "All", "type": "Filter"},
+      "0": { "action": {"SetNetworkSubnetListFilters": {} }, "description": "All", "type": "Filter"},
     },
     "NetworkSecurityGroups": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
@@ -112,7 +112,7 @@
     },
     "NetworkSecurityGroupRules": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
-      "0": { "action": {"SetNetworkSecurityGroupRuleFilters": {}}, "description": "All", "type": "Filter"},
+      "0": { "action": {"SetNetworkSecurityGroupRuleListFilters": {}}, "description": "All", "type": "Filter"},
     }
   },
   "global_keybindings": {
