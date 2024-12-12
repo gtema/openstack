@@ -13,88 +13,35 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 
 use crate::cloud_worker::common::ConfirmableRequest;
+pub use crate::cloud_worker::dns::recordset::*;
+pub use crate::cloud_worker::dns::zone::*;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DnsRecordsetFilters {
-    /// Zone Id
-    pub zone_id: Option<String>,
-    /// Optional name (for info purposes
-    pub zone_name: Option<String>,
+/// DNS operations
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DnsApiRequest {
+    Recordset(DnsRecordsetApiRequest),
+    Zone(DnsZoneApiRequest),
 }
-impl fmt::Display for DnsRecordsetFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut parts: Vec<String> = Vec::new();
-        if self.zone_id.is_some() || self.zone_name.is_some() {
-            parts.push(format!(
-                "zone: {}",
-                self.zone_name
-                    .as_ref()
-                    .or(self.zone_name.as_ref())
-                    .unwrap_or(&String::new())
-            ));
-        }
-        write!(f, "{}", parts.join(","))
+
+impl From<DnsRecordsetApiRequest> for DnsApiRequest {
+    fn from(item: DnsRecordsetApiRequest) -> Self {
+        DnsApiRequest::Recordset(item)
     }
 }
 
-impl TryFrom<&DnsRecordsetFilters>
-    for openstack_sdk::api::dns::v2::zone::recordset::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &DnsRecordsetFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder = openstack_sdk::api::dns::v2::zone::recordset::list::Request::builder();
-        ep_builder.sort_key("name");
-
-        if let Some(zone_id) = &value.zone_id {
-            ep_builder.zone_id(zone_id.clone());
-        }
-
-        Ok(ep_builder)
+impl From<DnsZoneApiRequest> for DnsApiRequest {
+    fn from(item: DnsZoneApiRequest) -> Self {
+        DnsApiRequest::Zone(item)
     }
 }
 
-impl TryFrom<&DnsRecordsetFilters>
-    for openstack_sdk::api::dns::v2::recordset::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &DnsRecordsetFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder = openstack_sdk::api::dns::v2::recordset::list::Request::builder();
-
-        ep_builder.sort_key("name");
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DnsZoneFilters {}
-impl fmt::Display for DnsZoneFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct DnsZoneDelete {
-    pub zone_id: String,
-    pub zone_name: Option<String>,
-}
-
-impl fmt::Display for DnsZoneDelete {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl ConfirmableRequest for DnsZoneDelete {
+impl ConfirmableRequest for DnsApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
-        Some(format!(
-            "Delete DNS Zone {} ?",
-            self.zone_name.clone().unwrap_or(self.zone_id.clone())
-        ))
+        match &self {
+            DnsApiRequest::Zone(req) => req.get_confirm_message(),
+            _ => None,
+        }
     }
 }

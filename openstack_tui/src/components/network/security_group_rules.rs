@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, NetworkSecurityGroupRuleFilters},
+    cloud_worker::types::{
+        ApiRequest, NetworkApiRequest, NetworkSecurityGroupRuleApiRequest,
+        NetworkSecurityGroupRuleList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -53,7 +56,7 @@ pub struct NetworkData {
 }
 
 pub type NetworkSecurityGroupRules<'a> =
-    TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupRuleFilters>;
+    TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupRuleList>;
 
 impl Component for NetworkSecurityGroupRules<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -73,9 +76,9 @@ impl Component for NetworkSecurityGroupRules<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkSecurityGroupRules = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        NetworkSecurityGroupRuleApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -84,23 +87,26 @@ impl Component for NetworkSecurityGroupRules<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    NetworkSecurityGroupRuleApiRequest::List(self.get_filters().clone()),
+                ))));
             }
-            Action::SetNetworkSecurityGroupRuleFilters(filters) => {
+            Action::SetNetworkSecurityGroupRuleListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::NetworkSecurityGroupRules(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    NetworkSecurityGroupRuleApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::NetworkSecurityGroupRules(_),
+                request:
+                    ApiRequest::Network(NetworkApiRequest::SecurityGroupRule(
+                        NetworkSecurityGroupRuleApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;

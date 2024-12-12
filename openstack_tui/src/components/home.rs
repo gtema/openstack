@@ -29,8 +29,15 @@ use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
-    action::Action, cloud_worker::types::ApiRequest, components::Component, config::Config,
-    error::TuiError, mode::Mode,
+    action::Action,
+    cloud_worker::types::{
+        ApiRequest, ComputeApiRequest, ComputeQuotaSetApiRequest, ComputeQuotaSetDetails,
+        NetworkApiRequest, NetworkQuotaApiRequest, NetworkQuotaDetails,
+    },
+    components::Component,
+    config::Config,
+    error::TuiError,
+    mode::Mode,
 };
 
 /// Single resource quota details
@@ -65,6 +72,7 @@ pub struct Home {
     config: Config,
     is_loading: bool,
     is_error: bool,
+    project_id: Option<String>,
     compute_quota: Option<ComputeQuota>,
     network_quota: Option<NetworkQuota>,
     pub keymap: HashMap<KeyEvent, Action>,
@@ -109,8 +117,18 @@ impl Home {
 
     fn refresh_data(&mut self) -> Result<Option<Action>, TuiError> {
         if let Some(command_tx) = &self.command_tx {
-            command_tx.send(Action::PerformApiRequest(ApiRequest::ComputeQuota))?;
-            command_tx.send(Action::PerformApiRequest(ApiRequest::NetworkQuota))?;
+            if let Some(project_id) = &self.project_id {
+                command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeQuotaSetApiRequest::Details(ComputeQuotaSetDetails {
+                        project_id: project_id.clone(),
+                    }),
+                )))?;
+                command_tx.send(Action::PerformApiRequest(ApiRequest::from(
+                    NetworkQuotaApiRequest::Details(NetworkQuotaDetails {
+                        project_id: project_id.clone(),
+                    }),
+                )))?;
+            }
         }
         Ok(None)
     }
@@ -133,12 +151,18 @@ impl Component for Home {
                 self.is_error = false;
                 self.set_loading(true);
             }
-            Action::ConnectedToCloud(_) => {
+            Action::ConnectedToCloud(auth) => {
                 self.is_error = false;
                 self.set_loading(true);
                 self.compute_quota = None;
                 self.network_quota = None;
-                if let Mode::Home = current_mode {
+                if let Some(project) = auth.project {
+                    if let Some(pid) = project.id {
+                        self.project_id = Some(pid);
+                    }
+                }
+
+                if current_mode == Mode::Home {
                     return self.refresh_data();
                 }
             }
@@ -155,14 +179,18 @@ impl Component for Home {
             }
 
             Action::ApiResponseData {
-                request: ApiRequest::ComputeQuota { .. },
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::QuotaSet(
+                        ComputeQuotaSetApiRequest::Details(_),
+                    )),
                 data,
             } => {
                 self.set_compute_data(data)?;
                 self.set_loading(false);
             }
             Action::ApiResponseData {
-                request: ApiRequest::NetworkQuota { .. },
+                request:
+                    ApiRequest::Network(NetworkApiRequest::Quota(NetworkQuotaApiRequest::Details(_))),
                 data,
             } => {
                 self.set_network_data(data)?;

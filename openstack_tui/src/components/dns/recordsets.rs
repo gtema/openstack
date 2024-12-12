@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, DnsRecordsetFilters},
+    cloud_worker::types::{ApiRequest, DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList},
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -45,7 +45,7 @@ pub struct RecordsetData {
     updated_at: Option<String>,
 }
 
-pub type DnsRecordsets<'a> = TableViewComponentBase<'a, RecordsetData, DnsRecordsetFilters>;
+pub type DnsRecordsets<'a> = TableViewComponentBase<'a, RecordsetData, DnsRecordsetList>;
 
 impl Component for DnsRecordsets<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -65,8 +65,8 @@ impl Component for DnsRecordsets<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::DnsRecordsets = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::DnsRecordsets(
-                        self.get_filters().clone(),
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        DnsRecordsetApiRequest::List(self.get_filters().clone()),
                     ))));
                 }
             }
@@ -76,24 +76,24 @@ impl Component for DnsRecordsets<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::DnsRecordsets(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    DnsRecordsetApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::DnsRecordsets(_),
+                request: ApiRequest::Dns(DnsApiRequest::Recordset(DnsRecordsetApiRequest::List(_))),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::SetDnsRecordsetFilters(filters) => {
+            Action::SetDnsRecordsetListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::DnsRecordsets(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    DnsRecordsetApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             //Action::DeleteDnsRecordset => {
@@ -103,7 +103,7 @@ impl Component for DnsRecordsets<'_> {
             //        if let Some(command_tx) = self.get_command_tx() {
             //            // and have a selected entry
             //            if let Some(selected_entry) = self.get_selected() {
-            //                // send action to set SecurityGroupRulesFilters
+            //                // send action to set SecurityGroupRulesListFilters
             //                command_tx.send(Action::Confirm(ApiRequest::DnsRecordsetDelete(
             //                    DnsRecordsetDelete {
             //                        zone_id: selected_entry.id.clone(),

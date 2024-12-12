@@ -13,82 +13,45 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityAuthProjectFilters {}
-impl fmt::Display for IdentityAuthProjectFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityProjectFilters {}
-impl fmt::Display for IdentityProjectFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
+pub use crate::cloud_worker::identity::auth::*;
+pub use crate::cloud_worker::identity::group::*;
+pub use crate::cloud_worker::identity::project::*;
+pub use crate::cloud_worker::identity::user::*;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityUserFilters {}
-impl fmt::Display for IdentityUserFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
+/// Identity operations
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum IdentityApiRequest {
+    /// Auth
+    Auth(IdentityAuthApiRequest),
+    /// Groups
+    Group(IdentityGroupApiRequest),
+    /// Projects
+    Project(IdentityProjectApiRequest),
+    //    Group,
+    User(IdentityUserApiRequest),
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityGroupFilters {}
-impl fmt::Display for IdentityGroupFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+impl From<IdentityAuthApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityAuthApiRequest) -> Self {
+        IdentityApiRequest::Auth(item)
     }
 }
 
-/// Group Users filter
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityGroupUserFilters {
-    /// Group id (used by API)
-    pub group_id: String,
-    /// Group name (Set by caller for display only)
-    pub group_name: Option<String>,
-}
-impl fmt::Display for IdentityGroupUserFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "group: {}",
-            self.group_name.as_ref().unwrap_or(&self.group_id)
-        )
+impl From<IdentityGroupApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityGroupApiRequest) -> Self {
+        IdentityApiRequest::Group(item)
     }
 }
 
-/// Update user properties
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityUserUpdate {
-    /// User ID
-    pub id: String,
-    /// New user name
-    pub name: Option<String>,
-    /// Enabled
-    pub enabled: Option<bool>,
+impl From<IdentityProjectApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityProjectApiRequest) -> Self {
+        IdentityApiRequest::Project(item)
+    }
 }
 
-/// User Application Credentials filter
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct IdentityApplicationCredentialFilters {
-    /// User id (used by API)
-    pub user_id: String,
-    /// User name (Set by caller for display only)
-    pub user_name: Option<String>,
-}
-impl fmt::Display for IdentityApplicationCredentialFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "user: {}",
-            self.user_name.as_ref().unwrap_or(&self.user_id)
-        )
+impl From<IdentityUserApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityUserApiRequest) -> Self {
+        IdentityApiRequest::User(item)
     }
 }

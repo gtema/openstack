@@ -11,83 +11,30 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+#![allow(clippy::module_inception)]
 
 use eyre::Result;
-use serde_json::Value;
 use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_sdk::{api::Pagination, api::QueryAsync};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
-use crate::cloud_worker::{ApiRequest, Cloud};
+use crate::cloud_worker::image::types::ImageApiRequest;
+use crate::cloud_worker::types::ExecuteApiRequest;
+use crate::cloud_worker::{ApiRequest, CloudWorkerError};
 
+pub mod image;
 pub mod types;
-use types::*;
 
-pub trait ImageExt {
-    async fn perform_api_request(
-        &mut self,
+impl ExecuteApiRequest for ImageApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
         app_tx: &UnboundedSender<Action>,
-        request: ApiRequest,
-    ) -> Result<()>;
-
-    async fn get_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>>;
-    async fn delete_image(&mut self, request: &ImageImageDelete) -> Result<()>;
-}
-
-impl ImageExt for Cloud {
-    async fn perform_api_request(
-        &mut self,
-        app_tx: &UnboundedSender<Action>,
-        request: ApiRequest,
-    ) -> Result<()> {
-        match request {
-            ApiRequest::ImageImages(ref filters) => match self.get_images(filters).await {
-                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
-                Err(err) => {
-                    app_tx.send(Action::Error(format!("Failed to fetch images: {:?}", err)))?
-                }
-            },
-            ApiRequest::ImageImageDelete(ref request) => match self.delete_image(request).await {
-                Ok(_data) => app_tx.send(Action::Refresh)?,
-                Err(err) => {
-                    app_tx.send(Action::Error(format!("Failed to delete image: {:?}", err)))?
-                }
-            },
-            _ => {
-                todo!()
-            }
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            ImageApiRequest::Image(data) => data.execute_request(session, request, app_tx).await,
         }
-        Ok(())
-    }
-
-    async fn get_images(&mut self, filters: &ImageFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let mut ep_builder = openstack_sdk::api::image::v2::image::list::Request::builder();
-            ep_builder.sort_key("name");
-            ep_builder.sort_dir("asc");
-
-            if let Some(vis) = &filters.visibility {
-                ep_builder.visibility(vis);
-            }
-            let ep = ep_builder.build()?;
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn delete_image(&mut self, request: &ImageImageDelete) -> Result<()> {
-        if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::image::v2::image::delete::Request::builder()
-                .id(request.image_id.clone())
-                .build()?;
-
-            openstack_sdk::api::ignore(ep).query_async(session).await?;
-            return Ok(());
-        }
-        Ok(())
     }
 }

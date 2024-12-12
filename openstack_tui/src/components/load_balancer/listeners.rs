@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, LoadBalancerListenerFilters},
+    cloud_worker::types::{
+        ApiRequest, LoadBalancerApiRequest, LoadBalancerListenerApiRequest,
+        LoadBalancerListenerList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -46,7 +49,7 @@ pub struct ListenerData {
 }
 
 pub type LoadBalancerListeners<'a> =
-    TableViewComponentBase<'a, ListenerData, LoadBalancerListenerFilters>;
+    TableViewComponentBase<'a, ListenerData, LoadBalancerListenerList>;
 
 impl Component for LoadBalancerListeners<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -66,9 +69,9 @@ impl Component for LoadBalancerListeners<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::LoadBalancerListeners = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::LoadBalancerListeners(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        LoadBalancerListenerApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -77,25 +80,28 @@ impl Component for LoadBalancerListeners<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::LoadBalancerListeners(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerListenerApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::LoadBalancerListeners(_),
+                request:
+                    ApiRequest::LoadBalancer(LoadBalancerApiRequest::Listener(
+                        LoadBalancerListenerApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::SetLoadBalancerListenerFilters(filters) => {
+            Action::SetLoadBalancerListenerListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::LoadBalancerListeners(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerListenerApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             // Action::DeleteLoadBalancer => {
             //     // only if we are currently in the right mode
@@ -104,7 +110,7 @@ impl Component for LoadBalancerListeners<'_> {
             //         if let Some(command_tx) = self.get_command_tx() {
             //             // and have a selected entry
             //             if let Some(selected_entry) = self.get_selected() {
-            //                 // send action to set SecurityGroupRulesFilters
+            //                 // send action to set SecurityGroupRulesListFilters
             //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
             //                     LoadBalancerLoadBalancerDelete {
             //                         image_id: selected_entry.id.clone(),

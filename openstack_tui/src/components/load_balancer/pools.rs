@@ -22,8 +22,8 @@ use tokio::sync::mpsc::UnboundedSender;
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, LoadBalancerHealthMonitorFilters, LoadBalancerPoolFilters,
-        LoadBalancerPoolMemberFilters,
+        ApiRequest, LoadBalancerApiRequest, LoadBalancerHealthmonitorList,
+        LoadBalancerPoolApiRequest, LoadBalancerPoolList, LoadBalancerPoolMemberList,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -46,7 +46,7 @@ pub struct PoolData {
     protocol: String,
 }
 
-pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, PoolData, LoadBalancerPoolFilters>;
+pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, PoolData, LoadBalancerPoolList>;
 
 impl Component for LoadBalancerPools<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -66,9 +66,9 @@ impl Component for LoadBalancerPools<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::LoadBalancerPools = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::LoadBalancerPools(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        LoadBalancerPoolApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -77,25 +77,28 @@ impl Component for LoadBalancerPools<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::LoadBalancerPools(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerPoolApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::LoadBalancerPools(_),
+                request:
+                    ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(
+                        LoadBalancerPoolApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::SetLoadBalancerPoolFilters(filters) => {
+            Action::SetLoadBalancerPoolListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::LoadBalancerPools(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    LoadBalancerPoolApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::ShowLoadBalancerPoolMembers => {
                 // only if we are currently in the expected mode
@@ -104,8 +107,8 @@ impl Component for LoadBalancerPools<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
-                            command_tx.send(Action::SetLoadBalancerPoolMemberFilters(
-                                LoadBalancerPoolMemberFilters {
+                            command_tx.send(Action::SetLoadBalancerPoolMemberListFilters(
+                                LoadBalancerPoolMemberList {
                                     pool_id: group_row.id.clone(),
                                     pool_name: Some(group_row.name.clone()),
                                 },
@@ -125,8 +128,8 @@ impl Component for LoadBalancerPools<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
-                            command_tx.send(Action::SetLoadBalancerHealthMonitorFilters(
-                                LoadBalancerHealthMonitorFilters {
+                            command_tx.send(Action::SetLoadBalancerHealthMonitorListFilters(
+                                LoadBalancerHealthmonitorList {
                                     pool_id: Some(group_row.id.clone()),
                                     pool_name: Some(group_row.name.clone()),
                                 },
@@ -146,7 +149,7 @@ impl Component for LoadBalancerPools<'_> {
             //         if let Some(command_tx) = self.get_command_tx() {
             //             // and have a selected entry
             //             if let Some(selected_entry) = self.get_selected() {
-            //                 // send action to set SecurityGroupRulesFilters
+            //                 // send action to set SecurityGroupRulesListFilters
             //                 command_tx.send(Action::Confirm(ApiRequest::LoadBalancerLoadBalancerDelete(
             //                     LoadBalancerLoadBalancerDelete {
             //                         image_id: selected_entry.id.clone(),

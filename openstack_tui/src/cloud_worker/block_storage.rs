@@ -13,137 +13,38 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use eyre::Result;
-use serde_json::Value;
 use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_sdk::{api::Pagination, api::QueryAsync};
+use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
-use crate::cloud_worker::{ApiRequest, Cloud};
+use crate::cloud_worker::block_storage::types::BlockStorageApiRequest;
+use crate::cloud_worker::common::CloudWorkerError;
+use crate::cloud_worker::types::ExecuteApiRequest;
+use crate::cloud_worker::ApiRequest;
 
+pub mod backup;
+pub mod snapshot;
 pub mod types;
-use types::*;
+pub mod volume;
 
-pub trait BlockStorageExt {
-    async fn perform_api_request(
-        &mut self,
+impl ExecuteApiRequest for BlockStorageApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
         app_tx: &UnboundedSender<Action>,
-        request: ApiRequest,
-    ) -> Result<()>;
-
-    /// List Backups
-    async fn get_backups(&mut self, filters: &BlockStorageBackupFilters) -> Result<Vec<Value>>;
-    /// List Snapshots
-    async fn get_snapshots(&mut self, filters: &BlockStorageSnapshotFilters) -> Result<Vec<Value>>;
-    /// List Volumes
-    async fn get_volumes(&mut self, filters: &BlockStorageVolumeFilters) -> Result<Vec<Value>>;
-    /// Delete Volume
-    async fn delete_volume(&mut self, request: &BlockStorageVolumeDelete) -> Result<()>;
-}
-
-impl BlockStorageExt for Cloud {
-    async fn perform_api_request(
-        &mut self,
-        app_tx: &UnboundedSender<Action>,
-        request: ApiRequest,
-    ) -> Result<()> {
-        match request {
-            ApiRequest::BlockStorageBackups(ref filters) => match self.get_backups(filters).await {
-                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
-                Err(err) => app_tx.send(Action::Error(format!(
-                    "Failed to fetch block-storage backups: {:?}",
-                    err
-                )))?,
-            },
-            ApiRequest::BlockStorageSnapshots(ref filters) => {
-                match self.get_snapshots(filters).await {
-                    Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
-                    Err(err) => app_tx.send(Action::Error(format!(
-                        "Failed to fetch block-storage snapshots: {:?}",
-                        err
-                    )))?,
-                }
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            BlockStorageApiRequest::Backup(data) => {
+                data.execute_request(session, request, app_tx).await
             }
-            ApiRequest::BlockStorageVolumes(ref filters) => match self.get_volumes(filters).await {
-                Ok(data) => app_tx.send(Action::ApiResponsesData { request, data })?,
-                Err(err) => app_tx.send(Action::Error(format!(
-                    "Failed to fetch block-storage volumes: {:?}",
-                    err
-                )))?,
-            },
-            ApiRequest::BlockStorageVolumeDelete(ref request) => {
-                match self.delete_volume(request).await {
-                    Ok(_data) => app_tx.send(Action::Refresh)?,
-                    Err(err) => app_tx.send(Action::Error(format!(
-                        "Failed to delete block-storage volume: {:?}",
-                        err
-                    )))?,
-                }
+            BlockStorageApiRequest::Snapshot(data) => {
+                data.execute_request(session, request, app_tx).await
             }
-            _ => {
-                todo!()
+            BlockStorageApiRequest::Volume(data) => {
+                data.execute_request(session, request, app_tx).await
             }
         }
-        Ok(())
-    }
-
-    async fn get_backups(&mut self, filters: &BlockStorageBackupFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let ep =
-                openstack_sdk::api::block_storage::v3::backup::list_detailed::RequestBuilder::try_from(
-                    filters,
-                )?
-                .build()?;
-
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_snapshots(&mut self, filters: &BlockStorageSnapshotFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let ep =
-                openstack_sdk::api::block_storage::v3::snapshot::list_detailed::RequestBuilder::try_from(
-                    filters,
-                )?
-                .build()?;
-
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn get_volumes(&mut self, filters: &BlockStorageVolumeFilters) -> Result<Vec<Value>> {
-        if let Some(session) = &self.cloud {
-            let ep =
-                openstack_sdk::api::block_storage::v3::volume::list_detailed::RequestBuilder::try_from(
-                    filters,
-                )?
-                .build()?;
-
-            let res: Vec<Value> = openstack_sdk::api::paged(ep, Pagination::All)
-                .query_async(session)
-                .await?;
-            return Ok(res);
-        }
-        Ok(Vec::new())
-    }
-
-    async fn delete_volume(&mut self, request: &BlockStorageVolumeDelete) -> Result<()> {
-        if let Some(session) = &self.cloud {
-            let ep = openstack_sdk::api::block_storage::v3::volume::delete::Request::builder()
-                .id(request.volume_id.clone())
-                .build()?;
-
-            openstack_sdk::api::ignore(ep).query_async(session).await?;
-            return Ok(());
-        }
-        Ok(())
     }
 }

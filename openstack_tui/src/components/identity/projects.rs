@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, IdentityProjectFilters},
+    cloud_worker::types::{
+        ApiRequest, IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -45,7 +47,7 @@ pub struct ProjectData {
     domain_id: String,
 }
 
-pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectData, IdentityProjectFilters>;
+pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectData, IdentityProjectList>;
 
 impl Component for IdentityProjects<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -65,9 +67,9 @@ impl Component for IdentityProjects<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityProjects = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::IdentityProjects(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        IdentityProjectApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -76,15 +78,18 @@ impl Component for IdentityProjects<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::IdentityProjects(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityProjectApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::IdentityProjects(_),
+                request:
+                    ApiRequest::Identity(IdentityApiRequest::Project(IdentityProjectApiRequest::List(
+                        _,
+                    ))),
                 data,
             } => {
                 self.set_data(data)?;

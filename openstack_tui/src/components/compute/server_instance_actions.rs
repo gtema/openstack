@@ -21,7 +21,9 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, ComputeServerInstanceActionFilters},
+    cloud_worker::types::{
+        ApiRequest, ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -47,7 +49,7 @@ pub struct ServerInstanceActionData {
 }
 
 pub type ComputeServerInstanceActions<'a> =
-    TableViewComponentBase<'a, ServerInstanceActionData, ComputeServerInstanceActionFilters>;
+    TableViewComponentBase<'a, ServerInstanceActionData, ComputeServerInstanceActionList>;
 
 impl Component for ComputeServerInstanceActions<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -67,9 +69,9 @@ impl Component for ComputeServerInstanceActions<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeServerInstanceActions = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::ComputeServerInstanceActions(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        ComputeServerApiRequest::InstanceActionList(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -78,25 +80,28 @@ impl Component for ComputeServerInstanceActions<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::ComputeServerInstanceActions(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeServerApiRequest::InstanceActionList(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::ComputeServerInstanceActions(_),
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::Server(
+                        ComputeServerApiRequest::InstanceActionList(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;
             }
-            Action::SetComputeServerInstanceActionFilters(filters) => {
+            Action::SetComputeServerInstanceActionListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::ComputeServerInstanceActions(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeServerApiRequest::InstanceActionList(self.get_filters().clone()),
+                ))));
             }
             Action::ShowComputeServerInstanceActionEvents => {
                 // only if we are currently in the IdentityGroup mode
@@ -105,12 +110,12 @@ impl Component for ComputeServerInstanceActions<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
+                            // send action to set SecurityGroupRulesList
                             let mut filter = self.get_filters().clone();
                             filter.request_id = Some(selected_entry.id.clone());
 
                             command_tx
-                                .send(Action::SetComputeServerInstanceActionFilters(filter))?;
+                                .send(Action::SetComputeServerInstanceActionListFilters(filter))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
                                 mode: Mode::ComputeServerInstanceActionEvents,

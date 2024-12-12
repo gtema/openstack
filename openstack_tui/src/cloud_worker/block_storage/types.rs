@@ -12,100 +12,44 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
 use serde::{Deserialize, Serialize};
-use std::fmt;
 
+pub use crate::cloud_worker::block_storage::backup::*;
+pub use crate::cloud_worker::block_storage::snapshot::*;
+pub use crate::cloud_worker::block_storage::volume::*;
 use crate::cloud_worker::common::ConfirmableRequest;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct BlockStorageBackupFilters {}
+/// Block Storage operations
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum BlockStorageApiRequest {
+    Backup(BlockStorageBackupApiRequest),
+    Snapshot(BlockStorageSnapshotApiRequest),
+    Volume(BlockStorageVolumeApiRequest),
+}
 
-impl fmt::Display for BlockStorageBackupFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+impl From<BlockStorageBackupApiRequest> for BlockStorageApiRequest {
+    fn from(item: BlockStorageBackupApiRequest) -> Self {
+        BlockStorageApiRequest::Backup(item)
     }
 }
 
-impl TryFrom<&BlockStorageBackupFilters>
-    for openstack_sdk::api::block_storage::v3::backup::list_detailed::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &BlockStorageBackupFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::block_storage::v3::backup::list_detailed::Request::builder();
-
-        // TODO(gtema) cinder rejects "name" in few clouds
-        ep_builder.sort_key("created_at");
-        Ok(ep_builder)
+impl From<BlockStorageSnapshotApiRequest> for BlockStorageApiRequest {
+    fn from(item: BlockStorageSnapshotApiRequest) -> Self {
+        BlockStorageApiRequest::Snapshot(item)
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct BlockStorageSnapshotFilters {}
-
-impl fmt::Display for BlockStorageSnapshotFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+impl From<BlockStorageVolumeApiRequest> for BlockStorageApiRequest {
+    fn from(item: BlockStorageVolumeApiRequest) -> Self {
+        BlockStorageApiRequest::Volume(item)
     }
 }
 
-impl TryFrom<&BlockStorageSnapshotFilters>
-    for openstack_sdk::api::block_storage::v3::snapshot::list_detailed::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &BlockStorageSnapshotFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::block_storage::v3::snapshot::list_detailed::Request::builder();
-
-        // TODO(gtema) cinder rejects "name" in few clouds
-        ep_builder.sort_key("created_at");
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct BlockStorageVolumeFilters {}
-
-impl fmt::Display for BlockStorageVolumeFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl TryFrom<&BlockStorageVolumeFilters>
-    for openstack_sdk::api::block_storage::v3::volume::list_detailed::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &BlockStorageVolumeFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::block_storage::v3::volume::list_detailed::Request::builder();
-
-        ep_builder.sort_key("name");
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct BlockStorageVolumeDelete {
-    pub volume_id: String,
-    pub volume_name: Option<String>,
-}
-
-impl fmt::Display for BlockStorageVolumeDelete {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl ConfirmableRequest for BlockStorageVolumeDelete {
+impl ConfirmableRequest for BlockStorageApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
-        Some(format!(
-            "Delete volume {} ?",
-            self.volume_name.clone().unwrap_or(self.volume_id.clone())
-        ))
+        match &self {
+            BlockStorageApiRequest::Volume(req) => req.get_confirm_message(),
+            _ => None,
+        }
     }
 }

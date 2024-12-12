@@ -13,176 +13,45 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use serde::{Deserialize, Serialize};
-use std::fmt;
 
-//use crate::cloud_worker::common::ConfirmableRequest;
+pub use crate::cloud_worker::load_balancer::healthmonitor::*;
+pub use crate::cloud_worker::load_balancer::listener::*;
+pub use crate::cloud_worker::load_balancer::loadbalancer::*;
+pub use crate::cloud_worker::load_balancer::pool::*;
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct LoadBalancerFilters {}
+/// LoadBalancer operations
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum LoadBalancerApiRequest {
+    /// Health monitors
+    Healthmonitor(LoadBalancerHealthmonitorApiRequest),
+    /// Loadbalancers
+    Loadbalancer(LoadBalancerLoadbalancerApiRequest),
+    /// Listeners
+    Listener(LoadBalancerListenerApiRequest),
+    /// Pools
+    Pool(LoadBalancerPoolApiRequest),
+}
 
-impl fmt::Display for LoadBalancerFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "")
+impl From<LoadBalancerHealthmonitorApiRequest> for LoadBalancerApiRequest {
+    fn from(item: LoadBalancerHealthmonitorApiRequest) -> Self {
+        LoadBalancerApiRequest::Healthmonitor(item)
     }
 }
 
-impl TryFrom<&LoadBalancerFilters>
-    for openstack_sdk::api::load_balancer::v2::loadbalancer::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(_value: &LoadBalancerFilters) -> Result<Self, Self::Error> {
-        let ep_builder =
-            openstack_sdk::api::load_balancer::v2::loadbalancer::list::Request::builder();
-
-        Ok(ep_builder)
+impl From<LoadBalancerLoadbalancerApiRequest> for LoadBalancerApiRequest {
+    fn from(item: LoadBalancerLoadbalancerApiRequest) -> Self {
+        LoadBalancerApiRequest::Loadbalancer(item)
     }
 }
 
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct LoadBalancerListenerFilters {
-    pub loadbalancer_id: Option<String>,
-    pub loadbalancer_name: Option<String>,
-}
-
-impl fmt::Display for LoadBalancerListenerFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut parts: Vec<String> = Vec::new();
-        if self.loadbalancer_id.is_some() || self.loadbalancer_name.is_some() {
-            parts.push(format!(
-                "lb: {}",
-                self.loadbalancer_name
-                    .as_ref()
-                    .or(self.loadbalancer_id.as_ref())
-                    .unwrap_or(&String::new())
-            ));
-        }
-        write!(f, "{}", parts.join(","))
+impl From<LoadBalancerListenerApiRequest> for LoadBalancerApiRequest {
+    fn from(item: LoadBalancerListenerApiRequest) -> Self {
+        LoadBalancerApiRequest::Listener(item)
     }
 }
 
-impl TryFrom<&LoadBalancerListenerFilters>
-    for openstack_sdk::api::load_balancer::v2::listener::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &LoadBalancerListenerFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::load_balancer::v2::listener::list::Request::builder();
-
-        if let Some(lb_id) = &value.loadbalancer_id {
-            ep_builder.load_balancer_id(lb_id.clone());
-        }
-
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct LoadBalancerPoolFilters {
-    pub loadbalancer_id: Option<String>,
-    pub loadbalancer_name: Option<String>,
-}
-
-impl fmt::Display for LoadBalancerPoolFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut parts: Vec<String> = Vec::new();
-        if self.loadbalancer_id.is_some() || self.loadbalancer_name.is_some() {
-            parts.push(format!(
-                "lb: {}",
-                self.loadbalancer_name
-                    .as_ref()
-                    .or(self.loadbalancer_id.as_ref())
-                    .unwrap_or(&String::new())
-            ));
-        }
-        write!(f, "{}", parts.join(","))
-    }
-}
-
-impl TryFrom<&LoadBalancerPoolFilters>
-    for openstack_sdk::api::load_balancer::v2::pool::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &LoadBalancerPoolFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder = openstack_sdk::api::load_balancer::v2::pool::list::Request::builder();
-
-        if let Some(val) = &value.loadbalancer_id {
-            ep_builder.loadbalancer_id(val.clone());
-        }
-
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct LoadBalancerPoolMemberFilters {
-    pub pool_id: String,
-    pub pool_name: Option<String>,
-}
-
-impl fmt::Display for LoadBalancerPoolMemberFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut parts: Vec<String> = Vec::new();
-        parts.push(format!(
-            "pool: {}",
-            self.pool_name.as_ref().unwrap_or(&self.pool_id)
-        ));
-        write!(f, "{}", parts.join(","))
-    }
-}
-
-impl TryFrom<&LoadBalancerPoolMemberFilters>
-    for openstack_sdk::api::load_balancer::v2::pool::member::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &LoadBalancerPoolMemberFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::load_balancer::v2::pool::member::list::Request::builder();
-
-        ep_builder.pool_id(value.pool_id.clone());
-
-        Ok(ep_builder)
-    }
-}
-
-#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct LoadBalancerHealthMonitorFilters {
-    pub pool_id: Option<String>,
-    pub pool_name: Option<String>,
-}
-
-impl fmt::Display for LoadBalancerHealthMonitorFilters {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut parts: Vec<String> = Vec::new();
-        if self.pool_id.is_some() || self.pool_id.is_some() {
-            parts.push(format!(
-                "pool: {}",
-                self.pool_name
-                    .as_ref()
-                    .or(self.pool_id.as_ref())
-                    .unwrap_or(&String::new())
-            ));
-        }
-        write!(f, "{}", parts.join(","))
-    }
-}
-
-impl TryFrom<&LoadBalancerHealthMonitorFilters>
-    for openstack_sdk::api::load_balancer::v2::healthmonitor::list::RequestBuilder<'_>
-{
-    type Error = eyre::Report;
-
-    fn try_from(value: &LoadBalancerHealthMonitorFilters) -> Result<Self, Self::Error> {
-        let mut ep_builder =
-            openstack_sdk::api::load_balancer::v2::healthmonitor::list::Request::builder();
-
-        if let Some(val) = &value.pool_id {
-            ep_builder.pool_id(val.clone());
-        }
-
-        Ok(ep_builder)
+impl From<LoadBalancerPoolApiRequest> for LoadBalancerApiRequest {
+    fn from(item: LoadBalancerPoolApiRequest) -> Self {
+        LoadBalancerApiRequest::Pool(item)
     }
 }

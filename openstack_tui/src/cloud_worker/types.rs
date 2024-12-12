@@ -15,10 +15,13 @@
 use serde::{Deserialize, Serialize};
 use strum::Display;
 
+use crate::action::Action;
 use openstack_sdk::types::ServiceType;
+use openstack_sdk::AsyncOpenStack;
+use tokio::sync::mpsc::UnboundedSender;
 
 pub use crate::cloud_worker::block_storage::types::*;
-pub use crate::cloud_worker::common::ConfirmableRequest;
+pub use crate::cloud_worker::common::{CloudWorkerError, ConfirmableRequest};
 pub use crate::cloud_worker::compute::types::*;
 pub use crate::cloud_worker::dns::types::*;
 pub use crate::cloud_worker::identity::types::*;
@@ -30,102 +33,39 @@ pub use crate::cloud_worker::network::types::*;
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]
 pub enum ApiRequest {
     // Block storage resources
-    /// Cinder backup
-    BlockStorageBackups(BlockStorageBackupFilters),
-    /// Cinder snapshot
-    BlockStorageSnapshots(BlockStorageSnapshotFilters),
-    /// Cinder volume
-    BlockStorageVolumes(BlockStorageVolumeFilters),
-    /// Delete Cinder volume
-    BlockStorageVolumeDelete(BlockStorageVolumeDelete),
+    /// Block Storage api requests
+    BlockStorage(BlockStorageApiRequest),
+
     // Compute resources
-    ComputeFlavors(ComputeFlavorFilters),
-    ComputeServers(ComputeServerFilters),
-    /// Delete server request
-    ComputeServerDelete(ComputeServerDelete),
-    ComputeServerInstanceActions(ComputeServerInstanceActionFilters),
-    ComputeServerInstanceAction(ComputeServerInstanceActionFilters),
-    ComputeServerConsoleOutput(String),
-    ComputeAggregates(ComputeAggregateFilters),
-    ComputeHypervisors(ComputeHypervisorFilters),
-    ComputeQuota,
+    /// Compute api requests
+    Compute(ComputeApiRequest),
 
-    // DNS
-    /// DNS Recordsets
-    DnsRecordsets(DnsRecordsetFilters),
-    /// DNS Zones
-    DnsZones(DnsZoneFilters),
-    /// Delete DNS zone
-    DnsZoneDelete(DnsZoneDelete),
+    /// DNS resources
+    Dns(DnsApiRequest),
 
-    // Identity (Keystone)
-    IdentityAuthProjects(IdentityAuthProjectFilters),
-    IdentityApplicationCredentials(IdentityApplicationCredentialFilters),
-    IdentityGroups(IdentityGroupFilters),
-    IdentityGroupUsers(IdentityGroupUserFilters),
-    IdentityProjects(IdentityProjectFilters),
-    IdentityUsers(IdentityUserFilters),
-    IdentityUserUpdate(IdentityUserUpdate),
+    /// Identity (Keystone)
+    Identity(IdentityApiRequest),
 
-    // Image (Glance)
-    ImageImages(ImageFilters),
-    /// Delete image
-    ImageImageDelete(ImageImageDelete),
+    /// Image (Glance)
+    Image(ImageApiRequest),
 
-    // Load Balancer
-    LoadBalancers(LoadBalancerFilters),
-    LoadBalancerListeners(LoadBalancerListenerFilters),
-    LoadBalancerPools(LoadBalancerPoolFilters),
-    LoadBalancerPoolMembers(LoadBalancerPoolMemberFilters),
-    LoadBalancerHealthMonitors(LoadBalancerHealthMonitorFilters),
+    /// Load Balancer
+    LoadBalancer(LoadBalancerApiRequest),
 
     // Network (Neutron)
-    NetworkNetworks(NetworkNetworkFilters),
-    NetworkRouters(NetworkRouterFilters),
-    NetworkSubnets(NetworkSubnetFilters),
-    NetworkSecurityGroups(NetworkSecurityGroupFilters),
-    NetworkSecurityGroupRules(NetworkSecurityGroupRuleFilters),
-    NetworkQuota,
+    Network(NetworkApiRequest),
 }
 
 impl From<ApiRequest> for ServiceType {
     fn from(item: ApiRequest) -> Self {
         match item {
-            ApiRequest::BlockStorageBackups(_)
-            | ApiRequest::BlockStorageSnapshots(_)
-            | ApiRequest::BlockStorageVolumes(_)
-            | ApiRequest::BlockStorageVolumeDelete(_) => Self::BlockStorage,
-            ApiRequest::ComputeServers(_)
-            | ApiRequest::ComputeServerDelete(_)
-            | ApiRequest::ComputeServerConsoleOutput(_)
-            | ApiRequest::ComputeServerInstanceAction(_)
-            | ApiRequest::ComputeServerInstanceActions(_)
-            | ApiRequest::ComputeFlavors(_)
-            | ApiRequest::ComputeQuota
-            | ApiRequest::ComputeAggregates(_)
-            | ApiRequest::ComputeHypervisors(_) => Self::Compute,
-            ApiRequest::DnsRecordsets(_)
-            | ApiRequest::DnsZones(_)
-            | ApiRequest::DnsZoneDelete(_) => Self::Dns,
-            ApiRequest::IdentityAuthProjects(_)
-            | ApiRequest::IdentityApplicationCredentials(_)
-            | ApiRequest::IdentityGroups(_)
-            | ApiRequest::IdentityGroupUsers(_)
-            | ApiRequest::IdentityProjects(_)
-            | ApiRequest::IdentityUserUpdate(_)
-            | ApiRequest::IdentityUsers(_) => Self::Identity,
-            ApiRequest::ImageImages(_) | ApiRequest::ImageImageDelete(_) => Self::Image,
-            ApiRequest::LoadBalancers(_)
-            | ApiRequest::LoadBalancerListeners(_)
-            | ApiRequest::LoadBalancerHealthMonitors(_)
-            | ApiRequest::LoadBalancerPools(_)
-            | ApiRequest::LoadBalancerPoolMembers(_) => Self::LoadBalancer,
-            ApiRequest::NetworkNetworks(_)
-            | ApiRequest::NetworkRouters(_)
-            | ApiRequest::NetworkQuota
-            | ApiRequest::NetworkSecurityGroups(_)
-            | ApiRequest::NetworkSecurityGroupRules(_)
-            | ApiRequest::NetworkSubnets(_) => Self::Network,
+            ApiRequest::BlockStorage(_) => Self::BlockStorage,
+            ApiRequest::Compute(_) => Self::Compute,
+            ApiRequest::Dns(_) => Self::Dns,
+            ApiRequest::Identity(_) => Self::Identity,
+            ApiRequest::Image(_) => Self::Image,
+            ApiRequest::LoadBalancer(_) => Self::LoadBalancer,
+            ApiRequest::Network(_) => Self::Network,
         }
     }
 }
@@ -133,11 +73,20 @@ impl From<ApiRequest> for ServiceType {
 impl ConfirmableRequest for ApiRequest {
     fn get_confirm_message(&self) -> Option<String> {
         match &self {
-            ApiRequest::BlockStorageVolumeDelete(x) => x.get_confirm_message(),
-            ApiRequest::ComputeServerDelete(x) => x.get_confirm_message(),
-            ApiRequest::DnsZoneDelete(x) => x.get_confirm_message(),
-            ApiRequest::ImageImageDelete(x) => x.get_confirm_message(),
+            ApiRequest::BlockStorage(x) => x.get_confirm_message(),
+            ApiRequest::Compute(x) => x.get_confirm_message(),
+            ApiRequest::Dns(x) => x.get_confirm_message(),
+            ApiRequest::Image(x) => x.get_confirm_message(),
             _ => None,
         }
     }
+}
+
+pub trait ExecuteApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError>;
 }

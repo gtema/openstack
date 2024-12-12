@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, BlockStorageVolumeDelete, BlockStorageVolumeFilters},
+    cloud_worker::types::{
+        ApiRequest, BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDelete,
+        BlockStorageVolumeList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -47,8 +50,7 @@ pub struct VolumeData {
     updated_at: String,
 }
 
-pub type BlockStorageVolumes<'a> =
-    TableViewComponentBase<'a, VolumeData, BlockStorageVolumeFilters>;
+pub type BlockStorageVolumes<'a> = TableViewComponentBase<'a, VolumeData, BlockStorageVolumeList>;
 
 impl Component for BlockStorageVolumes<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -68,9 +70,9 @@ impl Component for BlockStorageVolumes<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::BlockStorageVolumes = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::BlockStorageVolumes(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        BlockStorageVolumeApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -79,15 +81,18 @@ impl Component for BlockStorageVolumes<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::BlockStorageVolumes(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    BlockStorageVolumeApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::BlockStorageVolumes(_),
+                request:
+                    ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(
+                        BlockStorageVolumeApiRequest::List(_),
+                    )),
                 data,
             } => {
                 self.set_data(data)?;
@@ -99,13 +104,13 @@ impl Component for BlockStorageVolumes<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::Confirm(
-                                ApiRequest::BlockStorageVolumeDelete(BlockStorageVolumeDelete {
+                            // send action to set SecurityGroupRulesList
+                            command_tx.send(Action::Confirm(ApiRequest::from(
+                                BlockStorageVolumeApiRequest::Delete(BlockStorageVolumeDelete {
                                     volume_id: selected_entry.id.clone(),
                                     volume_name: Some(selected_entry.name.clone()),
                                 }),
-                            ))?;
+                            )))?;
                         }
                     }
                 }

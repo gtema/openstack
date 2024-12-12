@@ -21,7 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, ComputeFlavorFilters, ComputeServerFilters},
+    cloud_worker::types::*,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -48,7 +48,7 @@ pub struct FlavorData {
     disabled: String,
 }
 
-pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorFilters>;
+pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorList>;
 
 impl Component for ComputeFlavors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -68,8 +68,8 @@ impl Component for ComputeFlavors<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeFlavors = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeFlavors(
-                        self.get_filters().clone(),
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        ComputeFlavorApiRequest::List(self.get_filters().clone()),
                     ))));
                 }
             }
@@ -79,15 +79,16 @@ impl Component for ComputeFlavors<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::ComputeFlavors(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeFlavorApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::ComputeFlavors(_),
+                request:
+                    ApiRequest::Compute(ComputeApiRequest::Flavor(ComputeFlavorApiRequest::List(_))),
                 data,
             } => {
                 self.set_data(data)?;
@@ -99,9 +100,9 @@ impl Component for ComputeFlavors<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesFilters
-                            command_tx.send(Action::SetComputeServerFilters(
-                                ComputeServerFilters {
+                            // send action to set SecurityGroupRulesList
+                            command_tx.send(Action::SetComputeServerListFilters(
+                                ComputeServerList {
                                     all_tenants: None,
                                     flavor_id: Some(selected_entry.id.clone()),
                                     flavor_name: Some(selected_entry.name.clone()),

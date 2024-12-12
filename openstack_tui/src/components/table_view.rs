@@ -313,7 +313,7 @@ where
     }
 
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
-        let items: Vec<T> = serde_json::from_value(serde_json::Value::Array(data.clone()))?;
+        let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))?;
         if data != self.raw_items {
             self.items = items;
             self.raw_items = data.clone();

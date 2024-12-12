@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, IdentityGroupFilters, IdentityGroupUserFilters},
+    cloud_worker::types::{
+        ApiRequest, IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupList,
+        IdentityGroupUserList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -48,7 +51,7 @@ pub struct GroupData {
     description: String,
 }
 
-pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupData, IdentityGroupFilters>;
+pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupData, IdentityGroupList>;
 
 impl Component for IdentityGroups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -68,8 +71,8 @@ impl Component for IdentityGroups<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityGroups = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityGroups(
-                        self.get_filters().clone(),
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        IdentityGroupApiRequest::List(self.get_filters().clone()),
                     ))));
                 }
             }
@@ -79,8 +82,8 @@ impl Component for IdentityGroups<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(ApiRequest::IdentityGroups(
-                    self.get_filters().clone(),
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    IdentityGroupApiRequest::List(self.get_filters().clone()),
                 ))));
             }
             Action::ShowIdentityGroupUsers => {
@@ -90,9 +93,9 @@ impl Component for IdentityGroups<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
-                            // send action to set GroupUserFilters
-                            command_tx.send(Action::SetIdentityGroupUserFilters(
-                                IdentityGroupUserFilters {
+                            // send action to set GroupUserListFilters
+                            command_tx.send(Action::SetIdentityGroupUserListFilters(
+                                IdentityGroupUserList {
                                     group_id: group_row.id.clone(),
                                     group_name: Some(group_row.name.clone()),
                                 },
@@ -110,7 +113,8 @@ impl Component for IdentityGroups<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::IdentityGroups(_),
+                request:
+                    ApiRequest::Identity(IdentityApiRequest::Group(IdentityGroupApiRequest::List(_))),
                 data,
             } => {
                 self.set_data(data)?;

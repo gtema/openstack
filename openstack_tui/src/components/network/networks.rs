@@ -21,7 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, NetworkNetworkFilters, NetworkSubnetFilters},
+    cloud_worker::types::{
+        ApiRequest, NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList,
+        NetworkSubnetList,
+    },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -47,7 +50,7 @@ pub struct NetworkData {
     updated: String,
 }
 
-pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkFilters>;
+pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkList>;
 
 impl Component for NetworkNetworks<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -67,9 +70,9 @@ impl Component for NetworkNetworks<'_> {
                 self.set_loading(true);
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkNetworks = current_mode {
-                    return Ok(Some(Action::PerformApiRequest(
-                        ApiRequest::NetworkNetworks(self.get_filters().clone()),
-                    )));
+                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                        NetworkNetworkApiRequest::List(self.get_filters().clone()),
+                    ))));
                 }
             }
             Action::Mode {
@@ -78,9 +81,9 @@ impl Component for NetworkNetworks<'_> {
             }
             | Action::Refresh => {
                 self.set_loading(true);
-                return Ok(Some(Action::PerformApiRequest(
-                    ApiRequest::NetworkNetworks(self.get_filters().clone()),
-                )));
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    NetworkNetworkApiRequest::List(self.get_filters().clone()),
+                ))));
             }
             Action::ShowNetworkSubnets => {
                 // only if we are currently in the expected mode
@@ -89,8 +92,8 @@ impl Component for NetworkNetworks<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
-                            command_tx.send(Action::SetNetworkSubnetFilters(
-                                NetworkSubnetFilters {
+                            command_tx.send(Action::SetNetworkSubnetListFilters(
+                                NetworkSubnetList {
                                     network_id: Some(group_row.id.clone()),
                                     network_name: Some(group_row.name.clone()),
                                 },
@@ -107,7 +110,8 @@ impl Component for NetworkNetworks<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::NetworkNetworks(_),
+                request:
+                    ApiRequest::Network(NetworkApiRequest::Network(NetworkNetworkApiRequest::List(_))),
                 data,
             } => {
                 self.set_data(data)?;

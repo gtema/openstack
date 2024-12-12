@@ -13,9 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use eyre::{eyre, Report, Result};
-use openstack_sdk::{
-    config::ConfigFile, types::identity::v3::AuthResponse, types::ServiceType, AsyncOpenStack,
-};
+use openstack_sdk::{config::ConfigFile, types::identity::v3::AuthResponse, AsyncOpenStack};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tokio::time::{sleep, Duration};
 use tracing::debug;
@@ -32,10 +30,10 @@ mod load_balancer;
 mod network;
 pub mod types;
 
-use crate::cloud_worker::{
-    block_storage::BlockStorageExt, compute::ComputeExt, dns::DnsExt, identity::IdentityExt,
-    image::ImageExt, load_balancer::LoadBalancerExt, network::NetworkExt, types::*,
-};
+pub use crate::cloud_worker::common::CloudWorkerError;
+
+use crate::cloud_worker::types::*;
+use crate::error::TuiError;
 
 /// Cloud worker struct
 pub(crate) struct Cloud {
@@ -113,7 +111,7 @@ impl Cloud {
         &mut self,
         app_tx: UnboundedSender<Action>,
         action_rx: &mut UnboundedReceiver<Action>,
-    ) -> Result<()> {
+    ) -> Result<(), TuiError> {
         loop {
             while let Some(action) = action_rx.recv().await {
                 debug!("Got action {:?}", action);
@@ -154,41 +152,16 @@ impl Cloud {
                         }
                     }
                     Action::PerformApiRequest(request) => {
-                        // Request the resource using the service extension trait
-                        match ServiceType::from(request.clone()) {
-                            ServiceType::BlockStorage => {
-                                <Cloud as BlockStorageExt>::perform_api_request(
-                                    self, &app_tx, request,
-                                )
-                                .await?
-                            }
-                            ServiceType::Compute => {
-                                <Cloud as ComputeExt>::perform_api_request(self, &app_tx, request)
-                                    .await?
-                            }
-                            ServiceType::Dns => {
-                                <Cloud as DnsExt>::perform_api_request(self, &app_tx, request)
-                                    .await?
-                            }
-                            ServiceType::Identity => {
-                                <Cloud as IdentityExt>::perform_api_request(self, &app_tx, request)
-                                    .await?
-                            }
-                            ServiceType::Image => {
-                                <Cloud as ImageExt>::perform_api_request(self, &app_tx, request)
-                                    .await?
-                            }
-                            ServiceType::LoadBalancer => {
-                                <Cloud as LoadBalancerExt>::perform_api_request(
-                                    self, &app_tx, request,
-                                )
-                                .await?
-                            }
-                            ServiceType::Network => {
-                                <Cloud as NetworkExt>::perform_api_request(self, &app_tx, request)
-                                    .await?
-                            }
-                            _ => todo!(),
+                        if let Some(ref mut conn) = self.cloud {
+                            request
+                                .execute_request(conn, &request, &app_tx)
+                                .await
+                                .or_else(|err| {
+                                    app_tx.send(Action::Error(format!(
+                                        "Error performing API request\n\n{:?}",
+                                        err
+                                    )))
+                                })?;
                         }
                     }
                     _ => {}
@@ -200,5 +173,24 @@ impl Cloud {
             sleep(Duration::from_millis(100)).await;
         }
         Ok(())
+    }
+}
+
+impl ExecuteApiRequest for ApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            ApiRequest::BlockStorage(data) => data.execute_request(session, request, app_tx).await,
+            ApiRequest::Compute(data) => data.execute_request(session, request, app_tx).await,
+            ApiRequest::Dns(data) => data.execute_request(session, request, app_tx).await,
+            ApiRequest::Identity(data) => data.execute_request(session, request, app_tx).await,
+            ApiRequest::Image(data) => data.execute_request(session, request, app_tx).await,
+            ApiRequest::LoadBalancer(data) => data.execute_request(session, request, app_tx).await,
+            ApiRequest::Network(data) => data.execute_request(session, request, app_tx).await,
+        }
     }
 }
