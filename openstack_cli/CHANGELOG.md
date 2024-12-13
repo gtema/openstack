@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.2...openstack_cli-v0.9.3) - 2024-12-13
+
+### Added
+
+- Fix LB failover schemas (#857)
+- Enable identity endpoint-filter commands (#834)
+- Enable registered_limit commands (#832)
+- Improve `status` field detection (#827)
+- Colorize output rows based on the entity status (#824)
+- Add support for system scope (#828)
+
+### Other
+
+- Split metadata into independent services (#843)
+- Get rid of `to_string` where possible (#844)
+- Address another clippy suggestion in sdk (#842)
+
 ## [0.9.2](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.1...openstack_cli-v0.9.2) - 2024-12-01
 
 ### Added

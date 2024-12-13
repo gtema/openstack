@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.15.0...openstack_sdk-v0.16.0) - 2024-12-13
+
+### Added
+
+- Fix LB failover schemas (#857)
+- Add support for system scope (#828)
+- Colorize output rows based on the entity status (#824)
+
+### Other
+
+- Get rid of `to_string` where possible (#844)
+- Split metadata into independent services (#843)
+- Address another clippy suggestion in sdk (#842)
+
 ## [0.15.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.14.1...openstack_sdk-v0.15.0) - 2024-12-01
 
 ### Added
