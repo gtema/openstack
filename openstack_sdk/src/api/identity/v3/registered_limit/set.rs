@@ -25,13 +25,59 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde_json::Value;
+use serde::Deserialize;
+use serde::Serialize;
 use std::borrow::Cow;
-use std::collections::BTreeMap;
+
+/// A `registered_limit` objects
+///
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct RegisteredLimit<'a> {
+    /// The default limit for the registered limit.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) default_limit: Option<i32>,
+
+    /// The registered limit description.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
+
+    /// The ID of the region that contains the service endpoint. Either
+    /// service_id, resource_name, or region_id must be different than existing
+    /// value otherwise it will raise 409.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) region_id: Option<Option<Cow<'a, str>>>,
+
+    /// The resource name. Either service_id, resource_name or region_id must
+    /// be different than existing value otherwise it will raise 409.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) resource_name: Option<Cow<'a, str>>,
+
+    /// The UUID of the service to update to which the registered limit
+    /// belongs. Either service_id, resource_name, or region_id must be
+    /// different than existing value otherwise it will raise 409.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) service_id: Option<Cow<'a, str>>,
+}
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// A `registered_limit` objects
+    ///
+    #[builder(setter(into))]
+    pub(crate) registered_limit: RegisteredLimit<'a>,
+
     /// registered_limit_id parameter for
     /// /v3/registered_limits/{registered_limit_id} API
     ///
@@ -40,9 +86,6 @@ pub struct Request<'a> {
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
-
-    #[builder(setter(name = "_properties"), default, private)]
-    _properties: BTreeMap<Cow<'a, str>, Value>,
 }
 impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
@@ -51,7 +94,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder<'_> {
     /// Add a single header to the Registered_Limit.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -74,18 +117,6 @@ where {
             .extend(iter.map(Into::into));
         self
     }
-
-    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
-    where
-        I: Iterator<Item = (K, V)>,
-        K: Into<Cow<'a, str>>,
-        V: Into<Value>,
-    {
-        self._properties
-            .get_or_insert_with(BTreeMap::new)
-            .extend(iter.map(|(k, v)| (k.into(), v.into())));
-        self
-    }
 }
 
 impl RestEndpoint for Request<'_> {
@@ -104,9 +135,10 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        for (key, val) in &self._properties {
-            params.push(key.clone(), val.clone());
-        }
+        params.push(
+            "registered_limit",
+            serde_json::to_value(&self.registered_limit)?,
+        );
 
         params.into_body()
     }
@@ -116,7 +148,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("registered_limit".into())
     }
 
     /// Returns headers to be set into the request
@@ -145,14 +177,26 @@ mod tests {
     #[test]
     fn test_service_type() {
         assert_eq!(
-            Request::builder().build().unwrap().service_type(),
+            Request::builder()
+                .registered_limit(RegisteredLimitBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .service_type(),
             ServiceType::Identity
         );
     }
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder()
+                .registered_limit(RegisteredLimitBuilder::default().build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "registered_limit"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -165,10 +209,14 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "registered_limit": {} }));
         });
 
-        let endpoint = Request::builder().id("id").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .registered_limit(RegisteredLimitBuilder::default().build().unwrap())
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -184,11 +232,12 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "registered_limit": {} }));
         });
 
         let endpoint = Request::builder()
             .id("id")
+            .registered_limit(RegisteredLimitBuilder::default().build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

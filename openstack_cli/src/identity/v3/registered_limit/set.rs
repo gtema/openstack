@@ -31,11 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::registered_limit::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Updates the specified registered limit.
 ///
@@ -53,9 +52,10 @@ pub struct RegisteredLimitCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// A `registered_limit` objects
+    ///
+    #[command(flatten)]
+    registered_limit: RegisteredLimit,
 }
 
 /// Query parameters
@@ -75,22 +75,85 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// RegisteredLimit Body data
+#[derive(Args, Clone)]
+struct RegisteredLimit {
+    /// The default limit for the registered limit.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    default_limit: Option<i32>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The registered limit description.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// The ID of the region that contains the service endpoint. Either
+    /// service_id, resource_name, or region_id must be different than existing
+    /// value otherwise it will raise 409.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    region_id: Option<String>,
+
+    /// The resource name. Either service_id, resource_name or region_id must
+    /// be different than existing value otherwise it will raise 409.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to update to which the registered limit
+    /// belongs. Either service_id, resource_name, or region_id must be
+    /// different than existing value otherwise it will raise 409.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    service_id: Option<String>,
+}
+
+/// RegisteredLimit response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The default limit for the registered limit.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    default_limit: Option<i32>,
+
+    /// The registered limit description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// The registered limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    region_id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the registered limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    service_id: Option<String>,
 }
 
 impl RegisteredLimitCommand {
@@ -111,9 +174,30 @@ impl RegisteredLimitCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.registered_limit data
+        let args = &self.registered_limit;
+        let mut registered_limit_builder = set::RegisteredLimitBuilder::default();
+        if let Some(val) = &args.service_id {
+            registered_limit_builder.service_id(val);
         }
+
+        if let Some(val) = &args.region_id {
+            registered_limit_builder.region_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.resource_name {
+            registered_limit_builder.resource_name(val);
+        }
+
+        if let Some(val) = &args.default_limit {
+            registered_limit_builder.default_limit(*val);
+        }
+
+        if let Some(val) = &args.description {
+            registered_limit_builder.description(Some(val.into()));
+        }
+
+        ep_builder.registered_limit(registered_limit_builder.build().unwrap());
 
         let ep = ep_builder
             .build()
