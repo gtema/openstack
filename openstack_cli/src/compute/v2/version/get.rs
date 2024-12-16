@@ -34,7 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::compute::v2::version::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// This fetches all the information about all known major API versions in the
 /// deployment. Links to more specific information will be provided for each
@@ -62,22 +62,62 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Version response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// A common name for the version in question. Informative only, it has no
+    /// real semantic meaning.
+    ///
+    #[serde()]
+    #[structable()]
+    id: String,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// Links to the resources in question. See
+    /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
+    /// for more info.
+    ///
+    #[serde()]
+    #[structable(pretty)]
+    links: Value,
+
+    #[serde(rename = "media-types")]
+    #[structable(optional, pretty, title = "media-types")]
+    media_types: Option<Value>,
+
+    /// If this version of the API supports microversions, the minimum
+    /// microversion that is supported. This will be the empty string if
+    /// microversions are not supported.
+    ///
+    #[serde()]
+    #[structable()]
+    min_version: String,
+
+    /// The status of this API version. This can be one of:
+    ///
+    /// - `CURRENT`: this is the preferred version of the API to use
+    /// - `SUPPORTED`: this is an older, but still supported version of the API
+    /// - `DEPRECATED`: a deprecated version of the API that is slated for
+    ///   removal
+    ///
+    #[serde()]
+    #[structable()]
+    status: String,
+
+    /// This is a fixed string. It is `2011-01-21T11:33:21Z` in version 2.0,
+    /// `2013-07-23T11:33:21Z` in version 2.1.
+    ///
+    /// Note
+    ///
+    /// It is vestigial and provides no useful information. It will be
+    /// deprecated and removed in the future.
+    ///
+    #[serde()]
+    #[structable()]
+    updated: String,
+
+    #[serde()]
+    #[structable(optional)]
+    version: Option<String>,
 }
 
 impl VersionCommand {

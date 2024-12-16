@@ -92,15 +92,15 @@ struct ResponseData {
     /// example, the offset value is `-05:00`.
     ///
     #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
+    #[structable()]
+    created_at: String,
 
     /// A boolean indicates whether this aggregate is deleted or not, if it has
     /// not been deleted, `false` will appear.
     ///
     #[serde()]
-    #[structable(optional)]
-    deleted: Option<bool>,
+    #[structable()]
+    deleted: bool,
 
     /// The date and time when the resource was deleted. If the resource has
     /// not been deleted yet, this field will be `null`, The date and time
@@ -128,14 +128,20 @@ struct ResponseData {
     /// The ID of the host aggregate.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
+    #[structable()]
+    id: i32,
 
     /// Metadata key and value pairs associated with the aggregate.
     ///
     #[serde()]
     #[structable(optional, pretty)]
     metadata: Option<Value>,
+
+    /// The name of the host aggregate.
+    ///
+    #[serde()]
+    #[structable()]
+    name: String,
 
     /// The date and time when the resource was updated, if the resource has
     /// not been updated, this field will show as `null`. The date and time
@@ -159,8 +165,8 @@ struct ResponseData {
     /// **New in version 2.41**
     ///
     #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
+    #[structable()]
+    uuid: String,
 }
 
 impl AggregateCommand {

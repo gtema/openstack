@@ -78,94 +78,45 @@ struct AddHost {
 /// Aggregate response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The availability zone of the host aggregate.
-    ///
     #[serde()]
     #[structable(optional)]
     availability_zone: Option<String>,
 
-    /// The date and time when the resource was created. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
     #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
+    #[structable()]
+    created_at: String,
 
-    /// A boolean indicates whether this aggregate is deleted or not, if it has
-    /// not been deleted, `false` will appear.
-    ///
     #[serde()]
-    #[structable(optional)]
-    deleted: Option<bool>,
+    #[structable()]
+    deleted: bool,
 
-    /// The date and time when the resource was deleted. If the resource has
-    /// not been deleted yet, this field will be `null`, The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
     #[serde()]
-    #[structable(optional)]
-    deleted_at: Option<String>,
+    #[structable()]
+    deleted_at: String,
 
-    /// An array of host information.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     hosts: Option<Value>,
 
-    /// The ID of the host aggregate.
-    ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
+    #[structable()]
+    id: i32,
 
-    /// Metadata key and value pairs associated with the aggregate.
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     metadata: Option<Value>,
 
-    /// The date and time when the resource was updated, if the resource has
-    /// not been updated, this field will show as `null`. The date and time
-    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
-    ///
-    /// ```text
-    /// CCYY-MM-DDThh:mm:ss±hh:mm
-    ///
-    /// ```
-    ///
-    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
-    /// included, is the time zone as an offset from UTC. In the previous
-    /// example, the offset value is `-05:00`.
-    ///
     #[serde()]
-    #[structable(optional)]
-    updated_at: Option<String>,
+    #[structable()]
+    name: String,
 
-    /// The UUID of the host aggregate.
-    ///
-    /// **New in version 2.41**
-    ///
     #[serde()]
-    #[structable(optional)]
-    uuid: Option<String>,
+    #[structable()]
+    updated_at: String,
+
+    #[serde()]
+    #[structable()]
+    uuid: String,
 }
 
 impl AggregateCommand {

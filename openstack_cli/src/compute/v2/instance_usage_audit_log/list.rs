@@ -158,7 +158,7 @@ struct ResponseData {
     /// The state of the instance usage audit task. `DONE` or `RUNNING`.
     ///
     #[serde()]
-    #[structable(optional)]
+    #[structable(optional, status)]
     state: Option<String>,
 
     /// The total number of instance audit task errors.

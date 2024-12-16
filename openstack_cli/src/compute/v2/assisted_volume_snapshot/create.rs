@@ -131,8 +131,8 @@ struct ResponseData {
     /// The source volume ID.
     ///
     #[serde(rename = "volumeId")]
-    #[structable(optional, title = "volumeId")]
-    volume_id: Option<String>,
+    #[structable(title = "volumeId")]
+    volume_id: String,
 }
 
 impl AssistedVolumeSnapshotCommand {

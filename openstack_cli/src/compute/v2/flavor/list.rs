@@ -32,7 +32,6 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::IntString;
-use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::list_detailed;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
@@ -92,6 +91,14 @@ struct PathParameters {}
 /// Flavors response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The description of the flavor.
+    ///
+    /// **New in version 2.55**
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
     /// The size of the root disk that will be created in GiB. If 0 the root
     /// disk will be set to exactly the size of the image used to deploy the
     /// instance. However, in this case the scheduler cannot select the compute
@@ -101,8 +108,8 @@ struct ResponseData {
     /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    disk: Option<IntString>,
+    #[structable(wide)]
+    disk: i32,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
     /// only be included if the user is allowed by policy to index flavor
@@ -118,21 +125,25 @@ struct ResponseData {
     /// this is really a string.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The display name of a flavor.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
-    /// Whether the flavor is public (available to all projects) or scoped to a
-    /// set of projects. Default is True if not specified.
-    ///
     #[serde(rename = "os-flavor-access:is_public")]
-    #[structable(optional, title = "os-flavor-access:is_public", wide)]
-    os_flavor_access_is_public: Option<bool>,
+    #[structable(pretty, title = "os-flavor-access:is_public", wide)]
+    os_flavor_access_is_public: Value,
+
+    /// Whether or not the flavor has been administratively disabled. This is
+    /// typically only visible to administrative users.
+    ///
+    #[serde(rename = "OS-FLV-DISABLED:disabled")]
+    #[structable(title = "OS-FLV-DISABLED:disabled", wide)]
+    os_flv_disabled_disabled: bool,
 
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
@@ -140,22 +151,18 @@ struct ResponseData {
     /// limitations. Defaults to 0.
     ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
-    #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral", wide)]
-    os_flv_ext_data_ephemeral: Option<IntString>,
+    #[structable(title = "OS-FLV-EXT-DATA:ephemeral", wide)]
+    os_flv_ext_data_ephemeral: i32,
 
     /// The amount of RAM a flavor has, in MiB.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    ram: Option<IntString>,
+    #[structable(wide)]
+    ram: i32,
 
-    /// The receive / transmit factor (as a float) that will be set on ports if
-    /// the network backend supports the QOS extension. Otherwise it will be
-    /// ignored. It defaults to 1.0.
-    ///
     #[serde()]
-    #[structable(optional, wide)]
-    rxtx_factor: Option<NumString>,
+    #[structable(pretty, wide)]
+    rxtx_factor: Value,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the
@@ -163,14 +170,14 @@ struct ResponseData {
     /// default return value of swap is 0 instead of empty string.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    swap: Option<IntString>,
+    #[structable(wide)]
+    swap: IntString,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    vcpus: Option<IntString>,
+    #[structable(wide)]
+    vcpus: i32,
 }
 
 impl FlavorsCommand {
