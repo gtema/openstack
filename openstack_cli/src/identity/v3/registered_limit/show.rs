@@ -34,7 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::registered_limit::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Shows details for a registered limit.
 ///
@@ -70,22 +70,51 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// RegisteredLimit response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The default limit for the registered limit.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    default_limit: Option<i32>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The registered limit description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// The registered limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    region_id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the registered limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    service_id: Option<String>,
 }
 
 impl RegisteredLimitCommand {

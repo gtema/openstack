@@ -87,12 +87,17 @@ struct Options {
 /// Role Body data
 #[derive(Args, Clone)]
 struct Role {
-    /// The role description.
+    /// The new role description.
     ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The role name.
+    /// The ID of the domain.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    domain_id: Option<String>,
+
+    /// The new role name.
     ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -113,6 +118,12 @@ struct ResponseData {
     #[structable(optional)]
     description: Option<String>,
 
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    domain_id: Option<String>,
+
     /// The role ID.
     ///
     #[serde()]
@@ -125,7 +136,7 @@ struct ResponseData {
     #[structable(optional, pretty)]
     links: Option<Value>,
 
-    /// The role name.
+    /// The resource name.
     ///
     #[serde()]
     #[structable(optional)]
@@ -177,7 +188,11 @@ impl RoleCommand {
         }
 
         if let Some(val) = &args.description {
-            role_builder.description(val);
+            role_builder.description(Some(val.into()));
+        }
+
+        if let Some(val) = &args.domain_id {
+            role_builder.domain_id(Some(val.into()));
         }
 
         if let Some(val) = &args.options {

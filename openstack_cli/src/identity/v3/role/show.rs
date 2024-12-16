@@ -79,6 +79,12 @@ struct ResponseData {
     #[structable(optional)]
     description: Option<String>,
 
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    domain_id: Option<String>,
+
     /// The role ID.
     ///
     #[serde()]
@@ -91,7 +97,7 @@ struct ResponseData {
     #[structable(optional, pretty)]
     links: Option<Value>,
 
-    /// The role name.
+    /// The resource name.
     ///
     #[serde()]
     #[structable(optional)]

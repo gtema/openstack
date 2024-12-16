@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::role::imply::set;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -52,10 +51,6 @@ pub struct ImplyCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
-
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
 }
 
 /// Query parameters
@@ -120,9 +115,6 @@ impl ImplyCommand {
         ep_builder.implied_role_id(&self.path.implied_role_id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
 
         let ep = ep_builder
             .build()

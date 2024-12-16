@@ -33,8 +33,7 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::registered_limit::list;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Lists Registered Limits.
 ///
@@ -55,27 +54,65 @@ pub struct RegisteredLimitsCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The ID of the region.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    region_id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    resource_name: Option<String>,
+
+    /// Filters the response by a service ID.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    service_id: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// RegisteredLimits response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The default limit for the registered limit.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    default_limit: Option<i32>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The registered limit description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
+
+    /// The registered limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    region_id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the registered limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    service_id: Option<String>,
 }
 
 impl RegisteredLimitsCommand {
@@ -90,18 +127,28 @@ impl RegisteredLimitsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.service_id {
+            ep_builder.service_id(val);
+        }
+        if let Some(val) = &self.query.region_id {
+            ep_builder.region_id(val);
+        }
+        if let Some(val) = &self.query.resource_name {
+            ep_builder.resource_name(val);
+        }
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

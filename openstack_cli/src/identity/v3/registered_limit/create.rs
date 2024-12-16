@@ -31,11 +31,11 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
+use crate::common::parse_json;
 use openstack_sdk::api::identity::v3::registered_limit::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Creates registered limits. It supports to create more than one registered
 /// limit in one request.
@@ -54,9 +54,10 @@ pub struct RegisteredLimitCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// A list of `registered_limits` objects
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    registered_limits: Vec<Value>,
 }
 
 /// Query parameters
@@ -66,22 +67,51 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// RegisteredLimit response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The default limit for the registered limit.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    default_limit: Option<i32>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The registered limit description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// The registered limit ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The ID of the region that contains the service endpoint. The value can
+    /// be None.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    region_id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    resource_name: Option<String>,
+
+    /// The UUID of the service to which the registered limit belongs.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    service_id: Option<String>,
 }
 
 impl RegisteredLimitCommand {
@@ -101,9 +131,14 @@ impl RegisteredLimitCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
-        }
+        // Set Request.registered_limits data
+
+        let registered_limits_builder: Vec<create::RegisteredLimits> = self
+            .registered_limits
+            .iter()
+            .flat_map(|v| serde_json::from_value::<create::RegisteredLimits>(v.to_owned()))
+            .collect::<Vec<create::RegisteredLimits>>();
+        ep_builder.registered_limits(registered_limits_builder);
 
         let ep = ep_builder
             .build()

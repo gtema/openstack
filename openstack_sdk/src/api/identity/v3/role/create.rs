@@ -27,7 +27,9 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 /// The resource options for the role. Available resource options are
 /// `immutable`.
@@ -45,17 +47,23 @@ pub struct Options {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Role<'a> {
-    /// The role description.
+    /// Add description about the role.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) description: Option<Cow<'a, str>>,
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
+
+    /// The ID of the domain of the role.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
 
     /// The role name.
     ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
@@ -63,6 +71,24 @@ pub struct Role<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> RoleBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -164,7 +190,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .role(RoleBuilder::default().build().unwrap())
+                .role(RoleBuilder::default().name("foo").build().unwrap())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -176,7 +202,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .role(RoleBuilder::default().build().unwrap())
+                .role(RoleBuilder::default().name("foo").build().unwrap())
                 .build()
                 .unwrap()
                 .response_key()
@@ -199,7 +225,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .role(RoleBuilder::default().build().unwrap())
+            .role(RoleBuilder::default().name("foo").build().unwrap())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -221,7 +247,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .role(RoleBuilder::default().build().unwrap())
+            .role(RoleBuilder::default().name("foo").build().unwrap())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

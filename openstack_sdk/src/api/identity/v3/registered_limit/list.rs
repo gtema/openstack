@@ -25,20 +25,37 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use std::borrow::Cow;
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
-pub struct Request {
+pub struct Request<'a> {
+    /// The ID of the region.
+    ///
+    #[builder(default, setter(into))]
+    region_id: Option<Cow<'a, str>>,
+
+    /// The resource name.
+    ///
+    #[builder(default, setter(into))]
+    resource_name: Option<Cow<'a, str>>,
+
+    /// Filters the response by a service ID.
+    ///
+    #[builder(default, setter(into))]
+    service_id: Option<Cow<'a, str>>,
+
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
 }
-impl Request {
+impl<'a> Request<'a> {
     /// Create a builder for the endpoint.
-    pub fn builder() -> RequestBuilder {
+    pub fn builder() -> RequestBuilder<'a> {
         RequestBuilder::default()
     }
 }
 
-impl RequestBuilder {
+impl RequestBuilder<'_> {
     /// Add a single header to the Registered_Limit.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -63,7 +80,7 @@ where {
     }
 }
 
-impl RestEndpoint for Request {
+impl RestEndpoint for Request<'_> {
     fn method(&self) -> http::Method {
         http::Method::GET
     }
@@ -73,7 +90,12 @@ impl RestEndpoint for Request {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("service_id", self.service_id.as_ref());
+        params.push_opt("region_id", self.region_id.as_ref());
+        params.push_opt("resource_name", self.resource_name.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {
@@ -81,7 +103,7 @@ impl RestEndpoint for Request {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("registered_limits".into())
     }
 
     /// Returns headers to be set into the request
@@ -117,7 +139,10 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder().build().unwrap().response_key().is_none())
+        assert_eq!(
+            Request::builder().build().unwrap().response_key().unwrap(),
+            "registered_limits"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -130,7 +155,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "registered_limits": {} }));
         });
 
         let endpoint = Request::builder().build().unwrap();
@@ -149,7 +174,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "registered_limits": {} }));
         });
 
         let endpoint = Request::builder()

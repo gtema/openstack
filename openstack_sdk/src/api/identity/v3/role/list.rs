@@ -30,10 +30,15 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a domain ID.
+    /// The ID of the domain.
     ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
+
+    /// The resource name.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -81,6 +86,7 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("name", self.name.as_ref());
         params.push_opt("domain_id", self.domain_id.as_ref());
 
         params
