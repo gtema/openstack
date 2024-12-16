@@ -92,7 +92,13 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// The name of the domain.
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The name of the project.
     ///
     #[serde()]
     #[structable(optional)]
@@ -105,6 +111,8 @@ struct ResponseData {
     #[structable(optional, pretty)]
     options: Option<Value>,
 
+    /// A list of simple strings assigned to a project.
+    ///
     #[serde()]
     #[structable(optional, pretty)]
     tags: Option<Value>,

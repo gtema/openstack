@@ -76,6 +76,14 @@ struct PathParameters {
     )]
     id: String,
 }
+/// Options Body data
+#[derive(Args, Clone)]
+#[group(required = false, multiple = true)]
+struct Options {
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    immutable: Option<bool>,
+}
+
 /// Project Body data
 #[derive(Args, Clone)]
 struct Project {
@@ -95,6 +103,12 @@ struct Project {
     ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
+
+    /// The resource options for the project. Available resource options are
+    /// `immutable`.
+    ///
+    #[command(flatten)]
+    options: Option<Options>,
 
     /// A list of simple strings assigned to a project. Tags can be used to
     /// classify projects into groups.
@@ -215,6 +229,14 @@ impl ProjectCommand {
 
         if let Some(val) = &args.name {
             project_builder.name(val);
+        }
+
+        if let Some(val) = &args.options {
+            let mut options_builder = set::OptionsBuilder::default();
+            if let Some(val) = &val.immutable {
+                options_builder.immutable(*val);
+            }
+            project_builder.options(options_builder.build().expect("A valid object"));
         }
 
         if let Some(val) = &args.tags {
