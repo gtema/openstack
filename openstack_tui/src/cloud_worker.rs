@@ -20,14 +20,14 @@ use tracing::debug;
 
 use crate::action::Action;
 
-mod block_storage;
+pub mod block_storage;
 mod common;
-mod compute;
-mod dns;
-mod identity;
-mod image;
-mod load_balancer;
-mod network;
+pub mod compute;
+pub mod dns;
+pub mod identity;
+pub mod image;
+pub mod load_balancer;
+pub mod network;
 pub mod types;
 
 pub use crate::cloud_worker::common::CloudWorkerError;

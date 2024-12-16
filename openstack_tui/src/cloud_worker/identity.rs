@@ -27,6 +27,7 @@ pub mod project;
 pub mod types;
 pub mod user;
 use types::*;
+pub mod v3;
 
 impl ExecuteApiRequest for IdentityApiRequest {
     async fn execute_request(
