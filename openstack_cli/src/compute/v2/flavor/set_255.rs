@@ -31,8 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::IntString;
-use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::find;
 use openstack_sdk::api::compute::v2::flavor::set_255;
 use openstack_sdk::api::find;
@@ -100,6 +98,12 @@ struct Flavor {
 /// Flavor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
+    /// The description of the flavor.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
     /// The size of the root disk that will be created in GiB. If 0 the root
     /// disk will be set to exactly the size of the image used to deploy the
     /// instance. However, in this case the scheduler cannot select the compute
@@ -109,8 +113,8 @@ struct ResponseData {
     /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
     ///
     #[serde()]
-    #[structable(optional)]
-    disk: Option<IntString>,
+    #[structable()]
+    disk: i32,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
     /// only be included if the user is allowed by policy to index flavor
@@ -126,29 +130,33 @@ struct ResponseData {
     /// this is really a string.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    links: Option<Value>,
+    #[structable(pretty)]
+    links: Value,
 
     /// The display name of a flavor.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
-    /// Whether the flavor is public (available to all projects) or scoped to a
-    /// set of projects. Default is True if not specified.
-    ///
     #[serde(rename = "os-flavor-access:is_public")]
-    #[structable(optional, title = "os-flavor-access:is_public")]
-    os_flavor_access_is_public: Option<bool>,
+    #[structable(pretty, title = "os-flavor-access:is_public")]
+    os_flavor_access_is_public: Value,
+
+    /// Whether or not the flavor has been administratively disabled. This is
+    /// typically only visible to administrative users.
+    ///
+    #[serde(rename = "OS-FLV-DISABLED:disabled")]
+    #[structable(title = "OS-FLV-DISABLED:disabled")]
+    os_flv_disabled_disabled: bool,
 
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
@@ -156,22 +164,18 @@ struct ResponseData {
     /// limitations. Defaults to 0.
     ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
-    #[structable(optional, title = "OS-FLV-EXT-DATA:ephemeral")]
-    os_flv_ext_data_ephemeral: Option<IntString>,
+    #[structable(title = "OS-FLV-EXT-DATA:ephemeral")]
+    os_flv_ext_data_ephemeral: i32,
 
     /// The amount of RAM a flavor has, in MiB.
     ///
     #[serde()]
-    #[structable(optional)]
-    ram: Option<IntString>,
+    #[structable()]
+    ram: i32,
 
-    /// The receive / transmit factor (as a float) that will be set on ports if
-    /// the network backend supports the QOS extension. Otherwise it will be
-    /// ignored. It defaults to 1.0.
-    ///
     #[serde()]
-    #[structable(optional)]
-    rxtx_factor: Option<NumString>,
+    #[structable(pretty)]
+    rxtx_factor: Value,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the
@@ -179,14 +183,14 @@ struct ResponseData {
     /// default return value of swap is 0 instead of empty string.
     ///
     #[serde()]
-    #[structable(optional)]
-    swap: Option<IntString>,
+    #[structable()]
+    swap: i32,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[serde()]
-    #[structable(optional)]
-    vcpus: Option<IntString>,
+    #[structable()]
+    vcpus: i32,
 }
 
 impl FlavorCommand {

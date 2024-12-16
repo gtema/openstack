@@ -76,14 +76,14 @@ struct ResponseData {
     /// this is really a string.
     ///
     #[serde()]
-    #[structable(optional)]
-    flavor_id: Option<String>,
+    #[structable()]
+    flavor_id: String,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
     #[serde()]
-    #[structable(optional)]
-    tenant_id: Option<String>,
+    #[structable()]
+    tenant_id: String,
 }
 
 impl FlavorAccessesCommand {

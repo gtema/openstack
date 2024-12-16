@@ -31,7 +31,6 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::extra_spec::get;
 use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
@@ -82,7 +81,7 @@ struct PathParameters {
 }
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, NumString>);
+struct ResponseData(HashMap<String, String>);
 
 impl StructTable for ResponseData {
     fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
@@ -91,7 +90,7 @@ impl StructTable for ResponseData {
         rows.extend(
             self.0
                 .iter()
-                .map(|(k, v)| Vec::from([k.clone(), v.to_string()])),
+                .map(|(k, v)| Vec::from([k.clone(), v.clone()])),
         );
         (headers, rows)
     }
