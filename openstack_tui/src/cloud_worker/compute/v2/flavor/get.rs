@@ -34,7 +34,11 @@ pub struct ComputeFlavorShow {
 
 impl fmt::Display for ComputeFlavorShow {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let parts: Vec<String> = Vec::new();
+        let mut parts: Vec<String> = Vec::new();
+        parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
         write!(f, "{}", parts.join(","))
     }
 }

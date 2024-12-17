@@ -40,6 +40,10 @@ impl fmt::Display for DnsRecordsetDelete {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
         parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
+        parts.push(format!(
             "zone: {}",
             self.zone_name.clone().unwrap_or(self.zone_id.clone())
         ));

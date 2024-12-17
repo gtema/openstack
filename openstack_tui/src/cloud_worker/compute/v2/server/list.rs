@@ -104,7 +104,7 @@ impl fmt::Display for ComputeServerList {
                 self.kernel_name
                     .as_ref()
                     .or(self.kernel_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -114,7 +114,7 @@ impl fmt::Display for ComputeServerList {
                 self.project_name
                     .as_ref()
                     .or(self.project_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -124,7 +124,7 @@ impl fmt::Display for ComputeServerList {
                 self.ramdisk_name
                     .as_ref()
                     .or(self.ramdisk_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -134,7 +134,7 @@ impl fmt::Display for ComputeServerList {
                 self.reservation_name
                     .as_ref()
                     .or(self.reservation_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -144,7 +144,7 @@ impl fmt::Display for ComputeServerList {
                 self.tenant_name
                     .as_ref()
                     .or(self.tenant_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -154,7 +154,17 @@ impl fmt::Display for ComputeServerList {
                 self.user_name
                     .as_ref()
                     .or(self.user_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
+            ));
+        }
+
+        if self.uuid.is_some() || self.uuname.is_some() {
+            parts.push(format!(
+                "u: {}",
+                self.uuname
+                    .as_ref()
+                    .or(self.uuid.as_ref())
+                    .unwrap_or(&String::default())
             ));
         }
 

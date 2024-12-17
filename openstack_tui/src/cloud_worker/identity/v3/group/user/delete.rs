@@ -43,6 +43,10 @@ impl fmt::Display for IdentityUserDelete {
             "group: {}",
             self.group_name.clone().unwrap_or(self.group_id.clone())
         ));
+        parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
         write!(f, "{}", parts.join(","))
     }
 }
