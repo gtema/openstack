@@ -41,7 +41,7 @@ impl fmt::Display for IdentityGroupList {
                 self.domain_name
                     .as_ref()
                     .or(self.domain_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

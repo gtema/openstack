@@ -53,7 +53,7 @@ impl fmt::Display for IdentityProjectList {
                 self.domain_name
                     .as_ref()
                     .or(self.domain_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -63,7 +63,7 @@ impl fmt::Display for IdentityProjectList {
                 self.parent_name
                     .as_ref()
                     .or(self.parent_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

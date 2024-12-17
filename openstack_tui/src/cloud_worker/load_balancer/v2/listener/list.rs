@@ -74,7 +74,17 @@ impl fmt::Display for LoadBalancerListenerList {
                 self.default_pool_name
                     .as_ref()
                     .or(self.default_pool_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
+            ));
+        }
+
+        if self.id.is_some() || self.name.is_some() {
+            parts.push(format!(
+                "name/id: {}",
+                self.name
+                    .as_ref()
+                    .or(self.id.as_ref())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -84,7 +94,7 @@ impl fmt::Display for LoadBalancerListenerList {
                 self.load_balancer_name
                     .as_ref()
                     .or(self.load_balancer_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -94,7 +104,7 @@ impl fmt::Display for LoadBalancerListenerList {
                 self.project_name
                     .as_ref()
                     .or(self.project_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

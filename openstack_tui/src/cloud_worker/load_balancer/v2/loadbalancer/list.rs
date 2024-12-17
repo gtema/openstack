@@ -69,7 +69,17 @@ impl fmt::Display for LoadBalancerLoadbalancerList {
                 self.flavor_name
                     .as_ref()
                     .or(self.flavor_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
+            ));
+        }
+
+        if self.id.is_some() || self.name.is_some() {
+            parts.push(format!(
+                "name/id: {}",
+                self.name
+                    .as_ref()
+                    .or(self.id.as_ref())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -79,7 +89,7 @@ impl fmt::Display for LoadBalancerLoadbalancerList {
                 self.project_name
                     .as_ref()
                     .or(self.project_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -89,7 +99,7 @@ impl fmt::Display for LoadBalancerLoadbalancerList {
                 self.vip_network_name
                     .as_ref()
                     .or(self.vip_network_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -99,7 +109,7 @@ impl fmt::Display for LoadBalancerLoadbalancerList {
                 self.vip_port_name
                     .as_ref()
                     .or(self.vip_port_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -109,7 +119,7 @@ impl fmt::Display for LoadBalancerLoadbalancerList {
                 self.vip_qos_policy_name
                     .as_ref()
                     .or(self.vip_qos_policy_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -119,7 +129,7 @@ impl fmt::Display for LoadBalancerLoadbalancerList {
                 self.vip_subnet_name
                     .as_ref()
                     .or(self.vip_subnet_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

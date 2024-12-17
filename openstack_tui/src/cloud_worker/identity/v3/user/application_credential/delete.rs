@@ -40,6 +40,10 @@ impl fmt::Display for IdentityApplicationCredentialDelete {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
         parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
+        parts.push(format!(
             "user: {}",
             self.user_name.clone().unwrap_or(self.user_id.clone())
         ));

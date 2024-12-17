@@ -37,13 +37,17 @@ pub struct ComputeQuotaSetShow {
 impl fmt::Display for ComputeQuotaSetShow {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
+        parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
         if self.user_id.is_some() || self.user_name.is_some() {
             parts.push(format!(
                 "user: {}",
                 self.user_name
                     .as_ref()
                     .or(self.user_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

@@ -38,6 +38,10 @@ impl fmt::Display for ComputeInstanceActionShow {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
         parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
+        parts.push(format!(
             "server: {}",
             self.server_name.clone().unwrap_or(self.server_id.clone())
         ));

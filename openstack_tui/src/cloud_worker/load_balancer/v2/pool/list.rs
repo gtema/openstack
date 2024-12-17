@@ -57,13 +57,23 @@ pub struct LoadBalancerPoolList {
 impl fmt::Display for LoadBalancerPoolList {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
+        if self.id.is_some() || self.name.is_some() {
+            parts.push(format!(
+                "name/id: {}",
+                self.name
+                    .as_ref()
+                    .or(self.id.as_ref())
+                    .unwrap_or(&String::default())
+            ));
+        }
+
         if self.loadbalancer_id.is_some() || self.loadbalancer_name.is_some() {
             parts.push(format!(
                 "loadbalancer: {}",
                 self.loadbalancer_name
                     .as_ref()
                     .or(self.loadbalancer_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -73,7 +83,7 @@ impl fmt::Display for LoadBalancerPoolList {
                 self.project_name
                     .as_ref()
                     .or(self.project_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

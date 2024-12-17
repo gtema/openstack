@@ -40,6 +40,10 @@ impl fmt::Display for LoadBalancerMemberDelete {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
         parts.push(format!(
+            ": {}",
+            self.name.clone().unwrap_or(self.id.clone())
+        ));
+        parts.push(format!(
             "pool: {}",
             self.pool_name.clone().unwrap_or(self.pool_id.clone())
         ));

@@ -52,7 +52,7 @@ impl fmt::Display for DnsRecordsetList {
                 self.zone_name
                     .as_ref()
                     .or(self.zone_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 

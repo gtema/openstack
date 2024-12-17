@@ -50,7 +50,7 @@ impl fmt::Display for IdentityUserList {
                 self.domain_name
                     .as_ref()
                     .or(self.domain_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -60,7 +60,7 @@ impl fmt::Display for IdentityUserList {
                 self.idp_name
                     .as_ref()
                     .or(self.idp_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -70,7 +70,7 @@ impl fmt::Display for IdentityUserList {
                 self.protocol_name
                     .as_ref()
                     .or(self.protocol_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
@@ -80,7 +80,7 @@ impl fmt::Display for IdentityUserList {
                 self.unique_name
                     .as_ref()
                     .or(self.unique_id.as_ref())
-                    .unwrap_or(&String::new())
+                    .unwrap_or(&String::default())
             ));
         }
 
