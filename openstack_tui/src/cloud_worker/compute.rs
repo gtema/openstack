@@ -28,6 +28,7 @@ pub mod hypervisor;
 pub mod quota_set;
 pub mod server;
 pub mod types;
+pub mod v2;
 
 use types::*;
 

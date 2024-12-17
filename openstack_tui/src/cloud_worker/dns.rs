@@ -24,6 +24,7 @@ use crate::cloud_worker::{ApiRequest, CloudWorkerError};
 
 pub mod recordset;
 pub mod types;
+pub mod v2;
 pub mod zone;
 
 impl ExecuteApiRequest for DnsApiRequest {

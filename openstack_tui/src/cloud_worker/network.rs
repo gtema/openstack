@@ -29,6 +29,7 @@ pub mod security_group;
 pub mod security_group_rule;
 pub mod subnet;
 pub mod types;
+pub mod v2;
 
 use types::*;
 impl ExecuteApiRequest for NetworkApiRequest {

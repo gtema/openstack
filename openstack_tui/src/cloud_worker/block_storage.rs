@@ -26,6 +26,7 @@ use crate::cloud_worker::ApiRequest;
 pub mod backup;
 pub mod snapshot;
 pub mod types;
+pub mod v3;
 pub mod volume;
 
 impl ExecuteApiRequest for BlockStorageApiRequest {

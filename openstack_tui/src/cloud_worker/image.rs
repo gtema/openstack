@@ -25,6 +25,7 @@ use crate::cloud_worker::{ApiRequest, CloudWorkerError};
 
 pub mod image;
 pub mod types;
+//pub mod v2;
 
 impl ExecuteApiRequest for ImageApiRequest {
     async fn execute_request(

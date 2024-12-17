@@ -26,6 +26,7 @@ pub mod listener;
 pub mod loadbalancer;
 pub mod pool;
 pub mod types;
+pub mod v2;
 
 impl ExecuteApiRequest for LoadBalancerApiRequest {
     async fn execute_request(
