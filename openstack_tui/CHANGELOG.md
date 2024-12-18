@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.3...openstack_tui-v0.9.4) - 2024-12-18
+
+### Added
+
+- Start building parts of TUI (#876)
+
+### Fixed
+
+- Fix few tui generated code issues (#877)
+
 ## [0.9.3](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.2...openstack_tui-v0.9.3) - 2024-12-13
 
 ### Added
