@@ -120,6 +120,10 @@ where
         Ok(())
     }
 
+    pub fn get_config(&self) -> &Config {
+        &self.config
+    }
+
     pub fn get_command_tx(&self) -> Option<&UnboundedSender<Action>> {
         self.command_tx.as_ref()
     }

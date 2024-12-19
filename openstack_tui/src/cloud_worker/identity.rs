@@ -12,37 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
-use tokio::sync::mpsc::UnboundedSender;
-
-use openstack_sdk::AsyncOpenStack;
-
-use crate::action::Action;
-use crate::cloud_worker::types::ExecuteApiRequest;
-use crate::cloud_worker::{ApiRequest, CloudWorkerError};
-
-pub mod auth;
-pub mod group;
-pub mod project;
-pub mod types;
-pub mod user;
-use types::*;
 pub mod v3;
 
-impl ExecuteApiRequest for IdentityApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            IdentityApiRequest::Auth(data) => data.execute_request(session, request, app_tx).await,
-            IdentityApiRequest::Group(data) => data.execute_request(session, request, app_tx).await,
-            IdentityApiRequest::Project(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            IdentityApiRequest::User(data) => data.execute_request(session, request, app_tx).await,
-        }
-    }
-}
+pub use v3::*;

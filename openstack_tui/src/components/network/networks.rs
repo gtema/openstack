@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,10 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList,
-        NetworkSubnetList,
+    cloud_worker::network::v2::{
+        NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList, NetworkSubnetListBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -52,6 +52,25 @@ pub struct NetworkData {
 
 pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkList>;
 
+impl NetworkNetworks<'_> {
+    /// Normalize filters
+    ///
+    /// Add preferred sorting
+    fn normalize_filters(&self, mut filters: NetworkNetworkList) -> NetworkNetworkList {
+        if filters.sort_key.is_none() {
+            filters.sort_key = Some(Vec::from(["name".into()]));
+            filters.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filters
+    }
+
+    /// Normalized filters
+    fn normalized_filters(&self) -> NetworkNetworkList {
+        self.normalize_filters(self.get_filters().clone())
+            .to_owned()
+    }
+}
+
 impl Component for NetworkNetworks<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
@@ -71,7 +90,7 @@ impl Component for NetworkNetworks<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkNetworks = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkNetworkApiRequest::List(self.get_filters().clone()),
+                        NetworkNetworkApiRequest::List(Box::new(self.normalized_filters())),
                     ))));
                 }
             }
@@ -82,7 +101,7 @@ impl Component for NetworkNetworks<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkNetworkApiRequest::List(self.get_filters().clone()),
+                    NetworkNetworkApiRequest::List(Box::new(self.normalized_filters())),
                 ))));
             }
             Action::ShowNetworkSubnets => {
@@ -93,10 +112,11 @@ impl Component for NetworkNetworks<'_> {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
                             command_tx.send(Action::SetNetworkSubnetListFilters(
-                                NetworkSubnetList {
-                                    network_id: Some(group_row.id.clone()),
-                                    network_name: Some(group_row.name.clone()),
-                                },
+                                NetworkSubnetListBuilder::default()
+                                    .network_id(group_row.id.clone())
+                                    .network_name(group_row.name.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare listing subnets request")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::NetworkSubnets,
@@ -110,11 +130,12 @@ impl Component for NetworkNetworks<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Network(NetworkApiRequest::Network(NetworkNetworkApiRequest::List(_))),
+                request: ApiRequest::Network(NetworkApiRequest::Network(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let NetworkNetworkApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             _ => {}
         };

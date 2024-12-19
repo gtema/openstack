@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,10 +21,12 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, LoadBalancerApiRequest, LoadBalancerListenerList,
-        LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList, LoadBalancerPoolList,
+    cloud_worker::load_balancer::v2::{
+        LoadBalancerApiRequest, LoadBalancerListenerListBuilder,
+        LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList,
+        LoadBalancerPoolListBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -68,7 +70,9 @@ impl Component for LoadBalancers<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::LoadBalancers = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        LoadBalancerLoadbalancerApiRequest::List(self.get_filters().clone()),
+                        LoadBalancerLoadbalancerApiRequest::List(Box::new(
+                            self.get_filters().clone(),
+                        )),
                     ))));
                 }
             }
@@ -79,26 +83,25 @@ impl Component for LoadBalancers<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerLoadbalancerApiRequest::List(self.get_filters().clone()),
+                    LoadBalancerLoadbalancerApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::LoadBalancer(LoadBalancerApiRequest::Loadbalancer(
-                        LoadBalancerLoadbalancerApiRequest::List(_),
-                    )),
+                request: ApiRequest::LoadBalancer(LoadBalancerApiRequest::Loadbalancer(res)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let LoadBalancerLoadbalancerApiRequest::List(_) = *res {
+                    self.set_data(data)?;
+                }
             }
             Action::SetLoadBalancerListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerLoadbalancerApiRequest::List(self.get_filters().clone()),
+                    LoadBalancerLoadbalancerApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::ShowLoadBalancerListeners => {
@@ -110,10 +113,11 @@ impl Component for LoadBalancers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
                             command_tx.send(Action::SetLoadBalancerListenerListFilters(
-                                LoadBalancerListenerList {
-                                    loadbalancer_id: Some(selected_entry.id.clone()),
-                                    loadbalancer_name: Some(selected_entry.name.clone()),
-                                },
+                                LoadBalancerListenerListBuilder::default()
+                                    .load_balancer_id(selected_entry.id.clone())
+                                    .load_balancer_name(selected_entry.name.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare filters")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerListeners,
@@ -132,10 +136,11 @@ impl Component for LoadBalancers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
                             command_tx.send(Action::SetLoadBalancerPoolListFilters(
-                                LoadBalancerPoolList {
-                                    loadbalancer_id: Some(selected_entry.id.clone()),
-                                    loadbalancer_name: Some(selected_entry.name.clone()),
-                                },
+                                LoadBalancerPoolListBuilder::default()
+                                    .loadbalancer_id(selected_entry.id.clone())
+                                    .loadbalancer_name(selected_entry.name.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare filters")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerPools,

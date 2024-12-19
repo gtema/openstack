@@ -21,9 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserList,
+    cloud_worker::identity::v3::{
+        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserApiRequest,
+        IdentityGroupUserList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -67,7 +69,7 @@ impl Component for IdentityGroupUsers<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityUsers = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityGroupApiRequest::UserList(self.get_filters().clone()),
+                        IdentityGroupUserApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -78,7 +80,7 @@ impl Component for IdentityGroupUsers<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityGroupApiRequest::UserList(self.get_filters().clone()),
+                    IdentityGroupUserApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::SetIdentityGroupUserListFilters(filters) => {
@@ -86,20 +88,21 @@ impl Component for IdentityGroupUsers<'_> {
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityGroupApiRequest::UserList(self.get_filters().clone()),
+                    IdentityGroupUserApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Identity(IdentityApiRequest::Group(IdentityGroupApiRequest::UserList(
-                        _,
-                    ))),
+                request: ApiRequest::Identity(IdentityApiRequest::Group(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let IdentityGroupApiRequest::User(x) = *req {
+                    if let IdentityGroupUserApiRequest::List(_) = *x {
+                        self.set_data(data)?;
+                    }
+                }
             }
             _ => {}
         };

@@ -16,5 +16,64 @@
 // `openstack-codegenerator`.
 
 //! `Dns` Service bindings
+
+use eyre::Result;
+use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc::UnboundedSender;
+
+use openstack_sdk::AsyncOpenStack;
+
+use crate::action::Action;
+use crate::cloud_worker::common::CloudWorkerError;
+use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+
 pub mod recordset;
 pub mod zone;
+
+pub use recordset::*;
+pub use zone::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum DnsApiRequest {
+    /// Recordset
+    Recordset(Box<DnsRecordsetApiRequest>),
+    /// Zone
+    Zone(Box<DnsZoneApiRequest>),
+}
+
+impl From<DnsApiRequest> for ApiRequest {
+    fn from(item: DnsApiRequest) -> Self {
+        ApiRequest::Dns(item)
+    }
+}
+
+impl From<DnsRecordsetApiRequest> for DnsApiRequest {
+    fn from(item: DnsRecordsetApiRequest) -> Self {
+        DnsApiRequest::Recordset(Box::new(item))
+    }
+}
+
+impl From<DnsZoneApiRequest> for DnsApiRequest {
+    fn from(item: DnsZoneApiRequest) -> Self {
+        DnsApiRequest::Zone(Box::new(item))
+    }
+}
+
+impl ExecuteApiRequest for DnsApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            DnsApiRequest::Recordset(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            DnsApiRequest::Zone(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+        }
+        Ok(())
+    }
+}

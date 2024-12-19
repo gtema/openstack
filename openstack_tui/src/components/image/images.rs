@@ -21,9 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, ImageApiRequest, ImageImageApiRequest, ImageImageDelete, ImageImageList,
+    cloud_worker::image::v2::{
+        ImageApiRequest, ImageImageApiRequest, ImageImageDelete, ImageImageList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -74,7 +75,7 @@ impl Component for Images<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::ImageImages = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ImageImageApiRequest::List(self.get_filters().clone()),
+                        ImageImageApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -85,23 +86,25 @@ impl Component for Images<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ImageImageApiRequest::List(self.get_filters().clone()),
+                    ImageImageApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::Image(ImageApiRequest::Image(ImageImageApiRequest::List(_))),
+                request: ApiRequest::Image(ImageApiRequest::Image(res)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let ImageImageApiRequest::List(_) = *res {
+                    self.set_data(data)?;
+                }
             }
             Action::SetImageListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ImageImageApiRequest::List(self.get_filters().clone()),
+                    ImageImageApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DeleteImage => {
@@ -113,10 +116,10 @@ impl Component for Images<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesListFilters
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                ImageImageApiRequest::Delete(ImageImageDelete {
-                                    image_id: selected_entry.id.clone(),
-                                    image_name: Some(selected_entry.name.clone()),
-                                }),
+                                ImageImageApiRequest::Delete(Box::new(ImageImageDelete {
+                                    id: selected_entry.id.clone(),
+                                    name: Some(selected_entry.name.clone()),
+                                })),
                             )))?;
                         }
                     }

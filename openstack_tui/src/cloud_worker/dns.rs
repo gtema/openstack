@@ -12,31 +12,26 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
-use tokio::sync::mpsc::UnboundedSender;
+use crate::cloud_worker::ConfirmableRequest;
 
-use openstack_sdk::AsyncOpenStack;
-
-use crate::action::Action;
-use crate::cloud_worker::dns::types::DnsApiRequest;
-use crate::cloud_worker::types::ExecuteApiRequest;
-use crate::cloud_worker::{ApiRequest, CloudWorkerError};
-
-pub mod recordset;
-pub mod types;
 pub mod v2;
-pub mod zone;
 
-impl ExecuteApiRequest for DnsApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            DnsApiRequest::Recordset(data) => data.execute_request(session, request, app_tx).await,
-            DnsApiRequest::Zone(data) => data.execute_request(session, request, app_tx).await,
+pub use v2::*;
+
+impl ConfirmableRequest for DnsApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            DnsApiRequest::Zone(req) => req.get_confirm_message(),
+            _ => None,
+        }
+    }
+}
+
+impl ConfirmableRequest for DnsZoneApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            DnsZoneApiRequest::Delete(req) => req.get_confirm_message(),
+            _ => None,
         }
     }
 }

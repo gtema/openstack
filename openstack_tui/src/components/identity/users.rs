@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,10 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, IdentityApiRequest, IdentityApplicationCredentialList, IdentityUserApiRequest,
-        IdentityUserList, IdentityUserUpdate,
+    cloud_worker::identity::v3::{
+        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialListBuilder,
+        IdentityUserList, IdentityUserSetBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -74,7 +75,7 @@ impl Component for IdentityUsers<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityUsers = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityUserApiRequest::List(self.get_filters().clone()),
+                        IdentityUserApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -85,7 +86,7 @@ impl Component for IdentityUsers<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityUserApiRequest::List(self.get_filters().clone()),
+                    IdentityUserApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::IdentityUserFlipEnable => {
@@ -97,11 +98,13 @@ impl Component for IdentityUsers<'_> {
                         if let Some(group_row) = self.get_selected() {
                             // send action to set GroupUserListFilters
                             command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                                IdentityUserApiRequest::Update(IdentityUserUpdate {
-                                    id: group_row.id.clone(),
-                                    name: None,
-                                    enabled: Some(!group_row.enabled),
-                                }),
+                                IdentityUserApiRequest::Set(Box::new(
+                                    IdentityUserSetBuilder::default()
+                                        .id(group_row.id.clone())
+                                        .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!group_row.enabled).build().wrap_err("cannot prepare user data structure")?)
+                                        .build()
+                                        .wrap_err("cannot prepare user update request")?,
+                                )),
                             )))?;
                             self.set_loading(true);
                         }
@@ -118,10 +121,13 @@ impl Component for IdentityUsers<'_> {
                             // send action to set GroupUserListFilters
                             command_tx.send(
                                 Action::SetIdentityApplicationCredentialListFilters(
-                                    IdentityApplicationCredentialList {
-                                        user_id: group_row.id.clone(),
-                                        user_name: Some(group_row.name.clone()),
-                                    },
+                                    IdentityUserApplicationCredentialListBuilder::default()
+                                        .user_id(group_row.id.clone())
+                                        .user_name(group_row.name.clone())
+                                        .build()
+                                        .wrap_err(
+                                            "cannot prepare application credential list request",
+                                        )?,
                                 ),
                             )?;
                             command_tx.send(Action::Mode {
@@ -136,26 +142,28 @@ impl Component for IdentityUsers<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Identity(IdentityApiRequest::User(IdentityUserApiRequest::List(_))),
+                request: ApiRequest::Identity(IdentityApiRequest::User(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let IdentityUserApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             Action::ApiResponseData {
-                request:
-                    ApiRequest::Identity(IdentityApiRequest::User(IdentityUserApiRequest::Update(_))),
+                request: ApiRequest::Identity(IdentityApiRequest::User(req)),
                 data,
             } => {
-                // Since user update only returns some info (i.e. it doesn't contain email) we need
-                // to update record manually
-                let updated_user: UserData = serde_json::from_value(data.clone())?;
-                if let Some(item_row) = self.get_item_row_by_res_id_mut(&updated_user.id) {
-                    item_row.enabled = updated_user.enabled;
-                    item_row.name = updated_user.name;
-                    self.sync_table_data()?;
+                if let IdentityUserApiRequest::Set(_) = *req {
+                    // Since user update only returns some info (i.e. it doesn't contain email) we need
+                    // to update record manually
+                    let updated_user: UserData = serde_json::from_value(data.clone())?;
+                    if let Some(item_row) = self.get_item_row_by_res_id_mut(&updated_user.id) {
+                        item_row.enabled = updated_user.enabled;
+                        item_row.name = updated_user.name;
+                        self.sync_table_data()?;
+                    }
+                    self.set_loading(false);
                 }
-                self.set_loading(false);
             }
             _ => {}
         };

@@ -17,7 +17,7 @@
     "ComputeServers": {
       "y": { "action": "DescribeApiResponse", "description": "YAML"},
       "0": { "action": {"SetComputeServerListFilters": {} }, "description": "Default filters", "type": "Filter"},
-      "1": { "action": {"SetComputeServerListFilters": {"all_tenants": true} }, "description": "All tenants (admin)", "type": "Filter"},
+      "1": { "action": {"SetComputeServerListFilters": {"all_tenants": "true"} }, "description": "All tenants (admin)", "type": "Filter"},
       "ctrl-d": { "action": "DeleteComputeServer", "description": "Delete" },
       "c": { "action": "ShowServerConsoleOutput", "description": "Console output" },
       "a": { "action": "ShowComputeServerInstanceActions", "description": "Instance actions"},

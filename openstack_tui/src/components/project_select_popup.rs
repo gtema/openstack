@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::{KeyCode, KeyEvent};
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::{
     prelude::*,
     widgets::{block::*, *},
@@ -24,9 +24,11 @@ use structable_derive::StructTable;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, IdentityApiRequest, IdentityAuthApiRequest, IdentityAuthProjectList,
+    cloud_worker::identity::v3::{
+        IdentityApiRequest, IdentityAuthApiRequest, IdentityAuthProjectApiRequest,
+        IdentityAuthProjectListBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{Component, FuzzySelectList},
     config::Config,
     error::TuiError,
@@ -102,15 +104,20 @@ impl Component for ProjectSelect {
             Action::ConnectedToCloud(_) => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityAuthApiRequest::Projects(IdentityAuthProjectList {}),
+                    IdentityAuthProjectApiRequest::List(Box::new(
+                        IdentityAuthProjectListBuilder::default()
+                            .build()
+                            .wrap_err("cannot prepare auth project list request")?,
+                    )),
                 ))));
             }
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Identity(IdentityApiRequest::Auth(IdentityAuthApiRequest::Projects(_))),
+                request: ApiRequest::Identity(IdentityApiRequest::Auth(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let IdentityAuthApiRequest::Project(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             _ => {}
         };

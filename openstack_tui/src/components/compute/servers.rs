@@ -13,19 +13,22 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
+use serde_json::json;
 use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, ComputeApiRequest, ComputeServerApiRequest, ComputeServerDelete,
-        ComputeServerGetConsoleOutput, ComputeServerInstanceActionList, ComputeServerList,
+    cloud_worker::compute::v2::{
+        ComputeApiRequest, ComputeServerApiRequest, ComputeServerDelete,
+        ComputeServerGetConsoleOutputBuilder, ComputeServerInstanceActionListBuilder,
+        ComputeServerList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -51,7 +54,24 @@ pub struct ServerData {
 
 pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerList>;
 
-impl ComputeServers<'_> {}
+impl ComputeServers<'_> {
+    /// Normalize filters
+    ///
+    /// Add preferred sorting
+    fn normalize_filters(&self, mut filters: ComputeServerList) -> ComputeServerList {
+        if filters.sort_key.is_none() {
+            filters.sort_key = Some("display_name".into());
+            filters.sort_dir = Some("asc".into());
+        }
+        filters
+    }
+
+    /// Normalized filters
+    fn normalized_filters(&self) -> ComputeServerList {
+        self.normalize_filters(self.get_filters().clone())
+            .to_owned()
+    }
+}
 
 impl Component for ComputeServers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -73,7 +93,7 @@ impl Component for ComputeServers<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeServers = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeServerApiRequest::List(self.get_filters().clone()),
+                        ComputeServerApiRequest::ListDetailed(Box::new(self.normalized_filters())),
                     ))));
                 }
             }
@@ -84,42 +104,46 @@ impl Component for ComputeServers<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::List(self.get_filters().clone()),
+                    ComputeServerApiRequest::ListDetailed(Box::new(self.normalized_filters())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::Server(ComputeServerApiRequest::List(_))),
+                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let ComputeServerApiRequest::ListDetailed(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             Action::ApiResponseData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::Server(
-                        ComputeServerApiRequest::GetConsoleOutput(_),
-                    )),
+                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
                 data,
             } => {
-                if let Some(command_tx) = &self.get_command_tx() {
-                    command_tx.send(Action::SetDescribeApiResponseData(data.clone()))?;
-                    command_tx.send(Action::Mode {
-                        mode: Mode::Describe,
-                        stack: true,
-                    })?;
-                    self.set_loading(false);
-                } else {
-                    debug!("No command_tx");
+                if let ComputeServerApiRequest::GetConsoleOutput(_) = *req {
+                    if let Some(command_tx) = &self.get_command_tx() {
+                        command_tx.send(Action::SetDescribeApiResponseData(
+                            data.get("output")
+                                .unwrap_or(&json!("bad data returned by API"))
+                                .to_owned(),
+                        ))?;
+                        command_tx.send(Action::Mode {
+                            mode: Mode::Describe,
+                            stack: true,
+                        })?;
+                        self.set_loading(false);
+                    } else {
+                        debug!("No command_tx");
+                    }
                 }
             }
             Action::SetComputeServerListFilters(filters) => {
-                self.set_filters(filters);
+                self.set_filters(*filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::List(self.get_filters().clone()),
+                    ComputeServerApiRequest::ListDetailed(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::ShowServerConsoleOutput => {
@@ -133,10 +157,13 @@ impl Component for ComputeServers<'_> {
                     }
                     //self.set_loading(true);
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeServerApiRequest::GetConsoleOutput(ComputeServerGetConsoleOutput {
-                            server_id,
-                            length: Some(1000),
-                        }),
+                        ComputeServerApiRequest::GetConsoleOutput(Box::new(
+                            ComputeServerGetConsoleOutputBuilder::default()
+                                .id(server_id.clone())
+                                .os_get_console_output(crate::cloud_worker::compute::v2::server::get_console_output::OsGetConsoleOutputBuilder::default().build().wrap_err("cannot prepare os-get-console-output structure")?)
+                                .build()
+                                .wrap_err("cannot prepare request")?,
+                        )),
                     ))));
                 }
             }
@@ -149,11 +176,13 @@ impl Component for ComputeServers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesList
                             command_tx.send(Action::SetComputeServerInstanceActionListFilters(
-                                ComputeServerInstanceActionList {
-                                    server_id: Some(selected_entry.id.clone()),
-                                    server_name: Some(selected_entry.name.clone()),
-                                    request_id: None,
-                                },
+                                Box::new(
+                                    ComputeServerInstanceActionListBuilder::default()
+                                        .server_id(selected_entry.id.clone())
+                                        .server_name(selected_entry.name.clone())
+                                        .build()
+                                        .wrap_err("cannot prepare request")?,
+                                ),
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
@@ -173,10 +202,10 @@ impl Component for ComputeServers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesList
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                ComputeServerApiRequest::Delete(ComputeServerDelete {
-                                    server_id: selected_entry.id.clone(),
-                                    server_name: Some(selected_entry.name.clone()),
-                                }),
+                                ComputeServerApiRequest::Delete(Box::new(ComputeServerDelete {
+                                    id: selected_entry.id.clone(),
+                                    name: Some(selected_entry.name.clone()),
+                                })),
                             )))?;
                         }
                     }

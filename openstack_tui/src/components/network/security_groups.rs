@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,10 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
-        NetworkSecurityGroupRuleList,
+    cloud_worker::network::v2::{
+        NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
+        NetworkSecurityGroupRuleListBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -51,6 +52,25 @@ pub struct NetworkData {
 pub type NetworkSecurityGroups<'a> =
     TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupList>;
 
+impl NetworkSecurityGroups<'_> {
+    /// Normalize filters
+    ///
+    /// Add preferred sorting
+    fn normalize_filters(&self, mut filters: NetworkSecurityGroupList) -> NetworkSecurityGroupList {
+        if filters.sort_key.is_none() {
+            filters.sort_key = Some(Vec::from(["name".into()]));
+            filters.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filters
+    }
+
+    /// Normalized filters
+    fn normalized_filters(&self) -> NetworkSecurityGroupList {
+        self.normalize_filters(self.get_filters().clone())
+            .to_owned()
+    }
+}
+
 impl Component for NetworkSecurityGroups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
@@ -70,7 +90,7 @@ impl Component for NetworkSecurityGroups<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkSecurityGroups = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkSecurityGroupApiRequest::List(self.get_filters().clone()),
+                        NetworkSecurityGroupApiRequest::List(Box::new(self.normalized_filters())),
                     ))));
                 }
             }
@@ -81,7 +101,7 @@ impl Component for NetworkSecurityGroups<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkSecurityGroupApiRequest::List(self.get_filters().clone()),
+                    NetworkSecurityGroupApiRequest::List(Box::new(self.normalized_filters())),
                 ))));
             }
             Action::ShowNetworkSecurityGroupRules => {
@@ -93,10 +113,13 @@ impl Component for NetworkSecurityGroups<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesListFilters
                             command_tx.send(Action::SetNetworkSecurityGroupRuleListFilters(
-                                NetworkSecurityGroupRuleList {
-                                    security_group_id: Some(selected_entry.id.clone()),
-                                    security_group_name: Some(selected_entry.name.clone()),
-                                },
+                                NetworkSecurityGroupRuleListBuilder::default()
+                                    .security_group_id(selected_entry.id.clone())
+                                    .security_group_name(selected_entry.name.clone())
+                                    .build()
+                                    .wrap_err(
+                                        "error preparing security group rules list request",
+                                    )?,
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
@@ -111,13 +134,12 @@ impl Component for NetworkSecurityGroups<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Network(NetworkApiRequest::SecurityGroup(
-                        NetworkSecurityGroupApiRequest::List(_),
-                    )),
+                request: ApiRequest::Network(NetworkApiRequest::SecurityGroup(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let NetworkSecurityGroupApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             _ => {}
         };

@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,10 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, LoadBalancerApiRequest, LoadBalancerHealthmonitorList,
-        LoadBalancerPoolApiRequest, LoadBalancerPoolList, LoadBalancerPoolMemberList,
+    cloud_worker::load_balancer::v2::{
+        LoadBalancerApiRequest, LoadBalancerHealthmonitorListBuilder, LoadBalancerPoolApiRequest,
+        LoadBalancerPoolList, LoadBalancerPoolMemberListBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -67,7 +68,7 @@ impl Component for LoadBalancerPools<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::LoadBalancerPools = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        LoadBalancerPoolApiRequest::List(self.get_filters().clone()),
+                        LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -78,26 +79,25 @@ impl Component for LoadBalancerPools<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerPoolApiRequest::List(self.get_filters().clone()),
+                    LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(
-                        LoadBalancerPoolApiRequest::List(_),
-                    )),
+                request: ApiRequest::LoadBalancer(LoadBalancerApiRequest::Pool(res)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let LoadBalancerPoolApiRequest::List(_) = *res {
+                    self.set_data(data)?;
+                }
             }
             Action::SetLoadBalancerPoolListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    LoadBalancerPoolApiRequest::List(self.get_filters().clone()),
+                    LoadBalancerPoolApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::ShowLoadBalancerPoolMembers => {
@@ -108,10 +108,11 @@ impl Component for LoadBalancerPools<'_> {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
                             command_tx.send(Action::SetLoadBalancerPoolMemberListFilters(
-                                LoadBalancerPoolMemberList {
-                                    pool_id: group_row.id.clone(),
-                                    pool_name: Some(group_row.name.clone()),
-                                },
+                                LoadBalancerPoolMemberListBuilder::default()
+                                    .pool_id(group_row.id.clone())
+                                    .pool_name(group_row.name.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare filters")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerPoolMembers,
@@ -129,10 +130,11 @@ impl Component for LoadBalancerPools<'_> {
                         // and have a selected entry
                         if let Some(group_row) = self.get_selected() {
                             command_tx.send(Action::SetLoadBalancerHealthMonitorListFilters(
-                                LoadBalancerHealthmonitorList {
-                                    pool_id: Some(group_row.id.clone()),
-                                    pool_name: Some(group_row.name.clone()),
-                                },
+                                LoadBalancerHealthmonitorListBuilder::default()
+                                    .pool_id(group_row.id.clone())
+                                    .pool_name(group_row.name.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare filters")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerHealthMonitors,

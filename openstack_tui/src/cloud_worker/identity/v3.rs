@@ -16,7 +16,90 @@
 // `openstack-codegenerator`.
 
 //! `Identity` Service bindings
+
+use eyre::Result;
+use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc::UnboundedSender;
+
+use openstack_sdk::AsyncOpenStack;
+
+use crate::action::Action;
+use crate::cloud_worker::common::CloudWorkerError;
+use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+
 pub mod auth;
 pub mod group;
 pub mod project;
 pub mod user;
+
+pub use auth::*;
+pub use group::*;
+pub use project::*;
+pub use user::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum IdentityApiRequest {
+    /// Auth
+    Auth(Box<IdentityAuthApiRequest>),
+    /// Group
+    Group(Box<IdentityGroupApiRequest>),
+    /// Project
+    Project(Box<IdentityProjectApiRequest>),
+    /// User
+    User(Box<IdentityUserApiRequest>),
+}
+
+impl From<IdentityApiRequest> for ApiRequest {
+    fn from(item: IdentityApiRequest) -> Self {
+        ApiRequest::Identity(item)
+    }
+}
+
+impl From<IdentityAuthApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityAuthApiRequest) -> Self {
+        IdentityApiRequest::Auth(Box::new(item))
+    }
+}
+
+impl From<IdentityGroupApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityGroupApiRequest) -> Self {
+        IdentityApiRequest::Group(Box::new(item))
+    }
+}
+
+impl From<IdentityProjectApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityProjectApiRequest) -> Self {
+        IdentityApiRequest::Project(Box::new(item))
+    }
+}
+
+impl From<IdentityUserApiRequest> for IdentityApiRequest {
+    fn from(item: IdentityUserApiRequest) -> Self {
+        IdentityApiRequest::User(Box::new(item))
+    }
+}
+
+impl ExecuteApiRequest for IdentityApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            IdentityApiRequest::Auth(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            IdentityApiRequest::Group(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            IdentityApiRequest::Project(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            IdentityApiRequest::User(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+        }
+        Ok(())
+    }
+}

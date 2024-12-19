@@ -16,4 +16,51 @@
 // `openstack-codegenerator`.
 
 //! `Image` Service bindings
+
+use eyre::Result;
+use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc::UnboundedSender;
+
+use openstack_sdk::AsyncOpenStack;
+
+use crate::action::Action;
+use crate::cloud_worker::common::CloudWorkerError;
+use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+
 pub mod image;
+
+pub use image::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ImageApiRequest {
+    /// Image
+    Image(Box<ImageImageApiRequest>),
+}
+
+impl From<ImageApiRequest> for ApiRequest {
+    fn from(item: ImageApiRequest) -> Self {
+        ApiRequest::Image(item)
+    }
+}
+
+impl From<ImageImageApiRequest> for ImageApiRequest {
+    fn from(item: ImageImageApiRequest) -> Self {
+        ImageApiRequest::Image(Box::new(item))
+    }
+}
+
+impl ExecuteApiRequest for ImageApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            ImageApiRequest::Image(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+        }
+        Ok(())
+    }
+}

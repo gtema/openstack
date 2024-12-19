@@ -20,14 +20,14 @@ use openstack_sdk::types::ServiceType;
 use openstack_sdk::AsyncOpenStack;
 use tokio::sync::mpsc::UnboundedSender;
 
-pub use crate::cloud_worker::block_storage::types::*;
+pub use crate::cloud_worker::block_storage::*;
 pub use crate::cloud_worker::common::{CloudWorkerError, ConfirmableRequest};
-pub use crate::cloud_worker::compute::types::*;
-pub use crate::cloud_worker::dns::types::*;
-pub use crate::cloud_worker::identity::types::*;
-pub use crate::cloud_worker::image::types::*;
-pub use crate::cloud_worker::load_balancer::types::*;
-pub use crate::cloud_worker::network::types::*;
+pub use crate::cloud_worker::compute::*;
+pub use crate::cloud_worker::dns::*;
+pub use crate::cloud_worker::identity::*;
+pub use crate::cloud_worker::image::*;
+pub use crate::cloud_worker::load_balancer::*;
+pub use crate::cloud_worker::network::*;
 
 /// OpenStack "resource"
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Display, Deserialize)]

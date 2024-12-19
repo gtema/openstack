@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use itertools::Itertools;
 use ratatui::{
     layout::{
@@ -30,10 +30,13 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, ComputeApiRequest, ComputeQuotaSetApiRequest, ComputeQuotaSetDetails,
-        NetworkApiRequest, NetworkQuotaApiRequest, NetworkQuotaDetails,
+    cloud_worker::compute::{
+        ComputeApiRequest, ComputeQuotaSetApiRequest, ComputeQuotaSetShowBuilder,
     },
+    cloud_worker::network::v2::{
+        NetworkApiRequest, NetworkQuotaApiRequest, NetworkQuotaShowBuilder,
+    },
+    cloud_worker::types::ApiRequest,
     components::Component,
     config::Config,
     error::TuiError,
@@ -119,14 +122,20 @@ impl Home {
         if let Some(command_tx) = &self.command_tx {
             if let Some(project_id) = &self.project_id {
                 command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeQuotaSetApiRequest::Details(ComputeQuotaSetDetails {
-                        project_id: project_id.clone(),
-                    }),
+                    ComputeQuotaSetApiRequest::Details(Box::new(
+                        ComputeQuotaSetShowBuilder::default()
+                            .id(project_id.clone())
+                            .build()
+                            .wrap_err("cannot prepare compute quota request")?,
+                    )),
                 )))?;
                 command_tx.send(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkQuotaApiRequest::Details(NetworkQuotaDetails {
-                        project_id: project_id.clone(),
-                    }),
+                    NetworkQuotaApiRequest::Details(Box::new(
+                        NetworkQuotaShowBuilder::default()
+                            .id(project_id.clone())
+                            .build()
+                            .wrap_err("cannot prepare network quota request")?,
+                    )),
                 )))?;
             }
         }
@@ -179,22 +188,22 @@ impl Component for Home {
             }
 
             Action::ApiResponseData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::QuotaSet(
-                        ComputeQuotaSetApiRequest::Details(_),
-                    )),
+                request: ApiRequest::Compute(ComputeApiRequest::QuotaSet(_req)),
                 data,
             } => {
+                //if let ComputeQuotaSetApiRequest::Details(_) = *req {
                 self.set_compute_data(data)?;
                 self.set_loading(false);
+                //}
             }
             Action::ApiResponseData {
-                request:
-                    ApiRequest::Network(NetworkApiRequest::Quota(NetworkQuotaApiRequest::Details(_))),
+                request: ApiRequest::Network(NetworkApiRequest::Quota(_req)),
                 data,
             } => {
+                //if let NetworkQuotaApiRequest::Details(_) = *req {
                 self.set_network_data(data)?;
                 self.set_loading(false);
+                //}
             }
 
             Action::Error(_) => {

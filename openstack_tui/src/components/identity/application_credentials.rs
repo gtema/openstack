@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,10 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, IdentityApiRequest, IdentityApplicationCredentialApiRequest,
-        IdentityApplicationCredentialList, IdentityUserApiRequest,
+    cloud_worker::identity::v3::{
+        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialApiRequest,
+        IdentityUserApplicationCredentialList, IdentityUserApplicationCredentialListBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -50,7 +51,7 @@ pub struct ApplicationCredentialData {
 }
 
 pub type IdentityApplicationCredentials<'a> =
-    TableViewComponentBase<'a, ApplicationCredentialData, IdentityApplicationCredentialList>;
+    TableViewComponentBase<'a, ApplicationCredentialData, IdentityUserApplicationCredentialList>;
 
 impl Component for IdentityApplicationCredentials<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -67,10 +68,13 @@ impl Component for IdentityApplicationCredentials<'_> {
                 self.set_loading(true);
                 // Unset the filters since in new cloud everything is different
                 self.set_data(Vec::new())?;
-                self.set_filters(IdentityApplicationCredentialList {
-                    user_id: auth.user.id,
-                    user_name: Some(auth.user.name),
-                });
+                self.set_filters(
+                    IdentityUserApplicationCredentialListBuilder::default()
+                        .user_id(auth.user.id)
+                        .user_name(auth.user.name)
+                        .build()
+                        .wrap_err("cannot prepare listing application credentials request")?,
+                );
             }
             Action::Mode {
                 mode: Mode::IdentityApplicationCredentials,
@@ -79,7 +83,9 @@ impl Component for IdentityApplicationCredentials<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityApplicationCredentialApiRequest::List(self.get_filters().clone()),
+                    IdentityUserApplicationCredentialApiRequest::List(Box::new(
+                        self.get_filters().clone(),
+                    )),
                 ))));
             }
             Action::SetIdentityApplicationCredentialListFilters(filters) => {
@@ -87,22 +93,23 @@ impl Component for IdentityApplicationCredentials<'_> {
                 self.set_data(Vec::new())?;
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityApplicationCredentialApiRequest::List(self.get_filters().clone()),
+                    IdentityUserApplicationCredentialApiRequest::List(Box::new(
+                        self.get_filters().clone(),
+                    )),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Identity(IdentityApiRequest::User(
-                        IdentityUserApiRequest::ApplicationCredential(
-                            IdentityApplicationCredentialApiRequest::List(_),
-                        ),
-                    )),
+                request: ApiRequest::Identity(IdentityApiRequest::User(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let IdentityUserApiRequest::ApplicationCredential(x) = *req {
+                    if let IdentityUserApplicationCredentialApiRequest::List(_) = *x {
+                        self.set_data(data)?;
+                    }
+                }
             }
             _ => {}
         };

@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,6 +21,7 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
+    cloud_worker::compute::v2::{ComputeFlavorList, ComputeServerListBuilder},
     cloud_worker::types::*,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
@@ -50,6 +51,25 @@ pub struct FlavorData {
 
 pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorList>;
 
+impl ComputeFlavors<'_> {
+    /// Normalize filters
+    ///
+    /// Add preferred sorting
+    fn normalize_filters(&self, mut filters: ComputeFlavorList) -> ComputeFlavorList {
+        if filters.sort_key.is_none() {
+            filters.sort_key = Some("name".into());
+            filters.sort_dir = Some("asc".into());
+        }
+        filters
+    }
+
+    /// Normalized filters
+    fn normalized_filters(&self) -> ComputeFlavorList {
+        self.normalize_filters(self.get_filters().clone())
+            .to_owned()
+    }
+}
+
 impl Component for ComputeFlavors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
@@ -69,7 +89,7 @@ impl Component for ComputeFlavors<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeFlavors = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeFlavorApiRequest::List(self.get_filters().clone()),
+                        ComputeFlavorApiRequest::ListDetailed(Box::new(self.normalized_filters())),
                     ))));
                 }
             }
@@ -80,18 +100,19 @@ impl Component for ComputeFlavors<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeFlavorApiRequest::List(self.get_filters().clone()),
+                    ComputeFlavorApiRequest::ListDetailed(Box::new(self.normalized_filters())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::Flavor(ComputeFlavorApiRequest::List(_))),
+                request: ApiRequest::Compute(ComputeApiRequest::Flavor(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let ComputeFlavorApiRequest::ListDetailed(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             Action::ShowComputeServersWithFlavor => {
                 // only if we are currently in the flavors mode
@@ -101,13 +122,12 @@ impl Component for ComputeFlavors<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesList
-                            command_tx.send(Action::SetComputeServerListFilters(
-                                ComputeServerList {
-                                    all_tenants: None,
-                                    flavor_id: Some(selected_entry.id.clone()),
-                                    flavor_name: Some(selected_entry.name.clone()),
-                                },
-                            ))?;
+                            command_tx.send(Action::SetComputeServerListFilters(Box::new(
+                                ComputeServerListBuilder::default()
+                                    .flavor(selected_entry.id.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare filters")?,
+                            )))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
                                 mode: Mode::ComputeServers,

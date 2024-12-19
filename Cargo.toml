@@ -26,6 +26,7 @@ clap = { version = "^4.5", features = ["cargo", "color", "derive", "env"] }
 clap_complete = { version = "^4.5" }
 color-eyre = { version = "^0.6", features = ["default", "issue-url", "track-caller"] }
 config = { version = "^0.14", default-features = false }
+derive_builder = { version = "^0.20" }
 dialoguer = "^0.11"
 dirs = "^5.0"
 eyre = { version = "^0.6" }

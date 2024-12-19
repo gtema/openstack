@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,9 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionList,
+    cloud_worker::compute::v2::{
+        ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionApiRequest,
+        ComputeServerInstanceActionList, ComputeServerInstanceActionShowBuilder,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -46,6 +48,8 @@ pub struct ServerInstanceActionData {
     start_time: String,
     #[structable(title = "User")]
     user_id: String,
+    #[structable(title = "Server ID", wide)]
+    instance_uuid: String,
 }
 
 pub type ComputeServerInstanceActions<'a> =
@@ -70,7 +74,9 @@ impl Component for ComputeServerInstanceActions<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeServerInstanceActions = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeServerApiRequest::InstanceActionList(self.get_filters().clone()),
+                        ComputeServerInstanceActionApiRequest::List(Box::new(
+                            self.get_filters().clone(),
+                        )),
                     ))));
                 }
             }
@@ -81,26 +87,31 @@ impl Component for ComputeServerInstanceActions<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::InstanceActionList(self.get_filters().clone()),
+                    ComputeServerInstanceActionApiRequest::List(Box::new(
+                        self.get_filters().clone(),
+                    )),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::Server(
-                        ComputeServerApiRequest::InstanceActionList(_),
-                    )),
+                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let ComputeServerApiRequest::InstanceAction(x) = *req {
+                    if let ComputeServerInstanceActionApiRequest::List(_) = *x {
+                        self.set_data(data)?;
+                    }
+                }
             }
             Action::SetComputeServerInstanceActionListFilters(filters) => {
-                self.set_filters(filters);
+                self.set_filters(*filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::InstanceActionList(self.get_filters().clone()),
+                    ComputeServerInstanceActionApiRequest::List(Box::new(
+                        self.get_filters().clone(),
+                    )),
                 ))));
             }
             Action::ShowComputeServerInstanceActionEvents => {
@@ -110,12 +121,16 @@ impl Component for ComputeServerInstanceActions<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesList
-                            let mut filter = self.get_filters().clone();
-                            filter.request_id = Some(selected_entry.id.clone());
-
-                            command_tx
-                                .send(Action::SetComputeServerInstanceActionListFilters(filter))?;
+                            // send action to set server instance action filters
+                            let mut req = ComputeServerInstanceActionShowBuilder::default();
+                            req.id(selected_entry.id.clone());
+                            req.server_id(selected_entry.instance_uuid.clone());
+                            if let Some(name) = &self.get_filters().server_name {
+                                req.server_name(name.clone());
+                            }
+                            command_tx.send(Action::SetComputeServerInstanceActionShowFilters(
+                                req.build().wrap_err("cannot prepare request")?,
+                            ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
                                 mode: Mode::ComputeServerInstanceActionEvents,
