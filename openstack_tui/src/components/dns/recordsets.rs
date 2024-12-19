@@ -21,7 +21,8 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{ApiRequest, DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList},
+    cloud_worker::dns::v2::{DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList},
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -66,7 +67,7 @@ impl Component for DnsRecordsets<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::DnsRecordsets = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsRecordsetApiRequest::List(self.get_filters().clone()),
+                        DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -77,23 +78,25 @@ impl Component for DnsRecordsets<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    DnsRecordsetApiRequest::List(self.get_filters().clone()),
+                    DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::Dns(DnsApiRequest::Recordset(DnsRecordsetApiRequest::List(_))),
+                request: ApiRequest::Dns(DnsApiRequest::Recordset(_req)),
                 data,
             } => {
+                //if let DnsRecordsetApiRequest::List(_) = *req {
                 self.set_data(data)?;
+                //}
             }
             Action::SetDnsRecordsetListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    DnsRecordsetApiRequest::List(self.get_filters().clone()),
+                    DnsRecordsetApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             //Action::DeleteDnsRecordset => {

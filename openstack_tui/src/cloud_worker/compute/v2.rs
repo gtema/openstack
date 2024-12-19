@@ -16,8 +16,103 @@
 // `openstack-codegenerator`.
 
 //! `Compute` Service bindings
+
+use eyre::Result;
+use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc::UnboundedSender;
+
+use openstack_sdk::AsyncOpenStack;
+
+use crate::action::Action;
+use crate::cloud_worker::common::CloudWorkerError;
+use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+
 pub mod aggregate;
 pub mod flavor;
 pub mod hypervisor;
 pub mod quota_set;
 pub mod server;
+
+pub use aggregate::*;
+pub use flavor::*;
+pub use hypervisor::*;
+pub use quota_set::*;
+pub use server::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ComputeApiRequest {
+    /// Aggregate
+    Aggregate(Box<ComputeAggregateApiRequest>),
+    /// Flavor
+    Flavor(Box<ComputeFlavorApiRequest>),
+    /// Hypervisor
+    Hypervisor(Box<ComputeHypervisorApiRequest>),
+    /// QuotaSet
+    QuotaSet(Box<ComputeQuotaSetApiRequest>),
+    /// Server
+    Server(Box<ComputeServerApiRequest>),
+}
+
+impl From<ComputeApiRequest> for ApiRequest {
+    fn from(item: ComputeApiRequest) -> Self {
+        ApiRequest::Compute(item)
+    }
+}
+
+impl From<ComputeAggregateApiRequest> for ComputeApiRequest {
+    fn from(item: ComputeAggregateApiRequest) -> Self {
+        ComputeApiRequest::Aggregate(Box::new(item))
+    }
+}
+
+impl From<ComputeFlavorApiRequest> for ComputeApiRequest {
+    fn from(item: ComputeFlavorApiRequest) -> Self {
+        ComputeApiRequest::Flavor(Box::new(item))
+    }
+}
+
+impl From<ComputeHypervisorApiRequest> for ComputeApiRequest {
+    fn from(item: ComputeHypervisorApiRequest) -> Self {
+        ComputeApiRequest::Hypervisor(Box::new(item))
+    }
+}
+
+impl From<ComputeQuotaSetApiRequest> for ComputeApiRequest {
+    fn from(item: ComputeQuotaSetApiRequest) -> Self {
+        ComputeApiRequest::QuotaSet(Box::new(item))
+    }
+}
+
+impl From<ComputeServerApiRequest> for ComputeApiRequest {
+    fn from(item: ComputeServerApiRequest) -> Self {
+        ComputeApiRequest::Server(Box::new(item))
+    }
+}
+
+impl ExecuteApiRequest for ComputeApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            ComputeApiRequest::Aggregate(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            ComputeApiRequest::Flavor(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            ComputeApiRequest::Hypervisor(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            ComputeApiRequest::QuotaSet(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            ComputeApiRequest::Server(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+        }
+        Ok(())
+    }
+}

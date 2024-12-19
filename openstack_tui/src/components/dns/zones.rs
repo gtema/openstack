@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
@@ -21,9 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, DnsApiRequest, DnsRecordsetList, DnsZoneApiRequest, DnsZoneDelete, DnsZoneList,
+    cloud_worker::dns::v2::{
+        DnsApiRequest, DnsRecordsetListBuilder, DnsZoneApiRequest, DnsZoneDelete, DnsZoneList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -68,7 +69,7 @@ impl Component for DnsZones<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::DnsZones = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        DnsZoneApiRequest::List(self.get_filters().clone()),
+                        DnsZoneApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -79,23 +80,25 @@ impl Component for DnsZones<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    DnsZoneApiRequest::List(self.get_filters().clone()),
+                    DnsZoneApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request: ApiRequest::Dns(DnsApiRequest::Zone(DnsZoneApiRequest::List(_))),
+                request: ApiRequest::Dns(DnsApiRequest::Zone(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let DnsZoneApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             Action::SetDnsZoneListFilters(filters) => {
                 self.set_filters(filters);
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    DnsZoneApiRequest::List(self.get_filters().clone()),
+                    DnsZoneApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::ShowDnsZoneRecordsets => {
@@ -106,10 +109,11 @@ impl Component for DnsZones<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             command_tx.send(Action::SetDnsRecordsetListFilters(
-                                DnsRecordsetList {
-                                    zone_id: Some(selected_entry.id.clone()),
-                                    zone_name: Some(selected_entry.name.clone()),
-                                },
+                                DnsRecordsetListBuilder::default()
+                                    .zone_id(selected_entry.id.clone())
+                                    .zone_name(selected_entry.name.clone())
+                                    .build()
+                                    .wrap_err("cannot prepare zone recordsets listing request")?,
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
@@ -127,12 +131,12 @@ impl Component for DnsZones<'_> {
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
-                            // send action to set SecurityGroupRulesListFilters
+                            // send action to set filters
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                DnsZoneApiRequest::Delete(DnsZoneDelete {
-                                    zone_id: selected_entry.id.clone(),
-                                    zone_name: Some(selected_entry.name.clone()),
-                                }),
+                                DnsZoneApiRequest::Delete(Box::new(DnsZoneDelete {
+                                    id: selected_entry.id.clone(),
+                                    name: Some(selected_entry.name.clone()),
+                                })),
                             )))?;
                         }
                     }

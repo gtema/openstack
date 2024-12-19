@@ -12,40 +12,26 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
-use tokio::sync::mpsc::UnboundedSender;
+use crate::cloud_worker::ConfirmableRequest;
 
-use openstack_sdk::AsyncOpenStack;
-
-use crate::action::Action;
-use crate::cloud_worker::block_storage::types::BlockStorageApiRequest;
-use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::ExecuteApiRequest;
-use crate::cloud_worker::ApiRequest;
-
-pub mod backup;
-pub mod snapshot;
-pub mod types;
 pub mod v3;
-pub mod volume;
 
-impl ExecuteApiRequest for BlockStorageApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            BlockStorageApiRequest::Backup(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            BlockStorageApiRequest::Snapshot(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            BlockStorageApiRequest::Volume(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
+pub use v3::*;
+
+impl ConfirmableRequest for BlockStorageApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            BlockStorageApiRequest::Volume(req) => req.get_confirm_message(),
+            _ => None,
+        }
+    }
+}
+
+impl ConfirmableRequest for BlockStorageVolumeApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            BlockStorageVolumeApiRequest::Delete(req) => req.get_confirm_message(),
+            _ => None,
         }
     }
 }

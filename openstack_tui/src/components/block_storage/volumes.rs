@@ -13,18 +13,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use serde::Deserialize;
 use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
+use tracing::debug;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDelete,
+    cloud_worker::block_storage::v3::{
+        BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDeleteBuilder,
         BlockStorageVolumeList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -71,7 +73,9 @@ impl Component for BlockStorageVolumes<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::BlockStorageVolumes = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        BlockStorageVolumeApiRequest::List(self.get_filters().clone()),
+                        BlockStorageVolumeApiRequest::ListDetailed(Box::new(
+                            self.get_filters().clone(),
+                        )),
                     ))));
                 }
             }
@@ -82,20 +86,22 @@ impl Component for BlockStorageVolumes<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    BlockStorageVolumeApiRequest::List(self.get_filters().clone()),
+                    BlockStorageVolumeApiRequest::ListDetailed(Box::new(
+                        self.get_filters().clone(),
+                    )),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(
-                        BlockStorageVolumeApiRequest::List(_),
-                    )),
+                request: ApiRequest::BlockStorage(BlockStorageApiRequest::Volume(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let BlockStorageVolumeApiRequest::ListDetailed(_) = *req {
+                    debug!("Data is {:?}", data);
+                    self.set_data(data)?;
+                }
             }
             Action::DeleteBlockStorageVolume => {
                 // only if we are currently in the Volumes mode
@@ -106,10 +112,13 @@ impl Component for BlockStorageVolumes<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesList
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                BlockStorageVolumeApiRequest::Delete(BlockStorageVolumeDelete {
-                                    volume_id: selected_entry.id.clone(),
-                                    volume_name: Some(selected_entry.name.clone()),
-                                }),
+                                BlockStorageVolumeApiRequest::Delete(Box::new(
+                                    BlockStorageVolumeDeleteBuilder::default()
+                                        .id(selected_entry.id.clone())
+                                        .name(selected_entry.name.clone())
+                                        .build()
+                                        .wrap_err("cannot prepare request")?,
+                                )),
                             )))?;
                         }
                     }

@@ -21,9 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
+    cloud_worker::identity::v3::{
+        IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -68,7 +69,7 @@ impl Component for IdentityProjects<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::IdentityProjects = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        IdentityProjectApiRequest::List(self.get_filters().clone()),
+                        IdentityProjectApiRequest::List(Box::new(self.get_filters().clone())),
                     ))));
                 }
             }
@@ -79,20 +80,19 @@ impl Component for IdentityProjects<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    IdentityProjectApiRequest::List(self.get_filters().clone()),
+                    IdentityProjectApiRequest::List(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Identity(IdentityApiRequest::Project(IdentityProjectApiRequest::List(
-                        _,
-                    ))),
+                request: ApiRequest::Identity(IdentityApiRequest::Project(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let IdentityProjectApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             Action::SwitchToProject => {
                 if let Some(project) = self.get_selected() {

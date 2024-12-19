@@ -51,6 +51,25 @@ pub struct RouterData {
 
 pub type NetworkRouters<'a> = TableViewComponentBase<'a, RouterData, NetworkRouterList>;
 
+impl NetworkRouters<'_> {
+    /// Normalize filters
+    ///
+    /// Add preferred sorting
+    fn normalize_filters(&self, mut filters: NetworkRouterList) -> NetworkRouterList {
+        if filters.sort_key.is_none() {
+            filters.sort_key = Some(Vec::from(["name".into()]));
+            filters.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filters
+    }
+
+    /// Normalized filters
+    fn normalized_filters(&self) -> NetworkRouterList {
+        self.normalize_filters(self.get_filters().clone())
+            .to_owned()
+    }
+}
+
 impl Component for NetworkRouters<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
@@ -70,7 +89,7 @@ impl Component for NetworkRouters<'_> {
                     self.set_loading(true);
                     self.set_data(Vec::new())?;
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkRouterApiRequest::List(self.get_filters().clone()),
+                        NetworkRouterApiRequest::List(Box::new(self.normalized_filters())),
                     ))));
                 }
             }
@@ -81,7 +100,7 @@ impl Component for NetworkRouters<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkRouterApiRequest::List(self.get_filters().clone()),
+                    NetworkRouterApiRequest::List(Box::new(self.normalized_filters())),
                 ))));
             }
             // Action::ShowRouterSubnets => {
@@ -106,11 +125,12 @@ impl Component for NetworkRouters<'_> {
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Network(NetworkApiRequest::Router(NetworkRouterApiRequest::List(_))),
+                request: ApiRequest::Network(NetworkApiRequest::Router(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let NetworkRouterApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             _ => {}
         };

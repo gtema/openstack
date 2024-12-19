@@ -16,9 +16,116 @@
 // `openstack-codegenerator`.
 
 //! `Network` Service bindings
+
+use eyre::Result;
+use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc::UnboundedSender;
+
+use openstack_sdk::AsyncOpenStack;
+
+use crate::action::Action;
+use crate::cloud_worker::common::CloudWorkerError;
+use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
+
 pub mod network;
 pub mod quota;
 pub mod router;
 pub mod security_group;
 pub mod security_group_rule;
 pub mod subnet;
+
+pub use network::*;
+pub use quota::*;
+pub use router::*;
+pub use security_group::*;
+pub use security_group_rule::*;
+pub use subnet::*;
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum NetworkApiRequest {
+    /// Network
+    Network(Box<NetworkNetworkApiRequest>),
+    /// Quota
+    Quota(Box<NetworkQuotaApiRequest>),
+    /// Router
+    Router(Box<NetworkRouterApiRequest>),
+    /// SecurityGroup
+    SecurityGroup(Box<NetworkSecurityGroupApiRequest>),
+    /// SecurityGroupRule
+    SecurityGroupRule(Box<NetworkSecurityGroupRuleApiRequest>),
+    /// Subnet
+    Subnet(Box<NetworkSubnetApiRequest>),
+}
+
+impl From<NetworkApiRequest> for ApiRequest {
+    fn from(item: NetworkApiRequest) -> Self {
+        ApiRequest::Network(item)
+    }
+}
+
+impl From<NetworkNetworkApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkNetworkApiRequest) -> Self {
+        NetworkApiRequest::Network(Box::new(item))
+    }
+}
+
+impl From<NetworkQuotaApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkQuotaApiRequest) -> Self {
+        NetworkApiRequest::Quota(Box::new(item))
+    }
+}
+
+impl From<NetworkRouterApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkRouterApiRequest) -> Self {
+        NetworkApiRequest::Router(Box::new(item))
+    }
+}
+
+impl From<NetworkSecurityGroupApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkSecurityGroupApiRequest) -> Self {
+        NetworkApiRequest::SecurityGroup(Box::new(item))
+    }
+}
+
+impl From<NetworkSecurityGroupRuleApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkSecurityGroupRuleApiRequest) -> Self {
+        NetworkApiRequest::SecurityGroupRule(Box::new(item))
+    }
+}
+
+impl From<NetworkSubnetApiRequest> for NetworkApiRequest {
+    fn from(item: NetworkSubnetApiRequest) -> Self {
+        NetworkApiRequest::Subnet(Box::new(item))
+    }
+}
+
+impl ExecuteApiRequest for NetworkApiRequest {
+    async fn execute_request(
+        &self,
+        session: &mut AsyncOpenStack,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
+    ) -> Result<(), CloudWorkerError> {
+        match self {
+            NetworkApiRequest::Network(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            NetworkApiRequest::Quota(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            NetworkApiRequest::Router(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            NetworkApiRequest::SecurityGroup(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            NetworkApiRequest::SecurityGroupRule(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+            NetworkApiRequest::Subnet(ref req) => {
+                req.execute_request(session, request, app_tx).await?;
+            }
+        }
+        Ok(())
+    }
+}

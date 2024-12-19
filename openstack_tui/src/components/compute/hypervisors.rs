@@ -21,9 +21,10 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
+    cloud_worker::compute::v2::{
+        ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -66,7 +67,9 @@ impl Component for ComputeHypervisors<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::ComputeHypervisors = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeHypervisorApiRequest::List(self.get_filters().clone()),
+                        ComputeHypervisorApiRequest::ListDetailed(Box::new(
+                            self.get_filters().clone(),
+                        )),
                     ))));
                 }
             }
@@ -77,20 +80,19 @@ impl Component for ComputeHypervisors<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeHypervisorApiRequest::List(self.get_filters().clone()),
+                    ComputeHypervisorApiRequest::ListDetailed(Box::new(self.get_filters().clone())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::Hypervisor(
-                        ComputeHypervisorApiRequest::List(_),
-                    )),
+                request: ApiRequest::Compute(ComputeApiRequest::Hypervisor(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let ComputeHypervisorApiRequest::ListDetailed(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             _ => {}
         };

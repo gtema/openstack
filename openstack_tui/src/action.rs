@@ -91,8 +91,9 @@ pub enum Action {
     DeleteBlockStorageVolume,
 
     // Compute (Nova)
-    SetComputeServerListFilters(cloud_types::ComputeServerList),
-    SetComputeServerInstanceActionListFilters(cloud_types::ComputeServerInstanceActionList),
+    SetComputeServerListFilters(Box<cloud_types::ComputeServerList>),
+    SetComputeServerInstanceActionListFilters(Box<cloud_types::ComputeServerInstanceActionList>),
+    SetComputeServerInstanceActionShowFilters(cloud_types::ComputeServerInstanceActionShow),
     /// Show servers provisioned with selected flavor
     ShowComputeServersWithFlavor,
     /// Delete selected server
@@ -132,7 +133,7 @@ pub enum Action {
     //  Users
     // Set ApplicationCredentials filters
     ShowIdentityUserApplicationCredentials,
-    SetIdentityApplicationCredentialListFilters(cloud_types::IdentityApplicationCredentialList),
+    SetIdentityApplicationCredentialListFilters(cloud_types::IdentityUserApplicationCredentialList),
     /// Toggle user enabled property
     IdentityUserFlipEnable,
     /// Remove user

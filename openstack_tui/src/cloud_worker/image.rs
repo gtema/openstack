@@ -13,29 +13,25 @@
 // SPDX-License-Identifier: Apache-2.0
 #![allow(clippy::module_inception)]
 
-use eyre::Result;
-use tokio::sync::mpsc::UnboundedSender;
+use crate::cloud_worker::ConfirmableRequest;
 
-use openstack_sdk::AsyncOpenStack;
+pub mod v2;
 
-use crate::action::Action;
-use crate::cloud_worker::image::types::ImageApiRequest;
-use crate::cloud_worker::types::ExecuteApiRequest;
-use crate::cloud_worker::{ApiRequest, CloudWorkerError};
+pub use v2::*;
 
-pub mod image;
-pub mod types;
-//pub mod v2;
+impl ConfirmableRequest for ImageApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            ImageApiRequest::Image(req) => req.get_confirm_message(),
+        }
+    }
+}
 
-impl ExecuteApiRequest for ImageApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            ImageApiRequest::Image(data) => data.execute_request(session, request, app_tx).await,
+impl ConfirmableRequest for ImageImageApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            ImageImageApiRequest::Delete(req) => req.get_confirm_message(),
+            _ => None,
         }
     }
 }

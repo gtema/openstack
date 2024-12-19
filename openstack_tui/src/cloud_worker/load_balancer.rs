@@ -12,42 +12,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use tokio::sync::mpsc::UnboundedSender;
+//use tokio::sync::mpsc::UnboundedSender;
 
-use openstack_sdk::AsyncOpenStack;
+//use openstack_sdk::AsyncOpenStack;
 
-use crate::action::Action;
-use crate::cloud_worker::ExecuteApiRequest;
-use crate::cloud_worker::LoadBalancerApiRequest;
-use crate::cloud_worker::{ApiRequest, CloudWorkerError};
+//use crate::action::Action;
+//use crate::cloud_worker::ExecuteApiRequest;
+//use crate::cloud_worker::LoadBalancerApiRequest;
+//use crate::cloud_worker::{ApiRequest, CloudWorkerError};
 
-pub mod healthmonitor;
-pub mod listener;
-pub mod loadbalancer;
-pub mod pool;
-pub mod types;
 pub mod v2;
 
-impl ExecuteApiRequest for LoadBalancerApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            LoadBalancerApiRequest::Healthmonitor(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            LoadBalancerApiRequest::Loadbalancer(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            LoadBalancerApiRequest::Listener(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            LoadBalancerApiRequest::Pool(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-        }
-    }
-}
+pub use v2::*;

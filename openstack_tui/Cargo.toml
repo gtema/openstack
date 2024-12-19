@@ -20,6 +20,7 @@ clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "u
 color-eyre = { workspace = true }
 config = { workspace = true, features = ["json", "json5", "yaml"] }
 crossterm = { version = "^0.28", features = ["serde", "event-stream"] }
+derive_builder = { workspace = true }
 derive_deref = "^1.1"
 dirs = { workspace = true }
 eyre = { workspace = true }

@@ -24,58 +24,85 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
-use openstack_sdk::api::compute::v2::quota_set::details::RequestBuilder;
+use openstack_sdk::api::compute::v2::server::os_get_console_output::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
-pub struct ComputeQuotaSetShow {
+pub struct ComputeServerGetConsoleOutput {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
     // Body parameters
-    #[builder(default)]
-    pub user_id: Option<String>,
-    #[builder(default)]
-    pub user_name: Option<String>,
-    // Body parameters
+    /// The action to get console output of the server.
+    ///
+    os_get_console_output: OsGetConsoleOutput,
+}
+/// OsGetConsoleOutput data
+#[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
+#[builder(setter(strip_option))]
+pub struct OsGetConsoleOutput {
+    /// The number of lines to fetch from the end of console log. All lines
+    /// will be returned if this is not specified.
+    ///
+    /// Note
+    ///
+    /// This parameter can be specified as not only ‘integer’ but also
+    /// ‘string’.
+    ///
+    #[builder(default, setter(into))]
+    pub length: Option<Option<i32>>,
 }
 
-impl fmt::Display for ComputeQuotaSetShow {
+impl TryFrom<&OsGetConsoleOutput>
+    for openstack_sdk::api::compute::v2::server::os_get_console_output::OsGetConsoleOutputBuilder
+{
+    type Error = Report;
+    fn try_from(value: &OsGetConsoleOutput) -> Result<Self, Self::Error> {
+        let mut ep_builder = Self::default();
+        if let Some(val) = &value.length {
+            ep_builder.length((*val).map(Into::into));
+        }
+        Ok(ep_builder)
+    }
+}
+impl TryFrom<&OsGetConsoleOutput>
+    for openstack_sdk::api::compute::v2::server::os_get_console_output::OsGetConsoleOutput
+{
+    type Error = Report;
+    fn try_from(value: &OsGetConsoleOutput) -> Result<Self, Self::Error> {
+        let ep_builder: openstack_sdk::api::compute::v2::server::os_get_console_output::OsGetConsoleOutputBuilder = TryFrom::try_from(value)?;
+        ep_builder
+            .build()
+            .wrap_err("cannot prepare request element `OsGetConsoleOutput`")
+    }
+}
+
+impl fmt::Display for ComputeServerGetConsoleOutput {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut parts: Vec<String> = Vec::new();
         parts.push(format!(
             "name/id: {}",
             self.name.clone().unwrap_or(self.id.clone())
         ));
-        if self.user_id.is_some() || self.user_name.is_some() {
-            parts.push(format!(
-                "user: {}",
-                self.user_name
-                    .as_ref()
-                    .or(self.user_id.as_ref())
-                    .unwrap_or(&String::default())
-            ));
-        }
-
         write!(f, "{}", parts.join(","))
     }
 }
 
-impl TryFrom<&ComputeQuotaSetShow> for RequestBuilder<'_> {
+impl TryFrom<&ComputeServerGetConsoleOutput> for RequestBuilder<'_> {
     type Error = Report;
-    fn try_from(value: &ComputeQuotaSetShow) -> Result<Self, Self::Error> {
+    fn try_from(value: &ComputeServerGetConsoleOutput) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
         ep_builder.id(value.id.clone());
-        if let Some(val) = &value.user_id {
-            ep_builder.user_id(val.clone());
-        }
+        ep_builder.os_get_console_output(TryInto::<
+            openstack_sdk::api::compute::v2::server::os_get_console_output::OsGetConsoleOutput,
+        >::try_into(&value.os_get_console_output)?);
 
         Ok(ep_builder)
     }
 }
 
-impl ExecuteApiRequest for ComputeQuotaSetShow {
+impl ExecuteApiRequest for ComputeServerGetConsoleOutput {
     async fn execute_request(
         &self,
         session: &mut AsyncOpenStack,

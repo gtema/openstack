@@ -21,9 +21,11 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionList,
+    cloud_worker::compute::v2::{
+        ComputeApiRequest, ComputeServerApiRequest, ComputeServerInstanceActionApiRequest,
+        ComputeServerInstanceActionShow,
     },
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -49,7 +51,7 @@ pub struct ServerInstanceActionEventData {
 }
 
 pub type ComputeServerInstanceActionEvents<'a> =
-    TableViewComponentBase<'a, ServerInstanceActionEventData, ComputeServerInstanceActionList>;
+    TableViewComponentBase<'a, ServerInstanceActionEventData, ComputeServerInstanceActionShow>;
 
 impl Component for ComputeServerInstanceActionEvents<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -77,33 +79,36 @@ impl Component for ComputeServerInstanceActionEvents<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    ComputeServerApiRequest::InstanceActionShow(self.get_filters().clone()),
+                    ComputeServerInstanceActionApiRequest::Get(Box::new(
+                        self.get_filters().clone(),
+                    )),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponseData {
-                request:
-                    ApiRequest::Compute(ComputeApiRequest::Server(
-                        ComputeServerApiRequest::InstanceActionShow(_),
-                    )),
+                request: ApiRequest::Compute(ComputeApiRequest::Server(req)),
                 data,
             } => {
-                if let Some(events) = data.get("events") {
-                    if let Some(ar) = events.as_array() {
-                        self.set_data(ar.to_vec())?;
+                if let ComputeServerApiRequest::InstanceAction(x) = *req {
+                    if let ComputeServerInstanceActionApiRequest::Get(_) = *x {
+                        if let Some(events) = data.get("events") {
+                            if let Some(ar) = events.as_array() {
+                                self.set_data(ar.to_vec())?;
+                            }
+                        }
                     }
                 }
             }
-            Action::SetComputeServerInstanceActionListFilters(filters) => {
-                if filters.request_id.is_some() {
-                    self.set_filters(filters);
-                    self.set_loading(true);
-                    return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        ComputeServerApiRequest::InstanceActionShow(self.get_filters().clone()),
-                    ))));
-                }
+            Action::SetComputeServerInstanceActionShowFilters(req) => {
+                self.set_filters(req);
+                self.set_loading(true);
+                return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
+                    ComputeServerInstanceActionApiRequest::Get(Box::new(
+                        self.get_filters().clone(),
+                    )),
+                ))));
             }
 
             _ => {}

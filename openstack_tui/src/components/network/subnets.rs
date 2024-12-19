@@ -21,9 +21,8 @@ use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::types::{
-        ApiRequest, NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList,
-    },
+    cloud_worker::network::v2::{NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList},
+    cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
@@ -49,6 +48,25 @@ pub struct SubnetData {
 
 pub type NetworkSubnets<'a> = TableViewComponentBase<'a, SubnetData, NetworkSubnetList>;
 
+impl NetworkSubnets<'_> {
+    /// Normalize filters
+    ///
+    /// Add preferred sorting
+    fn normalize_filters(&self, mut filters: NetworkSubnetList) -> NetworkSubnetList {
+        if filters.sort_key.is_none() {
+            filters.sort_key = Some(Vec::from(["name".into()]));
+            filters.sort_dir = Some(Vec::from(["asc".into()]));
+        }
+        filters
+    }
+
+    /// Normalized filters
+    fn normalized_filters(&self) -> NetworkSubnetList {
+        self.normalize_filters(self.get_filters().clone())
+            .to_owned()
+    }
+}
+
 impl Component for NetworkSubnets<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
         self.set_config(config)
@@ -68,7 +86,7 @@ impl Component for NetworkSubnets<'_> {
                 self.set_data(Vec::new())?;
                 if let Mode::NetworkSubnets = current_mode {
                     return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                        NetworkSubnetApiRequest::List(self.get_filters().clone()),
+                        NetworkSubnetApiRequest::List(Box::new(self.normalized_filters())),
                     ))));
                 }
             }
@@ -79,18 +97,19 @@ impl Component for NetworkSubnets<'_> {
             | Action::Refresh => {
                 self.set_loading(true);
                 return Ok(Some(Action::PerformApiRequest(ApiRequest::from(
-                    NetworkSubnetApiRequest::List(self.get_filters().clone()),
+                    NetworkSubnetApiRequest::List(Box::new(self.normalized_filters())),
                 ))));
             }
             Action::DescribeApiResponse => self.describe_selected_entry()?,
             Action::Tick => self.app_tick()?,
             Action::Render => self.render_tick()?,
             Action::ApiResponsesData {
-                request:
-                    ApiRequest::Network(NetworkApiRequest::Subnet(NetworkSubnetApiRequest::List(_))),
+                request: ApiRequest::Network(NetworkApiRequest::Subnet(req)),
                 data,
             } => {
-                self.set_data(data)?;
+                if let NetworkSubnetApiRequest::List(_) = *req {
+                    self.set_data(data)?;
+                }
             }
             Action::SetNetworkSubnetListFilters(filters) => {
                 self.set_filters(filters);

@@ -13,45 +13,6 @@
 // SPDX-License-Identifier: Apache-2.0
 #![allow(clippy::module_inception)]
 
-use eyre::Result;
-use tokio::sync::mpsc::UnboundedSender;
-
-use openstack_sdk::AsyncOpenStack;
-
-use crate::action::Action;
-use crate::cloud_worker::ExecuteApiRequest;
-use crate::cloud_worker::{ApiRequest, CloudWorkerError};
-
-pub mod network;
-pub mod quota;
-pub mod router;
-pub mod security_group;
-pub mod security_group_rule;
-pub mod subnet;
-pub mod types;
 pub mod v2;
 
-use types::*;
-impl ExecuteApiRequest for NetworkApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            NetworkApiRequest::Network(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            NetworkApiRequest::Quota(data) => data.execute_request(session, request, app_tx).await,
-            NetworkApiRequest::Router(data) => data.execute_request(session, request, app_tx).await,
-            NetworkApiRequest::SecurityGroup(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            NetworkApiRequest::SecurityGroupRule(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            NetworkApiRequest::Subnet(data) => data.execute_request(session, request, app_tx).await,
-        }
-    }
-}
+pub use v2::*;

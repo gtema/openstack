@@ -12,45 +12,26 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use eyre::Result;
-use tokio::sync::mpsc::UnboundedSender;
+use crate::cloud_worker::ConfirmableRequest;
 
-use openstack_sdk::AsyncOpenStack;
-
-use crate::action::Action;
-use crate::cloud_worker::common::CloudWorkerError;
-use crate::cloud_worker::types::ExecuteApiRequest;
-use crate::cloud_worker::ApiRequest;
-
-pub mod aggregate;
-pub mod flavor;
-pub mod hypervisor;
-pub mod quota_set;
-pub mod server;
-pub mod types;
 pub mod v2;
 
-use types::*;
+pub use v2::*;
 
-impl ExecuteApiRequest for ComputeApiRequest {
-    async fn execute_request(
-        &self,
-        session: &mut AsyncOpenStack,
-        request: &ApiRequest,
-        app_tx: &UnboundedSender<Action>,
-    ) -> Result<(), CloudWorkerError> {
-        match self {
-            ComputeApiRequest::Aggregate(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            ComputeApiRequest::Flavor(data) => data.execute_request(session, request, app_tx).await,
-            ComputeApiRequest::Hypervisor(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            ComputeApiRequest::QuotaSet(data) => {
-                data.execute_request(session, request, app_tx).await
-            }
-            ComputeApiRequest::Server(data) => data.execute_request(session, request, app_tx).await,
+impl ConfirmableRequest for ComputeApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            ComputeApiRequest::Server(req) => req.get_confirm_message(),
+            _ => None,
+        }
+    }
+}
+
+impl ConfirmableRequest for ComputeServerApiRequest {
+    fn get_confirm_message(&self) -> Option<String> {
+        match &self {
+            ComputeServerApiRequest::Delete(x) => x.get_confirm_message(),
+            _ => None,
         }
     }
 }
