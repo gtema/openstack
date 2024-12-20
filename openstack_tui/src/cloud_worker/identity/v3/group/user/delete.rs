@@ -35,11 +35,9 @@ pub struct IdentityGroupUserDelete {
     pub group_id: String,
     #[builder(default)]
     pub group_name: Option<String>,
-    // Body parameters
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityGroupUserDelete {
