@@ -28,10 +28,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Routers";
+const VIEW_CONFIG_KEY: &str = "network.router";
 
 #[derive(Deserialize, StructTable)]
 pub struct RouterData {
@@ -47,6 +48,12 @@ pub struct RouterData {
     #[structable(title = "Updated")]
     #[serde(rename = "updated_at")]
     updated: String,
+}
+
+impl ResourceKey for RouterData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type NetworkRouters<'a> = TableViewComponentBase<'a, RouterData, NetworkRouterList>;

@@ -31,7 +31,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const ITEM_HEIGHT: usize = 1;
@@ -49,11 +49,11 @@ where
     T: StructTable,
     Vec<T>: StructTable,
     T: DeserializeOwned,
+    T: ResourceKey,
     F: Default + Display,
 {
     command_tx: Option<UnboundedSender<Action>>,
-    config: Config,
-    output_config: OutputConfig,
+    pub config: Config,
 
     state: TableState,
     scroll_state: ScrollbarState,
@@ -79,6 +79,7 @@ where
     T: StructTable,
     Vec<T>: StructTable,
     T: DeserializeOwned,
+    T: ResourceKey,
     F: Default + Display,
 {
     fn default() -> Self {
@@ -91,6 +92,7 @@ where
     T: StructTable,
     Vec<T>: StructTable,
     T: DeserializeOwned,
+    T: ResourceKey,
     F: Default + Display,
 {
     pub fn new() -> Self {
@@ -104,7 +106,6 @@ where
             scroll_state: ScrollbarState::new(0),
             column_widths: Vec::new(),
             content_size: Size::new(0, 0),
-            output_config: OutputConfig::default(),
             table_headers: Row::default(),
             table_rows: Vec::new(),
             table_row_styles: Vec::new(),
@@ -126,6 +127,10 @@ where
 
     pub fn get_command_tx(&self) -> Option<&UnboundedSender<Action>> {
         self.command_tx.as_ref()
+    }
+
+    pub fn get_output_config(&mut self) -> &mut OutputConfig {
+        self.config.views.entry(T::get_key().into()).or_default()
     }
 
     pub fn set_command_tx(&mut self, tx: UnboundedSender<Action>) -> Result<(), TuiError> {
@@ -332,7 +337,8 @@ where
 
     /// Synchronize table data from internal vector of typed entries
     pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
-        let (table_headers, table_rows) = self.items.build(&self.output_config);
+        let view_config = self.get_output_config().clone();
+        let (table_headers, table_rows) = self.items.build(&view_config);
         let mut statuses = self.items.status();
 
         // Ensure we have as many statuses as rows to zip them properly

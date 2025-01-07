@@ -30,13 +30,14 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "SecurityGroups";
+const VIEW_CONFIG_KEY: &str = "network.security_group";
 
 #[derive(Deserialize, StructTable)]
-pub struct NetworkData {
+pub struct SecurityGroupData {
     #[structable(title = "Id", wide)]
     id: String,
     #[structable(title = "Name")]
@@ -49,8 +50,14 @@ pub struct NetworkData {
     updated: String,
 }
 
+impl ResourceKey for SecurityGroupData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+}
+
 pub type NetworkSecurityGroups<'a> =
-    TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupList>;
+    TableViewComponentBase<'a, SecurityGroupData, NetworkSecurityGroupList>;
 
 impl NetworkSecurityGroups<'_> {
     /// Normalize filters

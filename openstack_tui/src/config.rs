@@ -13,8 +13,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use std::{
-    collections::{BTreeMap, HashMap},
-    path::PathBuf,
+    collections::{BTreeMap, BTreeSet, HashMap},
+    path::{Path, PathBuf},
 };
 
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
@@ -22,10 +22,14 @@ use derive_deref::{Deref, DerefMut};
 use eyre::Result;
 use ratatui::style::{palette::tailwind, Color};
 use serde::{de::Deserializer, Deserialize};
+use std::fmt;
+use tracing::error;
+
+use thiserror::Error;
 
 use crate::{action::Action, mode::Mode};
 
-const CONFIG: &str = include_str!("../.config/config.json5");
+const CONFIG: &str = include_str!("../.config/config.yaml");
 
 #[derive(Clone, Debug, Deserialize, Default)]
 pub struct AppConfig {
@@ -48,57 +52,165 @@ pub struct Config {
     pub mode_aliases: BTreeMap<String, Mode>,
     #[serde(default)]
     pub styles: Styles,
+    #[serde(default)]
+    pub views: HashMap<String, ViewConfig>,
+}
+
+/// Errors which may occur when dealing with OpenStack connection
+/// configuration data.
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum ConfigError {
+    #[error("failed to deserialize config: {}", source)]
+    Parse {
+        /// The source of the error.
+        #[from]
+        source: config::ConfigError,
+    },
+}
+
+impl ConfigError {
+    pub fn parse(source: config::ConfigError) -> Self {
+        ConfigError::Parse { source }
+    }
+}
+
+/// Errors which may occur when adding sources to the [`ConfigFileBuilder`].
+#[derive(Error)]
+#[non_exhaustive]
+pub enum ConfigFileBuilderError {
+    #[error("Failed to parse file {path:?}: {source}")]
+    FileParse {
+        source: Box<config::ConfigError>,
+        builder: ConfigFileBuilder,
+        path: PathBuf,
+    },
+    #[error("Failed to deserialize config {path:?}: {source}")]
+    ConfigDeserialize {
+        source: Box<config::ConfigError>,
+        builder: ConfigFileBuilder,
+        path: PathBuf,
+    },
+}
+
+/// A builder to create a [`ConfigFile`] by specifying which files to load.
+pub struct ConfigFileBuilder {
+    sources: Vec<config::Config>,
+}
+
+impl ConfigFileBuilder {
+    /// Add a source to the builder. This will directly parse the config and check if it is valid.
+    /// Values of sources added first will be overridden by later added sources, if the keys match.
+    /// In other words, the sources will be merged, with the later taking precedence over the
+    /// earlier ones.
+    pub fn add_source(mut self, source: impl AsRef<Path>) -> Result<Self, ConfigFileBuilderError> {
+        let config = match config::Config::builder()
+            .add_source(config::File::from(source.as_ref()))
+            .build()
+        {
+            Ok(config) => config,
+            Err(error) => {
+                return Err(ConfigFileBuilderError::FileParse {
+                    source: Box::new(error),
+                    builder: self,
+                    path: source.as_ref().to_owned(),
+                })
+            }
+        };
+
+        if let Err(error) = config.clone().try_deserialize::<Config>() {
+            return Err(ConfigFileBuilderError::ConfigDeserialize {
+                source: Box::new(error),
+                builder: self,
+                path: source.as_ref().to_owned(),
+            });
+        }
+
+        self.sources.push(config);
+        Ok(self)
+    }
+
+    /// This will build a [`ConfigFile`] with the previously specified sources. Since
+    /// the sources have already been checked on errors, this will not fail.
+    pub fn build(self) -> Config {
+        let mut config = config::Config::builder();
+
+        for source in self.sources {
+            config = config.add_source(source);
+        }
+
+        config.build().unwrap().try_deserialize().unwrap()
+    }
+}
+
+impl fmt::Debug for ConfigFileBuilderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ConfigFileBuilderError::FileParse {
+                ref source,
+                ref path,
+                ..
+            } => f
+                .debug_struct("FileParse")
+                .field("source", source)
+                .field("path", path)
+                .finish_non_exhaustive(),
+            ConfigFileBuilderError::ConfigDeserialize {
+                ref source,
+                ref path,
+                ..
+            } => f
+                .debug_struct("ConfigDeserialize")
+                .field("source", source)
+                .field("path", path)
+                .finish_non_exhaustive(),
+        }
+    }
 }
 
 impl Config {
-    pub fn new() -> Result<Self, config::ConfigError> {
-        let default_config: Config = json5::from_str(CONFIG).unwrap();
-        let data_dir = crate::utils::get_data_dir();
+    pub fn new() -> Result<Self, ConfigError> {
+        let default_config: config::Config = config::Config::builder()
+            .add_source(config::File::from_str(CONFIG, config::FileFormat::Yaml))
+            .build()?;
+
         let config_dir = crate::utils::get_config_dir();
-        let mut builder = config::Config::builder()
-            .set_default("_data_dir", data_dir.to_str().unwrap())?
-            .set_default("_config_dir", config_dir.to_str().unwrap())?;
+        let mut builder = ConfigFileBuilder {
+            sources: Vec::from([default_config]),
+        };
 
         let config_files = [
-            ("config.json5", config::FileFormat::Json5),
-            ("config.json", config::FileFormat::Json),
             ("config.yaml", config::FileFormat::Yaml),
+            ("views.yaml", config::FileFormat::Yaml),
         ];
         let mut found_config = false;
-        for (file, format) in &config_files {
-            builder = builder.add_source(
-                config::File::from(config_dir.join(file))
-                    .format(*format)
-                    .required(false),
-            );
+        for (file, _format) in &config_files {
             if config_dir.join(file).exists() {
-                found_config = true
+                found_config = true;
+
+                builder = match builder.add_source(config_dir.join(file)) {
+                    Ok(builder) => builder,
+                    Err(ConfigFileBuilderError::FileParse { source, .. }) => {
+                        return Err(ConfigError::parse(*source));
+                    }
+                    Err(ConfigFileBuilderError::ConfigDeserialize {
+                        source,
+                        builder,
+                        path,
+                    }) => {
+                        error!(
+                        "The file {path:?} could not be deserialized and will be ignored: {source}"
+                    );
+                        builder
+                    }
+                }
             }
         }
         if !found_config {
             tracing::error!("No configuration file found. Application may not behave as expected");
         }
 
-        let mut cfg: Self = builder.build()?.try_deserialize()?;
-
-        for (mode, default_bindings) in default_config.mode_keybindings.iter() {
-            let user_bindings = cfg.mode_keybindings.entry(*mode).or_default();
-            for (key, cmd) in default_bindings.iter() {
-                user_bindings
-                    .entry(key.clone())
-                    .or_insert_with(|| cmd.clone());
-            }
-        }
-        for (key, cmd) in default_config.global_keybindings.iter() {
-            cfg.global_keybindings
-                .entry(key.clone())
-                .or_insert_with(|| cmd.clone());
-        }
-
-        for (key, mode) in default_config.mode_aliases.iter() {
-            cfg.mode_aliases.entry(key.clone()).or_insert_with(|| *mode);
-        }
-        Ok(cfg)
+        Ok(builder.build())
     }
 }
 
@@ -142,6 +254,15 @@ impl<'de> Deserialize<'de> for KeyBindings {
 
         Ok(KeyBindings(keybindings))
     }
+}
+
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct ViewConfig {
+    /// List of fields to be shown
+    pub fields: BTreeSet<String>,
+    /// Wide mode (additional fields requested)
+    #[serde(default)]
+    pub wide: bool,
 }
 
 fn parse_key_event(raw: &str) -> Result<KeyEvent, String> {
@@ -377,18 +498,6 @@ pub fn parse_key_sequence(raw: &str) -> Result<Vec<KeyEvent>, String> {
 
     sequences.into_iter().map(parse_key_event).collect()
 }
-
-//impl<'de> Deserialize<'de> for Mode {
-//    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-//    where
-//        D: Deserializer<'de>,
-//    {
-//        let parsed = String::deserialize(deserializer)?;
-//        let mode = Mode::try_from(parsed)?;
-//
-//        Ok(mode)
-//    }
-//}
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Styles {

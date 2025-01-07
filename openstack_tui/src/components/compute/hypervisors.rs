@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Compute Hypervisors";
+const VIEW_CONFIG_KEY: &str = "compute.hypervisor";
 
 #[derive(Deserialize, StructTable)]
 pub struct HypervisorData {
@@ -44,6 +45,12 @@ pub struct HypervisorData {
     status: String,
     #[structable(title = "State")]
     state: String,
+}
+
+impl ResourceKey for HypervisorData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type ComputeHypervisors<'a> = TableViewComponentBase<'a, HypervisorData, ComputeHypervisorList>;

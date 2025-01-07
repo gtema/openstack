@@ -29,13 +29,14 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "SecurityGroupRules";
+const VIEW_CONFIG_KEY: &str = "network.security_group_rule";
 
 #[derive(Deserialize, StructTable)]
-pub struct NetworkData {
+pub struct SecurityGroupRuleData {
     #[structable(title = "Id", wide)]
     id: String,
     #[serde(default, deserialize_with = "as_string")]
@@ -55,8 +56,14 @@ pub struct NetworkData {
     port_range_max: String,
 }
 
+impl ResourceKey for SecurityGroupRuleData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
+}
+
 pub type NetworkSecurityGroupRules<'a> =
-    TableViewComponentBase<'a, NetworkData, NetworkSecurityGroupRuleList>;
+    TableViewComponentBase<'a, SecurityGroupRuleData, NetworkSecurityGroupRuleList>;
 
 impl NetworkSecurityGroupRules<'_> {
     /// Normalize filters

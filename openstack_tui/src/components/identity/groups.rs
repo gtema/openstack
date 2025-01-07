@@ -30,10 +30,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Identity Groups";
+const VIEW_CONFIG_KEY: &str = "identity.group";
 
 /// Group resource data
 #[derive(Deserialize, StructTable)]
@@ -50,6 +51,12 @@ pub struct GroupData {
     /// Group description
     #[structable(title = "Description")]
     description: String,
+}
+
+impl ResourceKey for GroupData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupData, IdentityGroupList>;

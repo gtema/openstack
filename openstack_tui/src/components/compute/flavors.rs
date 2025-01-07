@@ -27,10 +27,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Compute Flavors";
+const VIEW_CONFIG_KEY: &str = "compute.flavor";
 
 #[derive(Deserialize, StructTable)]
 pub struct FlavorData {
@@ -47,6 +48,12 @@ pub struct FlavorData {
     disk: String,
     #[serde(rename = "OS-FLV-DISABLED:disabled", deserialize_with = "as_string")]
     disabled: String,
+}
+
+impl ResourceKey for FlavorData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorList>;

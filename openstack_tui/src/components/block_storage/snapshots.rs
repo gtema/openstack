@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Snapshots";
+const VIEW_CONFIG_KEY: &str = "block_storage.snapshot";
 
 #[derive(Deserialize, StructTable)]
 pub struct SnapshotData {
@@ -44,6 +45,12 @@ pub struct SnapshotData {
     status: String,
     #[structable(title = "Created")]
     created_at: String,
+}
+
+impl ResourceKey for SnapshotData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type BlockStorageSnapshots<'a> =

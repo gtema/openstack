@@ -1,0 +1,372 @@
+---
+# Mode keybindings in the following form
+#  <Mode>:
+#    <shortcut>:
+#       action: <ACTION TO PERFORM>
+#       description: <DESCRIPTION USED IN TUI>
+mode_keybindings:
+  Home: {}
+  # Block Storage views
+  BlockStorageBackups:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  BlockStorageSnapshots:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  BlockStorageVolumes:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "ctrl-d":
+      action: DeleteBlockStorageVolume
+      description: Delete
+  # Compute views
+  ComputeAggregates:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  ComputeServers:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "0":
+      action:
+        SetComputeServerListFilters: {}
+      description: Default filters
+      type: Filter
+    "1":
+      action:
+        SetComputeServerListFilters: {"all_tenants": "true"}
+      description: All tenants (admin)
+      type: Filter
+    "ctrl-d":
+      action: DeleteComputeServer
+      description: Delete
+    "c":
+      action: ShowServerConsoleOutput
+      description: Console output
+    "a":
+      action: ShowComputeServerInstanceActions
+      description: Instance actions
+  ComputeServerInstanceActions:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "e":
+      action: ShowComputeServerInstanceActionEvents
+      description: Events
+  ComputeFlavors:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "s":
+      action: ShowComputeServersWithFlavor
+      description: Servers
+  ComputeHypervisors:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  # DNS views
+  DnsRecordsets:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "0":
+      action:
+        SetDnsRecordsetListFilters: {}
+      description: Default filters
+      type: Filter
+  DnsZones:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "r":
+      action: ShowDnsZoneRecordsets
+      description: Recordsets
+    "ctrl-d":
+      action: DeleteDnsZone
+      description: Delete
+  # Identity views
+  IdentityApplicationCredentials:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  IdentityGroups:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "u":
+      action: ShowIdentityGroupUsers
+      description: Group users
+    "d":
+      action: IdentityGroupDelete
+      description: Delete (todo!)
+    "a":
+      action: IdentityGroupCreate
+      description: Create new group (todo!)
+  IdentityGroupUsers:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "a":
+      action: IdentityGroupUserAdd
+      description: Add new user into group (todo!)
+    "r":
+      action: IdentityGroupUserRemove
+      description: Remove user from group (todo!)
+  IdentityProjects:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "s":
+      action: SwitchToProject
+      description: Switch to project
+  IdentityUsers:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "e":
+      action: IdentityUserFlipEnable
+      description: Enable/Disable user
+    "r":
+      action: IdentityUserDelete
+      description: Delete user (todo!)
+    "a":
+      action: IdentityUserCreate
+      description: Create new user (todo!)
+    "p":
+      action: IdentityUserSetPassword
+      description: Set user password (todo!)
+    "c":
+      action: ShowIdentityUserApplicationCredentials
+      description: Application credentials
+  # Image views
+  ImageImages:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "0":
+      action:
+        SetImageListFilters: {}
+      description: Default filters
+      type: Filter
+    "1":
+      action:
+        SetImageListFilters: {"visibility": "public"}
+      description: public
+      type: Filter
+    "2":
+      action:
+        SetImageListFilters: {"visibility": "shared"}
+      description: shared
+      type: Filter
+    "3":
+      action:
+        SetImageListFilters: {"visibility": "private"}
+      description: private
+      type: Filter
+    "ctrl-d":
+      action: DeleteImage
+      description: Delete
+  # LoadBalancer views
+  LoadBalancers:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "l":
+      action: ShowLoadBalancerListeners
+      description: Listeners
+    "p":
+      action: ShowLoadBalancerPools
+      description: Pools
+  LoadBalancerListeners:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  LoadBalancerPools:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "<enter>":
+      action: ShowLoadBalancerPoolMembers
+      description: Members
+    "h":
+      action: ShowLoadBalancerPoolHealthMonitors
+      description: HealthMonitors
+  LoadBalancerPoolMembers:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  LoadBalancerHealthMonitors:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  # Network views
+  NetworkNetworks:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "<enter>":
+      action: ShowNetworkSubnets
+      description: Subnets
+  NetworkRouters:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+  NetworkSubnets:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "0":
+      action:
+        SetNetworkSubnetListFilters: {}
+      description: All
+      type: Filter
+  NetworkSecurityGroups:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "l":
+      action: ShowNetworkSecurityGroupRules
+      description: Rules
+  NetworkSecurityGroupRules:
+    "y":
+      action: DescribeApiResponse
+      description: YAML
+    "0":
+      action:
+        SetNetworkSecurityGroupRuleListFilters: {}
+      description: All
+      type: Filter
+# Global keybindings
+# <KEYBINDING>:
+#   action: <ACTION>
+#   description: <TEXT>
+global_keybindings:
+  "<q>":
+    action: Quit
+    description: Quit
+  "<Ctrl-c>":
+    action: Quit
+    description: Quit
+  "<Ctrl-z>":
+    action: Suspend
+    description: Suspend
+  "F1":
+    action:
+      Mode:
+        mode: Home
+        stack: false
+    description: Home
+  "F2":
+    action: CloudSelect
+    description: Select cloud
+  ":":
+    action: ApiRequestSelect
+    description: Select resource
+  "<F4>":
+    action: SelectProject
+    description: Select project
+  "<ctrl-r>":
+    action: Refresh
+    description: Reload data
+# Mode aliases
+# <ALIAS>: <MODE>
+mode_aliases:
+  "aggregates (compute)": "ComputeAggregates"
+  "application credentials (identity)": "IdentityApplicationCredentials"
+  "backups": "BlockStorageBackups"
+  "flavors": "ComputeFlavors"
+  "groups (identity)": "IdentityGroups"
+  "host-aggregates (compute)": "ComputeAggregates"
+  "hypervisors (compute)": "ComputeHypervisors"
+  "images": "ImageImages"
+  "loadbalancers": "LoadBalancers"
+  "lb (loadbalancers)": "LoadBalancers"
+  "listeners (loadbalancer)": "LoadBalancerListeners"
+  "lbl (loadbalancer listeners)": "LoadBalancerListeners"
+  "pool (loadbalancer)": "LoadBalancerPools"
+  "lbp (loadbalancer pools)": "LoadBalancerPools"
+  "healthmonitors (loadbalancer)": "LoadBalancerHealthMonitors"
+  "lbhm (loadbalancer health monitors)": "LoadBalancerHealthMonitors"
+  "nets": "NetworkNetworks"
+  "networks": "NetworkNetworks"
+  "projects": "IdentityProjects"
+  "recordsets (dns)": "DnsRecordsets"
+  "routers": "NetworkRouters"
+  "security groups (network)": "NetworkSecurityGroups"
+  "security group rules (network)": "NetworkSecurityGroupRules"
+  "servers": "ComputeServers"
+  "sg": "NetworkSecurityGroups"
+  "sgr": "NetworkSecurityGroupRules"
+  "snapshots": "BlockStorageSnapshots"
+  "subnets (network)": "NetworkSubnets"
+  "volumes": "BlockStorageVolumes"
+  "users": "IdentityUsers"
+  "zones (dns)": "DnsZones"
+# View output
+# <RESOURCE_KEY>:
+#   fields: <ARRAY OF COLUMNS TO SHOW>
+#   wide: true
+views:
+  # Block Storage
+  block_storage.backup:
+    fields: [Id, Name, AZ, Size, Status, Created]
+  block_storage.snapshots:
+    fields: [Id, Name, Status, Created]
+  block_storage.volume:
+    fields: [Id, Name, AZ, Size, Status, Updated]
+  # Compute
+  compute.aggregate:
+    fields: [Name, UUID, AZ, Updated]
+  compute.flavor:
+    fields: [Id, Name, vCPU, ram, disk, disabled]
+  compute.hypervisor:
+    fields: [IP, Hostname,Status, State]
+  compute.server/instance_action/event:
+    fields: [Event, Result, Started, Finished, Host]
+  compute.server/instance_action:
+    fields: [Id, Action, Message, Started, User, "Server ID"]
+  compute.server:
+    fields: [Id, Name, Status, Created, Updated]
+  # DNS
+  dns.recordset:
+    fields: [Id, Name, Status, Created, Updated]
+  dns.zone:
+    fields: [Id, Name, Status, Created, Updated]
+  # Identity
+  identity.group:
+    fields: [Id, Name, Domain, Description]
+  identity.project:
+    fields: [Id, Name, "Parent ID", Enabled, "Domain ID"]
+  identity.user/application_credential:
+    fields: [Id, Name, "Expires at", "Unrestricted"]
+  identity.user:
+    fields: [Name, Domain, Enabled, Email, "Pwd expiry"]
+  # Image
+  image.image:
+    fields: [Id, Name, Distro, Version, Arch, Visibility]
+  # Load Balancer
+  load-balancer.healthmonitor:
+    fields: [Id, Name, Status, Type]
+  load-balancer.listener:
+    fields: [Id, Name, Status, Protocol, Port]
+  load-balancer.loadbalancer:
+    fields: [Id, Name, Status, Address]
+  load-balancer.pool/member:
+    fields: [Id, Name, Status, Port]
+  load-balancer.pool:
+    fields: [Id, Name, Status, Protocol]
+  # Network
+  network.network:
+    fields: [Id, Name, Status, Created, Updated]
+  network.router:
+    fields: [Id, Name, Status, Created, Updated]
+  network.subnet:
+    fields: [Id, Name, Cidr, Description, Created]
+  network.security_group_rule:
+    fields: [Id, Ethertype, Direction, Protocol, "Range Min", "Range Max"]
+  network.security_group:
+    fields: [Id, Name, Created, Updated]

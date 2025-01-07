@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Networks";
+const VIEW_CONFIG_KEY: &str = "network.network";
 
 #[derive(Deserialize, StructTable)]
 pub struct NetworkData {
@@ -48,6 +49,12 @@ pub struct NetworkData {
     #[structable(title = "Updated")]
     #[serde(rename = "updated_at")]
     updated: String,
+}
+
+impl ResourceKey for NetworkData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkList>;

@@ -31,10 +31,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Volumes";
+const VIEW_CONFIG_KEY: &str = "block_storage.volume";
 
 #[derive(Deserialize, StructTable)]
 pub struct VolumeData {
@@ -50,6 +51,12 @@ pub struct VolumeData {
     status: String,
     #[structable(title = "Updated")]
     updated_at: String,
+}
+
+impl ResourceKey for VolumeData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type BlockStorageVolumes<'a> = TableViewComponentBase<'a, VolumeData, BlockStorageVolumeList>;
