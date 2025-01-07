@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Images";
+const VIEW_CONFIG_KEY: &str = "image.image";
 
 #[derive(Deserialize, StructTable)]
 pub struct ImageData {
@@ -52,6 +53,12 @@ pub struct ImageData {
     #[structable(title = "Visibility")]
     #[serde(rename = "visibility", default)]
     visibility: String,
+}
+
+impl ResourceKey for ImageData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type Images<'a> = TableViewComponentBase<'a, ImageData, ImageImageList>;

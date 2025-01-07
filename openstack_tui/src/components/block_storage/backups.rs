@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Backups";
+const VIEW_CONFIG_KEY: &str = "block_storage.backup";
 
 #[derive(Deserialize, StructTable)]
 pub struct BackupData {
@@ -53,6 +54,12 @@ pub struct BackupData {
     #[structable(title = "Created")]
     #[serde(default)]
     created_at: String,
+}
+
+impl ResourceKey for BackupData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type BlockStorageBackups<'a> = TableViewComponentBase<'a, BackupData, BlockStorageBackupList>;

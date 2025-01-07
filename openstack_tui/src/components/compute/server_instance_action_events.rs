@@ -30,10 +30,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "InstanceAction Events";
+const VIEW_CONFIG_KEY: &str = "compute.server/instance_action/event";
 
 #[derive(Deserialize, StructTable)]
 pub struct ServerInstanceActionEventData {
@@ -48,6 +49,12 @@ pub struct ServerInstanceActionEventData {
     finish_time: Option<String>,
     #[structable(title = "Host", optional)]
     host: Option<String>,
+}
+
+impl ResourceKey for ServerInstanceActionEventData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type ComputeServerInstanceActionEvents<'a> =

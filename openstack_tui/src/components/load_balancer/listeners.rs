@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "LB Listeners";
+const VIEW_CONFIG_KEY: &str = "load-balancer.listener";
 
 #[derive(Deserialize, StructTable)]
 pub struct ListenerData {
@@ -46,6 +47,12 @@ pub struct ListenerData {
     protocol: String,
     #[structable(title = "Port")]
     protocol_port: usize,
+}
+
+impl ResourceKey for ListenerData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type LoadBalancerListeners<'a> =

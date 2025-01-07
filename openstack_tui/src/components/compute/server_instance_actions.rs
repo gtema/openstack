@@ -30,10 +30,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "ServerInstanceAction Actions";
+const VIEW_CONFIG_KEY: &str = "compute.server/instance_action";
 
 #[derive(Deserialize, StructTable)]
 pub struct ServerInstanceActionData {
@@ -50,6 +51,12 @@ pub struct ServerInstanceActionData {
     user_id: String,
     #[structable(title = "Server ID", wide)]
     instance_uuid: String,
+}
+
+impl ResourceKey for ServerInstanceActionData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type ComputeServerInstanceActions<'a> =

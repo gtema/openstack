@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Compute Aggregates";
+const VIEW_CONFIG_KEY: &str = "compute.aggregate";
 
 #[derive(Deserialize, StructTable)]
 pub struct AggregateData {
@@ -44,6 +45,12 @@ pub struct AggregateData {
     availability_zone: String,
     #[structable(title = "Updated")]
     updated_at: String,
+}
+
+impl ResourceKey for AggregateData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type ComputeAggregates<'a> = TableViewComponentBase<'a, AggregateData, ComputeAggregateList>;

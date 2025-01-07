@@ -30,10 +30,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "LB Pools";
+const VIEW_CONFIG_KEY: &str = "load-balancer.pool";
 
 #[derive(Deserialize, StructTable)]
 pub struct PoolData {
@@ -45,6 +46,12 @@ pub struct PoolData {
     operating_status: String,
     #[structable(title = "Protocol")]
     protocol: String,
+}
+
+impl ResourceKey for PoolData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, PoolData, LoadBalancerPoolList>;

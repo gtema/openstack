@@ -27,10 +27,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "DNS Recordsets";
+const VIEW_CONFIG_KEY: &str = "dns.recordset";
 
 #[derive(Deserialize, StructTable)]
 pub struct RecordsetData {
@@ -44,6 +45,12 @@ pub struct RecordsetData {
     created_at: String,
     #[structable(title = "Updated", optional)]
     updated_at: Option<String>,
+}
+
+impl ResourceKey for RecordsetData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type DnsRecordsets<'a> = TableViewComponentBase<'a, RecordsetData, DnsRecordsetList>;

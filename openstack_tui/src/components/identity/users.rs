@@ -30,10 +30,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Identity Users";
+const VIEW_CONFIG_KEY: &str = "identity.user";
 
 #[derive(Deserialize, StructTable)]
 pub struct UserData {
@@ -52,6 +53,12 @@ pub struct UserData {
     #[serde(default, deserialize_with = "as_string")]
     #[structable(title = "Pwd expiry")]
     password_expires_at: String,
+}
+
+impl ResourceKey for UserData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type IdentityUsers<'a> = TableViewComponentBase<'a, UserData, IdentityUserList>;

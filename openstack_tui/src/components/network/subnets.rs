@@ -27,10 +27,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Subnets";
+const VIEW_CONFIG_KEY: &str = "network.subnet";
 
 #[derive(Deserialize, StructTable)]
 pub struct SubnetData {
@@ -44,6 +45,12 @@ pub struct SubnetData {
     #[structable(title = "Created")]
     #[serde(default)]
     created_at: String,
+}
+
+impl ResourceKey for SubnetData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type NetworkSubnets<'a> = TableViewComponentBase<'a, SubnetData, NetworkSubnetList>;

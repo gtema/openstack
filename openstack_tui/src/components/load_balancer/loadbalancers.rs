@@ -31,10 +31,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "LoadBalancers";
+const VIEW_CONFIG_KEY: &str = "load-balancer.loadbalancer";
 
 #[derive(Deserialize, StructTable)]
 pub struct LoadBalancerData {
@@ -46,6 +47,12 @@ pub struct LoadBalancerData {
     operating_status: String,
     #[structable(title = "Address", optional)]
     vip_address: Option<String>,
+}
+
+impl ResourceKey for LoadBalancerData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type LoadBalancers<'a> =

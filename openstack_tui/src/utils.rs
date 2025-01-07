@@ -12,12 +12,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use crate::config::ViewConfig;
 use eyre::Result;
 use lazy_static::lazy_static;
 use ratatui::prelude::*;
 use serde::{de, de::Visitor, Deserialize, Deserializer, Serialize};
 use serde_json::Value;
-use std::collections::BTreeSet;
 use std::fmt;
 use std::path::PathBuf;
 use tracing_error::ErrorLayer;
@@ -26,6 +26,13 @@ use tracing_subscriber::{
 };
 
 const VERSION_MESSAGE: &str = concat!(env!("CARGO_PKG_VERSION"),);
+pub type OutputConfig = ViewConfig;
+
+pub trait ResourceKey {
+    fn get_key() -> &'static str {
+        ""
+    }
+}
 
 lazy_static! {
     pub static ref PROJECT_NAME: String = env!("CARGO_CRATE_NAME").to_uppercase().to_string();
@@ -205,14 +212,6 @@ pub(crate) fn as_string<'de, D: Deserializer<'de>>(deserializer: D) -> Result<St
         Value::Null => String::from(""),
         _ => return Err(de::Error::custom("Wrong type, expected boolean")),
     })
-}
-
-#[derive(Default, Clone)]
-pub struct OutputConfig {
-    /// Limit fields (their titles) to be returned
-    pub fields: BTreeSet<String>,
-    /// Wide mode (additional fields requested)
-    pub wide: bool,
 }
 
 pub trait StructTable {

@@ -33,10 +33,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Compute Servers";
+const VIEW_CONFIG_KEY: &str = "compute.server";
 
 #[derive(Deserialize, StructTable)]
 pub struct ServerData {
@@ -50,6 +51,12 @@ pub struct ServerData {
     created: String,
     #[structable(title = "Updated")]
     updated: String,
+}
+
+impl ResourceKey for ServerData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerList>;

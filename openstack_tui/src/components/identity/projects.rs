@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Identity Projects";
+const VIEW_CONFIG_KEY: &str = "identity.project";
 
 #[derive(Deserialize, StructTable)]
 pub struct ProjectData {
@@ -46,6 +47,12 @@ pub struct ProjectData {
     enabled: bool,
     #[structable(title = "Domain ID")]
     domain_id: String,
+}
+
+impl ResourceKey for ProjectData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectData, IdentityProjectList>;

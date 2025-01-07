@@ -29,10 +29,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "DNS Zones";
+const VIEW_CONFIG_KEY: &str = "dns.zone";
 
 #[derive(Deserialize, StructTable)]
 pub struct ZoneData {
@@ -46,6 +47,12 @@ pub struct ZoneData {
     created_at: String,
     #[structable(title = "Updated")]
     updated_at: String,
+}
+
+impl ResourceKey for ZoneData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type DnsZones<'a> = TableViewComponentBase<'a, ZoneData, DnsZoneList>;

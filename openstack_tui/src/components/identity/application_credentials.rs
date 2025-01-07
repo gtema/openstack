@@ -30,10 +30,11 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, StructTable},
+    utils::{as_string, OutputConfig, ResourceKey, StructTable},
 };
 
 const TITLE: &str = "Application Credentials";
+const VIEW_CONFIG_KEY: &str = "identity.user/application_credential";
 
 #[derive(Deserialize, StructTable)]
 pub struct ApplicationCredentialData {
@@ -43,11 +44,17 @@ pub struct ApplicationCredentialData {
     #[structable(title = "Name")]
     name: String,
     #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Expires as")]
+    #[structable(title = "Expires at")]
     expires_at: String,
     #[structable(title = "Unrestricted", optional)]
     #[serde(default)]
     unrestricted: Option<bool>,
+}
+
+impl ResourceKey for ApplicationCredentialData {
+    fn get_key() -> &'static str {
+        VIEW_CONFIG_KEY
+    }
 }
 
 pub type IdentityApplicationCredentials<'a> =
