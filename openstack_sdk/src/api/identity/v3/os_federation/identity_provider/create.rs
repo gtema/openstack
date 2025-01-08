@@ -24,42 +24,15 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde::Deserialize;
-use serde::Serialize;
+use serde_json::Value;
 use std::borrow::Cow;
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct IdentityProvider<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) authorization_ttl: Option<Option<i32>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) description: Option<Option<Cow<'a, str>>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) domain_id: Option<Option<Cow<'a, str>>>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) enabled: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) remote_ids: Option<Vec<Cow<'a, str>>>,
-}
+use std::collections::BTreeMap;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    #[builder(setter(into))]
-    pub(crate) identity_provider: IdentityProvider<'a>,
+    #[builder(private, setter(name = "_identity_provider"))]
+    pub(crate) identity_provider: BTreeMap<Cow<'a, str>, Value>,
 
     /// idp_id parameter for /v3/OS-FEDERATION/identity_providers/{idp_id} API
     ///
@@ -76,7 +49,19 @@ impl<'a> Request<'a> {
     }
 }
 
-impl RequestBuilder<'_> {
+impl<'a> RequestBuilder<'a> {
+    pub fn identity_provider<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self.identity_provider
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
+
     /// Add a single header to the Identity_Provider.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {
@@ -164,7 +149,7 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .identity_provider(IdentityProviderBuilder::default().build().unwrap())
+                .identity_provider(BTreeMap::<String, Value>::new().into_iter())
                 .build()
                 .unwrap()
                 .service_type(),
@@ -176,7 +161,7 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .identity_provider(IdentityProviderBuilder::default().build().unwrap())
+                .identity_provider(BTreeMap::<String, Value>::new().into_iter())
                 .build()
                 .unwrap()
                 .response_key()
@@ -202,7 +187,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .idp_id("idp_id")
-            .identity_provider(IdentityProviderBuilder::default().build().unwrap())
+            .identity_provider(BTreeMap::<String, Value>::new().into_iter())
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -228,7 +213,7 @@ mod tests {
 
         let endpoint = Request::builder()
             .idp_id("idp_id")
-            .identity_provider(IdentityProviderBuilder::default().build().unwrap())
+            .identity_provider(BTreeMap::<String, Value>::new().into_iter())
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

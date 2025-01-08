@@ -33,20 +33,15 @@ use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 pub struct ComputeServerInstanceActionList {
     #[builder(default)]
     pub changes_before: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub changes_since: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub marker: Option<String>,
-    // Body parameters
     pub server_id: String,
     #[builder(default)]
     pub server_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeServerInstanceActionList {

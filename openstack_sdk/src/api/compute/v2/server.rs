@@ -99,6 +99,7 @@ pub mod set_21;
 pub mod set_219;
 pub mod set_290;
 pub mod set_294;
+pub mod share;
 pub mod shelve;
 pub mod shelve_offload;
 pub mod suspend;

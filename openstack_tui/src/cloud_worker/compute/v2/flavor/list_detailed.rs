@@ -33,25 +33,18 @@ use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 pub struct ComputeFlavorList {
     #[builder(default)]
     pub is_public: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub marker: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub min_disk: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub min_ram: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_dir: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_key: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeFlavorList {

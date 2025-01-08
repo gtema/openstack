@@ -130,7 +130,8 @@ struct ResponseData {
     os_flavor_access_is_public: Value,
 
     /// Whether or not the flavor has been administratively disabled. This is
-    /// typically only visible to administrative users.
+    /// an artifact of the legacy v2 API and will always be set to `false`.
+    /// There is currently no way to disable a flavor and set this to `true`.
     ///
     #[serde(rename = "OS-FLV-DISABLED:disabled")]
     #[structable(title = "OS-FLV-DISABLED:disabled")]

@@ -33,10 +33,8 @@ pub struct ComputeHypervisorShow {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub with_servers: Option<bool>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeHypervisorShow {
