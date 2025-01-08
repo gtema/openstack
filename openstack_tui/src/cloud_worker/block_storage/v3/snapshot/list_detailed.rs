@@ -33,31 +33,22 @@ use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 pub struct BlockStorageSnapshotList {
     #[builder(default)]
     pub all_tenants: Option<bool>,
-    // Body parameters
     #[builder(default)]
     pub consumes_quota: Option<bool>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub marker: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub offset: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub sort: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_dir: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_key: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub with_count: Option<bool>,
-    // Body parameters
 }
 
 impl fmt::Display for BlockStorageSnapshotList {

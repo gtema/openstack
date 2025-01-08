@@ -33,16 +33,12 @@ use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 pub struct ComputeHypervisorList {
     #[builder(default)]
     pub hypervisor_hostname_pattern: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub marker: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub with_servers: Option<bool>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeHypervisorList {

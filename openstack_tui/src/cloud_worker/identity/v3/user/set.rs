@@ -33,7 +33,7 @@ pub struct IdentityUserSet {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
+
     /// A `user` object
     ///
     user: User,
@@ -193,7 +193,8 @@ pub struct User {
     #[builder(default, setter(into))]
     pub domain_id: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[builder(default)]
     pub enabled: Option<bool>,

@@ -35,7 +35,6 @@ pub struct BlockStorageSnapshotDelete {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for BlockStorageSnapshotDelete {

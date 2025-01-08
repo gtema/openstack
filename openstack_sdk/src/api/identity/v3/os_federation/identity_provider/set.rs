@@ -29,21 +29,28 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct IdentityProvider<'a> {
+    /// The length of validity in minutes for group memberships carried over
+    /// through mapping and persisted in the database. If left unset, the
+    /// default value configured in keystone will be used, if enabled.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) authorization_ttl: Option<Option<i32>>,
 
+    /// The identity provider description
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the identity provider is enabled or not
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
+    /// List of the unique identity provider's remote IDs
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) remote_ids: Option<Vec<Cow<'a, str>>>,
