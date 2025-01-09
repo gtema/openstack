@@ -34,7 +34,6 @@ pub struct IdentityGroupList {
     pub domain_id: Option<String>,
     #[builder(default)]
     pub domain_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityGroupList {

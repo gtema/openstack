@@ -68,7 +68,9 @@ impl From<ComputeServerGetConsoleOutput> for ComputeServerApiRequest {
 
 impl From<ComputeServerInstanceActionApiRequest> for ComputeServerApiRequest {
     fn from(item: ComputeServerInstanceActionApiRequest) -> Self {
-        ComputeServerApiRequest::InstanceAction(Box::new(item))
+        ComputeServerApiRequest::InstanceAction(Box::new(
+            item,
+        ))
     }
 }
 
