@@ -216,7 +216,7 @@ impl AsyncOpenStack {
         session.catalog.register_catalog_endpoint(
             "identity",
             identity_service_url,
-            None::<String>,
+            config.region_name.as_ref(),
             Some("public"),
         )?;
 
@@ -448,10 +448,11 @@ where {
         &mut self,
         service_type: &ServiceType,
     ) -> Result<(), OpenStackError> {
-        if let Ok(ep) =
-            self.catalog
-                .get_service_endpoint(service_type.to_string(), None, None::<String>)
-        {
+        if let Ok(ep) = self.catalog.get_service_endpoint(
+            service_type.to_string(),
+            None,
+            self.config.region_name.as_ref(),
+        ) {
             if self.catalog.discovery_allowed(service_type.to_string()) {
                 info!("Performing `{}` endpoint version discovery", service_type);
 
