@@ -42,7 +42,7 @@ jobs:
           toolchain: stable
 
       - name: Run release-plz
-        uses: MarcoIeni/release-plz-action@db75300cf27adcd986d6f0cf4a72a4ffcc11dae5 # v0.5.86
+        uses: MarcoIeni/release-plz-action@ca8762285a5dc0c220cb4a7896c9986ff6c97ecf # v0.5.88
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
