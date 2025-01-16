@@ -59,10 +59,10 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// The security group name.
+    /// The action to add a security group to a server.
     ///
-    #[arg(help_heading = "Body parameters", long)]
-    name: String,
+    #[command(flatten)]
+    add_security_group: AddSecurityGroup,
     /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     #[arg(help_heading = "Body parameters")]
@@ -85,6 +85,15 @@ struct PathParameters {
     )]
     id: String,
 }
+/// AddSecurityGroup Body data
+#[derive(Args, Clone)]
+struct AddSecurityGroup {
+    /// The security group name.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    name: String,
+}
+
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {}
@@ -107,8 +116,13 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        // Set Request.name data
-        ep_builder.name(&self.name);
+        // Set Request.add_security_group data
+        let args = &self.add_security_group;
+        let mut add_security_group_builder = add_security_group::AddSecurityGroupBuilder::default();
+
+        add_security_group_builder.name(&args.name);
+
+        ep_builder.add_security_group(add_security_group_builder.build().unwrap());
 
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

@@ -33,34 +33,24 @@ use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 pub struct DnsZoneList {
     #[builder(default)]
     pub _type: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub description: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub email: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub market: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_dir: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_key: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub status: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub ttl: Option<i32>,
-    // Body parameters
 }
 
 impl fmt::Display for DnsZoneList {

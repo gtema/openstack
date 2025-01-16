@@ -34,31 +34,24 @@ pub struct IdentityUserList {
     pub domain_id: Option<String>,
     #[builder(default)]
     pub domain_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub enabled: Option<bool>,
-    // Body parameters
     #[builder(default)]
     pub idp_id: Option<String>,
     #[builder(default)]
     pub idp_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub password_expires_at: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub protocol_id: Option<String>,
     #[builder(default)]
     pub protocol_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub unique_id: Option<String>,
     #[builder(default)]
     pub unique_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityUserList {

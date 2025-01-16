@@ -33,11 +33,9 @@ pub struct ComputeServerInstanceActionShow {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     pub server_id: String,
     #[builder(default)]
     pub server_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeServerInstanceActionShow {

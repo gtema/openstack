@@ -17,12 +17,10 @@
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
-use tracing::trace;
-
 use crate::api::find::Findable;
 use crate::api::rest_endpoint_prelude::*;
-
 use crate::api::{ApiError, RestClient};
+use tracing::trace;
 
 use crate::api::compute::v2::aggregate::{get as Get, list as List};
 
@@ -44,7 +42,7 @@ impl<'a> Request<'a> {
     }
 }
 
-impl<'a> RequestBuilder<'a> {
+impl RequestBuilder<'_> {
     /// Add a single header to the Volume.
     pub fn header(&mut self, header_name: &'static str, header_value: &'static str) -> &mut Self
 where {

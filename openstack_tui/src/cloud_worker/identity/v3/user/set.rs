@@ -33,7 +33,7 @@ pub struct IdentityUserSet {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
+
     /// A `user` object
     ///
     user: User,
@@ -193,7 +193,8 @@ pub struct User {
     #[builder(default, setter(into))]
     pub domain_id: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[builder(default)]
     pub enabled: Option<bool>,
@@ -242,6 +243,9 @@ impl TryFrom<&User> for openstack_sdk::api::identity::v3::user::set::UserBuilder
     type Error = Report;
     fn try_from(value: &User) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
+        if let Some(val) = &value.password {
+            ep_builder.password(val.clone().map(Into::into));
+        }
         if let Some(val) = &value.default_project_id {
             ep_builder.default_project_id(val.clone().map(Into::into));
         }
@@ -263,9 +267,6 @@ impl TryFrom<&User> for openstack_sdk::api::identity::v3::user::set::UserBuilder
         }
         if let Some(val) = &value.name {
             ep_builder.name(val.clone());
-        }
-        if let Some(val) = &value.password {
-            ep_builder.password(val.clone().map(Into::into));
         }
         if let Some(val) = &value.options {
             ep_builder.options(TryInto::<

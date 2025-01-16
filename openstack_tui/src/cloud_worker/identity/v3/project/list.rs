@@ -35,39 +35,28 @@ pub struct IdentityProjectList {
     pub domain_id: Option<String>,
     #[builder(default)]
     pub domain_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub enabled: Option<bool>,
-    // Body parameters
     #[builder(default)]
     pub is_domain: Option<bool>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub marker: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub not_tags: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub not_tags_any: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub parent_id: Option<String>,
     #[builder(default)]
     pub parent_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub tags: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub tags_any: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityProjectList {

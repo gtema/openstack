@@ -35,11 +35,9 @@ pub struct DnsZoneRecordsetDelete {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     pub zone_id: String,
     #[builder(default)]
     pub zone_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for DnsZoneRecordsetDelete {

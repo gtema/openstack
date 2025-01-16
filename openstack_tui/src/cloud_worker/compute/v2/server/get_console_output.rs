@@ -33,7 +33,7 @@ pub struct ComputeServerGetConsoleOutput {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
+
     /// The action to get console output of the server.
     ///
     os_get_console_output: OsGetConsoleOutput,

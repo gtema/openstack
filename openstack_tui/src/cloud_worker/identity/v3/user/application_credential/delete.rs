@@ -35,11 +35,9 @@ pub struct IdentityUserApplicationCredentialDelete {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     pub user_id: String,
     #[builder(default)]
     pub user_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityUserApplicationCredentialDelete {

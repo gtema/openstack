@@ -192,6 +192,10 @@ impl UserCommand {
         // Set Request.user data
         let args = &self.user;
         let mut user_builder = create::UserBuilder::default();
+        if let Some(val) = &args.password {
+            user_builder.password(Some(val.into()));
+        }
+
         if let Some(val) = &args.default_project_id {
             user_builder.default_project_id(Some(val.into()));
         }
@@ -217,10 +221,6 @@ impl UserCommand {
         }
 
         user_builder.name(&args.name);
-
-        if let Some(val) = &args.password {
-            user_builder.password(Some(val.into()));
-        }
 
         if let Some(val) = &args.options {
             let mut options_builder = create::OptionsBuilder::default();

@@ -33,187 +33,130 @@ use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 pub struct ComputeServerList {
     #[builder(default)]
     pub access_ip_v4: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub access_ip_v6: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub all_tenants: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub auto_disk_config: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub availability_zone: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub block_device_mapping: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub changes_before: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub changes_since: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub config_drive: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub created_at: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub deleted: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub description: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub display_description: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub display_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub flavor: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub host: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub hostname: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub image: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub image_ref: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub info_cache: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub ip: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub ip6: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub kernel_id: Option<String>,
     #[builder(default)]
     pub kernel_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub key_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub launch_index: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub launched_at: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub limit: Option<i32>,
-    // Body parameters
     #[builder(default)]
     pub locked: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub locked_by: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub marker: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub metadata: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub node: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub not_tags: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub not_tags_any: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub pci_devices: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub power_state: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub progress: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub project_id: Option<String>,
     #[builder(default)]
     pub project_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub ramdisk_id: Option<String>,
     #[builder(default)]
     pub ramdisk_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub reservation_id: Option<String>,
     #[builder(default)]
     pub reservation_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub root_device_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub security_groups: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub services: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub soft_deleted: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_dir: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub sort_key: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub status: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub system_metadata: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub tags: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub tags_any: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub task_state: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub tenant_id: Option<String>,
     #[builder(default)]
     pub tenant_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub terminated_at: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub user_id: Option<String>,
     #[builder(default)]
     pub user_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub uuid: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub vm_state: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeServerList {

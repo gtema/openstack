@@ -33,12 +33,10 @@ pub struct ComputeQuotaSetShow {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub user_id: Option<String>,
     #[builder(default)]
     pub user_name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for ComputeQuotaSetShow {
