@@ -186,10 +186,11 @@ pub struct Ipsecpolicy<'a> {
     pub(crate) encapsulation_mode: Option<EncapsulationMode>,
 
     /// The encryption algorithm. A valid value is `3des`, `aes-128`,
-    /// `aes-192`, `aes-256`. Additional values for AES CCM and GCM modes are
-    /// defined (e.g. `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations
-    /// of key length 128, 192, 256 bits and ICV length 8, 12, 16 octets.
-    /// Default is `aes-128`.
+    /// `aes-192`, `aes-256`, `aes-128-ctr`, `aes-192-ctr`, `aes-256-ctr`.
+    /// Additional values for AES CCM and GCM modes are defined (e.g.
+    /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
+    /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
+    /// `aes-128`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]

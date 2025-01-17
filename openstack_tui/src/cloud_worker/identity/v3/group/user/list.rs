@@ -33,10 +33,8 @@ pub struct IdentityGroupUserList {
     pub group_id: String,
     #[builder(default)]
     pub group_name: Option<String>,
-    // Body parameters
     #[builder(default)]
     pub password_expires_at: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityGroupUserList {

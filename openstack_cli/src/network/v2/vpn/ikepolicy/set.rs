@@ -166,10 +166,11 @@ struct Ikepolicy {
     description: Option<String>,
 
     /// The encryption algorithm. A valid value is `3des`, `aes-128`,
-    /// `aes-192`, `aes-256`. Additional values for AES CCM and GCM modes are
-    /// defined (e.g. `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations
-    /// of key length 128, 192, 256 bits and ICV length 8, 12, 16 octets.
-    /// Default is `aes-128`.
+    /// `aes-192`, `aes-256`, `aes-128-ctr`, `aes-192-ctr`, `aes-256-ctr`.
+    /// Additional values for AES CCM and GCM modes are defined (e.g.
+    /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
+    /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
+    /// `aes-128`.
     ///
     #[arg(help_heading = "Body parameters", long)]
     encryption_algorithm: Option<EncryptionAlgorithm>,
@@ -221,10 +222,11 @@ struct ResponseData {
     description: Option<String>,
 
     /// The encryption algorithm. A valid value is `3des`, `aes-128`,
-    /// `aes-192`, `aes-256`. Additional values for AES CCM and GCM modes are
-    /// defined (e.g. `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations
-    /// of key length 128, 192, 256 bits and ICV length 8, 12, 16 octets.
-    /// Default is `aes-128`.
+    /// `aes-192`, `aes-256`, `aes-128-ctr`, `aes-192-ctr`, `aes-256-ctr`.
+    /// Additional values for AES CCM and GCM modes are defined (e.g.
+    /// `aes-256-ccm-16`, `aes-256-gcm-16`) for all combinations of key length
+    /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
+    /// `aes-128`.
     ///
     #[serde()]
     #[structable(optional)]

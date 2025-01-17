@@ -59,10 +59,10 @@ pub struct ServerCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    /// The security group name.
+    /// The action to remove a security group from the server.
     ///
-    #[arg(help_heading = "Body parameters", long)]
-    name: String,
+    #[command(flatten)]
+    remove_security_group: RemoveSecurityGroup,
     /// Additional properties to be sent with the request
     #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     #[arg(help_heading = "Body parameters")]
@@ -85,6 +85,15 @@ struct PathParameters {
     )]
     id: String,
 }
+/// RemoveSecurityGroup Body data
+#[derive(Args, Clone)]
+struct RemoveSecurityGroup {
+    /// The security group name.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    name: String,
+}
+
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {}
@@ -107,8 +116,14 @@ impl ServerCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        // Set Request.name data
-        ep_builder.name(&self.name);
+        // Set Request.remove_security_group data
+        let args = &self.remove_security_group;
+        let mut remove_security_group_builder =
+            remove_security_group::RemoveSecurityGroupBuilder::default();
+
+        remove_security_group_builder.name(&args.name);
+
+        ep_builder.remove_security_group(remove_security_group_builder.build().unwrap());
 
         if let Some(properties) = &self.properties {
             ep_builder.properties(properties.iter().cloned());

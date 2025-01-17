@@ -35,7 +35,6 @@ pub struct IdentityUserDelete {
     pub id: String,
     #[builder(default)]
     pub name: Option<String>,
-    // Body parameters
 }
 
 impl fmt::Display for IdentityUserDelete {

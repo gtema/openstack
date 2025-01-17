@@ -20,17 +20,31 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use serde::Deserialize;
+use serde::Serialize;
 use serde_json::Value;
 use std::borrow::Cow;
 use std::collections::BTreeMap;
 
+/// The action to remove a security group from the server.
+///
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct RemoveSecurityGroup<'a> {
+    /// The security group name.
+    ///
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) name: Cow<'a, str>,
+}
+
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// The security group name.
+    /// The action to remove a security group from the server.
     ///
     #[builder(setter(into))]
-    pub(crate) name: Cow<'a, str>,
+    pub(crate) remove_security_group: RemoveSecurityGroup<'a>,
 
     /// id parameter for /v2.1/servers/{id}/action API
     ///
@@ -102,7 +116,10 @@ impl RestEndpoint for Request<'_> {
     fn body(&self) -> Result<Option<(&'static str, Vec<u8>)>, BodyError> {
         let mut params = JsonBodyParams::default();
 
-        params.push("name", serde_json::to_value(&self.name)?);
+        params.push(
+            "removeSecurityGroup",
+            serde_json::to_value(&self.remove_security_group)?,
+        );
         for (key, val) in &self._properties {
             params.push(key.clone(), val.clone());
         }
@@ -145,7 +162,12 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .name("foo")
+                .remove_security_group(
+                    RemoveSecurityGroupBuilder::default()
+                        .name("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .service_type(),
@@ -156,7 +178,12 @@ mod tests {
     #[test]
     fn test_response_key() {
         assert!(Request::builder()
-            .name("foo")
+            .remove_security_group(
+                RemoveSecurityGroupBuilder::default()
+                    .name("foo")
+                    .build()
+                    .unwrap()
+            )
             .build()
             .unwrap()
             .response_key()
@@ -176,7 +203,16 @@ mod tests {
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().id("id").name("foo").build().unwrap();
+        let endpoint = Request::builder()
+            .id("id")
+            .remove_security_group(
+                RemoveSecurityGroupBuilder::default()
+                    .name("foo")
+                    .build()
+                    .unwrap(),
+            )
+            .build()
+            .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -197,7 +233,12 @@ mod tests {
 
         let endpoint = Request::builder()
             .id("id")
-            .name("foo")
+            .remove_security_group(
+                RemoveSecurityGroupBuilder::default()
+                    .name("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

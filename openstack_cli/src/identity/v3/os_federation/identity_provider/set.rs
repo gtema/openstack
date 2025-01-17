@@ -71,18 +71,25 @@ struct PathParameters {
 /// IdentityProvider Body data
 #[derive(Args, Clone)]
 struct IdentityProvider {
+    /// The length of validity in minutes for group memberships carried over
+    /// through mapping and persisted in the database. If left unset, the
+    /// default value configured in keystone will be used, if enabled.
+    ///
     #[arg(help_heading = "Body parameters", long)]
     authorization_ttl: Option<Option<i32>>,
 
+    /// The identity provider description
+    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the identity provider is enabled or not
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
+    /// List of the unique identity provider's remote IDs
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     remote_ids: Option<Vec<String>>,
 }

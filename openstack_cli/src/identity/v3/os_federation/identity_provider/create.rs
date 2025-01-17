@@ -31,6 +31,7 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::os_federation::identity_provider::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
@@ -50,8 +51,8 @@ pub struct IdentityProviderCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[command(flatten)]
-    identity_provider: IdentityProvider,
+    #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
+    identity_provider: Vec<(String, Value)>,
 }
 
 /// Query parameters
@@ -70,28 +71,6 @@ struct PathParameters {
     )]
     idp_id: String,
 }
-/// IdentityProvider Body data
-#[derive(Args, Clone)]
-struct IdentityProvider {
-    #[arg(help_heading = "Body parameters", long)]
-    authorization_ttl: Option<Option<i32>>,
-
-    #[arg(help_heading = "Body parameters", long)]
-    description: Option<String>,
-
-    #[arg(help_heading = "Body parameters", long)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
-    ///
-    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
-    enabled: Option<bool>,
-
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    remote_ids: Option<Vec<String>>,
-}
-
 /// IdentityProvider response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
@@ -152,29 +131,8 @@ impl IdentityProviderCommand {
         // Set query parameters
         // Set body parameters
         // Set Request.identity_provider data
-        let args = &self.identity_provider;
-        let mut identity_provider_builder = create::IdentityProviderBuilder::default();
-        if let Some(val) = &args.enabled {
-            identity_provider_builder.enabled(*val);
-        }
 
-        if let Some(val) = &args.description {
-            identity_provider_builder.description(Some(val.into()));
-        }
-
-        if let Some(val) = &args.domain_id {
-            identity_provider_builder.domain_id(Some(val.into()));
-        }
-
-        if let Some(val) = &args.authorization_ttl {
-            identity_provider_builder.authorization_ttl(*val);
-        }
-
-        if let Some(val) = &args.remote_ids {
-            identity_provider_builder.remote_ids(val.iter().map(Into::into).collect::<Vec<_>>());
-        }
-
-        ep_builder.identity_provider(identity_provider_builder.build().unwrap());
+        ep_builder.identity_provider(self.identity_provider.iter().cloned());
 
         let ep = ep_builder
             .build()
