@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.3...openstack_cli-v0.9.4) - 2025-01-17
+
+### Added
+
+- Synchronize code with OpenAPIs (#924)
+- Adapt few compute result schema changes (#871)
+- Update identity schemas (#870)
+- Adapt identity schemas (#868)
+- Prepare switch to generated tui code (#880)
+- Start building parts of TUI (#876)
+
+### Fixed
+
+- Respect region_name set in the config (#919)
+
 ## [0.9.3](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.2...openstack_cli-v0.9.3) - 2024-12-13
 
 ### Added
