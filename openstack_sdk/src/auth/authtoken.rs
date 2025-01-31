@@ -183,11 +183,20 @@ impl AuthToken {
     }
 
     /// Detect authentication validity (valid/expired/unset)
-    pub fn get_state(&self) -> AuthState {
+    ///
+    /// Offset can be used to calculate imminent expiration.
+    pub fn get_state(&self, expiration_offset: Option<chrono::TimeDelta>) -> AuthState {
+        let expiration = chrono::Utc::now();
+        let soon_expiration = match expiration_offset {
+            Some(offset) => expiration + offset,
+            None => expiration,
+        };
         match &self.auth_info {
             Some(data) => {
-                if data.token.expires_at <= chrono::offset::Local::now() {
+                if data.token.expires_at <= expiration {
                     AuthState::Expired
+                } else if data.token.expires_at <= soon_expiration {
+                    AuthState::AboutToExpire
                 } else {
                     AuthState::Valid
                 }

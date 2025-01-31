@@ -56,7 +56,7 @@ pub(crate) struct ScopeAuths(HashMap<AuthTokenScope, AuthToken>);
 impl ScopeAuths {
     /// Filter out all invalid auth data keeping only valid ones
     fn filter_invalid_auths(&mut self) -> &mut Self {
-        self.0.retain(|_, v| AuthState::Valid == v.get_state());
+        self.0.retain(|_, v| AuthState::Valid == v.get_state(None));
         self
     }
 
@@ -64,7 +64,7 @@ impl ScopeAuths {
     fn find_valid_unscoped_auth(&self) -> Option<AuthToken> {
         for (k, v) in self.0.iter() {
             if let AuthTokenScope::Unscoped = k {
-                if let AuthState::Valid = v.get_state() {
+                if let AuthState::Valid = v.get_state(None) {
                     return Some(v.clone());
                 }
             }
@@ -75,7 +75,7 @@ impl ScopeAuths {
     /// Find first matching unscoped authz
     fn find_first_valid_auth(&self) -> Option<AuthToken> {
         for (_, v) in self.0.iter() {
-            if let AuthState::Valid = v.get_state() {
+            if let AuthState::Valid = v.get_state(None) {
                 return Some(v.clone());
             }
         }

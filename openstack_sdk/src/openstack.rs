@@ -23,6 +23,7 @@ use std::{fs::File, io::Read};
 use tracing::{debug, error, event, info, instrument, trace, warn, Level};
 
 use bytes::Bytes;
+use chrono::TimeDelta;
 use http::{Response as HttpResponse, StatusCode};
 
 use reqwest::{
@@ -38,7 +39,7 @@ use crate::api::query::RawQuery;
 use crate::auth::{
     self, authtoken,
     authtoken::{AuthTokenError, AuthType},
-    Auth,
+    Auth, AuthState,
 };
 use crate::config::{get_config_identity_hash, ConfigFile};
 use crate::state;
@@ -435,6 +436,16 @@ impl OpenStack {
     pub fn get_auth_token(&self) -> Option<String> {
         if let Auth::AuthToken(token) = &self.auth {
             return Some(token.token.clone());
+        }
+        None
+    }
+
+    /// Return current authentication status
+    ///
+    /// Offset can be used to calculate imminent expiration.
+    pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
+        if let Auth::AuthToken(token) = &self.auth {
+            return Some(token.get_state(offset));
         }
         None
     }

@@ -83,6 +83,8 @@ pub enum AuthState {
     Valid,
     /// Expired
     Expired,
+    /// About to expire
+    AboutToExpire,
     /// Authentication is missing
     Unset,
 }
@@ -134,7 +136,7 @@ mod tests {
     #[test]
     fn test_auth_validity_unset() {
         let auth = super::AuthToken::default();
-        assert!(matches!(auth.get_state(), AuthState::Unset));
+        assert!(matches!(auth.get_state(None), AuthState::Unset));
     }
 
     #[test]
@@ -143,13 +145,29 @@ mod tests {
             token: String::new(),
             auth_info: Some(AuthResponse {
                 token: AuthToken {
-                    expires_at: chrono::offset::Local::now()
-                        - chrono::Duration::try_days(1).unwrap(),
+                    expires_at: chrono::Utc::now() - chrono::TimeDelta::days(1),
                     ..Default::default()
                 },
             }),
         };
-        assert!(matches!(auth.get_state(), AuthState::Expired));
+        assert!(matches!(auth.get_state(None), AuthState::Expired));
+    }
+
+    #[test]
+    fn test_auth_validity_expire_soon() {
+        let auth = super::AuthToken {
+            token: String::new(),
+            auth_info: Some(AuthResponse {
+                token: AuthToken {
+                    expires_at: chrono::Utc::now() + chrono::TimeDelta::minutes(10),
+                    ..Default::default()
+                },
+            }),
+        };
+        assert!(matches!(
+            auth.get_state(Some(chrono::TimeDelta::minutes(15))),
+            AuthState::AboutToExpire
+        ));
     }
 
     #[test]
@@ -158,12 +176,11 @@ mod tests {
             token: String::new(),
             auth_info: Some(AuthResponse {
                 token: AuthToken {
-                    expires_at: chrono::offset::Local::now()
-                        + chrono::Duration::try_days(1).unwrap(),
+                    expires_at: chrono::Utc::now() + chrono::TimeDelta::days(1),
                     ..Default::default()
                 },
             }),
         };
-        assert!(matches!(auth.get_state(), AuthState::Valid));
+        assert!(matches!(auth.get_state(None), AuthState::Valid));
     }
 }
