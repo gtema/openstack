@@ -36,11 +36,13 @@ use crate::common::parse_key_val;
 use openstack_sdk::api::identity::v3::os_trust::trust::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Create a new trust.
 ///
 /// The User creating the trust must be the trustor.
+///
+/// POST /v3/OS-TRUST/trusts
 ///
 #[derive(Args)]
 pub struct TrustCommand {
@@ -52,9 +54,8 @@ pub struct TrustCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    #[command(flatten)]
+    trust: Trust,
 }
 
 /// Query parameters
@@ -64,22 +65,212 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Trust Body data
+#[derive(Args, Clone)]
+struct Trust {
+    /// If set to true then a trust between a trustor and any third-party user
+    /// may be issued by the trustee just like a regular trust. If set to
+    /// false, stops further redelegation. False by default.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    allow_redelegation: Option<Option<bool>>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// Specifies the expiration time of the trust. A trust may be revoked
+    /// ahead of expiration. If the value represents a time in the past, the
+    /// trust is deactivated. In the redelegation case it must not exceed the
+    /// value of the corresponding expires_at field of the redelegated trust or
+    /// it may be omitted, then the expires_at value is copied from the
+    /// redelegated trust.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    expires_at: Option<String>,
+
+    /// If set to true, then the user attribute of tokens generated based on
+    /// the trust will represent that of the trustor rather than the trustee,
+    /// thus allowing the trustee to impersonate the trustor. If impersonation
+    /// if set to false, then the token's user attribute will represent that of
+    /// the trustee.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    impersonation: bool,
+
+    /// Identifies the project upon which the trustor is delegating
+    /// authorization.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    project_id: Option<String>,
+
+    /// Returned with redelegated trust provides information about the
+    /// predecessor in the trust chain.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    redelegated_trust_id: Option<String>,
+
+    /// Specifies the maximum remaining depth of the redelegated trust chain.
+    /// Each subsequent trust has this field decremented by 1 automatically.
+    /// The initial trustor issuing new trust that can be redelegated, must set
+    /// allow_redelegation to true and may set redelegation_count to an integer
+    /// value less than or equal to max_redelegation_count configuration
+    /// parameter in order to limit the possible length of derived trust
+    /// chains. The trust issued by the trustor using a project-scoped token
+    /// (not redelegating), in which allow_redelegation is set to true (the new
+    /// trust is redelegatable), will be populated with the value specified in
+    /// the max_redelegation_count configuration parameter if
+    /// redelegation_count is not set or set to null. If allow_redelegation is
+    /// set to false then redelegation_count will be set to 0 in the trust. If
+    /// the trust is being issued by the trustee of a redelegatable
+    /// trust-scoped token (redelegation case) then redelegation_count should
+    /// not be set, as it will automatically be set to the value in the
+    /// redelegatable trust-scoped token decremented by 1. Note, if the
+    /// resulting value is 0, this means that the new trust will not be
+    /// redelegatable, regardless of the value of allow_redelegation.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    redelegation_count: Option<Option<i32>>,
+
+    /// Specifies how many times the trust can be used to obtain a token. This
+    /// value is decreased each time a token is issued through the trust. Once
+    /// it reaches 0, no further tokens will be issued through the trust. The
+    /// default value is null, meaning there is no limit on the number of
+    /// tokens issued through the trust. If redelegation is enabled it must not
+    /// be set.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    remaining_uses: Option<Option<i32>>,
+
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
+    roles: Option<Vec<Value>>,
+
+    /// Represents the user who is capable of consuming the trust.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    trustee_user_id: String,
+
+    /// Represents the user who created the trust, and who's authorization is
+    /// being delegated.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    trustor_user_id: String,
+}
+
+/// Trust response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// If set to true then a trust between a trustor and any third-party user
+    /// may be issued by the trustee just like a regular trust. If set to
+    /// false, stops further redelegation. False by default.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    allow_redelegation: Option<bool>,
+
+    #[serde()]
+    #[structable(optional)]
+    deleted_at: Option<String>,
+
+    /// Specifies the expiration time of the trust. A trust may be revoked
+    /// ahead of expiration. If the value represents a time in the past, the
+    /// trust is deactivated. In the redelegation case it must not exceed the
+    /// value of the corresponding expires_at field of the redelegated trust or
+    /// it may be omitted, then the expires_at value is copied from the
+    /// redelegated trust.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    expires_at: Option<String>,
+
+    /// The ID of the trust.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// If set to true, then the user attribute of tokens generated based on
+    /// the trust will represent that of the trustor rather than the trustee,
+    /// thus allowing the trustee to impersonate the trustor. If impersonation
+    /// if set to false, then the token's user attribute will represent that of
+    /// the trustee.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    impersonation: Option<bool>,
+
+    /// The links for the `user` resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// Identifies the project upon which the trustor is delegating
+    /// authorization.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    project_id: Option<String>,
+
+    /// Returned with redelegated trust provides information about the
+    /// predecessor in the trust chain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    redelegated_trust_id: Option<String>,
+
+    /// Specifies the maximum remaining depth of the redelegated trust chain.
+    /// Each subsequent trust has this field decremented by 1 automatically.
+    /// The initial trustor issuing new trust that can be redelegated, must set
+    /// allow_redelegation to true and may set redelegation_count to an integer
+    /// value less than or equal to max_redelegation_count configuration
+    /// parameter in order to limit the possible length of derived trust
+    /// chains. The trust issued by the trustor using a project-scoped token
+    /// (not redelegating), in which allow_redelegation is set to true (the new
+    /// trust is redelegatable), will be populated with the value specified in
+    /// the max_redelegation_count configuration parameter if
+    /// redelegation_count is not set or set to null. If allow_redelegation is
+    /// set to false then redelegation_count will be set to 0 in the trust. If
+    /// the trust is being issued by the trustee of a redelegatable
+    /// trust-scoped token (redelegation case) then redelegation_count should
+    /// not be set, as it will automatically be set to the value in the
+    /// redelegatable trust-scoped token decremented by 1. Note, if the
+    /// resulting value is 0, this means that the new trust will not be
+    /// redelegatable, regardless of the value of allow_redelegation.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    redelegation_count: Option<i32>,
+
+    /// Specifies how many times the trust can be used to obtain a token. This
+    /// value is decreased each time a token is issued through the trust. Once
+    /// it reaches 0, no further tokens will be issued through the trust. The
+    /// default value is null, meaning there is no limit on the number of
+    /// tokens issued through the trust. If redelegation is enabled it must not
+    /// be set.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    remaining_uses: Option<i32>,
+
+    #[serde()]
+    #[structable(optional, pretty)]
+    roles: Option<Value>,
+
+    /// The links for the `user` resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    roles_links: Option<Value>,
+
+    /// Represents the user who is capable of consuming the trust.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    trustee_user_id: Option<String>,
+
+    /// Represents the user who created the trust, and who's authorization is
+    /// being delegated.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    trustor_user_id: Option<String>,
 }
 
 impl TrustCommand {
@@ -99,9 +290,49 @@ impl TrustCommand {
         // Set path parameters
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.trust data
+        let args = &self.trust;
+        let mut trust_builder = create::TrustBuilder::default();
+
+        trust_builder.trustor_user_id(&args.trustor_user_id);
+
+        trust_builder.trustee_user_id(&args.trustee_user_id);
+
+        trust_builder.impersonation(args.impersonation);
+
+        if let Some(val) = &args.project_id {
+            trust_builder.project_id(Some(val.into()));
         }
+
+        if let Some(val) = &args.remaining_uses {
+            trust_builder.remaining_uses(*val);
+        }
+
+        if let Some(val) = &args.expires_at {
+            trust_builder.expires_at(Some(val.into()));
+        }
+
+        if let Some(val) = &args.allow_redelegation {
+            trust_builder.allow_redelegation(*val);
+        }
+
+        if let Some(val) = &args.redelegation_count {
+            trust_builder.redelegation_count(*val);
+        }
+
+        if let Some(val) = &args.redelegated_trust_id {
+            trust_builder.redelegated_trust_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.roles {
+            let roles_builder: Vec<create::Roles> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create::Roles>(v.to_owned()))
+                .collect::<Vec<create::Roles>>();
+            trust_builder.roles(roles_builder);
+        }
+
+        ep_builder.trust(trust_builder.build().unwrap());
 
         let ep = ep_builder
             .build()

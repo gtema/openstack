@@ -101,24 +101,24 @@ pub struct Options<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User<'a> {
-    /// The ID of the default project for the user.
+    /// The new ID of the default project for the user.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
+    /// The resource description.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The ID of the domain.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) domain_id: Option<Cow<'a, str>>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Enables or disables the user. An enabled user can authenticate and
+    /// receive authorization. A disabled user cannot authenticate or receive
+    /// authorization. Additionally, all tokens that the user holds become no
+    /// longer valid. If you reenable this user, pre-existing tokens do not
+    /// become valid. To enable the user, set to `true`. To disable the user,
+    /// set to `false`. Default is `true`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
@@ -134,7 +134,7 @@ pub struct User<'a> {
     ///   {
     ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///       {"protocol_id": mapped, "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
@@ -145,7 +145,7 @@ pub struct User<'a> {
     #[builder(default, setter(into))]
     pub(crate) federated: Option<Vec<Federated<'a>>>,
 
-    /// The user name. Must be unique within the owning domain.
+    /// The new name for the user. Must be unique within the owning domain.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]

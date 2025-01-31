@@ -72,15 +72,18 @@ struct Group {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The ID of the domain.
+    /// The ID of the domain of the group. If the domain ID is not provided in
+    /// the request, the Identity service will attempt to pull the domain ID
+    /// from the token used in the request. Note that this requires the use of
+    /// a domain-scoped token.
     ///
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
 
-    /// The user name. Must be unique within the owning domain.
+    /// The name of the group.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    name: Option<String>,
+    name: String,
 }
 
 /// Group response representation
@@ -139,9 +142,7 @@ impl GroupCommand {
             group_builder.domain_id(val);
         }
 
-        if let Some(val) = &args.name {
-            group_builder.name(val);
-        }
+        group_builder.name(&args.name);
 
         ep_builder.group(group_builder.build().unwrap());
 
