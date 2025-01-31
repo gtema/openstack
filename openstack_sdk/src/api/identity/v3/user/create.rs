@@ -98,17 +98,29 @@ pub struct Options<'a> {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User<'a> {
-    /// The ID of the default project for the user.
+    /// The ID of the default project for the user. A user’s default project
+    /// must not be a domain. Setting this attribute does not grant any actual
+    /// authorization on the project, and is merely provided for convenience.
+    /// Therefore, the referenced project does not need to exist within the
+    /// user domain. (Since v3.1) If the user does not have authorization to
+    /// their default project, the default project is ignored at token
+    /// creation. (Since v3.1) Additionally, if your default project is not
+    /// valid, a token is issued without an explicit scope of authorization.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) default_project_id: Option<Option<Cow<'a, str>>>,
 
+    /// The resource description.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The ID of the domain.
+    /// The ID of the domain of the user. If the domain ID is not provided in
+    /// the request, the Identity service will attempt to pull the domain ID
+    /// from the token used in the request. Note that this requires the use of
+    /// a domain-scoped token.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -131,7 +143,7 @@ pub struct User<'a> {
     ///   {
     ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///       {"protocol_id": mapped, "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
@@ -158,7 +170,7 @@ pub struct User<'a> {
     #[builder(default, setter(into))]
     pub(crate) options: Option<Options<'a>>,
 
-    /// The new password for the user.
+    /// The password for the user.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -252,7 +264,7 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn response_key(&self) -> Option<Cow<'static, str>> {
-        None
+        Some("user".into())
     }
 
     /// Returns headers to be set into the request
@@ -292,12 +304,15 @@ mod tests {
 
     #[test]
     fn test_response_key() {
-        assert!(Request::builder()
-            .user(UserBuilder::default().name("foo").build().unwrap())
-            .build()
-            .unwrap()
-            .response_key()
-            .is_none())
+        assert_eq!(
+            Request::builder()
+                .user(UserBuilder::default().name("foo").build().unwrap())
+                .build()
+                .unwrap()
+                .response_key()
+                .unwrap(),
+            "user"
+        );
     }
 
     #[cfg(feature = "sync")]
@@ -310,7 +325,7 @@ mod tests {
 
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "user": {} }));
         });
 
         let endpoint = Request::builder()
@@ -332,7 +347,7 @@ mod tests {
                 .header("not_foo", "not_bar");
             then.status(200)
                 .header("content-type", "application/json")
-                .json_body(json!({ "dummy": {} }));
+                .json_body(json!({ "user": {} }));
         });
 
         let endpoint = Request::builder()

@@ -180,21 +180,22 @@ impl TryFrom<&Options> for openstack_sdk::api::identity::v3::user::set::Options<
 #[derive(Builder, Debug, Default, Deserialize, Clone, Eq, PartialEq, Serialize)]
 #[builder(setter(strip_option))]
 pub struct User {
-    /// The ID of the default project for the user.
+    /// The new ID of the default project for the user.
     ///
     #[builder(default, setter(into))]
     pub default_project_id: Option<Option<String>>,
 
+    /// The resource description.
+    ///
     #[builder(default, setter(into))]
     pub description: Option<Option<String>>,
 
-    /// The ID of the domain.
-    ///
-    #[builder(default, setter(into))]
-    pub domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Enables or disables the user. An enabled user can authenticate and
+    /// receive authorization. A disabled user cannot authenticate or receive
+    /// authorization. Additionally, all tokens that the user holds become no
+    /// longer valid. If you reenable this user, pre-existing tokens do not
+    /// become valid. To enable the user, set to `true`. To disable the user,
+    /// set to `false`. Default is `true`.
     ///
     #[builder(default)]
     pub enabled: Option<bool>,
@@ -209,7 +210,7 @@ pub struct User {
     ///   {
     ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///       {"protocol_id": mapped, "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
@@ -219,7 +220,7 @@ pub struct User {
     #[builder(default, setter(into))]
     pub federated: Option<Vec<Federated>>,
 
-    /// The user name. Must be unique within the owning domain.
+    /// The new name for the user. Must be unique within the owning domain.
     ///
     #[builder(default, setter(into))]
     pub name: Option<String>,
@@ -251,9 +252,6 @@ impl TryFrom<&User> for openstack_sdk::api::identity::v3::user::set::UserBuilder
         }
         if let Some(val) = &value.description {
             ep_builder.description(val.clone().map(Into::into));
-        }
-        if let Some(val) = &value.domain_id {
-            ep_builder.domain_id(val.clone());
         }
         if let Some(val) = &value.enabled {
             ep_builder.enabled(*val);

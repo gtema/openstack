@@ -35,7 +35,9 @@ use openstack_sdk::api::identity::v3::os_federation::service_provider::list;
 use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
-/// GET operation on /v3/OS-FEDERATION/service_providers
+/// List service providers.
+///
+/// GET/HEAD /OS-FEDERATION/service_providers
 ///
 #[derive(Args)]
 pub struct ServiceProvidersCommand {
@@ -50,7 +52,17 @@ pub struct ServiceProvidersCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// Whether the service provider is enabled or not
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
+    enabled: Option<bool>,
+
+    /// The service provider ID
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    id: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -61,22 +73,22 @@ struct ResponseData {
     /// The URL to authenticate against
     ///
     #[serde()]
-    #[structable(wide)]
-    auth_url: String,
+    #[structable(optional, wide)]
+    auth_url: Option<String>,
 
-    /// The description of the Service Provider
+    /// The description of the service provider
     ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// Whether the service provider is enabled or not
     ///
     #[serde()]
     #[structable(optional, wide)]
     enabled: Option<bool>,
 
-    /// The Service Provider unique ID
+    /// The service provider ID
     ///
     #[serde()]
     #[structable(optional)]
@@ -88,11 +100,11 @@ struct ResponseData {
     #[structable(optional, wide)]
     relay_state_prefix: Option<String>,
 
-    /// The Service Provider’s URL
+    /// The service provider's URL
     ///
     #[serde()]
-    #[structable(wide)]
-    sp_url: String,
+    #[structable(optional, wide)]
+    sp_url: Option<String>,
 }
 
 impl ServiceProvidersCommand {
@@ -107,10 +119,16 @@ impl ServiceProvidersCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.id {
+            ep_builder.id(val);
+        }
+        if let Some(val) = &self.query.enabled {
+            ep_builder.enabled(*val);
+        }
         // Set body parameters
 
         let ep = ep_builder

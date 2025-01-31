@@ -27,7 +27,9 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum Interface {
@@ -44,13 +46,25 @@ pub enum Interface {
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Endpoint<'a> {
-    /// Indicates whether the endpoint appears in the service catalog: -
-    /// `false`. The endpoint does not appear in the service catalog. - `true`.
-    /// The endpoint appears in the service catalog.
+    /// A description of the endpoint.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) description: Option<Option<Cow<'a, str>>>,
+
+    /// Defines whether the endpoint appears in the service catalog: - `false`.
+    /// The endpoint does not appear in the service catalog. - `true`. The
+    /// endpoint appears in the service catalog. Default is `true`.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
+
+    /// The endpoint ID.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
 
     /// The interface type, which describes the visibility of the endpoint.
     /// Value is: - `public`. Visible by end users on a publicly available
@@ -58,33 +72,57 @@ pub struct Endpoint<'a> {
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
     ///
+    #[serde()]
+    #[builder()]
+    pub(crate) interface: Interface,
+
+    /// The name of the endpoint.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) interface: Option<Interface>,
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) region: Option<Cow<'a, str>>,
+    pub(crate) region: Option<Option<Cow<'a, str>>>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) region_id: Option<Cow<'a, str>>,
+    pub(crate) region_id: Option<Option<Cow<'a, str>>>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) service_id: Option<Cow<'a, str>>,
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) service_id: Cow<'a, str>,
 
     /// The endpoint URL.
     ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) url: Option<Cow<'a, str>>,
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) url: Cow<'a, str>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> EndpointBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -186,7 +224,14 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .endpoint(EndpointBuilder::default().build().unwrap())
+                .endpoint(
+                    EndpointBuilder::default()
+                        .interface(Interface::Admin)
+                        .service_id("foo")
+                        .url("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .service_type(),
@@ -198,7 +243,14 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .endpoint(EndpointBuilder::default().build().unwrap())
+                .endpoint(
+                    EndpointBuilder::default()
+                        .interface(Interface::Admin)
+                        .service_id("foo")
+                        .url("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .response_key()
@@ -221,7 +273,14 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .endpoint(EndpointBuilder::default().build().unwrap())
+            .endpoint(
+                EndpointBuilder::default()
+                    .interface(Interface::Admin)
+                    .service_id("foo")
+                    .url("foo")
+                    .build()
+                    .unwrap(),
+            )
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -243,7 +302,14 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .endpoint(EndpointBuilder::default().build().unwrap())
+            .endpoint(
+                EndpointBuilder::default()
+                    .interface(Interface::Admin)
+                    .service_id("foo")
+                    .url("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

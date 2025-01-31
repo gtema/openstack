@@ -37,7 +37,9 @@ use openstack_sdk::api::identity::v3::os_trust::trust::delete;
 use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
-/// DELETE operation on /v3/OS-TRUST/trusts/{trust_id}
+/// Delete trust.
+///
+/// DELETE /v3/OS-TRUST/trusts/{trust_id}
 ///
 #[derive(Args)]
 pub struct TrustCommand {

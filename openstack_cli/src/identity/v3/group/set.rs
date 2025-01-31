@@ -81,17 +81,12 @@ struct PathParameters {
 /// Group Body data
 #[derive(Args, Clone)]
 struct Group {
-    /// The description of the group.
+    /// The new description of the group.
     ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The ID of the domain.
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    domain_id: Option<String>,
-
-    /// The user name. Must be unique within the owning domain.
+    /// The new name of the group.
     ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -160,10 +155,6 @@ impl GroupCommand {
         let mut group_builder = set::GroupBuilder::default();
         if let Some(val) = &args.description {
             group_builder.description(Some(val.into()));
-        }
-
-        if let Some(val) = &args.domain_id {
-            group_builder.domain_id(val);
         }
 
         if let Some(val) = &args.name {
