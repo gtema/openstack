@@ -22,6 +22,7 @@ use tracing::{debug, error, event, info, instrument, trace, warn, Level};
 
 use async_trait::async_trait;
 use bytes::Bytes;
+use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
 use http::{HeaderMap, Response as HttpResponse, StatusCode};
@@ -40,7 +41,7 @@ use crate::api::RestClient;
 use crate::auth::{
     self, authtoken,
     authtoken::{AuthTokenError, AuthType},
-    Auth,
+    Auth, AuthState,
 };
 use crate::config::{get_config_identity_hash, ConfigFile};
 use crate::state;
@@ -522,6 +523,16 @@ where {
     pub fn get_auth_info(&self) -> Option<AuthResponse> {
         if let Auth::AuthToken(token) = &self.auth {
             return token.auth_info.clone();
+        }
+        None
+    }
+
+    /// Return current authentication status
+    ///
+    /// Offset can be used to calculate imminent expiration.
+    pub fn get_auth_state(&self, offset: Option<TimeDelta>) -> Option<AuthState> {
+        if let Auth::AuthToken(token) = &self.auth {
+            return Some(token.get_state(offset));
         }
         None
     }

@@ -37,8 +37,8 @@ pub struct AuthToken {
     pub project: Option<Project>,
     pub domain: Option<Domain>,
     pub system: Option<System>,
-    pub issued_at: Option<DateTime<Local>>,
-    pub expires_at: DateTime<Local>,
+    pub issued_at: Option<DateTime<Utc>>,
+    pub expires_at: DateTime<Utc>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, Eq, PartialEq)]
