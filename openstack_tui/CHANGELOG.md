@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.4...openstack_tui-v0.9.5) - 2025-01-31
+
+### Other
+
+- update Cargo.lock dependencies
+
 ## [0.9.4](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.3...openstack_tui-v0.9.4) - 2025-01-17
 
 ### Added

@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.17.0...openstack_sdk-v0.18.0) - 2025-01-31
+
+### Added
+
+- Add get_auth_state method to obtain auth status (#937)
+
 ## [0.17.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.16.0...openstack_sdk-v0.17.0) - 2025-01-17
 
 ### Added
