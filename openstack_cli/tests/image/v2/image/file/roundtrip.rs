@@ -14,7 +14,7 @@
 
 use assert_cmd::prelude::*;
 use file_diff::diff_files;
-use rand::distributions::{Alphanumeric, DistString};
+use rand::distr::{Alphanumeric, SampleString};
 use serde_json::Value;
 use std::fs::File;
 use std::io::copy;

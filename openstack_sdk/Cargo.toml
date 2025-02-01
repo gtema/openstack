@@ -53,7 +53,7 @@ futures = {workspace = true}
 futures-util = { workspace = true }
 http = { workspace = true }
 http-body-util = "^0.1"
-hyper = { version = "^1.5", features = ["full"] }
+hyper = { version = "^1.6", features = ["full"] }
 hyper-util = { version = "^0.1", features = ["full"] }
 itertools = { workspace = true }
 json-patch = { workspace = true }
@@ -72,7 +72,7 @@ url = { workspace = true }
 
 [dev-dependencies]
 httpmock = "^0.7"
-reserve-port = "^2.0"
+reserve-port = "^2.1"
 tempfile = { workspace = true }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
 
