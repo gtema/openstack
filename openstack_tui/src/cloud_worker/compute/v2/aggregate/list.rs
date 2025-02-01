@@ -24,8 +24,12 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::aggregate::list::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -63,4 +67,102 @@ impl ExecuteApiRequest for ComputeAggregateList {
         })?;
         Ok(())
     }
+}
+/// ComputeAggregate response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ComputeAggregate {
+    /// The availability zone of the host aggregate.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "AVAILABILITY_ZONE", wide)]
+    availability_zone: Option<String>,
+
+    /// The date and time when the resource was created. The date and time
+    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
+    ///
+    #[serde()]
+    #[structable(title = "CREATED_AT")]
+    created_at: String,
+
+    /// A boolean indicates whether this aggregate is deleted or not, if it has
+    /// not been deleted, `false` will appear.
+    ///
+    #[serde()]
+    #[structable(title = "DELETED", wide)]
+    deleted: bool,
+
+    /// The date and time when the resource was deleted. If the resource has
+    /// not been deleted yet, this field will be `null`, The date and time
+    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DELETED_AT", wide)]
+    deleted_at: Option<String>,
+
+    /// A list of host ids in this aggregate.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HOSTS", wide)]
+    hosts: Option<Value>,
+
+    /// The ID of the host aggregate.
+    ///
+    #[serde()]
+    #[structable(title = "ID", wide)]
+    id: i32,
+
+    /// Metadata key and value pairs associated with the aggregate.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "METADATA", wide)]
+    metadata: Option<Value>,
+
+    /// The name of the host aggregate.
+    ///
+    #[serde()]
+    #[structable(title = "NAME")]
+    name: String,
+
+    /// The date and time when the resource was updated, if the resource has
+    /// not been updated, this field will show as `null`. The date and time
+    /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`. The `±hh:mm` value, if
+    /// included, is the time zone as an offset from UTC. In the previous
+    /// example, the offset value is `-05:00`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
+
+    /// The UUID of the host aggregate.
+    ///
+    /// **New in version 2.41**
+    ///
+    #[serde()]
+    #[structable(title = "UUID", wide)]
+    uuid: String,
 }

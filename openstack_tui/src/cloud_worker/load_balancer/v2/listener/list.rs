@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::load_balancer::v2::listener::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -266,4 +270,273 @@ impl ExecuteApiRequest for LoadBalancerListenerList {
         })?;
         Ok(())
     }
+}
+/// LoadBalancerListener response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct LoadBalancerListener {
+    /// The administrative state of the resource, which is up (`true`) or down
+    /// (`false`).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ADMIN_STATE_UP", wide)]
+    admin_state_up: Option<bool>,
+
+    /// A list of IPv4, IPv6 or mix of both CIDRs.
+    ///
+    /// **New in version 2.12**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ALLOWED_CIDRS", wide)]
+    allowed_cidrs: Option<Value>,
+
+    /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
+    ///
+    /// **New in version 2.20**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ALPN_PROTOCOLS", wide)]
+    alpn_protocols: Option<Value>,
+
+    /// The TLS client authentication mode. One of the options `NONE`,
+    /// `OPTIONAL` or `MANDATORY`.
+    ///
+    /// **New in version 2.8**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CLIENT_AUTHENTICATION", wide)]
+    client_authentication: Option<String>,
+
+    /// The ref of the
+    /// [key manager service](https://docs.openstack.org/castellan/latest/)
+    /// secret containing a PEM format client CA certificate bundle for
+    /// `TERMINATED_HTTPS` listeners.
+    ///
+    /// **New in version 2.8**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CLIENT_CA_TLS_CONTAINER_REF", wide)]
+    client_ca_tls_container_ref: Option<String>,
+
+    /// The URI of the
+    /// [key manager service](https://docs.openstack.org/castellan/latest/)
+    /// secret containing a PEM format CA revocation list file for
+    /// `TERMINATED_HTTPS` listeners.
+    ///
+    /// **New in version 2.8**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CLIENT_CRL_CONTAINER_REF", wide)]
+    client_crl_container_ref: Option<String>,
+
+    /// The maximum number of connections permitted for this listener. Default
+    /// value is -1 which represents infinite connections or a default value
+    /// defined by the provider driver.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CONNECTION_LIMIT", wide)]
+    connection_limit: Option<i32>,
+
+    /// The UTC date and timestamp when the resource was created.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CREATED_AT")]
+    created_at: Option<String>,
+
+    /// The ID of the pool used by the listener if no L7 policies match. The
+    /// pool has some restrictions. See
+    /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DEFAULT_POOL_ID", wide)]
+    default_pool_id: Option<String>,
+
+    /// The URI of the
+    /// [key manager service](https://docs.openstack.org/castellan/latest/)
+    /// secret containing a PKCS12 format certificate/key bundle for
+    /// `TERMINATED_HTTPS` listeners. DEPRECATED: A secret container of type
+    /// “certificate” containing the certificate and key for `TERMINATED_HTTPS`
+    /// listeners.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DEFAULT_TLS_CONTAINER_REF", wide)]
+    default_tls_container_ref: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// Defines whether the `includeSubDomains` directive should be added to
+    /// the Strict-Transport-Security HTTP response header.
+    ///
+    /// **New in version 2.27**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HSTS_INCLUDE_SUBDOMAINS", wide)]
+    hsts_include_subdomains: Option<bool>,
+
+    /// The value of the `max_age` directive for the Strict-Transport-Security
+    /// HTTP response header.
+    ///
+    /// **New in version 2.27**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HSTS_MAX_AGE", wide)]
+    hsts_max_age: Option<i32>,
+
+    /// Defines whether the `preload` directive should be added to the
+    /// Strict-Transport-Security HTTP response header.
+    ///
+    /// **New in version 2.27**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HSTS_PRELOAD", wide)]
+    hsts_preload: Option<bool>,
+
+    /// The ID of the listener.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// A dictionary of optional headers to insert into the request before it
+    /// is sent to the backend `member`. See
+    /// [Supported HTTP Header Insertions](#header-insertions). Both keys and
+    /// values are always specified as strings.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "INSERT_HEADERS", wide)]
+    insert_headers: Option<Value>,
+
+    /// A list of L7 policy IDs.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "L7POLICIES", wide)]
+    l7policies: Option<Value>,
+
+    /// A list of load balancer IDs.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "LOADBALANCERS", wide)]
+    loadbalancers: Option<Value>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    /// The operating status of the resource. See
+    /// [Operating Status Codes](#op-status).
+    ///
+    #[serde(default)]
+    #[structable(optional, status, title = "OPERATING_STATUS")]
+    operating_status: Option<String>,
+
+    /// The ID of the project owning this resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROJECT_ID", wide)]
+    project_id: Option<String>,
+
+    /// The protocol for the resource. One of `HTTP`, `HTTPS`, `SCTP`,
+    /// `PROMETHEUS`, `TCP`, `TERMINATED_HTTPS`, or `UDP`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROTOCOL", wide)]
+    protocol: Option<String>,
+
+    /// The protocol port number for the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROTOCOL_PORT", wide)]
+    protocol_port: Option<i32>,
+
+    /// The provisioning status of the resource. See
+    /// [Provisioning Status Codes](#prov-status).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROVISIONING_STATUS", wide)]
+    provisioning_status: Option<String>,
+
+    /// A list of URIs to the
+    /// [key manager service](https://docs.openstack.org/barbican/latest/)
+    /// secrets containing PKCS12 format certificate/key bundles for
+    /// `TERMINATED_HTTPS` listeners. (DEPRECATED) Secret containers of type
+    /// “certificate” containing the certificates and keys for
+    /// `TERMINATED_HTTPS` listeners.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SNI_CONTAINER_REFS", wide)]
+    sni_container_refs: Option<Value>,
+
+    /// A list of simple strings assigned to the resource.
+    ///
+    /// **New in version 2.5**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TAGS", wide)]
+    tags: Option<Value>,
+
+    #[serde(default)]
+    #[structable(optional, title = "TENANT_ID", wide)]
+    tenant_id: Option<String>,
+
+    /// Frontend client inactivity timeout in milliseconds. Default: 50000.
+    ///
+    /// **New in version 2.1**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TIMEOUT_CLIENT_DATA", wide)]
+    timeout_client_data: Option<i32>,
+
+    /// Backend member connection timeout in milliseconds. Default: 5000.
+    ///
+    /// **New in version 2.1**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TIMEOUT_MEMBER_CONNECT", wide)]
+    timeout_member_connect: Option<i32>,
+
+    /// Backend member inactivity timeout in milliseconds. Default: 50000.
+    ///
+    /// **New in version 2.1**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TIMEOUT_MEMBER_DATA", wide)]
+    timeout_member_data: Option<i32>,
+
+    /// Time, in milliseconds, to wait for additional TCP packets for content
+    /// inspection. Default: 0.
+    ///
+    /// **New in version 2.1**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TIMEOUT_TCP_INSPECT", wide)]
+    timeout_tcp_inspect: Option<i32>,
+
+    /// List of ciphers in OpenSSL format (colon-separated). See
+    /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
+    ///
+    /// **New in version 2.15**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TLS_CIPHERS", wide)]
+    tls_ciphers: Option<String>,
+
+    /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
+    /// TLSv1.1, TLSv1.2, TLSv1.3
+    ///
+    /// **New in version 2.17**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TLS_VERSIONS", wide)]
+    tls_versions: Option<Value>,
+
+    /// The UTC date and timestamp when the resource was last updated.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
 }

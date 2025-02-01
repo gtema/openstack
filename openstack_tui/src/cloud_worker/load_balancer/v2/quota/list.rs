@@ -24,8 +24,11 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::load_balancer::v2::quota::list::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -63,4 +66,76 @@ impl ExecuteApiRequest for LoadBalancerQuotaList {
         })?;
         Ok(())
     }
+}
+/// LoadBalancerQuota response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct LoadBalancerQuota {
+    #[serde(default)]
+    #[structable(optional, title = "HEALTH_MONITOR")]
+    health_monitor: Option<i32>,
+
+    /// The configured health monitor quota limit. A setting of `null` means it
+    /// is using the deployment default quota. A setting of `-1` means
+    /// unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HEALTHMONITOR")]
+    healthmonitor: Option<i32>,
+
+    /// The configured l7policy quota limit. A setting of `null` means it is
+    /// using the deployment default quota. A setting of `-1` means unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "L7POLICY")]
+    l7policy: Option<i32>,
+
+    /// The configured l7rule quota limit. A setting of `null` means it is
+    /// using the deployment default quota. A setting of `-1` means unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "L7RULE")]
+    l7rule: Option<i32>,
+
+    /// The configured listener quota limit. A setting of `null` means it is
+    /// using the deployment default quota. A setting of `-1` means unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "LISTENER")]
+    listener: Option<i32>,
+
+    #[serde(default)]
+    #[structable(optional, title = "LOAD_BALANCER")]
+    load_balancer: Option<i32>,
+
+    /// The configured load balancer quota limit. A setting of `null` means it
+    /// is using the deployment default quota. A setting of `-1` means
+    /// unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "LOADBALANCER")]
+    loadbalancer: Option<i32>,
+
+    /// The configured member quota limit. A setting of `null` means it is
+    /// using the deployment default quota. A setting of `-1` means unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "MEMBER")]
+    member: Option<i32>,
+
+    /// The configured pool quota limit. A setting of `null` means it is using
+    /// the deployment default quota. A setting of `-1` means unlimited.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "POOL")]
+    pool: Option<i32>,
+
+    /// The ID of the project owning this resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROJECT_ID", wide)]
+    project_id: Option<String>,
+
+    #[serde(default)]
+    #[structable(optional, title = "TENANT_ID")]
+    tenant_id: Option<String>,
 }

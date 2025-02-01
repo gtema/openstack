@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::dns::v2::recordset::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -132,4 +136,94 @@ impl ExecuteApiRequest for DnsRecordsetList {
         })?;
         Ok(())
     }
+}
+/// DnsRecordset response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct DnsRecordset {
+    /// current action in progress on the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ACTION", wide)]
+    action: Option<Value>,
+
+    /// Date / Time when resource was created.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CREATED_AT")]
+    created_at: Option<String>,
+
+    /// Description for this recordset
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// ID for the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// DNS Name for the recordset
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    /// ID for the project that owns the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROJECT_ID", wide)]
+    project_id: Option<String>,
+
+    /// A list of data for this recordset. Each item will be a separate record
+    /// in Designate These items should conform to the DNS spec for the record
+    /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
+    /// hostname.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "RECORDS", wide)]
+    records: Option<Value>,
+
+    /// The status of the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATUS")]
+    status: Option<Value>,
+
+    /// TTL (Time to Live) for the recordset.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TTL", wide)]
+    ttl: Option<i32>,
+
+    /// They RRTYPE of the recordset.
+    ///
+    #[serde(default, rename = "type")]
+    #[structable(optional, title = "TYPE", wide)]
+    _type: Option<Value>,
+
+    /// Date / Time when resource last updated.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
+
+    /// Version of the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "VERSION", wide)]
+    version: Option<i32>,
+
+    /// ID for the zone that contains this recordset
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ZONE_ID", wide)]
+    zone_id: Option<String>,
+
+    /// The name of the zone that contains this recordset
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ZONE_NAME", wide)]
+    zone_name: Option<String>,
 }

@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::server::instance_action::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -93,4 +97,14 @@ impl ExecuteApiRequest for ComputeServerInstanceActionList {
         })?;
         Ok(())
     }
+}
+/// ComputeServerInstanceAction response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ComputeServerInstanceAction {
+    /// List of the actions for the given instance in descending order of
+    /// creation.
+    ///
+    #[serde(default, rename = "instanceActions")]
+    #[structable(optional, title = "INSTANCEACTIONS", wide)]
+    instance_actions: Option<Value>,
 }

@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::hypervisor::list_detailed::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -85,4 +89,194 @@ impl ExecuteApiRequest for ComputeHypervisorList {
         })?;
         Ok(())
     }
+}
+/// ComputeHypervisor response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ComputeHypervisor {
+    /// A dictionary that contains cpu information like `arch`, `model`,
+    /// `vendor`, `features` and `topology`. The content of this field is
+    /// hypervisor specific.
+    ///
+    /// Note
+    ///
+    /// Since version 2.28 `cpu_info` field is returned as a dictionary instead
+    /// of string.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CPU_INFO", wide)]
+    cpu_info: Option<Value>,
+
+    /// The current_workload is the number of tasks the hypervisor is
+    /// responsible for. This will be equal or greater than the number of
+    /// active VMs on the system (it can be greater when VMs are being deleted
+    /// and the hypervisor is still cleaning up).
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CURRENT_WORKLOAD", wide)]
+    current_workload: Option<i32>,
+
+    /// The actual free disk on this hypervisor(in GiB). If allocation ratios
+    /// used for overcommit are configured, this may be negative. This is
+    /// intentional as it provides insight into the amount by which the disk is
+    /// overcommitted.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DISK_AVAILABLE_LEAST", wide)]
+    disk_available_least: Option<i32>,
+
+    /// The free disk remaining on this hypervisor(in GiB). This does not take
+    /// allocation ratios used for overcommit into account so this value may be
+    /// negative.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "FREE_DISK_GB", wide)]
+    free_disk_gb: Option<i32>,
+
+    /// The free RAM in this hypervisor(in MiB). This does not take allocation
+    /// ratios used for overcommit into account so this value may be negative.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "FREE_RAM_MB", wide)]
+    free_ram_mb: Option<i32>,
+
+    /// The IP address of the hypervisor’s host.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HOST_IP", wide)]
+    host_ip: Option<String>,
+
+    /// The hypervisor host name provided by the Nova virt driver. For the
+    /// Ironic driver, it is the Ironic node uuid.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HYPERVISOR_HOSTNAME", wide)]
+    hypervisor_hostname: Option<String>,
+
+    /// The hypervisor type.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HYPERVISOR_TYPE", wide)]
+    hypervisor_type: Option<String>,
+
+    /// The hypervisor version.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "HYPERVISOR_VERSION", wide)]
+    hypervisor_version: Option<i32>,
+
+    /// The id of the hypervisor. From version 2.53 it is a string as UUID
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// The disk in this hypervisor (in GiB). This does not take allocation
+    /// ratios used for overcommit into account so there may be disparity
+    /// between this and the used count.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "LOCAL_GB", wide)]
+    local_gb: Option<i32>,
+
+    /// The disk used in this hypervisor (in GiB).
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "LOCAL_GB_USED", wide)]
+    local_gb_used: Option<i32>,
+
+    /// The memory of this hypervisor (in MiB). This does not take allocation
+    /// ratios used for overcommit into account so there may be disparity
+    /// between this and the used count.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "MEMORY_MB", wide)]
+    memory_mb: Option<i32>,
+
+    /// The memory used in this hypervisor (in MiB).
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "MEMORY_MB_USED", wide)]
+    memory_mb_used: Option<i32>,
+
+    /// The number of running VMs on this hypervisor.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "RUNNING_VMS", wide)]
+    running_vms: Option<i32>,
+
+    /// A list of `server` objects. This field has become mandatory in
+    /// microversion 2.75. If no servers is on hypervisor then empty list is
+    /// returned.
+    ///
+    /// **New in version 2.53**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SERVERS", wide)]
+    servers: Option<Value>,
+
+    /// The hypervisor service object.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SERVICE", wide)]
+    service: Option<Value>,
+
+    /// The state of the hypervisor. One of `up` or `down`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATE")]
+    state: Option<Value>,
+
+    /// The status of the hypervisor. One of `enabled` or `disabled`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATUS")]
+    status: Option<Value>,
+
+    /// The total uptime of the hypervisor and information about average load.
+    /// Only reported for active hosts where the virt driver supports this
+    /// feature.
+    ///
+    /// **New in version 2.88**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPTIME", wide)]
+    uptime: Option<String>,
+
+    /// The number of vCPU in this hypervisor. This does not take allocation
+    /// ratios used for overcommit into account so there may be disparity
+    /// between this and the used count.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "VCPUS", wide)]
+    vcpus: Option<i32>,
+
+    /// The number of vCPU used in this hypervisor.
+    ///
+    /// **Available until version 2.87**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "VCPUS_USED", wide)]
+    vcpus_used: Option<i32>,
 }

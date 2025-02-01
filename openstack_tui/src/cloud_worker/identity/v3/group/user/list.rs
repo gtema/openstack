@@ -24,8 +24,12 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::identity::v3::group::user::list::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -77,4 +81,86 @@ impl ExecuteApiRequest for IdentityGroupUserList {
         })?;
         Ok(())
     }
+}
+/// IdentityGroupUser response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct IdentityGroupUser {
+    /// The ID of the default project for the user.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DEFAULT_PROJECT_ID", wide)]
+    default_project_id: Option<String>,
+
+    /// The resource description.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// The ID of the domain.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DOMAIN_ID", wide)]
+    domain_id: Option<String>,
+
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ENABLED", wide)]
+    enabled: Option<bool>,
+
+    /// List of federated objects associated with a user. Each object in the
+    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
+    /// objects, each of which contains `protocol_id` and `unique_id` of the
+    /// protocol and user respectively. For example:
+    ///
+    /// ```text
+    /// "federated": [
+    ///   {
+    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
+    ///     "protocols": [
+    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///     ]
+    ///   }
+    /// ]
+    ///
+    /// ```
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "FEDERATED", wide)]
+    federated: Option<Value>,
+
+    /// The user ID.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// The user name. Must be unique within the owning domain.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    /// The resource options for the user. Available resource options are
+    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+    /// `ignore_lockout_failure_attempts`, `lock_password`,
+    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+    /// `ignore_user_inactivity`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "OPTIONS", wide)]
+    options: Option<Value>,
+
+    /// The date and time when the password expires. The time zone is UTC.
+    ///
+    /// This is a response object attribute; not valid for requests. A `null`
+    /// value indicates that the password never expires.
+    ///
+    /// **New in version 3.7**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PASSWORD_EXPIRES_AT", wide)]
+    password_expires_at: Option<String>,
 }
