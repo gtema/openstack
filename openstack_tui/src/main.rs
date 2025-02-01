@@ -12,8 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#![deny(dead_code, unused_imports, unused_mut)]
-
 use clap::Parser;
 use cli::Cli;
 use eyre::Result;
