@@ -17,7 +17,7 @@
 
 //! Update a service provider.
 //!
-//! PATCH /OS-FEDERATION/service_providers/{sp_id}
+//! PATCH /OS-FEDERATION/service_providers/{service_provider_id}
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -31,25 +31,32 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ServiceProvider<'a> {
+    /// The URL to authenticate against
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) auth_url: Option<Cow<'a, str>>,
 
+    /// The description of the service provider
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the service provider is enabled or not
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default)]
     pub(crate) enabled: Option<bool>,
 
+    /// The prefix of the RelayState SAML attribute
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) relay_state_prefix: Option<Option<Cow<'a, str>>>,
 
+    /// The service provider's URL
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) sp_url: Option<Cow<'a, str>>,
@@ -61,10 +68,11 @@ pub struct Request<'a> {
     #[builder(setter(into))]
     pub(crate) service_provider: ServiceProvider<'a>,
 
-    /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    /// service_provider_id parameter for
+    /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
     ///
     #[builder(default, setter(into))]
-    sp_id: Cow<'a, str>,
+    id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -108,8 +116,8 @@ impl RestEndpoint for Request<'_> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "OS-FEDERATION/service_providers/{sp_id}",
-            sp_id = self.sp_id.as_ref(),
+            "OS-FEDERATION/service_providers/{id}",
+            id = self.id.as_ref(),
         )
         .into()
     }
@@ -190,10 +198,8 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::PATCH).path(format!(
-                "/OS-FEDERATION/service_providers/{sp_id}",
-                sp_id = "sp_id",
-            ));
+            when.method(httpmock::Method::PATCH)
+                .path(format!("/OS-FEDERATION/service_providers/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
@@ -201,7 +207,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .sp_id("sp_id")
+            .id("id")
             .service_provider(ServiceProviderBuilder::default().build().unwrap())
             .build()
             .unwrap();
@@ -215,10 +221,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::PATCH)
-                .path(format!(
-                    "/OS-FEDERATION/service_providers/{sp_id}",
-                    sp_id = "sp_id",
-                ))
+                .path(format!("/OS-FEDERATION/service_providers/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -227,7 +230,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .sp_id("sp_id")
+            .id("id")
             .service_provider(ServiceProviderBuilder::default().build().unwrap())
             .headers(
                 [(

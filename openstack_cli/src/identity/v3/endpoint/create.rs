@@ -76,12 +76,22 @@ enum Interface {
 /// Endpoint Body data
 #[derive(Args, Clone)]
 struct Endpoint {
-    /// Indicates whether the endpoint appears in the service catalog: -
-    /// `false`. The endpoint does not appear in the service catalog. - `true`.
-    /// The endpoint appears in the service catalog.
+    /// A description of the endpoint.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// Defines whether the endpoint appears in the service catalog: - `false`.
+    /// The endpoint does not appear in the service catalog. - `true`. The
+    /// endpoint appears in the service catalog. Default is `true`.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
+
+    /// The endpoint ID.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    id: Option<String>,
 
     /// The interface type, which describes the visibility of the endpoint.
     /// Value is: - `public`. Visible by end users on a publicly available
@@ -90,7 +100,12 @@ struct Endpoint {
     /// on a secure network interface.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    interface: Option<Interface>,
+    interface: Interface,
+
+    /// The name of the endpoint.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
@@ -105,12 +120,12 @@ struct Endpoint {
     /// The UUID of the service to which the endpoint belongs.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    service_id: Option<String>,
+    service_id: String,
 
     /// The endpoint URL.
     ///
     #[arg(help_heading = "Body parameters", long)]
-    url: Option<String>,
+    url: String,
 }
 
 /// Endpoint response representation
@@ -185,33 +200,39 @@ impl EndpointCommand {
         // Set Request.endpoint data
         let args = &self.endpoint;
         let mut endpoint_builder = create::EndpointBuilder::default();
+        if let Some(val) = &args.id {
+            endpoint_builder.id(val);
+        }
+
         if let Some(val) = &args.enabled {
             endpoint_builder.enabled(*val);
         }
 
-        if let Some(val) = &args.interface {
-            let tmp = match val {
-                Interface::Admin => create::Interface::Admin,
-                Interface::Internal => create::Interface::Internal,
-                Interface::Public => create::Interface::Public,
-            };
-            endpoint_builder.interface(tmp);
+        let tmp = match &args.interface {
+            Interface::Admin => create::Interface::Admin,
+            Interface::Internal => create::Interface::Internal,
+            Interface::Public => create::Interface::Public,
+        };
+        endpoint_builder.interface(tmp);
+
+        if let Some(val) = &args.region_id {
+            endpoint_builder.region_id(Some(val.into()));
         }
 
         if let Some(val) = &args.region {
-            endpoint_builder.region(val);
+            endpoint_builder.region(Some(val.into()));
         }
 
-        if let Some(val) = &args.region_id {
-            endpoint_builder.region_id(val);
+        endpoint_builder.service_id(&args.service_id);
+
+        endpoint_builder.url(&args.url);
+
+        if let Some(val) = &args.name {
+            endpoint_builder.name(val);
         }
 
-        if let Some(val) = &args.service_id {
-            endpoint_builder.service_id(val);
-        }
-
-        if let Some(val) = &args.url {
-            endpoint_builder.url(val);
+        if let Some(val) = &args.description {
+            endpoint_builder.description(Some(val.into()));
         }
 
         ep_builder.endpoint(endpoint_builder.build().unwrap());

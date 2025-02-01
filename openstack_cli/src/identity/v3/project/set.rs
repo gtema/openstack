@@ -132,8 +132,8 @@ struct ResponseData {
     #[structable(optional)]
     domain_id: Option<String>,
 
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde()]
     #[structable(optional)]
@@ -145,8 +145,8 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
-    /// If set to `true`, project is enabled. If set to `false`, project is
-    /// disabled.
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
     ///
     #[serde()]
     #[structable(optional)]

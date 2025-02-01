@@ -17,7 +17,7 @@
 
 //! Create ServiceProvider command
 //!
-//! Wraps invoking of the `v3/OS-FEDERATION/service_providers/{sp_id}` with `PUT` method
+//! Wraps invoking of the `v3/OS-FEDERATION/service_providers/{service_provider_id}` with `PUT` method
 
 use clap::Args;
 use serde::{Deserialize, Serialize};
@@ -33,11 +33,12 @@ use crate::StructTable;
 
 use openstack_sdk::api::identity::v3::os_federation::service_provider::create;
 use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Create a service provider.
 ///
-/// PUT /OS-FEDERATION/service_providers/{sp_id}
+/// PUT /OS-FEDERATION/service_providers/{service_provider_id}
 ///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
@@ -60,33 +61,41 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    /// service_provider_id parameter for
+    /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
     ///
     #[arg(
         help_heading = "Path parameters",
-        id = "path_param_sp_id",
-        value_name = "SP_ID"
+        id = "path_param_id",
+        value_name = "ID"
     )]
-    sp_id: String,
+    id: String,
 }
 /// ServiceProvider Body data
 #[derive(Args, Clone)]
 struct ServiceProvider {
+    /// The URL to authenticate against
+    ///
     #[arg(help_heading = "Body parameters", long)]
     auth_url: String,
 
+    /// The description of the service provider
+    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Whether the service provider is enabled or not
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
 
+    /// The prefix of the RelayState SAML attribute
+    ///
     #[arg(help_heading = "Body parameters", long)]
     relay_state_prefix: Option<String>,
 
+    /// The service provider's URL
+    ///
     #[arg(help_heading = "Body parameters", long)]
     sp_url: String,
 }
@@ -97,26 +106,32 @@ struct ResponseData {
     /// The URL to authenticate against
     ///
     #[serde()]
-    #[structable()]
-    auth_url: String,
+    #[structable(optional)]
+    auth_url: Option<String>,
 
-    /// The description of the Service Provider
+    /// The description of the service provider
     ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// Whether the Service Provider is enabled or not
+    /// Whether the service provider is enabled or not
     ///
     #[serde()]
     #[structable(optional)]
     enabled: Option<bool>,
 
-    /// The Service Provider unique ID
+    /// The service provider ID
     ///
     #[serde()]
     #[structable(optional)]
     id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
 
     /// The prefix of the RelayState SAML attribute
     ///
@@ -124,11 +139,11 @@ struct ResponseData {
     #[structable(optional)]
     relay_state_prefix: Option<String>,
 
-    /// The Service Provider’s URL
+    /// The service provider's URL
     ///
     #[serde()]
-    #[structable()]
-    sp_url: String,
+    #[structable(optional)]
+    sp_url: Option<String>,
 }
 
 impl ServiceProviderCommand {
@@ -146,7 +161,7 @@ impl ServiceProviderCommand {
         let mut ep_builder = create::Request::builder();
 
         // Set path parameters
-        ep_builder.sp_id(&self.path.sp_id);
+        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
         // Set Request.service_provider data

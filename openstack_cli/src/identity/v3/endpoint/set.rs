@@ -31,10 +31,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::parse_key_val;
+use clap::ValueEnum;
 use openstack_sdk::api::identity::v3::endpoint::set;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
 use structable_derive::StructTable;
 
 /// Updates an endpoint.
@@ -53,9 +52,10 @@ pub struct EndpointCommand {
     #[command(flatten)]
     path: PathParameters,
 
-    #[arg(long="property", value_name="key=value", value_parser=parse_key_val::<String, Value>)]
-    #[arg(help_heading = "Body parameters")]
-    properties: Option<Vec<(String, Value)>>,
+    /// An `endpoint` object.
+    ///
+    #[command(flatten)]
+    endpoint: Endpoint,
 }
 
 /// Query parameters
@@ -74,6 +74,64 @@ struct PathParameters {
     )]
     id: String,
 }
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum Interface {
+    Admin,
+    Internal,
+    Public,
+}
+
+/// Endpoint Body data
+#[derive(Args, Clone)]
+struct Endpoint {
+    /// A description of the endpoint.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    description: Option<String>,
+
+    /// Indicates whether the endpoint appears in the service catalog -false.
+    /// The endpoint does not appear in the service catalog. -true. The
+    /// endpoint appears in the service catalog.
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    enabled: Option<bool>,
+
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: - `public`. Visible by end users on a publicly available
+    /// network interface. - `internal`. Visible by end users on an unmetered
+    /// internal network interface. - `admin`. Visible by administrative users
+    /// on a secure network interface.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    interface: Option<Interface>,
+
+    /// The name of the endpoint.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    name: Option<String>,
+
+    /// (Deprecated in v3.2) The geographic location of the service endpoint.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    region: Option<String>,
+
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    region_id: Option<String>,
+
+    /// The UUID of the service to which the endpoint belongs.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    service_id: Option<String>,
+
+    /// The endpoint URL.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    url: Option<String>,
+}
+
 /// Endpoint response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
@@ -144,9 +202,47 @@ impl EndpointCommand {
         ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
-        if let Some(properties) = &self.properties {
-            ep_builder.properties(properties.iter().cloned());
+        // Set Request.endpoint data
+        let args = &self.endpoint;
+        let mut endpoint_builder = set::EndpointBuilder::default();
+        if let Some(val) = &args.enabled {
+            endpoint_builder.enabled(*val);
         }
+
+        if let Some(val) = &args.interface {
+            let tmp = match val {
+                Interface::Admin => set::Interface::Admin,
+                Interface::Internal => set::Interface::Internal,
+                Interface::Public => set::Interface::Public,
+            };
+            endpoint_builder.interface(tmp);
+        }
+
+        if let Some(val) = &args.region_id {
+            endpoint_builder.region_id(Some(val.into()));
+        }
+
+        if let Some(val) = &args.region {
+            endpoint_builder.region(Some(val.into()));
+        }
+
+        if let Some(val) = &args.service_id {
+            endpoint_builder.service_id(val);
+        }
+
+        if let Some(val) = &args.url {
+            endpoint_builder.url(val);
+        }
+
+        if let Some(val) = &args.name {
+            endpoint_builder.name(val);
+        }
+
+        if let Some(val) = &args.description {
+            endpoint_builder.description(Some(val.into()));
+        }
+
+        ep_builder.endpoint(endpoint_builder.build().unwrap());
 
         let ep = ep_builder
             .build()

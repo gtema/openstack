@@ -55,17 +55,21 @@ pub struct EndpointsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// Filters the response by an interface.
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: -public. Visible by end users on a publicly available network
+    /// interface. -internal. Visible by end users on an unmetered internal
+    /// network interface.-admin. Visible by administrative users on a secure
+    /// network interface.
     ///
     #[arg(help_heading = "Query parameters", long, value_parser = ["admin","internal","public"])]
     interface: Option<String>,
 
-    /// Filters the response by a region ID.
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
     ///
     #[arg(help_heading = "Query parameters", long)]
-    region: Option<String>,
+    region_id: Option<String>,
 
-    /// Filters the response by a service ID.
+    /// The UUID of the service to which the endpoint belongs
     ///
     #[arg(help_heading = "Query parameters", long)]
     service_id: Option<String>,
@@ -142,14 +146,14 @@ impl EndpointsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.service_id {
-            ep_builder.service_id(val);
-        }
-        if let Some(val) = &self.query.region {
-            ep_builder.region(val);
-        }
         if let Some(val) = &self.query.interface {
             ep_builder.interface(val);
+        }
+        if let Some(val) = &self.query.region_id {
+            ep_builder.region_id(val);
+        }
+        if let Some(val) = &self.query.service_id {
+            ep_builder.service_id(val);
         }
         // Set body parameters
 

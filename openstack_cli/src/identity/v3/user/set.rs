@@ -109,21 +109,22 @@ struct Options {
 /// User Body data
 #[derive(Args, Clone)]
 struct User {
-    /// The ID of the default project for the user.
+    /// The new ID of the default project for the user.
     ///
     #[arg(help_heading = "Body parameters", long)]
     default_project_id: Option<String>,
 
+    /// The resource description.
+    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The ID of the domain.
-    ///
-    #[arg(help_heading = "Body parameters", long)]
-    domain_id: Option<String>,
-
-    /// If the user is enabled, this value is `true`. If the user is disabled,
-    /// this value is `false`.
+    /// Enables or disables the user. An enabled user can authenticate and
+    /// receive authorization. A disabled user cannot authenticate or receive
+    /// authorization. Additionally, all tokens that the user holds become no
+    /// longer valid. If you reenable this user, pre-existing tokens do not
+    /// become valid. To enable the user, set to `true`. To disable the user,
+    /// set to `false`. Default is `true`.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     enabled: Option<bool>,
@@ -138,7 +139,7 @@ struct User {
     ///   {
     ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///       {"protocol_id": mapped, "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
@@ -148,7 +149,7 @@ struct User {
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     federated: Option<Vec<Value>>,
 
-    /// The user name. Must be unique within the owning domain.
+    /// The new name for the user. Must be unique within the owning domain.
     ///
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
@@ -177,6 +178,8 @@ struct ResponseData {
     #[structable(optional)]
     default_project_id: Option<String>,
 
+    /// The resource description.
+    ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
@@ -221,6 +224,12 @@ struct ResponseData {
     #[structable(optional)]
     id: Option<String>,
 
+    /// The links for the `user` resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
     /// The user name. Must be unique within the owning domain.
     ///
     #[serde()]
@@ -237,11 +246,16 @@ struct ResponseData {
     #[structable(optional, pretty)]
     options: Option<Value>,
 
-    /// The new password for the user.
+    /// The date and time when the password expires. The time zone is UTC.
+    ///
+    /// This is a response object attribute; not valid for requests. A `null`
+    /// value indicates that the password never expires.
+    ///
+    /// **New in version 3.7**
     ///
     #[serde()]
     #[structable(optional)]
-    password: Option<String>,
+    password_expires_at: Option<String>,
 }
 
 impl UserCommand {
@@ -287,10 +301,6 @@ impl UserCommand {
 
         if let Some(val) = &args.description {
             user_builder.description(Some(val.into()));
-        }
-
-        if let Some(val) = &args.domain_id {
-            user_builder.domain_id(val);
         }
 
         if let Some(val) = &args.enabled {

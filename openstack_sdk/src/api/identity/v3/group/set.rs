@@ -30,30 +30,44 @@ use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
 use serde::Serialize;
+use serde_json::Value;
 use std::borrow::Cow;
+use std::collections::BTreeMap;
 
 /// A `group` object
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Group<'a> {
-    /// The description of the group.
+    /// The new description of the group.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) description: Option<Option<Cow<'a, str>>>,
 
-    /// The ID of the domain.
-    ///
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) domain_id: Option<Cow<'a, str>>,
-
-    /// The user name. Must be unique within the owning domain.
+    /// The new name of the group.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) name: Option<Cow<'a, str>>,
+
+    #[builder(setter(name = "_properties"), default, private)]
+    #[serde(flatten)]
+    _properties: BTreeMap<Cow<'a, str>, Value>,
+}
+
+impl<'a> GroupBuilder<'a> {
+    pub fn properties<I, K, V>(&mut self, iter: I) -> &mut Self
+    where
+        I: Iterator<Item = (K, V)>,
+        K: Into<Cow<'a, str>>,
+        V: Into<Value>,
+    {
+        self._properties
+            .get_or_insert_with(BTreeMap::new)
+            .extend(iter.map(|(k, v)| (k.into(), v.into())));
+        self
+    }
 }
 
 #[derive(Builder, Debug, Clone)]

@@ -87,6 +87,8 @@ struct ResponseData {
     #[structable(optional, wide)]
     default_project_id: Option<String>,
 
+    /// The resource description.
+    ///
     #[serde()]
     #[structable(optional, wide)]
     description: Option<String>,
@@ -147,11 +149,16 @@ struct ResponseData {
     #[structable(optional, pretty, wide)]
     options: Option<Value>,
 
-    /// The new password for the user.
+    /// The date and time when the password expires. The time zone is UTC.
+    ///
+    /// This is a response object attribute; not valid for requests. A `null`
+    /// value indicates that the password never expires.
+    ///
+    /// **New in version 3.7**
     ///
     #[serde()]
     #[structable(optional, wide)]
-    password: Option<String>,
+    password_expires_at: Option<String>,
 }
 
 impl UsersCommand {
