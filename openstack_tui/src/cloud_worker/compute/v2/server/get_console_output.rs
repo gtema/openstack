@@ -62,7 +62,7 @@ impl TryFrom<&OsGetConsoleOutput>
     fn try_from(value: &OsGetConsoleOutput) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
         if let Some(val) = &value.length {
-            ep_builder.length((*val));
+            ep_builder.length(*val);
         }
         Ok(ep_builder)
     }

@@ -22,6 +22,8 @@ COPY xtask/Cargo.toml /usr/src/openstack/xtask/
 COPY fuzz/Cargo.toml /usr/src/openstack/fuzz/
 RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/src/lib.rs &&\
     cp openstack/src/main.rs openstack/openstack_cli/src/bin/osc.rs &&\
+    mkdir -p openstack/openstack_tui/src/bin && touch openstack/openstack_tui/src/lib.rs &&\
+    cp openstack/src/main.rs openstack/openstack_tui/src/bin/ostui.rs &&\
     mkdir -p openstack/openstack_sdk/src && touch openstack/openstack_sdk/src/lib.rs &&\
     mkdir -p openstack/structable_derive/src && touch openstack/structable_derive/src/lib.rs &&\
     mkdir -p /usr/src/openstack/xtask/src && touch openstack/xtask/src/lib.rs &&\
@@ -49,7 +51,7 @@ COPY . /usr/src/openstack/
 RUN touch openstack_sdk/src/lib.rs && touch openstack_cli/src/bin/osc.rs && touch openstack_cli/src/lib.rs && touch structable_derive/src/lib.rs
 
 # This is the actual application build.
-RUN cargo build --target x86_64-unknown-linux-musl --release -p openstack_cli
+RUN cargo build --target x86_64-unknown-linux-musl --release --bin osc
 
 ################
 ##### Runtime

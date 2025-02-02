@@ -64,7 +64,7 @@ impl ContainerCommand {
             .path_segments()
             .expect("Object Store endpoint must not point to a bare domain")
             .filter(|x| !x.is_empty())
-            .last()
+            .next_back()
             .expect("Object Store endpoint must end with project id");
         client
             .object_store_container_prune_async(account, &self.container, self.prefix.as_ref())

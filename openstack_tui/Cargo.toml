@@ -11,9 +11,12 @@ homepage.workspace = true
 repository.workspace = true
 rust-version = "1.80" # MSRV
 
+[lib]
+bench = false
+
 [[bin]]
 name = "ostui"
-path = "src/main.rs"
+path = "src/bin/ostui.rs"
 
 [dependencies]
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
