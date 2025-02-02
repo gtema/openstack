@@ -96,7 +96,7 @@ impl AccountCommand {
             .path_segments()
             .expect("Object Store endpoint must not point to a bare domain")
             .filter(|x| !x.is_empty())
-            .last();
+            .next_back();
         if let Some(account) = account {
             ep_builder.account(account);
         }

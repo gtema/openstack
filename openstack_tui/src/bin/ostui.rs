@@ -13,25 +13,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use clap::Parser;
-use cli::Cli;
 use eyre::Result;
 
-use crate::{
+use openstack_tui::{
     app::App,
+    cli::Cli,
     utils::{initialize_logging, initialize_panic_handler},
 };
-
-pub mod action;
-pub mod app;
-pub mod cli;
-mod cloud_worker;
-pub mod components;
-pub mod config;
-mod error;
-pub mod mode;
-pub mod tui;
-pub mod utils;
-pub mod widgets;
 
 async fn tokio_main() -> Result<()> {
     initialize_logging()?;
