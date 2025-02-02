@@ -25,6 +25,7 @@ use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
 use openstack_sdk::api::identity::v3::user::list::RequestBuilder;
+use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -41,6 +42,10 @@ pub struct IdentityUserList {
     #[builder(default)]
     pub idp_name: Option<String>,
     #[builder(default)]
+    pub limit: Option<i32>,
+    #[builder(default)]
+    pub marker: Option<String>,
+    #[builder(default)]
     pub name: Option<String>,
     #[builder(default)]
     pub password_expires_at: Option<String>,
@@ -48,6 +53,10 @@ pub struct IdentityUserList {
     pub protocol_id: Option<String>,
     #[builder(default)]
     pub protocol_name: Option<String>,
+    #[builder(default)]
+    pub sort_dir: Option<String>,
+    #[builder(default)]
+    pub sort_key: Option<String>,
     #[builder(default)]
     pub unique_id: Option<String>,
     #[builder(default)]
@@ -126,6 +135,18 @@ impl TryFrom<&IdentityUserList> for RequestBuilder<'_> {
         if let Some(val) = &value.unique_id {
             ep_builder.unique_id(val.clone());
         }
+        if let Some(val) = &value.marker {
+            ep_builder.marker(val.clone());
+        }
+        if let Some(val) = &value.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.clone());
+        }
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.clone());
+        }
 
         Ok(ep_builder)
     }
@@ -143,7 +164,7 @@ impl ExecuteApiRequest for IdentityUserList {
             .wrap_err("Cannot prepare request")?;
         app_tx.send(Action::ApiResponsesData {
             request: request.clone(),
-            data: ep.query_async(session).await?,
+            data: paged(ep, Pagination::All).query_async(session).await?,
         })?;
         Ok(())
     }

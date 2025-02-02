@@ -25,6 +25,7 @@ use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
 use openstack_sdk::api::identity::v3::group::list::RequestBuilder;
+use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -34,6 +35,16 @@ pub struct IdentityGroupList {
     pub domain_id: Option<String>,
     #[builder(default)]
     pub domain_name: Option<String>,
+    #[builder(default)]
+    pub limit: Option<i32>,
+    #[builder(default)]
+    pub marker: Option<String>,
+    #[builder(default)]
+    pub name: Option<String>,
+    #[builder(default)]
+    pub sort_dir: Option<String>,
+    #[builder(default)]
+    pub sort_key: Option<String>,
 }
 
 impl fmt::Display for IdentityGroupList {
@@ -60,6 +71,21 @@ impl TryFrom<&IdentityGroupList> for RequestBuilder<'_> {
         if let Some(val) = &value.domain_id {
             ep_builder.domain_id(val.clone());
         }
+        if let Some(val) = &value.name {
+            ep_builder.name(val.clone());
+        }
+        if let Some(val) = &value.marker {
+            ep_builder.marker(val.clone());
+        }
+        if let Some(val) = &value.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &value.sort_key {
+            ep_builder.sort_key(val.clone());
+        }
+        if let Some(val) = &value.sort_dir {
+            ep_builder.sort_dir(val.clone());
+        }
 
         Ok(ep_builder)
     }
@@ -77,7 +103,7 @@ impl ExecuteApiRequest for IdentityGroupList {
             .wrap_err("Cannot prepare request")?;
         app_tx.send(Action::ApiResponsesData {
             request: request.clone(),
-            data: ep.query_async(session).await?,
+            data: paged(ep, Pagination::All).query_async(session).await?,
         })?;
         Ok(())
     }

@@ -35,7 +35,7 @@ use crate::common::parse_json;
 use openstack_sdk::api::identity::v3::user::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Creates a user.
 ///
@@ -95,15 +95,27 @@ struct Options {
 /// User Body data
 #[derive(Args, Clone)]
 struct User {
-    /// The ID of the default project for the user.
+    /// The ID of the default project for the user. A user’s default project
+    /// must not be a domain. Setting this attribute does not grant any actual
+    /// authorization on the project, and is merely provided for convenience.
+    /// Therefore, the referenced project does not need to exist within the
+    /// user domain. (Since v3.1) If the user does not have authorization to
+    /// their default project, the default project is ignored at token
+    /// creation. (Since v3.1) Additionally, if your default project is not
+    /// valid, a token is issued without an explicit scope of authorization.
     ///
     #[arg(help_heading = "Body parameters", long)]
     default_project_id: Option<String>,
 
+    /// The resource description.
+    ///
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
-    /// The ID of the domain.
+    /// The ID of the domain of the user. If the domain ID is not provided in
+    /// the request, the Identity service will attempt to pull the domain ID
+    /// from the token used in the request. Note that this requires the use of
+    /// a domain-scoped token.
     ///
     #[arg(help_heading = "Body parameters", long)]
     domain_id: Option<String>,
@@ -124,7 +136,7 @@ struct User {
     ///   {
     ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
     ///     "protocols": [
-    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///       {"protocol_id": mapped, "unique_id": "test@example.com"}
     ///     ]
     ///   }
     /// ]
@@ -148,28 +160,103 @@ struct User {
     #[command(flatten)]
     options: Option<Options>,
 
-    /// The new password for the user.
+    /// The password for the user.
     ///
     #[arg(help_heading = "Body parameters", long)]
     password: Option<String>,
 }
 
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// User response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The ID of the default project for the user.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    default_project_id: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The resource description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
+
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    domain_id: Option<String>,
+
+    /// If the user is enabled, this value is `true`. If the user is disabled,
+    /// this value is `false`.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    enabled: Option<bool>,
+
+    /// List of federated objects associated with a user. Each object in the
+    /// list contains the `idp_id` and `protocols`. `protocols` is a list of
+    /// objects, each of which contains `protocol_id` and `unique_id` of the
+    /// protocol and user respectively. For example:
+    ///
+    /// ```text
+    /// "federated": [
+    ///   {
+    ///     "idp_id": "efbab5a6acad4d108fec6c63d9609d83",
+    ///     "protocols": [
+    ///       {"protocol_id": "mapped", "unique_id": "test@example.com"}
+    ///     ]
+    ///   }
+    /// ]
+    ///
+    /// ```
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    federated: Option<Value>,
+
+    /// The user ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The links for the `user` resource.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The user name. Must be unique within the owning domain.
+    ///
+    #[serde()]
+    #[structable()]
+    name: String,
+
+    /// The resource options for the user. Available resource options are
+    /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
+    /// `ignore_lockout_failure_attempts`, `lock_password`,
+    /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
+    /// `ignore_user_inactivity`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    options: Option<Value>,
+
+    #[serde()]
+    #[structable(optional)]
+    password: Option<String>,
+
+    /// The date and time when the password expires. The time zone is UTC.
+    ///
+    /// This is a response object attribute; not valid for requests. A `null`
+    /// value indicates that the password never expires.
+    ///
+    /// **New in version 3.7**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    password_expires_at: Option<String>,
 }
 
 impl UserCommand {

@@ -17,7 +17,7 @@
 
 //! Delete a service provider.
 //!
-//! DELETE /OS-FEDERATION/service_providers/{sp_id}
+//! DELETE /OS-FEDERATION/service_providers/{service_provider_id}
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
@@ -29,10 +29,11 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    /// service_provider_id parameter for
+    /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
     ///
     #[builder(default, setter(into))]
-    sp_id: Cow<'a, str>,
+    id: Cow<'a, str>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -76,8 +77,8 @@ impl RestEndpoint for Request<'_> {
 
     fn endpoint(&self) -> Cow<'static, str> {
         format!(
-            "OS-FEDERATION/service_providers/{sp_id}",
-            sp_id = self.sp_id.as_ref(),
+            "OS-FEDERATION/service_providers/{id}",
+            id = self.id.as_ref(),
         )
         .into()
     }
@@ -135,17 +136,15 @@ mod tests {
     fn endpoint() {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::DELETE).path(format!(
-                "/OS-FEDERATION/service_providers/{sp_id}",
-                sp_id = "sp_id",
-            ));
+            when.method(httpmock::Method::DELETE)
+                .path(format!("/OS-FEDERATION/service_providers/{id}", id = "id",));
 
             then.status(200)
                 .header("content-type", "application/json")
                 .json_body(json!({ "dummy": {} }));
         });
 
-        let endpoint = Request::builder().sp_id("sp_id").build().unwrap();
+        let endpoint = Request::builder().id("id").build().unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
         mock.assert();
     }
@@ -156,10 +155,7 @@ mod tests {
         let client = MockServerClient::new();
         let mock = client.server.mock(|when, then| {
             when.method(httpmock::Method::DELETE)
-                .path(format!(
-                    "/OS-FEDERATION/service_providers/{sp_id}",
-                    sp_id = "sp_id",
-                ))
+                .path(format!("/OS-FEDERATION/service_providers/{id}", id = "id",))
                 .header("foo", "bar")
                 .header("not_foo", "not_bar");
             then.status(200)
@@ -168,7 +164,7 @@ mod tests {
         });
 
         let endpoint = Request::builder()
-            .sp_id("sp_id")
+            .id("id")
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),

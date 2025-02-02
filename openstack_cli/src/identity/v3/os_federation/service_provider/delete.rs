@@ -17,7 +17,7 @@
 
 //! Delete ServiceProvider command
 //!
-//! Wraps invoking of the `v3/OS-FEDERATION/service_providers/{sp_id}` with `DELETE` method
+//! Wraps invoking of the `v3/OS-FEDERATION/service_providers/{service_provider_id}` with `DELETE` method
 
 use clap::Args;
 use serde::{Deserialize, Serialize};
@@ -39,7 +39,7 @@ use structable_derive::StructTable;
 
 /// Delete a service provider.
 ///
-/// DELETE /OS-FEDERATION/service_providers/{sp_id}
+/// DELETE /OS-FEDERATION/service_providers/{service_provider_id}
 ///
 #[derive(Args)]
 pub struct ServiceProviderCommand {
@@ -59,14 +59,15 @@ struct QueryParameters {}
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {
-    /// sp_id parameter for /v3/OS-FEDERATION/service_providers/{sp_id} API
+    /// service_provider_id parameter for
+    /// /v3/OS-FEDERATION/service_providers/{service_provider_id} API
     ///
     #[arg(
         help_heading = "Path parameters",
-        id = "path_param_sp_id",
-        value_name = "SP_ID"
+        id = "path_param_id",
+        value_name = "ID"
     )]
-    sp_id: String,
+    id: String,
 }
 /// ServiceProvider response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
@@ -87,7 +88,7 @@ impl ServiceProviderCommand {
         let mut ep_builder = delete::Request::builder();
 
         // Set path parameters
-        ep_builder.sp_id(&self.path.sp_id);
+        ep_builder.id(&self.path.id);
         // Set query parameters
         // Set body parameters
 

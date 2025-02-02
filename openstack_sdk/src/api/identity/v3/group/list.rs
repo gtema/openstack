@@ -27,13 +27,37 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a domain ID.
+    /// The ID of the domain.
     ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
+
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// ID of the last fetched entry
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
+    /// The resource name.
+    ///
+    #[builder(default, setter(into))]
+    name: Option<Cow<'a, str>>,
+
+    /// Sort direction. A valid value is asc (ascending) or desc (descending).
+    ///
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    /// Sorts resources by attribute.
+    ///
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
 
     #[builder(setter(name = "_headers"), default, private)]
     _headers: Option<HeaderMap>,
@@ -82,6 +106,11 @@ impl RestEndpoint for Request<'_> {
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
         params.push_opt("domain_id", self.domain_id.as_ref());
+        params.push_opt("name", self.name.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
 
         params
     }
@@ -104,6 +133,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(3, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

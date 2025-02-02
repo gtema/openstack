@@ -27,35 +27,54 @@ use crate::api::rest_endpoint_prelude::*;
 
 use std::borrow::Cow;
 
+use crate::api::Pageable;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a domain ID.
+    /// The ID of the domain.
     ///
     #[builder(default, setter(into))]
     domain_id: Option<Cow<'a, str>>,
 
-    /// If set to true, then only enabled projects will be returned. Any value
-    /// other than 0 (including no value) will be interpreted as true.
+    /// Whether the identity provider is enabled or not
     ///
     #[builder(default)]
     enabled: Option<bool>,
 
-    /// Filters the response by IDP ID.
+    /// Filters the response by an identity provider ID.
     ///
     #[builder(default, setter(into))]
     idp_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a resource name.
+    #[builder(default)]
+    limit: Option<i32>,
+
+    /// ID of the last fetched entry
+    ///
+    #[builder(default, setter(into))]
+    marker: Option<Cow<'a, str>>,
+
+    /// The resource name.
     ///
     #[builder(default, setter(into))]
     name: Option<Cow<'a, str>>,
 
     /// Filter results based on which user passwords have expired. The query
     /// should include an operator and a timestamp with a colon (:) separating
-    /// the two, for example: `password_expires_at={operator}:{timestamp}`.
-    /// Valid operators are: `lt`, `lte`, `gt`, `gte`, `eq`, and `neq`. Valid
-    /// timestamps are of the form: YYYY-MM-DDTHH:mm:ssZ.
+    /// the two, for example: `password_expires_at={operator}:{timestamp}`
+    /// Valid operators are: lt, lte, gt, gte, eq, and neq
+    ///
+    /// - lt: expiration time lower than the timestamp
+    /// - lte: expiration time lower than or equal to the timestamp
+    /// - gt: expiration time higher than the timestamp
+    /// - gte: expiration time higher than or equal to the timestamp
+    /// - eq: expiration time equal to the timestamp
+    /// - neq: expiration time not equal to the timestamp
+    ///
+    /// Valid timestamps are of the form: `YYYY-MM-DDTHH:mm:ssZ`.For
+    /// example:`/v3/users?password_expires_at=lt:2016-12-08T22:02:00Z` The
+    /// example would return a list of users whose password expired before the
+    /// timestamp `(2016-12-08T22:02:00Z).`
     ///
     #[builder(default, setter(into))]
     password_expires_at: Option<Cow<'a, str>>,
@@ -64,6 +83,16 @@ pub struct Request<'a> {
     ///
     #[builder(default, setter(into))]
     protocol_id: Option<Cow<'a, str>>,
+
+    /// Sort direction. A valid value is asc (ascending) or desc (descending).
+    ///
+    #[builder(default, setter(into))]
+    sort_dir: Option<Cow<'a, str>>,
+
+    /// Sorts resources by attribute.
+    ///
+    #[builder(default, setter(into))]
+    sort_key: Option<Cow<'a, str>>,
 
     /// Filters the response by a unique ID.
     ///
@@ -123,6 +152,10 @@ impl RestEndpoint for Request<'_> {
         params.push_opt("password_expires_at", self.password_expires_at.as_ref());
         params.push_opt("protocol_id", self.protocol_id.as_ref());
         params.push_opt("unique_id", self.unique_id.as_ref());
+        params.push_opt("marker", self.marker.as_ref());
+        params.push_opt("limit", self.limit);
+        params.push_opt("sort_key", self.sort_key.as_ref());
+        params.push_opt("sort_dir", self.sort_dir.as_ref());
 
         params
     }
@@ -145,6 +178,7 @@ impl RestEndpoint for Request<'_> {
         Some(ApiVersion::new(3, 0))
     }
 }
+impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {

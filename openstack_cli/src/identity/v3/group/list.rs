@@ -31,9 +31,14 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use eyre::OptionExt;
+use openstack_sdk::api::find_by_name;
+use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::group::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::{paged, Pagination};
 use structable_derive::StructTable;
+use tracing::warn;
 
 /// Lists groups.
 ///
@@ -50,15 +55,56 @@ pub struct GroupsCommand {
     /// Path parameters
     #[command(flatten)]
     path: PathParameters,
+
+    /// Total limit of entities count to return. Use this when there are too many entries.
+    #[arg(long, default_value_t = 10000)]
+    max_items: usize,
 }
 
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// Filters the response by a domain ID.
+    /// Domain resource for which the operation should be performed.
+    #[command(flatten)]
+    domain: DomainInput,
+
+    #[arg(help_heading = "Query parameters", long)]
+    limit: Option<i32>,
+
+    /// ID of the last fetched entry
     ///
     #[arg(help_heading = "Query parameters", long)]
+    marker: Option<String>,
+
+    /// The resource name.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+
+    /// Sort direction. A valid value is asc (ascending) or desc (descending).
+    ///
+    #[arg(help_heading = "Query parameters", long, value_parser = ["asc","desc"])]
+    sort_dir: Option<String>,
+
+    /// Sorts resources by attribute.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    sort_key: Option<String>,
+}
+
+/// Domain input select group
+#[derive(Args)]
+#[group(required = false, multiple = false)]
+struct DomainInput {
+    /// Domain Name.
+    #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_NAME")]
+    domain_name: Option<String>,
+    /// Domain ID.
+    #[arg(long, help_heading = "Path parameters", value_name = "DOMAIN_ID")]
     domain_id: Option<String>,
+    /// Current domain.
+    #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
+    current_domain: bool,
 }
 
 /// Path parameters
@@ -108,8 +154,61 @@ impl GroupsCommand {
 
         // Set path parameters
         // Set query parameters
-        if let Some(val) = &self.query.domain_id {
-            ep_builder.domain_id(val);
+        if let Some(id) = &self.query.domain.domain_id {
+            // domain_id is passed. No need to lookup
+            ep_builder.domain_id(id);
+        } else if let Some(name) = &self.query.domain.domain_name {
+            // domain_name is passed. Need to lookup resource
+            let mut sub_find_builder = find_domain::Request::builder();
+            warn!("Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead.");
+
+            sub_find_builder.id(name);
+            let find_ep = sub_find_builder
+                .build()
+                .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
+            let find_data: serde_json::Value = find_by_name(find_ep).query_async(client).await?;
+            // Try to extract resource id
+            match find_data.get("id") {
+                Some(val) => match val.as_str() {
+                    Some(id_str) => {
+                        ep_builder.domain_id(id_str.to_owned());
+                    }
+                    None => {
+                        return Err(OpenStackCliError::ResourceAttributeNotString(
+                            serde_json::to_string(&val)?,
+                        ))
+                    }
+                },
+                None => {
+                    return Err(OpenStackCliError::ResourceAttributeMissing(
+                        "id".to_string(),
+                    ))
+                }
+            };
+        } else if self.query.domain.current_domain {
+            ep_builder.domain_id(
+                client
+                    .get_auth_info()
+                    .ok_or_eyre("Cannot determine current authentication information")?
+                    .token
+                    .user
+                    .id,
+            );
+        }
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
+        if let Some(val) = &self.query.marker {
+            ep_builder.marker(val);
+        }
+        if let Some(val) = &self.query.limit {
+            ep_builder.limit(*val);
+        }
+        if let Some(val) = &self.query.sort_key {
+            ep_builder.sort_key(val);
+        }
+        if let Some(val) = &self.query.sort_dir {
+            ep_builder.sort_dir(val);
         }
         // Set body parameters
 
@@ -117,7 +216,9 @@ impl GroupsCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+        let data: Vec<serde_json::Value> = paged(ep, Pagination::Limit(self.max_items))
+            .query_async(client)
+            .await?;
 
         op.output_list::<ResponseData>(data)?;
         Ok(())

@@ -30,17 +30,21 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by an interface.
+    /// The interface type, which describes the visibility of the endpoint.
+    /// Value is: -public. Visible by end users on a publicly available network
+    /// interface. -internal. Visible by end users on an unmetered internal
+    /// network interface.-admin. Visible by administrative users on a secure
+    /// network interface.
     ///
     #[builder(default, setter(into))]
     interface: Option<Cow<'a, str>>,
 
-    /// Filters the response by a region ID.
+    /// (Since v3.2) The ID of the region that contains the service endpoint.
     ///
     #[builder(default, setter(into))]
-    region: Option<Cow<'a, str>>,
+    region_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a service ID.
+    /// The UUID of the service to which the endpoint belongs
     ///
     #[builder(default, setter(into))]
     service_id: Option<Cow<'a, str>>,
@@ -91,9 +95,9 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
-        params.push_opt("service_id", self.service_id.as_ref());
-        params.push_opt("region", self.region.as_ref());
         params.push_opt("interface", self.interface.as_ref());
+        params.push_opt("region_id", self.region_id.as_ref());
+        params.push_opt("service_id", self.service_id.as_ref());
 
         params
     }
