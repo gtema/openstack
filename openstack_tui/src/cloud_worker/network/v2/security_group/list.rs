@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::security_group::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -162,4 +166,67 @@ impl ExecuteApiRequest for NetworkSecurityGroupList {
         })?;
         Ok(())
     }
+}
+/// NetworkSecurityGroup response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct NetworkSecurityGroup {
+    #[serde(default)]
+    #[structable(optional, title = "CREATED_AT")]
+    created_at: Option<String>,
+
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// The ID of the security group.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// Human-readable name of the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    #[serde(default)]
+    #[structable(optional, title = "REVISION_NUMBER", wide)]
+    revision_number: Option<i32>,
+
+    /// A list of `security_group_rule` objects. Refer to
+    /// [Security group rules](#security-group-rules) for details.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SECURITY_GROUP_RULES", wide)]
+    security_group_rules: Option<Value>,
+
+    /// Indicates whether this security group is shared to the requester’s
+    /// project.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SHARED", wide)]
+    shared: Option<bool>,
+
+    /// Indicates if the security group is stateful or stateless.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATEFUL", wide)]
+    stateful: Option<bool>,
+
+    /// The list of tags on the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TAGS", wide)]
+    tags: Option<Value>,
+
+    /// The ID of the project.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TENANT_ID", wide)]
+    tenant_id: Option<String>,
+
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
 }

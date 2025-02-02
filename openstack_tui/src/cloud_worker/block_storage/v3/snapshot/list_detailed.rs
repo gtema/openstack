@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::block_storage::v3::snapshot::list_detailed::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -110,4 +114,128 @@ impl ExecuteApiRequest for BlockStorageSnapshotList {
         })?;
         Ok(())
     }
+}
+/// BlockStorageSnapshot response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct BlockStorageSnapshot {
+    /// Whether this resource consumes quota or not. Resources that not counted
+    /// for quota usage are usually temporary internal resources created to
+    /// perform an operation.
+    ///
+    /// **New in version 3.65**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CONSUMES_QUOTA", wide)]
+    consumes_quota: Option<bool>,
+
+    /// The total count of requested resource before pagination is applied.
+    ///
+    /// **New in version 3.45**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "COUNT", wide)]
+    count: Option<i32>,
+
+    /// The date and time when the resource was created.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CREATED_AT")]
+    created_at: Option<String>,
+
+    /// A description for the snapshot.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// The ID of the group snapshot.
+    ///
+    /// **New in version 3.14**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "GROUP_SNAPSHOT_ID", wide)]
+    group_snapshot_id: Option<String>,
+
+    /// The snapshot UUID.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// One or more metadata key and value pairs for the snapshot, if any.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "METADATA", wide)]
+    metadata: Option<Value>,
+
+    /// The name of the object.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    /// A percentage value for the build progress.
+    ///
+    #[serde(default, rename = "os-extended-snapshot-attributes:progress")]
+    #[structable(optional, title = "OS-EXTENDED-SNAPSHOT-ATTRIBUTES:PROGRESS", wide)]
+    os_extended_snapshot_attributes_progress: Option<String>,
+
+    /// The UUID of the owning project.
+    ///
+    #[serde(default, rename = "os-extended-snapshot-attributes:project_id")]
+    #[structable(optional, title = "OS-EXTENDED-SNAPSHOT-ATTRIBUTES:PROJECT_ID", wide)]
+    os_extended_snapshot_attributes_project_id: Option<String>,
+
+    /// The size of the volume, in gibibytes (GiB).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SIZE", wide)]
+    size: Option<i64>,
+
+    /// The status for the snapshot.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATUS")]
+    status: Option<Value>,
+
+    /// The date and time when the resource was updated.
+    ///
+    /// The date and time stamp format is
+    /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601):
+    ///
+    /// ```text
+    /// CCYY-MM-DDThh:mm:ss±hh:mm
+    ///
+    /// ```
+    ///
+    /// For example, `2015-08-27T09:49:58-05:00`.
+    ///
+    /// The `±hh:mm` value, if included, is the time zone as an offset from
+    /// UTC. In the previous example, the offset value is `-05:00`.
+    ///
+    /// If the `updated_at` date and time stamp is not set, its value is
+    /// `null`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
+
+    /// If the snapshot was created from a volume, the volume ID.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "VOLUME_ID", wide)]
+    volume_id: Option<String>,
 }

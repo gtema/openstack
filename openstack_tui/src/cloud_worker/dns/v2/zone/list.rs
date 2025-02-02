@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::dns::v2::zone::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -115,4 +119,122 @@ impl ExecuteApiRequest for DnsZoneList {
         })?;
         Ok(())
     }
+}
+/// DnsZone response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct DnsZone {
+    /// current action in progress on the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ACTION", wide)]
+    action: Option<Value>,
+
+    /// Key:Value pairs of information about this zone, and the pool the user
+    /// would like to place the zone in. This information can be used by the
+    /// scheduler to place zones on the correct pool.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ATTRIBUTES", wide)]
+    attributes: Option<Value>,
+
+    /// Date / Time when resource was created.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CREATED_AT")]
+    created_at: Option<String>,
+
+    /// Description for this zone
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// e-mail for the zone. Used in SOA records for the zone
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "EMAIL", wide)]
+    email: Option<String>,
+
+    /// ID for the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// Mandatory for secondary zones. The servers to slave from to get DNS
+    /// information
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "MASTERS", wide)]
+    masters: Option<Value>,
+
+    /// DNS Name for the zone
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    /// ID for the pool hosting this zone
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "POOL_ID", wide)]
+    pool_id: Option<String>,
+
+    /// ID for the project that owns the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PROJECT_ID", wide)]
+    project_id: Option<String>,
+
+    /// current serial number for the zone
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SERIAL", wide)]
+    serial: Option<i32>,
+
+    /// True if the zone is shared with another project.
+    ///
+    /// **New in version 2.1**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SHARED", wide)]
+    shared: Option<bool>,
+
+    /// The status of the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATUS")]
+    status: Option<Value>,
+
+    /// For secondary zones. The last time an update was retrieved from the
+    /// master servers
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TRANSFERRED_AT", wide)]
+    transferred_at: Option<String>,
+
+    /// TTL (Time to Live) for the zone.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TTL", wide)]
+    ttl: Option<i32>,
+
+    /// Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are
+    /// slaved from another DNS Server. Defaults to PRIMARY
+    ///
+    #[serde(default, rename = "type")]
+    #[structable(optional, title = "TYPE", wide)]
+    _type: Option<Value>,
+
+    /// Date / Time when resource last updated.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
+
+    /// Version of the resource
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "VERSION", wide)]
+    version: Option<i32>,
 }

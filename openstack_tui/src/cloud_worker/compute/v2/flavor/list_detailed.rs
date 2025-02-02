@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::flavor::list_detailed::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -100,4 +104,96 @@ impl ExecuteApiRequest for ComputeFlavorList {
         })?;
         Ok(())
     }
+}
+/// ComputeFlavor response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ComputeFlavor {
+    /// The description of the flavor.
+    ///
+    /// **New in version 2.55**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// The size of the root disk that will be created in GiB. If 0 the root
+    /// disk will be set to exactly the size of the image used to deploy the
+    /// instance. However, in this case the scheduler cannot select the compute
+    /// host based on the virtual image size. Therefore, 0 should only be used
+    /// for volume booted instances or for testing purposes. Volume-backed
+    /// instances can be enforced for flavors with zero root disk via the
+    /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
+    ///
+    #[serde()]
+    #[structable(title = "DISK", wide)]
+    disk: i32,
+
+    /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
+    /// only be included if the user is allowed by policy to index flavor
+    /// extra_specs.
+    ///
+    /// **New in version 2.61**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "EXTRA_SPECS", wide)]
+    extra_specs: Option<Value>,
+
+    /// The ID of the flavor. While people often make this look like an int,
+    /// this is really a string.
+    ///
+    #[serde()]
+    #[structable(title = "ID", wide)]
+    id: String,
+
+    /// The display name of a flavor.
+    ///
+    #[serde()]
+    #[structable(title = "NAME")]
+    name: String,
+
+    #[serde(rename = "os-flavor-access:is_public")]
+    #[structable(title = "OS-FLAVOR-ACCESS:IS_PUBLIC", wide)]
+    os_flavor_access_is_public: Value,
+
+    /// Whether or not the flavor has been administratively disabled. This is
+    /// an artifact of the legacy v2 API and will always be set to `false`.
+    /// There is currently no way to disable a flavor and set this to `true`.
+    ///
+    #[serde(rename = "OS-FLV-DISABLED:disabled")]
+    #[structable(title = "OS-FLV-DISABLED:DISABLED", wide)]
+    os_flv_disabled_disabled: bool,
+
+    /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
+    /// disks may be written over on server state changes. So should only be
+    /// used as a scratch space for applications that are aware of its
+    /// limitations. Defaults to 0.
+    ///
+    #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
+    #[structable(title = "OS-FLV-EXT-DATA:EPHEMERAL", wide)]
+    os_flv_ext_data_ephemeral: i32,
+
+    /// The amount of RAM a flavor has, in MiB.
+    ///
+    #[serde()]
+    #[structable(title = "RAM", wide)]
+    ram: i32,
+
+    #[serde()]
+    #[structable(title = "RXTX_FACTOR", wide)]
+    rxtx_factor: Value,
+
+    /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
+    /// (the default), no dedicated swap disk will be created. Currently, the
+    /// empty string (‘’) is used to represent 0. As of microversion 2.75
+    /// default return value of swap is 0 instead of empty string.
+    ///
+    #[serde()]
+    #[structable(title = "SWAP", wide)]
+    swap: String,
+
+    /// The number of virtual CPUs that will be allocated to the server.
+    ///
+    #[serde()]
+    #[structable(title = "VCPUS", wide)]
+    vcpus: i32,
 }

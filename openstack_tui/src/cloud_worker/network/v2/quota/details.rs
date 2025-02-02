@@ -24,6 +24,7 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::quota::details::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 

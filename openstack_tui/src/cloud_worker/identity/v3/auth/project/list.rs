@@ -24,8 +24,11 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::identity::v3::auth::project::list::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -63,4 +66,32 @@ impl ExecuteApiRequest for IdentityAuthProjectList {
         })?;
         Ok(())
     }
+}
+/// IdentityAuthProject response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct IdentityAuthProject {
+    /// The ID of the domain for the project.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DOMAIN_ID", wide)]
+    domain_id: Option<String>,
+
+    /// If set to `true`, project is enabled. If set to `false`, project is
+    /// disabled.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ENABLED", wide)]
+    enabled: Option<bool>,
+
+    /// The ID for the project.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// The name of the project.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
 }

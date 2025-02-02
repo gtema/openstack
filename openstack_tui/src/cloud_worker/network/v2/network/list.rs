@@ -24,9 +24,13 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
+use crate::utils::OutputConfig;
+use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::network::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use serde_json::Value;
+use structable_derive::StructTable;
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]
@@ -214,4 +218,174 @@ impl ExecuteApiRequest for NetworkNetworkList {
         })?;
         Ok(())
     }
+}
+/// NetworkNetwork response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct NetworkNetwork {
+    /// The administrative state of the network, which is up (`true`) or down
+    /// (`false`).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ADMIN_STATE_UP", wide)]
+    admin_state_up: Option<bool>,
+
+    /// The availability zone candidate for the network.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "AVAILABILITY_ZONE_HINTS", wide)]
+    availability_zone_hints: Option<Value>,
+
+    /// The availability zone for the network.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "AVAILABILITY_ZONES", wide)]
+    availability_zones: Option<Value>,
+
+    /// Time at which the resource has been created (in UTC ISO8601 format).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "CREATED_AT")]
+    created_at: Option<String>,
+
+    /// A human-readable description for the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DESCRIPTION", wide)]
+    description: Option<String>,
+
+    /// A valid DNS domain.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "DNS_DOMAIN", wide)]
+    dns_domain: Option<String>,
+
+    /// The ID of the network.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "ID", wide)]
+    id: Option<String>,
+
+    /// The ID of the IPv4 address scope that the network is associated with.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "IPV4_ADDRESS_SCOPE", wide)]
+    ipv4_address_scope: Option<String>,
+
+    /// The ID of the IPv6 address scope that the network is associated with.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "IPV6_ADDRESS_SCOPE", wide)]
+    ipv6_address_scope: Option<String>,
+
+    /// The network is default pool or not.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "IS_DEFAULT", wide)]
+    is_default: Option<bool>,
+
+    /// Indicates whether L2 connectivity is available throughout the
+    /// `network`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "L2_ADJACENCY", wide)]
+    l2_adjacency: Option<String>,
+
+    /// The maximum transmission unit (MTU) value to address fragmentation.
+    /// Minimum value is 68 for IPv4, and 1280 for IPv6.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "MTU", wide)]
+    mtu: Option<i32>,
+
+    /// Human-readable name of the network.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "NAME")]
+    name: Option<String>,
+
+    /// The port security status of the network. Valid values are enabled
+    /// (`true`) and disabled (`false`). This value is used as the default
+    /// value of `port_security_enabled` field of a newly created port.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "PORT_SECURITY_ENABLED", wide)]
+    port_security_enabled: Option<bool>,
+
+    #[serde(default, rename = "provider:network_type")]
+    #[structable(optional, title = "PROVIDER:NETWORK_TYPE", wide)]
+    provider_network_type: Option<String>,
+
+    #[serde(default, rename = "provider:physical_network")]
+    #[structable(optional, title = "PROVIDER:PHYSICAL_NETWORK", wide)]
+    provider_physical_network: Option<String>,
+
+    #[serde(default, rename = "provider:segmentation_id")]
+    #[structable(optional, title = "PROVIDER:SEGMENTATION_ID", wide)]
+    provider_segmentation_id: Option<String>,
+
+    /// The ID of the QoS policy associated with the network.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "QOS_POLICY_ID", wide)]
+    qos_policy_id: Option<String>,
+
+    /// The revision number of the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "REVISION_NUMBER", wide)]
+    revision_number: Option<i32>,
+
+    /// Defines whether the network may be used for creation of floating IPs.
+    /// Only networks with this flag may be an external gateway for routers.
+    /// The network must have an external routing facility that is not managed
+    /// by the networking service. If the network is updated from external to
+    /// internal the unused floating IPs of this network are automatically
+    /// deleted when extension `floatingip-autodelete-internal` is present.
+    ///
+    #[serde(default, rename = "router:external")]
+    #[structable(optional, title = "ROUTER:EXTERNAL", wide)]
+    router_external: Option<bool>,
+
+    /// A list of provider `segment` objects.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SEGMENTS", wide)]
+    segments: Option<Value>,
+
+    /// Indicates whether this network is shared across all tenants. By
+    /// default, only administrative users can change this value.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SHARED", wide)]
+    shared: Option<bool>,
+
+    /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "STATUS")]
+    status: Option<String>,
+
+    /// The associated subnets.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "SUBNETS", wide)]
+    subnets: Option<Value>,
+
+    /// The list of tags on the resource.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TAGS", wide)]
+    tags: Option<Value>,
+
+    /// The ID of the project.
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "TENANT_ID", wide)]
+    tenant_id: Option<String>,
+
+    /// Time at which the resource has been updated (in UTC ISO8601 format).
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "UPDATED_AT")]
+    updated_at: Option<String>,
 }
