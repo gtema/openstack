@@ -576,6 +576,25 @@ where
         None
     }
 
+    /// delete the row with the typed data matching resource id
+    #[instrument(level = "debug", skip(self))]
+    pub fn delete_item_row_by_res_id_mut(&mut self, search_id: &String) -> Result<Option<usize>> {
+        let mut item_idx: Option<usize> = None;
+        for (idx, raw_item) in self.raw_items.iter_mut().enumerate() {
+            if let Some(row_item_id) = raw_item.get("id").or(raw_item.get("uuid")) {
+                if row_item_id == search_id {
+                    item_idx = Some(idx);
+                    break;
+                }
+            }
+        }
+        if let Some(idx) = item_idx {
+            self.raw_items.remove(idx);
+            self.items.remove(idx);
+        }
+        Ok(item_idx)
+    }
+
     pub fn get_selected_raw(&self) -> Option<&Value> {
         self.state.selected().map(|x| &self.raw_items[x])
     }
