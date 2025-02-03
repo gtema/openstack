@@ -24,7 +24,6 @@ use crate::action::Action;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
-use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::server::os_get_console_output::RequestBuilder;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 
@@ -62,7 +61,7 @@ impl TryFrom<&OsGetConsoleOutput>
     fn try_from(value: &OsGetConsoleOutput) -> Result<Self, Self::Error> {
         let mut ep_builder = Self::default();
         if let Some(val) = &value.length {
-            ep_builder.length(*val);
+            ep_builder.length((*val).map(Into::into));
         }
         Ok(ep_builder)
     }

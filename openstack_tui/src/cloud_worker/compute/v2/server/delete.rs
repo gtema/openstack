@@ -25,7 +25,6 @@ use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 
 use crate::cloud_worker::ConfirmableRequest;
-use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::server::delete::RequestBuilder;
 use openstack_sdk::api::ignore;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
