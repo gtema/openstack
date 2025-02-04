@@ -62,13 +62,18 @@ impl ExecuteApiRequest for NetworkNetworkDelete {
     async fn execute_request(
         &self,
         session: &mut AsyncOpenStack,
-        _request: &ApiRequest,
-        _app_tx: &UnboundedSender<Action>,
+        request: &ApiRequest,
+        app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         let ep = TryInto::<RequestBuilder>::try_into(self)?
             .build()
             .wrap_err("Cannot prepare request")?;
         ignore(ep).query_async(session).await?;
+        // Let caller know deletion was completed
+        app_tx.send(Action::ApiResponseData {
+            request: request.clone(),
+            data: serde_json::Value::Null,
+        })?;
         Ok(())
     }
 }
