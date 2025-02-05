@@ -127,12 +127,12 @@ mode_keybindings:
     "y":
       action: DescribeApiResponse
       description: YAML
+    "ctrl-d":
+      action: IdentityUserDelete
+      description: Delete
     "e":
       action: IdentityUserFlipEnable
       description: Enable/Disable user
-    "r":
-      action: IdentityUserDelete
-      description: Delete user (todo!)
     "a":
       action: IdentityUserCreate
       description: Create new user (todo!)

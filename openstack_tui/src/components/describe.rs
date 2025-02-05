@@ -21,16 +21,13 @@ use ratatui::{
 };
 use serde_json::Value;
 use std::cmp;
-use std::collections::HashMap;
 
 use crate::{action::Action, config::Config, error::TuiError, mode::Mode};
 
 #[derive(Default)]
 pub struct Describe {
     config: Config,
-    pub keymap: HashMap<KeyEvent, Action>,
-    pub text: Vec<String>,
-    pub last_events: Vec<KeyEvent>,
+    text: Vec<String>,
     title: Option<String>,
     is_focused: bool,
     is_loading: bool,
@@ -48,17 +45,6 @@ impl Describe {
             ..Default::default()
         }
     }
-
-    pub fn keymap(mut self, keymap: HashMap<KeyEvent, Action>) -> Self {
-        self.keymap = keymap;
-        self
-    }
-
-    pub fn tick(&mut self) {
-        self.last_events.drain(..);
-    }
-
-    pub fn render_tick(&mut self) {}
 
     pub fn set_loading(&mut self, loading: bool) {
         self.is_loading = loading;
@@ -95,11 +81,6 @@ impl Describe {
                 .into(),
         );
 
-        Ok(())
-    }
-
-    pub fn set_title(&mut self, title: Option<String>) -> Result<()> {
-        self.title = title;
         Ok(())
     }
 

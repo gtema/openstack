@@ -23,7 +23,7 @@ use crate::{
     action::Action,
     cloud_worker::identity::v3::{
         IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialListBuilder,
-        IdentityUserList, IdentityUserSetBuilder,
+        IdentityUserDelete, IdentityUserDeleteBuilder, IdentityUserList, IdentityUserSetBuilder,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
@@ -118,6 +118,27 @@ impl Component for IdentityUsers<'_> {
                     }
                 }
             }
+            Action::IdentityUserDelete => {
+                // only if we are currently in the proper mode
+                if current_mode == Mode::IdentityUsers {
+                    // and have command_tx
+                    if let Some(command_tx) = self.get_command_tx() {
+                        // and have a selected entry
+                        if let Some(row) = self.get_selected() {
+                            // send action to set Delete User
+                            command_tx.send(Action::Confirm(ApiRequest::from(
+                                IdentityUserApiRequest::Delete(Box::new(
+                                    IdentityUserDeleteBuilder::default()
+                                        .id(row.id.clone())
+                                        .name(row.name.clone())
+                                        .build()
+                                        .wrap_err("cannot prepare user delete request")?,
+                                )),
+                            )))?;
+                        }
+                    }
+                }
+            }
             Action::ShowIdentityUserApplicationCredentials => {
                 // only if we are currently in the proper mode
                 if current_mode == Mode::IdentityUsers {
@@ -170,6 +191,14 @@ impl Component for IdentityUsers<'_> {
                         self.sync_table_data()?;
                     }
                     self.set_loading(false);
+                } else if let IdentityUserApiRequest::Delete(del) = *req {
+                    if let IdentityUserDelete { id, .. } = *del {
+                        if self.delete_item_row_by_res_id_mut(&id)?.is_none() {
+                            return Ok(Some(Action::Refresh));
+                        }
+                        self.sync_table_data()?;
+                        self.set_loading(false);
+                    }
                 }
             }
             _ => {}

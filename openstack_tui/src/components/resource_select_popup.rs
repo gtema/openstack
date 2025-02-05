@@ -19,7 +19,6 @@ use ratatui::{
     prelude::*,
     widgets::{block::*, *},
 };
-use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
@@ -34,8 +33,6 @@ use crate::{
 pub struct ApiRequestSelect {
     command_tx: Option<UnboundedSender<Action>>,
     config: Config,
-    pub keymap: HashMap<KeyEvent, Action>,
-    pub last_events: Vec<KeyEvent>,
     fuzzy_list: FuzzySelectList,
 }
 
@@ -43,17 +40,6 @@ impl ApiRequestSelect {
     pub fn new() -> Self {
         Self::default()
     }
-
-    pub fn keymap(mut self, keymap: HashMap<KeyEvent, Action>) -> Self {
-        self.keymap = keymap;
-        self
-    }
-
-    pub fn tick(&mut self) {
-        self.last_events.drain(..);
-    }
-
-    pub fn render_tick(&mut self) {}
 }
 
 impl Component for ApiRequestSelect {
