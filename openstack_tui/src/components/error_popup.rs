@@ -19,7 +19,6 @@ use ratatui::{
     prelude::*,
     widgets::{block::*, *},
 };
-use std::collections::HashMap;
 
 use crate::{
     action::Action, components::Component, config::Config, error::TuiError, mode::Mode,
@@ -28,8 +27,6 @@ use crate::{
 
 pub struct ErrorPopup {
     config: Config,
-    pub keymap: HashMap<KeyEvent, Action>,
-    pub last_events: Vec<KeyEvent>,
     text: Vec<String>,
     scroll: (u16, u16),
 }
@@ -44,14 +41,11 @@ impl ErrorPopup {
     pub fn new() -> Self {
         Self {
             config: Config::default(),
-            keymap: HashMap::new(),
             text: Vec::new(),
-            last_events: Vec::new(),
             scroll: (0, 0),
         }
     }
 
-    pub fn render_tick(&mut self) {}
     pub fn scroll_right(&mut self) {
         self.scroll.0 = self.scroll.0.saturating_add(1);
     }

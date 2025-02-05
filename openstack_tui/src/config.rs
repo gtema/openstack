@@ -31,18 +31,18 @@ use crate::{action::Action, mode::Mode};
 
 const CONFIG: &str = include_str!("../.config/config.yaml");
 
-#[derive(Clone, Debug, Deserialize, Default)]
-pub struct AppConfig {
-    #[serde(default)]
-    pub _data_dir: PathBuf,
-    #[serde(default)]
-    pub _config_dir: PathBuf,
-}
+//#[derive(Clone, Debug, Deserialize, Default)]
+//pub struct AppConfig {
+//    #[serde(default)]
+//    pub _data_dir: PathBuf,
+//    #[serde(default)]
+//    pub _config_dir: PathBuf,
+//}
 
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct Config {
-    #[serde(default, flatten)]
-    pub config: AppConfig,
+    //#[serde(default, flatten)]
+    //pub config: AppConfig,
     #[serde(default)]
     pub mode_keybindings: HashMap<Mode, KeyBindings>,
     #[serde(default)]

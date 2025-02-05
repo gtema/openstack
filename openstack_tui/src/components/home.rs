@@ -12,7 +12,6 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use itertools::Itertools;
 use ratatui::{
@@ -25,7 +24,6 @@ use ratatui::{
 };
 use serde::Deserialize;
 use serde_json::Value;
-use std::collections::HashMap;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
@@ -78,8 +76,6 @@ pub struct Home {
     project_id: Option<String>,
     compute_quota: Option<ComputeQuota>,
     network_quota: Option<NetworkQuota>,
-    pub keymap: HashMap<KeyEvent, Action>,
-    pub last_events: Vec<KeyEvent>,
 }
 
 impl Home {
@@ -87,16 +83,7 @@ impl Home {
         Self::default()
     }
 
-    pub fn keymap(mut self, keymap: HashMap<KeyEvent, Action>) -> Self {
-        self.keymap = keymap;
-        self
-    }
-
-    pub fn tick(&mut self) {
-        self.last_events.drain(..);
-    }
-
-    pub fn render_tick(&mut self) {}
+    pub fn tick(&mut self) {}
 
     pub fn set_loading(&mut self, loading: bool) {
         self.is_loading = loading;
