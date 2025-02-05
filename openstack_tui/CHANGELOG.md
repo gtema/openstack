@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.6](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.5...openstack_tui-v0.9.6) - 2025-02-05
+
+### Added
+
+- Send response action also for delete events (#954)
+- Adapt clippy run to include bin targets (#948)
+
+### Other
+
+- Implement user deletion (#952)
+
 ## [0.9.5](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.4...openstack_tui-v0.9.5) - 2025-02-02
 
 ### Added
