@@ -21,9 +21,9 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create_30;
-mod create_316;
-mod list;
+pub mod create_30;
+pub mod create_316;
+pub mod list;
 
 /// Volume manage extension (manageable_volumes)
 ///

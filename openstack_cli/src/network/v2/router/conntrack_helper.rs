@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Lists, creates, shows details for, updates, and deletes router conntrack helper (CT) target
 /// rules.

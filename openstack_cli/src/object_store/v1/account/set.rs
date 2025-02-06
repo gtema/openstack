@@ -76,6 +76,7 @@ pub struct AccountCommand {
 pub struct Account {}
 
 impl AccountCommand {
+    /// Perform command action
     pub async fn take_action(
         &self,
         parsed_args: &Cli,

@@ -40,7 +40,7 @@ fn url_to_http_uri(url: Url) -> Uri {
 
 /// Supported http methods
 #[derive(Clone, Debug, Eq, PartialEq, PartialOrd, Ord, ValueEnum)]
-enum Method {
+pub enum Method {
     /// HEAD
     Head,
     /// GET

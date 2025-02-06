@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod default;
-mod delete;
-mod option;
-mod set;
-mod show;
+pub mod default;
+pub mod delete;
+pub mod option;
+pub mod set;
+pub mod show;
 
 /// Domain Group group
 ///

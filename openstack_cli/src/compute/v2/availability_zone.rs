@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
-mod list_detail;
+pub mod list;
+pub mod list_detail;
 
 /// Availability zones
 ///

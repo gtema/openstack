@@ -20,15 +20,15 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod bandwidth_limit_rule;
-mod create;
-mod delete;
-mod dscp_marking_rule;
-mod list;
-mod minimum_bandwidth_rule;
-mod minimum_packet_rate_rule;
-mod set;
-mod show;
+pub mod bandwidth_limit_rule;
+pub mod create;
+pub mod delete;
+pub mod dscp_marking_rule;
+pub mod list;
+pub mod minimum_bandwidth_rule;
+pub mod minimum_packet_rate_rule;
+pub mod set;
+pub mod show;
 
 /// QoS minimum packet rate rules
 ///

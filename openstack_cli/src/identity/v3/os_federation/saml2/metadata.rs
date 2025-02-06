@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod get;
+pub mod get;
 
 /// A user may retrieve Metadata about an Identity Service acting as an Identity Provider.
 ///

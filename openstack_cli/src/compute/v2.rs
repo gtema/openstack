@@ -20,23 +20,23 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
-mod aggregate;
-mod assisted_volume_snapshot;
-mod availability_zone;
-mod extension;
-mod flavor;
-mod hypervisor;
-mod instance_usage_audit_log;
-mod keypair;
-mod limit;
-mod migration;
-mod quota_class_set;
-mod quota_set;
-mod server;
-mod server_external_event;
-mod server_group;
-mod service;
-mod simple_tenant_usage;
+pub mod aggregate;
+pub mod assisted_volume_snapshot;
+pub mod availability_zone;
+pub mod extension;
+pub mod flavor;
+pub mod hypervisor;
+pub mod instance_usage_audit_log;
+pub mod keypair;
+pub mod limit;
+pub mod migration;
+pub mod quota_class_set;
+pub mod quota_set;
+pub mod server;
+pub mod server_external_event;
+pub mod server_group;
+pub mod service;
+pub mod simple_tenant_usage;
 
 /// Compute service (Nova) operations
 #[derive(Parser)]

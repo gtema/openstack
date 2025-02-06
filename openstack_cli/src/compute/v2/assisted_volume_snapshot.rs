@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
+pub mod create;
+pub mod delete;
 
 /// Assisted volume snapshots (os-assisted-volume-snapshots)
 ///

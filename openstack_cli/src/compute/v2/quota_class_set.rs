@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod set_21;
-mod show;
+pub mod set_21;
+pub mod show;
 
 /// Quota class sets (os-quota-class-sets)
 ///

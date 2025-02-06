@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod config;
-mod delete;
-mod failover;
-mod list;
-mod show;
-mod stats;
+pub mod config;
+pub mod delete;
+pub mod failover;
+pub mod list;
+pub mod show;
+pub mod stats;
 
 /// Amphorae (Octavia) commands
 #[derive(Parser)]

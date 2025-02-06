@@ -109,6 +109,7 @@ pub struct Containers {
 }
 
 impl ContainersCommand {
+    /// Perform command action
     pub async fn take_action(
         &self,
         parsed_args: &Cli,

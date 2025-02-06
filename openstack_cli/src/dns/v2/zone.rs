@@ -19,13 +19,13 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod nameserver;
-mod recordset;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod nameserver;
+pub mod recordset;
+pub mod set;
+pub mod show;
 
 /// DNS Zone operations
 #[derive(Parser)]

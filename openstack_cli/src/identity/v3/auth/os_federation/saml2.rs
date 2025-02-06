@@ -20,9 +20,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod ecp;
-mod get;
+pub mod create;
+pub mod ecp;
+pub mod get;
 
 /// Identity SAML2 auth commands
 #[derive(Parser)]

@@ -19,7 +19,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod get;
+pub mod get;
 
 /// Resource provider usages
 ///

@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Details for the site-to-site IPsec connection, including the peer CIDRs, MTU, authentication
 /// mode, peer address, DPD settings, and status.

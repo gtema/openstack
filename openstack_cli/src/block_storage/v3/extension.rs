@@ -20,7 +20,7 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod list;
+pub mod list;
 
 /// API extensions (extensions)
 #[derive(Parser)]

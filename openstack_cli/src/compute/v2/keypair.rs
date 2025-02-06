@@ -22,14 +22,14 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create_20;
-mod create_21;
-mod create_210;
-mod create_22;
-mod create_292;
-mod delete;
-mod list;
-mod show;
+pub mod create_20;
+pub mod create_21;
+pub mod create_210;
+pub mod create_22;
+pub mod create_292;
+pub mod delete;
+pub mod list;
+pub mod show;
 
 /// Keypairs commands
 ///

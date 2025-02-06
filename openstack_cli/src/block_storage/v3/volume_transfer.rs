@@ -21,11 +21,11 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod accept;
-mod create_355;
-mod delete;
-mod list;
-mod show;
+pub mod accept;
+pub mod create_355;
+pub mod delete;
+pub mod list;
+pub mod show;
 
 /// Volume transfers (volume-transfers) (3.55 or later)
 ///

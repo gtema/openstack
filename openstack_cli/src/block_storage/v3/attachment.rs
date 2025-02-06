@@ -21,13 +21,13 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create_327;
-mod create_354;
-mod delete;
-mod list;
-mod os_complete;
-mod set_327;
-mod show;
+pub mod create_327;
+pub mod create_354;
+pub mod delete;
+pub mod list;
+pub mod os_complete;
+pub mod set_327;
+pub mod show;
 
 /// Attachments (attachments)
 ///

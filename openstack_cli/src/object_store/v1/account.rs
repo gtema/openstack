@@ -19,8 +19,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod set;
-mod show;
+pub mod set;
+pub mod show;
 
 /// Account commands
 #[derive(Parser)]

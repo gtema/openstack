@@ -20,16 +20,16 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod associate;
-mod association;
-mod create;
-mod delete;
-mod delete_keys;
-mod disassociate;
-mod disassociate_all;
-mod list;
-mod set;
-mod show;
+pub mod associate;
+pub mod association;
+pub mod create;
+pub mod delete;
+pub mod delete_keys;
+pub mod disassociate;
+pub mod disassociate_all;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Quality of service (QoS) specifications (qos-specs)
 ///

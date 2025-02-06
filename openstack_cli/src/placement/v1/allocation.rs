@@ -19,17 +19,17 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create_113;
-mod create_128;
-mod create_134;
-mod create_138;
-mod delete;
-mod set_10;
-mod set_112;
-mod set_128;
-mod set_138;
-mod set_18;
-mod show;
+pub mod create_113;
+pub mod create_128;
+pub mod create_134;
+pub mod create_138;
+pub mod delete;
+pub mod set_10;
+pub mod set_112;
+pub mod set_128;
+pub mod set_138;
+pub mod set_18;
+pub mod show;
 
 /// Allocations
 ///

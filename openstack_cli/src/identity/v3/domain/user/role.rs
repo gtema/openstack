@@ -20,10 +20,10 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod delete;
-mod list;
-mod set;
-mod show;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Domain user roles
 ///

@@ -20,9 +20,9 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
-mod image;
-mod metadef;
-mod schema;
+pub mod image;
+pub mod metadef;
+pub mod schema;
 
 /// Image service operations
 #[derive(Parser)]

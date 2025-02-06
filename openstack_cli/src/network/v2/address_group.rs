@@ -20,13 +20,13 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod add_addresses;
-mod create;
-mod delete;
-mod list;
-mod remove_addresses;
-mod set;
-mod show;
+pub mod add_addresses;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod remove_addresses;
+pub mod set;
+pub mod show;
 
 /// Address groups
 ///

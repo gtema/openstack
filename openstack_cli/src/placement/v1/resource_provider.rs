@@ -19,18 +19,18 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod aggregate;
-mod allocation;
-mod create_10;
-mod create_114;
-mod delete;
-mod inventory;
-mod list;
-mod set_10;
-mod set_114;
-mod show;
-mod r#trait;
-mod usage;
+pub mod aggregate;
+pub mod allocation;
+pub mod create_10;
+pub mod create_114;
+pub mod delete;
+pub mod inventory;
+pub mod list;
+pub mod set_10;
+pub mod set_114;
+pub mod show;
+pub mod r#trait;
+pub mod usage;
 
 /// Resource Providers
 ///

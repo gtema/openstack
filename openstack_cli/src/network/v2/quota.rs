@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod defaults;
-mod delete;
-mod details;
-mod list;
-mod set;
-mod show;
+pub mod defaults;
+pub mod delete;
+pub mod details;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Quotas extension (quotas)
 ///

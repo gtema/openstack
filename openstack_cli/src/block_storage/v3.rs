@@ -19,28 +19,28 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
-mod attachment;
-mod availability_zone;
-mod backup;
-mod cluster;
-mod default_type;
-mod extension;
-mod group;
-mod group_snapshot;
-mod group_type;
-mod host;
-mod limit;
-mod message;
-mod os_volume_transfer;
-mod qos_spec;
-mod resource_filter;
-mod service;
-mod snapshot;
-mod snapshot_manage;
-mod r#type;
-mod volume;
-mod volume_manage;
-mod volume_transfer;
+pub mod attachment;
+pub mod availability_zone;
+pub mod backup;
+pub mod cluster;
+pub mod default_type;
+pub mod extension;
+pub mod group;
+pub mod group_snapshot;
+pub mod group_type;
+pub mod host;
+pub mod limit;
+pub mod message;
+pub mod os_volume_transfer;
+pub mod qos_spec;
+pub mod resource_filter;
+pub mod service;
+pub mod snapshot;
+pub mod snapshot_manage;
+pub mod r#type;
+pub mod volume;
+pub mod volume_manage;
+pub mod volume_transfer;
 
 /// Block Storage (Volume) service (Cinder) commands
 #[derive(Parser)]

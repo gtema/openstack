@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod set;
-mod show;
-mod tag;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
+pub mod tag;
 
 /// Network Segment Ranges
 ///

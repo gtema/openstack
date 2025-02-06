@@ -19,9 +19,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod delete;
-mod set;
-mod show;
+pub mod delete;
+pub mod set;
+pub mod show;
 
 /// DNS Quota operations
 #[derive(Parser)]

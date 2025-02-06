@@ -20,13 +20,13 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod dhcp_network;
-mod l3_router;
-mod list;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod dhcp_network;
+pub mod l3_router;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Address scopes
 ///

@@ -20,19 +20,19 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
-mod amphorae;
-mod availability_zone;
-mod availability_zone_profile;
-mod flavor;
-mod flavor_profile;
-mod healthmonitor;
-mod l7policy;
-mod listener;
-mod loadbalancer;
-mod pool;
-mod provider;
-mod quota;
-mod version;
+pub mod amphorae;
+pub mod availability_zone;
+pub mod availability_zone_profile;
+pub mod flavor;
+pub mod flavor_profile;
+pub mod healthmonitor;
+pub mod l7policy;
+pub mod listener;
+pub mod loadbalancer;
+pub mod pool;
+pub mod provider;
+pub mod quota;
+pub mod version;
 
 /// Load Balancer service operations
 #[derive(Parser)]

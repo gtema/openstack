@@ -21,9 +21,9 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod list;
-mod set;
-mod show;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Clusters (clusters)
 ///

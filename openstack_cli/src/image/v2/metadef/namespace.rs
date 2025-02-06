@@ -20,15 +20,15 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod object;
-mod property;
-mod resource_type;
-mod set;
-mod show;
-mod tag;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod object;
+pub mod property;
+pub mod resource_type;
+pub mod set;
+pub mod show;
+pub mod tag;
 
 /// Metadata definition namespaces
 ///

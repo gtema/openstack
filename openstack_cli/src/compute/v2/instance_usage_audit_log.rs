@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
-mod show;
+pub mod list;
+pub mod show;
 
 /// Server usage audit log (os-instance-usage-audit-log)
 ///

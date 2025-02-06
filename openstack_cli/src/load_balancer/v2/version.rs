@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod get;
+pub mod get;
 
 /// Version (Octavia) commands
 #[derive(Parser)]

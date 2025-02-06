@@ -36,19 +36,19 @@ use openstack_sdk::{
     auth::authtoken::AuthTokenScope, types::identity::v3::Project, AsyncOpenStack,
 };
 
-mod api;
-mod auth;
-mod block_storage;
-mod catalog;
+pub mod api;
+pub mod auth;
+pub mod block_storage;
+pub mod catalog;
 mod common;
-mod compute;
-mod dns;
-mod identity;
-mod image;
-mod load_balancer;
-mod network;
-mod object_store;
-mod placement;
+pub mod compute;
+pub mod dns;
+pub mod identity;
+pub mod image;
+pub mod load_balancer;
+pub mod network;
+pub mod object_store;
+pub mod placement;
 
 mod tracing_stats;
 

@@ -19,22 +19,22 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod auth;
-mod credential;
-mod domain;
-mod endpoint;
-mod group;
-mod limit;
-mod os_ep_filter;
-mod os_federation;
-mod project;
-mod region;
-mod registered_limit;
-mod role;
-mod role_assignment;
-mod role_inference;
-mod service;
-mod user;
+pub mod auth;
+pub mod credential;
+pub mod domain;
+pub mod endpoint;
+pub mod group;
+pub mod limit;
+pub mod os_ep_filter;
+pub mod os_federation;
+pub mod project;
+pub mod region;
+pub mod registered_limit;
+pub mod role;
+pub mod role_assignment;
+pub mod role_inference;
+pub mod service;
+pub mod user;
 
 /// Identity (Keystone) commands
 ///

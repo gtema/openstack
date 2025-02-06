@@ -20,10 +20,10 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod delete;
-mod list;
-mod set_362;
-mod show;
+pub mod delete;
+pub mod list;
+pub mod set_362;
+pub mod show;
 
 /// Default Volume Types (default-types)
 ///
