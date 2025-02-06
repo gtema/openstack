@@ -21,8 +21,8 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create;
-mod list;
+pub mod create;
+pub mod list;
 
 /// SnapshotManage manage extension (manageable_snapshots)
 ///

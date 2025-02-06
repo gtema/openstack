@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod port_association;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod port_association;
+pub mod set;
+pub mod show;
 
 /// Local IPs (local_ips)
 ///

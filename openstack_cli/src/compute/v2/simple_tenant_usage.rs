@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
-mod show;
+pub mod list;
+pub mod show;
 
 /// Usage reports (os-simple-tenant-usage)
 ///

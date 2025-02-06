@@ -20,11 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod identity_provider;
-mod mapping;
-mod service_provider;
-mod saml2 {
-    pub(super) mod metadata;
+pub mod identity_provider;
+pub mod mapping;
+pub mod service_provider;
+/// IdP SAML2
+pub mod saml2 {
+    pub mod metadata;
 }
 
 /// OS-Federation

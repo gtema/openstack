@@ -21,9 +21,9 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod delete;
-mod list;
-mod show;
+pub mod delete;
+pub mod list;
+pub mod show;
 
 /// Messages (messages)
 ///

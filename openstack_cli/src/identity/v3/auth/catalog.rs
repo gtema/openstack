@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
+pub mod list;
 
 /// Identity Catalog commands
 ///

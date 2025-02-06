@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod defaults;
-mod delete;
-mod details;
-mod set_21;
-mod show;
+pub mod defaults;
+pub mod delete;
+pub mod details;
+pub mod set_21;
+pub mod show;
 
 /// Quota sets (os-quota-sets)
 ///

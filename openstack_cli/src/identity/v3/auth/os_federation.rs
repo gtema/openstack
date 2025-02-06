@@ -20,9 +20,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod identity_provider;
+pub mod identity_provider;
 //mod saml2;
-mod websso;
+pub mod websso;
 
 /// Identity Federated auch commands
 ///

@@ -19,9 +19,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod delete;
-mod list;
-mod set;
+pub mod delete;
+pub mod list;
+pub mod set;
 
 /// Resource provider traits
 ///

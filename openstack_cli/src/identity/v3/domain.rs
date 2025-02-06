@@ -20,14 +20,14 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod config;
-mod create;
-mod delete;
-mod group;
-mod list;
-mod set;
-mod show;
-mod user;
+pub mod config;
+pub mod create;
+pub mod delete;
+pub mod group;
+pub mod list;
+pub mod set;
+pub mod show;
+pub mod user;
 
 /// Identity Domain commands
 ///

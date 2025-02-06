@@ -20,14 +20,15 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod model {
-    pub(super) mod get;
+pub mod create;
+pub mod delete;
+pub mod list;
+/// Limit model
+pub mod model {
+    pub mod get;
 }
-mod set;
-mod show;
+pub mod set;
+pub mod show;
 
 /// Unified Limits
 ///

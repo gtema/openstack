@@ -20,19 +20,19 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod add_external_gateways;
-mod add_extraroutes;
-mod add_router_interface;
-mod conntrack_helper;
-mod create;
-mod delete;
-mod l3_agent;
-mod list;
-mod remove_external_gateways;
-mod remove_extraroutes;
-mod remove_router_interface;
-mod show;
-mod tag;
+pub mod add_external_gateways;
+pub mod add_extraroutes;
+pub mod add_router_interface;
+pub mod conntrack_helper;
+pub mod create;
+pub mod delete;
+pub mod l3_agent;
+pub mod list;
+pub mod remove_external_gateways;
+pub mod remove_extraroutes;
+pub mod remove_router_interface;
+pub mod show;
+pub mod tag;
 
 /// Router commands
 #[derive(Parser)]

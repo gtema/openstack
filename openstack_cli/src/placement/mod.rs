@@ -14,4 +14,4 @@
 
 //! Placement service
 
-pub(super) mod v1;
+pub mod v1;

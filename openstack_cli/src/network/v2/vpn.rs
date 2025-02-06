@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod endpoint_group;
-mod ikepolicy;
-mod ipsec_site_connection;
-mod ipsecpolicy;
-mod vpnservice;
+pub mod endpoint_group;
+pub mod ikepolicy;
+pub mod ipsec_site_connection;
+pub mod ipsecpolicy;
+pub mod vpnservice;
 
 /// VPNaaS 2.0 (vpn, vpnservices, ikepolicies, ipsecpolicies, endpoint-groups,
 /// ipsec-site-connections)

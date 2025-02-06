@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod default;
-mod delete_all;
-mod group;
-mod list;
-mod replace;
-mod set;
+pub mod default;
+pub mod delete_all;
+pub mod group;
+pub mod list;
+pub mod replace;
+pub mod set;
 
 /// Config configuration
 ///

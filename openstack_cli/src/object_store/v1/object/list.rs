@@ -139,6 +139,7 @@ pub struct Objects {
 }
 
 impl ObjectsCommand {
+    /// Perform command action
     pub async fn take_action(
         &self,
         parsed_args: &Cli,

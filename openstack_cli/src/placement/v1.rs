@@ -20,13 +20,13 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
-mod allocation;
-mod allocation_candidate;
-mod reshaper;
-mod resource_class;
-mod resource_provider;
-mod r#trait;
-mod usage;
+pub mod allocation;
+pub mod allocation_candidate;
+pub mod reshaper;
+pub mod resource_class;
+pub mod resource_provider;
+pub mod r#trait;
+pub mod usage;
 
 /// The placement API service was introduced in the 14.0.0 Newton release within the nova
 /// repository and extracted to the placement repository in the 19.0.0 Stein release. This is a

@@ -13,4 +13,4 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Image (Glance) commands
-pub(super) mod v2;
+pub mod v2;

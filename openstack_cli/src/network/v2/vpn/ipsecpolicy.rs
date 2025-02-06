@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// The IP security policy that specifies the authentication and encryption algorithm and
 /// encapsulation mode to use for the established VPN connection.

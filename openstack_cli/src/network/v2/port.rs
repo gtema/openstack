@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod show;
-mod tag;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod show;
+pub mod tag;
 
 /// Port commands
 #[derive(Parser)]

@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
-mod show;
+pub mod list;
+pub mod show;
 
 /// Lists all hypervisors, shows summary statistics for all hypervisors over
 /// all compute nodes, shows details for a hypervisor, shows the uptime for a

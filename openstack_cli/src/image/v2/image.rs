@@ -20,18 +20,18 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod deactivate;
-mod delete;
+pub mod create;
+pub mod deactivate;
+pub mod delete;
 /// Image data operations
-mod file {
-    pub(super) mod download;
-    pub(super) mod upload;
+pub mod file {
+    pub mod download;
+    pub mod upload;
 }
-mod list;
-mod patch;
-mod reactivate;
-mod show;
+pub mod list;
+pub mod patch;
+pub mod reactivate;
+pub mod show;
 
 /// Image (Glance) commands
 #[derive(Parser)]

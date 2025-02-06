@@ -19,9 +19,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
-mod set_11;
-mod set_119;
+pub mod list;
+pub mod set_11;
+pub mod set_119;
 
 /// Resource provider aggregates
 ///

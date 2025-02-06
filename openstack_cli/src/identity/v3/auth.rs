@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod catalog;
-mod domain;
-mod os_federation;
-mod project;
-mod system;
-mod token;
+pub mod catalog;
+pub mod domain;
+pub mod os_federation;
+pub mod project;
+pub mod system;
+pub mod token;
 
 /// Identity Auth commands
 ///

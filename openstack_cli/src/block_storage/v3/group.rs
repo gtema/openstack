@@ -20,17 +20,17 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create_313;
-mod create_from_src_314;
-mod delete_313;
-mod disable_replication_338;
-mod enable_replication_338;
-mod failover_replication_338;
-mod list;
-mod list_replication_targets_338;
-mod reset_status_320;
-mod set_313;
-mod show;
+pub mod create_313;
+pub mod create_from_src_314;
+pub mod delete_313;
+pub mod disable_replication_338;
+pub mod enable_replication_338;
+pub mod failover_replication_338;
+pub mod list;
+pub mod list_replication_targets_338;
+pub mod reset_status_320;
+pub mod set_313;
+pub mod show;
 
 /// Generic volume groups (groups)
 ///

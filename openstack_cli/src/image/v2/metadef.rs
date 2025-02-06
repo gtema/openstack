@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod namespace;
-mod resource_type;
+pub mod namespace;
+pub mod resource_type;
 
 /// Metadefs
 ///

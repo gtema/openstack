@@ -20,11 +20,11 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
-mod limit;
-mod quota;
-mod recordset;
-mod reverse;
-mod zone;
+pub mod limit;
+pub mod quota;
+pub mod recordset;
+pub mod reverse;
+pub mod zone;
 
 /// DNS service (Designate) operations
 #[derive(Parser)]

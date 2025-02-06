@@ -20,12 +20,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod alias_bandwidth_limit_rule;
-mod alias_dscp_marking_rule;
-mod alias_minimum_bandwidth_rule;
-mod alias_minimum_packet_rate_rule;
-mod policy;
-mod rule_type;
+pub mod alias_bandwidth_limit_rule;
+pub mod alias_dscp_marking_rule;
+pub mod alias_minimum_bandwidth_rule;
+pub mod alias_minimum_packet_rate_rule;
+pub mod policy;
+pub mod rule_type;
 
 /// Quality of Service
 #[derive(Parser)]

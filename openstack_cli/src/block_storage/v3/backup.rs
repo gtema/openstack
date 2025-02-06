@@ -21,22 +21,24 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create_30;
-mod create_343;
-mod create_351;
-mod delete;
-mod export_record {
-    pub(super) mod get;
+pub mod create_30;
+pub mod create_343;
+pub mod create_351;
+pub mod delete;
+/// Export backup record
+pub mod export_record {
+    pub mod get;
 }
-mod list;
-mod import_record {
-    pub(super) mod create;
+pub mod list;
+/// Import backup records
+pub mod import_record {
+    pub mod create;
 }
-mod os_force_delete;
-mod os_reset_status;
-mod set_343;
-mod set_39;
-mod show;
+pub mod os_force_delete;
+pub mod os_reset_status;
+pub mod set_343;
+pub mod set_39;
+pub mod show;
 
 /// Backups
 ///

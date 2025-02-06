@@ -20,9 +20,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod availability_zone_capability;
-mod flavor_capability;
-mod list;
+pub mod availability_zone_capability;
+pub mod flavor_capability;
+pub mod list;
 
 /// Provider (Octavia) commands
 #[derive(Parser)]

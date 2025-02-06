@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod endpoint;
-mod endpoint_group;
+pub mod endpoint;
+pub mod endpoint_group;
 
 /// Endpoint project API
 #[derive(Parser)]

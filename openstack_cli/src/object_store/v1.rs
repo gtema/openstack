@@ -20,9 +20,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod account;
-mod container;
-mod object;
+pub mod account;
+pub mod container;
+pub mod object;
 
 /// Object Store service (Swift) commands
 #[derive(Parser)]

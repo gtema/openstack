@@ -21,8 +21,8 @@ use openstack_sdk::AsyncOpenStack;
 use crate::{Cli, OpenStackCliError};
 
 //mod create;
-mod delete;
-mod get;
+pub mod delete;
+pub mod get;
 
 /// Identity token commands
 ///

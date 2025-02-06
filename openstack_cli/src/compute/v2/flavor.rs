@@ -20,17 +20,17 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod add_tenant_access;
-mod create_20;
-mod create_21;
-mod create_255;
-mod delete;
-mod extra_spec;
-mod flavor_access;
-mod list;
-mod remove_tenant_access;
-mod set_255;
-mod show;
+pub mod add_tenant_access;
+pub mod create_20;
+pub mod create_21;
+pub mod create_255;
+pub mod delete;
+pub mod extra_spec;
+pub mod flavor_access;
+pub mod list;
+pub mod remove_tenant_access;
+pub mod set_255;
+pub mod show;
 
 /// Flavor commands
 ///

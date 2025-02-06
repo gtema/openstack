@@ -23,12 +23,12 @@ use crate::{Cli, OpenStackCliError};
 use crate::identity::v3::role_assignment;
 use crate::identity::v3::role_inference;
 
-mod create;
-mod delete;
-mod imply;
-mod list;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod imply;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Identity Role commands
 ///

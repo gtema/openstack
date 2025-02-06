@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod delete;
-mod list;
-mod set_20;
-mod set_211;
-mod set_253;
+pub mod delete;
+pub mod list;
+pub mod set_20;
+pub mod set_211;
+pub mod set_253;
 
 /// Server groups (os-server-groups)
 ///

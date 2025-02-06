@@ -101,6 +101,7 @@ pub struct ObjectCommand {
 pub struct Object {}
 
 impl ObjectCommand {
+    /// Perform command action
     pub async fn take_action(
         &self,
         parsed_args: &Cli,

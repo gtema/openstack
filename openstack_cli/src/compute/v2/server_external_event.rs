@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create_20;
-mod create_251;
-mod create_276;
-mod create_282;
-mod create_293;
+pub mod create_20;
+pub mod create_251;
+pub mod create_276;
+pub mod create_282;
+pub mod create_293;
 
 /// Create external events (os-server-external-events)
 ///

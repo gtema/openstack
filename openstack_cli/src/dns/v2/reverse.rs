@@ -19,7 +19,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod floatingip;
+pub mod floatingip;
 
 /// DNS Reverse recordsets (PTR) operations
 #[derive(Parser)]

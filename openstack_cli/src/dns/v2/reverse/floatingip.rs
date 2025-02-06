@@ -19,9 +19,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod list;
-mod set;
-mod show;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// DNS PTR records operations
 #[derive(Parser)]

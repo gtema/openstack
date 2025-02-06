@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod set;
+pub mod set;
 
 /// User password commands
 ///

@@ -21,15 +21,15 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod add_project_access;
-mod create;
-mod delete;
-mod encryption;
-mod extra_spec;
-mod list;
-mod remove_project_access;
-mod set;
-mod show;
+pub mod add_project_access;
+pub mod create;
+pub mod delete;
+pub mod encryption;
+pub mod extra_spec;
+pub mod list;
+pub mod remove_project_access;
+pub mod set;
+pub mod show;
 
 /// Block Storage VolumeType type commands
 ///

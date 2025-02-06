@@ -21,11 +21,11 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create;
-mod delete;
-mod list;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Volume Type Encryption commands
 ///

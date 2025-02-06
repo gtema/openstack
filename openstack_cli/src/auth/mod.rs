@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod login;
-mod show;
+pub mod login;
+pub mod show;
 
 /// Cloud Authentication operations
 ///

@@ -21,17 +21,17 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create_30;
-mod create_313;
-mod create_347;
-mod create_353;
-mod delete;
-mod list;
-mod metadata;
-mod os_extend;
-mod set_30;
-mod set_353;
-mod show;
+pub mod create_30;
+pub mod create_313;
+pub mod create_347;
+pub mod create_353;
+pub mod delete;
+pub mod list;
+pub mod metadata;
+pub mod os_extend;
+pub mod set_30;
+pub mod set_353;
+pub mod show;
 
 /// Block Storage Volume commands
 #[derive(Parser)]

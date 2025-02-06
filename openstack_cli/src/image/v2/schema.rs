@@ -20,11 +20,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod image;
-mod images;
-mod member;
-mod members;
-mod metadef;
+pub mod image;
+pub mod images;
+pub mod member;
+pub mod members;
+pub mod metadef;
 
 /// Schemas
 #[derive(Parser)]

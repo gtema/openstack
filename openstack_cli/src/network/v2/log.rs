@@ -21,8 +21,8 @@ use openstack_sdk::AsyncOpenStack;
 use crate::{Cli, OpenStackCliError};
 
 #[allow(clippy::module_inception)]
-mod log;
-mod loggable_resource;
+pub mod log;
+pub mod loggable_resource;
 
 /// Logging
 ///

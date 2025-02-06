@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod role;
+pub mod role;
 
 /// Domain groups
 #[derive(Parser)]

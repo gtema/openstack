@@ -21,15 +21,15 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod create;
-mod delete;
-mod list;
-mod os_force_delete;
-mod os_reset_status;
-mod os_unmanage;
-mod os_update_snapshot_status;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod os_force_delete;
+pub mod os_reset_status;
+pub mod os_unmanage;
+pub mod os_update_snapshot_status;
+pub mod set;
+pub mod show;
 
 /// Volume snapshots (snapshots)
 ///

@@ -19,11 +19,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod delete;
-mod download;
-mod list;
-mod show;
-mod upload;
+pub mod delete;
+pub mod download;
+pub mod list;
+pub mod show;
+pub mod upload;
 
 /// Object commands
 #[derive(Parser)]

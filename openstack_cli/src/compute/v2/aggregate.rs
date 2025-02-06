@@ -19,18 +19,18 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod add_host;
-mod create_21;
-mod delete;
-mod list;
+pub mod add_host;
+pub mod create_21;
+pub mod delete;
+pub mod list;
 /// Aggregate image
-mod image {
-    pub(super) mod cache_281;
+pub mod image {
+    pub mod cache_281;
 }
-mod remove_host;
-mod set_21;
-mod set_metadata;
-mod show;
+pub mod remove_host;
+pub mod set_21;
+pub mod set_metadata;
+pub mod show;
 
 /// Creates and manages host aggregates. An aggregate assigns metadata to
 /// groups of compute nodes.

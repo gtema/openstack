@@ -20,10 +20,10 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod show;
 
 /// Metering Label Rule commands
 #[derive(Parser)]

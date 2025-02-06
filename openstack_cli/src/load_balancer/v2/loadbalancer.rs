@@ -20,14 +20,14 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod failover;
-mod list;
-mod set;
-mod show;
-mod stats;
-mod status;
+pub mod create;
+pub mod delete;
+pub mod failover;
+pub mod list;
+pub mod set;
+pub mod show;
+pub mod stats;
+pub mod status;
 
 /// Loadbalancer (Octavia) commands
 #[derive(Parser)]

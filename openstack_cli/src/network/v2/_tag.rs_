@@ -24,11 +24,11 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod delete;
-mod delete_all;
-mod list;
-mod set;
-mod show;
+pub mod delete;
+pub mod delete_all;
+pub mod list;
+pub mod set;
+pub mod show;
 
 /// Lists tags, creates, replaces or deletes one or more tags for a
 /// resource, checks the existence of a tag for a resource.

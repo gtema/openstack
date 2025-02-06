@@ -20,7 +20,7 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod protocol;
+pub mod protocol;
 
 /// Identity WebSSO auth commands
 #[derive(Parser)]

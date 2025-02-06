@@ -19,8 +19,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create_134;
-mod create_138;
+pub mod create_134;
+pub mod create_138;
 
 /// Reshaper
 #[derive(Parser)]

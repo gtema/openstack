@@ -20,8 +20,8 @@ use crate::{Cli, OpenStackCliError};
 
 use openstack_sdk::AsyncOpenStack;
 
-mod list;
-mod show;
+pub mod list;
+pub mod show;
 
 /// Hosts extension (os-hosts)
 ///

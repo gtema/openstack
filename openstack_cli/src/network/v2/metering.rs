@@ -20,8 +20,8 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod metering_label;
-mod metering_label_rule;
+pub mod metering_label;
+pub mod metering_label_rule;
 
 /// Metering labels and rules  (metering-labels, metering-label-rules)
 ///

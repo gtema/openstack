@@ -19,13 +19,13 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod delete_all;
-mod list;
-mod replace;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod delete_all;
+pub mod list;
+pub mod replace;
+pub mod set;
+pub mod show;
 
 /// Resource provider inventories
 ///

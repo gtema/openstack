@@ -20,9 +20,9 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
+pub mod create;
+pub mod delete;
+pub mod list;
 
 /// Local IP Associations (port_associations)
 ///

@@ -20,21 +20,21 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-pub(super) mod access_rule;
-pub(super) mod application_credential;
-mod create;
-mod delete;
-mod list;
-mod password;
-mod set;
-mod show;
+pub mod access_rule;
+pub mod application_credential;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod password;
+pub mod set;
+pub mod show;
 /// User project commands
-mod project {
-    pub(super) mod list;
+pub mod project {
+    pub mod list;
 }
 /// User group commands
-mod group {
-    pub(super) mod list;
+pub mod group {
+    pub mod list;
 }
 
 /// User commands

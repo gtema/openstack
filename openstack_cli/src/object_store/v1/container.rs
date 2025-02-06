@@ -19,12 +19,12 @@ use openstack_sdk::AsyncOpenStack;
 
 use crate::{Cli, OpenStackCliError};
 
-mod create;
-mod delete;
-mod list;
-mod prune;
-mod set;
-mod show;
+pub mod create;
+pub mod delete;
+pub mod list;
+pub mod prune;
+pub mod set;
+pub mod show;
 
 /// Container commands
 #[derive(Parser)]
