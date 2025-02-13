@@ -66,7 +66,7 @@ jobs:
           toolchain: stable
 
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@acd25891978b4cdaebd139d3efef606d26513b14 # v2.47.0
+        uses: taiki-e/install-action@ae9d9ea210235f03e365c28f43504df735a511be # v2.48.10
         with:
           tool: cargo-nextest
 
