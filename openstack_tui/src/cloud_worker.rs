@@ -12,10 +12,12 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use chrono::TimeDelta;
 use eyre::{eyre, Report, Result};
-use openstack_sdk::{config::ConfigFile, types::identity::v3::AuthResponse, AsyncOpenStack};
+use openstack_sdk::{
+    auth::AuthState, config::ConfigFile, types::identity::v3::AuthResponse, AsyncOpenStack,
+};
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
-use tokio::time::{sleep, Duration};
 use tracing::debug;
 
 use crate::action::Action;
@@ -39,7 +41,6 @@ use crate::error::TuiError;
 pub(crate) struct Cloud {
     cloud_configs: ConfigFile,
     pub(crate) cloud: Option<AsyncOpenStack>,
-    should_quit: bool,
 }
 
 impl Cloud {
@@ -48,7 +49,6 @@ impl Cloud {
         Self {
             cloud_configs: cfg,
             cloud: None,
-            should_quit: false,
         }
     }
 
@@ -112,65 +112,62 @@ impl Cloud {
         app_tx: UnboundedSender<Action>,
         action_rx: &mut UnboundedReceiver<Action>,
     ) -> Result<(), TuiError> {
-        loop {
-            while let Some(action) = action_rx.recv().await {
-                debug!("Got action {:?}", action);
-                match action {
-                    Action::Quit => self.should_quit = true,
-                    Action::ConnectToCloud(cloud) => match self.connect_to_cloud(cloud).await {
-                        Ok(()) => {
-                            if let Some(auth_info) = self
-                                .cloud
-                                .as_ref()
-                                .expect("Connected to the cloud")
-                                .get_auth_info()
-                            {
-                                app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
+        while let Some(action) = action_rx.recv().await {
+            debug!("Got action {:?}", action);
+            match action {
+                Action::ConnectToCloud(cloud) => match self.connect_to_cloud(cloud).await {
+                    Ok(()) => {
+                        if let Some(auth_info) = self
+                            .cloud
+                            .as_ref()
+                            .expect("Connected to the cloud")
+                            .get_auth_info()
+                        {
+                            app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
+                        }
+                    }
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Failed to connect to the cloud: {:?}",
+                        err
+                    )))?,
+                },
+                Action::ListClouds => {
+                    app_tx.send(Action::Clouds(self.cloud_configs.get_available_clouds()))?;
+                }
+                Action::CloudChangeScope(ref scope) => match self.switch_auth_scope(scope).await {
+                    Ok(auth_response) => {
+                        if let Some(auth_info) = auth_response {
+                            app_tx.send(Action::ConnectedToCloud(Box::new(auth_info.token)))?;
+                        }
+                    }
+                    Err(err) => app_tx.send(Action::Error(format!(
+                        "Cannot switch session scope: {:?}",
+                        err
+                    )))?,
+                },
+                Action::PerformApiRequest(request) => {
+                    if let Some(ref mut conn) = self.cloud {
+                        // Check if reauth is necessary
+                        match &conn.get_auth_state(Some(TimeDelta::seconds(10))) {
+                            Some(AuthState::Expired) | Some(AuthState::AboutToExpire) => {
+                                conn.authorize(None, false, true).await?;
                             }
+                            _ => {}
                         }
-                        Err(err) => app_tx.send(Action::Error(format!(
-                            "Failed to connect to the cloud: {:?}",
-                            err
-                        )))?,
-                    },
-                    Action::ListClouds => {
-                        app_tx.send(Action::Clouds(self.cloud_configs.get_available_clouds()))?;
+
+                        request
+                            .execute_request(conn, &request, &app_tx)
+                            .await
+                            .or_else(|err| {
+                                app_tx.send(Action::Error(format!(
+                                    "Error performing API request\n\n{:?}",
+                                    err
+                                )))
+                            })?;
                     }
-                    Action::CloudChangeScope(ref scope) => {
-                        match self.switch_auth_scope(scope).await {
-                            Ok(auth_response) => {
-                                if let Some(auth_info) = auth_response {
-                                    app_tx.send(Action::ConnectedToCloud(Box::new(
-                                        auth_info.token,
-                                    )))?;
-                                }
-                            }
-                            Err(err) => app_tx.send(Action::Error(format!(
-                                "Cannot switch session scope: {:?}",
-                                err
-                            )))?,
-                        }
-                    }
-                    Action::PerformApiRequest(request) => {
-                        if let Some(ref mut conn) = self.cloud {
-                            request
-                                .execute_request(conn, &request, &app_tx)
-                                .await
-                                .or_else(|err| {
-                                    app_tx.send(Action::Error(format!(
-                                        "Error performing API request\n\n{:?}",
-                                        err
-                                    )))
-                                })?;
-                        }
-                    }
-                    _ => {}
-                };
-            }
-            if self.should_quit {
-                break;
-            }
-            sleep(Duration::from_millis(100)).await;
+                }
+                _ => {}
+            };
         }
         Ok(())
     }
