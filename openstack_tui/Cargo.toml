@@ -19,6 +19,7 @@ name = "ostui"
 path = "src/bin/ostui.rs"
 
 [dependencies]
+chrono = { workspace= true }
 clap = { workspace = true, features = ["cargo", "derive", "env", "wrap_help", "unicode", "string", "unstable-styles"] }
 color-eyre = { workspace = true }
 config = { workspace = true, features = ["json", "json5", "yaml"] }

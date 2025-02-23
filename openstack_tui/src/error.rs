@@ -36,6 +36,14 @@ pub enum TuiError {
         source: tokio::sync::mpsc::error::SendError<action::Action>,
     },
 
+    /// OpenStack error.
+    #[error(transparent)]
+    OpenStackError {
+        /// The source of the error.
+        #[from]
+        source: openstack_sdk::OpenStackError,
+    },
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),

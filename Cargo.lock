@@ -2196,6 +2196,7 @@ dependencies = [
 name = "openstack_tui"
 version = "0.9.5"
 dependencies = [
+ "chrono",
  "clap",
  "color-eyre",
  "config",
