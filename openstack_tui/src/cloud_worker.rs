@@ -64,6 +64,9 @@ impl Cloud {
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
             .await?;
         session
+            .discover_service_endpoint(&openstack_sdk::types::ServiceType::BlockStorage)
+            .await?;
+        session
             .discover_service_endpoint(&openstack_sdk::types::ServiceType::Dns)
             .await?;
         session
@@ -92,6 +95,9 @@ impl Cloud {
 
             session
                 .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
+                .await?;
+            session
+                .discover_service_endpoint(&openstack_sdk::types::ServiceType::BlockStorage)
                 .await?;
             session
                 .discover_service_endpoint(&openstack_sdk::types::ServiceType::Image)
