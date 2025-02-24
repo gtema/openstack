@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::network::v2::qos::rule_type::list;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::api::network::v2::qos::rule_type::list;
+use openstack_sdk::api::{Pagination, paged};
 use structable_derive::StructTable;
 
 /// Lists available qos rule types.

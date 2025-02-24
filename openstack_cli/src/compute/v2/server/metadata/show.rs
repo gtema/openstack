@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::compute::v2::server::metadata::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::server::metadata::get;
 use std::collections::HashMap;
 
 /// Shows details for a metadata item, by key, for a server.

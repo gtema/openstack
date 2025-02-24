@@ -25,17 +25,17 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::build_upload_asyncread;
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::image::v2::image::file::upload;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::image::v2::image::file::upload;
 use structable_derive::StructTable;
 
 /// Uploads binary image data. *(Since Image API v2.0)*

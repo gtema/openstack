@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::NetworkApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::NetworkApiRequest;
 
 pub mod delete;
 pub mod list;
@@ -56,10 +56,10 @@ impl ExecuteApiRequest for NetworkSecurityGroupApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            NetworkSecurityGroupApiRequest::Delete(ref req) => {
+            NetworkSecurityGroupApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkSecurityGroupApiRequest::List(ref req) => {
+            NetworkSecurityGroupApiRequest::List(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use crate::common::parse_key_val;
 use crate::common::NumString;
-use openstack_sdk::api::compute::v2::flavor::extra_spec::create;
+use crate::common::parse_key_val;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::flavor::extra_spec::create;
 use std::collections::HashMap;
 
 /// Creates extra specs for a flavor, by ID.

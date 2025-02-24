@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::IntString;
-use openstack_sdk::api::network::v2::router::conntrack_helper::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::router::conntrack_helper::get;
 use structable_derive::StructTable;
 
 /// Shows information for a router conntrack helper.

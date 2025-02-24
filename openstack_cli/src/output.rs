@@ -14,15 +14,15 @@
 
 //! Output processing module
 
-use comfy_table::{presets::UTF8_FULL_CONDENSED, Cell, Color, ContentArrangement, Table};
+use comfy_table::{Cell, Color, ContentArrangement, Table, presets::UTF8_FULL_CONDENSED};
 use eyre::WrapErr;
 use openstack_sdk::types::EntryStatus;
 use serde::de::DeserializeOwned;
 use std::collections::BTreeSet;
 use std::io::{self, Write};
 
-use crate::cli::{Cli, OutputFormat};
 use crate::OpenStackCliError;
+use crate::cli::{Cli, OutputFormat};
 
 /// Output configuration data structure
 #[derive(Clone, Debug, Default)]

@@ -27,7 +27,7 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 use crate::cloud_worker::ConfirmableRequest;
 use openstack_sdk::api::ignore;
 use openstack_sdk::api::load_balancer::v2::pool::member::delete::RequestBuilder;
-use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 
 #[derive(Builder, Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[builder(setter(strip_option))]

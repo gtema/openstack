@@ -16,14 +16,14 @@
 use clap::Args;
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
+use crate::output::OutputProcessor;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
 use openstack_sdk::api::object_store::v1::container::prune::PruneAsyncExt;

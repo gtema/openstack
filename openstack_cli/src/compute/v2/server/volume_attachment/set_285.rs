@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::compute::v2::server::volume_attachment::set_285;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::server::volume_attachment::set_285;
 use structable_derive::StructTable;
 
 /// Update a volume attachment.

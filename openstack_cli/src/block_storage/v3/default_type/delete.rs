@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::block_storage::v3::default_type::delete;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::block_storage::v3::default_type::delete;
 use structable_derive::StructTable;
 
 /// Unset a default volume type for a project.

@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::compute::v2::flavor::extra_spec::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::flavor::extra_spec::list;
 use std::collections::HashMap;
 
 /// Lists all extra specs for a flavor, by ID.

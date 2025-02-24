@@ -14,8 +14,8 @@
 //! CLI top level command and processing
 //!
 use clap::builder::{
-    styling::{AnsiColor, Effects},
     Styles,
+    styling::{AnsiColor, Effects},
 };
 use clap::{Args, Parser, ValueEnum};
 use clap_complete::Shell;

@@ -24,7 +24,7 @@ use crate::{
     cloud_worker::types::{
         ApiRequest, NetworkApiRequest, NetworkRouterApiRequest, NetworkRouterList,
     },
-    components::{table_view::TableViewComponentBase, Component},
+    components::{Component, table_view::TableViewComponentBase},
     config::Config,
     error::TuiError,
     mode::Mode,

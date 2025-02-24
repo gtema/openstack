@@ -25,17 +25,17 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::domain::find as find_domain;
 use openstack_sdk::api::identity::v3::role::list;
-use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 use tracing::warn;
@@ -148,7 +148,9 @@ impl RolesCommand {
         } else if let Some(name) = &self.query.domain.domain_name {
             // domain_name is passed. Need to lookup resource
             let mut sub_find_builder = find_domain::Request::builder();
-            warn!("Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead.");
+            warn!(
+                "Querying domain by name (because of `--domain-name` parameter passed) may not be definite. This may fail in which case parameter `--domain-id` should be used instead."
+            );
 
             sub_find_builder.id(name);
             let find_ep = sub_find_builder
@@ -164,13 +166,13 @@ impl RolesCommand {
                     None => {
                         return Err(OpenStackCliError::ResourceAttributeNotString(
                             serde_json::to_string(&val)?,
-                        ))
+                        ));
                     }
                 },
                 None => {
                     return Err(OpenStackCliError::ResourceAttributeMissing(
                         "id".to_string(),
-                    ))
+                    ));
                 }
             };
         } else if self.query.domain.current_domain {

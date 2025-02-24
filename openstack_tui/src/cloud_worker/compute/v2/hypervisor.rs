@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::ComputeApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::ComputeApiRequest;
 
 pub mod get;
 pub mod list_detailed;
@@ -68,10 +68,10 @@ impl ExecuteApiRequest for ComputeHypervisorApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            ComputeHypervisorApiRequest::Get(ref req) => {
+            ComputeHypervisorApiRequest::Get(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeHypervisorApiRequest::ListDetailed(ref req) => {
+            ComputeHypervisorApiRequest::ListDetailed(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

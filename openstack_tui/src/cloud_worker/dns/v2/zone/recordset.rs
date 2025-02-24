@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::DnsApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::DnsApiRequest;
 
 pub mod delete;
 pub mod list;
@@ -56,10 +56,10 @@ impl ExecuteApiRequest for DnsZoneRecordsetApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            DnsZoneRecordsetApiRequest::Delete(ref req) => {
+            DnsZoneRecordsetApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            DnsZoneRecordsetApiRequest::List(ref req) => {
+            DnsZoneRecordsetApiRequest::List(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

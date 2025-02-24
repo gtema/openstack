@@ -97,19 +97,19 @@ impl ExecuteApiRequest for ComputeApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            ComputeApiRequest::Aggregate(ref req) => {
+            ComputeApiRequest::Aggregate(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeApiRequest::Flavor(ref req) => {
+            ComputeApiRequest::Flavor(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeApiRequest::Hypervisor(ref req) => {
+            ComputeApiRequest::Hypervisor(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeApiRequest::QuotaSet(ref req) => {
+            ComputeApiRequest::QuotaSet(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeApiRequest::Server(ref req) => {
+            ComputeApiRequest::Server(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }
