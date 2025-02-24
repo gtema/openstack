@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::delete;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::identity::v3::os_federation::identity_provider::protocol::delete;
 use structable_derive::StructTable;
 
 /// Delete a protocol from an IDP.

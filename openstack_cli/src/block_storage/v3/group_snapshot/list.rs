@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::block_storage::v3::group_snapshot::list_detailed;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::api::block_storage::v3::group_snapshot::list_detailed;
+use openstack_sdk::api::{Pagination, paged};
 use structable_derive::StructTable;
 
 /// Returns a detailed list of group_snapshots.

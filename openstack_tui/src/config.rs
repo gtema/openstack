@@ -20,8 +20,8 @@ use std::{
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use derive_deref::{Deref, DerefMut};
 use eyre::Result;
-use ratatui::style::{palette::tailwind, Color};
-use serde::{de::Deserializer, Deserialize};
+use ratatui::style::{Color, palette::tailwind};
+use serde::{Deserialize, de::Deserializer};
 use std::fmt;
 use tracing::error;
 
@@ -114,7 +114,7 @@ impl ConfigFileBuilder {
                     source: Box::new(error),
                     builder: self,
                     path: source.as_ref().to_owned(),
-                })
+                });
             }
         };
 
@@ -146,20 +146,12 @@ impl ConfigFileBuilder {
 impl fmt::Debug for ConfigFileBuilderError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ConfigFileBuilderError::FileParse {
-                ref source,
-                ref path,
-                ..
-            } => f
+            ConfigFileBuilderError::FileParse { source, path, .. } => f
                 .debug_struct("FileParse")
                 .field("source", source)
                 .field("path", path)
                 .finish_non_exhaustive(),
-            ConfigFileBuilderError::ConfigDeserialize {
-                ref source,
-                ref path,
-                ..
-            } => f
+            ConfigFileBuilderError::ConfigDeserialize { source, path, .. } => f
                 .debug_struct("ConfigDeserialize")
                 .field("source", source)
                 .field("path", path)
@@ -199,8 +191,8 @@ impl Config {
                         path,
                     }) => {
                         error!(
-                        "The file {path:?} could not be deserialized and will be ignored: {source}"
-                    );
+                            "The file {path:?} could not be deserialized and will be ignored: {source}"
+                        );
                         builder
                     }
                 }

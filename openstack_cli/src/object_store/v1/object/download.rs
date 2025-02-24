@@ -21,22 +21,22 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 use structable_derive::StructTable;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
 use crate::common::download_file;
-use openstack_sdk::api::object_store::v1::object::get::Request;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::object::get::Request;
 
 /// Downloads the object content and gets the object metadata.
 /// This operation returns the object metadata in the response headers and the

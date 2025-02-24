@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::placement::v1::resource_provider::aggregate::set_11;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::placement::v1::resource_provider::aggregate::set_11;
 
 /// Associate a list of aggregates with the resource provider identified by
 /// {uuid}.

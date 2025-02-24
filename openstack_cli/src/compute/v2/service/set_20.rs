@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::IntString;
-use openstack_sdk::api::compute::v2::service::set_20;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::service::set_20;
 use structable_derive::StructTable;
 
 /// Update a compute service to enable or disable scheduling, including

@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::compute::v2::server::rescue;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::server::rescue;
 use structable_derive::StructTable;
 
 /// Puts a server in rescue mode and changes its status to `RESCUE`.

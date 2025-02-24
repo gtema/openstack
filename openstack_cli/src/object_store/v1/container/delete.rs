@@ -22,21 +22,21 @@ use http::Response;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 use structable_derive::StructTable;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
-use openstack_sdk::api::object_store::v1::container::delete::Request;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::container::delete::Request;
 
 /// Deletes an empty container.
 /// This operation fails unless the container is empty. An empty container has

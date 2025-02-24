@@ -20,22 +20,22 @@ use http::{HeaderName, HeaderValue};
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 use structable_derive::StructTable;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
 use crate::common::parse_key_val;
-use openstack_sdk::api::object_store::v1::container::set::Request;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::container::set::Request;
 
 /// Creates, updates, or deletes custom metadata for a container.
 #[derive(Args, Clone, Debug)]

@@ -77,13 +77,13 @@ impl ExecuteApiRequest for BlockStorageApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            BlockStorageApiRequest::Backup(ref req) => {
+            BlockStorageApiRequest::Backup(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            BlockStorageApiRequest::Snapshot(ref req) => {
+            BlockStorageApiRequest::Snapshot(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            BlockStorageApiRequest::Volume(ref req) => {
+            BlockStorageApiRequest::Volume(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

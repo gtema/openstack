@@ -87,16 +87,16 @@ impl ExecuteApiRequest for IdentityApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            IdentityApiRequest::Auth(ref req) => {
+            IdentityApiRequest::Auth(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            IdentityApiRequest::Group(ref req) => {
+            IdentityApiRequest::Group(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            IdentityApiRequest::Project(ref req) => {
+            IdentityApiRequest::Project(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            IdentityApiRequest::User(ref req) => {
+            IdentityApiRequest::User(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

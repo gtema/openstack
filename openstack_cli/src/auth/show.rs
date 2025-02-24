@@ -16,14 +16,14 @@
 use clap::Parser;
 use tracing::info;
 
-use crate::output::{self, OutputProcessor};
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::{self, OutputProcessor};
 
-use openstack_sdk::types::identity::v3::AuthResponse;
 use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::types::identity::v3::AuthResponse;
 
 /// Show current authorization information for the cloud
 ///

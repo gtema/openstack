@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::BoolString;
-use openstack_sdk::api::network::v2::default_security_group_rule::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::default_security_group_rule::get;
 use structable_derive::StructTable;
 
 /// Shows detailed information for a security group default rule.

@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::load_balancer::v2::quota::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::load_balancer::v2::quota::list;
 use structable_derive::StructTable;
 
 /// Lists all quotas for the project.

@@ -166,11 +166,12 @@ impl Describe {
     }
 
     fn render(&mut self, f: &mut Frame<'_>, area: Rect) {
-        let mut title = vec![self
-            .title
-            .clone()
-            .unwrap_or(String::from(" Describe "))
-            .white()];
+        let mut title = vec![
+            self.title
+                .clone()
+                .unwrap_or(String::from(" Describe "))
+                .white(),
+        ];
         if self.is_loading {
             title.push(Span::styled(
                 " ...Loading... ",

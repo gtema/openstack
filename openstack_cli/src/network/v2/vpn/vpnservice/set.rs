@@ -25,17 +25,17 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::BoolString;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::vpn::vpnservice::find;
 use openstack_sdk::api::network::v2::vpn::vpnservice::set;
-use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Updates a VPN service.

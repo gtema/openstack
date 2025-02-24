@@ -23,6 +23,7 @@ use crate::{
     action::Action,
     cloud_worker::Cloud,
     components::{
+        Component,
         block_storage::{
             backups::BlockStorageBackups, snapshots::BlockStorageSnapshots,
             volumes::BlockStorageVolumes,
@@ -58,7 +59,6 @@ use crate::{
         },
         project_select_popup::ProjectSelect,
         resource_select_popup::ApiRequestSelect,
-        Component,
     },
     config::Config,
     mode::Mode,
@@ -290,9 +290,14 @@ impl App {
                     action_tx.send(action)?;
                 }
             }
-        } else if let Some(component) = self.components.get_mut(&self.mode) {
-            if let Some(action) = component.handle_events(Some(event.clone()))? {
-                action_tx.send(action)?;
+        } else {
+            match self.components.get_mut(&self.mode) {
+                Some(component) => {
+                    if let Some(action) = component.handle_events(Some(event.clone()))? {
+                        action_tx.send(action)?;
+                    }
+                }
+                _ => {}
             }
         }
         if let Some(action) = self.header.handle_events(Some(event.clone()))? {

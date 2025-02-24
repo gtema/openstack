@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::load_balancer::v2::l7policy::delete;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::load_balancer::v2::l7policy::delete;
 use structable_derive::StructTable;
 
 /// Removes a L7 policy and its associated configuration from the project.

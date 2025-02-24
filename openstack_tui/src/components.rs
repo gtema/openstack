@@ -15,8 +15,8 @@
 use crossterm::event::{KeyEvent, MouseEvent};
 use eyre::Result;
 use ratatui::{
-    prelude::{Rect, Size},
     Frame,
+    prelude::{Rect, Size},
 };
 use tokio::sync::mpsc::UnboundedSender;
 

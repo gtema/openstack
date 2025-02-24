@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::ComputeApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::ComputeApiRequest;
 
 pub mod delete;
 pub mod get;
@@ -104,19 +104,19 @@ impl ExecuteApiRequest for ComputeServerApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            ComputeServerApiRequest::Delete(ref req) => {
+            ComputeServerApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeServerApiRequest::Get(ref req) => {
+            ComputeServerApiRequest::Get(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeServerApiRequest::GetConsoleOutput(ref req) => {
+            ComputeServerApiRequest::GetConsoleOutput(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeServerApiRequest::InstanceAction(ref req) => {
+            ComputeServerApiRequest::InstanceAction(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ComputeServerApiRequest::ListDetailed(ref req) => {
+            ComputeServerApiRequest::ListDetailed(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

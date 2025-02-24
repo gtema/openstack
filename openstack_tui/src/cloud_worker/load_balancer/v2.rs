@@ -97,19 +97,19 @@ impl ExecuteApiRequest for LoadBalancerApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            LoadBalancerApiRequest::Healthmonitor(ref req) => {
+            LoadBalancerApiRequest::Healthmonitor(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            LoadBalancerApiRequest::Listener(ref req) => {
+            LoadBalancerApiRequest::Listener(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            LoadBalancerApiRequest::Loadbalancer(ref req) => {
+            LoadBalancerApiRequest::Loadbalancer(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            LoadBalancerApiRequest::Pool(ref req) => {
+            LoadBalancerApiRequest::Pool(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            LoadBalancerApiRequest::Quota(ref req) => {
+            LoadBalancerApiRequest::Quota(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

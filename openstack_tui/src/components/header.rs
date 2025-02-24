@@ -23,7 +23,7 @@ use std::cmp::max;
 use crate::{
     action::Action,
     components::Component,
-    config::{key_event_to_string_with_unicode, CommandType, Config},
+    config::{CommandType, Config, key_event_to_string_with_unicode},
     error::TuiError,
     mode::Mode,
 };

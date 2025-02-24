@@ -29,21 +29,21 @@ use http::Response;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 use structable_derive::StructTable;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
-use openstack_sdk::api::object_store::v1::object::delete::Request;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::object::delete::Request;
 
 /// Permanently deletes an object from the object store.
 /// Object deletion occurs immediately at request time. Any subsequent GET,

@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::find;
 use openstack_sdk::api::load_balancer::v2::availability_zone_profile::set;
-use openstack_sdk::api::QueryAsync;
 use structable_derive::StructTable;
 
 /// Updates an Availability Zone Profile.

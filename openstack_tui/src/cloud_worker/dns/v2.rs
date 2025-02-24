@@ -67,10 +67,10 @@ impl ExecuteApiRequest for DnsApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            DnsApiRequest::Recordset(ref req) => {
+            DnsApiRequest::Recordset(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            DnsApiRequest::Zone(ref req) => {
+            DnsApiRequest::Zone(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

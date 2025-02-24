@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::LoadBalancerApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::LoadBalancerApiRequest;
 
 pub mod delete;
 pub mod get;
@@ -60,13 +60,13 @@ impl ExecuteApiRequest for LoadBalancerListenerApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            LoadBalancerListenerApiRequest::Delete(ref req) => {
+            LoadBalancerListenerApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            LoadBalancerListenerApiRequest::Get(ref req) => {
+            LoadBalancerListenerApiRequest::Get(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            LoadBalancerListenerApiRequest::List(ref req) => {
+            LoadBalancerListenerApiRequest::List(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

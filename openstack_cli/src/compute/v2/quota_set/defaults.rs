@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::IntString;
-use openstack_sdk::api::compute::v2::quota_set::defaults;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::quota_set::defaults;
 use structable_derive::StructTable;
 
 /// Lists the default quotas for a project.

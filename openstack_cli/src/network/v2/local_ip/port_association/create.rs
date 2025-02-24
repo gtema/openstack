@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::network::v2::local_ip::port_association::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::local_ip::port_association::create;
 use structable_derive::StructTable;
 
 /// Creates a Local IP association with a given Port. If a Port has multiple

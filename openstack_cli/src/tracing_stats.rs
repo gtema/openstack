@@ -18,11 +18,11 @@
 use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
 use tracing::{
-    field::{Field, Visit},
     Event, Subscriber,
+    field::{Field, Visit},
 };
-use tracing_subscriber::layer::Context;
 use tracing_subscriber::Layer;
+use tracing_subscriber::layer::Context;
 
 /// HTTP Request statistics container
 #[derive(Default)]
@@ -163,14 +163,20 @@ mod tests {
         let summaries: Vec<(String, String, u128)> =
             r.summarize_by_url_method().into_iter().collect();
 
-        assert!(summaries
-            .iter()
-            .any(|x| *x == (String::from("http://foo.bar/"), String::from("get"), 1)));
-        assert!(summaries
-            .iter()
-            .any(|x| *x == (String::from("http://foo.bar/1"), String::from("get"), 9)));
-        assert!(summaries
-            .iter()
-            .any(|x| *x == (String::from("http://foo.bar/"), String::from("post"), 5)));
+        assert!(
+            summaries
+                .iter()
+                .any(|x| *x == (String::from("http://foo.bar/"), String::from("get"), 1))
+        );
+        assert!(
+            summaries
+                .iter()
+                .any(|x| *x == (String::from("http://foo.bar/1"), String::from("get"), 9))
+        );
+        assert!(
+            summaries
+                .iter()
+                .any(|x| *x == (String::from("http://foo.bar/"), String::from("post"), 5))
+        );
     }
 }

@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::BoolString;
-use openstack_sdk::api::network::v2::security_group_rule::set;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::security_group_rule::set;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI

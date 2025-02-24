@@ -57,7 +57,7 @@ impl ExecuteApiRequest for ImageApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            ImageApiRequest::Image(ref req) => {
+            ImageApiRequest::Image(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

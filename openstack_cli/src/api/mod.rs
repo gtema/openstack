@@ -22,15 +22,15 @@ use tracing::info;
 use url::Url;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::{AsyncClient, RestClient},
     types::ServiceType,
-    AsyncOpenStack,
 };
 
-use crate::common::parse_key_val;
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
+use crate::common::parse_key_val;
+use crate::output::OutputProcessor;
 
 fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()
