@@ -29,34 +29,37 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Filters the response by a group ID.
-    ///
+    #[builder(default, setter(into))]
+    effective: Option<Cow<'a, str>>,
+
     #[builder(default, setter(into))]
     group_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a role ID.
-    ///
+    #[builder(default, setter(into))]
+    include_names: Option<Cow<'a, str>>,
+
+    #[builder(default, setter(into))]
+    include_subtree: Option<Cow<'a, str>>,
+
     #[builder(default, setter(into))]
     role_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a domain ID.
+    /// The ID of the domain.
     ///
     #[builder(default, setter(into))]
     scope_domain_id: Option<Cow<'a, str>>,
 
-    /// Filters based on role assignments that are inherited. The only value of
-    /// inherited_to that is currently supported is projects.
-    ///
     #[builder(default, setter(into))]
     scope_os_inherit_inherited_to: Option<Cow<'a, str>>,
 
-    /// Filters the response by a project ID.
+    /// The ID of the project.
     ///
     #[builder(default, setter(into))]
     scope_project_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a user ID.
-    ///
+    #[builder(default, setter(into))]
+    scope_system: Option<Cow<'a, str>>,
+
     #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 
@@ -106,11 +109,15 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("effective", self.effective.as_ref());
+        params.push_opt("include_names", self.include_names.as_ref());
+        params.push_opt("include_subtree", self.include_subtree.as_ref());
         params.push_opt("group.id", self.group_id.as_ref());
         params.push_opt("role.id", self.role_id.as_ref());
-        params.push_opt("user.id", self.user_id.as_ref());
+        params.push_opt("scope.system", self.scope_system.as_ref());
         params.push_opt("scope.domain.id", self.scope_domain_id.as_ref());
         params.push_opt("scope.project.id", self.scope_project_id.as_ref());
+        params.push_opt("user.id", self.user_id.as_ref());
         params.push_opt(
             "scope.OS-INHERIT:inherited_to",
             self.scope_os_inherit_inherited_to.as_ref(),

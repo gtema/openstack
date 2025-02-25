@@ -34,7 +34,7 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::system::group::role::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
 /// Lists all system role assignment a group has.
 ///
@@ -69,22 +69,39 @@ struct PathParameters {
     )]
     group_id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// Roles response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The role description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// The ID of the domain.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    domain_id: Option<String>,
+
+    /// The role ID.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The resource name.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
+
+    /// The resource options for the role. Available resource options are
+    /// `immutable`.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    options: Option<Value>,
 }
 
 impl RolesCommand {
@@ -110,8 +127,9 @@ impl RolesCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

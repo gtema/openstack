@@ -34,9 +34,11 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
-/// GET operation on /v3/OS-EP-FILTER/endpoint_groups
+/// List all endpoint groups.
+///
+/// GET /v3/OS-EP-FILTER/endpoint_groups
 ///
 #[derive(Args)]
 pub struct EndpointGroupsCommand {
@@ -51,27 +53,45 @@ pub struct EndpointGroupsCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The name of the endpoint group.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    name: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
 struct PathParameters {}
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// EndpointGroups response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The endpoint group description.
+    ///
+    #[serde()]
+    #[structable(optional, wide)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// Describes the filtering performed by the endpoint group. The filter
+    /// used must be an endpoint property, such as interface, service_id,
+    /// region, and enabled. Note that if using interface as a filter, the only
+    /// available values are public, internal, and admin.
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    filters: Option<Value>,
+
+    /// The endpoint group ID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The name of the endpoint group.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
 }
 
 impl EndpointGroupsCommand {
@@ -86,18 +106,22 @@ impl EndpointGroupsCommand {
         let op = OutputProcessor::from_args(parsed_args);
         op.validate_args(parsed_args)?;
 
-        let ep_builder = list::Request::builder();
+        let mut ep_builder = list::Request::builder();
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.name {
+            ep_builder.name(val);
+        }
         // Set body parameters
 
         let ep = ep_builder
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let data: Vec<serde_json::Value> = ep.query_async(client).await?;
+
+        op.output_list::<ResponseData>(data)?;
         Ok(())
     }
 }

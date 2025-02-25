@@ -34,9 +34,11 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::os_ep_filter::endpoint_group::get;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::collections::HashMap;
+use structable_derive::StructTable;
 
-/// GET operation on /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}
+/// Get Endpoint Group
+///
+/// GET /v3/OS-EP-FILTER/endpoint_groups/{endpoint_group_id}
 ///
 #[derive(Args)]
 pub struct EndpointGroupCommand {
@@ -66,22 +68,41 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
+/// EndpointGroup response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {
+    /// The endpoint group description.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    description: Option<String>,
 
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
+    /// Describes the filtering performed by the endpoint group. The filter
+    /// used must be an endpoint property, such as interface, service_id,
+    /// region, and enabled. Note that if using interface as a filter, the only
+    /// available values are public, internal, and admin.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    filters: Option<Value>,
+
+    /// The endpoint group ID
+    ///
+    #[serde()]
+    #[structable(optional)]
+    id: Option<String>,
+
+    /// The link to the resources in question.
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    links: Option<Value>,
+
+    /// The name of the endpoint group.
+    ///
+    #[serde()]
+    #[structable(optional)]
+    name: Option<String>,
 }
 
 impl EndpointGroupCommand {

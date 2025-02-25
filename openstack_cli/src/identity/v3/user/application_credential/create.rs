@@ -109,6 +109,11 @@ struct ApplicationCredential {
     #[arg(help_heading = "Body parameters", long)]
     expires_at: Option<String>,
 
+    /// The UUID for the credential.
+    ///
+    #[arg(help_heading = "Body parameters", long)]
+    id: Option<String>,
+
     /// The name of the application credential. Must be unique to a user.
     ///
     #[arg(help_heading = "Body parameters", long)]
@@ -135,32 +140,32 @@ struct ApplicationCredential {
     #[arg(help_heading = "Body parameters", long)]
     secret: Option<String>,
 
+    #[arg(help_heading = "Body parameters", long)]
+    system: Option<String>,
+
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
     /// or trusts. Defaults to false.
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
-    unrestricted: Option<bool>,
+    unrestricted: Option<Option<bool>>,
 }
 
 /// ApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// A list of `access_rules` objects
+    /// A list of access_rules objects
     ///
     #[serde()]
     #[structable(optional, pretty)]
     access_rules: Option<Value>,
 
-    /// A description of the application credential’s purpose.
+    /// A description of the application credential's purpose.
     ///
     #[serde()]
     #[structable(optional)]
     description: Option<String>,
 
-    /// An optional expiry time for the application credential. If unset, the
-    /// application credential does not expire.
-    ///
     #[serde()]
     #[structable(optional)]
     expires_at: Option<String>,
@@ -275,12 +280,12 @@ impl ApplicationCredentialCommand {
         // Set Request.application_credential data
         let args = &self.application_credential;
         let mut application_credential_builder = create::ApplicationCredentialBuilder::default();
-        if let Some(val) = &args.secret {
-            application_credential_builder.secret(val);
+        if let Some(val) = &args.id {
+            application_credential_builder.id(val);
         }
 
-        if let Some(val) = &args.project_id {
-            application_credential_builder.project_id(val);
+        if let Some(val) = &args.secret {
+            application_credential_builder.secret(Some(val.into()));
         }
 
         application_credential_builder.name(&args.name);
@@ -293,16 +298,8 @@ impl ApplicationCredentialCommand {
             application_credential_builder.expires_at(Some(val.into()));
         }
 
-        if let Some(val) = &args.roles {
-            let roles_builder: Vec<create::Roles> = val
-                .iter()
-                .flat_map(|v| serde_json::from_value::<create::Roles>(v.to_owned()))
-                .collect::<Vec<create::Roles>>();
-            application_credential_builder.roles(roles_builder);
-        }
-
-        if let Some(val) = &args.unrestricted {
-            application_credential_builder.unrestricted(*val);
+        if let Some(val) = &args.project_id {
+            application_credential_builder.project_id(val);
         }
 
         if let Some(val) = &args.access_rules {
@@ -311,6 +308,22 @@ impl ApplicationCredentialCommand {
                 .flat_map(|v| serde_json::from_value::<create::AccessRules>(v.to_owned()))
                 .collect::<Vec<create::AccessRules>>();
             application_credential_builder.access_rules(access_rules_builder);
+        }
+
+        if let Some(val) = &args.unrestricted {
+            application_credential_builder.unrestricted(*val);
+        }
+
+        if let Some(val) = &args.system {
+            application_credential_builder.system(Some(val.into()));
+        }
+
+        if let Some(val) = &args.roles {
+            let roles_builder: Vec<create::Roles> = val
+                .iter()
+                .flat_map(|v| serde_json::from_value::<create::Roles>(v.to_owned()))
+                .collect::<Vec<create::Roles>>();
+            application_credential_builder.roles(roles_builder);
         }
 
         ep_builder.application_credential(application_credential_builder.build().unwrap());
