@@ -155,6 +155,10 @@ pub enum OpenStackCliError {
         source: dialoguer::Error,
     },
 
+    /// Input parameters
+    #[error("input parameters error: {0}")]
+    InputParameters(String),
+
     /// Others.
     #[error(transparent)]
     Other(#[from] eyre::Report),

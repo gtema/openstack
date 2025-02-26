@@ -97,6 +97,7 @@ fn initialize_panic_handler() -> Result<()> {
                     Some(OpenStackCliError::ConnectionNotFound { .. }) => false,
                     Some(OpenStackCliError::OpenStackApi { .. }) => false,
                     Some(OpenStackCliError::ReScope { .. }) => false,
+                    Some(OpenStackCliError::InputParameters { .. }) => false,
                     _ => true,
                 }
             }
