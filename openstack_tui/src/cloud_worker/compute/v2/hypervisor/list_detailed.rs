@@ -92,7 +92,7 @@ impl ExecuteApiRequest for ComputeHypervisorList {
 }
 /// ComputeHypervisor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ComputeHypervisor {
+pub struct ComputeHypervisor {
     /// A dictionary that contains cpu information like `arch`, `model`,
     /// `vendor`, `features` and `topology`. The content of this field is
     /// hypervisor specific.
@@ -106,7 +106,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "CPU_INFO", wide)]
-    cpu_info: Option<Value>,
+    pub cpu_info: Option<Value>,
 
     /// The current_workload is the number of tasks the hypervisor is
     /// responsible for. This will be equal or greater than the number of
@@ -117,7 +117,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "CURRENT_WORKLOAD", wide)]
-    current_workload: Option<i32>,
+    pub current_workload: Option<i32>,
 
     /// The actual free disk on this hypervisor(in GiB). If allocation ratios
     /// used for overcommit are configured, this may be negative. This is
@@ -128,7 +128,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "DISK_AVAILABLE_LEAST", wide)]
-    disk_available_least: Option<i32>,
+    pub disk_available_least: Option<i32>,
 
     /// The free disk remaining on this hypervisor(in GiB). This does not take
     /// allocation ratios used for overcommit into account so this value may be
@@ -138,7 +138,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "FREE_DISK_GB", wide)]
-    free_disk_gb: Option<i32>,
+    pub free_disk_gb: Option<i32>,
 
     /// The free RAM in this hypervisor(in MiB). This does not take allocation
     /// ratios used for overcommit into account so this value may be negative.
@@ -147,38 +147,38 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "FREE_RAM_MB", wide)]
-    free_ram_mb: Option<i32>,
+    pub free_ram_mb: Option<i32>,
 
     /// The IP address of the hypervisor’s host.
     ///
     #[serde(default)]
     #[structable(optional, title = "HOST_IP", wide)]
-    host_ip: Option<String>,
+    pub host_ip: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
     ///
     #[serde(default)]
     #[structable(optional, title = "HYPERVISOR_HOSTNAME", wide)]
-    hypervisor_hostname: Option<String>,
+    pub hypervisor_hostname: Option<String>,
 
     /// The hypervisor type.
     ///
     #[serde(default)]
     #[structable(optional, title = "HYPERVISOR_TYPE", wide)]
-    hypervisor_type: Option<String>,
+    pub hypervisor_type: Option<String>,
 
     /// The hypervisor version.
     ///
     #[serde(default)]
     #[structable(optional, title = "HYPERVISOR_VERSION", wide)]
-    hypervisor_version: Option<i32>,
+    pub hypervisor_version: Option<i32>,
 
     /// The id of the hypervisor. From version 2.53 it is a string as UUID
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The disk in this hypervisor (in GiB). This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -188,7 +188,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "LOCAL_GB", wide)]
-    local_gb: Option<i32>,
+    pub local_gb: Option<i32>,
 
     /// The disk used in this hypervisor (in GiB).
     ///
@@ -196,7 +196,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "LOCAL_GB_USED", wide)]
-    local_gb_used: Option<i32>,
+    pub local_gb_used: Option<i32>,
 
     /// The memory of this hypervisor (in MiB). This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -206,7 +206,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "MEMORY_MB", wide)]
-    memory_mb: Option<i32>,
+    pub memory_mb: Option<i32>,
 
     /// The memory used in this hypervisor (in MiB).
     ///
@@ -214,7 +214,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "MEMORY_MB_USED", wide)]
-    memory_mb_used: Option<i32>,
+    pub memory_mb_used: Option<i32>,
 
     /// The number of running VMs on this hypervisor.
     ///
@@ -222,7 +222,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "RUNNING_VMS", wide)]
-    running_vms: Option<i32>,
+    pub running_vms: Option<i32>,
 
     /// A list of `server` objects. This field has become mandatory in
     /// microversion 2.75. If no servers is on hypervisor then empty list is
@@ -232,25 +232,25 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "SERVERS", wide)]
-    servers: Option<Value>,
+    pub servers: Option<Value>,
 
     /// The hypervisor service object.
     ///
     #[serde(default)]
     #[structable(optional, title = "SERVICE", wide)]
-    service: Option<Value>,
+    pub service: Option<Value>,
 
     /// The state of the hypervisor. One of `up` or `down`.
     ///
     #[serde(default)]
     #[structable(optional, title = "STATE")]
-    state: Option<Value>,
+    pub state: Option<Value>,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     ///
     #[serde(default)]
     #[structable(optional, title = "STATUS")]
-    status: Option<Value>,
+    pub status: Option<Value>,
 
     /// The total uptime of the hypervisor and information about average load.
     /// Only reported for active hosts where the virt driver supports this
@@ -260,7 +260,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "UPTIME", wide)]
-    uptime: Option<String>,
+    pub uptime: Option<String>,
 
     /// The number of vCPU in this hypervisor. This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -270,7 +270,7 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "VCPUS", wide)]
-    vcpus: Option<i32>,
+    pub vcpus: Option<i32>,
 
     /// The number of vCPU used in this hypervisor.
     ///
@@ -278,5 +278,5 @@ struct ComputeHypervisor {
     ///
     #[serde(default)]
     #[structable(optional, title = "VCPUS_USED", wide)]
-    vcpus_used: Option<i32>,
+    pub vcpus_used: Option<i32>,
 }

@@ -211,13 +211,13 @@ impl ExecuteApiRequest for LoadBalancerPoolList {
 }
 /// LoadBalancerPool response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct LoadBalancerPool {
+pub struct LoadBalancerPool {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
@@ -225,7 +225,7 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "ALPN_PROTOCOLS", wide)]
-    alpn_protocols: Option<Value>,
+    pub alpn_protocols: Option<Value>,
 
     /// The reference of the
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
@@ -236,13 +236,13 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "CA_TLS_CONTAINER_REF", wide)]
-    ca_tls_container_ref: Option<String>,
+    pub ca_tls_container_ref: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The reference of the
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
@@ -251,83 +251,83 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "CRL_CONTAINER_REF", wide)]
-    crl_container_ref: Option<String>,
+    pub crl_container_ref: Option<String>,
 
     /// A human-readable description for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The associated health monitor ID.
     ///
     #[serde(default)]
     #[structable(optional, title = "HEALTHMONITOR_ID", wide)]
-    healthmonitor_id: Option<String>,
+    pub healthmonitor_id: Option<String>,
 
     /// The ID of the pool.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`,
     /// `ROUND_ROBIN`, `SOURCE_IP`, or `SOURCE_IP_PORT`.
     ///
     #[serde(default)]
     #[structable(optional, title = "LB_ALGORITHM", wide)]
-    lb_algorithm: Option<String>,
+    pub lb_algorithm: Option<String>,
 
     /// A list of listener IDs.
     ///
     #[serde(default)]
     #[structable(optional, title = "LISTENERS", wide)]
-    listeners: Option<Value>,
+    pub listeners: Option<Value>,
 
     /// A list of load balancer IDs.
     ///
     #[serde(default)]
     #[structable(optional, title = "LOADBALANCERS", wide)]
-    loadbalancers: Option<Value>,
+    pub loadbalancers: Option<Value>,
 
     /// A list of member IDs.
     ///
     #[serde(default)]
     #[structable(optional, title = "MEMBERS", wide)]
-    members: Option<Value>,
+    pub members: Option<Value>,
 
     /// Human-readable name of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
     #[serde(default)]
     #[structable(optional, status, title = "OPERATING_STATUS")]
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROJECT_ID", wide)]
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `PROXY`,
     /// `PROXYV2`, `SCTP`, `TCP`, or `UDP`.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROTOCOL", wide)]
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
     #[serde(default)]
     #[structable(optional, title = "PROVISIONING_STATUS", wide)]
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// A JSON object specifying the session persistence for the pool or `null`
     /// for no session persistence. See
@@ -335,7 +335,7 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "SESSION_PERSISTENCE", wide)]
-    session_persistence: Option<Value>,
+    pub session_persistence: Option<Value>,
 
     /// A list of simple strings assigned to the resource.
     ///
@@ -343,11 +343,11 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// List of ciphers in OpenSSL format (colon-separated). See
     /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
@@ -356,7 +356,7 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "TLS_CIPHERS", wide)]
-    tls_ciphers: Option<String>,
+    pub tls_ciphers: Option<String>,
 
     /// The reference to the
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
@@ -368,7 +368,7 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "TLS_CONTAINER_REF", wide)]
-    tls_container_ref: Option<String>,
+    pub tls_container_ref: Option<String>,
 
     /// When `true` connections to backend member servers will use TLS
     /// encryption. Default is `false`.
@@ -377,7 +377,7 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "TLS_ENABLED", wide)]
-    tls_enabled: Option<bool>,
+    pub tls_enabled: Option<bool>,
 
     /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
     /// TLSv1.1, TLSv1.2, TLSv1.3
@@ -386,11 +386,11 @@ struct LoadBalancerPool {
     ///
     #[serde(default)]
     #[structable(optional, title = "TLS_VERSIONS", wide)]
-    tls_versions: Option<Value>,
+    pub tls_versions: Option<Value>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

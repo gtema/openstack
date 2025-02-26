@@ -40,9 +40,9 @@ use std::collections::HashMap;
 
 /// Update Quota for a particular tenant
 ///
-/// | param req: | request | | --- | --- | | param id: | target project id that
-/// needs to be updated | | param body: | key, value pair that will be applied
-/// to the resources if the update succeeds |
+/// | | | | --- | --- | | param req: | request | | param id: | target project
+/// id that needs to be updated | | param body: | key, value pair that will be
+/// applied to the resources if the update succeeds |
 ///
 #[derive(Args)]
 pub struct QuotaSetCommand {

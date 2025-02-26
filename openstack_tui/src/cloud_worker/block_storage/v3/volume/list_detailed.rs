@@ -127,7 +127,7 @@ impl ExecuteApiRequest for BlockStorageVolumeList {
 }
 /// BlockStorageVolume response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct BlockStorageVolume {
+pub struct BlockStorageVolume {
     /// Instance attachment information. If this volume is attached to a server
     /// instance, the attachments list includes the UUID of the attached
     /// server, an attachment UUID, the name of the attached host, if any, the
@@ -149,15 +149,22 @@ struct BlockStorageVolume {
     ///
     /// ```
     ///
-    #[serde(default)]
-    #[structable(optional, title = "ATTACHMENTS", wide)]
-    attachments: Option<Value>,
+    #[serde()]
+    #[structable(title = "ATTACHMENTS", wide)]
+    pub attachments: Value,
 
     /// The name of the availability zone.
     ///
     #[serde(default)]
     #[structable(optional, title = "AVAILABILITY_ZONE", wide)]
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
+
+    /// Enables or disables the bootable attribute. You can boot an instance
+    /// from a bootable volume.
+    ///
+    #[serde()]
+    #[structable(title = "BOOTABLE", wide)]
+    pub bootable: bool,
 
     /// The cluster name of volume backend.
     ///
@@ -165,13 +172,13 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "CLUSTER_NAME", wide)]
-    cluster_name: Option<String>,
+    pub cluster_name: Option<String>,
 
     /// The UUID of the consistency group.
     ///
     #[serde(default)]
     #[structable(optional, title = "CONSISTENCYGROUP_ID", wide)]
-    consistencygroup_id: Option<String>,
+    pub consistencygroup_id: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
@@ -181,7 +188,7 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "CONSUMES_QUOTA", wide)]
-    consumes_quota: Option<bool>,
+    pub consumes_quota: Option<bool>,
 
     /// The date and time when the resource was created.
     ///
@@ -200,19 +207,19 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The volume description.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// If true, this volume is encrypted.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "ENCRYPTED", wide)]
-    encrypted: Option<bool>,
+    #[serde()]
+    #[structable(title = "ENCRYPTED", wide)]
+    pub encrypted: bool,
 
     /// The ID of the group.
     ///
@@ -220,38 +227,38 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "GROUP_ID", wide)]
-    group_id: Option<String>,
+    pub group_id: Option<String>,
 
     /// The UUID of the volume.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    #[serde()]
+    #[structable(title = "ID", wide)]
+    pub id: String,
 
     /// A `metadata` object. Contains one or more metadata key and value pairs
     /// that are associated with the volume.
     ///
     #[serde(default)]
     #[structable(optional, title = "METADATA", wide)]
-    metadata: Option<Value>,
+    pub metadata: Option<Value>,
 
     /// The volume migration status. Admin only.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "MIGRATION_STATUS", wide)]
-    migration_status: Option<String>,
+    #[serde()]
+    #[structable(title = "MIGRATION_STATUS", wide)]
+    pub migration_status: String,
 
     /// If true, this volume can attach to more than one instance.
     ///
     #[serde(default)]
     #[structable(optional, title = "MULTIATTACH", wide)]
-    multiattach: Option<bool>,
+    pub multiattach: Option<bool>,
 
     /// The volume name.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
     /// driver or `null` if the driver doesn’t use the field or if it hasn’t
@@ -261,13 +268,13 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "PROVIDER_ID", wide)]
-    provider_id: Option<String>,
+    pub provider_id: Option<String>,
 
     /// The volume replication status.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "REPLICATION_STATUS", wide)]
-    replication_status: Option<String>,
+    #[serde()]
+    #[structable(title = "REPLICATION_STATUS", wide)]
+    pub replication_status: String,
 
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
@@ -276,7 +283,7 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "SERVICE_UUID", wide)]
-    service_uuid: Option<String>,
+    pub service_uuid: Option<String>,
 
     /// An indicator whether the host connecting the volume should lock for the
     /// whole attach/detach process or not. `true` means only is iSCSI
@@ -288,13 +295,13 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "SHARED_TARGETS", wide)]
-    shared_targets: Option<bool>,
+    pub shared_targets: Option<bool>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    #[serde(default)]
-    #[structable(optional, title = "SIZE", wide)]
-    size: Option<i64>,
+    #[serde()]
+    #[structable(title = "SIZE", wide)]
+    pub size: i64,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
@@ -302,20 +309,20 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "SNAPSHOT_ID", wide)]
-    snapshot_id: Option<String>,
+    pub snapshot_id: Option<String>,
 
     /// The UUID of the source volume. The API creates a new volume with the
     /// same size as the source volume unless a larger size is requested.
     ///
     #[serde(default)]
     #[structable(optional, title = "SOURCE_VOLID", wide)]
-    source_volid: Option<String>,
+    pub source_volid: Option<String>,
 
     /// The volume status.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "STATUS")]
-    status: Option<String>,
+    #[serde()]
+    #[structable(title = "STATUS")]
+    pub status: String,
 
     /// The date and time when the resource was updated.
     ///
@@ -337,19 +344,19 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The UUID of the user.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "USER_ID", wide)]
-    user_id: Option<String>,
+    #[serde()]
+    #[structable(title = "USER_ID", wide)]
+    pub user_id: String,
 
     /// The associated volume type name for the volume.
     ///
     #[serde(default)]
     #[structable(optional, title = "VOLUME_TYPE", wide)]
-    volume_type: Option<String>,
+    pub volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
     ///
@@ -357,5 +364,5 @@ struct BlockStorageVolume {
     ///
     #[serde(default)]
     #[structable(optional, title = "VOLUME_TYPE_ID", wide)]
-    volume_type_id: Option<String>,
+    pub volume_type_id: Option<String>,
 }

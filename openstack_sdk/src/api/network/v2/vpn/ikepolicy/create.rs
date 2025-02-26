@@ -35,22 +35,6 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
-pub enum AuthAlgorithm {
-    #[serde(rename = "aes-cmac")]
-    AesCmac,
-    #[serde(rename = "aes-xcbc")]
-    AesXcbc,
-    #[serde(rename = "sha1")]
-    Sha1,
-    #[serde(rename = "sha256")]
-    Sha256,
-    #[serde(rename = "sha384")]
-    Sha384,
-    #[serde(rename = "sha512")]
-    Sha512,
-}
-
-#[derive(Debug, Deserialize, Clone, Serialize)]
 pub enum EncryptionAlgorithm {
     #[serde(rename = "3des")]
     _3des,
@@ -62,6 +46,8 @@ pub enum EncryptionAlgorithm {
     Aes128Ccm16,
     #[serde(rename = "aes-128-ccm-8")]
     Aes128Ccm8,
+    #[serde(rename = "aes-128-ctr")]
+    Aes128Ctr,
     #[serde(rename = "aes-128-gcm-12")]
     Aes128Gcm12,
     #[serde(rename = "aes-128-gcm-16")]
@@ -76,6 +62,8 @@ pub enum EncryptionAlgorithm {
     Aes192Ccm16,
     #[serde(rename = "aes-192-ccm-8")]
     Aes192Ccm8,
+    #[serde(rename = "aes-192-ctr")]
+    Aes192Ctr,
     #[serde(rename = "aes-192-gcm-12")]
     Aes192Gcm12,
     #[serde(rename = "aes-192-gcm-16")]
@@ -90,12 +78,30 @@ pub enum EncryptionAlgorithm {
     Aes256Ccm16,
     #[serde(rename = "aes-256-ccm-8")]
     Aes256Ccm8,
+    #[serde(rename = "aes-256-ctr")]
+    Aes256Ctr,
     #[serde(rename = "aes-256-gcm-12")]
     Aes256Gcm12,
     #[serde(rename = "aes-256-gcm-16")]
     Aes256Gcm16,
     #[serde(rename = "aes-256-gcm-8")]
     Aes256Gcm8,
+}
+
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum AuthAlgorithm {
+    #[serde(rename = "aes-cmac")]
+    AesCmac,
+    #[serde(rename = "aes-xcbc")]
+    AesXcbc,
+    #[serde(rename = "sha1")]
+    Sha1,
+    #[serde(rename = "sha256")]
+    Sha256,
+    #[serde(rename = "sha384")]
+    Sha384,
+    #[serde(rename = "sha512")]
+    Sha512,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

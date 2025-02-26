@@ -38,8 +38,8 @@ use std::collections::HashMap;
 
 /// Show quota for a particular tenant
 ///
-/// | param req: | request | | --- | --- | | param id: | target project id that
-/// needs to be shown |
+/// | | | | --- | --- | | param req: | request | | param id: | target project
+/// id that needs to be shown |
 ///
 #[derive(Args)]
 pub struct QuotaSetCommand {

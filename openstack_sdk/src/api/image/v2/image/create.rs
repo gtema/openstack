@@ -192,8 +192,7 @@ pub struct Request<'a> {
     ///
     /// The value might be `null` (JSON null data type).
     ///
-    /// **Newton changes**: The `vhdx` disk format is a supported value.
-    ///
+    /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
     ///
     #[builder(default)]

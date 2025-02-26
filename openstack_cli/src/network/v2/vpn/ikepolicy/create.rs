@@ -72,22 +72,13 @@ struct QueryParameters {}
 struct PathParameters {}
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
-enum AuthAlgorithm {
-    AesCmac,
-    AesXcbc,
-    Sha1,
-    Sha256,
-    Sha384,
-    Sha512,
-}
-
-#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum EncryptionAlgorithm {
     _3des,
     Aes128,
     Aes128Ccm12,
     Aes128Ccm16,
     Aes128Ccm8,
+    Aes128Ctr,
     Aes128Gcm12,
     Aes128Gcm16,
     Aes128Gcm8,
@@ -95,6 +86,7 @@ enum EncryptionAlgorithm {
     Aes192Ccm12,
     Aes192Ccm16,
     Aes192Ccm8,
+    Aes192Ctr,
     Aes192Gcm12,
     Aes192Gcm16,
     Aes192Gcm8,
@@ -102,9 +94,20 @@ enum EncryptionAlgorithm {
     Aes256Ccm12,
     Aes256Ccm16,
     Aes256Ccm8,
+    Aes256Ctr,
     Aes256Gcm12,
     Aes256Gcm16,
     Aes256Gcm8,
+}
+
+#[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
+enum AuthAlgorithm {
+    AesCmac,
+    AesXcbc,
+    Sha1,
+    Sha256,
+    Sha384,
+    Sha512,
 }
 
 #[derive(Clone, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
@@ -296,6 +299,37 @@ impl IkepolicyCommand {
         // Set Request.ikepolicy data
         let args = &self.ikepolicy;
         let mut ikepolicy_builder = create::IkepolicyBuilder::default();
+        if let Some(val) = &args.encryption_algorithm {
+            let tmp = match val {
+                EncryptionAlgorithm::_3des => create::EncryptionAlgorithm::_3des,
+                EncryptionAlgorithm::Aes128 => create::EncryptionAlgorithm::Aes128,
+                EncryptionAlgorithm::Aes128Ccm12 => create::EncryptionAlgorithm::Aes128Ccm12,
+                EncryptionAlgorithm::Aes128Ccm16 => create::EncryptionAlgorithm::Aes128Ccm16,
+                EncryptionAlgorithm::Aes128Ccm8 => create::EncryptionAlgorithm::Aes128Ccm8,
+                EncryptionAlgorithm::Aes128Ctr => create::EncryptionAlgorithm::Aes128Ctr,
+                EncryptionAlgorithm::Aes128Gcm12 => create::EncryptionAlgorithm::Aes128Gcm12,
+                EncryptionAlgorithm::Aes128Gcm16 => create::EncryptionAlgorithm::Aes128Gcm16,
+                EncryptionAlgorithm::Aes128Gcm8 => create::EncryptionAlgorithm::Aes128Gcm8,
+                EncryptionAlgorithm::Aes192 => create::EncryptionAlgorithm::Aes192,
+                EncryptionAlgorithm::Aes192Ccm12 => create::EncryptionAlgorithm::Aes192Ccm12,
+                EncryptionAlgorithm::Aes192Ccm16 => create::EncryptionAlgorithm::Aes192Ccm16,
+                EncryptionAlgorithm::Aes192Ccm8 => create::EncryptionAlgorithm::Aes192Ccm8,
+                EncryptionAlgorithm::Aes192Ctr => create::EncryptionAlgorithm::Aes192Ctr,
+                EncryptionAlgorithm::Aes192Gcm12 => create::EncryptionAlgorithm::Aes192Gcm12,
+                EncryptionAlgorithm::Aes192Gcm16 => create::EncryptionAlgorithm::Aes192Gcm16,
+                EncryptionAlgorithm::Aes192Gcm8 => create::EncryptionAlgorithm::Aes192Gcm8,
+                EncryptionAlgorithm::Aes256 => create::EncryptionAlgorithm::Aes256,
+                EncryptionAlgorithm::Aes256Ccm12 => create::EncryptionAlgorithm::Aes256Ccm12,
+                EncryptionAlgorithm::Aes256Ccm16 => create::EncryptionAlgorithm::Aes256Ccm16,
+                EncryptionAlgorithm::Aes256Ccm8 => create::EncryptionAlgorithm::Aes256Ccm8,
+                EncryptionAlgorithm::Aes256Ctr => create::EncryptionAlgorithm::Aes256Ctr,
+                EncryptionAlgorithm::Aes256Gcm12 => create::EncryptionAlgorithm::Aes256Gcm12,
+                EncryptionAlgorithm::Aes256Gcm16 => create::EncryptionAlgorithm::Aes256Gcm16,
+                EncryptionAlgorithm::Aes256Gcm8 => create::EncryptionAlgorithm::Aes256Gcm8,
+            };
+            ikepolicy_builder.encryption_algorithm(tmp);
+        }
+
         if let Some(val) = &args.tenant_id {
             ikepolicy_builder.tenant_id(val);
         }
@@ -318,34 +352,6 @@ impl IkepolicyCommand {
                 AuthAlgorithm::Sha512 => create::AuthAlgorithm::Sha512,
             };
             ikepolicy_builder.auth_algorithm(tmp);
-        }
-
-        if let Some(val) = &args.encryption_algorithm {
-            let tmp = match val {
-                EncryptionAlgorithm::_3des => create::EncryptionAlgorithm::_3des,
-                EncryptionAlgorithm::Aes128 => create::EncryptionAlgorithm::Aes128,
-                EncryptionAlgorithm::Aes128Ccm12 => create::EncryptionAlgorithm::Aes128Ccm12,
-                EncryptionAlgorithm::Aes128Ccm16 => create::EncryptionAlgorithm::Aes128Ccm16,
-                EncryptionAlgorithm::Aes128Ccm8 => create::EncryptionAlgorithm::Aes128Ccm8,
-                EncryptionAlgorithm::Aes128Gcm12 => create::EncryptionAlgorithm::Aes128Gcm12,
-                EncryptionAlgorithm::Aes128Gcm16 => create::EncryptionAlgorithm::Aes128Gcm16,
-                EncryptionAlgorithm::Aes128Gcm8 => create::EncryptionAlgorithm::Aes128Gcm8,
-                EncryptionAlgorithm::Aes192 => create::EncryptionAlgorithm::Aes192,
-                EncryptionAlgorithm::Aes192Ccm12 => create::EncryptionAlgorithm::Aes192Ccm12,
-                EncryptionAlgorithm::Aes192Ccm16 => create::EncryptionAlgorithm::Aes192Ccm16,
-                EncryptionAlgorithm::Aes192Ccm8 => create::EncryptionAlgorithm::Aes192Ccm8,
-                EncryptionAlgorithm::Aes192Gcm12 => create::EncryptionAlgorithm::Aes192Gcm12,
-                EncryptionAlgorithm::Aes192Gcm16 => create::EncryptionAlgorithm::Aes192Gcm16,
-                EncryptionAlgorithm::Aes192Gcm8 => create::EncryptionAlgorithm::Aes192Gcm8,
-                EncryptionAlgorithm::Aes256 => create::EncryptionAlgorithm::Aes256,
-                EncryptionAlgorithm::Aes256Ccm12 => create::EncryptionAlgorithm::Aes256Ccm12,
-                EncryptionAlgorithm::Aes256Ccm16 => create::EncryptionAlgorithm::Aes256Ccm16,
-                EncryptionAlgorithm::Aes256Ccm8 => create::EncryptionAlgorithm::Aes256Ccm8,
-                EncryptionAlgorithm::Aes256Gcm12 => create::EncryptionAlgorithm::Aes256Gcm12,
-                EncryptionAlgorithm::Aes256Gcm16 => create::EncryptionAlgorithm::Aes256Gcm16,
-                EncryptionAlgorithm::Aes256Gcm8 => create::EncryptionAlgorithm::Aes256Gcm8,
-            };
-            ikepolicy_builder.encryption_algorithm(tmp);
         }
 
         if let Some(val) = &args.phase1_negotiation_mode {

@@ -157,8 +157,8 @@ struct ResponseData {
     /// The ID of the group snapshot.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The group snapshot name.
     ///
@@ -177,8 +177,8 @@ struct ResponseData {
     /// The `status` of the generic group snapshot.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable()]
+    status: String,
 }
 
 impl GroupSnapshotsCommand {

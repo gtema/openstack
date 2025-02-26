@@ -69,29 +69,29 @@ impl ExecuteApiRequest for IdentityAuthProjectList {
 }
 /// IdentityAuthProject response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct IdentityAuthProject {
+pub struct IdentityAuthProject {
     /// The ID of the domain for the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "DOMAIN_ID", wide)]
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled.
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLED", wide)]
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The ID for the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 }

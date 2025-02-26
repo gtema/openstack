@@ -151,51 +151,51 @@ impl ExecuteApiRequest for IdentityProjectList {
 }
 /// IdentityProject response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct IdentityProject {
+pub struct IdentityProject {
     /// The description of the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain for the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "DOMAIN_ID", wide)]
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLED", wide)]
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The ID for the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
     #[serde(default)]
     #[structable(optional, title = "IS_DOMAIN", wide)]
-    is_domain: Option<bool>,
+    pub is_domain: Option<bool>,
 
     /// The name of the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
     ///
     #[serde(default)]
     #[structable(optional, title = "OPTIONS", wide)]
-    options: Option<Value>,
+    pub options: Option<Value>,
 
     /// The ID of the parent for the project.
     ///
@@ -203,11 +203,11 @@ struct IdentityProject {
     ///
     #[serde(default)]
     #[structable(optional, title = "PARENT_ID", wide)]
-    parent_id: Option<String>,
+    pub parent_id: Option<String>,
 
     /// A list of simple strings assigned to a project.
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 }

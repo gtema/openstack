@@ -36,7 +36,6 @@ use clap::ValueEnum;
 use openstack_sdk::api::load_balancer::v2::loadbalancer::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Creates a load balancer.
@@ -86,6 +85,14 @@ use structable_derive::StructTable;
 /// providing a list of JSON objects containing a `subnet_id` and optionally an
 /// `ip_address`. All additional subnets must be part of the same network as
 /// the primary VIP.
+///
+/// An optional `vip_sg_ids` attribute can be used to set custom Neutron
+/// Security Groups that are applied on the VIP port of the Load Balancer. When
+/// this option is used, Octavia does not manage the security of the Listeners,
+/// the user must set Security Group Rules to allow the network traffic on the
+/// VIP port. `vip_sg_ids` are incompatible with SR-IOV load balancer and
+/// cannot be set if the load balancer has a listener that uses
+/// `allowed_cidrs`.
 ///
 #[derive(Args)]
 #[command(about = "Create a Load Balancer")]
@@ -216,6 +223,14 @@ struct Loadbalancer {
     #[arg(help_heading = "Body parameters", long)]
     vip_qos_policy_id: Option<String>,
 
+    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
+    /// Balancer.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    vip_sg_ids: Option<Vec<String>>,
+
     /// The ID of the subnet for the Virtual IP (VIP). One of `vip_network_id`,
     /// `vip_port_id`, or `vip_subnet_id` must be specified.
     ///
@@ -336,6 +351,15 @@ struct ResponseData {
     #[structable(optional)]
     vip_qos_policy_id: Option<String>,
 
+    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
+    /// Balancer.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    vip_sg_ids: Option<Value>,
+
     /// The ID of the subnet for the Virtual IP (VIP).
     ///
     #[serde()]
@@ -350,18 +374,6 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     vip_vnic_type: Option<String>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponsePools {
-    id: String,
-}
-
-impl fmt::Display for ResponsePools {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!("id={}", self.id)]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl LoadbalancerCommand {
@@ -414,6 +426,10 @@ impl LoadbalancerCommand {
 
         if let Some(val) = &args.vip_qos_policy_id {
             loadbalancer_builder.vip_qos_policy_id(val);
+        }
+
+        if let Some(val) = &args.vip_sg_ids {
+            loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.additional_vips {

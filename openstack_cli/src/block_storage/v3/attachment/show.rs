@@ -96,8 +96,8 @@ struct ResponseData {
     /// The ID of attachment.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The UUID of the attaching instance.
     ///
@@ -108,14 +108,14 @@ struct ResponseData {
     /// The status of the attachment.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable()]
+    status: String,
 
     /// The UUID of the volume which the attachment belongs to.
     ///
     #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
+    #[structable()]
+    volume_id: String,
 }
 
 impl AttachmentCommand {

@@ -113,28 +113,28 @@ impl ExecuteApiRequest for IdentityGroupList {
 }
 /// IdentityGroup response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct IdentityGroup {
+pub struct IdentityGroup {
     /// The description of the group.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain.
     ///
     #[serde(default)]
     #[structable(optional, title = "DOMAIN_ID", wide)]
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// The ID of the group.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 }

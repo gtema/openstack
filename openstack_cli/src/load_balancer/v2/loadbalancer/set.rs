@@ -112,6 +112,9 @@ struct Loadbalancer {
     ///
     #[arg(help_heading = "Body parameters", long)]
     vip_qos_policy_id: Option<String>,
+
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
+    vip_sg_ids: Option<Vec<String>>,
 }
 
 /// Loadbalancer response representation
@@ -250,6 +253,15 @@ struct ResponseData {
     #[structable(optional)]
     vip_qos_policy_id: Option<String>,
 
+    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
+    /// Balancer.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde()]
+    #[structable(optional, pretty)]
+    vip_sg_ids: Option<Value>,
+
     /// The ID of the subnet for the Virtual IP (VIP).
     ///
     #[serde()]
@@ -313,6 +325,10 @@ impl LoadbalancerCommand {
 
         if let Some(val) = &args.admin_state_up {
             loadbalancer_builder.admin_state_up(*val);
+        }
+
+        if let Some(val) = &args.vip_sg_ids {
+            loadbalancer_builder.vip_sg_ids(val.iter().map(Into::into).collect::<Vec<_>>());
         }
 
         if let Some(val) = &args.tags {

@@ -100,9 +100,6 @@ struct OsGetConsoleOutput {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The console output as a string. Control characters will be escaped to
-    /// create a valid JSON string.
-    ///
     #[serde()]
     #[structable()]
     output: String,

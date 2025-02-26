@@ -77,8 +77,8 @@ struct ResponseData {
     /// The UUID of the volume type.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// Whether the volume type is publicly visible.
     ///
@@ -89,8 +89,8 @@ struct ResponseData {
     /// The name of the volume type.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// Whether the volume type is publicly visible.
     ///

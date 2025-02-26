@@ -101,13 +101,13 @@ struct OsGetSpiceconsole {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// The type of RDP console. The only valid value is `rdp-html5`.
+    /// The type of the remote console
     ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
     _type: Option<String>,
 
-    /// The URL used to connect to the RDP console.
+    /// The URL used to connect to the console.
     ///
     #[serde()]
     #[structable(optional)]

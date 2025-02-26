@@ -114,8 +114,7 @@ pub struct ImageCommand {
     ///
     /// The value might be `null` (JSON null data type).
     ///
-    /// **Newton changes**: The `vhdx` disk format is a supported value.
-    ///
+    /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
     ///
     #[arg(help_heading = "Body parameters", long)]
@@ -314,8 +313,7 @@ struct ResponseData {
     ///
     /// The value might be `null` (JSON null data type).
     ///
-    /// **Newton changes**: The `vhdx` disk format is a supported value.
-    ///
+    /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
     ///
     #[serde()]

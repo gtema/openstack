@@ -107,14 +107,14 @@ impl ExecuteApiRequest for ComputeFlavorList {
 }
 /// ComputeFlavor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ComputeFlavor {
+pub struct ComputeFlavor {
     /// The description of the flavor.
     ///
     /// **New in version 2.55**
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The size of the root disk that will be created in GiB. If 0 the root
     /// disk will be set to exactly the size of the image used to deploy the
@@ -126,7 +126,7 @@ struct ComputeFlavor {
     ///
     #[serde()]
     #[structable(title = "DISK", wide)]
-    disk: i32,
+    pub disk: i32,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
     /// only be included if the user is allowed by policy to index flavor
@@ -136,24 +136,24 @@ struct ComputeFlavor {
     ///
     #[serde(default)]
     #[structable(optional, title = "EXTRA_SPECS", wide)]
-    extra_specs: Option<Value>,
+    pub extra_specs: Option<Value>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
     ///
     #[serde()]
     #[structable(title = "ID", wide)]
-    id: String,
+    pub id: String,
 
     /// The display name of a flavor.
     ///
     #[serde()]
     #[structable(title = "NAME")]
-    name: String,
+    pub name: String,
 
     #[serde(rename = "os-flavor-access:is_public")]
     #[structable(title = "OS-FLAVOR-ACCESS:IS_PUBLIC", wide)]
-    os_flavor_access_is_public: Value,
+    pub os_flavor_access_is_public: Value,
 
     /// Whether or not the flavor has been administratively disabled. This is
     /// an artifact of the legacy v2 API and will always be set to `false`.
@@ -161,7 +161,7 @@ struct ComputeFlavor {
     ///
     #[serde(rename = "OS-FLV-DISABLED:disabled")]
     #[structable(title = "OS-FLV-DISABLED:DISABLED", wide)]
-    os_flv_disabled_disabled: bool,
+    pub os_flv_disabled_disabled: bool,
 
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
@@ -170,17 +170,17 @@ struct ComputeFlavor {
     ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
     #[structable(title = "OS-FLV-EXT-DATA:EPHEMERAL", wide)]
-    os_flv_ext_data_ephemeral: i32,
+    pub os_flv_ext_data_ephemeral: i32,
 
     /// The amount of RAM a flavor has, in MiB.
     ///
     #[serde()]
     #[structable(title = "RAM", wide)]
-    ram: i32,
+    pub ram: i32,
 
     #[serde()]
     #[structable(title = "RXTX_FACTOR", wide)]
-    rxtx_factor: Value,
+    pub rxtx_factor: Value,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the
@@ -189,11 +189,11 @@ struct ComputeFlavor {
     ///
     #[serde()]
     #[structable(title = "SWAP", wide)]
-    swap: String,
+    pub swap: String,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
     #[serde()]
     #[structable(title = "VCPUS", wide)]
-    vcpus: i32,
+    pub vcpus: i32,
 }

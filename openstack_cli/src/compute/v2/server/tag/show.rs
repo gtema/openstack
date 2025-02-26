@@ -31,11 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use bytes::Bytes;
-use http::Response;
 use openstack_sdk::api::compute::v2::server::tag::get;
-use openstack_sdk::api::RawQueryAsync;
-use structable_derive::StructTable;
+use openstack_sdk::api::QueryAsync;
+use serde_json::Value;
+use std::collections::HashMap;
 
 /// Checks tag existence on the server. If tag exists response with 204 status
 /// code will be returned. Otherwise returns 404.
@@ -81,9 +80,23 @@ struct PathParameters {
     )]
     id: String,
 }
-/// Tag response representation
-#[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ResponseData {}
+/// Response data as HashMap type
+#[derive(Deserialize, Serialize)]
+struct ResponseData(HashMap<String, Value>);
+
+impl StructTable for ResponseData {
+    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
+        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
+        let mut rows: Vec<Vec<String>> = Vec::new();
+        rows.extend(self.0.iter().map(|(k, v)| {
+            Vec::from([
+                k.clone(),
+                serde_json::to_string(&v).expect("Is a valid data"),
+            ])
+        }));
+        (headers, rows)
+    }
+}
 
 impl TagCommand {
     /// Perform command action
@@ -109,10 +122,8 @@ impl TagCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
-        let data = ResponseData {};
-        // Maybe output some headers metadata
-        op.output_human::<ResponseData>(&data)?;
+        let data = ep.query_async(client).await?;
+        op.output_single::<ResponseData>(data)?;
         Ok(())
     }
 }

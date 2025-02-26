@@ -71,6 +71,10 @@ pub struct Loadbalancer<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_qos_policy_id: Option<Cow<'a, str>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) vip_sg_ids: Option<Vec<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]

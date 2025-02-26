@@ -17,8 +17,8 @@
 
 //! Shows the volume usage info given by hosts.
 //!
-//! | param req: | security context | | --- | --- | | param id: | hostname | |
-//! returns: | dict -- the host resources dictionary. ex.:
+//! | | | | --- | --- | | param req: | security context | | param id: |
+//! hostname | | returns: | dict -- the host resources dictionary. ex.:
 //! `  {'host': [{'resource': D},..]} D: {'host': 'hostname','project': 'admin',     'volume_count': 1, 'total_volume_gb': 2048}  `
 //! |
 //!

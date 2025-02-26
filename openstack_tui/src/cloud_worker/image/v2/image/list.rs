@@ -172,127 +172,127 @@ impl ExecuteApiRequest for ImageImageList {
 }
 /// ImageImage response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ImageImage {
+pub struct ImageImage {
     /// md5 hash of image contents.
     ///
     #[serde(default)]
     #[structable(optional, title = "CHECKSUM", wide)]
-    checksum: Option<String>,
+    pub checksum: Option<String>,
 
     /// Format of the container
     ///
     #[serde(default)]
     #[structable(optional, title = "CONTAINER_FORMAT", wide)]
-    container_format: Option<Value>,
+    pub container_format: Option<Value>,
 
     /// Date and time of image registration
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// URL to access the image file kept in external store
     ///
     #[serde(default)]
     #[structable(optional, title = "DIRECT_URL", wide)]
-    direct_url: Option<String>,
+    pub direct_url: Option<String>,
 
     /// Format of the disk
     ///
     #[serde(default)]
     #[structable(optional, title = "DISK_FORMAT", wide)]
-    disk_format: Option<Value>,
+    pub disk_format: Option<Value>,
 
     /// An image file url
     ///
     #[serde(default)]
     #[structable(optional, title = "FILE", wide)]
-    file: Option<String>,
+    pub file: Option<String>,
 
     /// An identifier for the image
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// A set of URLs to access the image file kept in external store
     ///
     #[serde(default)]
     #[structable(optional, title = "LOCATIONS", wide)]
-    locations: Option<Value>,
+    pub locations: Option<Value>,
 
     /// Amount of disk space (in GB) required to boot image.
     ///
     #[serde(default)]
     #[structable(optional, title = "MIN_DISK", wide)]
-    min_disk: Option<i32>,
+    pub min_disk: Option<i32>,
 
     /// Amount of ram (in MB) required to boot image.
     ///
     #[serde(default)]
     #[structable(optional, title = "MIN_RAM", wide)]
-    min_ram: Option<i32>,
+    pub min_ram: Option<i32>,
 
     /// Descriptive name for the image
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Algorithm to calculate the os_hash_value
     ///
     #[serde(default)]
     #[structable(optional, title = "OS_HASH_ALGO", wide)]
-    os_hash_algo: Option<String>,
+    pub os_hash_algo: Option<String>,
 
     /// Hexdigest of the image contents using the algorithm specified by the
     /// os_hash_algo
     ///
     #[serde(default)]
     #[structable(optional, title = "OS_HASH_VALUE", wide)]
-    os_hash_value: Option<String>,
+    pub os_hash_value: Option<String>,
 
     /// If true, image will not appear in default image list response.
     ///
     #[serde(default)]
     #[structable(optional, title = "OS_HIDDEN", wide)]
-    os_hidden: Option<bool>,
+    pub os_hidden: Option<bool>,
 
     /// Owner of the image
     ///
     #[serde(default)]
     #[structable(optional, title = "OWNER", wide)]
-    owner: Option<String>,
+    pub owner: Option<String>,
 
     /// If true, image will not be deletable.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROTECTED", wide)]
-    protected: Option<bool>,
+    pub protected: Option<bool>,
 
     /// An image schema url
     ///
     #[serde(default)]
     #[structable(optional, title = "SCHEMA", wide)]
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     /// An image self url
     ///
     #[serde(default, rename = "self")]
     #[structable(optional, title = "SELF", wide)]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
     /// Size of image file in bytes
     ///
     #[serde(default)]
     #[structable(optional, title = "SIZE", wide)]
-    size: Option<i64>,
+    pub size: Option<i64>,
 
     /// Status of the image
     ///
     #[serde(default)]
     #[structable(optional, title = "STATUS")]
-    status: Option<Value>,
+    pub status: Option<Value>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
@@ -300,29 +300,29 @@ struct ImageImage {
     ///
     #[serde(default)]
     #[structable(optional, title = "STORES", wide)]
-    stores: Option<String>,
+    pub stores: Option<String>,
 
     /// List of strings related to the image
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     /// Date and time of the last image modification
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// Virtual size of image in bytes
     ///
     #[serde(default)]
     #[structable(optional, title = "VIRTUAL_SIZE", wide)]
-    virtual_size: Option<i64>,
+    pub virtual_size: Option<i64>,
 
     /// Scope of image accessibility
     ///
     #[serde(default)]
     #[structable(optional, title = "VISIBILITY", wide)]
-    visibility: Option<Value>,
+    pub visibility: Option<Value>,
 }

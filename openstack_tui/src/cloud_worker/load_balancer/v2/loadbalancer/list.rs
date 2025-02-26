@@ -269,7 +269,7 @@ impl ExecuteApiRequest for LoadBalancerLoadbalancerList {
 }
 /// LoadBalancerLoadbalancer response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct LoadBalancerLoadbalancer {
+pub struct LoadBalancerLoadbalancer {
     /// A list of JSON objects defining “additional VIPs”. The format for these
     /// is `{"subnet_id": <subnet_id>, "ip_address": <ip_address>}`, where the
     /// `subnet_id` field is mandatory and the `ip_address` field is optional.
@@ -280,88 +280,88 @@ struct LoadBalancerLoadbalancer {
     ///
     #[serde(default)]
     #[structable(optional, title = "ADDITIONAL_VIPS", wide)]
-    additional_vips: Option<Value>,
+    pub additional_vips: Option<Value>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// An availability zone name.
     ///
     #[serde(default)]
     #[structable(optional, title = "AVAILABILITY_ZONE", wide)]
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the flavor.
     ///
     #[serde(default)]
     #[structable(optional, title = "FLAVOR_ID", wide)]
-    flavor_id: Option<String>,
+    pub flavor_id: Option<String>,
 
     /// The ID of the load balancer.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The associated listener IDs, if any.
     ///
     #[serde(default)]
     #[structable(optional, title = "LISTENERS", wide)]
-    listeners: Option<Value>,
+    pub listeners: Option<Value>,
 
     /// Human-readable name of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
     #[serde(default)]
     #[structable(optional, status, title = "OPERATING_STATUS")]
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The associated pool IDs, if any.
     ///
     #[serde(default)]
     #[structable(optional, title = "POOLS", wide)]
-    pools: Option<Value>,
+    pub pools: Option<Value>,
 
     /// The ID of the project owning this resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROJECT_ID", wide)]
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// Provider name for the load balancer.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROVIDER", wide)]
-    provider: Option<String>,
+    pub provider: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
     #[serde(default)]
     #[structable(optional, title = "PROVISIONING_STATUS", wide)]
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
@@ -369,47 +369,56 @@ struct LoadBalancerLoadbalancer {
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
     ///
     #[serde(default)]
     #[structable(optional, title = "VIP_ADDRESS", wide)]
-    vip_address: Option<String>,
+    pub vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP).
     ///
     #[serde(default)]
     #[structable(optional, title = "VIP_NETWORK_ID", wide)]
-    vip_network_id: Option<String>,
+    pub vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
     ///
     #[serde(default)]
     #[structable(optional, title = "VIP_PORT_ID", wide)]
-    vip_port_id: Option<String>,
+    pub vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
     ///
     #[serde(default)]
     #[structable(optional, title = "VIP_QOS_POLICY_ID", wide)]
-    vip_qos_policy_id: Option<String>,
+    pub vip_qos_policy_id: Option<String>,
+
+    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
+    /// Balancer.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde(default)]
+    #[structable(optional, title = "VIP_SG_IDS", wide)]
+    pub vip_sg_ids: Option<Value>,
 
     /// The ID of the subnet for the Virtual IP (VIP).
     ///
     #[serde(default)]
     #[structable(optional, title = "VIP_SUBNET_ID", wide)]
-    vip_subnet_id: Option<String>,
+    pub vip_subnet_id: Option<String>,
 
     /// The VIP vNIC type used for the load balancer. One of `normal` or
     /// `direct`.
@@ -418,5 +427,5 @@ struct LoadBalancerLoadbalancer {
     ///
     #[serde(default)]
     #[structable(optional, title = "VIP_VNIC_TYPE", wide)]
-    vip_vnic_type: Option<String>,
+    pub vip_vnic_type: Option<String>,
 }

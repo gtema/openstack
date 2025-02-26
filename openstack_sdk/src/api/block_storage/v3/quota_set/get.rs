@@ -17,8 +17,8 @@
 
 //! Show quota for a particular tenant
 //!
-//! | param req: | request | | --- | --- | | param id: | target project id that
-//! needs to be shown |
+//! | | | | --- | --- | | param req: | request | | param id: | target project
+//! id that needs to be shown |
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

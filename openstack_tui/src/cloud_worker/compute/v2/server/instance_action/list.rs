@@ -100,11 +100,11 @@ impl ExecuteApiRequest for ComputeServerInstanceActionList {
 }
 /// ComputeServerInstanceAction response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct ComputeServerInstanceAction {
+pub struct ComputeServerInstanceAction {
     /// List of the actions for the given instance in descending order of
     /// creation.
     ///
     #[serde(default, rename = "instanceActions")]
     #[structable(optional, title = "INSTANCEACTIONS", wide)]
-    instance_actions: Option<Value>,
+    pub instance_actions: Option<Value>,
 }
