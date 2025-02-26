@@ -74,7 +74,7 @@ async fn image_upload_download_roundtrip() -> Result<(), Box<dyn std::error::Err
         .arg("image")
         .arg("upload")
         .arg(image_id)
-        .arg("-f")
+        .arg("--file")
         .arg(fname.clone())
         .assert()
         .success();
