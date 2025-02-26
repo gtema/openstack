@@ -16,12 +16,11 @@
 use crate::error::OpenStackCliError;
 
 use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
+use serde_json::Value;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt;
 use std::io::IsTerminal;
-
-use serde_json::Value;
 
 use indicatif::{ProgressBar, ProgressStyle};
 use std::path::Path;
@@ -434,7 +433,12 @@ pub(crate) async fn build_upload_asyncread(
         // Reading from stdin
         build_upload_asyncread_from_stdin().await
     } else {
-        match src_name.unwrap().as_str() {
+        match src_name
+            .ok_or(OpenStackCliError::InputParameters(
+                "upload source name must be provided when stdin is not being piped".into(),
+            ))?
+            .as_str()
+        {
             "-" => build_upload_asyncread_from_stdin().await,
             file_name => build_upload_asyncread_from_file(file_name).await,
         }
