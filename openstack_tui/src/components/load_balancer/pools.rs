@@ -15,46 +15,63 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerHealthmonitorListBuilder, LoadBalancerPoolApiRequest,
-        LoadBalancerPoolList, LoadBalancerPoolMemberListBuilder,
+        LoadBalancerApiRequest, LoadBalancerHealthmonitorList,
+        LoadBalancerHealthmonitorListBuilder, LoadBalancerHealthmonitorListBuilderError,
+        LoadBalancerPool, LoadBalancerPoolApiRequest, LoadBalancerPoolList,
+        LoadBalancerPoolMemberList, LoadBalancerPoolMemberListBuilder,
+        LoadBalancerPoolMemberListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "LB Pools";
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool";
 
-#[derive(Deserialize, StructTable)]
-pub struct PoolData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    operating_status: String,
-    #[structable(title = "Protocol")]
-    protocol: String,
-}
-
-impl ResourceKey for PoolData {
+impl ResourceKey for LoadBalancerPool {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, PoolData, LoadBalancerPoolList>;
+impl TryFrom<&LoadBalancerPool> for LoadBalancerPoolMemberList {
+    type Error = LoadBalancerPoolMemberListBuilderError;
+    fn try_from(value: &LoadBalancerPool) -> Result<Self, Self::Error> {
+        let mut builder = LoadBalancerPoolMemberListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.pool_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.pool_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+impl TryFrom<&LoadBalancerPool> for LoadBalancerHealthmonitorList {
+    type Error = LoadBalancerHealthmonitorListBuilderError;
+    fn try_from(value: &LoadBalancerPool) -> Result<Self, Self::Error> {
+        let mut builder = LoadBalancerHealthmonitorListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.pool_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.pool_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+pub type LoadBalancerPools<'a> = TableViewComponentBase<'a, LoadBalancerPool, LoadBalancerPoolList>;
 
 impl Component for LoadBalancerPools<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -113,13 +130,10 @@ impl Component for LoadBalancerPools<'_> {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
+                        if let Some(selected_entry) = self.get_selected() {
                             command_tx.send(Action::SetLoadBalancerPoolMemberListFilters(
-                                LoadBalancerPoolMemberListBuilder::default()
-                                    .pool_id(group_row.id.clone())
-                                    .pool_name(group_row.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare filters")?,
+                                LoadBalancerPoolMemberList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerPoolMembers,
@@ -135,13 +149,10 @@ impl Component for LoadBalancerPools<'_> {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
+                        if let Some(selected_entry) = self.get_selected() {
                             command_tx.send(Action::SetLoadBalancerHealthMonitorListFilters(
-                                LoadBalancerHealthmonitorListBuilder::default()
-                                    .pool_id(group_row.id.clone())
-                                    .pool_name(group_row.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare filters")?,
+                                LoadBalancerHealthmonitorList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerHealthMonitors,

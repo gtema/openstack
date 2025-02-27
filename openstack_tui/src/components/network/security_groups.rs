@@ -15,49 +15,48 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroupApiRequest, NetworkSecurityGroupList,
-        NetworkSecurityGroupRuleListBuilder,
+        NetworkApiRequest, NetworkSecurityGroup, NetworkSecurityGroupApiRequest,
+        NetworkSecurityGroupList, NetworkSecurityGroupRuleList,
+        NetworkSecurityGroupRuleListBuilder, NetworkSecurityGroupRuleListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "SecurityGroups";
 const VIEW_CONFIG_KEY: &str = "network.security_group";
 
-#[derive(Deserialize, StructTable)]
-pub struct SecurityGroupData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Created")]
-    #[serde(rename = "created_at")]
-    created: String,
-    #[structable(title = "Updated")]
-    #[serde(rename = "updated_at")]
-    updated: String,
-}
-
-impl ResourceKey for SecurityGroupData {
+impl ResourceKey for NetworkSecurityGroup {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
+impl TryFrom<&NetworkSecurityGroup> for NetworkSecurityGroupRuleList {
+    type Error = NetworkSecurityGroupRuleListBuilderError;
+    fn try_from(value: &NetworkSecurityGroup) -> Result<Self, Self::Error> {
+        let mut builder = NetworkSecurityGroupRuleListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.security_group_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.security_group_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
 pub type NetworkSecurityGroups<'a> =
-    TableViewComponentBase<'a, SecurityGroupData, NetworkSecurityGroupList>;
+    TableViewComponentBase<'a, NetworkSecurityGroup, NetworkSecurityGroupList>;
 
 impl NetworkSecurityGroups<'_> {
     /// Normalize filters
@@ -120,13 +119,8 @@ impl Component for NetworkSecurityGroups<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesListFilters
                             command_tx.send(Action::SetNetworkSecurityGroupRuleListFilters(
-                                NetworkSecurityGroupRuleListBuilder::default()
-                                    .security_group_id(selected_entry.id.clone())
-                                    .security_group_name(selected_entry.name.clone())
-                                    .build()
-                                    .wrap_err(
-                                        "error preparing security group rules list request",
-                                    )?,
+                                NetworkSecurityGroupRuleList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
