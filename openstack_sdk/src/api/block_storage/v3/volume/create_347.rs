@@ -17,9 +17,9 @@
 
 //! Creates a new volume.
 //!
-//! | param req: | the request | | --- | --- | | param body: | the request body
-//! | | returns: | dict -- the new volume dictionary | | raises HTTPNotFound,
-//! HTTPBadRequest: | | | | |
+//! | | | | --- | --- | | param req: | the request | | param body: | the
+//! request body | | returns: | dict -- the new volume dictionary | | raises
+//! HTTPNotFound, HTTPBadRequest: | | | | |
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

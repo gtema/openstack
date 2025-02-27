@@ -63,6 +63,14 @@
 //! `ip_address`. All additional subnets must be part of the same network as
 //! the primary VIP.
 //!
+//! An optional `vip_sg_ids` attribute can be used to set custom Neutron
+//! Security Groups that are applied on the VIP port of the Load Balancer. When
+//! this option is used, Octavia does not manage the security of the Listeners,
+//! the user must set Security Group Rules to allow the network traffic on the
+//! VIP port. `vip_sg_ids` are incompatible with SR-IOV load balancer and
+//! cannot be set if the load balancer has a listener that uses
+//! `allowed_cidrs`.
+//!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
 
@@ -1119,6 +1127,15 @@ pub struct Loadbalancer<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) vip_qos_policy_id: Option<Cow<'a, str>>,
+
+    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
+    /// Balancer.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) vip_sg_ids: Option<Vec<Cow<'a, str>>>,
 
     /// The ID of the subnet for the Virtual IP (VIP). One of `vip_network_id`,
     /// `vip_port_id`, or `vip_subnet_id` must be specified.

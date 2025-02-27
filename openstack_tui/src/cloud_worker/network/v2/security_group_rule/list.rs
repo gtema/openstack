@@ -232,49 +232,49 @@ impl ExecuteApiRequest for NetworkSecurityGroupRuleList {
 }
 /// NetworkSecurityGroupRule response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct NetworkSecurityGroupRule {
+pub struct NetworkSecurityGroupRule {
     /// Indicates if the security group rule belongs to the default security
     /// group of the project or not.
     ///
     #[serde(default)]
     #[structable(optional, title = "BELONGS_TO_DEFAULT_SG", wide)]
-    belongs_to_default_sg: Option<bool>,
+    pub belongs_to_default_sg: Option<bool>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Ingress or egress, which is the direction in which the security group
     /// rule is applied.
     ///
     #[serde(default)]
     #[structable(optional, title = "DIRECTION", wide)]
-    direction: Option<Value>,
+    pub direction: Option<Value>,
 
     /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
     /// ingress or egress rules.
     ///
     #[serde(default)]
     #[structable(optional, title = "ETHERTYPE", wide)]
-    ethertype: Option<Value>,
+    pub ethertype: Option<Value>,
 
     /// The ID of the security group rule.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     #[serde(default)]
     #[structable(optional, title = "NORMALIZED_CIDR", wide)]
-    normalized_cidr: Option<String>,
+    pub normalized_cidr: Option<String>,
 
     /// The maximum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
@@ -283,7 +283,7 @@ struct NetworkSecurityGroupRule {
     ///
     #[serde(default)]
     #[structable(optional, title = "PORT_RANGE_MAX", wide)]
-    port_range_max: Option<i32>,
+    pub port_range_max: Option<i32>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
@@ -292,7 +292,7 @@ struct NetworkSecurityGroupRule {
     ///
     #[serde(default)]
     #[structable(optional, title = "PORT_RANGE_MIN", wide)]
-    port_range_min: Option<i32>,
+    pub port_range_min: Option<i32>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
@@ -308,14 +308,14 @@ struct NetworkSecurityGroupRule {
     ///
     #[serde(default)]
     #[structable(optional, title = "PROTOCOL", wide)]
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
     /// The remote address group UUID that is associated with this security
     /// group rule.
     ///
     #[serde(default)]
     #[structable(optional, title = "REMOTE_ADDRESS_GROUP_ID", wide)]
-    remote_address_group_id: Option<String>,
+    pub remote_address_group_id: Option<String>,
 
     /// The remote group UUID to associate with this security group rule. You
     /// can specify either the `remote_group_id` or `remote_ip_prefix`
@@ -323,35 +323,35 @@ struct NetworkSecurityGroupRule {
     ///
     #[serde(default)]
     #[structable(optional, title = "REMOTE_GROUP_ID", wide)]
-    remote_group_id: Option<String>,
+    pub remote_group_id: Option<String>,
 
     /// The remote IP prefix that is matched by this security group rule.
     ///
     #[serde(default)]
     #[structable(optional, title = "REMOTE_IP_PREFIX", wide)]
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
     /// The revision number of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "REVISION_NUMBER", wide)]
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The security group ID to associate with this security group rule.
     ///
     #[serde(default)]
     #[structable(optional, title = "SECURITY_GROUP_ID", wide)]
-    security_group_id: Option<String>,
+    pub security_group_id: Option<String>,
 
     /// The ID of the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

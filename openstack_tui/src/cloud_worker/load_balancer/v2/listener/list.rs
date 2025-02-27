@@ -273,13 +273,13 @@ impl ExecuteApiRequest for LoadBalancerListenerList {
 }
 /// LoadBalancerListener response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct LoadBalancerListener {
+pub struct LoadBalancerListener {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// A list of IPv4, IPv6 or mix of both CIDRs.
     ///
@@ -287,7 +287,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "ALLOWED_CIDRS", wide)]
-    allowed_cidrs: Option<Value>,
+    pub allowed_cidrs: Option<Value>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
@@ -295,7 +295,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "ALPN_PROTOCOLS", wide)]
-    alpn_protocols: Option<Value>,
+    pub alpn_protocols: Option<Value>,
 
     /// The TLS client authentication mode. One of the options `NONE`,
     /// `OPTIONAL` or `MANDATORY`.
@@ -304,7 +304,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "CLIENT_AUTHENTICATION", wide)]
-    client_authentication: Option<String>,
+    pub client_authentication: Option<String>,
 
     /// The ref of the
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
@@ -315,7 +315,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "CLIENT_CA_TLS_CONTAINER_REF", wide)]
-    client_ca_tls_container_ref: Option<String>,
+    pub client_ca_tls_container_ref: Option<String>,
 
     /// The URI of the
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
@@ -326,7 +326,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "CLIENT_CRL_CONTAINER_REF", wide)]
-    client_crl_container_ref: Option<String>,
+    pub client_crl_container_ref: Option<String>,
 
     /// The maximum number of connections permitted for this listener. Default
     /// value is -1 which represents infinite connections or a default value
@@ -334,13 +334,13 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "CONNECTION_LIMIT", wide)]
-    connection_limit: Option<i32>,
+    pub connection_limit: Option<i32>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The ID of the pool used by the listener if no L7 policies match. The
     /// pool has some restrictions. See
@@ -348,7 +348,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "DEFAULT_POOL_ID", wide)]
-    default_pool_id: Option<String>,
+    pub default_pool_id: Option<String>,
 
     /// The URI of the
     /// [key manager service](https://docs.openstack.org/castellan/latest/)
@@ -359,13 +359,13 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "DEFAULT_TLS_CONTAINER_REF", wide)]
-    default_tls_container_ref: Option<String>,
+    pub default_tls_container_ref: Option<String>,
 
     /// A human-readable description for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Defines whether the `includeSubDomains` directive should be added to
     /// the Strict-Transport-Security HTTP response header.
@@ -374,7 +374,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "HSTS_INCLUDE_SUBDOMAINS", wide)]
-    hsts_include_subdomains: Option<bool>,
+    pub hsts_include_subdomains: Option<bool>,
 
     /// The value of the `max_age` directive for the Strict-Transport-Security
     /// HTTP response header.
@@ -383,7 +383,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "HSTS_MAX_AGE", wide)]
-    hsts_max_age: Option<i32>,
+    pub hsts_max_age: Option<i32>,
 
     /// Defines whether the `preload` directive should be added to the
     /// Strict-Transport-Security HTTP response header.
@@ -392,13 +392,13 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "HSTS_PRELOAD", wide)]
-    hsts_preload: Option<bool>,
+    pub hsts_preload: Option<bool>,
 
     /// The ID of the listener.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// A dictionary of optional headers to insert into the request before it
     /// is sent to the backend `member`. See
@@ -407,58 +407,58 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "INSERT_HEADERS", wide)]
-    insert_headers: Option<Value>,
+    pub insert_headers: Option<Value>,
 
     /// A list of L7 policy IDs.
     ///
     #[serde(default)]
     #[structable(optional, title = "L7POLICIES", wide)]
-    l7policies: Option<Value>,
+    pub l7policies: Option<Value>,
 
     /// A list of load balancer IDs.
     ///
     #[serde(default)]
     #[structable(optional, title = "LOADBALANCERS", wide)]
-    loadbalancers: Option<Value>,
+    pub loadbalancers: Option<Value>,
 
     /// Human-readable name of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
     #[serde(default)]
     #[structable(optional, status, title = "OPERATING_STATUS")]
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROJECT_ID", wide)]
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `SCTP`,
     /// `PROMETHEUS`, `TCP`, `TERMINATED_HTTPS`, or `UDP`.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROTOCOL", wide)]
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
     /// The protocol port number for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROTOCOL_PORT", wide)]
-    protocol_port: Option<i32>,
+    pub protocol_port: Option<i32>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
     #[serde(default)]
     #[structable(optional, title = "PROVISIONING_STATUS", wide)]
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// A list of URIs to the
     /// [key manager service](https://docs.openstack.org/barbican/latest/)
@@ -469,7 +469,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "SNI_CONTAINER_REFS", wide)]
-    sni_container_refs: Option<Value>,
+    pub sni_container_refs: Option<Value>,
 
     /// A list of simple strings assigned to the resource.
     ///
@@ -477,11 +477,11 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Frontend client inactivity timeout in milliseconds. Default: 50000.
     ///
@@ -489,7 +489,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TIMEOUT_CLIENT_DATA", wide)]
-    timeout_client_data: Option<i32>,
+    pub timeout_client_data: Option<i32>,
 
     /// Backend member connection timeout in milliseconds. Default: 5000.
     ///
@@ -497,7 +497,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TIMEOUT_MEMBER_CONNECT", wide)]
-    timeout_member_connect: Option<i32>,
+    pub timeout_member_connect: Option<i32>,
 
     /// Backend member inactivity timeout in milliseconds. Default: 50000.
     ///
@@ -505,7 +505,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TIMEOUT_MEMBER_DATA", wide)]
-    timeout_member_data: Option<i32>,
+    pub timeout_member_data: Option<i32>,
 
     /// Time, in milliseconds, to wait for additional TCP packets for content
     /// inspection. Default: 0.
@@ -514,7 +514,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TIMEOUT_TCP_INSPECT", wide)]
-    timeout_tcp_inspect: Option<i32>,
+    pub timeout_tcp_inspect: Option<i32>,
 
     /// List of ciphers in OpenSSL format (colon-separated). See
     /// <https://www.openssl.org/docs/man1.1.1/man1/ciphers.html>
@@ -523,7 +523,7 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TLS_CIPHERS", wide)]
-    tls_ciphers: Option<String>,
+    pub tls_ciphers: Option<String>,
 
     /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
     /// TLSv1.1, TLSv1.2, TLSv1.3
@@ -532,11 +532,11 @@ struct LoadBalancerListener {
     ///
     #[serde(default)]
     #[structable(optional, title = "TLS_VERSIONS", wide)]
-    tls_versions: Option<Value>,
+    pub tls_versions: Option<Value>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

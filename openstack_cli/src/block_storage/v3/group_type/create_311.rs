@@ -107,8 +107,8 @@ struct ResponseData {
     /// The group type ID.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// Whether the group type is publicly visible.
     ///

@@ -175,31 +175,31 @@ impl ExecuteApiRequest for IdentityUserList {
 }
 /// IdentityUser response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct IdentityUser {
+pub struct IdentityUser {
     /// The ID of the default project for the user.
     ///
     #[serde(default)]
     #[structable(optional, title = "DEFAULT_PROJECT_ID", wide)]
-    default_project_id: Option<String>,
+    pub default_project_id: Option<String>,
 
     /// The resource description.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain.
     ///
     #[serde(default)]
     #[structable(optional, title = "DOMAIN_ID", wide)]
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLED", wide)]
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
     /// list contains the `idp_id` and `protocols`. `protocols` is a list of
@@ -220,19 +220,19 @@ struct IdentityUser {
     ///
     #[serde(default)]
     #[structable(optional, title = "FEDERATED", wide)]
-    federated: Option<Value>,
+    pub federated: Option<Value>,
 
     /// The user ID.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The resource options for the user. Available resource options are
     /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
@@ -242,7 +242,7 @@ struct IdentityUser {
     ///
     #[serde(default)]
     #[structable(optional, title = "OPTIONS", wide)]
-    options: Option<Value>,
+    pub options: Option<Value>,
 
     /// The date and time when the password expires. The time zone is UTC.
     ///
@@ -253,5 +253,5 @@ struct IdentityUser {
     ///
     #[serde(default)]
     #[structable(optional, title = "PASSWORD_EXPIRES_AT", wide)]
-    password_expires_at: Option<String>,
+    pub password_expires_at: Option<String>,
 }

@@ -117,7 +117,7 @@ impl ExecuteApiRequest for BlockStorageSnapshotList {
 }
 /// BlockStorageSnapshot response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct BlockStorageSnapshot {
+pub struct BlockStorageSnapshot {
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
@@ -126,7 +126,7 @@ struct BlockStorageSnapshot {
     ///
     #[serde(default)]
     #[structable(optional, title = "CONSUMES_QUOTA", wide)]
-    consumes_quota: Option<bool>,
+    pub consumes_quota: Option<bool>,
 
     /// The total count of requested resource before pagination is applied.
     ///
@@ -134,7 +134,7 @@ struct BlockStorageSnapshot {
     ///
     #[serde(default)]
     #[structable(optional, title = "COUNT", wide)]
-    count: Option<i32>,
+    pub count: Option<i32>,
 
     /// The date and time when the resource was created.
     ///
@@ -151,15 +151,15 @@ struct BlockStorageSnapshot {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    #[serde()]
+    #[structable(title = "CREATED_AT")]
+    pub created_at: String,
 
     /// A description for the snapshot.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
@@ -167,49 +167,49 @@ struct BlockStorageSnapshot {
     ///
     #[serde(default)]
     #[structable(optional, title = "GROUP_SNAPSHOT_ID", wide)]
-    group_snapshot_id: Option<String>,
+    pub group_snapshot_id: Option<String>,
 
     /// The snapshot UUID.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    #[serde()]
+    #[structable(title = "ID", wide)]
+    pub id: String,
 
     /// One or more metadata key and value pairs for the snapshot, if any.
     ///
     #[serde(default)]
     #[structable(optional, title = "METADATA", wide)]
-    metadata: Option<Value>,
+    pub metadata: Option<Value>,
 
     /// The name of the object.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// A percentage value for the build progress.
     ///
     #[serde(default, rename = "os-extended-snapshot-attributes:progress")]
     #[structable(optional, title = "OS-EXTENDED-SNAPSHOT-ATTRIBUTES:PROGRESS", wide)]
-    os_extended_snapshot_attributes_progress: Option<String>,
+    pub os_extended_snapshot_attributes_progress: Option<String>,
 
     /// The UUID of the owning project.
     ///
     #[serde(default, rename = "os-extended-snapshot-attributes:project_id")]
     #[structable(optional, title = "OS-EXTENDED-SNAPSHOT-ATTRIBUTES:PROJECT_ID", wide)]
-    os_extended_snapshot_attributes_project_id: Option<String>,
+    pub os_extended_snapshot_attributes_project_id: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    #[serde(default)]
-    #[structable(optional, title = "SIZE", wide)]
-    size: Option<i64>,
+    #[serde()]
+    #[structable(title = "SIZE", wide)]
+    pub size: i64,
 
     /// The status for the snapshot.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "STATUS")]
-    status: Option<Value>,
+    #[serde()]
+    #[structable(title = "STATUS")]
+    pub status: Value,
 
     /// The date and time when the resource was updated.
     ///
@@ -231,11 +231,11 @@ struct BlockStorageSnapshot {
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// If the snapshot was created from a volume, the volume ID.
     ///
     #[serde(default)]
     #[structable(optional, title = "VOLUME_ID", wide)]
-    volume_id: Option<String>,
+    pub volume_id: Option<String>,
 }

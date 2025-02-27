@@ -174,27 +174,27 @@ impl ExecuteApiRequest for NetworkRouterList {
 }
 /// NetworkRouter response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct NetworkRouter {
+pub struct NetworkRouter {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
     #[serde(default)]
     #[structable(optional, title = "AVAILABILITY_ZONE_HINTS", wide)]
-    availability_zone_hints: Option<Value>,
+    pub availability_zone_hints: Option<Value>,
 
     /// The availability zone(s) for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
     #[serde(default)]
     #[structable(optional, title = "AVAILABILITY_ZONES", wide)]
-    availability_zones: Option<Value>,
+    pub availability_zones: Option<Value>,
 
     /// The associated conntrack helper resources for the roter. If the router
     /// has multiple conntrack helper resources, this field has multiple
@@ -203,26 +203,26 @@ struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "CONNTRACK_HELPERS", wide)]
-    conntrack_helpers: Option<String>,
+    pub conntrack_helpers: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
     ///
     #[serde(default)]
     #[structable(optional, title = "DISTRIBUTED", wide)]
-    distributed: Option<bool>,
+    pub distributed: Option<bool>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
     /// router, the IPv6 address of internal subnets attached to the router can
@@ -233,7 +233,7 @@ struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLE_NDP_PROXY", wide)]
-    enable_ndp_proxy: Option<bool>,
+    pub enable_ndp_proxy: Option<bool>,
 
     /// The external gateway information of the router. If the router has an
     /// external gateway, this would be a dict with `network_id`,
@@ -243,38 +243,38 @@ struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "EXTERNAL_GATEWAY_INFO", wide)]
-    external_gateway_info: Option<Value>,
+    pub external_gateway_info: Option<Value>,
 
     /// The ID of the flavor associated with the router.
     ///
     #[serde(default)]
     #[structable(optional, title = "FLAVOR_ID", wide)]
-    flavor_id: Option<String>,
+    pub flavor_id: Option<String>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
     ///
     #[serde(default)]
     #[structable(optional, title = "HA", wide)]
-    ha: Option<bool>,
+    pub ha: Option<bool>,
 
     /// The ID of the router.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The revision number of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "REVISION_NUMBER", wide)]
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
@@ -282,29 +282,29 @@ struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "ROUTES", wide)]
-    routes: Option<Value>,
+    pub routes: Option<Value>,
 
     /// The router status.
     ///
     #[serde(default)]
     #[structable(optional, title = "STATUS")]
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     /// The ID of the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

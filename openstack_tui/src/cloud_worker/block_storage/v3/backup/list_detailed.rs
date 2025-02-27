@@ -112,18 +112,18 @@ impl ExecuteApiRequest for BlockStorageBackupList {
 }
 /// BlockStorageBackup response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct BlockStorageBackup {
+pub struct BlockStorageBackup {
     /// The name of the availability zone.
     ///
     #[serde(default)]
     #[structable(optional, title = "AVAILABILITY_ZONE", wide)]
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// The container name or null.
     ///
     #[serde(default)]
     #[structable(optional, title = "CONTAINER", wide)]
-    container: Option<String>,
+    pub container: Option<String>,
 
     /// The date and time when the resource was created.
     ///
@@ -142,7 +142,7 @@ struct BlockStorageBackup {
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The time when the data on the volume was first saved. If it is a backup
     /// from volume, it will be the same as `created_at` for a backup. If it is
@@ -151,32 +151,32 @@ struct BlockStorageBackup {
     ///
     #[serde(default)]
     #[structable(optional, title = "DATA_TIMESTAMP", wide)]
-    data_timestamp: Option<String>,
+    pub data_timestamp: Option<String>,
 
     /// The backup description or null.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// If the backup failed, the reason for the failure. Otherwise, null.
     ///
     #[serde(default)]
     #[structable(optional, title = "FAIL_REASON", wide)]
-    fail_reason: Option<String>,
+    pub fail_reason: Option<String>,
 
     /// If this value is `true`, there are other backups depending on this
     /// backup.
     ///
     #[serde(default)]
     #[structable(optional, title = "HAS_DEPENDENT_BACKUPS", wide)]
-    has_dependent_backups: Option<bool>,
+    pub has_dependent_backups: Option<bool>,
 
     /// The UUID of the backup.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    #[serde()]
+    #[structable(title = "ID", wide)]
+    pub id: String,
 
     /// Indicates whether the backup mode is incremental. If this value is
     /// `true`, the backup mode is incremental. If this value is `false`, the
@@ -184,7 +184,7 @@ struct BlockStorageBackup {
     ///
     #[serde(default)]
     #[structable(optional, title = "IS_INCREMENTAL", wide)]
-    is_incremental: Option<bool>,
+    pub is_incremental: Option<bool>,
 
     /// The backup metadata key value pairs.
     ///
@@ -192,38 +192,38 @@ struct BlockStorageBackup {
     ///
     #[serde(default)]
     #[structable(optional, title = "METADATA", wide)]
-    metadata: Option<Value>,
+    pub metadata: Option<Value>,
 
     /// The backup name.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The number of objects in the backup.
     ///
     #[serde(default)]
     #[structable(optional, title = "OBJECT_COUNT", wide)]
-    object_count: Option<i32>,
+    pub object_count: Option<i32>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    #[serde(default)]
-    #[structable(optional, title = "SIZE", wide)]
-    size: Option<i64>,
+    #[serde()]
+    #[structable(title = "SIZE", wide)]
+    pub size: i64,
 
     /// The UUID of the source volume snapshot.
     ///
     #[serde(default)]
     #[structable(optional, title = "SNAPSHOT_ID", wide)]
-    snapshot_id: Option<String>,
+    pub snapshot_id: Option<String>,
 
     /// The backup status. Refer to Backup statuses table for the possible
     /// status value.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "STATUS")]
-    status: Option<String>,
+    #[serde()]
+    #[structable(title = "STATUS")]
+    pub status: String,
 
     /// The date and time when the resource was updated.
     ///
@@ -245,11 +245,11 @@ struct BlockStorageBackup {
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The UUID of the volume.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "VOLUME_ID", wide)]
-    volume_id: Option<String>,
+    #[serde()]
+    #[structable(title = "VOLUME_ID", wide)]
+    pub volume_id: String,
 }

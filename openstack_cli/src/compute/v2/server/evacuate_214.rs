@@ -100,11 +100,9 @@ struct Evacuate {
 /// Server response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
 struct ResponseData {
-    /// An administrative password to access the evacuated instance. If you set
-    /// `enable_instance_password` configuration option to `False`, the API
-    /// wouldn’t return the `adminPass` field in response.
-    ///
-    /// **Available until version 2.13**
+    /// An administrative password to access moved instance. If you set
+    /// enable_instance_password configuration option to False, the API
+    /// wouldn’t return the adminPass field in response.
     ///
     #[serde(rename = "adminPass")]
     #[structable(title = "adminPass")]

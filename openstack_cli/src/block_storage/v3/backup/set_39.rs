@@ -133,8 +133,8 @@ struct ResponseData {
     /// The UUID of the backup.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// Indicates whether the backup mode is incremental. If this value is
     /// true, the backup mode is incremental. If this value is false, the
@@ -173,8 +173,8 @@ struct ResponseData {
     /// The size of the volume, in gibibytes (GiB).
     ///
     #[serde()]
-    #[structable(optional)]
-    size: Option<i64>,
+    #[structable()]
+    size: i64,
 
     /// The UUID of the source volume snapshot.
     ///
@@ -186,8 +186,8 @@ struct ResponseData {
     /// status value.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable()]
+    status: String,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is ISO 8601
@@ -199,8 +199,8 @@ struct ResponseData {
     /// The UUID of the volume.
     ///
     #[serde()]
-    #[structable(optional)]
-    volume_id: Option<String>,
+    #[structable()]
+    volume_id: String,
 }
 
 impl BackupCommand {

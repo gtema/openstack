@@ -255,81 +255,81 @@ impl ExecuteApiRequest for NetworkSubnetList {
 }
 /// NetworkSubnet response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct NetworkSubnet {
+pub struct NetworkSubnet {
     /// Allocation pools with `start` and `end` IP addresses for this subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "ALLOCATION_POOLS", wide)]
-    allocation_pools: Option<Value>,
+    pub allocation_pools: Option<Value>,
 
     /// The CIDR of the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "CIDR", wide)]
-    cidr: Option<String>,
+    pub cidr: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// List of dns name servers associated with the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "DNS_NAMESERVERS", wide)]
-    dns_nameservers: Option<Value>,
+    pub dns_nameservers: Option<Value>,
 
     /// Whether to publish DNS records for IPs from this subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "DNS_PUBLISH_FIXED_IP", wide)]
-    dns_publish_fixed_ip: Option<bool>,
+    pub dns_publish_fixed_ip: Option<bool>,
 
     /// Indicates whether dhcp is enabled or disabled for the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLE_DHCP", wide)]
-    enable_dhcp: Option<bool>,
+    pub enable_dhcp: Option<bool>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "GATEWAY_IP", wide)]
-    gateway_ip: Option<String>,
+    pub gateway_ip: Option<String>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
     ///
     #[serde(default)]
     #[structable(optional, title = "HOST_ROUTES", wide)]
-    host_routes: Option<Value>,
+    pub host_routes: Option<Value>,
 
     /// The ID of the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The IP protocol version. Value is `4` or `6`.
     ///
     #[serde(default)]
     #[structable(optional, title = "IP_VERSION", wide)]
-    ip_version: Option<i32>,
+    pub ip_version: Option<i32>,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     ///
     #[serde(default)]
     #[structable(optional, title = "IPV6_ADDRESS_MODE", wide)]
-    ipv6_address_mode: Option<Value>,
+    pub ipv6_address_mode: Option<Value>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
@@ -337,64 +337,64 @@ struct NetworkSubnet {
     ///
     #[serde(default)]
     #[structable(optional, title = "IPV6_RA_MODE", wide)]
-    ipv6_ra_mode: Option<Value>,
+    pub ipv6_ra_mode: Option<Value>,
 
     /// Human-readable name of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the network to which the subnet belongs.
     ///
     #[serde(default)]
     #[structable(optional, title = "NETWORK_ID", wide)]
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
     /// The revision number of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "REVISION_NUMBER", wide)]
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     #[serde(default, rename = "router:external")]
     #[structable(optional, title = "ROUTER:EXTERNAL", wide)]
-    router_external: Option<bool>,
+    pub router_external: Option<bool>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
     ///
     #[serde(default)]
     #[structable(optional, title = "SEGMENT_ID", wide)]
-    segment_id: Option<String>,
+    pub segment_id: Option<String>,
 
     /// The service types associated with the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "SERVICE_TYPES", wide)]
-    service_types: Option<Value>,
+    pub service_types: Option<Value>,
 
     /// The ID of the subnet pool associated with the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "SUBNETPOOL_ID", wide)]
-    subnetpool_id: Option<String>,
+    pub subnetpool_id: Option<String>,
 
     /// The list of tags on the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     /// The ID of the project.
     ///
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

@@ -102,8 +102,8 @@ struct ResponseData {
     /// The UUID of the group.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The group name.
     ///

@@ -17,8 +17,8 @@
 
 //! Delete Quota for a particular tenant.
 //!
-//! | param req: | request | | --- | --- | | param id: | target project id that
-//! needs to be deleted |
+//! | | | | --- | --- | | param req: | request | | param id: | target project
+//! id that needs to be deleted |
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};

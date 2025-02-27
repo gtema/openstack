@@ -115,14 +115,21 @@ struct ResponseData {
     /// ```
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    attachments: Option<Value>,
+    #[structable(pretty)]
+    attachments: Value,
 
     /// The name of the availability zone.
     ///
     #[serde()]
     #[structable(optional)]
     availability_zone: Option<String>,
+
+    /// Enables or disables the bootable attribute. You can boot an instance
+    /// from a bootable volume.
+    ///
+    #[serde()]
+    #[structable()]
+    bootable: bool,
 
     /// The cluster name of volume backend.
     ///
@@ -176,8 +183,8 @@ struct ResponseData {
     /// If true, this volume is encrypted.
     ///
     #[serde()]
-    #[structable(optional)]
-    encrypted: Option<bool>,
+    #[structable()]
+    encrypted: bool,
 
     /// The ID of the group.
     ///
@@ -190,8 +197,8 @@ struct ResponseData {
     /// The UUID of the volume.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The volume links.
     ///
@@ -209,8 +216,8 @@ struct ResponseData {
     /// The volume migration status. Admin only.
     ///
     #[serde()]
-    #[structable(optional)]
-    migration_status: Option<String>,
+    #[structable()]
+    migration_status: String,
 
     /// If true, this volume can attach to more than one instance.
     ///
@@ -237,8 +244,8 @@ struct ResponseData {
     /// The volume replication status.
     ///
     #[serde()]
-    #[structable(optional)]
-    replication_status: Option<String>,
+    #[structable()]
+    replication_status: String,
 
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
@@ -264,8 +271,8 @@ struct ResponseData {
     /// The size of the volume, in gibibytes (GiB).
     ///
     #[serde()]
-    #[structable(optional)]
-    size: Option<i64>,
+    #[structable()]
+    size: i64,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
@@ -285,8 +292,8 @@ struct ResponseData {
     /// The volume status.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable()]
+    status: String,
 
     /// The date and time when the resource was updated.
     ///
@@ -313,8 +320,8 @@ struct ResponseData {
     /// The UUID of the user.
     ///
     #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
+    #[structable()]
+    user_id: String,
 
     /// The associated volume type name for the volume.
     ///

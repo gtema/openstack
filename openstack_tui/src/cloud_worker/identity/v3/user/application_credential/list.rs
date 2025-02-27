@@ -84,34 +84,34 @@ impl ExecuteApiRequest for IdentityUserApplicationCredentialList {
 }
 /// IdentityUserApplicationCredential response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct IdentityUserApplicationCredential {
+pub struct IdentityUserApplicationCredential {
     /// A list of access_rules objects
     ///
     #[serde(default)]
     #[structable(optional, title = "ACCESS_RULES", wide)]
-    access_rules: Option<Value>,
+    pub access_rules: Option<Value>,
 
     /// A description of the application credential's purpose.
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     #[serde(default)]
     #[structable(optional, title = "EXPIRES_AT", wide)]
-    expires_at: Option<String>,
+    pub expires_at: Option<String>,
 
     /// The ID of the application credential.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the application credential. Must be unique to a user.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the project the application credential was created for and
     /// that authentication requests using this application credential will be
@@ -119,7 +119,7 @@ struct IdentityUserApplicationCredential {
     ///
     #[serde(default)]
     #[structable(optional, title = "PROJECT_ID", wide)]
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// An optional list of role objects, identified by ID or name. The list
     /// may only contain roles that the user has assigned on the project. If
@@ -128,7 +128,7 @@ struct IdentityUserApplicationCredential {
     ///
     #[serde(default)]
     #[structable(optional, title = "ROLES", wide)]
-    roles: Option<Value>,
+    pub roles: Option<Value>,
 
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
@@ -136,5 +136,5 @@ struct IdentityUserApplicationCredential {
     ///
     #[serde(default)]
     #[structable(optional, title = "UNRESTRICTED", wide)]
-    unrestricted: Option<bool>,
+    pub unrestricted: Option<bool>,
 }

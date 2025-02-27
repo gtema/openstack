@@ -231,25 +231,25 @@ impl ExecuteApiRequest for LoadBalancerHealthmonitorList {
 }
 /// LoadBalancerHealthmonitor response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct LoadBalancerHealthmonitor {
+pub struct LoadBalancerHealthmonitor {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The time, in seconds, between sending probes to members.
     ///
     #[serde(default)]
     #[structable(optional, title = "DELAY", wide)]
-    delay: Option<i32>,
+    pub delay: Option<i32>,
 
     /// The domain name, which be injected into the HTTP Host Header to the
     /// backend server for HTTP health check.
@@ -258,7 +258,7 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "DOMAIN_NAME", wide)]
-    domain_name: Option<String>,
+    pub domain_name: Option<String>,
 
     /// The list of HTTP status codes expected in response from the member to
     /// declare it healthy. Specify one of the following values:
@@ -269,7 +269,7 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "EXPECTED_CODES", wide)]
-    expected_codes: Option<String>,
+    pub expected_codes: Option<String>,
 
     /// The HTTP method that the health monitor uses for requests. One of
     /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
@@ -277,7 +277,7 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "HTTP_METHOD", wide)]
-    http_method: Option<String>,
+    pub http_method: Option<String>,
 
     /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
     ///
@@ -285,20 +285,20 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "HTTP_VERSION", wide)]
-    http_version: Option<f32>,
+    pub http_version: Option<f32>,
 
     /// The associated health monitor ID.
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The number of successful checks before changing the `operating status`
     /// of the member to `ONLINE`. A valid value is from `1` to `10`.
     ///
     #[serde(default)]
     #[structable(optional, title = "MAX_RETRIES", wide)]
-    max_retries: Option<i32>,
+    pub max_retries: Option<i32>,
 
     /// The number of allowed check failures before changing the
     /// `operating status` of the member to `ERROR`. A valid value is from `1`
@@ -306,37 +306,37 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "MAX_RETRIES_DOWN", wide)]
-    max_retries_down: Option<i32>,
+    pub max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
     #[serde(default)]
     #[structable(optional, status, title = "OPERATING_STATUS")]
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     #[serde(default)]
     #[structable(optional, title = "POOLS", wide)]
-    pools: Option<Value>,
+    pub pools: Option<Value>,
 
     /// The ID of the project owning this resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "PROJECT_ID", wide)]
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
     #[serde(default)]
     #[structable(optional, title = "PROVISIONING_STATUS", wide)]
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
@@ -344,31 +344,31 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "TAGS", wide)]
-    tags: Option<Value>,
+    pub tags: Option<Value>,
 
     #[serde(default)]
     #[structable(optional, title = "TENANT_ID", wide)]
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out. This value must be less than the delay value.
     ///
     #[serde(default)]
     #[structable(optional, title = "TIMEOUT", wide)]
-    timeout: Option<i32>,
+    pub timeout: Option<i32>,
 
     /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
     /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
     ///
     #[serde(default, rename = "type")]
     #[structable(optional, title = "TYPE", wide)]
-    _type: Option<String>,
+    pub _type: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
@@ -376,5 +376,5 @@ struct LoadBalancerHealthmonitor {
     ///
     #[serde(default)]
     #[structable(optional, title = "URL_PATH", wide)]
-    url_path: Option<String>,
+    pub url_path: Option<String>,
 }

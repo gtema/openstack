@@ -101,8 +101,8 @@ struct ResponseData {
     /// UTC.
     ///
     #[serde()]
-    #[structable(optional)]
-    created_at: Option<String>,
+    #[structable()]
+    created_at: String,
 
     /// A description for the snapshot.
     ///
@@ -121,8 +121,8 @@ struct ResponseData {
     /// The UUID of the object.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// One or more metadata key and value pairs for the snapshot.
     ///
@@ -151,14 +151,14 @@ struct ResponseData {
     /// The size of the volume, in gibibytes (GiB).
     ///
     #[serde()]
-    #[structable(optional)]
-    size: Option<i64>,
+    #[structable()]
+    size: i64,
 
     /// The status for the snapshot.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable()]
+    status: String,
 
     /// The date and time when the resource was updated.
     ///

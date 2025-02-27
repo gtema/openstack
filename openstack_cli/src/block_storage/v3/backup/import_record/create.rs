@@ -82,8 +82,8 @@ struct ResponseData {
     /// The UUID of the backup.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// Links for the backup.
     ///

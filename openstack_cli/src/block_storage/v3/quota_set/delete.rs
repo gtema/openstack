@@ -39,8 +39,8 @@ use structable_derive::StructTable;
 
 /// Delete Quota for a particular tenant.
 ///
-/// | param req: | request | | --- | --- | | param id: | target project id that
-/// needs to be deleted |
+/// | | | | --- | --- | | param req: | request | | param id: | target project
+/// id that needs to be deleted |
 ///
 #[derive(Args)]
 pub struct QuotaSetCommand {

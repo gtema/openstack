@@ -130,42 +130,42 @@ impl ExecuteApiRequest for DnsZoneRecordsetList {
 }
 /// DnsZoneRecordset response representation
 #[derive(Deserialize, Serialize, Clone, StructTable)]
-struct DnsZoneRecordset {
+pub struct DnsZoneRecordset {
     /// current action in progress on the resource
     ///
     #[serde(default)]
     #[structable(optional, title = "ACTION", wide)]
-    action: Option<Value>,
+    pub action: Option<Value>,
 
     /// Date / Time when resource was created.
     ///
     #[serde(default)]
     #[structable(optional, title = "CREATED_AT")]
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Description for this recordset
     ///
     #[serde(default)]
     #[structable(optional, title = "DESCRIPTION", wide)]
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// ID for the resource
     ///
     #[serde(default)]
     #[structable(optional, title = "ID", wide)]
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// DNS Name for the recordset
     ///
     #[serde(default)]
     #[structable(optional, title = "NAME")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// ID for the project that owns the resource
     ///
     #[serde(default)]
     #[structable(optional, title = "PROJECT_ID", wide)]
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// A list of data for this recordset. Each item will be a separate record
     /// in Designate These items should conform to the DNS spec for the record
@@ -174,47 +174,47 @@ struct DnsZoneRecordset {
     ///
     #[serde(default)]
     #[structable(optional, title = "RECORDS", wide)]
-    records: Option<Value>,
+    pub records: Option<Value>,
 
     /// The status of the resource.
     ///
     #[serde(default)]
     #[structable(optional, title = "STATUS")]
-    status: Option<Value>,
+    pub status: Option<Value>,
 
     /// TTL (Time to Live) for the recordset.
     ///
     #[serde(default)]
     #[structable(optional, title = "TTL", wide)]
-    ttl: Option<i32>,
+    pub ttl: Option<i32>,
 
     /// They RRTYPE of the recordset.
     ///
     #[serde(default, rename = "type")]
     #[structable(optional, title = "TYPE", wide)]
-    _type: Option<Value>,
+    pub _type: Option<Value>,
 
     /// Date / Time when resource last updated.
     ///
     #[serde(default)]
     #[structable(optional, title = "UPDATED_AT")]
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// Version of the resource
     ///
     #[serde(default)]
     #[structable(optional, title = "VERSION", wide)]
-    version: Option<i32>,
+    pub version: Option<i32>,
 
     /// ID for the zone that contains this recordset
     ///
     #[serde(default)]
     #[structable(optional, title = "ZONE_ID", wide)]
-    zone_id: Option<String>,
+    pub zone_id: Option<String>,
 
     /// The name of the zone that contains this recordset
     ///
     #[serde(default)]
     #[structable(optional, title = "ZONE_NAME", wide)]
-    zone_name: Option<String>,
+    pub zone_name: Option<String>,
 }

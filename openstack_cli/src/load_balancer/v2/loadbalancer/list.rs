@@ -345,6 +345,15 @@ struct ResponseData {
     #[structable(optional, wide)]
     vip_qos_policy_id: Option<String>,
 
+    /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
+    /// Balancer.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde()]
+    #[structable(optional, pretty, wide)]
+    vip_sg_ids: Option<Value>,
+
     /// The ID of the subnet for the Virtual IP (VIP).
     ///
     #[serde()]

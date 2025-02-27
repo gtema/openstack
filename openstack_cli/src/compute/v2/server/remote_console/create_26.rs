@@ -107,8 +107,9 @@ struct RemoteConsole {
     protocol: Protocol,
 
     /// The type of remote console. The valid values are `novnc`,
-    /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
-    /// Microversion `2.8`.
+    /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
+    /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
+    /// was added in Microversion `2.99`.
     ///
     #[arg(help_heading = "Body parameters", long)]
     _type: Type,
@@ -126,8 +127,9 @@ struct ResponseData {
     protocol: Option<String>,
 
     /// The type of remote console. The valid values are `novnc`,
-    /// `spice-html5`, `serial`, and `webmks`. The type `webmks` is added since
-    /// Microversion `2.8`.
+    /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
+    /// `webmks` was added in Microversion `2.8`, and the type `spice-direct`
+    /// was added in Microversion `2.99`.
     ///
     #[serde(rename = "type")]
     #[structable(optional, title = "type")]
