@@ -254,6 +254,15 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 
+    /// The member vNIC type used for the member port. One of `normal` or
+    /// `direct`.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vnic_type: Option<String>,
+
     /// The weight of a member determines the portion of requests or
     /// connections it services compared to the other members of the pool. For
     /// example, a member with a weight of 10 receives five times as many

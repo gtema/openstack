@@ -262,6 +262,10 @@ pub struct Members<'a> {
     pub(crate) protocol_port: i32,
 
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) request_sriov: Option<bool>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Cow<'a, str>>,
 

@@ -158,6 +158,14 @@ struct Member {
     #[arg(help_heading = "Body parameters", long)]
     protocol_port: i32,
 
+    /// Request that an SR-IOV VF be used for the member network port. Defaults
+    /// to `false`.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
+    request_sriov: Option<bool>,
+
     /// The subnet ID the member service is accessible from.
     ///
     #[arg(help_heading = "Body parameters", long)]
@@ -291,6 +299,15 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 
+    /// The member vNIC type used for the member port. One of `normal` or
+    /// `direct`.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde()]
+    #[structable(optional)]
+    vnic_type: Option<String>,
+
     /// The weight of a member determines the portion of requests or
     /// connections it services compared to the other members of the pool. For
     /// example, a member with a weight of 10 receives five times as many
@@ -362,6 +379,10 @@ impl MemberCommand {
 
         if let Some(val) = &args.tags {
             member_builder.tags(val.iter().map(Into::into).collect::<Vec<_>>());
+        }
+
+        if let Some(val) = &args.request_sriov {
+            member_builder.request_sriov(*val);
         }
 
         if let Some(val) = &args.tenant_id {
