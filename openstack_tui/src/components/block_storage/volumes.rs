@@ -15,51 +15,47 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
 use crate::{
     action::Action,
     cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDeleteBuilder,
-        BlockStorageVolumeList,
+        BlockStorageApiRequest, BlockStorageVolume, BlockStorageVolumeApiRequest,
+        BlockStorageVolumeDelete, BlockStorageVolumeDeleteBuilder,
+        BlockStorageVolumeDeleteBuilderError, BlockStorageVolumeList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Volumes";
 const VIEW_CONFIG_KEY: &str = "block_storage.volume";
 
-#[derive(Deserialize, StructTable)]
-pub struct VolumeData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "AZ")]
-    availability_zone: String,
-    #[structable(title = "Size")]
-    size: u32,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Updated")]
-    updated_at: String,
-}
-
-impl ResourceKey for VolumeData {
+impl ResourceKey for BlockStorageVolume {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type BlockStorageVolumes<'a> = TableViewComponentBase<'a, VolumeData, BlockStorageVolumeList>;
+pub type BlockStorageVolumes<'a> =
+    TableViewComponentBase<'a, BlockStorageVolume, BlockStorageVolumeList>;
+
+impl TryFrom<&BlockStorageVolume> for BlockStorageVolumeDelete {
+    type Error = BlockStorageVolumeDeleteBuilderError;
+    fn try_from(value: &BlockStorageVolume) -> Result<Self, Self::Error> {
+        let mut builder = BlockStorageVolumeDeleteBuilder::default();
+        builder.id(value.id.clone());
+        if let Some(val) = &value.name {
+            builder.name(val.clone());
+        }
+        builder.build()
+    }
+}
 
 impl Component for BlockStorageVolumes<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -120,11 +116,8 @@ impl Component for BlockStorageVolumes<'_> {
                             // send action to set SecurityGroupRulesList
                             command_tx.send(Action::Confirm(ApiRequest::from(
                                 BlockStorageVolumeApiRequest::Delete(Box::new(
-                                    BlockStorageVolumeDeleteBuilder::default()
-                                        .id(selected_entry.id.clone())
-                                        .name(selected_entry.name.clone())
-                                        .build()
-                                        .wrap_err("cannot prepare request")?,
+                                    BlockStorageVolumeDelete::try_from(selected_entry)
+                                        .wrap_err("error preparing OpenStack request")?,
                                 )),
                             )))?;
                         }

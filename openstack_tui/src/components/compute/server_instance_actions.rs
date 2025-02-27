@@ -38,18 +38,18 @@ const VIEW_CONFIG_KEY: &str = "compute.server/instance_action";
 
 #[derive(Deserialize, StructTable)]
 pub struct ServerInstanceActionData {
-    #[structable(title = "Id", wide)]
+    #[structable(title = "ID", wide)]
     #[serde(rename = "request_id")]
     id: String,
-    #[structable(title = "Action")]
+    #[structable(title = "ACTION")]
     action: String,
-    #[structable(title = "Message", optional)]
+    #[structable(title = "MESSAGE", optional)]
     message: Option<String>,
-    #[structable(title = "Started")]
+    #[structable(title = "STARTED")]
     start_time: String,
-    #[structable(title = "User")]
+    #[structable(title = "USER")]
     user_id: String,
-    #[structable(title = "Server ID", wide)]
+    #[structable(title = "SERVER ID", wide)]
     instance_uuid: String,
 }
 

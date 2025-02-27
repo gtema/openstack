@@ -15,47 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserApiRequest,
-        IdentityGroupUserList,
+        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUser,
+        IdentityGroupUserApiRequest, IdentityGroupUserList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Identity Group Users";
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-#[derive(Deserialize, StructTable)]
-pub struct UserData {
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Domain")]
-    domain_id: String,
-    #[structable(title = "Enabled")]
-    enabled: bool,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Pwd expiry")]
-    password_expires_at: String,
-}
-
-impl ResourceKey for UserData {
+impl ResourceKey for IdentityGroupUser {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityGroupUsers<'a> = TableViewComponentBase<'a, UserData, IdentityGroupUserList>;
+pub type IdentityGroupUsers<'a> =
+    TableViewComponentBase<'a, IdentityGroupUser, IdentityGroupUserList>;
 
 impl Component for IdentityGroupUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

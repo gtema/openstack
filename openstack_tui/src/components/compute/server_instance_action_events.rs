@@ -38,16 +38,16 @@ const VIEW_CONFIG_KEY: &str = "compute.server/instance_action/event";
 
 #[derive(Deserialize, StructTable)]
 pub struct ServerInstanceActionEventData {
-    #[structable(title = "Event")]
+    #[structable(title = "EVENT")]
     event: String,
-    #[structable(title = "Result")]
+    #[structable(title = "RESULT")]
     #[serde(deserialize_with = "as_string")]
     result: String,
-    #[structable(title = "Started", optional)]
+    #[structable(title = "STARTED", optional)]
     start_time: Option<String>,
-    #[structable(title = "Finished", optional)]
+    #[structable(title = "FINISHED", optional)]
     finish_time: Option<String>,
-    #[structable(title = "Host", optional)]
+    #[structable(title = "HOST", optional)]
     host: Option<String>,
 }
 

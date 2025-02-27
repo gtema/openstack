@@ -13,55 +13,65 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::{Result, WrapErr};
+use eyre::{OptionExt, Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialListBuilder,
-        IdentityUserDelete, IdentityUserDeleteBuilder, IdentityUserList, IdentityUserSetBuilder,
+        IdentityApiRequest, IdentityUser, IdentityUserApiRequest,
+        IdentityUserApplicationCredentialList, IdentityUserApplicationCredentialListBuilder,
+        IdentityUserApplicationCredentialListBuilderError, IdentityUserDelete,
+        IdentityUserDeleteBuilder, IdentityUserDeleteBuilderError, IdentityUserList,
+        IdentityUserSetBuilder,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Identity Users";
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-#[derive(Deserialize, StructTable)]
-pub struct UserData {
-    /// User id (used for related operations)
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Email")]
-    email: String,
-    #[structable(title = "Domain")]
-    domain_id: String,
-    #[structable(title = "Enabled")]
-    enabled: bool,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Pwd expiry")]
-    password_expires_at: String,
-}
-
-impl ResourceKey for UserData {
+impl ResourceKey for IdentityUser {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityUsers<'a> = TableViewComponentBase<'a, UserData, IdentityUserList>;
+impl TryFrom<&IdentityUser> for IdentityUserDelete {
+    type Error = IdentityUserDeleteBuilderError;
+    fn try_from(value: &IdentityUser) -> Result<Self, Self::Error> {
+        let mut builder = IdentityUserDeleteBuilder::default();
+        if let Some(val) = &value.id {
+            builder.id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+impl TryFrom<&IdentityUser> for IdentityUserApplicationCredentialList {
+    type Error = IdentityUserApplicationCredentialListBuilderError;
+    fn try_from(value: &IdentityUser) -> Result<Self, Self::Error> {
+        let mut builder = IdentityUserApplicationCredentialListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.user_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.user_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+pub type IdentityUsers<'a> = TableViewComponentBase<'a, IdentityUser, IdentityUserList>;
 
 impl Component for IdentityUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -102,17 +112,15 @@ impl Component for IdentityUsers<'_> {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
+                        if let Some(selected_row) = self.get_selected() {
                             // send action to set GroupUserListFilters
                             command_tx.send(Action::PerformApiRequest(ApiRequest::from(
                                 IdentityUserApiRequest::Set(Box::new(
                                     IdentityUserSetBuilder::default()
-                                        .id(group_row.id.clone())
-                                        .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!group_row.enabled).build().wrap_err("cannot prepare user data structure")?)
-                                        .build()
-                                        .wrap_err("cannot prepare user update request")?,
-                                )),
-                            )))?;
+                                        .id(selected_row.id.clone().ok_or_eyre("id must be present")?)
+                                        .user(crate::cloud_worker::identity::v3::user::set::UserBuilder::default().enabled(!selected_row.enabled.ok_or_eyre("user enabled property must be preset")?).build().wrap_err("cannot prepare user data structure")?)
+                                        .build().wrap_err("error preparing OpenStack request")?
+                                )))))?;
                             self.set_loading(true);
                         }
                     }
@@ -124,15 +132,12 @@ impl Component for IdentityUsers<'_> {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
-                        if let Some(row) = self.get_selected() {
+                        if let Some(selected_row) = self.get_selected() {
                             // send action to set Delete User
                             command_tx.send(Action::Confirm(ApiRequest::from(
                                 IdentityUserApiRequest::Delete(Box::new(
-                                    IdentityUserDeleteBuilder::default()
-                                        .id(row.id.clone())
-                                        .name(row.name.clone())
-                                        .build()
-                                        .wrap_err("cannot prepare user delete request")?,
+                                    IdentityUserDelete::try_from(selected_row)
+                                        .wrap_err("error preparing OpenStack request")?,
                                 )),
                             )))?;
                         }
@@ -145,17 +150,12 @@ impl Component for IdentityUsers<'_> {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
+                        if let Some(selected_row) = self.get_selected() {
                             // send action to set GroupUserListFilters
                             command_tx.send(
                                 Action::SetIdentityApplicationCredentialListFilters(
-                                    IdentityUserApplicationCredentialListBuilder::default()
-                                        .user_id(group_row.id.clone())
-                                        .user_name(group_row.name.clone())
-                                        .build()
-                                        .wrap_err(
-                                            "cannot prepare application credential list request",
-                                        )?,
+                                    IdentityUserApplicationCredentialList::try_from(selected_row)
+                                        .wrap_err("error preparing OpenStack request")?,
                                 ),
                             )?;
                             command_tx.send(Action::Mode {
@@ -184,8 +184,10 @@ impl Component for IdentityUsers<'_> {
                 if let IdentityUserApiRequest::Set(_) = *req {
                     // Since user update only returns some info (i.e. it doesn't contain email) we need
                     // to update record manually
-                    let updated_user: UserData = serde_json::from_value(data.clone())?;
-                    if let Some(item_row) = self.get_item_row_by_res_id_mut(&updated_user.id) {
+                    let updated_user: IdentityUser = serde_json::from_value(data.clone())?;
+                    if let Some(item_row) = self.get_item_row_by_res_id_mut(
+                        &updated_user.id.ok_or_eyre("id must be present")?,
+                    ) {
                         item_row.enabled = updated_user.enabled;
                         item_row.name = updated_user.name;
                         self.sync_table_data()?;

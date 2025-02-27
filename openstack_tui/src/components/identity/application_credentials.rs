@@ -15,50 +15,37 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredentialApiRequest,
-        IdentityUserApplicationCredentialList, IdentityUserApplicationCredentialListBuilder,
+        IdentityApiRequest, IdentityUserApiRequest, IdentityUserApplicationCredential,
+        IdentityUserApplicationCredentialApiRequest, IdentityUserApplicationCredentialList,
+        IdentityUserApplicationCredentialListBuilder,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Application Credentials";
 const VIEW_CONFIG_KEY: &str = "identity.user/application_credential";
 
-#[derive(Deserialize, StructTable)]
-pub struct ApplicationCredentialData {
-    /// ApplicationCredential id (used for related operations)
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Expires at")]
-    expires_at: String,
-    #[structable(title = "Unrestricted", optional)]
-    #[serde(default)]
-    unrestricted: Option<bool>,
-}
-
-impl ResourceKey for ApplicationCredentialData {
+impl ResourceKey for IdentityUserApplicationCredential {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityApplicationCredentials<'a> =
-    TableViewComponentBase<'a, ApplicationCredentialData, IdentityUserApplicationCredentialList>;
+pub type IdentityApplicationCredentials<'a> = TableViewComponentBase<
+    'a,
+    IdentityUserApplicationCredential,
+    IdentityUserApplicationCredentialList,
+>;
 
 impl Component for IdentityApplicationCredentials<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

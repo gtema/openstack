@@ -15,55 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSecurityGroupRuleApiRequest, NetworkSecurityGroupRuleList,
+        NetworkApiRequest, NetworkSecurityGroupRule, NetworkSecurityGroupRuleApiRequest,
+        NetworkSecurityGroupRuleList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "SecurityGroupRules";
 const VIEW_CONFIG_KEY: &str = "network.security_group_rule";
 
-#[derive(Deserialize, StructTable)]
-pub struct SecurityGroupRuleData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Ethertype")]
-    ethertype: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Direction")]
-    direction: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Protocol")]
-    protocol: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Range Min")]
-    port_range_min: String,
-    #[serde(default, deserialize_with = "as_string")]
-    #[structable(title = "Range Max")]
-    port_range_max: String,
-}
-
-impl ResourceKey for SecurityGroupRuleData {
+impl ResourceKey for NetworkSecurityGroupRule {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type NetworkSecurityGroupRules<'a> =
-    TableViewComponentBase<'a, SecurityGroupRuleData, NetworkSecurityGroupRuleList>;
+    TableViewComponentBase<'a, NetworkSecurityGroupRule, NetworkSecurityGroupRuleList>;
 
 impl NetworkSecurityGroupRules<'_> {
     /// Normalize filters

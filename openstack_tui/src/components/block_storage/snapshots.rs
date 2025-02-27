@@ -15,46 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageSnapshotApiRequest, BlockStorageSnapshotList,
+        BlockStorageApiRequest, BlockStorageSnapshot, BlockStorageSnapshotApiRequest,
+        BlockStorageSnapshotList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Snapshots";
 const VIEW_CONFIG_KEY: &str = "block_storage.snapshot";
 
-#[derive(Deserialize, StructTable)]
-pub struct SnapshotData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    created_at: String,
-}
-
-impl ResourceKey for SnapshotData {
+impl ResourceKey for BlockStorageSnapshot {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type BlockStorageSnapshots<'a> =
-    TableViewComponentBase<'a, SnapshotData, BlockStorageSnapshotList>;
+    TableViewComponentBase<'a, BlockStorageSnapshot, BlockStorageSnapshotList>;
 
 impl Component for BlockStorageSnapshots<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
