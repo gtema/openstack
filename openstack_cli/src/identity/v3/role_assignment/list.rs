@@ -34,7 +34,6 @@ use crate::StructTable;
 use openstack_sdk::api::identity::v3::role_assignment::list;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
-use std::fmt;
 use structable_derive::StructTable;
 
 /// Get a list of role assignments.
@@ -124,55 +123,37 @@ pub struct RoleAssignmentsCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// Returns the effective assignments, including any assignments gained by
-    /// virtue of group membership.
-    ///
-    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Query parameters", long)]
-    effective: Option<bool>,
+    #[arg(help_heading = "Query parameters", long)]
+    effective: Option<String>,
 
-    /// Filters the response by a group ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     group_id: Option<String>,
 
-    /// If set, then the names of any entities returned will be include as well
-    /// as their IDs. Any value other than 0 (including no value) will be
-    /// interpreted as true.
-    ///
-    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Query parameters", long)]
-    include_names: Option<bool>,
+    #[arg(help_heading = "Query parameters", long)]
+    include_names: Option<String>,
 
-    /// If set, then relevant assignments in the project hierarchy below the
-    /// project specified in the scope.project_id query parameter are also
-    /// included in the response. Any value other than 0 (including no value)
-    /// for include_subtree will be interpreted as true.
-    ///
-    #[arg(action=clap::ArgAction::SetTrue, help_heading = "Query parameters", long)]
-    include_subtree: Option<bool>,
+    #[arg(help_heading = "Query parameters", long)]
+    include_subtree: Option<String>,
 
-    /// Filters the response by a role ID.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     role_id: Option<String>,
 
-    /// Filters the response by a domain ID.
+    /// The ID of the domain.
     ///
     #[arg(help_heading = "Query parameters", long)]
     scope_domain_id: Option<String>,
 
-    /// Filters based on role assignments that are inherited. The only value of
-    /// inherited_to that is currently supported is projects.
-    ///
     #[arg(help_heading = "Query parameters", long)]
     scope_os_inherit_inherited_to: Option<String>,
 
-    /// Filters the response by a project ID.
+    /// The ID of the project.
     ///
     #[arg(help_heading = "Query parameters", long)]
     scope_project_id: Option<String>,
 
-    /// Filters the response by a user ID.
-    ///
+    #[arg(help_heading = "Query parameters", long)]
+    scope_system: Option<String>,
+
     #[arg(help_heading = "Query parameters", long)]
     user_id: Option<String>,
 }
@@ -187,46 +168,17 @@ struct ResponseData {
     #[structable(optional, pretty)]
     group: Option<Value>,
 
-    /// A prior role object.
-    ///
     #[serde()]
-    #[structable(optional, pretty)]
-    role: Option<Value>,
+    #[structable(pretty)]
+    role: Value,
 
-    /// The authorization scope, including the system (Since v3.10), a project,
-    /// or a domain (Since v3.4). If multiple scopes are specified in the same
-    /// request (e.g. project and domain or domain and system) an HTTP 400 Bad
-    /// Request will be returned, as a token cannot be simultaneously scoped to
-    /// multiple authorization targets. An ID is sufficient to uniquely
-    /// identify a project but if a project is specified by name, then the
-    /// domain of the project must also be specified in order to uniquely
-    /// identify the project by name. A domain scope may be specified by either
-    /// the domain’s ID or name with equivalent results.
-    ///
     #[serde()]
-    #[structable(optional, pretty)]
-    scope: Option<Value>,
+    #[structable(pretty)]
+    scope: Value,
 
-    /// A user object
-    ///
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
-}
-/// `struct` response type
-#[derive(Default, Clone, Deserialize, Serialize)]
-struct ResponseLinks {
-    _self: Option<String>,
-}
-
-impl fmt::Display for ResponseLinks {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let data = Vec::from([format!(
-            "_self={}",
-            self._self.clone().map_or(String::new(), |v| v.to_string())
-        )]);
-        write!(f, "{}", data.join(";"))
-    }
 }
 
 impl RoleAssignmentsCommand {
@@ -245,14 +197,23 @@ impl RoleAssignmentsCommand {
 
         // Set path parameters
         // Set query parameters
+        if let Some(val) = &self.query.effective {
+            ep_builder.effective(val);
+        }
+        if let Some(val) = &self.query.include_names {
+            ep_builder.include_names(val);
+        }
+        if let Some(val) = &self.query.include_subtree {
+            ep_builder.include_subtree(val);
+        }
         if let Some(val) = &self.query.group_id {
             ep_builder.group_id(val);
         }
         if let Some(val) = &self.query.role_id {
             ep_builder.role_id(val);
         }
-        if let Some(val) = &self.query.user_id {
-            ep_builder.user_id(val);
+        if let Some(val) = &self.query.scope_system {
+            ep_builder.scope_system(val);
         }
         if let Some(val) = &self.query.scope_domain_id {
             ep_builder.scope_domain_id(val);
@@ -260,17 +221,11 @@ impl RoleAssignmentsCommand {
         if let Some(val) = &self.query.scope_project_id {
             ep_builder.scope_project_id(val);
         }
+        if let Some(val) = &self.query.user_id {
+            ep_builder.user_id(val);
+        }
         if let Some(val) = &self.query.scope_os_inherit_inherited_to {
             ep_builder.scope_os_inherit_inherited_to(val);
-        }
-        if let Some(true) = self.query.effective {
-            ep_builder.effective(serde_json::Value::Null);
-        }
-        if let Some(true) = self.query.include_names {
-            ep_builder.include_names(serde_json::Value::Null);
-        }
-        if let Some(true) = self.query.include_subtree {
-            ep_builder.include_subtree(serde_json::Value::Null);
         }
         // Set body parameters
 

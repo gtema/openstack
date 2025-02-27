@@ -92,61 +92,42 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
-use serde_json::Value;
 use std::borrow::Cow;
 
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
-    /// Returns the effective assignments, including any assignments gained by
-    /// virtue of group membership.
-    ///
-    #[builder(default)]
-    effective: Option<Value>,
+    #[builder(default, setter(into))]
+    effective: Option<Cow<'a, str>>,
 
-    /// Filters the response by a group ID.
-    ///
     #[builder(default, setter(into))]
     group_id: Option<Cow<'a, str>>,
 
-    /// If set, then the names of any entities returned will be include as well
-    /// as their IDs. Any value other than 0 (including no value) will be
-    /// interpreted as true.
-    ///
-    #[builder(default)]
-    include_names: Option<Value>,
+    #[builder(default, setter(into))]
+    include_names: Option<Cow<'a, str>>,
 
-    /// If set, then relevant assignments in the project hierarchy below the
-    /// project specified in the scope.project_id query parameter are also
-    /// included in the response. Any value other than 0 (including no value)
-    /// for include_subtree will be interpreted as true.
-    ///
-    #[builder(default)]
-    include_subtree: Option<Value>,
+    #[builder(default, setter(into))]
+    include_subtree: Option<Cow<'a, str>>,
 
-    /// Filters the response by a role ID.
-    ///
     #[builder(default, setter(into))]
     role_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a domain ID.
+    /// The ID of the domain.
     ///
     #[builder(default, setter(into))]
     scope_domain_id: Option<Cow<'a, str>>,
 
-    /// Filters based on role assignments that are inherited. The only value of
-    /// inherited_to that is currently supported is projects.
-    ///
     #[builder(default, setter(into))]
     scope_os_inherit_inherited_to: Option<Cow<'a, str>>,
 
-    /// Filters the response by a project ID.
+    /// The ID of the project.
     ///
     #[builder(default, setter(into))]
     scope_project_id: Option<Cow<'a, str>>,
 
-    /// Filters the response by a user ID.
-    ///
+    #[builder(default, setter(into))]
+    scope_system: Option<Cow<'a, str>>,
+
     #[builder(default, setter(into))]
     user_id: Option<Cow<'a, str>>,
 
@@ -196,18 +177,19 @@ impl RestEndpoint for Request<'_> {
 
     fn parameters(&self) -> QueryParams {
         let mut params = QueryParams::default();
+        params.push_opt("effective", self.effective.as_ref());
+        params.push_opt("include_names", self.include_names.as_ref());
+        params.push_opt("include_subtree", self.include_subtree.as_ref());
         params.push_opt("group.id", self.group_id.as_ref());
         params.push_opt("role.id", self.role_id.as_ref());
-        params.push_opt("user.id", self.user_id.as_ref());
+        params.push_opt("scope.system", self.scope_system.as_ref());
         params.push_opt("scope.domain.id", self.scope_domain_id.as_ref());
         params.push_opt("scope.project.id", self.scope_project_id.as_ref());
+        params.push_opt("user.id", self.user_id.as_ref());
         params.push_opt(
             "scope.OS-INHERIT:inherited_to",
             self.scope_os_inherit_inherited_to.as_ref(),
         );
-        params.push_opt_key_only("effective", self.effective.as_ref());
-        params.push_opt_key_only("include_names", self.include_names.as_ref());
-        params.push_opt_key_only("include_subtree", self.include_subtree.as_ref());
 
         params
     }

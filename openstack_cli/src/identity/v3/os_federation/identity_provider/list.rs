@@ -36,7 +36,9 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// GET operation on /v3/OS-FEDERATION/identity_providers
+/// List all identity providers.
+///
+/// GET/HEAD /OS-FEDERATION/identity_providers
 ///
 #[derive(Args)]
 pub struct IdentityProvidersCommand {
@@ -52,12 +54,12 @@ pub struct IdentityProvidersCommand {
 /// Query parameters
 #[derive(Args)]
 struct QueryParameters {
-    /// Filter for Identity Providers’ enabled attribute
+    /// Whether the identity provider is enabled or not
     ///
     #[arg(action=clap::ArgAction::Set, help_heading = "Query parameters", long)]
     enabled: Option<bool>,
 
-    /// Filter for Identity Providers’ ID attribute
+    /// The identity provider ID
     ///
     #[arg(help_heading = "Query parameters", long)]
     id: Option<String>,

@@ -36,7 +36,9 @@ use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 
-/// GET operation on /v3/OS-FEDERATION/identity_providers/{idp_id}
+/// Get an IDP resource.
+///
+/// GET/HEAD /OS-FEDERATION/identity_providers/{idp_id}
 ///
 #[derive(Args)]
 pub struct IdentityProviderCommand {

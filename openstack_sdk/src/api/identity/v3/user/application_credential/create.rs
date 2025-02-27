@@ -30,16 +30,20 @@ use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
 
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct Roles<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) id: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) name: Option<Cow<'a, str>>,
+#[derive(Debug, Deserialize, Clone, Serialize)]
+pub enum Method {
+    #[serde(rename = "DELETE")]
+    Delete,
+    #[serde(rename = "GET")]
+    Get,
+    #[serde(rename = "HEAD")]
+    Head,
+    #[serde(rename = "PATCH")]
+    Patch,
+    #[serde(rename = "POST")]
+    Post,
+    #[serde(rename = "PUT")]
+    Put,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -49,17 +53,40 @@ pub struct AccessRules<'a> {
     #[builder(default, setter(into))]
     pub(crate) id: Option<Cow<'a, str>>,
 
+    /// The request method that the application credential is permitted to use
+    /// for a given API endpoint.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) method: Option<Cow<'a, str>>,
+    #[builder(default)]
+    pub(crate) method: Option<Method>,
 
+    /// The API path that the application credential is permitted to access.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) path: Option<Cow<'a, str>>,
 
+    /// The service type identifier for the service that the application
+    /// credential is permitted to access. Must be a service type that is
+    /// listed in the service catalog and not a code name for a service.
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) service: Option<Cow<'a, str>>,
+}
+
+#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
+#[builder(setter(strip_option))]
+pub struct Roles<'a> {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
+
+    /// The resource name.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) name: Option<Cow<'a, str>>,
 }
 
 /// An application credential object.
@@ -85,6 +112,12 @@ pub struct ApplicationCredential<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) expires_at: Option<Option<Cow<'a, str>>>,
+
+    /// The UUID for the credential.
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) id: Option<Cow<'a, str>>,
 
     /// The name of the application credential. Must be unique to a user.
     ///
@@ -114,15 +147,19 @@ pub struct ApplicationCredential<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) secret: Option<Cow<'a, str>>,
+    pub(crate) secret: Option<Option<Cow<'a, str>>>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) system: Option<Option<Cow<'a, str>>>,
 
     /// An optional flag to restrict whether the application credential may be
     /// used for the creation or destruction of other application credentials
     /// or trusts. Defaults to false.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) unrestricted: Option<bool>,
+    #[builder(default, setter(into))]
+    pub(crate) unrestricted: Option<Option<bool>>,
 }
 
 #[derive(Builder, Debug, Clone)]

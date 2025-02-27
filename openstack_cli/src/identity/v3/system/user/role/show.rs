@@ -31,14 +31,16 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
+use bytes::Bytes;
 use eyre::eyre;
 use eyre::OptionExt;
+use http::Response;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::system::user::role::get;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::QueryAsync;
-use serde_json::Value;
-use std::collections::HashMap;
+use openstack_sdk::api::RawQueryAsync;
+use structable_derive::StructTable;
 use tracing::warn;
 
 /// Get a specific system role assignment for a user. This is the same API as
@@ -94,23 +96,9 @@ struct UserInput {
     #[arg(long, help_heading = "Path parameters", action = clap::ArgAction::SetTrue)]
     current_user: bool,
 }
-/// Response data as HashMap type
-#[derive(Deserialize, Serialize)]
-struct ResponseData(HashMap<String, Value>);
-
-impl StructTable for ResponseData {
-    fn build(&self, _options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>) {
-        let headers: Vec<String> = Vec::from(["Name".to_string(), "Value".to_string()]);
-        let mut rows: Vec<Vec<String>> = Vec::new();
-        rows.extend(self.0.iter().map(|(k, v)| {
-            Vec::from([
-                k.clone(),
-                serde_json::to_string(&v).expect("Is a valid data"),
-            ])
-        }));
-        (headers, rows)
-    }
-}
+/// Role response representation
+#[derive(Deserialize, Serialize, Clone, StructTable)]
+struct ResponseData {}
 
 impl RoleCommand {
     /// Perform command action
@@ -178,8 +166,10 @@ impl RoleCommand {
             .build()
             .map_err(|x| OpenStackCliError::EndpointBuild(x.to_string()))?;
 
-        let data = ep.query_async(client).await?;
-        op.output_single::<ResponseData>(data)?;
+        let _rsp: Response<Bytes> = ep.raw_query_async(client).await?;
+        let data = ResponseData {};
+        // Maybe output some headers metadata
+        op.output_human::<ResponseData>(&data)?;
         Ok(())
     }
 }
