@@ -15,48 +15,30 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::types::{
-        ApiRequest, NetworkApiRequest, NetworkRouterApiRequest, NetworkRouterList,
+        ApiRequest, NetworkApiRequest, NetworkRouter, NetworkRouterApiRequest, NetworkRouterList,
     },
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Routers";
 const VIEW_CONFIG_KEY: &str = "network.router";
 
-#[derive(Deserialize, StructTable)]
-pub struct RouterData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    #[serde(rename = "created_at")]
-    created: String,
-    #[structable(title = "Updated")]
-    #[serde(rename = "updated_at")]
-    updated: String,
-}
-
-impl ResourceKey for RouterData {
+impl ResourceKey for NetworkRouter {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkRouters<'a> = TableViewComponentBase<'a, RouterData, NetworkRouterList>;
+pub type NetworkRouters<'a> = TableViewComponentBase<'a, NetworkRouter, NetworkRouterList>;
 
 impl NetworkRouters<'_> {
     /// Normalize filters

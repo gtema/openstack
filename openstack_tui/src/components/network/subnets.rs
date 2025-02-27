@@ -15,45 +15,31 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::network::v2::{NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList},
+    cloud_worker::network::v2::{
+        NetworkApiRequest, NetworkSubnet, NetworkSubnetApiRequest, NetworkSubnetList,
+    },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Subnets";
 const VIEW_CONFIG_KEY: &str = "network.subnet";
 
-#[derive(Deserialize, StructTable)]
-pub struct SubnetData {
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Cidr")]
-    cidr: String,
-    #[structable(title = "Description")]
-    #[serde(default)]
-    description: String,
-    #[structable(title = "Created")]
-    #[serde(default)]
-    created_at: String,
-}
-
-impl ResourceKey for SubnetData {
+impl ResourceKey for NetworkSubnet {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkSubnets<'a> = TableViewComponentBase<'a, SubnetData, NetworkSubnetList>;
+pub type NetworkSubnets<'a> = TableViewComponentBase<'a, NetworkSubnet, NetworkSubnetList>;
 
 impl NetworkSubnets<'_> {
     /// Normalize filters

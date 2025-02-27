@@ -15,51 +15,46 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupList,
-        IdentityGroupUserListBuilder,
+        IdentityApiRequest, IdentityGroup, IdentityGroupApiRequest, IdentityGroupList,
+        IdentityGroupUserList, IdentityGroupUserListBuilder, IdentityGroupUserListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Identity Groups";
 const VIEW_CONFIG_KEY: &str = "identity.group";
 
-/// Group resource data
-#[derive(Deserialize, StructTable)]
-pub struct GroupData {
-    /// Group ID (not shown by default but necessary for fetching related resources)
-    #[structable(title = "Id", wide)]
-    id: String,
-    /// Name
-    #[structable(title = "Name")]
-    name: String,
-    /// Domain ID
-    #[structable(title = "Domain")]
-    domain_id: String,
-    /// Group description
-    #[structable(title = "Description")]
-    description: String,
-}
-
-impl ResourceKey for GroupData {
+impl ResourceKey for IdentityGroup {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityGroups<'a> = TableViewComponentBase<'a, GroupData, IdentityGroupList>;
+impl TryFrom<&IdentityGroup> for IdentityGroupUserList {
+    type Error = IdentityGroupUserListBuilderError;
+    fn try_from(value: &IdentityGroup) -> Result<Self, Self::Error> {
+        let mut builder = IdentityGroupUserListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.group_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.group_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+pub type IdentityGroups<'a> = TableViewComponentBase<'a, IdentityGroup, IdentityGroupList>;
 
 impl Component for IdentityGroups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -103,11 +98,8 @@ impl Component for IdentityGroups<'_> {
                         if let Some(group_row) = self.get_selected() {
                             // send action to set GroupUserListFilters
                             command_tx.send(Action::SetIdentityGroupUserListFilters(
-                                IdentityGroupUserListBuilder::default()
-                                    .group_id(group_row.id.clone())
-                                    .group_name(group_row.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare group user list request")?,
+                                IdentityGroupUserList::try_from(group_row)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {

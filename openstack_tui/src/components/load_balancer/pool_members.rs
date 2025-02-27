@@ -15,47 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerPoolApiRequest, LoadBalancerPoolMemberApiRequest,
-        LoadBalancerPoolMemberList,
+        LoadBalancerApiRequest, LoadBalancerPoolApiRequest, LoadBalancerPoolMember,
+        LoadBalancerPoolMemberApiRequest, LoadBalancerPoolMemberList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "LB Pool Members";
 const VIEW_CONFIG_KEY: &str = "load-balancer.pool/member";
 
-#[derive(Deserialize, StructTable)]
-pub struct MemberData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    operating_status: String,
-    #[structable(title = "Port")]
-    protocol_port: usize,
-}
-
-impl ResourceKey for MemberData {
+impl ResourceKey for LoadBalancerPoolMember {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type LoadBalancerPoolMembers<'a> =
-    TableViewComponentBase<'a, MemberData, LoadBalancerPoolMemberList>;
+    TableViewComponentBase<'a, LoadBalancerPoolMember, LoadBalancerPoolMemberList>;
 
 impl Component for LoadBalancerPoolMembers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

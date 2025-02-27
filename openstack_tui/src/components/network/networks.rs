@@ -15,49 +15,45 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList, NetworkSubnetListBuilder,
+        NetworkApiRequest, NetworkNetwork, NetworkNetworkApiRequest, NetworkNetworkList,
+        NetworkSubnetList, NetworkSubnetListBuilder, NetworkSubnetListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Networks";
 const VIEW_CONFIG_KEY: &str = "network.network";
-
-#[derive(Deserialize, StructTable)]
-pub struct NetworkData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    #[serde(rename = "created_at")]
-    created: String,
-    #[structable(title = "Updated")]
-    #[serde(rename = "updated_at")]
-    updated: String,
-}
-
-impl ResourceKey for NetworkData {
+impl ResourceKey for NetworkNetwork {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkData, NetworkNetworkList>;
+impl TryFrom<&NetworkNetwork> for NetworkSubnetList {
+    type Error = NetworkSubnetListBuilderError;
+    fn try_from(value: &NetworkNetwork) -> Result<Self, Self::Error> {
+        let mut builder = NetworkSubnetListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.network_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.network_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkNetwork, NetworkNetworkList>;
 
 impl NetworkNetworks<'_> {
     /// Normalize filters
@@ -117,13 +113,10 @@ impl Component for NetworkNetworks<'_> {
                     // and have command_tx
                     if let Some(command_tx) = self.get_command_tx() {
                         // and have a selected entry
-                        if let Some(group_row) = self.get_selected() {
+                        if let Some(selected_entry) = self.get_selected() {
                             command_tx.send(Action::SetNetworkSubnetListFilters(
-                                NetworkSubnetListBuilder::default()
-                                    .network_id(group_row.id.clone())
-                                    .network_name(group_row.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare listing subnets request")?,
+                                NetworkSubnetList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::NetworkSubnets,
