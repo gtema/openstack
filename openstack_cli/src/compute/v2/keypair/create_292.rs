@@ -135,20 +135,20 @@ struct ResponseData {
     /// The fingerprint for the keypair.
     ///
     #[serde()]
-    #[structable(optional)]
-    fingerprint: Option<String>,
+    #[structable()]
+    fingerprint: String,
 
     /// The keypair ID.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<i32>,
+    #[structable()]
+    id: i32,
 
     /// The name for the keypair.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// If you do not provide a public key on create, a new keypair will be
     /// built for you, and the private key will be returned during the initial
@@ -164,16 +164,16 @@ struct ResponseData {
     /// The keypair public key.
     ///
     #[serde()]
-    #[structable(optional)]
-    public_key: Option<String>,
+    #[structable()]
+    public_key: String,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
     ///
     #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
+    #[structable(title = "type")]
+    _type: String,
 
     /// It is always null.
     ///
@@ -184,8 +184,8 @@ struct ResponseData {
     /// The user_id for a keypair.
     ///
     #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
+    #[structable()]
+    user_id: String,
 }
 
 impl KeypairCommand {

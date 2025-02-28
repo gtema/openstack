@@ -127,8 +127,8 @@ struct ResponseData {
     /// The UUID of the tenant/user the quotas listed for.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The object of detailed injected files quota, including in_use, limit
     /// and reserved number of injected files.

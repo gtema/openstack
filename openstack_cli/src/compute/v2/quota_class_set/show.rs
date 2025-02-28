@@ -101,8 +101,8 @@ struct ResponseData {
     /// only.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The number of allowed injected files for the quota class.
     ///

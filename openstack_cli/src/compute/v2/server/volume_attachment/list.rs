@@ -112,22 +112,22 @@ struct ResponseData {
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    device: Option<String>,
+    #[structable(wide)]
+    device: String,
 
     /// The volume ID of the attachment.
     ///
     /// **Available until version 2.88**
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The UUID of the server.
     ///
     #[serde(rename = "serverId")]
-    #[structable(optional, title = "serverId", wide)]
-    server_id: Option<String>,
+    #[structable(title = "serverId", wide)]
+    server_id: String,
 
     /// The device tag applied to the volume block device or `null`.
     ///
@@ -140,8 +140,8 @@ struct ResponseData {
     /// The UUID of the attached volume.
     ///
     #[serde(rename = "volumeId")]
-    #[structable(optional, title = "volumeId", wide)]
-    volume_id: Option<String>,
+    #[structable(title = "volumeId", wide)]
+    volume_id: String,
 }
 
 impl VolumeAttachmentsCommand {

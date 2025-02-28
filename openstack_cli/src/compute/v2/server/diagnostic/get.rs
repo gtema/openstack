@@ -146,8 +146,8 @@ struct ResponseData {
     /// Id of the resource
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The dictionary with information about VM memory usage. Following fields
     /// are presented in the dictionary:
@@ -165,8 +165,8 @@ struct ResponseData {
     /// Name
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// The list of dictionaries with detailed information about VM NICs.
     /// Following fields are presented in each dictionary:

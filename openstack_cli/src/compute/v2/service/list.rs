@@ -96,14 +96,14 @@ struct ResponseData {
     /// The name of the host.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    host: Option<String>,
+    #[structable(wide)]
+    host: String,
 
     /// The id of the service as a uuid.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<IntString>,
+    #[structable()]
+    id: IntString,
 
     /// Service name
     ///
@@ -114,14 +114,14 @@ struct ResponseData {
     /// The state of the service. One of `up` or `down`.
     ///
     #[serde()]
-    #[structable(optional)]
-    state: Option<String>,
+    #[structable()]
+    state: String,
 
     /// The status of the service. One of `enabled` or `disabled`.
     ///
     #[serde()]
-    #[structable(optional)]
-    status: Option<String>,
+    #[structable()]
+    status: String,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -142,8 +142,8 @@ struct ResponseData {
     /// The availability zone name.
     ///
     #[serde()]
-    #[structable(optional, wide)]
-    zone: Option<String>,
+    #[structable(wide)]
+    zone: String,
 }
 
 impl ServicesCommand {

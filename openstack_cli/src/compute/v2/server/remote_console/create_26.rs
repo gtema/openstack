@@ -123,8 +123,8 @@ struct ResponseData {
     /// `2.8`.
     ///
     #[serde()]
-    #[structable(optional)]
-    protocol: Option<String>,
+    #[structable()]
+    protocol: String,
 
     /// The type of remote console. The valid values are `novnc`,
     /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
@@ -132,14 +132,14 @@ struct ResponseData {
     /// was added in Microversion `2.99`.
     ///
     #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
+    #[structable(title = "type")]
+    _type: String,
 
     /// The URL is used to connect the console.
     ///
     #[serde()]
-    #[structable(optional)]
-    url: Option<String>,
+    #[structable()]
+    url: String,
 }
 
 impl RemoteConsoleCommand {

@@ -76,8 +76,8 @@ struct ResponseData {
     /// A short name by which this extension is also known.
     ///
     #[serde()]
-    #[structable(optional)]
-    alias: Option<String>,
+    #[structable()]
+    alias: String,
 
     /// Text describing this extension’s purpose.
     ///
@@ -95,8 +95,8 @@ struct ResponseData {
     /// Name of the extension.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// A URL pointing to the namespace for this extension.
     ///

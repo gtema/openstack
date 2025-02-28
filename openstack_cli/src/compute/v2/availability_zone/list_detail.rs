@@ -78,14 +78,14 @@ struct ResponseData {
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
-    #[structable(optional, title = "zoneName")]
-    zone_name: Option<String>,
+    #[structable(title = "zoneName")]
+    zone_name: String,
 
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
-    #[structable(optional, pretty, title = "zoneState")]
-    zone_state: Option<Value>,
+    #[structable(pretty, title = "zoneState")]
+    zone_state: Value,
 }
 
 impl AvailabilityZonesCommand {

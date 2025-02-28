@@ -100,28 +100,28 @@ struct ResponseData {
     /// The fingerprint for the keypair.
     ///
     #[serde()]
-    #[structable(optional)]
-    fingerprint: Option<String>,
+    #[structable()]
+    fingerprint: String,
 
     /// The name for the keypair.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// The keypair public key.
     ///
     #[serde()]
-    #[structable(optional)]
-    public_key: Option<String>,
+    #[structable()]
+    public_key: String,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
     ///
     #[serde(rename = "type")]
-    #[structable(optional, title = "type", wide)]
-    _type: Option<String>,
+    #[structable(title = "type", wide)]
+    _type: String,
 }
 
 impl KeypairsCommand {
