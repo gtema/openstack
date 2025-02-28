@@ -105,7 +105,7 @@ struct ResponseData {
     ///
     #[serde()]
     #[structable()]
-    bootable: bool,
+    bootable: String,
 
     /// The cluster name of volume backend.
     ///
