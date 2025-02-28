@@ -93,8 +93,8 @@ struct ResponseData {
     /// The name of the action.
     ///
     #[serde()]
-    #[structable(optional)]
-    action: Option<String>,
+    #[structable()]
+    action: String,
 
     /// The events which occurred in this action in descending order of
     /// creation.
@@ -106,8 +106,8 @@ struct ResponseData {
     /// **New in version 2.51**
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    events: Option<Value>,
+    #[structable(pretty)]
+    events: Value,
 
     /// The related error message for when an action fails.
     ///
@@ -118,14 +118,14 @@ struct ResponseData {
     /// The ID of the project which initiated the server action.
     ///
     #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
+    #[structable()]
+    project_id: String,
 
     /// The request id generated when execute the API of this action.
     ///
     #[serde()]
-    #[structable(optional)]
-    request_id: Option<String>,
+    #[structable()]
+    request_id: String,
 
     /// The date and time when the action was started.
     ///
@@ -155,8 +155,8 @@ struct ResponseData {
     /// The ID of the user which initiated the server action.
     ///
     #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
+    #[structable()]
+    user_id: String,
 }
 
 impl InstanceActionCommand {

@@ -77,8 +77,8 @@ struct ResponseData {
     /// The UUID of the server group.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// A list of members in the server group.
     ///
@@ -99,8 +99,8 @@ struct ResponseData {
     /// The name of the server group.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// A list of exactly one policy name to associate with the server group.
     /// The current valid policy names are:
@@ -141,16 +141,16 @@ struct ResponseData {
     /// **New in version 2.64**
     ///
     #[serde()]
-    #[structable(optional)]
-    policy: Option<String>,
+    #[structable()]
+    policy: String,
 
     /// The project ID who owns the server group.
     ///
     /// **New in version 2.13**
     ///
     #[serde()]
-    #[structable(optional)]
-    project_id: Option<String>,
+    #[structable()]
+    project_id: String,
 
     /// The `rules` field, which is a dict, can be applied to the policy.
     /// Currently, only the `max_server_per_host` rule is supported for the
@@ -170,8 +170,8 @@ struct ResponseData {
     /// **New in version 2.13**
     ///
     #[serde()]
-    #[structable(optional)]
-    user_id: Option<String>,
+    #[structable()]
+    user_id: String,
 }
 
 impl ServerGroupCommand {

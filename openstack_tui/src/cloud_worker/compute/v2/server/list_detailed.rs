@@ -499,9 +499,9 @@ pub struct ComputeServer {
     /// information used to create the server instance, represented as a nested
     /// dictionary.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "FLAVOR", wide)]
-    pub flavor: Option<Value>,
+    #[serde()]
+    #[structable(title = "FLAVOR", wide)]
+    pub flavor: Value,
 
     /// The host status. Values where next value in list can override the
     /// previous:
@@ -535,16 +535,16 @@ pub struct ComputeServer {
 
     /// Id of the server
     ///
-    #[serde(default)]
-    #[structable(optional, title = "ID", wide)]
-    pub id: Option<String>,
+    #[serde()]
+    #[structable(title = "ID", wide)]
+    pub id: String,
 
     /// The UUID and links for the image for your server instance. The `image`
     /// object will be an empty string when you boot the server from a volume.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "IMAGE", wide)]
-    pub image: Option<Value>,
+    #[serde()]
+    #[structable(title = "IMAGE", wide)]
+    pub image: Value,
 
     /// The name of associated key pair, if any.
     ///
@@ -569,9 +569,9 @@ pub struct ComputeServer {
 
     /// The server name.
     ///
-    #[serde(default)]
-    #[structable(optional, title = "NAME")]
-    pub name: Option<String>,
+    #[serde()]
+    #[structable(title = "NAME")]
+    pub name: String,
 
     /// Disk configuration. The value is either:
     ///

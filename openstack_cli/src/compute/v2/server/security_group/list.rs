@@ -83,14 +83,14 @@ struct ResponseData {
     /// The ID of the security group.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The security group name.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// The list of security group rules.
     ///

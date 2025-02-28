@@ -104,14 +104,14 @@ struct ResponseData {
     /// The type of the remote console
     ///
     #[serde(rename = "type")]
-    #[structable(optional, title = "type")]
-    _type: Option<String>,
+    #[structable(title = "type")]
+    _type: String,
 
     /// The URL used to connect to the console.
     ///
     #[serde()]
-    #[structable(optional)]
-    url: Option<String>,
+    #[structable()]
+    url: String,
 }
 
 impl ServerCommand {

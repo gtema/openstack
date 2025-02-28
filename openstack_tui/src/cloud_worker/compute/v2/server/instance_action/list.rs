@@ -104,7 +104,7 @@ pub struct ComputeServerInstanceAction {
     /// List of the actions for the given instance in descending order of
     /// creation.
     ///
-    #[serde(default, rename = "instanceActions")]
-    #[structable(optional, title = "INSTANCEACTIONS", wide)]
-    pub instance_actions: Option<Value>,
+    #[serde(rename = "instanceActions")]
+    #[structable(title = "INSTANCEACTIONS", wide)]
+    pub instance_actions: Value,
 }

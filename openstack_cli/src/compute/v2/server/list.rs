@@ -356,8 +356,8 @@ struct ResponseData {
     /// dictionary.
     ///
     #[serde()]
-    #[structable(optional, pretty, wide)]
-    flavor: Option<Value>,
+    #[structable(pretty, wide)]
+    flavor: Value,
 
     /// The host status. Values where next value in list can override the
     /// previous:
@@ -392,15 +392,15 @@ struct ResponseData {
     /// Id of the server
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// The UUID and links for the image for your server instance. The `image`
     /// object will be an empty string when you boot the server from a volume.
     ///
     #[serde()]
-    #[structable(optional, pretty, wide)]
-    image: Option<Value>,
+    #[structable(pretty, wide)]
+    image: Value,
 
     /// The name of associated key pair, if any.
     ///
@@ -426,8 +426,8 @@ struct ResponseData {
     /// The server name.
     ///
     #[serde()]
-    #[structable(optional)]
-    name: Option<String>,
+    #[structable()]
+    name: String,
 
     /// Disk configuration. The value is either:
     ///

@@ -451,8 +451,8 @@ struct ResponseData {
     /// The UUID of the server.
     ///
     #[serde()]
-    #[structable(optional)]
-    id: Option<String>,
+    #[structable()]
+    id: String,
 
     /// Links pertaining to usage. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
