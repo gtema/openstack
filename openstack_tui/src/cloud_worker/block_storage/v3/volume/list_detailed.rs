@@ -164,7 +164,7 @@ pub struct BlockStorageVolume {
     ///
     #[serde()]
     #[structable(title = "BOOTABLE", wide)]
-    pub bootable: bool,
+    pub bootable: String,
 
     /// The cluster name of volume backend.
     ///
