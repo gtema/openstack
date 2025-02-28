@@ -123,6 +123,15 @@ pub struct Member<'a> {
     #[builder()]
     pub(crate) protocol_port: i32,
 
+    /// Request that an SR-IOV VF be used for the member network port. Defaults
+    /// to `false`.
+    ///
+    /// **New in version 2.29**
+    ///
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default)]
+    pub(crate) request_sriov: Option<bool>,
+
     /// The subnet ID the member service is accessible from.
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
