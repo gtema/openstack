@@ -34,6 +34,7 @@ pub use crate::types::api_version::ApiVersion;
 pub enum ServiceType {
     BlockStorage,
     Compute,
+    ContainerInfrastructureManagement,
     Dns,
     Image,
     Identity,
@@ -49,6 +50,9 @@ impl fmt::Display for ServiceType {
         match self {
             ServiceType::BlockStorage => write!(f, "block-storage"),
             ServiceType::Compute => write!(f, "compute"),
+            ServiceType::ContainerInfrastructureManagement => {
+                write!(f, "container-infrastructure-management")
+            }
             ServiceType::Dns => write!(f, "dns"),
             ServiceType::Image => write!(f, "image"),
             ServiceType::Identity => write!(f, "identity"),
@@ -66,6 +70,7 @@ impl From<&str> for ServiceType {
         match val {
             "block-storage" => ServiceType::BlockStorage,
             "compute" => ServiceType::Compute,
+            "container-infrastructure-management" => ServiceType::ContainerInfrastructureManagement,
             "dns" => ServiceType::Dns,
             "identity" => ServiceType::Identity,
             "image" => ServiceType::Image,

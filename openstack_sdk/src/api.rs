@@ -153,6 +153,8 @@ mod rest_endpoint;
 pub mod block_storage;
 #[cfg(feature = "compute")]
 pub mod compute;
+#[cfg(feature = "container_infra")]
+pub mod container_infrastructure_management;
 #[cfg(feature = "dns")]
 pub mod dns;
 #[allow(dead_code)]

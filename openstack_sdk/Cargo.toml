@@ -17,6 +17,7 @@ default = [
   "sync",
   "block_storage",
   "compute",
+  "container_infra",
   "dns",
   "identity",
   "image",
@@ -27,6 +28,7 @@ default = [
 ]
 block_storage = []
 compute = []
+container_infra = []
 dns = []
 identity = []
 image = []
