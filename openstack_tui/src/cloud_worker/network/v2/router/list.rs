@@ -243,7 +243,7 @@ pub struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "EXTERNAL_GATEWAY_INFO", wide)]
-    pub external_gateway_info: Option<Value>,
+    pub external_gateway_info: Option<String>,
 
     /// The ID of the flavor associated with the router.
     ///

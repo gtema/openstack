@@ -36,38 +36,6 @@ use std::borrow::Cow;
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct ExternalFixedIps<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) ip_address: Option<Cow<'a, str>>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) subnet_id: Option<Cow<'a, str>>,
-}
-
-/// The external gateway information of the router. If the router has an
-/// external gateway, this would be a dict with `network_id`, `enable_snat`,
-/// `external_fixed_ips` and `qos_policy_id`. Otherwise, this would be `null`.
-///
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
-pub struct ExternalGatewayInfo<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default)]
-    pub(crate) enable_snat: Option<bool>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) external_fixed_ips: Option<Vec<ExternalFixedIps<'a>>>,
-
-    #[serde()]
-    #[builder(setter(into))]
-    pub(crate) network_id: Cow<'a, str>,
-}
-
-#[derive(Builder, Debug, Deserialize, Clone, Serialize)]
-#[builder(setter(strip_option))]
 pub struct Routes<'a> {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
@@ -120,7 +88,7 @@ pub struct Router<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) external_gateway_info: Option<ExternalGatewayInfo<'a>>,
+    pub(crate) external_gateway_info: Option<Cow<'a, str>>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
