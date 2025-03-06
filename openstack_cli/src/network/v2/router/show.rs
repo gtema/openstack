@@ -145,8 +145,8 @@ struct ResponseData {
     /// this would be `null`.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    external_gateway_info: Option<Value>,
+    #[structable(optional)]
+    external_gateway_info: Option<String>,
 
     /// The ID of the flavor associated with the router.
     ///

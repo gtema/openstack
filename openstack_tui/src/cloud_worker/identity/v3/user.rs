@@ -58,7 +58,9 @@ impl From<IdentityUserApiRequest> for ApiRequest {
 
 impl From<IdentityUserApplicationCredentialApiRequest> for IdentityUserApiRequest {
     fn from(item: IdentityUserApplicationCredentialApiRequest) -> Self {
-        IdentityUserApiRequest::ApplicationCredential(Box::new(item))
+        IdentityUserApiRequest::ApplicationCredential(Box::new(
+            item,
+        ))
     }
 }
 

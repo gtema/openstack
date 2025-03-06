@@ -83,20 +83,6 @@ struct PathParameters {
     )]
     id: String,
 }
-/// ExternalGatewayInfo Body data
-#[derive(Args, Clone)]
-#[group(required = false, multiple = true)]
-struct ExternalGatewayInfo {
-    #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
-    enable_snat: Option<bool>,
-
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
-    external_fixed_ips: Option<Vec<Value>>,
-
-    #[arg(help_heading = "Body parameters", long, required = false)]
-    network_id: String,
-}
-
 /// Router Body data
 #[derive(Args, Clone)]
 struct Router {
@@ -131,8 +117,8 @@ struct Router {
     /// `enable_snat`, `external_fixed_ips` and `qos_policy_id`. Otherwise,
     /// this would be `null`.
     ///
-    #[command(flatten)]
-    external_gateway_info: Option<ExternalGatewayInfo>,
+    #[arg(help_heading = "Body parameters", long)]
+    external_gateway_info: Option<String>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
@@ -223,8 +209,8 @@ struct ResponseData {
     /// this would be `null`.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    external_gateway_info: Option<Value>,
+    #[structable(optional)]
+    external_gateway_info: Option<String>,
 
     /// The ID of the flavor associated with the router.
     ///
@@ -332,24 +318,7 @@ impl RouterCommand {
         }
 
         if let Some(val) = &args.external_gateway_info {
-            let mut external_gateway_info_builder = set::ExternalGatewayInfoBuilder::default();
-
-            external_gateway_info_builder.network_id(&val.network_id);
-            if let Some(val) = &val.enable_snat {
-                external_gateway_info_builder.enable_snat(*val);
-            }
-            if let Some(val) = &val.external_fixed_ips {
-                let external_fixed_ips_builder: Vec<set::ExternalFixedIps> = val
-                    .iter()
-                    .flat_map(|v| serde_json::from_value::<set::ExternalFixedIps>(v.to_owned()))
-                    .collect::<Vec<set::ExternalFixedIps>>();
-                external_gateway_info_builder.external_fixed_ips(external_fixed_ips_builder);
-            }
-            router_builder.external_gateway_info(
-                external_gateway_info_builder
-                    .build()
-                    .expect("A valid object"),
-            );
+            router_builder.external_gateway_info(val);
         }
 
         if let Some(val) = &args.ha {
