@@ -38,6 +38,7 @@ wher = "wher"
 [type.rust.extend-words]
 ro = "ro"
 ser = "ser"
+typ = "typ"
 
 [type.sh]
 extend-glob = []
