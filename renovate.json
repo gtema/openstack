@@ -5,5 +5,14 @@
   ],
   "schedule": [
     "every weekend"
-  ]
+  ],
+  "separateMinorPatch": true,
+  "patch": {
+    "enabled": false
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch"],
+      "enabled": false
+    },
 }
