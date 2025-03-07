@@ -6,6 +6,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.6](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.5...openstack_cli-v0.9.6) - 2025-03-07
+
+### Added
+
+- Actually start building magnum code (#1039)
+- Fix network external_gateway_info schema (#1038)
+- Initialize magnum service structure (#1033)
+- Add required to compute service responses (#1011)
+- BS volume bootable parameter is a string (#1010)
+- New generated content (#1009)
+- Ensure generated TUI responses are pub (#1006)
+- Drop role assignment schema hardcode (#1005)
+- Return readable error instead of crashing (#1002)
+- Adapt clippy run to include bin targets (#948)
+
+### Fixed
+
+- Use '--file' instead of '-f' in the image functest (#1001)
+
+### Other
+
+- Make cli modules and commands public (#956)
+
 ## [0.9.5](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.4...openstack_cli-v0.9.5) - 2025-02-02
 
 ### Added
