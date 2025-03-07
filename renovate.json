@@ -15,4 +15,5 @@
       "matchUpdateTypes": ["patch"],
       "enabled": false
     },
+  ]
 }
