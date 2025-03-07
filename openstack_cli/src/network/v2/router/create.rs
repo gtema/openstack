@@ -36,6 +36,7 @@ use crate::common::BoolString;
 use openstack_sdk::api::network::v2::router::create;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
+use std::fmt;
 use structable_derive::StructTable;
 
 /// Creates a logical router.
@@ -89,6 +90,9 @@ struct ExternalGatewayInfo {
 
     #[arg(help_heading = "Body parameters", long, required = false)]
     network_id: String,
+
+    #[arg(help_heading = "Body parameters", long)]
+    qos_policy_id: Option<String>,
 }
 
 /// Router Body data
@@ -228,8 +232,8 @@ struct ResponseData {
     /// this would be `null`.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    external_gateway_info: Option<Value>,
+    #[structable(optional)]
+    external_gateway_info: Option<ResponseExternalGatewayInfo>,
 
     /// The ID of the flavor associated with the router.
     ///
@@ -294,6 +298,41 @@ struct ResponseData {
     #[structable(optional)]
     updated_at: Option<String>,
 }
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseExternalGatewayInfo {
+    enable_snat: Option<BoolString>,
+    external_fixed_ips: Option<Value>,
+    network_id: String,
+    qos_policy_id: Option<String>,
+}
+
+impl fmt::Display for ResponseExternalGatewayInfo {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "enable_snat={}",
+                self.enable_snat
+                    .clone()
+                    .map_or(String::new(), |v| v.to_string())
+            ),
+            format!(
+                "external_fixed_ips={}",
+                self.external_fixed_ips
+                    .clone()
+                    .map_or(String::new(), |v| v.to_string())
+            ),
+            format!("network_id={}", self.network_id),
+            format!(
+                "qos_policy_id={}",
+                self.qos_policy_id
+                    .clone()
+                    .map_or(String::new(), |v| v.to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
+}
 
 impl RouterCommand {
     /// Perform command action
@@ -331,15 +370,18 @@ impl RouterCommand {
             let mut external_gateway_info_builder = create::ExternalGatewayInfoBuilder::default();
 
             external_gateway_info_builder.network_id(&val.network_id);
-            if let Some(val) = &val.enable_snat {
-                external_gateway_info_builder.enable_snat(*val);
-            }
             if let Some(val) = &val.external_fixed_ips {
                 let external_fixed_ips_builder: Vec<create::ExternalFixedIps> = val
                     .iter()
                     .flat_map(|v| serde_json::from_value::<create::ExternalFixedIps>(v.to_owned()))
                     .collect::<Vec<create::ExternalFixedIps>>();
                 external_gateway_info_builder.external_fixed_ips(external_fixed_ips_builder);
+            }
+            if let Some(val) = &val.enable_snat {
+                external_gateway_info_builder.enable_snat(*val);
+            }
+            if let Some(val) = &val.qos_policy_id {
+                external_gateway_info_builder.qos_policy_id(Some(val.into()));
             }
             router_builder.external_gateway_info(
                 external_gateway_info_builder
