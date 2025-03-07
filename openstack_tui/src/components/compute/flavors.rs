@@ -15,48 +15,29 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::compute::v2::{ComputeFlavorList, ComputeServerListBuilder},
+    cloud_worker::compute::v2::{ComputeFlavor, ComputeFlavorList, ComputeServerListBuilder},
     cloud_worker::types::*,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Compute Flavors";
 const VIEW_CONFIG_KEY: &str = "compute.flavor";
 
-#[derive(Deserialize, StructTable)]
-pub struct FlavorData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "vCPU")]
-    #[serde(deserialize_with = "as_string")]
-    vcpus: String,
-    #[serde(deserialize_with = "as_string")]
-    ram: String,
-    #[serde(deserialize_with = "as_string")]
-    disk: String,
-    #[serde(rename = "OS-FLV-DISABLED:disabled", deserialize_with = "as_string")]
-    disabled: String,
-}
-
-impl ResourceKey for FlavorData {
+impl ResourceKey for ComputeFlavor {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeFlavors<'a> = TableViewComponentBase<'a, FlavorData, ComputeFlavorList>;
+pub type ComputeFlavors<'a> = TableViewComponentBase<'a, ComputeFlavor, ComputeFlavorList>;
 
 impl ComputeFlavors<'_> {
     /// Normalize filters

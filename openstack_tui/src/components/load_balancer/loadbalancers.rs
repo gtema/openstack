@@ -15,48 +15,63 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerListenerListBuilder,
-        LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList,
-        LoadBalancerPoolListBuilder,
+        LoadBalancerApiRequest, LoadBalancerListenerList, LoadBalancerListenerListBuilder,
+        LoadBalancerListenerListBuilderError, LoadBalancerLoadbalancer,
+        LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList, LoadBalancerPoolList,
+        LoadBalancerPoolListBuilder, LoadBalancerPoolListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "LoadBalancers";
 const VIEW_CONFIG_KEY: &str = "load-balancer.loadbalancer";
 
-#[derive(Deserialize, StructTable)]
-pub struct LoadBalancerData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    operating_status: String,
-    #[structable(title = "Address", optional)]
-    vip_address: Option<String>,
-}
-
-impl ResourceKey for LoadBalancerData {
+impl ResourceKey for LoadBalancerLoadbalancer {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
+impl TryFrom<&LoadBalancerLoadbalancer> for LoadBalancerListenerList {
+    type Error = LoadBalancerListenerListBuilderError;
+    fn try_from(value: &LoadBalancerLoadbalancer) -> Result<Self, Self::Error> {
+        let mut builder = LoadBalancerListenerListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.load_balancer_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.load_balancer_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+impl TryFrom<&LoadBalancerLoadbalancer> for LoadBalancerPoolList {
+    type Error = LoadBalancerPoolListBuilderError;
+    fn try_from(value: &LoadBalancerLoadbalancer) -> Result<Self, Self::Error> {
+        let mut builder = LoadBalancerPoolListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.loadbalancer_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.loadbalancer_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
 pub type LoadBalancers<'a> =
-    TableViewComponentBase<'a, LoadBalancerData, LoadBalancerLoadbalancerList>;
+    TableViewComponentBase<'a, LoadBalancerLoadbalancer, LoadBalancerLoadbalancerList>;
 
 impl Component for LoadBalancers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -120,11 +135,8 @@ impl Component for LoadBalancers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
                             command_tx.send(Action::SetLoadBalancerListenerListFilters(
-                                LoadBalancerListenerListBuilder::default()
-                                    .load_balancer_id(selected_entry.id.clone())
-                                    .load_balancer_name(selected_entry.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare filters")?,
+                                LoadBalancerListenerList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerListeners,
@@ -143,11 +155,8 @@ impl Component for LoadBalancers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
                             command_tx.send(Action::SetLoadBalancerPoolListFilters(
-                                LoadBalancerPoolListBuilder::default()
-                                    .loadbalancer_id(selected_entry.id.clone())
-                                    .loadbalancer_name(selected_entry.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare filters")?,
+                                LoadBalancerPoolList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             return Ok(Some(Action::Mode {
                                 mode: Mode::LoadBalancerPools,

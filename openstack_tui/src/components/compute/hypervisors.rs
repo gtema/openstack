@@ -15,45 +15,32 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
+        ComputeApiRequest, ComputeHypervisor, ComputeHypervisorApiRequest, ComputeHypervisorList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Compute Hypervisors";
 const VIEW_CONFIG_KEY: &str = "compute.hypervisor";
 
-#[derive(Deserialize, StructTable)]
-pub struct HypervisorData {
-    #[structable(title = "IP")]
-    host_ip: String,
-    #[structable(title = "Hostname")]
-    hypervisor_hostname: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "State")]
-    state: String,
-}
-
-impl ResourceKey for HypervisorData {
+impl ResourceKey for ComputeHypervisor {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeHypervisors<'a> = TableViewComponentBase<'a, HypervisorData, ComputeHypervisorList>;
+pub type ComputeHypervisors<'a> =
+    TableViewComponentBase<'a, ComputeHypervisor, ComputeHypervisorList>;
 
 impl Component for ComputeHypervisors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

@@ -15,45 +15,31 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
-        ComputeAggregateApiRequest, ComputeAggregateList, ComputeApiRequest,
+        ComputeAggregate, ComputeAggregateApiRequest, ComputeAggregateList, ComputeApiRequest,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Compute Aggregates";
 const VIEW_CONFIG_KEY: &str = "compute.aggregate";
 
-#[derive(Deserialize, StructTable)]
-pub struct AggregateData {
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "UUID")]
-    uuid: String,
-    #[structable(title = "AZ")]
-    availability_zone: String,
-    #[structable(title = "Updated")]
-    updated_at: String,
-}
-
-impl ResourceKey for AggregateData {
+impl ResourceKey for ComputeAggregate {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeAggregates<'a> = TableViewComponentBase<'a, AggregateData, ComputeAggregateList>;
+pub type ComputeAggregates<'a> = TableViewComponentBase<'a, ComputeAggregate, ComputeAggregateList>;
 
 impl Component for ComputeAggregates<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

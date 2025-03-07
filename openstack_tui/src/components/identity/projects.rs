@@ -15,47 +15,31 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
+        IdentityApiRequest, IdentityProject, IdentityProjectApiRequest, IdentityProjectList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Identity Projects";
 const VIEW_CONFIG_KEY: &str = "identity.project";
 
-#[derive(Deserialize, StructTable)]
-pub struct ProjectData {
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "ID")]
-    id: String,
-    #[structable(title = "Parent ID")]
-    parent_id: String,
-    #[structable(title = "Enabled")]
-    enabled: bool,
-    #[structable(title = "Domain ID")]
-    domain_id: String,
-}
-
-impl ResourceKey for ProjectData {
+impl ResourceKey for IdentityProject {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectData, IdentityProjectList>;
+pub type IdentityProjects<'a> = TableViewComponentBase<'a, IdentityProject, IdentityProjectList>;
 
 impl Component for IdentityProjects<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -104,10 +88,10 @@ impl Component for IdentityProjects<'_> {
             Action::SwitchToProject => {
                 if let Some(project) = self.get_selected() {
                     let new_project = openstack_sdk::types::identity::v3::Project {
-                        id: Some(project.id.clone()),
-                        name: Some(project.name.clone()),
+                        id: project.id.clone(),
+                        name: project.name.clone(),
                         domain: Some(openstack_sdk::types::identity::v3::Domain {
-                            id: Some(project.domain_id.clone()),
+                            id: project.domain_id.clone(),
                             name: None,
                         }),
                     };

@@ -15,46 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerHealthmonitorApiRequest, LoadBalancerHealthmonitorList,
+        LoadBalancerApiRequest, LoadBalancerHealthmonitor, LoadBalancerHealthmonitorApiRequest,
+        LoadBalancerHealthmonitorList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "LB HealthMonitors";
 const VIEW_CONFIG_KEY: &str = "load-balancer.healthmonitor";
 
-#[derive(Deserialize, StructTable)]
-pub struct HealthMonitorData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    operating_status: String,
-    #[structable(title = "Type")]
-    r#type: String,
-}
-
-impl ResourceKey for HealthMonitorData {
+impl ResourceKey for LoadBalancerHealthmonitor {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type LoadBalancerHealthMonitors<'a> =
-    TableViewComponentBase<'a, HealthMonitorData, LoadBalancerHealthmonitorList>;
+    TableViewComponentBase<'a, LoadBalancerHealthmonitor, LoadBalancerHealthmonitorList>;
 
 impl Component for LoadBalancerHealthMonitors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
