@@ -36,6 +36,7 @@ use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::router::find;
 use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
+use std::fmt;
 use structable_derive::StructTable;
 
 /// Shows details for a router.
@@ -145,8 +146,8 @@ struct ResponseData {
     /// this would be `null`.
     ///
     #[serde()]
-    #[structable(optional, pretty)]
-    external_gateway_info: Option<Value>,
+    #[structable(optional)]
+    external_gateway_info: Option<ResponseExternalGatewayInfo>,
 
     /// The ID of the flavor associated with the router.
     ///
@@ -210,6 +211,41 @@ struct ResponseData {
     #[serde()]
     #[structable(optional)]
     updated_at: Option<String>,
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseExternalGatewayInfo {
+    enable_snat: Option<BoolString>,
+    external_fixed_ips: Option<Value>,
+    network_id: String,
+    qos_policy_id: Option<String>,
+}
+
+impl fmt::Display for ResponseExternalGatewayInfo {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "enable_snat={}",
+                self.enable_snat
+                    .clone()
+                    .map_or(String::new(), |v| v.to_string())
+            ),
+            format!(
+                "external_fixed_ips={}",
+                self.external_fixed_ips
+                    .clone()
+                    .map_or(String::new(), |v| v.to_string())
+            ),
+            format!("network_id={}", self.network_id),
+            format!(
+                "qos_policy_id={}",
+                self.qos_policy_id
+                    .clone()
+                    .map_or(String::new(), |v| v.to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 
 impl RouterCommand {

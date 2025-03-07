@@ -42,10 +42,14 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct ExternalFixedIps<'a> {
+    /// IP Address
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) ip_address: Option<Cow<'a, str>>,
 
+    /// The subnet ID from which the IP address is assigned
+    ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) subnet_id: Option<Cow<'a, str>>,
@@ -69,6 +73,10 @@ pub struct ExternalGatewayInfo<'a> {
     #[serde()]
     #[builder(setter(into))]
     pub(crate) network_id: Cow<'a, str>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[builder(default, setter(into))]
+    pub(crate) qos_policy_id: Option<Option<Cow<'a, str>>>,
 }
 
 /// A `router` object.
@@ -120,7 +128,7 @@ pub struct Router<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) external_gateway_info: Option<ExternalGatewayInfo<'a>>,
+    pub(crate) external_gateway_info: Option<Option<ExternalGatewayInfo<'a>>>,
 
     /// The ID of the flavor associated with the router.
     ///
