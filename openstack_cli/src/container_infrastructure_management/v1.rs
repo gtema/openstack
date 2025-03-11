@@ -20,20 +20,39 @@ use openstack_sdk::{types::ServiceType, AsyncOpenStack};
 
 use crate::{Cli, OpenStackCliError};
 
+pub mod certificate;
+pub mod cluster;
+pub mod clustertemplate;
+pub mod federation;
+pub mod mservice;
+pub mod quota;
+pub mod stat;
+pub mod version;
+
 /// Container Infra service (Magnum) operations
 #[derive(Parser)]
-pub struct ComputeCommand {
-    /// Container service resource
+pub struct ContainerInfrastructureCommand {
+    /// Container Infra service resource
     #[command(subcommand)]
-    command: ComputeCommands,
+    command: ContainerInfrastructureCommands,
 }
 
-/// Compute resources commands
+/// Container infrastructure management resources commands
 #[allow(missing_docs)]
 #[derive(Subcommand)]
-pub enum ComputeCommands {}
+pub enum ContainerInfrastructureCommands {
+    Certificate(Box<certificate::CertificateCommand>),
+    Cluster(Box<cluster::ClusterCommand>),
+    Clustertemplate(Box<clustertemplate::ClustertemplateCommand>),
+    Federation(Box<federation::FederationCommand>),
+    #[command(alias = "mservice")]
+    Service(Box<mservice::ServiceCommand>),
+    Quota(Box<quota::QuotaCommand>),
+    Stat(Box<stat::StatCommand>),
+    Version(Box<version::VersionCommand>),
+}
 
-impl ComputeCommand {
+impl ContainerInfrastructureCommand {
     /// Perform command action
     pub async fn take_action(
         &self,
@@ -44,7 +63,31 @@ impl ComputeCommand {
             .discover_service_endpoint(&ServiceType::ContainerInfrastructureManagement)
             .await?;
 
-        //match &self.command {
-        //}
+        match &self.command {
+            ContainerInfrastructureCommands::Certificate(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Cluster(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Clustertemplate(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Federation(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Service(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Quota(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Stat(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+            ContainerInfrastructureCommands::Version(cmd) => {
+                cmd.take_action(parsed_args, session).await
+            }
+        }
     }
 }
