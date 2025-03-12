@@ -29,6 +29,7 @@ use crate::auth;
 use crate::block_storage::v3 as block_storage;
 use crate::catalog;
 use crate::compute::v2 as compute;
+use crate::container_infrastructure_management::v1 as container_infra;
 use crate::dns::v2 as dns;
 use crate::identity::v3 as identity;
 use crate::image::v2 as image;
@@ -174,6 +175,8 @@ pub enum TopLevelCommands {
     BlockStorage(block_storage::BlockStorageCommand),
     Catalog(catalog::CatalogCommand),
     Compute(compute::ComputeCommand),
+    #[command(aliases = ["container-infrastructure-management", "container"])]
+    ContainerInfrastructure(container_infra::ContainerInfrastructureCommand),
     Dns(dns::DnsCommand),
     Identity(identity::IdentityCommand),
     Image(image::ImageCommand),
@@ -210,6 +213,7 @@ impl Cli {
             TopLevelCommands::BlockStorage(args) => args.take_action(self, client).await,
             TopLevelCommands::Catalog(args) => args.take_action(self, client).await,
             TopLevelCommands::Compute(args) => args.take_action(self, client).await,
+            TopLevelCommands::ContainerInfrastructure(args) => args.take_action(self, client).await,
             TopLevelCommands::Dns(args) => args.take_action(self, client).await,
             TopLevelCommands::Identity(args) => args.take_action(self, client).await,
             TopLevelCommands::Image(args) => args.take_action(self, client).await,

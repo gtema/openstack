@@ -12,30 +12,10 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-//! Integration tests of OpenStackCLI
-
-mod api;
-#[cfg(feature = "block_storage")]
-mod block_storage;
-mod catalog;
-#[cfg(feature = "compute")]
-mod compute;
-#[cfg(feature = "container_infra")]
-mod container_infrastructure_management;
-#[cfg(feature = "dns")]
-mod dns;
-#[cfg(feature = "identity")]
-mod identity;
-#[cfg(feature = "image")]
-mod image;
-#[cfg(feature = "load_balancer")]
-mod load_balancer;
-#[cfg(feature = "network")]
-mod network;
-#[cfg(feature = "object_store")]
-mod object_store;
-#[cfg(feature = "placement")]
-mod placement;
+// mod create_autogen;
+mod delete_autogen;
+mod list_autogen;
+mod show_autogen;
 
 use assert_cmd::prelude::*;
 use std::process::Command;
@@ -44,7 +24,12 @@ use std::process::Command;
 fn help() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("osc")?;
 
-    cmd.arg("--help");
+    cmd.args([
+        "container-infrastructure-management",
+        "cluster",
+        "nodegroup",
+        "--help",
+    ]);
     cmd.assert().success();
 
     Ok(())
