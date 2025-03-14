@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.5...openstack_tui-v0.10.0) - 2025-03-14
+
+### Added
+
+- Add required to compute service responses ([#1011](https://github.com/gtema/openstack/pull/1011))
+- BS volume bootable parameter is a string ([#1010](https://github.com/gtema/openstack/pull/1010))
+- New generated content ([#1009](https://github.com/gtema/openstack/pull/1009))
+- Ensure generated TUI responses are pub ([#1006](https://github.com/gtema/openstack/pull/1006))
+- Drop role assignment schema hardcode ([#1005](https://github.com/gtema/openstack/pull/1005))
+- Reconnect when token expired ([#989](https://github.com/gtema/openstack/pull/989))
+- Send response action also for delete events ([#954](https://github.com/gtema/openstack/pull/954))
+- Adapt clippy run to include bin targets ([#948](https://github.com/gtema/openstack/pull/948))
+
+### Fixed
+
+- Discover block-storage endpoint in the TUI ([#992](https://github.com/gtema/openstack/pull/992))
+
+### Other
+
+- *(deps)* Bump strum from 0.26.3 to 0.27.0 ([#965](https://github.com/gtema/openstack/pull/965))
+- Implement user deletion ([#952](https://github.com/gtema/openstack/pull/952))
+
 ## [0.9.5](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.4...openstack_tui-v0.9.5) - 2025-02-02
 
 ### Added
