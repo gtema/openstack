@@ -245,8 +245,11 @@ impl State {
             Ok(mut file) => {
                 let mut contents = vec![];
                 match file.read_to_end(&mut contents) {
-                    Ok(_) => match bincode::deserialize::<ScopeAuths>(&contents) {
-                        Ok(mut auth) => {
+                    Ok(_) => match bincode::serde::decode_from_slice(
+                        &contents,
+                        bincode::config::legacy(),
+                    ) {
+                        Ok::<(ScopeAuths, usize), _>((mut auth, _)) => {
                             auth.filter_invalid_auths();
                             trace!("Cached Auth info: {:?}", auth);
                             Some(auth)
@@ -287,7 +290,7 @@ impl State {
 
         let _ = state.0.insert(scope.clone(), data.clone());
 
-        match bincode::serialize(&state) {
+        match bincode::serde::encode_to_vec(&state, bincode::config::legacy()) {
             Ok(ser_data) => match File::create(fname.as_path()) {
                 Ok(mut file) => {
                     let _ = file.write_all(&ser_data);
