@@ -151,7 +151,7 @@ impl ToTokens for TableStructInputReceiver {
                 },
 
                 true => quote!(
-                    if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
+                    if options.fields.contains(#field_title) || (options.fields.is_empty() && options.wide) {
                         res.push(Vec::from([
                             #field_title.to_string(),
                             #field_value
@@ -167,7 +167,7 @@ impl ToTokens for TableStructInputReceiver {
                     }
                 ),
                 true => quote!(
-                    if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
+                    if options.fields.contains(#field_title) || (options.fields.is_empty() && options.wide)  {
                         row.push(#field_vec_value);
                     }
                 ),
@@ -180,7 +180,7 @@ impl ToTokens for TableStructInputReceiver {
                     }
                 ),
                 true => quote!(
-                    if (options.fields.is_empty() || options.fields.contains(#field_title)) && options.wide  {
+                    if options.fields.contains(#field_title) || (options.fields.is_empty() && options.wide)  {
                         headers.push(#field_title .to_string());
                     }
                 ),
