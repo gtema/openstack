@@ -110,6 +110,56 @@ fn test_single_wide() {
 }
 
 #[test]
+fn test_single_wide_column() {
+    let config = OutputConfig {
+        fields: BTreeSet::from(["Long".into()]),
+        wide: false,
+        pretty: false,
+    };
+    let user = User {
+        id: 1,
+        first_name: "Scooby".into(),
+        last_name: "Doo".into(),
+        extra: "XYZ".into(),
+        complex_data: Some(json!({"a": "b", "c": "d"})),
+        dummy: None,
+    };
+    let data = user.build(&config);
+    assert_eq!(
+        data,
+        (
+            vec!["Attribute".into(), "Value".into()],
+            vec![vec!["Long".into(), "XYZ".into()],]
+        )
+    );
+}
+
+#[test]
+fn test_single_wide_column_wide_mode() {
+    let config = OutputConfig {
+        fields: BTreeSet::from(["Long".into()]),
+        wide: true,
+        pretty: false,
+    };
+    let user = User {
+        id: 1,
+        first_name: "Scooby".into(),
+        last_name: "Doo".into(),
+        extra: "XYZ".into(),
+        complex_data: Some(json!({"a": "b", "c": "d"})),
+        dummy: None,
+    };
+    let data = user.build(&config);
+    assert_eq!(
+        data,
+        (
+            vec!["Attribute".into(), "Value".into()],
+            vec![vec!["Long".into(), "XYZ".into()],]
+        )
+    );
+}
+
+#[test]
 fn test_single_wide_pretty() {
     let config = OutputConfig {
         fields: BTreeSet::new(),
@@ -183,6 +233,78 @@ fn test_list() {
                 vec!["1".into(), "Scooby".into(), "Doo".into(), " ".into()],
                 vec!["2".into(), "John".into(), "Cena".into(), " ".into()],
             ]
+        )
+    );
+}
+
+#[test]
+fn test_list_wide_column() {
+    let config = OutputConfig {
+        fields: BTreeSet::from(["Long".into()]),
+        wide: false,
+        pretty: false,
+    };
+    let users = vec![
+        User {
+            id: 1,
+            first_name: "Scooby".into(),
+            last_name: "Doo".into(),
+            extra: "Foo".into(),
+            complex_data: Some(json!({"a": "b", "c": "d"})),
+            dummy: None,
+        },
+        User {
+            id: 2,
+            first_name: "John".into(),
+            last_name: "Cena".into(),
+            extra: "Bar".into(),
+            complex_data: None,
+            dummy: Some("foo".into()),
+        },
+    ];
+
+    let data = users.build(&config);
+    assert_eq!(
+        data,
+        (
+            vec!["Long".into(),],
+            vec![vec!["Foo".into(),], vec!["Bar".into(),],]
+        )
+    );
+}
+
+#[test]
+fn test_list_wide_column_wide_mode() {
+    let config = OutputConfig {
+        fields: BTreeSet::from(["Long".into()]),
+        wide: true,
+        pretty: false,
+    };
+    let users = vec![
+        User {
+            id: 1,
+            first_name: "Scooby".into(),
+            last_name: "Doo".into(),
+            extra: "Foo".into(),
+            complex_data: Some(json!({"a": "b", "c": "d"})),
+            dummy: None,
+        },
+        User {
+            id: 2,
+            first_name: "John".into(),
+            last_name: "Cena".into(),
+            extra: "Bar".into(),
+            complex_data: None,
+            dummy: Some("foo".into()),
+        },
+    ];
+
+    let data = users.build(&config);
+    assert_eq!(
+        data,
+        (
+            vec!["Long".into(),],
+            vec![vec!["Foo".into(),], vec!["Bar".into(),],]
         )
     );
 }
