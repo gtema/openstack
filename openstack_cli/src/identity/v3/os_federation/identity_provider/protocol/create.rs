@@ -135,7 +135,7 @@ impl ProtocolCommand {
         protocol_builder.mapping_id(&args.mapping_id);
 
         if let Some(val) = &args.remote_id_attribute {
-            protocol_builder.remote_id_attribute(val);
+            protocol_builder.remote_id_attribute(Some(val.into()));
         }
 
         ep_builder.protocol(protocol_builder.build().unwrap());

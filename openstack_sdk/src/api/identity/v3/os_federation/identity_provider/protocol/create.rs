@@ -37,7 +37,7 @@ pub struct Protocol<'a> {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) remote_id_attribute: Option<Cow<'a, str>>,
+    pub(crate) remote_id_attribute: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
