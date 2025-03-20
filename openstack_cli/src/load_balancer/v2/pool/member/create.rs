@@ -175,6 +175,8 @@ struct Member {
     ///
     /// **New in version 2.5**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 

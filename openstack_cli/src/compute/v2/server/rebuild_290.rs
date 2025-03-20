@@ -207,6 +207,8 @@ struct Rebuild {
     ///
     /// **New in version 2.63**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     trusted_image_certificates: Option<Vec<String>>,
 

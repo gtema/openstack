@@ -107,6 +107,8 @@ struct Flavor {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     service_profiles: Option<Vec<String>>,
 

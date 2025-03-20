@@ -156,6 +156,8 @@ struct Port {
     /// connected to the port can send a packet with source address which
     /// matches one of the specified allowed address pairs.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     allowed_address_pairs: Option<Vec<Value>>,
 
@@ -232,6 +234,8 @@ struct Port {
     /// A set of zero or more extra DHCP option pairs. An option pair consists
     /// of an option value and name.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     extra_dhcp_opts: Option<Vec<Value>>,
 
@@ -248,6 +252,8 @@ struct Port {
     /// - If you specify only an IP address, OpenStack Networking tries to
     ///   allocate the IP address if the address is a valid IP for any of the
     ///   subnets on the specified network.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     fixed_ips: Option<Vec<Value>>,
@@ -296,6 +302,8 @@ struct Port {
     qos_policy_id: Option<String>,
 
     /// The IDs of security groups applied to the port.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     security_groups: Option<Vec<String>>,

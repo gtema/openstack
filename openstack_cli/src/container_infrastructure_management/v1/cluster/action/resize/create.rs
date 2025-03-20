@@ -56,6 +56,8 @@ pub struct ResizeCommand {
     #[arg(help_heading = "Body parameters", long)]
     nodegroup: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     nodes_to_remove: Option<Vec<String>>,
 

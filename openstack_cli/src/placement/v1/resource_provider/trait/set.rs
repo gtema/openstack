@@ -55,6 +55,8 @@ pub struct TraitCommand {
 
     /// A list of traits.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     traits: Vec<String>,
 }

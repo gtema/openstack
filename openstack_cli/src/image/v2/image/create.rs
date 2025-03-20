@@ -132,6 +132,8 @@ pub struct ImageCommand {
 
     /// A set of URLs to access the image file kept in external store
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     locations: Option<Vec<Value>>,
 
@@ -168,6 +170,8 @@ pub struct ImageCommand {
 
     /// List of tags for this image. Each tag is a string of at most 255 chars.
     /// The maximum number of tags allowed on an image is set by the operator.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,

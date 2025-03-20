@@ -84,6 +84,8 @@ struct Network {
 
     /// The availability zone candidate for the network.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     availability_zone_hints: Option<Vec<String>>,
 
@@ -145,6 +147,8 @@ struct Network {
     router_external: Option<bool>,
 
     /// A list of provider `segment` objects.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     segments: Option<Vec<Value>>,

@@ -105,6 +105,8 @@ struct Loadbalancer {
     ///
     /// **New in version 2.5**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -113,6 +115,8 @@ struct Loadbalancer {
     #[arg(help_heading = "Body parameters", long)]
     vip_qos_policy_id: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     vip_sg_ids: Option<Vec<String>>,
 }

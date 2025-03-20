@@ -90,6 +90,8 @@ struct Group {
     /// multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     volume_types: Vec<String>,
 }

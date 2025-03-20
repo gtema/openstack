@@ -90,6 +90,8 @@ struct IdentityProvider {
 
     /// List of the unique identity provider's remote IDs
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     remote_ids: Option<Vec<String>>,
 }

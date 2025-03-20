@@ -138,6 +138,8 @@ struct Subnetpool {
     /// prefix must be unique among all subnet prefixes in all subnet pools
     /// that are associated with the address scope.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     prefixes: Option<Vec<String>>,
 }

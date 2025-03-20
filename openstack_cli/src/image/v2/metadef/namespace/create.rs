@@ -67,6 +67,8 @@ pub struct NamespaceCommand {
     #[arg(help_heading = "Body parameters", long)]
     namespace: String,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     objects: Option<Vec<Value>>,
 
@@ -83,9 +85,13 @@ pub struct NamespaceCommand {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     protected: Option<bool>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     resource_type_associations: Option<Vec<Value>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 

@@ -89,6 +89,8 @@ struct Subnet {
     /// automatically allocates pools for covering all IP addresses in the
     /// CIDR, excluding the address reserved for the subnet gateway by default.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     allocation_pools: Option<Vec<Value>>,
 
@@ -100,6 +102,8 @@ struct Subnet {
 
     /// List of dns name servers associated with the subnet. Default is an
     /// empty list.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     dns_nameservers: Option<Vec<String>>,
@@ -127,6 +131,8 @@ struct Subnet {
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters. Default value is an empty list.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     host_routes: Option<Vec<Value>>,
 
@@ -142,6 +148,8 @@ struct Subnet {
     segment_id: Option<String>,
 
     /// The service types associated with the subnet.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     service_types: Option<Vec<String>>,

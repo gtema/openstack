@@ -68,6 +68,8 @@ pub struct RecordsetCommand {
     /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
     /// hostname.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     records: Option<Vec<String>>,
 

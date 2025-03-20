@@ -82,6 +82,8 @@ struct InterfaceAttachment {
     /// Fixed IP addresses. If you request a specific fixed IP address without
     /// a `net_id`, the request returns a `Bad Request (400)` response code.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     fixed_ips: Option<Vec<String>>,
 

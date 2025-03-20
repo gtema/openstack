@@ -59,6 +59,8 @@ pub struct PropertyCommand {
     #[arg(help_heading = "Body parameters", long)]
     description: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     _enum: Option<Vec<String>>,
 
@@ -86,6 +88,8 @@ pub struct PropertyCommand {
     #[arg(help_heading = "Body parameters", long)]
     name: String,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     operators: Option<Vec<String>>,
 
@@ -95,6 +99,8 @@ pub struct PropertyCommand {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     readonly: Option<bool>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     required: Option<Vec<String>>,
 

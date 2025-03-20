@@ -54,6 +54,8 @@ pub struct TagCommand {
 
     /// A list of tags. The maximum count of tags in this list is 50.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Vec<String>,
 }

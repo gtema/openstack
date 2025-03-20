@@ -105,12 +105,16 @@ struct Listener {
     ///
     /// **New in version 2.12**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     allowed_cidrs: Option<Vec<String>>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
     /// **New in version 2.20**
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     alpn_protocols: Option<Vec<String>>,
@@ -219,12 +223,16 @@ struct Listener {
     /// “certificate” containing the certificates and keys for
     /// `TERMINATED_HTTPS` listeners.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     sni_container_refs: Option<Vec<String>>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
@@ -270,6 +278,8 @@ struct Listener {
     /// TLSv1.1, TLSv1.2, TLSv1.3
     ///
     /// **New in version 2.17**
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tls_versions: Option<Vec<String>>,
