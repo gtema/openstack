@@ -60,9 +60,13 @@ pub struct FederationCommand {
     #[arg(help_heading = "Body parameters", long)]
     hostcluster_id: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     links: Option<Vec<Value>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     member_ids: Option<Vec<String>>,
 

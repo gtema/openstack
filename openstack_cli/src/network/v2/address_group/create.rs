@@ -71,6 +71,8 @@ struct PathParameters {}
 struct AddressGroup {
     /// A list of IP addresses.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     addresses: Option<Vec<String>>,
 

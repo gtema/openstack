@@ -90,6 +90,8 @@ struct EndpointGroup {
     /// List of endpoints of the same type, for the endpoint group. The values
     /// will depend on type.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     endpoints: Option<Vec<String>>,
 

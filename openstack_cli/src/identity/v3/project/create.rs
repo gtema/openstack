@@ -142,6 +142,8 @@ struct Project {
     /// A list of simple strings assigned to a project. Tags can be used to
     /// classify projects into groups.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 }

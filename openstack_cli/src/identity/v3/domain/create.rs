@@ -111,6 +111,8 @@ struct Domain {
     #[command(flatten)]
     options: Option<Options>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 }

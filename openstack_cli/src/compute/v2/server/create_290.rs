@@ -135,6 +135,8 @@ struct ServerNetworks {
     #[arg(action=clap::ArgAction::SetTrue, help_heading = "Body parameters", long, required=false)]
     auto_networks: bool,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     networks: Option<Vec<Value>>,
 
@@ -174,6 +176,8 @@ struct Server {
     #[arg(help_heading = "Body parameters", long)]
     availability_zone: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     block_device_mapping: Option<Vec<Value>>,
 
@@ -202,6 +206,8 @@ struct Server {
     ///
     /// A bug has caused the `tag` attribute to no longer be accepted starting
     /// with version 2.33. It has been restored in version 2.42.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     block_device_mapping_v2: Option<Vec<Value>>,
@@ -375,6 +381,8 @@ struct Server {
     /// server in the `default` security group. Requested security groups are
     /// not applied to pre-existing ports.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     security_groups: Option<Vec<String>>,
 
@@ -390,6 +398,8 @@ struct Server {
     ///
     /// **New in version 2.52**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -400,6 +410,8 @@ struct Server {
     /// volume-backed instances.
     ///
     /// **New in version 2.63**
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     trusted_image_certificates: Option<Vec<String>>,
@@ -440,12 +452,16 @@ struct OsSchedulerHints {
     /// `DifferentCellFilter` is available on cloud side that is cell v1
     /// environment.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     different_cell: Option<Vec<String>>,
 
     /// A list of server UUIDs or a server UUID. Schedule the server on a
     /// different host from a set of servers. It is available when
     /// `DifferentHostFilter` is available on cloud side.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     different_host: Option<Vec<String>>,
@@ -475,6 +491,8 @@ struct OsSchedulerHints {
     /// A list of server UUIDs or a server UUID. Schedule the server on the
     /// same host as another server in a set of servers. It is available when
     /// `SameHostFilter` is available on cloud side.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     same_host: Option<Vec<String>>,

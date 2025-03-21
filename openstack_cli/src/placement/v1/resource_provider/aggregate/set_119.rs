@@ -52,6 +52,8 @@ pub struct AggregateCommand {
     #[command(flatten)]
     path: PathParameters,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     aggregates: Vec<String>,
 

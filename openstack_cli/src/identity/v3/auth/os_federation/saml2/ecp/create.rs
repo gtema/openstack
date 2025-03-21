@@ -191,6 +191,8 @@ struct Identity {
     /// The authentication method. For password authentication, specify
     /// `password`.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, required=false)]
     methods: Vec<Methods>,
 

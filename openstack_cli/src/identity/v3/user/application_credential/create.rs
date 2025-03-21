@@ -95,6 +95,8 @@ struct UserInput {
 struct ApplicationCredential {
     /// A list of `access_rules` objects
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     access_rules: Option<Vec<Value>>,
 
@@ -130,6 +132,8 @@ struct ApplicationCredential {
     /// may only contain roles that the user has assigned on the project. If
     /// not provided, the roles assigned to the application credential will be
     /// the same as the roles in the current token.
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     roles: Option<Vec<Value>>,

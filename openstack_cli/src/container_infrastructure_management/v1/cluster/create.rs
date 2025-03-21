@@ -159,9 +159,13 @@ pub struct ClusterCommand {
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, String>)]
     labels_skipped: Option<Vec<(String, String)>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     links: Option<Vec<Value>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     master_addresses: Option<Vec<String>>,
 
@@ -197,6 +201,8 @@ pub struct ClusterCommand {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     node_addresses: Option<Vec<String>>,
 

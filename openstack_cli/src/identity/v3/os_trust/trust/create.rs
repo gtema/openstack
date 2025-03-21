@@ -138,6 +138,8 @@ struct Trust {
     #[arg(help_heading = "Body parameters", long)]
     remaining_uses: Option<Option<i32>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     roles: Option<Vec<Value>>,
 

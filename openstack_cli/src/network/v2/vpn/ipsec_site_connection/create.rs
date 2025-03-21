@@ -149,6 +149,8 @@ struct IpsecSiteConnection {
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
     /// net_address > / < prefix > .
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     peer_cidrs: Option<Vec<String>>,
 

@@ -128,7 +128,7 @@ pub struct Options {
     #[builder(default)]
     pub multi_factor_auth_enabled: Option<bool>,
 
-    #[builder(default, setter(into))]
+    #[builder(default, private, setter(name = "_multi_factor_auth_rules"))]
     pub multi_factor_auth_rules: Option<Vec<Vec<String>>>,
 }
 
@@ -152,12 +152,7 @@ impl TryFrom<&Options> for openstack_sdk::api::identity::v3::user::set::OptionsB
             ep_builder.ignore_user_inactivity(*val);
         }
         if let Some(val) = &value.multi_factor_auth_rules {
-            ep_builder.multi_factor_auth_rules(
-                val.iter()
-                    .cloned()
-                    .map(|x1| x1.into_iter().map(Into::into).collect::<Vec<_>>())
-                    .collect::<Vec<_>>(),
-            );
+            ep_builder.multi_factor_auth_rules(val.iter().cloned());
         }
         if let Some(val) = &value.multi_factor_auth_enabled {
             ep_builder.multi_factor_auth_enabled(*val);

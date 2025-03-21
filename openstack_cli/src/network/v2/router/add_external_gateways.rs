@@ -77,6 +77,8 @@ struct PathParameters {
 struct Router {
     /// The list of external gateways of the router.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     external_gateways: Option<Vec<Value>>,
 }

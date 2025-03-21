@@ -149,6 +149,8 @@ struct Loadbalancer {
     ///
     /// **New in version 2.26**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     additional_vips: Option<Vec<Value>>,
 
@@ -175,6 +177,8 @@ struct Loadbalancer {
 
     /// The associated listener IDs, if any.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     listeners: Option<Vec<Value>>,
 
@@ -183,6 +187,8 @@ struct Loadbalancer {
     #[arg(help_heading = "Body parameters", long)]
     name: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     pools: Option<Vec<Value>>,
 
@@ -196,6 +202,8 @@ struct Loadbalancer {
     #[arg(help_heading = "Body parameters", long)]
     provider: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -228,6 +236,8 @@ struct Loadbalancer {
     /// Balancer.
     ///
     /// **New in version 2.29**
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     vip_sg_ids: Option<Vec<String>>,

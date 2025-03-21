@@ -102,8 +102,10 @@ struct Options {
     #[arg(action=clap::ArgAction::Set, help_heading = "Body parameters", long)]
     multi_factor_auth_enabled: Option<bool>,
 
-    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
-    multi_factor_auth_rules: Option<Vec<String>>,
+    /// Parameter is an array, may be provided multiple times.
+    ///
+    #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="[String] as JSON", value_parser=parse_json)]
+    multi_factor_auth_rules: Option<Vec<Vec<String>>>,
 }
 
 /// User Body data
@@ -145,6 +147,8 @@ struct User {
     /// ]
     ///
     /// ```
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     federated: Option<Vec<Value>>,
@@ -337,12 +341,7 @@ impl UserCommand {
                 options_builder.ignore_user_inactivity(*val);
             }
             if let Some(val) = &val.multi_factor_auth_rules {
-                options_builder.multi_factor_auth_rules(
-                    val.iter()
-                        .cloned()
-                        .map(|x| Vec::from([x.split(',').collect()]))
-                        .collect::<Vec<_>>(),
-                );
+                options_builder.multi_factor_auth_rules(val.iter());
             }
             if let Some(val) = &val.multi_factor_auth_enabled {
                 options_builder.multi_factor_auth_enabled(*val);

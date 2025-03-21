@@ -71,6 +71,8 @@ pub struct ZoneCommand {
     /// Mandatory for secondary zones. The servers to slave from to get DNS
     /// information
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     masters: Option<Vec<String>>,
 

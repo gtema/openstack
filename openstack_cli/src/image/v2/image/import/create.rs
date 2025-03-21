@@ -139,6 +139,8 @@ pub struct ImportCommand {
     /// If present contains the list of store id to import the image binary
     /// data to.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     stores: Option<Vec<String>>,
 }

@@ -89,8 +89,23 @@ pub struct Options<'a> {
     pub(crate) multi_factor_auth_enabled: Option<bool>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
+    #[builder(default, private, setter(name = "_multi_factor_auth_rules"))]
     pub(crate) multi_factor_auth_rules: Option<Vec<Vec<Cow<'a, str>>>>,
+}
+
+impl<'a> OptionsBuilder<'a> {
+    pub fn multi_factor_auth_rules<I1, I2, V>(&mut self, iter: I1) -> &mut Self
+    where
+        I1: Iterator<Item = I2>,
+        I2: IntoIterator<Item = V>,
+        V: Into<Cow<'a, str>>,
+    {
+        self.multi_factor_auth_rules
+            .get_or_insert(None)
+            .get_or_insert_with(Vec::new)
+            .extend(iter.map(|x| Vec::from_iter(x.into_iter().map(Into::into))));
+        self
+    }
 }
 
 /// A `user` object

@@ -128,6 +128,8 @@ struct Pool {
     ///
     /// **New in version 2.24**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     alpn_protocols: Option<Vec<String>>,
 
@@ -176,6 +178,8 @@ struct Pool {
     ///
     /// **New in version 2.5**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -210,6 +214,8 @@ struct Pool {
     /// TLSv1.1, TLSv1.2, TLSv1.3
     ///
     /// **New in version 2.17**
+    ///
+    /// Parameter is an array, may be provided multiple times.
     ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tls_versions: Option<Vec<String>>,

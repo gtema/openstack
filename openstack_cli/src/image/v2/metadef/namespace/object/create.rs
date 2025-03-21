@@ -59,6 +59,8 @@ pub struct ObjectCommand {
     #[arg(help_heading = "Body parameters", long, value_name="key=value", value_parser=parse_key_val::<String, Value>)]
     properties: Option<Vec<(String, Value)>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     required: Option<Vec<String>>,
 }

@@ -148,9 +148,13 @@ struct Listener {
     ///
     /// **New in version 2.12**
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     allowed_cidrs: Option<Vec<String>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     alpn_protocols: Option<Vec<String>>,
 
@@ -253,6 +257,8 @@ struct Listener {
 
     /// A list of L7 policy objects.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long, value_name="JSON", value_parser=parse_json)]
     l7policies: Option<Vec<Value>>,
 
@@ -289,9 +295,13 @@ struct Listener {
     /// “certificate” containing the certificates and keys for
     /// `TERMINATED_HTTPS` listeners.
     ///
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     sni_container_refs: Option<Vec<String>>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tags: Option<Vec<String>>,
 
@@ -330,6 +340,8 @@ struct Listener {
     #[arg(help_heading = "Body parameters", long)]
     tls_ciphers: Option<String>,
 
+    /// Parameter is an array, may be provided multiple times.
+    ///
     #[arg(action=clap::ArgAction::Append, help_heading = "Body parameters", long)]
     tls_versions: Option<Vec<String>>,
 }
