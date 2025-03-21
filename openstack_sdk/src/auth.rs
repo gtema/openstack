@@ -58,6 +58,9 @@ pub enum AuthError {
         #[from]
         source: AuthTokenError,
     },
+
+    #[error("token missing in the response")]
+    AuthTokenNotInResponse,
 }
 
 // Explicitly implement From to easier propagate nested errors
