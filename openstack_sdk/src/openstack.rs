@@ -39,7 +39,7 @@ use crate::api::query::RawQuery;
 use crate::auth::{
     self, authtoken,
     authtoken::{AuthTokenError, AuthType},
-    Auth, AuthState,
+    Auth, AuthError, AuthState,
 };
 use crate::config::{get_config_identity_hash, ConfigFile};
 use crate::state;
@@ -336,7 +336,7 @@ impl OpenStack {
             let token = rsp
                 .headers()
                 .get("x-subject-token")
-                .expect("x-subject-token present")
+                .ok_or(AuthError::AuthTokenNotInResponse)?
                 .to_str()
                 .expect("x-subject-token is a string");
 
