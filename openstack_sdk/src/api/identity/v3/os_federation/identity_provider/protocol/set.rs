@@ -31,13 +31,13 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
 pub struct Protocol<'a> {
-    #[serde(skip_serializing_if = "Option::is_none")]
-    #[builder(default, setter(into))]
-    pub(crate) mapping_id: Option<Cow<'a, str>>,
+    #[serde()]
+    #[builder(setter(into))]
+    pub(crate) mapping_id: Cow<'a, str>,
 
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) remote_id_attribute: Option<Cow<'a, str>>,
+    pub(crate) remote_id_attribute: Option<Option<Cow<'a, str>>>,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -155,7 +155,12 @@ mod tests {
     fn test_service_type() {
         assert_eq!(
             Request::builder()
-                .protocol(ProtocolBuilder::default().build().unwrap())
+                .protocol(
+                    ProtocolBuilder::default()
+                        .mapping_id("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .service_type(),
@@ -167,7 +172,12 @@ mod tests {
     fn test_response_key() {
         assert_eq!(
             Request::builder()
-                .protocol(ProtocolBuilder::default().build().unwrap())
+                .protocol(
+                    ProtocolBuilder::default()
+                        .mapping_id("foo")
+                        .build()
+                        .unwrap()
+                )
                 .build()
                 .unwrap()
                 .response_key()
@@ -195,7 +205,12 @@ mod tests {
         let endpoint = Request::builder()
             .idp_id("idp_id")
             .id("id")
-            .protocol(ProtocolBuilder::default().build().unwrap())
+            .protocol(
+                ProtocolBuilder::default()
+                    .mapping_id("foo")
+                    .build()
+                    .unwrap(),
+            )
             .build()
             .unwrap();
         let _: serde_json::Value = endpoint.query(&client).unwrap();
@@ -223,7 +238,12 @@ mod tests {
         let endpoint = Request::builder()
             .idp_id("idp_id")
             .id("id")
-            .protocol(ProtocolBuilder::default().build().unwrap())
+            .protocol(
+                ProtocolBuilder::default()
+                    .mapping_id("foo")
+                    .build()
+                    .unwrap(),
+            )
             .headers(
                 [(
                     Some(HeaderName::from_static("foo")),
