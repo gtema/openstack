@@ -15,47 +15,61 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::dns::v2::{
-        DnsApiRequest, DnsRecordsetListBuilder, DnsZoneApiRequest, DnsZoneDelete, DnsZoneList,
+        DnsApiRequest, DnsRecordsetList, DnsRecordsetListBuilder, DnsRecordsetListBuilderError,
+        DnsZone, DnsZoneApiRequest, DnsZoneDelete, DnsZoneDeleteBuilder, DnsZoneDeleteBuilderError,
+        DnsZoneList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "DNS Zones";
 const VIEW_CONFIG_KEY: &str = "dns.zone";
 
-#[derive(Deserialize, StructTable)]
-pub struct ZoneData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[serde(rename = "Status", default)]
-    status: String,
-    #[structable(title = "Created")]
-    created_at: String,
-    #[structable(title = "Updated")]
-    updated_at: String,
-}
-
-impl ResourceKey for ZoneData {
+impl ResourceKey for DnsZone {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type DnsZones<'a> = TableViewComponentBase<'a, ZoneData, DnsZoneList>;
+impl TryFrom<&DnsZone> for DnsZoneDelete {
+    type Error = DnsZoneDeleteBuilderError;
+    fn try_from(value: &DnsZone) -> Result<Self, Self::Error> {
+        let mut builder = DnsZoneDeleteBuilder::default();
+        if let Some(val) = &value.id {
+            builder.id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+impl TryFrom<&DnsZone> for DnsRecordsetList {
+    type Error = DnsRecordsetListBuilderError;
+    fn try_from(value: &DnsZone) -> Result<Self, Self::Error> {
+        let mut builder = DnsRecordsetListBuilder::default();
+        if let Some(val) = &value.id {
+            builder.zone_id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.zone_name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+pub type DnsZones<'a> = TableViewComponentBase<'a, DnsZone, DnsZoneList>;
 
 impl Component for DnsZones<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -116,11 +130,8 @@ impl Component for DnsZones<'_> {
                         // and have a selected entry
                         if let Some(selected_entry) = self.get_selected() {
                             command_tx.send(Action::SetDnsRecordsetListFilters(
-                                DnsRecordsetListBuilder::default()
-                                    .zone_id(selected_entry.id.clone())
-                                    .zone_name(selected_entry.name.clone())
-                                    .build()
-                                    .wrap_err("cannot prepare zone recordsets listing request")?,
+                                DnsRecordsetList::try_from(selected_entry)
+                                    .wrap_err("error preparing OpenStack request")?,
                             ))?;
                             // and switch mode
                             command_tx.send(Action::Mode {
@@ -140,10 +151,10 @@ impl Component for DnsZones<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set filters
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                DnsZoneApiRequest::Delete(Box::new(DnsZoneDelete {
-                                    id: selected_entry.id.clone(),
-                                    name: Some(selected_entry.name.clone()),
-                                })),
+                                DnsZoneApiRequest::Delete(Box::new(
+                                    DnsZoneDelete::try_from(selected_entry)
+                                        .wrap_err("error preparing OpenStack request")?,
+                                )),
                             )))?;
                         }
                     }

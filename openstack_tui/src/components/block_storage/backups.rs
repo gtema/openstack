@@ -15,54 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageBackupApiRequest, BlockStorageBackupList,
+        BlockStorageApiRequest, BlockStorageBackup, BlockStorageBackupApiRequest,
+        BlockStorageBackupList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Backups";
 const VIEW_CONFIG_KEY: &str = "block_storage.backup";
 
-#[derive(Deserialize, StructTable)]
-pub struct BackupData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name", optional)]
-    #[serde(default)]
-    name: Option<String>,
-    #[structable(title = "AZ", optional)]
-    #[serde(default)]
-    availability_zone: Option<String>,
-    #[structable(title = "Size")]
-    #[serde(default)]
-    size: u32,
-    #[structable(title = "Status")]
-    #[serde(default)]
-    status: String,
-    #[structable(title = "Created")]
-    #[serde(default)]
-    created_at: String,
-}
-
-impl ResourceKey for BackupData {
+impl ResourceKey for BlockStorageBackup {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type BlockStorageBackups<'a> = TableViewComponentBase<'a, BackupData, BlockStorageBackupList>;
+pub type BlockStorageBackups<'a> =
+    TableViewComponentBase<'a, BlockStorageBackup, BlockStorageBackupList>;
 
 impl Component for BlockStorageBackups<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

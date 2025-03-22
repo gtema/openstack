@@ -15,48 +15,33 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerListenerApiRequest, LoadBalancerListenerList,
+        LoadBalancerApiRequest, LoadBalancerListener, LoadBalancerListenerApiRequest,
+        LoadBalancerListenerList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "LB Listeners";
 const VIEW_CONFIG_KEY: &str = "load-balancer.listener";
 
-#[derive(Deserialize, StructTable)]
-pub struct ListenerData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    operating_status: String,
-    #[structable(title = "Protocol")]
-    protocol: String,
-    #[structable(title = "Port")]
-    protocol_port: usize,
-}
-
-impl ResourceKey for ListenerData {
+impl ResourceKey for LoadBalancerListener {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type LoadBalancerListeners<'a> =
-    TableViewComponentBase<'a, ListenerData, LoadBalancerListenerList>;
+    TableViewComponentBase<'a, LoadBalancerListener, LoadBalancerListenerList>;
 
 impl Component for LoadBalancerListeners<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

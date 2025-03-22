@@ -13,55 +13,48 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::KeyEvent;
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
     cloud_worker::image::v2::{
-        ImageApiRequest, ImageImageApiRequest, ImageImageDelete, ImageImageList,
+        ImageApiRequest, ImageImage, ImageImageApiRequest, ImageImageDelete,
+        ImageImageDeleteBuilder, ImageImageDeleteBuilderError, ImageImageList,
     },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Images";
 const VIEW_CONFIG_KEY: &str = "image.image";
 
-#[derive(Deserialize, StructTable)]
-pub struct ImageData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Distro")]
-    #[serde(rename = "os_distro", default)]
-    distro: String,
-    #[structable(title = "Version")]
-    #[serde(rename = "os_version", default)]
-    version: String,
-    #[structable(title = "Arch")]
-    #[serde(rename = "architecture", default)]
-    arch: String,
-    #[structable(title = "Visibility")]
-    #[serde(rename = "visibility", default)]
-    visibility: String,
-}
-
-impl ResourceKey for ImageData {
+impl ResourceKey for ImageImage {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type Images<'a> = TableViewComponentBase<'a, ImageData, ImageImageList>;
+impl TryFrom<&ImageImage> for ImageImageDelete {
+    type Error = ImageImageDeleteBuilderError;
+    fn try_from(value: &ImageImage) -> Result<Self, Self::Error> {
+        let mut builder = ImageImageDeleteBuilder::default();
+        if let Some(val) = &value.id {
+            builder.id(val.clone());
+        }
+        if let Some(val) = &value.name {
+            builder.name(val.clone());
+        }
+        builder.build()
+    }
+}
+
+pub type Images<'a> = TableViewComponentBase<'a, ImageImage, ImageImageList>;
 
 impl Component for Images<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
@@ -123,10 +116,10 @@ impl Component for Images<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesListFilters
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                ImageImageApiRequest::Delete(Box::new(ImageImageDelete {
-                                    id: selected_entry.id.clone(),
-                                    name: Some(selected_entry.name.clone()),
-                                })),
+                                ImageImageApiRequest::Delete(Box::new(
+                                    ImageImageDelete::try_from(selected_entry)
+                                        .wrap_err("error preparing OpenStack request")?,
+                                )),
                             )))?;
                         }
                     }

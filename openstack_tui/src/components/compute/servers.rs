@@ -15,17 +15,17 @@
 use crossterm::event::KeyEvent;
 use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
-use serde::Deserialize;
 use serde_json::json;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeServerApiRequest, ComputeServerDelete,
-        ComputeServerGetConsoleOutputBuilder, ComputeServerInstanceActionListBuilder,
+        ComputeApiRequest, ComputeServer, ComputeServerApiRequest, ComputeServerDelete,
+        ComputeServerDeleteBuilder, ComputeServerDeleteBuilderError,
+        ComputeServerGetConsoleOutputBuilder, ComputeServerInstanceActionList,
+        ComputeServerInstanceActionListBuilder, ComputeServerInstanceActionListBuilderError,
         ComputeServerList,
     },
     cloud_worker::types::ApiRequest,
@@ -33,33 +33,19 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "Compute Servers";
 const VIEW_CONFIG_KEY: &str = "compute.server";
 
-#[derive(Deserialize, StructTable)]
-pub struct ServerData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    created: String,
-    #[structable(title = "Updated")]
-    updated: String,
-}
-
-impl ResourceKey for ServerData {
+impl ResourceKey for ComputeServer {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerData, ComputeServerList>;
+pub type ComputeServers<'a> = TableViewComponentBase<'a, ComputeServer, ComputeServerList>;
 
 impl ComputeServers<'_> {
     /// Normalize filters
@@ -77,6 +63,26 @@ impl ComputeServers<'_> {
     fn normalized_filters(&self) -> ComputeServerList {
         self.normalize_filters(self.get_filters().clone())
             .to_owned()
+    }
+}
+
+impl TryFrom<&ComputeServer> for ComputeServerDelete {
+    type Error = ComputeServerDeleteBuilderError;
+    fn try_from(value: &ComputeServer) -> Result<Self, Self::Error> {
+        let mut builder = ComputeServerDeleteBuilder::default();
+        builder.id(value.id.clone());
+        builder.name(value.name.clone());
+        builder.build()
+    }
+}
+
+impl TryFrom<&ComputeServer> for ComputeServerInstanceActionList {
+    type Error = ComputeServerInstanceActionListBuilderError;
+    fn try_from(value: &ComputeServer) -> Result<Self, Self::Error> {
+        let mut builder = ComputeServerInstanceActionListBuilder::default();
+        builder.server_id(value.id.clone());
+        builder.server_name(value.name.clone());
+        builder.build()
     }
 }
 
@@ -184,11 +190,8 @@ impl Component for ComputeServers<'_> {
                             // send action to set SecurityGroupRulesList
                             command_tx.send(Action::SetComputeServerInstanceActionListFilters(
                                 Box::new(
-                                    ComputeServerInstanceActionListBuilder::default()
-                                        .server_id(selected_entry.id.clone())
-                                        .server_name(selected_entry.name.clone())
-                                        .build()
-                                        .wrap_err("cannot prepare request")?,
+                                    ComputeServerInstanceActionList::try_from(selected_entry)
+                                        .wrap_err("error preparing OpenStack request")?,
                                 ),
                             ))?;
                             // and switch mode
@@ -209,10 +212,10 @@ impl Component for ComputeServers<'_> {
                         if let Some(selected_entry) = self.get_selected() {
                             // send action to set SecurityGroupRulesList
                             command_tx.send(Action::Confirm(ApiRequest::from(
-                                ComputeServerApiRequest::Delete(Box::new(ComputeServerDelete {
-                                    id: selected_entry.id.clone(),
-                                    name: Some(selected_entry.name.clone()),
-                                })),
+                                ComputeServerApiRequest::Delete(Box::new(
+                                    ComputeServerDelete::try_from(selected_entry)
+                                        .wrap_err("error preparing OpenStack request")?,
+                                )),
                             )))?;
                         }
                     }

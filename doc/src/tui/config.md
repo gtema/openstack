@@ -21,7 +21,4 @@ with different value.
 Every resource view can be configured in a separate section of the config.
 Resource key in a form <SERVICE>.<RESOURCE>[/<SUBRESOURCE>] as used by the
 codegenerator is a name of a view. `fields` is an array of field names to be
-populated.
-
-NOTE: This a work in progress to pre-generate resource structures and column
-names.
+populated. All column names are forcibly converted to the UPPER CASE.

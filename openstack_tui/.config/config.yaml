@@ -313,60 +313,86 @@ mode_aliases:
 views:
   # Block Storage
   block_storage.backup:
-    fields: [Id, Name, AZ, Size, Status, Created]
+    fields: [ID, NAME, AZ, SIZE, STATUS, CREATED_AT]
+    wide: true
   block_storage.snapshots:
-    fields: [Id, Name, Status, Created]
+    fields: [ID, NAME, STATUS, CREATED_AT]
+    wide: true
   block_storage.volume:
-    fields: [Id, Name, AZ, Size, Status, Updated]
+    fields: [ID, NAME, AZ, SIZE, STATUS, UPDATED_AT]
+    wide: true
   # Compute
   compute.aggregate:
-    fields: [Name, UUID, AZ, Updated]
+    fields: [NAME, UUID, AZ, UPDATED_AT]
+    wide: true
   compute.flavor:
-    fields: [Id, Name, vCPU, ram, disk, disabled]
+    fields: [ID, NAME, VCPUS, RAM, DISK]
+    wide: true
   compute.hypervisor:
-    fields: [IP, Hostname,Status, State]
+    fields: [IP, HOSTNAME, STATUS, STATE]
+    wide: true
   compute.server/instance_action/event:
-    fields: [Event, Result, Started, Finished, Host]
+    fields: [EVENT, RESULT, STARTED, FINISHED, HOST]
+    wide: true
   compute.server/instance_action:
-    fields: [Id, Action, Message, Started, User, "Server ID"]
+    fields: [ID, ACTION, MESSAGE, STARTED, USER, "SERVER ID"]
+    wide: true
   compute.server:
-    fields: [Id, Name, Status, Created, Updated]
+    fields: [ID, NAME, STATUS, CREATED, UPDATED]
+    wide: true
   # DNS
   dns.recordset:
-    fields: [Id, Name, Status, Created, Updated]
+    fields: [ID, NAME, STATUS, CREATED, UPDATED]
+    wide: true
   dns.zone:
-    fields: [Id, Name, Status, Created, Updated]
+    fields: [ID, NAME, STATUS, CREATED, UPDATED]
+    wide: true
   # Identity
   identity.group:
-    fields: [Id, Name, Domain, Description]
+    fields: [ID, NAME, DOMAIN, DESCRIPTION]
+    wide: true
   identity.project:
-    fields: [Id, Name, "Parent ID", Enabled, "Domain ID"]
+    fields: [ID, NAME, "PARENT ID", ENABLED, "DOMAIN ID"]
+    wide: true
   identity.user/application_credential:
-    fields: [Id, Name, "Expires at", "Unrestricted"]
+    fields: [ID, NAME, "EXPIRES AT", "UNRESTRICTED"]
+    wide: true
   identity.user:
-    fields: [Name, Domain, Enabled, Email, "Pwd expiry"]
+    fields: [NAME, DOMAIN, ENABLED, EMAIL, "PWD EXPIRY"]
+    wide: true
   # Image
   image.image:
-    fields: [Id, Name, Distro, Version, Arch, Visibility]
+    fields: [ID, NAME, DISTRO, VERSION, ARCH, VISIBILITY]
+    wide: true
   # Load Balancer
   load-balancer.healthmonitor:
-    fields: [Id, Name, Status, Type]
+    fields: [ID, NAME, STATUS, TYPE]
+    wide: true
   load-balancer.listener:
-    fields: [Id, Name, Status, Protocol, Port]
+    fields: [ID, NAME, STATUS, PROTOCOL, PORT]
+    wide: true
   load-balancer.loadbalancer:
-    fields: [Id, Name, Status, Address]
+    fields: [ID, NAME, STATUS, ADDRESS]
+    wide: true
   load-balancer.pool/member:
-    fields: [Id, Name, Status, Port]
+    fields: [ID, NAME, STATUS, PORT]
+    wide: true
   load-balancer.pool:
-    fields: [Id, Name, Status, Protocol]
+    fields: [ID, NAME, STATUS, PROTOCOL]
+    wide: true
   # Network
   network.network:
-    fields: [Id, Name, Status, Created, Updated]
+    fields: [ID, NAME, STATUS, CREATED_AT, UPDATED_AT]
+    wide: true
   network.router:
-    fields: [Id, Name, Status, Created, Updated]
+    fields: [ID, NAME, STATUS, CREATED_AT, UPDATED_AT]
+    wide: true
   network.subnet:
-    fields: [Id, Name, Cidr, Description, Created]
+    fields: [ID, NAME, CIDR, DESCRIPTION, CREATED_AT]
+    wide: true
   network.security_group_rule:
-    fields: [Id, Ethertype, Direction, Protocol, "Range Min", "Range Max"]
+    fields: [ID, ETHERTYPE, DIRECTION, PROTOCOL, "RANGE MIN", "RANGE MAX"]
+    wide: true
   network.security_group:
-    fields: [Id, Name, Created, Updated]
+    fields: [ID, NAME, CREATED_AT, UPDATED_AT]
+    wide: true

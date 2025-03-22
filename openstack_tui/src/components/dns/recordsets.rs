@@ -15,45 +15,31 @@
 use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
-use serde::Deserialize;
-use structable_derive::StructTable;
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
     action::Action,
-    cloud_worker::dns::v2::{DnsApiRequest, DnsRecordsetApiRequest, DnsRecordsetList},
+    cloud_worker::dns::v2::{
+        DnsApiRequest, DnsRecordset, DnsRecordsetApiRequest, DnsRecordsetList,
+    },
     cloud_worker::types::ApiRequest,
     components::{table_view::TableViewComponentBase, Component},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const TITLE: &str = "DNS Recordsets";
 const VIEW_CONFIG_KEY: &str = "dns.recordset";
 
-#[derive(Deserialize, StructTable)]
-pub struct RecordsetData {
-    #[structable(title = "Id", wide)]
-    id: String,
-    #[structable(title = "Name")]
-    name: String,
-    #[structable(title = "Status")]
-    status: String,
-    #[structable(title = "Created")]
-    created_at: String,
-    #[structable(title = "Updated", optional)]
-    updated_at: Option<String>,
-}
-
-impl ResourceKey for RecordsetData {
+impl ResourceKey for DnsRecordset {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type DnsRecordsets<'a> = TableViewComponentBase<'a, RecordsetData, DnsRecordsetList>;
+pub type DnsRecordsets<'a> = TableViewComponentBase<'a, DnsRecordset, DnsRecordsetList>;
 
 impl Component for DnsRecordsets<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
