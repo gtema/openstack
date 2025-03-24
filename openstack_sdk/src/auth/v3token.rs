@@ -92,6 +92,8 @@ impl TryFrom<&AuthToken> for token_v3::Identity<'_> {
 #[cfg(test)]
 mod tests {
     use serde_json::json;
+    use tracing::info;
+    use tracing_test::traced_test;
 
     use super::*;
     use crate::api::identity::v3::auth::token::create as token_v3;
@@ -127,5 +129,19 @@ mod tests {
                 }
             })
         );
+    }
+
+    #[test]
+    #[traced_test]
+    fn test_token_not_in_log() {
+        let config = config::Auth {
+            token: Some("secret".into()),
+            ..Default::default()
+        };
+        let mut identity = token_v3::IdentityBuilder::default();
+        fill_identity(&mut identity, &config, false).unwrap();
+        let identity = identity.build().unwrap();
+        info!("Auth is {:?}", identity);
+        assert!(!logs_contain("secret"));
     }
 }

@@ -18,14 +18,14 @@ use std::convert::TryInto;
 use std::fmt::{self, Debug};
 use std::time::SystemTime;
 use std::{fs::File, io::Read};
-use tracing::{debug, error, event, info, instrument, trace, warn, Level};
+use tracing::{debug, enabled, error, event, info, instrument, trace, warn, Level};
 
 use async_trait::async_trait;
 use bytes::Bytes;
 use chrono::TimeDelta;
 use futures::io::{Error as IoError, ErrorKind as IoErrorKind};
 use futures::stream::TryStreamExt;
-use http::{HeaderMap, Response as HttpResponse, StatusCode};
+use http::{header, HeaderMap, HeaderValue, Response as HttpResponse, StatusCode};
 
 use tokio_util::codec;
 use tokio_util::compat::FuturesAsyncReadCompatExt;
@@ -560,14 +560,30 @@ where {
     #[instrument(name="request", skip_all, fields(http.uri = request.url().as_str(), http.method = request.method().as_str(), openstack.ver=request.headers().get("openstack-api-version").map(|v| v.to_str().unwrap_or(""))))]
     async fn execute_request(&self, request: Request) -> Result<Response, reqwest::Error> {
         info!("Sending request {:?}", request);
-        // Body may contain sensitive info.
         let url = request.url().clone();
         let method = request.method().clone();
-        if let Some(body) = request.body() {
-            if let Some(bytes) = body.as_bytes() {
-                trace!("Request Body: {:?}", std::str::from_utf8(bytes));
-            }
+
+        if enabled!(Level::TRACE)
+            && request.headers().get(header::CONTENT_TYPE)
+                == Some(&HeaderValue::from_static("application/json"))
+        {
+            // Body may contain sensitive info - censor it but only when trace is on
+            request
+                .body()
+                .and_then(|body| body.as_bytes())
+                .and_then(|bytes| String::from_utf8(bytes.to_vec()).ok())
+                .inspect(|rq| {
+                    let censored = self
+                        .config
+                        .get_sensitive_values()
+                        .iter()
+                        .fold(rq.clone(), |sanitized, &secret| {
+                            sanitized.replace(secret, "<CENSORED")
+                        });
+                    trace!("Request Body: {:?}", censored);
+                });
         }
+
         let start = SystemTime::now();
         let rsp = self.client.execute(request).await?;
         let elapsed = SystemTime::now().duration_since(start).unwrap_or_default();
