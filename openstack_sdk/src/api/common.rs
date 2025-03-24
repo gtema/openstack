@@ -12,6 +12,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+use secrecy::{ExposeSecret, SecretString};
 use std::borrow::Cow;
 use std::fmt;
 use std::iter;
@@ -92,6 +93,27 @@ where
     }
 }
 
+/// Serialize `SecretString` as string
+pub fn serialize_sensitive_optional_string<S>(
+    value: &Option<SecretString>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    match value {
+        Some(val) => serializer.serialize_str(val.expose_secret()),
+        None => serializer.serialize_none(),
+    }
+}
+
+/// Serialize `Option<SecretString>` as string
+pub fn serialize_sensitive_string<S>(value: &SecretString, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: serde::Serializer,
+{
+    serializer.serialize_str(value.expose_secret())
+}
 #[cfg(test)]
 mod tests {
     use std::borrow::Cow;

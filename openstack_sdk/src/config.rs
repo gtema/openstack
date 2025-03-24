@@ -42,6 +42,7 @@
 //! ).expect("Failed to load the configuration files");
 //! ```
 
+use secrecy::{ExposeSecret, SecretString};
 use std::fmt;
 use std::path::{Path, PathBuf};
 use tracing::{error, warn};
@@ -195,56 +196,60 @@ pub struct ConfigFile {
 }
 
 /// Authentication data
+///
+/// Sensitive fields are wrapped into the
+/// [SensitiveString](https://docs.rs/secrecy/0.10.3/secrecy/type.SecretString.html) to prevent
+/// accidental exposure in logs.
 #[derive(Clone, Default, Deserialize)]
 pub struct Auth {
     /// Authentication URL
-    pub(crate) auth_url: Option<String>,
+    pub auth_url: Option<String>,
     /// Authentication endpoint type (public/internal/admin)
-    pub(crate) endpoint: Option<String>,
+    pub endpoint: Option<String>,
     /// Auth Token
-    pub(crate) token: Option<String>,
+    pub token: Option<SecretString>,
 
     /// Auth User.Name
-    pub(crate) username: Option<String>,
+    pub username: Option<String>,
     /// Auth User.ID
-    pub(crate) user_id: Option<String>,
+    pub user_id: Option<String>,
     /// Auth User.Domain.Name
-    pub(crate) user_domain_name: Option<String>,
+    pub user_domain_name: Option<String>,
     /// Auth User.Domain.ID
-    pub(crate) user_domain_id: Option<String>,
+    pub user_domain_id: Option<String>,
     /// Auth User password
-    pub(crate) password: Option<String>,
+    pub password: Option<SecretString>,
 
     /// Auth (totp) MFA passcode
-    pub(crate) passcode: Option<String>,
+    pub passcode: Option<SecretString>,
 
     /// `Domain` scope Domain.ID
-    pub(crate) domain_id: Option<String>,
+    pub domain_id: Option<String>,
     /// `Domain` scope Domain.Name
-    pub(crate) domain_name: Option<String>,
+    pub domain_name: Option<String>,
     /// `Project` scope Project.ID
-    pub(crate) project_id: Option<String>,
+    pub project_id: Option<String>,
     /// `Project` scope Project.Name
-    pub(crate) project_name: Option<String>,
+    pub project_name: Option<String>,
     /// `Project` scope Project.Domain.ID
-    pub(crate) project_domain_id: Option<String>,
+    pub project_domain_id: Option<String>,
     /// `Project` scope Project.Domain.Name
-    pub(crate) project_domain_name: Option<String>,
+    pub project_domain_name: Option<String>,
 
     /// `Federation` protocol
-    pub(crate) protocol: Option<String>,
+    pub protocol: Option<String>,
     /// `Federation` identity provider
-    pub(crate) identity_provider: Option<String>,
+    pub identity_provider: Option<String>,
 
     /// `Application Credential` ID
-    pub(crate) application_credential_id: Option<String>,
+    pub application_credential_id: Option<String>,
     /// `Application Credential` Name
-    pub(crate) application_credential_name: Option<String>,
+    pub application_credential_name: Option<String>,
     /// `Application Credential` Secret
-    pub(crate) application_credential_secret: Option<String>,
+    pub application_credential_secret: Option<SecretString>,
 
     /// `System scope`
-    pub(crate) system_scope: Option<String>,
+    pub system_scope: Option<String>,
 }
 
 impl fmt::Debug for Auth {
@@ -267,10 +272,6 @@ impl fmt::Debug for Auth {
                 "application_credential_name",
                 &self.application_credential_name,
             )
-            .field(
-                "application_credential_secret",
-                &self.application_credential_secret,
-            )
             .field("system_scope", &self.system_scope)
             .finish()
     }
@@ -280,7 +281,7 @@ impl fmt::Debug for Auth {
 #[derive(Deserialize, Default, Clone)]
 pub struct CloudConfig {
     /// Authorization data
-    pub(crate) auth: Option<Auth>,
+    pub auth: Option<Auth>,
     /// Authorization type. While it can be enum it would make hard to extend SDK with custom implementations
     pub auth_type: Option<String>,
     /// Authorization methods (in the case when auth_type = `multifactor`.
@@ -456,6 +457,30 @@ impl CloudConfig {
                 .into_iter()
                 .filter(|x| !current_keys.contains(&x.0)),
         );
+    }
+
+    /// Get sensitive config values
+    ///
+    /// This method allows getting list of sensitive values from the config which need to be
+    /// censored from logs. It is purposely only available inside the crate for now to prevent
+    /// users from accidentally logging those. It can be made public though.
+    pub(crate) fn get_sensitive_values(&self) -> Vec<&str> {
+        let mut res = Vec::new();
+        if let Some(auth) = &self.auth {
+            if let Some(val) = &auth.password {
+                res.push(val.expose_secret());
+            }
+            if let Some(val) = &auth.application_credential_secret {
+                res.push(val.expose_secret());
+            }
+            if let Some(val) = &auth.token {
+                res.push(val.expose_secret());
+            }
+            if let Some(val) = &auth.passcode {
+                res.push(val.expose_secret());
+            }
+        }
+        res
     }
 }
 
@@ -636,6 +661,7 @@ impl ConfigFile {
 #[cfg(test)]
 mod tests {
     use crate::config;
+    use secrecy::ExposeSecret;
     use std::env;
     use std::io::Write;
     use std::path::PathBuf;
@@ -719,6 +745,39 @@ mod tests {
 
         assert_eq!(auth.auth_url, Some(String::from("http://fake.com")));
         assert_eq!(auth.username, Some(String::from("foo")));
-        assert_eq!(auth.password, Some(String::from("bar")));
+        assert_eq!(auth.password.unwrap().expose_secret(), String::from("bar"));
+    }
+
+    #[test]
+    fn test_sensitive_values() {
+        let mut cloud_file = Builder::new().suffix(".yaml").tempfile().unwrap();
+
+        const CLOUD_DATA: &str = r#"
+            clouds:
+              fake_cloud:
+                auth:
+                  auth_url: http://fake.com
+                  username: override_me
+                  password: pwd
+                  application_credential_secret: app_cred_secret
+                  token: tkn
+                  passcode: pcd
+        "#;
+
+        write!(cloud_file, "{}", CLOUD_DATA).unwrap();
+
+        let cfg = ConfigFile::builder()
+            .add_source(cloud_file.path())
+            .unwrap()
+            .build();
+
+        let profile = cfg
+            .get_cloud_config("fake_cloud")
+            .unwrap()
+            .expect("Profile exists");
+        assert_eq!(
+            vec!["pwd", "app_cred_secret", "tkn", "pcd"],
+            profile.get_sensitive_values()
+        );
     }
 }

@@ -133,6 +133,8 @@ pub fn fill_identity(
 #[cfg(test)]
 mod tests {
     use serde_json::json;
+    use tracing::info;
+    use tracing_test::traced_test;
 
     use super::*;
     use crate::api::identity::v3::auth::token::create as token_v3;
@@ -198,5 +200,23 @@ mod tests {
                 }
             })
         );
+    }
+
+    #[test]
+    #[traced_test]
+    fn test_passcode_not_in_log() {
+        let config = config::Auth {
+            user_id: Some("uid".into()),
+            username: Some("un".into()),
+            user_domain_id: Some("udi".into()),
+            user_domain_name: Some("udn".into()),
+            passcode: Some("secret".into()),
+            ..Default::default()
+        };
+        let mut identity = token_v3::IdentityBuilder::default();
+        fill_identity(&mut identity, &config, false).unwrap();
+        let identity = identity.build().unwrap();
+        info!("Auth is {:?}", identity);
+        assert!(!logs_contain("secret"));
     }
 }

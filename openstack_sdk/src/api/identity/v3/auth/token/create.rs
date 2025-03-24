@@ -27,7 +27,9 @@
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
+use secrecy::SecretString;
 
+use crate::api::common::{serialize_sensitive_optional_string, serialize_sensitive_string};
 use crate::api::rest_endpoint_prelude::*;
 
 use serde::Deserialize;
@@ -91,9 +93,12 @@ pub struct User<'a> {
 
     /// User Password
     ///
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "serialize_sensitive_optional_string"
+    )]
     #[builder(default, setter(into))]
-    pub(crate) password: Option<Cow<'a, str>>,
+    pub(crate) password: Option<SecretString>,
 }
 
 /// The `password` object, contains the authentication information.
@@ -112,12 +117,12 @@ pub struct Password<'a> {
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct Token<'a> {
+pub struct Token {
     /// Authorization Token value
     ///
-    #[serde()]
+    #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
-    pub(crate) id: Cow<'a, str>,
+    pub(crate) id: SecretString,
 }
 
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
@@ -143,9 +148,9 @@ pub struct TotpUser<'a> {
 
     /// MFA passcode
     ///
-    #[serde()]
+    #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
-    pub(crate) passcode: Cow<'a, str>,
+    pub(crate) passcode: SecretString,
 }
 
 /// Multi Factor Authentication information
@@ -198,9 +203,9 @@ pub struct ApplicationCredential<'a> {
 
     /// The secret for authenticating the application credential.
     ///
-    #[serde()]
+    #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
-    pub(crate) secret: Cow<'a, str>,
+    pub(crate) secret: SecretString,
 
     /// A user object, required if an application credential is identified by
     /// name and not ID.
@@ -238,7 +243,7 @@ pub struct Identity<'a> {
     ///
     #[serde(skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
-    pub(crate) token: Option<Token<'a>>,
+    pub(crate) token: Option<Token>,
 
     /// Multi Factor Authentication information
     ///
