@@ -173,7 +173,7 @@ impl PasswordCommand {
         let args = &self.user;
         let mut user_builder = set::UserBuilder::default();
         if let Some(val) = &args.original_password {
-            user_builder.original_password(val);
+            user_builder.original_password(val.clone());
         } else {
             let secret = Password::new()
                 .with_prompt("The original password for the user")
@@ -183,7 +183,7 @@ impl PasswordCommand {
         }
 
         if let Some(val) = &args.password {
-            user_builder.password(val);
+            user_builder.password(val.clone());
         } else {
             let secret = Password::new()
                 .with_prompt("The new password for the user")
