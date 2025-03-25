@@ -27,11 +27,12 @@
 //!
 use derive_builder::Builder;
 use http::{HeaderMap, HeaderName, HeaderValue};
-use secrecy::SecretString;
 
-use crate::api::common::{serialize_sensitive_optional_string, serialize_sensitive_string};
 use crate::api::rest_endpoint_prelude::*;
 
+use crate::api::common::serialize_sensitive_optional_string;
+use crate::api::common::serialize_sensitive_string;
+use secrecy::SecretString;
 use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
@@ -94,8 +95,8 @@ pub struct User<'a> {
     /// User Password
     ///
     #[serde(
-        skip_serializing_if = "Option::is_none",
-        serialize_with = "serialize_sensitive_optional_string"
+        serialize_with = "serialize_sensitive_optional_string",
+        skip_serializing_if = "Option::is_none"
     )]
     #[builder(default, setter(into))]
     pub(crate) password: Option<SecretString>,

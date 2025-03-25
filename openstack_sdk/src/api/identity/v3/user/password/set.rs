@@ -25,6 +25,8 @@ use http::{HeaderMap, HeaderName, HeaderValue};
 
 use crate::api::rest_endpoint_prelude::*;
 
+use crate::api::common::serialize_sensitive_string;
+use secrecy::SecretString;
 use serde::Deserialize;
 use serde::Serialize;
 use std::borrow::Cow;
@@ -33,18 +35,18 @@ use std::borrow::Cow;
 ///
 #[derive(Builder, Debug, Deserialize, Clone, Serialize)]
 #[builder(setter(strip_option))]
-pub struct User<'a> {
+pub struct User {
     /// The original password for the user.
     ///
-    #[serde()]
+    #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
-    pub(crate) original_password: Cow<'a, str>,
+    pub(crate) original_password: SecretString,
 
     /// The new password for the user.
     ///
-    #[serde()]
+    #[serde(serialize_with = "serialize_sensitive_string")]
     #[builder(setter(into))]
-    pub(crate) password: Cow<'a, str>,
+    pub(crate) password: SecretString,
 }
 
 #[derive(Builder, Debug, Clone)]
@@ -53,7 +55,7 @@ pub struct Request<'a> {
     /// A `user` object
     ///
     #[builder(setter(into))]
-    pub(crate) user: User<'a>,
+    pub(crate) user: User,
 
     /// user_id parameter for /v3/users/{user_id}/password API
     ///
