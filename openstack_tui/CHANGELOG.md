@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.10.0...openstack_tui-v0.11.0) - 2025-03-29
+
+### Added
+
+- Switch to generated response structs ([#1007](https://github.com/gtema/openstack/pull/1007))
+- Replace wrong simplification of vec parameters ([#1080](https://github.com/gtema/openstack/pull/1080))
+
 ## [0.10.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.9.5...openstack_tui-v0.10.0) - 2025-03-14
 
 ### Added
