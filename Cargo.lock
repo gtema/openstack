@@ -2774,11 +2774,10 @@ dependencies = [
 
 [[package]]
 name = "reserve-port"
-version = "2.1.0"
+version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "359fc315ed556eb0e42ce74e76f4b1cd807b50fa6307f3de4e51f92dbe86e2d5"
+checksum = "ba3747658ee2585ecf5607fa9887c92eff61b362ff5253dbf797dfeb73d33d78"
 dependencies = [
- "lazy_static",
  "thiserror 2.0.12",
 ]
 
