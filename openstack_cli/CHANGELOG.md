@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.10.0...openstack_cli-v0.11.0) - 2025-03-29
+
+### Added
+
+- Make sensitive fields be SecretString ([#1093](https://github.com/gtema/openstack/pull/1093))
+- Replace wrong simplification of vec parameters ([#1080](https://github.com/gtema/openstack/pull/1080))
+- Replace imported protocol schema ([#1079](https://github.com/gtema/openstack/pull/1079))
+- Address data sensitivity ([#1083](https://github.com/gtema/openstack/pull/1083))
+
+### Fixed
+
+- Handle missing token in the auth response ([#1078](https://github.com/gtema/openstack/pull/1078))
+
 ## [0.10.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.9.5...openstack_cli-v0.10.0) - 2025-03-14
 
 ### Added
