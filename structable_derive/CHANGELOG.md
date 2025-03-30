@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/gtema/openstack/compare/structable_derive-v0.1.5...structable_derive-v0.1.6) - 2025-03-29
+
+### Added
+
+- Allow showing wide field even without wide mode ([#1077](https://github.com/gtema/openstack/pull/1077))
+
 ## [0.1.5](https://github.com/gtema/openstack/compare/structable_derive-v0.1.4...structable_derive-v0.1.5) - 2024-12-13
 
 ### Added
