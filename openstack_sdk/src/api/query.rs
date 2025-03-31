@@ -31,6 +31,7 @@ use http::{HeaderMap, Response};
 
 pub fn url_to_http_uri(url: Url) -> Uri {
     url.as_str()
+        .trim_end_matches('?')
         .parse::<Uri>()
         .expect("failed to parse a url::Url as an http::Uri")
 }

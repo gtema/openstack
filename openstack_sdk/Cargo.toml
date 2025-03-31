@@ -75,6 +75,7 @@ url = { workspace = true }
 
 [dev-dependencies]
 httpmock = "^0.7"
+mockito = { version = "^1.7" }
 reserve-port = "^2.1"
 tempfile = { workspace = true }
 tracing-test = { version = "^0.2" }

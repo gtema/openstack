@@ -244,7 +244,7 @@ where
 #[cfg(test)]
 mod tests {
 
-    use http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
+    use http::{HeaderMap, HeaderName, HeaderValue};
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
@@ -255,12 +255,11 @@ mod tests {
     use crate::api::QueryAsync;
     use crate::api::{self, ApiError, Pagination};
     #[cfg(feature = "async")]
-    use crate::test::client::MockAsyncServerClient;
+    use crate::test::client::MockAsyncServerClient2;
     #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::MockServerClient2;
     use crate::test::client::{ExpectedUrl, PagedTestClient};
 
-    // #[derive(Debug)]
     struct Dummy {
         with_keyset: bool,
 
@@ -306,11 +305,13 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_non_json_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::OK.into()).body("not json");
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .with_status(200)
+            .with_body("not json")
+            .create();
 
         let res: Result<Vec<DummyResult>, _> =
             api::paged(Dummy::default(), Pagination::All).query(&client);
@@ -326,11 +327,14 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_non_json_response_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::OK.into()).body("not json");
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .with_status(200)
+            .with_body("not json")
+            .create_async()
+            .await;
 
         let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
             .query_async(&client)
@@ -347,11 +351,12 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_error_bad_json() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into());
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .with_status(409)
+            .create();
 
         let res: Result<Vec<DummyResult>, _> =
             api::paged(Dummy::default(), Pagination::All).query(&client);
@@ -367,11 +372,13 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_error_bad_json_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into());
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .with_status(409)
+            .create_async()
+            .await;
 
         let res: Result<Vec<DummyResult>, _> = api::paged(Dummy::default(), Pagination::All)
             .query_async(&client)
@@ -388,12 +395,15 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_error_detection() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into())
-                .json_body(json!({"message": "dummy error message"}));
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .with_status(409)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"message": "dummy error message"}"#)
+            .create();
+
         let endpoint = Dummy::default();
 
         let res: Result<Vec<DummyResult>, _> = api::paged(endpoint, Pagination::All).query(&client);
@@ -409,12 +419,16 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_error_detection_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/paged_dummy");
-            then.status(StatusCode::CONFLICT.into())
-                .json_body(json!({"message": "dummy error message"}));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .with_status(409)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"message": "dummy error message"}"#)
+            .create_async()
+            .await;
+
         let endpoint = Dummy::default();
 
         let res: Result<Vec<DummyResult>, _> = api::paged(endpoint, Pagination::All)
@@ -618,16 +632,16 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_pagination_headers() {
-        let client = MockServerClient::new();
+        let mut client = MockServerClient2::new();
         let mock_data: Vec<DummyResult> = (0..=255).map(|value| DummyResult { value }).collect();
-        let _mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/paged_dummy")
-                .header("foo", "bar");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({"resources": mock_data}));
-        });
+        let _mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .match_header("foo", "bar")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(json!({"resources": mock_data}).to_string())
+            .create();
 
         let mut query = Dummy::default();
         query._headers.get_or_insert_with(HeaderMap::new).insert(
@@ -642,16 +656,17 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_pagination_headers_async() {
-        let client = MockAsyncServerClient::new().await;
+        let mut client = MockAsyncServerClient2::new().await;
         let mock_data: Vec<DummyResult> = (0..=255).map(|value| DummyResult { value }).collect();
-        let _mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/paged_dummy")
-                .header("foo", "bar");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({"resources": mock_data}));
-        });
+        let _mock = client
+            .server
+            .mock("GET", "/paged_dummy")
+            .match_header("foo", "bar")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(json!({"resources": mock_data}).to_string())
+            .create_async()
+            .await;
 
         let mut query = Dummy::default();
         query._headers.get_or_insert_with(HeaderMap::new).insert(

@@ -365,14 +365,12 @@ where
 #[cfg(feature = "sync")]
 #[cfg(test)]
 mod tests {
-
-    use http::StatusCode;
     use serde::Deserialize;
     use serde_json::json;
 
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{ApiError, Query};
-    use crate::test::client::MockServerClient;
+    use crate::test::client::MockServerClient2;
     use crate::types::ServiceType;
 
     struct Dummy;
@@ -398,11 +396,13 @@ mod tests {
 
     #[test]
     fn test_non_json_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(200).body("not json");
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(200)
+            .with_body("not json")
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
@@ -416,11 +416,12 @@ mod tests {
 
     #[test]
     fn test_empty_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(200);
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(200)
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
@@ -434,11 +435,13 @@ mod tests {
 
     #[test]
     fn test_error_not_found() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(404);
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(404)
+            .create();
+
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
         if let ApiError::OpenStack { status, .. } = err {
@@ -451,11 +454,12 @@ mod tests {
 
     #[test]
     fn test_error_bad_json() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(http::StatusCode::CONFLICT.into());
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(409)
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
@@ -469,12 +473,14 @@ mod tests {
 
     #[test]
     fn test_error_detection() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(http::StatusCode::CONFLICT.into())
-                .json_body(json!({"message": "dummy error message"}));
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(409)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"message": "dummy error message"}"#)
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
@@ -493,13 +499,15 @@ mod tests {
 
     #[test]
     fn test_error_detection_unknown() {
-        let client = MockServerClient::new();
+        let mut client = MockServerClient2::new();
         let err_obj = json!({"bogus": "dummy error message"});
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(StatusCode::CONFLICT.into())
-                .json_body(err_obj.clone());
-        });
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(409)
+            .with_header("content-type", "application/json")
+            .with_body(err_obj.clone().to_string())
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
@@ -518,11 +526,14 @@ mod tests {
 
     #[test]
     fn test_bad_deserialization() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(200).json_body(json!({"not_value": 0}));
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"not_value": 0}"#)
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         let err = res.unwrap_err();
@@ -540,11 +551,14 @@ mod tests {
 
     #[test]
     fn test_good_deserialization() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummy");
-            then.status(200).json_body(json!({"value": 0}));
-        });
+        let mut client = MockServerClient2::new();
+        let mock = client
+            .server
+            .mock("GET", "/dummy")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(json!({"value": 0}).to_string())
+            .create();
 
         let res: Result<DummyResult, _> = Dummy.query(&client);
         assert_eq!(res.unwrap().value, 0);

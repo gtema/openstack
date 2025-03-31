@@ -222,9 +222,7 @@ where
 
 #[cfg(test)]
 mod tests {
-
     use serde::{Deserialize, Serialize};
-    use serde_json::json;
 
     use crate::api::find::Findable;
     use crate::api::rest_endpoint_prelude::*;
@@ -234,9 +232,9 @@ mod tests {
     use crate::api::QueryAsync;
     use crate::api::{self, ApiError};
     #[cfg(feature = "async")]
-    use crate::test::client::MockAsyncServerClient;
+    use crate::test::client::MockAsyncServerClient2;
     #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::MockServerClient2;
     use derive_builder::Builder;
 
     #[derive(Debug, Builder, Clone)]
@@ -328,13 +326,15 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_1() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resource": {"id": "abc"} }));
-        });
+        let mut client = MockServerClient2::new();
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"resource": {"id": "abc"}}"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query(&client);
         if let Ok(x) = res {
@@ -348,13 +348,16 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resource": {"id": "abc"} }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{"resource": {"id": "abc"}}"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         if let Ok(x) = res {
@@ -368,19 +371,21 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_1() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(404);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}] }));
-        });
+        let mut client = MockServerClient2::new();
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(404)
+            .create();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query(&client);
         get_mock.assert();
@@ -391,19 +396,23 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(404);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(404)
+            .create_async()
+            .await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         get_mock.assert();
@@ -414,19 +423,21 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_400_list_1() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(400);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}] }));
-        });
+        let mut client = MockServerClient2::new();
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(400)
+            .create();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query(&client);
         get_mock.assert();
@@ -437,19 +448,23 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_400_list_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(400);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(400)
+            .create_async()
+            .await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         get_mock.assert();
@@ -460,15 +475,16 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_by_name_0_list_1() {
-        let client = MockServerClient::new();
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}] }));
-        });
+        let mut client = MockServerClient2::new();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find_by_name(ep).query(&client);
         list_mock.assert();
@@ -478,15 +494,17 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_by_name_list_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find_by_name(ep).query_async(&client).await;
         list_mock.assert();
@@ -496,19 +514,21 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_2() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(404);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}, {"id": "abc2"}] }));
-        });
+        let mut client = MockServerClient2::new();
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(404)
+            .create();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}, {"id": "abc2"}] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query(&client);
         get_mock.assert();
@@ -522,19 +542,23 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_2_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(404);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}, {"id": "abc2"}] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(404)
+            .create_async()
+            .await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}, {"id": "abc2"}] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         get_mock.assert();
@@ -548,15 +572,16 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_by_name_list_2() {
-        let client = MockServerClient::new();
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}, {"id": "abc2"}] }));
-        });
+        let mut client = MockServerClient2::new();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}, {"id": "abc2"}] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find_by_name(ep).query(&client);
         list_mock.assert();
@@ -569,15 +594,17 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_by_name_list_2_async() {
-        let client = MockAsyncServerClient::new().await;
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [{"id": "abc"}, {"id": "abc2"}] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [{"id": "abc"}, {"id": "abc2"}] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find_by_name(ep).query_async(&client).await;
         list_mock.assert();
@@ -590,19 +617,21 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_0() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(404);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [] }));
-        });
+        let mut client = MockServerClient2::new();
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(404)
+            .create();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query(&client);
         get_mock.assert();
@@ -616,19 +645,23 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_0_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET).path("/dummies/abc");
-            then.status(404);
-        });
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let get_mock = client
+            .server
+            .mock("GET", "/dummies/abc")
+            .with_status(404)
+            .create_async()
+            .await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find(ep).query_async(&client).await;
         get_mock.assert();
@@ -642,15 +675,16 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_by_name_list_0() {
-        let client = MockServerClient::new();
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [] }));
-        });
+        let mut client = MockServerClient2::new();
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [] }"#)
+            .create();
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find_by_name(ep).query(&client);
         list_mock.assert();
@@ -663,15 +697,17 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_by_name_list_0_async() {
-        let client = MockAsyncServerClient::new().await;
-        let list_mock = client.server.mock(|when, then| {
-            when.method(httpmock::Method::GET)
-                .path("/dummies")
-                .query_param("name", "abc");
-            then.status(200)
-                .header("content-type", "application/json")
-                .json_body(json!({ "resources": [] }));
-        });
+        let mut client = MockAsyncServerClient2::new().await;
+        let list_mock = client
+            .server
+            .mock("GET", "/dummies")
+            .match_query(mockito::Matcher::UrlEncoded("name".into(), "abc".into()))
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(r#"{ "resources": [] }"#)
+            .create_async()
+            .await;
+
         let ep = Dummy { id: "abc".into() };
         let res: Result<DummyResult, _> = api::find_by_name(ep).query_async(&client).await;
         list_mock.assert();

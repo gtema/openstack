@@ -404,6 +404,73 @@ impl Client for MockServerClient {
     }
 }
 
+/// Mock Test client
+#[cfg(feature = "sync")]
+pub struct MockServerClient2 {
+    pub server: mockito::ServerGuard,
+    pub client: HttpClient,
+    endpoint: ServiceEndpoint,
+}
+
+#[cfg(feature = "sync")]
+impl MockServerClient2 {
+    pub fn new() -> Self {
+        let server = mockito::Server::new();
+        let client = HttpClient::new();
+        let base_url = Url::parse(server.url().as_ref()).unwrap();
+        Self {
+            server,
+            client,
+            endpoint: ServiceEndpoint::new(base_url, ApiVersion::new(0, 0)),
+        }
+    }
+}
+
+#[cfg(feature = "sync")]
+impl RestClient for MockServerClient2 {
+    type Error = RestError;
+
+    fn get_service_endpoint(
+        &self,
+        _service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(&self.endpoint)
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
+    }
+}
+
+#[cfg(feature = "sync")]
+impl Client for MockServerClient2 {
+    fn rest(
+        &self,
+        request: RequestBuilder,
+        body: Vec<u8>,
+    ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
+        let call = || -> Result<_, Self::Error> {
+            let http_request = request.body(body.clone())?;
+            let request = http_request.try_into()?;
+
+            let rsp = self.client.execute(request)?;
+
+            let mut http_rsp = HttpResponse::builder()
+                .status(rsp.status())
+                .version(rsp.version());
+
+            let headers = http_rsp.headers_mut().unwrap();
+            for (key, value) in rsp.headers() {
+                headers.insert(key, value.clone());
+            }
+
+            Ok(http_rsp.body(rsp.bytes()?)?)
+        };
+        call().map_err(ApiError::client)
+    }
+}
+
 #[cfg(feature = "async")]
 pub struct MockAsyncServerClient {
     pub server: MockServer,
@@ -445,6 +512,88 @@ impl RestClient for MockAsyncServerClient {
 #[cfg(feature = "async")]
 #[async_trait]
 impl AsyncClient for MockAsyncServerClient {
+    async fn rest_async(
+        &self,
+        request: http::request::Builder,
+        body: Vec<u8>,
+    ) -> Result<HttpResponse<Bytes>, ApiError<Self::Error>> {
+        use futures_util::TryFutureExt;
+        let call = || async {
+            let http_request = request.body(body)?;
+            let request = http_request.try_into()?;
+
+            let rsp = self.client.execute(request).await?;
+
+            let mut http_rsp = HttpResponse::builder()
+                .status(rsp.status())
+                .version(rsp.version());
+            let headers = http_rsp.headers_mut().unwrap();
+            for (key, value) in rsp.headers() {
+                headers.insert(key, value.clone());
+            }
+            Ok(http_rsp.body(rsp.bytes().await?)?)
+        };
+        call().map_err(ApiError::client).await
+    }
+
+    async fn rest_read_body_async(
+        &self,
+        _request: RequestBuilder,
+        _body: BoxedAsyncRead,
+    ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
+        todo!();
+    }
+
+    async fn download_async(
+        &self,
+        _request: RequestBuilder,
+        _body: Vec<u8>,
+    ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>> {
+        todo!();
+    }
+}
+
+#[cfg(feature = "async")]
+pub struct MockAsyncServerClient2 {
+    pub server: mockito::ServerGuard,
+    pub client: AsyncHttpClient,
+    endpoint: ServiceEndpoint,
+}
+
+#[cfg(feature = "async")]
+impl MockAsyncServerClient2 {
+    pub async fn new() -> Self {
+        let server = mockito::Server::new_async().await;
+        let client = AsyncHttpClient::new();
+        let base_url = Url::parse(server.url().as_ref()).unwrap();
+        Self {
+            server,
+            client,
+            endpoint: ServiceEndpoint::new(base_url, ApiVersion::new(0, 0)),
+        }
+    }
+}
+
+#[cfg(feature = "async")]
+impl RestClient for MockAsyncServerClient2 {
+    type Error = RestError;
+
+    fn get_service_endpoint(
+        &self,
+        _service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        Ok(&self.endpoint)
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
+    }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncClient for MockAsyncServerClient2 {
     async fn rest_async(
         &self,
         request: http::request::Builder,
