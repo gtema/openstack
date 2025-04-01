@@ -75,7 +75,7 @@ url = { workspace = true }
 
 [dev-dependencies]
 httpmock = "^0.7"
-reserve-port = "^2.1"
+reserve-port = "^2.2"
 tempfile = { workspace = true }
 tracing-test = { version = "^0.2" }
 tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
