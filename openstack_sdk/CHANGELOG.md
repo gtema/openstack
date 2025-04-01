@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.1](https://github.com/gtema/openstack/compare/openstack_sdk-v0.20.0...openstack_sdk-v0.20.1) - 2025-04-01
+
+### Other
+
+- Bundled update of deps ([#1105](https://github.com/gtema/openstack/pull/1105))
+
 ## [0.20.0](https://github.com/gtema/openstack/compare/openstack_sdk-v0.19.0...openstack_sdk-v0.20.0) - 2025-03-29
 
 ### Added

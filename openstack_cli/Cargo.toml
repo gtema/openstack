@@ -1,6 +1,6 @@
 [package]
 name = "openstack_cli"
-version = "0.11.0"
+version = "0.11.1"
 authors = [
     "Artem Goncharov (gtema)",
 ]
