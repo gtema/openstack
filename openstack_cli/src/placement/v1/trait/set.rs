@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::placement::v1::r#trait::set;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::placement::v1::r#trait::set;
 use structable_derive::StructTable;
 
 /// Insert a new custom trait. If traits already exists 204 will be returned.

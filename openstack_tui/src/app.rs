@@ -23,6 +23,7 @@ use crate::{
     action::Action,
     cloud_worker::Cloud,
     components::{
+        Component,
         block_storage::{
             backups::BlockStorageBackups, snapshots::BlockStorageSnapshots,
             volumes::BlockStorageVolumes,
@@ -58,7 +59,6 @@ use crate::{
         },
         project_select_popup::ProjectSelect,
         resource_select_popup::ApiRequestSelect,
-        Component,
     },
     config::Config,
     mode::Mode,

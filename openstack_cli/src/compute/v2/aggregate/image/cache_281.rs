@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::compute::v2::aggregate::image::cache_281;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::compute::v2::aggregate::image::cache_281;
 use structable_derive::StructTable;
 
 /// Requests that a set of images be pre-cached on compute nodes within the

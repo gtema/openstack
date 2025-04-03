@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::container_infrastructure_management::v1::stat::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::container_infrastructure_management::v1::stat::get;
 use structable_derive::StructTable;
 
 /// Show overall Magnum system stats. If the requester is non-admin user show

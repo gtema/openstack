@@ -25,17 +25,17 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use clap::ValueEnum;
 use http::Response;
-use openstack_sdk::api::compute::v2::server::reboot;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::compute::v2::server::reboot;
 use structable_derive::StructTable;
 
 /// Reboots a server.

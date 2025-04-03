@@ -17,8 +17,8 @@ use file_diff::diff_files;
 use rand::distr::{Alphanumeric, SampleString};
 use serde_json::Value;
 use std::fs::File;
-use std::io::copy;
 use std::io::Cursor;
+use std::io::copy;
 use std::process::Command;
 use tempfile::Builder;
 

@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::block_storage::v3::r#type::encryption::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::block_storage::v3::r#type::encryption::list;
 use structable_derive::StructTable;
 
 /// Returns the encryption specs for a given volume type.

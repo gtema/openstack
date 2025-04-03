@@ -29,7 +29,7 @@ use crate::{
         ComputeServerList,
     },
     cloud_worker::types::ApiRequest,
-    components::{table_view::TableViewComponentBase, Component},
+    components::{Component, table_view::TableViewComponentBase},
     config::Config,
     error::TuiError,
     mode::Mode,

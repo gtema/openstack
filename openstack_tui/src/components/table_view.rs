@@ -27,7 +27,7 @@ use tracing::{debug, instrument};
 
 use crate::{
     action::Action,
-    components::{describe::Describe, Component, Frame},
+    components::{Component, Frame, describe::Describe},
     config::Config,
     error::TuiError,
     mode::Mode,

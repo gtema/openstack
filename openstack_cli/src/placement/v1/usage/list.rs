@@ -25,18 +25,18 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use eyre::OptionExt;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find_by_name;
 use openstack_sdk::api::identity::v3::project::find as find_project;
 use openstack_sdk::api::identity::v3::user::find as find_user;
 use openstack_sdk::api::placement::v1::usage::list;
-use openstack_sdk::api::QueryAsync;
 use std::collections::HashMap;
 use std::fmt;
 use tracing::warn;
@@ -171,7 +171,9 @@ impl UsagesCommand {
         } else if let Some(name) = &self.query.project.project_name {
             // project_name is passed. Need to lookup resource
             let mut sub_find_builder = find_project::Request::builder();
-            warn!("Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead.");
+            warn!(
+                "Querying project by name (because of `--project-name` parameter passed) may not be definite. This may fail in which case parameter `--project-id` should be used instead."
+            );
 
             sub_find_builder.id(name);
             let find_ep = sub_find_builder
@@ -187,13 +189,13 @@ impl UsagesCommand {
                     None => {
                         return Err(OpenStackCliError::ResourceAttributeNotString(
                             serde_json::to_string(&val)?,
-                        ))
+                        ));
                     }
                 },
                 None => {
                     return Err(OpenStackCliError::ResourceAttributeMissing(
                         "id".to_string(),
-                    ))
+                    ));
                 }
             };
         } else if self.query.project.current_project {
@@ -212,7 +214,9 @@ impl UsagesCommand {
         } else if let Some(name) = &self.query.user.user_name {
             // user_name is passed. Need to lookup resource
             let mut sub_find_builder = find_user::Request::builder();
-            warn!("Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead.");
+            warn!(
+                "Querying user by name (because of `--user-name` parameter passed) may not be definite. This may fail in which case parameter `--user-id` should be used instead."
+            );
 
             sub_find_builder.id(name);
             let find_ep = sub_find_builder
@@ -228,13 +232,13 @@ impl UsagesCommand {
                     None => {
                         return Err(OpenStackCliError::ResourceAttributeNotString(
                             serde_json::to_string(&val)?,
-                        ))
+                        ));
                     }
                 },
                 None => {
                     return Err(OpenStackCliError::ResourceAttributeMissing(
                         "id".to_string(),
-                    ))
+                    ));
                 }
             };
         } else if self.query.user.current_user {

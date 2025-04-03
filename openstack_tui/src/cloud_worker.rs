@@ -13,9 +13,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use chrono::TimeDelta;
-use eyre::{eyre, Report, Result};
+use eyre::{Report, Result, eyre};
 use openstack_sdk::{
-    auth::AuthState, config::ConfigFile, types::identity::v3::AuthResponse, AsyncOpenStack,
+    AsyncOpenStack, auth::AuthState, config::ConfigFile, types::identity::v3::AuthResponse,
 };
 use tokio::sync::mpsc::{UnboundedReceiver, UnboundedSender};
 use tracing::debug;
@@ -88,28 +88,29 @@ impl Cloud {
         &mut self,
         scope: &openstack_sdk::auth::authtoken::AuthTokenScope,
     ) -> Result<Option<AuthResponse>, Report> {
-        if let Some(ref mut session) = self.cloud {
-            debug!("Switching connection scope to {:?}", scope);
-            session.authorize(Some(scope.clone()), true, false).await?;
-            debug!("Authed as {:?}", session.get_auth_info());
+        match self.cloud {
+            Some(ref mut session) => {
+                debug!("Switching connection scope to {:?}", scope);
+                session.authorize(Some(scope.clone()), true, false).await?;
+                debug!("Authed as {:?}", session.get_auth_info());
 
-            session
-                .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
-                .await?;
-            session
-                .discover_service_endpoint(&openstack_sdk::types::ServiceType::BlockStorage)
-                .await?;
-            session
-                .discover_service_endpoint(&openstack_sdk::types::ServiceType::Image)
-                .await?;
+                session
+                    .discover_service_endpoint(&openstack_sdk::types::ServiceType::Compute)
+                    .await?;
+                session
+                    .discover_service_endpoint(&openstack_sdk::types::ServiceType::BlockStorage)
+                    .await?;
+                session
+                    .discover_service_endpoint(&openstack_sdk::types::ServiceType::Image)
+                    .await?;
 
-            session
-                .discover_service_endpoint(&openstack_sdk::types::ServiceType::Network)
-                .await?;
+                session
+                    .discover_service_endpoint(&openstack_sdk::types::ServiceType::Network)
+                    .await?;
 
-            Ok(session.get_auth_info())
-        } else {
-            Err(eyre!("Cannot change scope without being connected first"))
+                Ok(session.get_auth_info())
+            }
+            _ => Err(eyre!("Cannot change scope without being connected first")),
         }
     }
 

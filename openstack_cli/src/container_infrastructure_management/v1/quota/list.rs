@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::container_infrastructure_management::v1::quota::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::container_infrastructure_management::v1::quota::list;
 use structable_derive::StructTable;
 
 /// List all quotas in Magnum.

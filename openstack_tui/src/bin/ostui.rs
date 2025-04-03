@@ -36,10 +36,11 @@ async fn tokio_main() -> Result<()> {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    if let Err(e) = tokio_main().await {
-        eprintln!("{} error: Something went wrong", env!("CARGO_PKG_NAME"));
-        Err(e)
-    } else {
-        Ok(())
+    match tokio_main().await {
+        Err(e) => {
+            eprintln!("{} error: Something went wrong", env!("CARGO_PKG_NAME"));
+            Err(e)
+        }
+        _ => Ok(()),
     }
 }

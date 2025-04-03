@@ -15,7 +15,7 @@
 //! Block storage v3 commands
 use clap::{Parser, Subcommand};
 
-use openstack_sdk::{types::ServiceType, AsyncOpenStack};
+use openstack_sdk::{AsyncOpenStack, types::ServiceType};
 
 use crate::{Cli, OpenStackCliError};
 

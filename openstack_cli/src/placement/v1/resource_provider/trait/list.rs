@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::placement::v1::resource_provider::r#trait::list;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::placement::v1::resource_provider::r#trait::list;
 
 /// Return a list of traits for the resource provider identified by {uuid}.
 ///
