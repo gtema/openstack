@@ -15,7 +15,7 @@
 //! Common helpers
 use crate::error::OpenStackCliError;
 
-use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, de::Visitor};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::error::Error;

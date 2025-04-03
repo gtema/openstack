@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::block_storage::v3::volume_transfer::accept;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::block_storage::v3::volume_transfer::accept;
 use serde_json::Value;
 use structable_derive::StructTable;
 

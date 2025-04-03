@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
-use openstack_sdk::api::compute::v2::keypair::create_210;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::keypair::create_210;
 use structable_derive::StructTable;
 
 /// Imports (or generates) a keypair.

@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::block_storage::v3::attachment::os_complete;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::block_storage::v3::attachment::os_complete;
 use structable_derive::StructTable;
 
 /// Empty body for os-complete action

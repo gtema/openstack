@@ -16,13 +16,13 @@ use crate::config::ViewConfig;
 use eyre::Result;
 use lazy_static::lazy_static;
 use ratatui::prelude::*;
-use serde::{de, de::Visitor, Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, de, de::Visitor};
 use serde_json::Value;
 use std::fmt;
 use std::path::PathBuf;
 use tracing_error::ErrorLayer;
 use tracing_subscriber::{
-    self, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
+    self, Layer, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt,
 };
 
 const VERSION_MESSAGE: &str = concat!(env!("CARGO_PKG_VERSION"),);
@@ -96,12 +96,15 @@ pub fn initialize_logging() -> Result<()> {
     std::fs::create_dir_all(directory.clone())?;
     let log_path = directory.join(LOG_FILE.clone());
     let log_file = std::fs::File::create(log_path)?;
-    std::env::set_var(
-        "RUST_LOG",
-        std::env::var("RUST_LOG")
-            .or_else(|_| std::env::var(LOG_ENV.clone()))
-            .unwrap_or_else(|_| format!("{}=info", env!("CARGO_CRATE_NAME"))),
-    );
+    // TODO: Audit that the environment access only happens in single-threaded code.
+    unsafe {
+        std::env::set_var(
+            "RUST_LOG",
+            std::env::var("RUST_LOG")
+                .or_else(|_| std::env::var(LOG_ENV.clone()))
+                .unwrap_or_else(|_| format!("{}=info", env!("CARGO_CRATE_NAME"))),
+        )
+    };
     let file_subscriber = tracing_subscriber::fmt::layer()
         .with_file(true)
         .with_line_number(true)
@@ -123,7 +126,7 @@ pub fn initialize_logging() -> Result<()> {
 /// this can be customized.
 #[macro_export]
 macro_rules! trace_dbg {
-    (target: $target:expr, level: $level:expr, $ex:expr) => {{
+    (target: $target:expr_2021, level: $level:expr_2021, $ex:expr_2021) => {{
         match $ex {
             value => {
                 tracing::event!(target: $target, $level, ?value, stringify!($ex));
@@ -131,13 +134,13 @@ macro_rules! trace_dbg {
             }
         }
     }};
-    (level: $level:expr, $ex:expr) => {
+    (level: $level:expr_2021, $ex:expr_2021) => {
         trace_dbg!(target: module_path!(), level: $level, $ex)
     };
-    (target: $target:expr, $ex:expr) => {
+    (target: $target:expr_2021, $ex:expr_2021) => {
         trace_dbg!(target: $target, level: tracing::Level::DEBUG, $ex)
     };
-    ($ex:expr) => {
+    ($ex:expr_2021) => {
         trace_dbg!(level: tracing::Level::DEBUG, $ex)
     };
 }

@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::container_infrastructure_management::v1::clustertemplate::delete;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::container_infrastructure_management::v1::clustertemplate::delete;
 use structable_derive::StructTable;
 
 /// Delete a cluster template.

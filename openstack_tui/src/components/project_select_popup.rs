@@ -33,7 +33,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{centered_rect_fixed, OutputConfig, StructTable},
+    utils::{OutputConfig, StructTable, centered_rect_fixed},
 };
 
 const TITLE: &str = " Select project to switch to: ";

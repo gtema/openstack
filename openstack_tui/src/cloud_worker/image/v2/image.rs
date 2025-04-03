@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::ImageApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::ImageApiRequest;
 
 pub mod delete;
 pub mod list;
@@ -56,10 +56,10 @@ impl ExecuteApiRequest for ImageImageApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            ImageImageApiRequest::Delete(ref req) => {
+            ImageImageApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            ImageImageApiRequest::List(ref req) => {
+            ImageImageApiRequest::List(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

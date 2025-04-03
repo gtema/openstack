@@ -30,10 +30,10 @@ use eyre::eyre;
 use std::sync::{Arc, Mutex};
 use tracing::warn;
 use tracing_subscriber::filter::LevelFilter;
-use tracing_subscriber::{prelude::*, Layer};
+use tracing_subscriber::{Layer, prelude::*};
 
 use openstack_sdk::{
-    auth::authtoken::AuthTokenScope, types::identity::v3::Project, AsyncOpenStack,
+    AsyncOpenStack, auth::authtoken::AuthTokenScope, types::identity::v3::Project,
 };
 
 pub mod api;
@@ -66,9 +66,9 @@ use cli::TopLevelCommands;
 pub(crate) use output::OutputConfig;
 pub(crate) use output::StructTable;
 
-use comfy_table::presets::UTF8_FULL_CONDENSED;
 use comfy_table::ContentArrangement;
 use comfy_table::Table;
+use comfy_table::presets::UTF8_FULL_CONDENSED;
 
 /// Entry point for the CLI wrapper
 pub async fn entry_point() -> Result<(), OpenStackCliError> {

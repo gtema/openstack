@@ -27,7 +27,7 @@ use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
 use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::identity::v3::group::user::list::RequestBuilder;
-use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
+use openstack_sdk::{AsyncOpenStack, api::QueryAsync};
 use serde_json::Value;
 use structable_derive::StructTable;
 

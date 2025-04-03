@@ -24,22 +24,22 @@ use clap::Args;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 use structable_derive::StructTable;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
-use openstack_sdk::api::object_store::v1::container::get::Request;
 use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::api::object_store::v1::container::get::Request;
+use openstack_sdk::api::{Pagination, paged};
 
 /// Shows details for a container and lists objects, sorted by name, in the
 /// container.

@@ -35,22 +35,22 @@ use http::Response;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 use structable_derive::StructTable;
 
 use openstack_sdk::{
+    AsyncOpenStack,
     api::RestClient,
     types::{ApiVersion, ServiceType},
-    AsyncOpenStack,
 };
 
 use crate::common::build_upload_asyncread;
-use openstack_sdk::api::object_store::v1::object::put::Request;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::object_store::v1::object::put::Request;
 
 /// Creates an object with data content and metadata, or replaces an existing
 /// object with data content and metadata.

@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::BlockStorageApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::BlockStorageApiRequest;
 
 pub mod delete;
 pub mod list_detailed;
@@ -68,10 +68,10 @@ impl ExecuteApiRequest for BlockStorageSnapshotApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            BlockStorageSnapshotApiRequest::Delete(ref req) => {
+            BlockStorageSnapshotApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            BlockStorageSnapshotApiRequest::ListDetailed(ref req) => {
+            BlockStorageSnapshotApiRequest::ListDetailed(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

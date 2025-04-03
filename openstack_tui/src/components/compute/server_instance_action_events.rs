@@ -26,11 +26,11 @@ use crate::{
         ComputeServerInstanceActionShow,
     },
     cloud_worker::types::ApiRequest,
-    components::{table_view::TableViewComponentBase, Component},
+    components::{Component, table_view::TableViewComponentBase},
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{as_string, OutputConfig, ResourceKey, StructTable},
+    utils::{OutputConfig, ResourceKey, StructTable, as_string},
 };
 
 const TITLE: &str = "InstanceAction Events";

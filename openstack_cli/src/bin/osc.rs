@@ -90,17 +90,15 @@ fn initialize_panic_handler() -> Result<()> {
         .issue_url(concat!(env!("CARGO_PKG_REPOSITORY"), "/issues/new"))
         .issue_filter(|kind| match kind {
             color_eyre::ErrorKind::NonRecoverable(_) => true,
-            color_eyre::ErrorKind::Recoverable(error) => {
-                match error.downcast_ref::<OpenStackCliError>() {
-                    Some(OpenStackCliError::Auth { .. }) => false,
-                    Some(OpenStackCliError::ConfigError { .. }) => false,
-                    Some(OpenStackCliError::ConnectionNotFound { .. }) => false,
-                    Some(OpenStackCliError::OpenStackApi { .. }) => false,
-                    Some(OpenStackCliError::ReScope { .. }) => false,
-                    Some(OpenStackCliError::InputParameters { .. }) => false,
-                    _ => true,
-                }
-            }
+            color_eyre::ErrorKind::Recoverable(error) => !matches!(
+                error.downcast_ref::<OpenStackCliError>(),
+                Some(OpenStackCliError::Auth { .. })
+                    | Some(OpenStackCliError::ConfigError { .. })
+                    | Some(OpenStackCliError::ConnectionNotFound { .. })
+                    | Some(OpenStackCliError::OpenStackApi { .. })
+                    | Some(OpenStackCliError::ReScope { .. })
+                    | Some(OpenStackCliError::InputParameters { .. })
+            ),
         })
         .add_issue_metadata("version", env!("CARGO_PKG_VERSION"))
         .add_issue_metadata("command", command)

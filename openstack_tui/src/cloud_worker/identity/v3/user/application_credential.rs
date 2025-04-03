@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::IdentityApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::IdentityApiRequest;
 
 pub mod delete;
 pub mod list;
@@ -56,10 +56,10 @@ impl ExecuteApiRequest for IdentityUserApplicationCredentialApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            IdentityUserApplicationCredentialApiRequest::Delete(ref req) => {
+            IdentityUserApplicationCredentialApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            IdentityUserApplicationCredentialApiRequest::List(ref req) => {
+            IdentityUserApplicationCredentialApiRequest::List(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

@@ -107,22 +107,22 @@ impl ExecuteApiRequest for NetworkApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            NetworkApiRequest::Network(ref req) => {
+            NetworkApiRequest::Network(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkApiRequest::Quota(ref req) => {
+            NetworkApiRequest::Quota(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkApiRequest::Router(ref req) => {
+            NetworkApiRequest::Router(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkApiRequest::SecurityGroup(ref req) => {
+            NetworkApiRequest::SecurityGroup(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkApiRequest::SecurityGroupRule(ref req) => {
+            NetworkApiRequest::SecurityGroupRule(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkApiRequest::Subnet(ref req) => {
+            NetworkApiRequest::Subnet(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

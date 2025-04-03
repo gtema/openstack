@@ -5,11 +5,11 @@ version = "0.11.0"
 keywords = ["tui", "openstack"]
 categories = ["command-line-utilities"]
 authors = ["Artem Goncharov (gtema)"]
-edition.workspace = true
+edition = "2024"
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
-rust-version = "1.80" # MSRV
+rust-version = "1.85" # MSRV
 
 [lib]
 bench = false

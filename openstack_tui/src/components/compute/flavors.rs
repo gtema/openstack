@@ -21,7 +21,7 @@ use crate::{
     action::Action,
     cloud_worker::compute::v2::{ComputeFlavor, ComputeFlavorList, ComputeServerListBuilder},
     cloud_worker::types::*,
-    components::{table_view::TableViewComponentBase, Component},
+    components::{Component, table_view::TableViewComponentBase},
     config::Config,
     error::TuiError,
     mode::Mode,

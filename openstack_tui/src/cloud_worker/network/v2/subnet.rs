@@ -24,9 +24,9 @@ use tokio::sync::mpsc::UnboundedSender;
 use openstack_sdk::AsyncOpenStack;
 
 use crate::action::Action;
+use crate::cloud_worker::NetworkApiRequest;
 use crate::cloud_worker::common::CloudWorkerError;
 use crate::cloud_worker::types::{ApiRequest, ExecuteApiRequest};
-use crate::cloud_worker::NetworkApiRequest;
 
 pub mod delete;
 pub mod list;
@@ -56,10 +56,10 @@ impl ExecuteApiRequest for NetworkSubnetApiRequest {
         app_tx: &UnboundedSender<Action>,
     ) -> Result<(), CloudWorkerError> {
         match self {
-            NetworkSubnetApiRequest::Delete(ref req) => {
+            NetworkSubnetApiRequest::Delete(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
-            NetworkSubnetApiRequest::List(ref req) => {
+            NetworkSubnetApiRequest::List(req) => {
                 req.execute_request(session, request, app_tx).await?;
             }
         }

@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val_opt;
-use openstack_sdk::api::compute::v2::aggregate::set_metadata;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::aggregate::set_metadata;
 use serde_json::Value;
 use structable_derive::StructTable;
 

@@ -16,8 +16,8 @@ use serde::{Deserialize, Serialize};
 use strum::Display;
 
 use crate::action::Action;
-use openstack_sdk::types::ServiceType;
 use openstack_sdk::AsyncOpenStack;
+use openstack_sdk::types::ServiceType;
 use tokio::sync::mpsc::UnboundedSender;
 
 pub use crate::cloud_worker::block_storage::*;

@@ -25,18 +25,18 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::download_file;
+use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::RawQueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::image::v2::image::file::download;
 use openstack_sdk::api::image::v2::image::find;
-use openstack_sdk::api::QueryAsync;
-use openstack_sdk::api::RawQueryAsync;
 use structable_derive::StructTable;
 
 /// Downloads binary image data. *(Since Image API v2.0)*
