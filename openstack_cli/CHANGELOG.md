@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.11.0...openstack_cli-v0.11.1) - 2025-04-03
+
+### Added
+
+- Introduce common resonse type helpers ([#1109](https://github.com/gtema/openstack/pull/1109))
+
+### Other
+
+- update Cargo.lock dependencies
+- Bundled update of deps ([#1105](https://github.com/gtema/openstack/pull/1105))
+
 ## [0.11.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.10.0...openstack_cli-v0.11.0) - 2025-03-29
 
 ### Added
