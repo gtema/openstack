@@ -28,6 +28,8 @@ use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::network::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
+use openstack_sdk::types::IntString;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 use serde_json::Value;
 use structable_derive::StructTable;
@@ -227,7 +229,7 @@ pub struct NetworkNetwork {
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    pub admin_state_up: Option<bool>,
+    pub admin_state_up: Option<BoolString>,
 
     /// The availability zone candidate for the network.
     ///
@@ -281,7 +283,7 @@ pub struct NetworkNetwork {
     ///
     #[serde(default)]
     #[structable(optional, title = "IS_DEFAULT", wide)]
-    pub is_default: Option<bool>,
+    pub is_default: Option<BoolString>,
 
     /// Indicates whether L2 connectivity is available throughout the
     /// `network`.
@@ -295,7 +297,7 @@ pub struct NetworkNetwork {
     ///
     #[serde(default)]
     #[structable(optional, title = "MTU", wide)]
-    pub mtu: Option<i32>,
+    pub mtu: Option<IntString>,
 
     /// Human-readable name of the network.
     ///
@@ -309,7 +311,7 @@ pub struct NetworkNetwork {
     ///
     #[serde(default)]
     #[structable(optional, title = "PORT_SECURITY_ENABLED", wide)]
-    pub port_security_enabled: Option<bool>,
+    pub port_security_enabled: Option<BoolString>,
 
     #[serde(default, rename = "provider:network_type")]
     #[structable(optional, title = "PROVIDER:NETWORK_TYPE", wide)]
@@ -321,7 +323,7 @@ pub struct NetworkNetwork {
 
     #[serde(default, rename = "provider:segmentation_id")]
     #[structable(optional, title = "PROVIDER:SEGMENTATION_ID", wide)]
-    pub provider_segmentation_id: Option<String>,
+    pub provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
     ///
@@ -344,7 +346,7 @@ pub struct NetworkNetwork {
     ///
     #[serde(default, rename = "router:external")]
     #[structable(optional, title = "ROUTER:EXTERNAL", wide)]
-    pub router_external: Option<bool>,
+    pub router_external: Option<BoolString>,
 
     /// A list of provider `segment` objects.
     ///
@@ -357,7 +359,7 @@ pub struct NetworkNetwork {
     ///
     #[serde(default)]
     #[structable(optional, title = "SHARED", wide)]
-    pub shared: Option<bool>,
+    pub shared: Option<BoolString>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
     ///

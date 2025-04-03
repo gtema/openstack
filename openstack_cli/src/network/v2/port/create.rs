@@ -33,10 +33,10 @@ use crate::StructTable;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
-use crate::common::BoolString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::port::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::BoolString;
 use serde_json::Value;
 use structable_derive::StructTable;
 

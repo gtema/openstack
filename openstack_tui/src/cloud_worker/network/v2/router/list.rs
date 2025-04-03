@@ -28,6 +28,7 @@ use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::router::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 use serde_json::Value;
 use structable_derive::StructTable;
@@ -180,7 +181,7 @@ pub struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "ADMIN_STATE_UP", wide)]
-    pub admin_state_up: Option<bool>,
+    pub admin_state_up: Option<BoolString>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
@@ -222,7 +223,7 @@ pub struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "DISTRIBUTED", wide)]
-    pub distributed: Option<bool>,
+    pub distributed: Option<BoolString>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
     /// router, the IPv6 address of internal subnets attached to the router can
@@ -233,7 +234,7 @@ pub struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLE_NDP_PROXY", wide)]
-    pub enable_ndp_proxy: Option<bool>,
+    pub enable_ndp_proxy: Option<BoolString>,
 
     /// The external gateway information of the router. If the router has an
     /// external gateway, this would be a dict with `network_id`,
@@ -256,7 +257,7 @@ pub struct NetworkRouter {
     ///
     #[serde(default)]
     #[structable(optional, title = "HA", wide)]
-    pub ha: Option<bool>,
+    pub ha: Option<BoolString>,
 
     /// The ID of the router.
     ///

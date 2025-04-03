@@ -31,11 +31,11 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::BoolString;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::address_scope::find;
 use openstack_sdk::api::network::v2::address_scope::set;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::BoolString;
 use structable_derive::StructTable;
 
 /// Updates an address scope.

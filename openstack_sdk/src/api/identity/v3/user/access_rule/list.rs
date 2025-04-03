@@ -30,6 +30,23 @@ use std::borrow::Cow;
 #[derive(Builder, Debug, Clone)]
 #[builder(setter(strip_option))]
 pub struct Request<'a> {
+    /// The request method that the application credential is permitted to use
+    /// for a given API endpoint.
+    ///
+    #[builder(default, setter(into))]
+    method: Option<Cow<'a, str>>,
+
+    /// The API path that the application credential is permitted to access.
+    ///
+    #[builder(default, setter(into))]
+    path: Option<Cow<'a, str>>,
+
+    /// The service type identifier for the service that the application is
+    /// permitted to access.
+    ///
+    #[builder(default, setter(into))]
+    service: Option<Cow<'a, str>>,
+
     /// user_id parameter for /v3/users/{user_id}/access_rules/{access_rule_id}
     /// API
     ///
@@ -85,7 +102,12 @@ impl RestEndpoint for Request<'_> {
     }
 
     fn parameters(&self) -> QueryParams {
-        QueryParams::default()
+        let mut params = QueryParams::default();
+        params.push_opt("service", self.service.as_ref());
+        params.push_opt("path", self.path.as_ref());
+        params.push_opt("method", self.method.as_ref());
+
+        params
     }
 
     fn service_type(&self) -> ServiceType {

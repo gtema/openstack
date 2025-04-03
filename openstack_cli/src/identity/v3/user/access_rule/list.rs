@@ -58,7 +58,24 @@ pub struct AccessRulesCommand {
 
 /// Query parameters
 #[derive(Args)]
-struct QueryParameters {}
+struct QueryParameters {
+    /// The request method that the application credential is permitted to use
+    /// for a given API endpoint.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    method: Option<String>,
+
+    /// The API path that the application credential is permitted to access.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    path: Option<String>,
+
+    /// The service type identifier for the service that the application is
+    /// permitted to access.
+    ///
+    #[arg(help_heading = "Query parameters", long)]
+    service: Option<String>,
+}
 
 /// Path parameters
 #[derive(Args)]
@@ -172,6 +189,15 @@ impl AccessRulesCommand {
             );
         }
         // Set query parameters
+        if let Some(val) = &self.query.service {
+            ep_builder.service(val);
+        }
+        if let Some(val) = &self.query.path {
+            ep_builder.path(val);
+        }
+        if let Some(val) = &self.query.method {
+            ep_builder.method(val);
+        }
         // Set body parameters
 
         let ep = ep_builder

@@ -32,9 +32,9 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_key_val;
-use crate::common::NumString;
 use openstack_sdk::api::compute::v2::flavor::extra_spec::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::NumString;
 use std::collections::HashMap;
 
 /// Creates extra specs for a flavor, by ID.

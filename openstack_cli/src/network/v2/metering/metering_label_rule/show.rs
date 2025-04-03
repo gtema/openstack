@@ -31,9 +31,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::BoolString;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::BoolString;
 use structable_derive::StructTable;
 
 /// Shows details for a metering label rule.

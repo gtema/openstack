@@ -28,6 +28,7 @@ use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::subnet::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 use serde_json::Value;
 use structable_derive::StructTable;
@@ -290,13 +291,13 @@ pub struct NetworkSubnet {
     ///
     #[serde(default)]
     #[structable(optional, title = "DNS_PUBLISH_FIXED_IP", wide)]
-    pub dns_publish_fixed_ip: Option<bool>,
+    pub dns_publish_fixed_ip: Option<BoolString>,
 
     /// Indicates whether dhcp is enabled or disabled for the subnet.
     ///
     #[serde(default)]
     #[structable(optional, title = "ENABLE_DHCP", wide)]
-    pub enable_dhcp: Option<bool>,
+    pub enable_dhcp: Option<BoolString>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
@@ -359,7 +360,7 @@ pub struct NetworkSubnet {
 
     #[serde(default, rename = "router:external")]
     #[structable(optional, title = "ROUTER:EXTERNAL", wide)]
-    pub router_external: Option<bool>,
+    pub router_external: Option<BoolString>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.

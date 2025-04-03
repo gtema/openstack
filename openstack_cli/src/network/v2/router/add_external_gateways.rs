@@ -32,9 +32,9 @@ use crate::OutputConfig;
 use crate::StructTable;
 
 use crate::common::parse_json;
-use crate::common::BoolString;
 use openstack_sdk::api::network::v2::router::add_external_gateways;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::BoolString;
 use serde_json::Value;
 use std::fmt;
 use structable_derive::StructTable;

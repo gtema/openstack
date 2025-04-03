@@ -31,10 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::qos::alias_bandwidth_limit_rule::set;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::IntString;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI

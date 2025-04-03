@@ -31,10 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::BoolString;
 use openstack_sdk::api::network::v2::security_group_rule::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use structable_derive::StructTable;
 
 /// Lists a summary of all OpenStack Networking security group rules that the
