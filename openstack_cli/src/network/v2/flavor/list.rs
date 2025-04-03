@@ -31,10 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::BoolString;
 use openstack_sdk::api::network::v2::flavor::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use serde_json::Value;
 use structable_derive::StructTable;
 

@@ -28,6 +28,7 @@ use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::security_group::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 use serde_json::Value;
 use structable_derive::StructTable;
@@ -206,13 +207,13 @@ pub struct NetworkSecurityGroup {
     ///
     #[serde(default)]
     #[structable(optional, title = "SHARED", wide)]
-    pub shared: Option<bool>,
+    pub shared: Option<BoolString>,
 
     /// Indicates if the security group is stateful or stateless.
     ///
     #[serde(default)]
     #[structable(optional, title = "STATEFUL", wide)]
-    pub stateful: Option<bool>,
+    pub stateful: Option<BoolString>,
 
     /// The list of tags on the resource.
     ///

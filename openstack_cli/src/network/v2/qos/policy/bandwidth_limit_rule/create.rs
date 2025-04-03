@@ -31,10 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::IntString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::IntString;
 use structable_derive::StructTable;
 
 /// Creates a bandwidth limit rule for a QoS policy.

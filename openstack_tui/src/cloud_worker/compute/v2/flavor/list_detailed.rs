@@ -28,6 +28,7 @@ use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::compute::v2::flavor::list_detailed::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::IntString;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 use serde_json::Value;
 use structable_derive::StructTable;
@@ -189,7 +190,7 @@ pub struct ComputeFlavor {
     ///
     #[serde()]
     #[structable(title = "SWAP", wide)]
-    pub swap: String,
+    pub swap: IntString,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///

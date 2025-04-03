@@ -31,10 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::BoolString;
 use openstack_sdk::api::network::v2::address_scope::list;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use structable_derive::StructTable;
 
 /// Lists address scopes that the project has access to.

@@ -28,6 +28,7 @@ use crate::utils::OutputConfig;
 use crate::utils::StructTable;
 use openstack_sdk::api::network::v2::security_group_rule::list::RequestBuilder;
 use openstack_sdk::api::{paged, Pagination};
+use openstack_sdk::types::BoolString;
 use openstack_sdk::{api::QueryAsync, AsyncOpenStack};
 use serde_json::Value;
 use structable_derive::StructTable;
@@ -238,7 +239,7 @@ pub struct NetworkSecurityGroupRule {
     ///
     #[serde(default)]
     #[structable(optional, title = "BELONGS_TO_DEFAULT_SG", wide)]
-    pub belongs_to_default_sg: Option<bool>,
+    pub belongs_to_default_sg: Option<BoolString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///

@@ -31,9 +31,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::IntString;
 use openstack_sdk::api::compute::v2::quota_set::defaults;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::IntString;
 use structable_derive::StructTable;
 
 /// Lists the default quotas for a project.

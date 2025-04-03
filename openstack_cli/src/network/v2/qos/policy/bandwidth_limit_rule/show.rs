@@ -31,9 +31,9 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::IntString;
 use openstack_sdk::api::network::v2::qos::policy::bandwidth_limit_rule::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::IntString;
 use structable_derive::StructTable;
 
 /// Shows details for a bandwidth limit rule for a QoS policy.

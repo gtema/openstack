@@ -31,10 +31,10 @@ use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
 
-use crate::common::BoolString;
 use clap::ValueEnum;
 use openstack_sdk::api::network::v2::metering::metering_label_rule::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::types::BoolString;
 use structable_derive::StructTable;
 
 /// Creates an L3 metering label rule.
