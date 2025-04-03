@@ -89,4 +89,4 @@ jobs:
           cargo install cargo-fuzz
 
       - name: Run tests
-        run: cargo fuzz run fuzz_openstack_sdk_config --features=fuzzing -- -max_total_time=60
+        run: cargo +nightly fuzz run fuzz_openstack_sdk_config --features=fuzzing -- -max_total_time=60
