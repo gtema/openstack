@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crossterm::event::{KeyCode, KeyEvent};
-use eyre::Result;
+use eyre::{Result, WrapErr};
 use openstack_sdk::types::EntryStatus;
 use ratatui::{
     prelude::*,
@@ -322,7 +322,16 @@ where
     }
 
     pub fn set_data(&mut self, data: Vec<Value>) -> Result<(), TuiError> {
-        let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))?;
+        let items = serde_json::from_value::<Vec<T>>(serde_json::Value::Array(data.clone()))
+            .wrap_err_with(|| {
+                format!(
+                    "json: {:?}",
+                    data.iter()
+                        .filter(|&item| serde_json::from_value::<T>(item.clone()).is_err())
+                        .map(|x| x.to_string())
+                        .collect::<Vec<_>>()
+                )
+            })?;
         if data != self.raw_items {
             self.items = items;
             self.raw_items = data.clone();
