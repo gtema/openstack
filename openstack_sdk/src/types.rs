@@ -16,10 +16,10 @@
 
 #![allow(dead_code)]
 use secrecy::{ExposeSecret, SecretString};
-use serde::{Deserialize, Serialize};
 use std::fmt;
 
 pub mod api_version;
+pub mod common;
 pub mod compute;
 pub mod identity;
 
@@ -29,6 +29,7 @@ use std::pin::Pin;
 use std::task::{Context, Poll};
 
 pub use crate::types::api_version::ApiVersion;
+pub use common::{BoolString, IdAndName, IntString, NameOrId, NumString};
 
 /// Supported Service Types
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -122,26 +123,6 @@ impl AsyncRead for BoxedAsyncRead {
     ) -> Poll<Result<usize, Error>> {
         self.reader.as_mut().poll_read(cx, buf)
     }
-}
-
-/// A reference to a resource by its Name and ID.
-#[derive(Deserialize, Debug, Clone, Serialize, Eq, PartialEq)]
-pub struct IdAndName {
-    /// The name of the entity.
-    pub name: String,
-    /// The UID for the entity.
-    pub id: String,
-}
-
-/// A reference to a resource by either its Name or ID.
-#[derive(Clone, Debug, Serialize, PartialEq, Eq, Hash)]
-pub enum NameOrId {
-    /// Resource ID.
-    #[serde(rename = "id")]
-    Id(String),
-    /// Resource name.
-    #[serde(rename = "name")]
-    Name(String),
 }
 
 /// Status of the resource
