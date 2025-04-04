@@ -24,14 +24,14 @@ use tracing::{instrument, trace};
 use url::Url;
 
 use http::{
-    self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response, Uri,
+    self, HeaderMap, HeaderValue, Method, Request, Response, Uri, header, request::Builder,
 };
 use serde::de::DeserializeOwned;
 //use serde_bytes::ByteBuf;
 
 use serde_json::json;
 
-use crate::api::{query, ApiError, BodyError, QueryParams, RestClient};
+use crate::api::{ApiError, BodyError, QueryParams, RestClient, query};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
 #[cfg(feature = "sync")]
@@ -365,14 +365,14 @@ where
 #[cfg(feature = "sync")]
 #[cfg(test)]
 mod tests {
-
     use http::StatusCode;
+    use httpmock::MockServer;
     use serde::Deserialize;
     use serde_json::json;
 
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{ApiError, Query};
-    use crate::test::client::MockServerClient;
+    use crate::test::client::FakeOpenStackClient;
     use crate::types::ServiceType;
 
     struct Dummy;
@@ -398,8 +398,9 @@ mod tests {
 
     #[test]
     fn test_non_json_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(200).body("not json");
         });
@@ -416,8 +417,9 @@ mod tests {
 
     #[test]
     fn test_empty_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(200);
         });
@@ -434,8 +436,9 @@ mod tests {
 
     #[test]
     fn test_error_not_found() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(404);
         });
@@ -451,8 +454,9 @@ mod tests {
 
     #[test]
     fn test_error_bad_json() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(http::StatusCode::CONFLICT.into());
         });
@@ -469,8 +473,9 @@ mod tests {
 
     #[test]
     fn test_error_detection() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(http::StatusCode::CONFLICT.into())
                 .json_body(json!({"message": "dummy error message"}));
@@ -493,9 +498,10 @@ mod tests {
 
     #[test]
     fn test_error_detection_unknown() {
-        let client = MockServerClient::new();
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
         let err_obj = json!({"bogus": "dummy error message"});
-        let mock = client.server.mock(|when, then| {
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(err_obj.clone());
@@ -518,8 +524,9 @@ mod tests {
 
     #[test]
     fn test_bad_deserialization() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(200).json_body(json!({"not_value": 0}));
         });
@@ -540,8 +547,9 @@ mod tests {
 
     #[test]
     fn test_good_deserialization() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(200).json_body(json!({"value": 0}));
         });

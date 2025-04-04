@@ -12,28 +12,25 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-use std::borrow::Cow;
-use std::cmp;
-
-use std::ops::Range;
-
 #[cfg(feature = "async")]
 use async_trait::async_trait;
-
 use bytes::Bytes;
 use derive_builder::Builder;
 use http::request::Builder as RequestBuilder;
-use http::{header, Method, Response, StatusCode};
 use http::{HeaderMap, Response as HttpResponse};
-#[cfg(feature = "sync")]
-use reqwest::blocking::Client as HttpClient;
+use http::{Method, Response, StatusCode, header};
 #[cfg(feature = "async")]
 use reqwest::Client as AsyncHttpClient;
+#[cfg(feature = "sync")]
+use reqwest::blocking::Client as HttpClient;
 use serde::ser::Serialize;
+use serde_json::json;
+use std::borrow::Cow;
+use std::cmp;
+use std::collections::HashMap;
+use std::ops::Range;
 use thiserror::Error;
 use url::Url;
-
-use serde_json::json;
 
 #[cfg(feature = "async")]
 use crate::api::AsyncClient;
@@ -41,10 +38,10 @@ use crate::api::AsyncClient;
 use crate::api::Client;
 use crate::api::{ApiError, RestClient};
 
-use crate::catalog::ServiceEndpoint;
+use crate::RestError;
+use crate::catalog::{CatalogError, ServiceEndpoint};
 use crate::types::identity::v3::Project;
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
-use crate::RestError;
 
 use httpmock::prelude::*;
 
@@ -339,6 +336,7 @@ where
 
 /// Mock Test client
 #[cfg(feature = "sync")]
+#[deprecated]
 pub struct MockServerClient {
     pub server: MockServer,
     pub client: HttpClient,
@@ -405,6 +403,7 @@ impl Client for MockServerClient {
 }
 
 #[cfg(feature = "async")]
+#[deprecated]
 pub struct MockAsyncServerClient {
     pub server: MockServer,
     pub client: AsyncHttpClient,
@@ -456,6 +455,176 @@ impl AsyncClient for MockAsyncServerClient {
             let request = http_request.try_into()?;
 
             let rsp = self.client.execute(request).await?;
+
+            let mut http_rsp = HttpResponse::builder()
+                .status(rsp.status())
+                .version(rsp.version());
+            let headers = http_rsp.headers_mut().unwrap();
+            for (key, value) in rsp.headers() {
+                headers.insert(key, value.clone());
+            }
+            Ok(http_rsp.body(rsp.bytes().await?)?)
+        };
+        call().map_err(ApiError::client).await
+    }
+
+    async fn rest_read_body_async(
+        &self,
+        _request: RequestBuilder,
+        _body: BoxedAsyncRead,
+    ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
+        todo!();
+    }
+
+    async fn download_async(
+        &self,
+        _request: RequestBuilder,
+        _body: Vec<u8>,
+    ) -> Result<(HeaderMap, BoxedAsyncRead), ApiError<Self::Error>> {
+        todo!();
+    }
+}
+
+/// Fake (test) OpenStack client
+///
+/// A client for a faked OpenStack server. Can be used together with mock servers to verify
+/// RestEndpoint instances behavior. It may be also used together with a more sophisticated mock
+/// server to simulate OpenStack.
+///
+/// A mock server is explicitly left out to give possibility to use the one fitting to the preciese
+/// requirements.
+///
+/// ```
+/// use httpmock::MockServer;
+///
+/// struct Dummy;
+///
+/// impl RestEndpoint for Dummy {
+///     fn method(&self) -> http::Method {
+///         http::Method::GET
+///     }
+///
+///     fn endpoint(&self) -> Cow<'static, str> {
+///         "dummy".into()
+///     }
+///
+///     fn service_type(&self) -> ServiceType {
+///         ServiceType::from("dummy")
+///     }
+/// }
+///
+/// #[test]
+/// fn test_non_json_response() {
+///     let server = MockServer::start();
+///     let client = FakeOpenStackClient::new(server.base_url());
+///     let mock = server.mock(|when, then| {
+///         when.method(httpmock::Method::GET).path("/dummy");
+///         then.status(200).body("not json");
+///     });
+///
+///     let res: Result<DummyResult, _> = Dummy.query(&client);
+///     let err = res.unwrap_err();
+///     if let ApiError::OpenStackService { status, .. } = err {
+///         assert_eq!(status, http::StatusCode::OK);
+///     } else {
+///         panic!("unexpected error: {}", err);
+///     }
+///     mock.assert();
+/// }
+///
+/// ```
+pub struct FakeOpenStackClient {
+    /// Known endpoints used by the client
+    endpoints: HashMap<String, ServiceEndpoint>,
+}
+
+impl FakeOpenStackClient {
+    /// Instantiate new Fake OpenStack Client with a url pointing to the base url of a server (i.e.
+    /// `http://localhost:1234`)
+    pub fn new<S: AsRef<str>>(url: S) -> Self {
+        let mut slf = Self {
+            endpoints: HashMap::new(),
+        };
+        slf.add_endpoint("default", Url::parse(url.as_ref()).unwrap());
+        slf
+    }
+
+    /// Register dedicated endpoint for a specific service_type. When no dedicated endpoint is
+    /// present a `default` one (used in the client initialization) is used.
+    pub fn add_endpoint<S: AsRef<str>>(&mut self, service_type: S, url: Url) -> &mut Self {
+        self.endpoints.insert(
+            service_type.as_ref().into(),
+            ServiceEndpoint::new(url, ApiVersion::new(0, 0)),
+        );
+        self
+    }
+}
+
+impl RestClient for FakeOpenStackClient {
+    type Error = RestError;
+
+    fn get_service_endpoint(
+        &self,
+        service_type: &ServiceType,
+        _version: Option<&ApiVersion>,
+    ) -> Result<&ServiceEndpoint, ApiError<Self::Error>> {
+        self.endpoints
+            .get(&service_type.to_string())
+            .or(self.endpoints.get("default"))
+            .ok_or(ApiError::catalog(CatalogError::ServiceNotConfigured(
+                service_type.to_string(),
+            )))
+    }
+
+    fn get_current_project(&self) -> Option<Project> {
+        None
+    }
+}
+
+#[cfg(feature = "sync")]
+impl Client for FakeOpenStackClient {
+    fn rest(
+        &self,
+        request: RequestBuilder,
+        body: Vec<u8>,
+    ) -> Result<Response<Bytes>, ApiError<Self::Error>> {
+        let call = || -> Result<_, Self::Error> {
+            let http_request = request.body(body.clone())?;
+            let request = http_request.try_into()?;
+
+            let client = HttpClient::new();
+            let rsp = client.execute(request)?;
+
+            let mut http_rsp = HttpResponse::builder()
+                .status(rsp.status())
+                .version(rsp.version());
+
+            let headers = http_rsp.headers_mut().unwrap();
+            for (key, value) in rsp.headers() {
+                headers.insert(key, value.clone());
+            }
+
+            Ok(http_rsp.body(rsp.bytes()?)?)
+        };
+        call().map_err(ApiError::client)
+    }
+}
+
+#[cfg(feature = "async")]
+#[async_trait]
+impl AsyncClient for FakeOpenStackClient {
+    async fn rest_async(
+        &self,
+        request: http::request::Builder,
+        body: Vec<u8>,
+    ) -> Result<HttpResponse<Bytes>, ApiError<Self::Error>> {
+        use futures_util::TryFutureExt;
+        let call = || async {
+            let http_request = request.body(body)?;
+            let request = http_request.try_into()?;
+
+            let client = AsyncHttpClient::new();
+            let rsp = client.execute(request).await?;
 
             let mut http_rsp = HttpResponse::builder()
                 .status(rsp.status())
