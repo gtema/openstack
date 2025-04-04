@@ -16,7 +16,7 @@ mod iter;
 mod next_page;
 mod pagination;
 
-use http::{header, HeaderValue, Request};
+use http::{HeaderValue, Request, header};
 use tracing::{debug, trace};
 
 #[cfg(feature = "async")]
@@ -28,7 +28,7 @@ use serde::de::DeserializeOwned;
 pub use self::pagination::{Pagination, PaginationError};
 
 use crate::api::rest_endpoint::set_latest_microversion;
-use crate::api::{query, ApiError, RestEndpoint};
+use crate::api::{ApiError, RestEndpoint, query};
 
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync};
@@ -243,21 +243,18 @@ where
 
 #[cfg(test)]
 mod tests {
-
     use http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
+    use httpmock::MockServer;
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
-    use crate::api::rest_endpoint_prelude::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
+    use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError, Pagination};
-    #[cfg(feature = "async")]
-    use crate::test::client::MockAsyncServerClient;
-    #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::FakeOpenStackClient;
     use crate::test::client::{ExpectedUrl, PagedTestClient};
 
     // #[derive(Debug)]
@@ -306,8 +303,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_non_json_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::OK.into()).body("not json");
         });
@@ -326,8 +324,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_non_json_response_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::OK.into()).body("not json");
         });
@@ -347,8 +346,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_error_bad_json() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::CONFLICT.into());
         });
@@ -367,8 +367,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_error_bad_json_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::CONFLICT.into());
         });
@@ -388,8 +389,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_error_detection() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(json!({"message": "dummy error message"}));
@@ -409,8 +411,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_error_detection_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/paged_dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(json!({"message": "dummy error message"}));
@@ -618,9 +621,10 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_pagination_headers() {
-        let client = MockServerClient::new();
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
         let mock_data: Vec<DummyResult> = (0..=255).map(|value| DummyResult { value }).collect();
-        let _mock = client.server.mock(|when, then| {
+        let _mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/paged_dummy")
                 .header("foo", "bar");
@@ -642,9 +646,10 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_pagination_headers_async() {
-        let client = MockAsyncServerClient::new().await;
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
         let mock_data: Vec<DummyResult> = (0..=255).map(|value| DummyResult { value }).collect();
-        let _mock = client.server.mock(|when, then| {
+        let _mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/paged_dummy")
                 .header("foo", "bar");

@@ -222,21 +222,18 @@ where
 
 #[cfg(test)]
 mod tests {
-
+    use httpmock::MockServer;
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
-    use crate::api::find::Findable;
-    use crate::api::rest_endpoint_prelude::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
+    use crate::api::find::Findable;
+    use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError};
-    #[cfg(feature = "async")]
-    use crate::test::client::MockAsyncServerClient;
-    #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::FakeOpenStackClient;
     use derive_builder::Builder;
 
     #[derive(Debug, Builder, Clone)]
@@ -328,8 +325,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_1() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(200)
                 .header("content-type", "application/json")
@@ -348,8 +346,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(200)
                 .header("content-type", "application/json")
@@ -368,12 +367,13 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_1() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -391,12 +391,13 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -414,12 +415,13 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_400_list_1() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(400);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -437,12 +439,13 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_400_list_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(400);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -460,8 +463,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_by_name_0_list_1() {
-        let client = MockServerClient::new();
-        let list_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -478,8 +482,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_by_name_list_1_async() {
-        let client = MockAsyncServerClient::new().await;
-        let list_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -496,12 +501,13 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_2() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -522,12 +528,13 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_2_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -548,8 +555,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_by_name_list_2() {
-        let client = MockServerClient::new();
-        let list_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -569,8 +577,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_by_name_list_2_async() {
-        let client = MockAsyncServerClient::new().await;
-        let list_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -590,12 +599,13 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_get_0_list_0() {
-        let client = MockServerClient::new();
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -616,12 +626,13 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_get_0_list_0_async() {
-        let client = MockAsyncServerClient::new().await;
-        let get_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let get_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummies/abc");
             then.status(404);
         });
-        let list_mock = client.server.mock(|when, then| {
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -642,8 +653,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_by_name_list_0() {
-        let client = MockServerClient::new();
-        let list_mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");
@@ -663,8 +675,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_by_name_list_0_async() {
-        let client = MockAsyncServerClient::new().await;
-        let list_mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let list_mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET)
                 .path("/dummies")
                 .query_param("name", "abc");

@@ -157,7 +157,7 @@ pub(crate) fn next_page_from_body(
                             None => {
                                 return Err(PaginationError::Body {
                                     msg: "`rel` element is missing in links".into(),
-                                })
+                                });
                             }
                         }
                     }

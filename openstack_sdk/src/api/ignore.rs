@@ -112,20 +112,17 @@ where
 
 #[cfg(test)]
 mod tests {
-
     use http::StatusCode;
+    use httpmock::MockServer;
     use serde_json::json;
 
-    use crate::api::rest_endpoint_prelude::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
+    use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError};
-    #[cfg(feature = "async")]
-    use crate::test::client::MockAsyncServerClient;
-    #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::FakeOpenStackClient;
     use crate::types::ServiceType;
 
     struct Dummy;
@@ -147,8 +144,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_non_json_response() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::OK.into()).body("not json");
         });
@@ -160,8 +158,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_openstack_non_json_response_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::OK.into()).body("not json");
         });
@@ -173,8 +172,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_bad_json() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into());
         });
@@ -191,8 +191,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_openstack_error_bad_json_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into());
         });
@@ -209,8 +210,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_detection() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(json!({"message": "dummy error message"}));
@@ -228,8 +230,9 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_openstack_error_detection_async() {
-        let client = MockAsyncServerClient::new().await;
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(json!({"message": "dummy error message"}));
@@ -247,9 +250,10 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn test_openstack_error_detection_unknown() {
-        let client = MockServerClient::new();
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
         let err_obj = json!({"bogus": "dummy error message"});
-        let mock = client.server.mock(|when, then| {
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(err_obj.clone());
@@ -267,9 +271,10 @@ mod tests {
     #[cfg(feature = "async")]
     #[tokio::test]
     async fn test_openstack_error_detection_unknown_async() {
-        let client = MockAsyncServerClient::new().await;
+        let server = MockServer::start_async().await;
+        let client = FakeOpenStackClient::new(server.base_url());
         let err_obj = json!({"bogus": "dummy error message"});
-        let mock = client.server.mock(|when, then| {
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::GET).path("/dummy");
             then.status(StatusCode::CONFLICT.into())
                 .json_body(err_obj.clone());
