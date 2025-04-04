@@ -16,7 +16,7 @@ mod iter;
 mod next_page;
 mod pagination;
 
-use http::{HeaderValue, Request, header};
+use http::{header, HeaderValue, Request};
 use tracing::{debug, trace};
 
 #[cfg(feature = "async")]
@@ -28,7 +28,7 @@ use serde::de::DeserializeOwned;
 pub use self::pagination::{Pagination, PaginationError};
 
 use crate::api::rest_endpoint::set_latest_microversion;
-use crate::api::{ApiError, RestEndpoint, query};
+use crate::api::{query, ApiError, RestEndpoint};
 
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync};
@@ -248,16 +248,15 @@ mod tests {
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
+    use crate::api::rest_endpoint_prelude::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
     #[cfg(feature = "async")]
     use crate::api::QueryAsync;
-    use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError, Pagination};
     use crate::test::client::FakeOpenStackClient;
-    use crate::test::client::{ExpectedUrl, PagedTestClient};
+    use crate::test::internal::{ExpectedUrl, PagedTestClient};
 
-    // #[derive(Debug)]
     struct Dummy {
         with_keyset: bool,
 

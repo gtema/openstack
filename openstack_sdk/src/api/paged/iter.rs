@@ -21,13 +21,13 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use futures_util::Stream;
 use http::request::Builder as RequestBuilder;
-use http::{HeaderValue, Request, Response, header};
+use http::{header, HeaderValue, Request, Response};
 use serde::de::DeserializeOwned;
 use url::Url;
 
-use crate::api::paged::{Pageable, Paged, Pagination, next_page};
+use crate::api::paged::{next_page, Pageable, Paged, Pagination};
 use crate::api::rest_endpoint::set_latest_microversion;
-use crate::api::{ApiError, RestClient, RestEndpoint, query};
+use crate::api::{query, ApiError, RestClient, RestEndpoint};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync};
 #[cfg(feature = "sync")]
@@ -472,7 +472,7 @@ mod tests {
     use crate::api::rest_endpoint_prelude::*;
     use crate::api::{self, ApiError, Pagination};
     use crate::test::client::FakeOpenStackClient;
-    use crate::test::client::{ExpectedUrl, PagedTestClient};
+    use crate::test::internal::{ExpectedUrl, PagedTestClient};
 
     #[derive(Debug, Default)]
     struct Dummy {

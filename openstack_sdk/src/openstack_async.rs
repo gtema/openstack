@@ -191,7 +191,9 @@ impl AsyncOpenStack {
             }
         }
         if let Some(false) = &config.verify {
-            warn!("SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate.");
+            warn!(
+                "SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate."
+            );
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
 

@@ -24,14 +24,14 @@ use tracing::{instrument, trace};
 use url::Url;
 
 use http::{
-    self, HeaderMap, HeaderValue, Method, Request, Response, Uri, header, request::Builder,
+    self, header, request::Builder, HeaderMap, HeaderValue, Method, Request, Response, Uri,
 };
 use serde::de::DeserializeOwned;
 //use serde_bytes::ByteBuf;
 
 use serde_json::json;
 
-use crate::api::{ApiError, BodyError, QueryParams, RestClient, query};
+use crate::api::{query, ApiError, BodyError, QueryParams, RestClient};
 #[cfg(feature = "async")]
 use crate::api::{AsyncClient, QueryAsync, RawQueryAsync};
 #[cfg(feature = "sync")]

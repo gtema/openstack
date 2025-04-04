@@ -35,6 +35,5 @@ pub use crate::openstack::OpenStack;
 #[cfg(feature = "async")]
 pub use crate::openstack_async::AsyncOpenStack;
 
-#[cfg(test)]
 #[allow(dead_code)]
 mod test;
