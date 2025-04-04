@@ -148,7 +148,7 @@ impl ConfigFileBuilder {
                     source: Box::new(error),
                     builder: self,
                     path: source.as_ref().to_owned(),
-                })
+                });
             }
         };
 

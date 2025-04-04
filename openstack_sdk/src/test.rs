@@ -11,5 +11,11 @@
 // limitations under the License.
 //
 // SPDX-License-Identifier: Apache-2.0
+//! Testing client
+//!
+//! Utilities for testing `openstack_sdk` or resources based on the `openstack_sdk` in external
+//! crates.
 
 pub mod client;
+#[cfg(test)]
+pub mod internal;

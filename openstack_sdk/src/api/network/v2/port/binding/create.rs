@@ -176,14 +176,13 @@ impl RestEndpoint for Request<'_> {
 
 #[cfg(test)]
 mod tests {
-    #![allow(unused_imports)]
     use super::*;
     #[cfg(feature = "sync")]
     use crate::api::Query;
-    #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::FakeOpenStackClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
+    use httpmock::MockServer;
     use serde_json::json;
 
     #[test]
@@ -214,8 +213,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::POST)
                 .path(format!("/ports/{port_id}/bindings", port_id = "port_id",));
 
@@ -236,8 +236,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::POST)
                 .path(format!("/ports/{port_id}/bindings", port_id = "port_id",))
                 .header("foo", "bar")

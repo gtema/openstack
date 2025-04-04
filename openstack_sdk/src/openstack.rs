@@ -156,7 +156,9 @@ impl OpenStack {
             }
         }
         if let Some(false) = &config.verify {
-            warn!("SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate.");
+            warn!(
+                "SSL Verification is disabled! Please consider using `cacert` instead for adding custom certificate."
+            );
             client_builder = client_builder.danger_accept_invalid_certs(true);
         }
 
@@ -325,7 +327,7 @@ impl OpenStack {
                     other => {
                         return Err(AuthTokenError::IdentityMethodSync {
                             auth_type: other.as_str().into(),
-                        })?
+                        })?;
                     }
                 }
             };

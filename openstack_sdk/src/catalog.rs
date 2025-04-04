@@ -234,7 +234,13 @@ impl Catalog {
                 if let Some(catalog_ep) =
                     catalog_eps.get_by_version_and_region(api_version, region_name.as_ref())
                 {
-                    debug!("Using catalog endpoint `{:?}` for service_type: `{}` (requested: `{}`) and version `{:?}`", catalog_ep, cat_type, service_type.as_ref(), api_version);
+                    debug!(
+                        "Using catalog endpoint `{:?}` for service_type: `{}` (requested: `{}`) and version `{:?}`",
+                        catalog_ep,
+                        cat_type,
+                        service_type.as_ref(),
+                        api_version
+                    );
                     return Ok(catalog_ep);
                 }
             }
@@ -243,7 +249,12 @@ impl Catalog {
                 if let Some(requested_ver) = api_version {
                     // Entry in the overrides with version match
                     if ep_override.version() == requested_ver {
-                        debug!("Using `{}_endpoint_override` as endpoint for service_type: `{}` and version `{:?}`", cat_type, service_type.as_ref(), api_version);
+                        debug!(
+                            "Using `{}_endpoint_override` as endpoint for service_type: `{}` and version `{:?}`",
+                            cat_type,
+                            service_type.as_ref(),
+                            api_version
+                        );
                         return Ok(ep_override);
                     }
                 } else {

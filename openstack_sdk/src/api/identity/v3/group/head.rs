@@ -136,14 +136,13 @@ impl Pageable for Request<'_> {}
 
 #[cfg(test)]
 mod tests {
-    #![allow(unused_imports)]
     use super::*;
     #[cfg(feature = "sync")]
     use crate::api::RawQuery;
-    #[cfg(feature = "sync")]
-    use crate::test::client::MockServerClient;
+    use crate::test::client::FakeOpenStackClient;
     use crate::types::ServiceType;
     use http::{HeaderName, HeaderValue};
+    use httpmock::MockServer;
 
     #[test]
     fn test_service_type() {
@@ -161,8 +160,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn endpoint() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::HEAD)
                 .path("/groups".to_string());
 
@@ -177,8 +177,9 @@ mod tests {
     #[cfg(feature = "sync")]
     #[test]
     fn endpoint_headers() {
-        let client = MockServerClient::new();
-        let mock = client.server.mock(|when, then| {
+        let server = MockServer::start();
+        let client = FakeOpenStackClient::new(server.base_url());
+        let mock = server.mock(|when, then| {
             when.method(httpmock::Method::HEAD)
                 .path("/groups".to_string())
                 .header("foo", "bar")

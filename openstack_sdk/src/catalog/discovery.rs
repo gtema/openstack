@@ -89,7 +89,11 @@ pub fn expand_link<S1: AsRef<str>, S2: AsRef<str>>(
                     .join(path)
                     .map_err(|x| CatalogError::url_parse(x, format!("{}/{}", base_url, path)))?
             } else {
-                error!("Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Not able to determine path part. Please inform your cloud provider.", service_type.as_ref(), link.as_ref());
+                error!(
+                    "Service version discovery misconfiguration [service_type: `{}`, url: `{}`]: Not able to determine path part. Please inform your cloud provider.",
+                    service_type.as_ref(),
+                    link.as_ref()
+                );
                 return Err(CatalogError::url_parse(url::ParseError::InvalidPort, link));
             }
         }
