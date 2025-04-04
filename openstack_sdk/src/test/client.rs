@@ -17,12 +17,12 @@ use async_trait::async_trait;
 use bytes::Bytes;
 use derive_builder::Builder;
 use http::request::Builder as RequestBuilder;
+use http::{header, Method, Response, StatusCode};
 use http::{HeaderMap, Response as HttpResponse};
-use http::{Method, Response, StatusCode, header};
-#[cfg(feature = "async")]
-use reqwest::Client as AsyncHttpClient;
 #[cfg(feature = "sync")]
 use reqwest::blocking::Client as HttpClient;
+#[cfg(feature = "async")]
+use reqwest::Client as AsyncHttpClient;
 use serde::ser::Serialize;
 use serde_json::json;
 use std::borrow::Cow;
@@ -38,10 +38,10 @@ use crate::api::AsyncClient;
 use crate::api::Client;
 use crate::api::{ApiError, RestClient};
 
-use crate::RestError;
 use crate::catalog::{CatalogError, ServiceEndpoint};
 use crate::types::identity::v3::Project;
 use crate::types::{ApiVersion, BoxedAsyncRead, ServiceType};
+use crate::RestError;
 
 use httpmock::prelude::*;
 
