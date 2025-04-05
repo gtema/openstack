@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1](https://github.com/gtema/openstack/compare/openstack_tui-v0.11.0...openstack_tui-v0.11.1) - 2025-04-05
+
+### Added
+
+- Add original json data to the error ([#1113](https://github.com/gtema/openstack/pull/1113))
+- Import IntString from openstack_sdk ([#1112](https://github.com/gtema/openstack/pull/1112))
+
+### Other
+
+- Update cli and tui to 2024 edition ([#990](https://github.com/gtema/openstack/pull/990))
+
 ## [0.11.0](https://github.com/gtema/openstack/compare/openstack_tui-v0.10.0...openstack_tui-v0.11.0) - 2025-03-29
 
 ### Added
