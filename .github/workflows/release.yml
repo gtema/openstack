@@ -128,7 +128,7 @@ jobs:
             echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           fi
       - name: "Harden Runner"
-        uses: "step-security/harden-runner@b131ca5ebfca4930fe6d4a3e82d1e386b4873c94"
+        uses: "step-security/harden-runner@617de1d11dea286f7a53941812f4667f646e72da"
         with:
           "egress-policy": "audit"
       - name: Install dist
