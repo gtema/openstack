@@ -45,7 +45,7 @@ jobs:
           toolchain: ${{ env.rust_min }}
           components: rustfmt
 
-      - uses: swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2.7.7
+      - uses: swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
 
       - name: Run rustfmt
         run: cargo fmt -- --check
@@ -78,7 +78,7 @@ jobs:
           toolchain: ${{ matrix.rust_ver }}
           components: rustfmt, clippy
 
-      - uses: swatinem/rust-cache@f0deed1e0edfc6a9be95417288c0e1099b1eeec3 # v2.7.7
+      - uses: swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
 
       - name: Install cargo-binstall
         uses: taiki-e/install-action@1426bdb9e21b806f1cae604ab3dfc05e174bf885 # v2.49.16
