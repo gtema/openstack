@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1](https://github.com/gtema/openstack/compare/openstack_cli-v0.11.0...openstack_cli-v0.11.1) - 2025-04-05
+
+### Added
+
+- Import IntString from openstack_sdk ([#1112](https://github.com/gtema/openstack/pull/1112))
+- Convert to FakeOpenStackClient in tests ([#1115](https://github.com/gtema/openstack/pull/1115))
+- *(test)* Introduce FakeOpenStackClient ([#1114](https://github.com/gtema/openstack/pull/1114))
+- Introduce common response type helpers ([#1109](https://github.com/gtema/openstack/pull/1109))
+
+### Other
+
+- Update cli and tui to 2024 edition ([#990](https://github.com/gtema/openstack/pull/990))
+- Bundled update of deps ([#1105](https://github.com/gtema/openstack/pull/1105))
+
 ## [0.11.0](https://github.com/gtema/openstack/compare/openstack_cli-v0.10.0...openstack_cli-v0.11.0) - 2025-03-29
 
 ### Added
