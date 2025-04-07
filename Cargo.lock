@@ -2303,6 +2303,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "openstack_types"
+version = "0.20.1"
+dependencies = [
+ "chrono",
+ "derive_builder",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
 name = "option-ext"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
