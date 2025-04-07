@@ -4,11 +4,12 @@ members = [
   "openstack_sdk",
   "openstack_cli",
   "openstack_tui",
+  "openstack_types",
   "structable_derive",
   "xtask",
   "fuzz"
 ]
-default-members = ["openstack_cli", "openstack_sdk", "openstack_tui"]
+default-members = ["openstack_cli", "openstack_sdk", "openstack_tui", "openstack_types"]
 
 [workspace.package]
 license = "Apache-2.0"

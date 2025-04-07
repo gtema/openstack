@@ -17,6 +17,7 @@ COPY Cargo.toml Cargo.lock /usr/src/openstack/
 COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
 COPY openstack_tui/Cargo.toml /usr/src/openstack/openstack_tui/
+COPY openstack_types/Cargo.toml /usr/src/openstack/openstack_types/
 COPY structable_derive/Cargo.toml /usr/src/openstack/structable_derive/
 COPY xtask/Cargo.toml /usr/src/openstack/xtask/
 COPY fuzz/Cargo.toml /usr/src/openstack/fuzz/
@@ -29,6 +30,7 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p /usr/src/openstack/xtask/src && touch openstack/xtask/src/lib.rs &&\
     mkdir -p openstack/fuzz/src && touch openstack/fuzz/src/lib.rs &&\
     mkdir -p openstack/openstack_sdk/examples &&\
+    mkdir -p openstack/openstack_types/src && touch openstack/openstack_types/src/lib.rs &&\
     touch openstack/openstack_sdk/examples/query_find.rs &&\
     touch openstack/openstack_sdk/examples/paged.rs &&\
     touch openstack/openstack_sdk/examples/query.rs &&\
