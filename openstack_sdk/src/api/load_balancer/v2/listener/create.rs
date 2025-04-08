@@ -60,6 +60,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Protocol {
     #[serde(rename = "HTTP")]
     Http,
@@ -78,6 +79,7 @@ pub enum Protocol {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum DefaultPoolProtocol {
     #[serde(rename = "HTTP")]
     Http,
@@ -96,6 +98,7 @@ pub enum DefaultPoolProtocol {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum LbAlgorithm {
     #[serde(rename = "LEAST_CONNECTIONS")]
     LeastConnections,
@@ -108,6 +111,7 @@ pub enum LbAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "APP_COOKIE")]
     AppCookie,
@@ -140,6 +144,7 @@ pub struct SessionPersistence<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum HealthmonitorType {
     #[serde(rename = "HTTP")]
     Http,
@@ -158,6 +163,7 @@ pub enum HealthmonitorType {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum HttpMethod {
     #[serde(rename = "CONNECT")]
     Connect,
@@ -380,6 +386,7 @@ pub struct DefaultPool<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Action {
     #[serde(rename = "REDIRECT_PREFIX")]
     RedirectPrefix,
@@ -392,6 +399,7 @@ pub enum Action {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum RedirectPoolProtocol {
     #[serde(rename = "HTTP")]
     Http,
@@ -410,6 +418,7 @@ pub enum RedirectPoolProtocol {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum RedirectPoolHealthmonitorType {
     #[serde(rename = "HTTP")]
     Http,
@@ -560,6 +569,7 @@ pub struct RedirectPool<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum RulesType {
     #[serde(rename = "COOKIE")]
     Cookie,
@@ -580,6 +590,7 @@ pub enum RulesType {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum CompareType {
     #[serde(rename = "CONTAINS")]
     Contains,
@@ -680,6 +691,7 @@ pub struct L7policies<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ClientAuthentication {
     #[serde(rename = "MANDATORY")]
     Mandatory,
@@ -690,6 +702,7 @@ pub enum ClientAuthentication {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ListenerProtocol {
     #[serde(rename = "HTTP")]
     Http,

@@ -27,6 +27,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Resource {
     #[serde(rename = "Cluster")]
     Cluster,

@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::identity::v3::system::group::role::get;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::identity::v3::system::group::role::get;
 use structable_derive::StructTable;
 
 /// Get a specific system role assignment for a group. This is the same API as

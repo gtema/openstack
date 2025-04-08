@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::network::v2::local_ip::port_association::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::local_ip::port_association::get;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI

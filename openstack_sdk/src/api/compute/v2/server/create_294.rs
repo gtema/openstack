@@ -82,6 +82,7 @@ pub struct Networks<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum NetworksStringEnum {
     #[serde(rename = "auto")]
     Auto,
@@ -97,6 +98,7 @@ pub enum ServerNetworks<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum OsDcfDiskConfig {
     #[serde(rename = "AUTO")]
     Auto,
@@ -149,6 +151,7 @@ pub struct BlockDeviceMapping<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum SourceType {
     #[serde(rename = "blank")]
     Blank,
@@ -161,6 +164,7 @@ pub enum SourceType {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum DestinationType {
     #[serde(rename = "local")]
     Local,

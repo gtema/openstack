@@ -25,17 +25,17 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::block_storage::v3::volume::os_set_image_metadata;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::block_storage::v3::volume::os_set_image_metadata;
 use structable_derive::StructTable;
 
 /// Command without description in OpenAPI

@@ -33,6 +33,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "api_image_import")]
     ApiImageImport,
@@ -43,6 +44,7 @@ pub enum Type {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Status {
     #[serde(rename = "failure")]
     Failure,

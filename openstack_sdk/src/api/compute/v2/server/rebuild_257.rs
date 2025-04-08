@@ -26,6 +26,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum OsDcfDiskConfig {
     #[serde(rename = "AUTO")]
     Auto,

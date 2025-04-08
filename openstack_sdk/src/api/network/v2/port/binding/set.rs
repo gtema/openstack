@@ -27,6 +27,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum VnicType {
     #[serde(rename = "accelerator-direct")]
     AcceleratorDirect,

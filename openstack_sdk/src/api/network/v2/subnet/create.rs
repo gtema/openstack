@@ -87,6 +87,7 @@ pub struct HostRoutes<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Ipv6RaMode {
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
@@ -97,6 +98,7 @@ pub enum Ipv6RaMode {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Ipv6AddressMode {
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,

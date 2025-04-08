@@ -26,6 +26,7 @@ use serde_json::Value;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "array")]
     Array,

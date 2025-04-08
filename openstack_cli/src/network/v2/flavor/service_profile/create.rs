@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::network::v2::flavor::service_profile::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::flavor::service_profile::create;
 use structable_derive::StructTable;
 
 /// Associate a flavor with a service profile.

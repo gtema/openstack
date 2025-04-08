@@ -41,6 +41,7 @@ pub struct Domain<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "ephemeral")]
     Ephemeral,

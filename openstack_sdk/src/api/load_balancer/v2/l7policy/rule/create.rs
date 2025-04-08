@@ -52,6 +52,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "COOKIE")]
     Cookie,
@@ -72,6 +73,7 @@ pub enum Type {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum CompareType {
     #[serde(rename = "CONTAINS")]
     Contains,

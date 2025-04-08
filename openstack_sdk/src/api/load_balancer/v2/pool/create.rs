@@ -63,6 +63,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Protocol {
     #[serde(rename = "HTTP")]
     Http,
@@ -81,6 +82,7 @@ pub enum Protocol {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum LbAlgorithm {
     #[serde(rename = "LEAST_CONNECTIONS")]
     LeastConnections,
@@ -93,6 +95,7 @@ pub enum LbAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "APP_COOKIE")]
     AppCookie,
@@ -127,6 +130,7 @@ pub struct SessionPersistence<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum HealthmonitorType {
     #[serde(rename = "HTTP")]
     Http,
@@ -145,6 +149,7 @@ pub enum HealthmonitorType {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum HttpMethod {
     #[serde(rename = "CONNECT")]
     Connect,

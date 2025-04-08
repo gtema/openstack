@@ -61,6 +61,7 @@ pub struct Links<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Status {
     #[serde(rename = "ADOPT_COMPLETE")]
     AdoptComplete,

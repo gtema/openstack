@@ -38,6 +38,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Action {
     #[serde(rename = "REDIRECT_PREFIX")]
     RedirectPrefix,

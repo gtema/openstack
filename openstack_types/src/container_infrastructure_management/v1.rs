@@ -16,3 +16,11 @@
 // `openstack-codegenerator`.
 
 //! `Container_infrastructure_management` Service bindings
+pub mod certificate;
+pub mod cluster;
+pub mod clustertemplate;
+pub mod federation;
+pub mod mservice;
+pub mod quota;
+pub mod stat;
+pub mod version;

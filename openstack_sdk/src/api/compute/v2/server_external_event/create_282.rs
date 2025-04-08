@@ -40,6 +40,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Name {
     #[serde(rename = "accelerator-request-bound")]
     AcceleratorRequestBound,
@@ -58,6 +59,7 @@ pub enum Name {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Status {
     #[serde(rename = "completed")]
     Completed,

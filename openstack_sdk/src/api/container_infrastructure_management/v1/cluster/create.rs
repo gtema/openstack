@@ -54,6 +54,7 @@ pub struct Links<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Status {
     #[serde(rename = "ADOPT_COMPLETE")]
     AdoptComplete,
@@ -94,6 +95,7 @@ pub enum Status {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum HealthStatus {
     #[serde(rename = "HEALTHY")]
     Healthy,

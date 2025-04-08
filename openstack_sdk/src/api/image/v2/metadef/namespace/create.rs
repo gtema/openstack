@@ -27,6 +27,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Visibility {
     #[serde(rename = "private")]
     Private,
@@ -51,6 +52,7 @@ pub struct ResourceTypeAssociations<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "array")]
     Array,

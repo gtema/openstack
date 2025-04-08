@@ -25,20 +25,20 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
 use clap::ValueEnum;
 use eyre::WrapErr;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::find;
 use openstack_sdk::api::network::v2::port::find;
 use openstack_sdk::api::network::v2::port::set;
-use openstack_sdk::api::QueryAsync;
 use openstack_sdk::types::BoolString;
 use serde_json::Value;
 use std::collections::BTreeMap;

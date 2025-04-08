@@ -31,6 +31,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum EncryptionAlgorithm {
     #[serde(rename = "3des")]
     _3des,
@@ -85,6 +86,7 @@ pub enum EncryptionAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum TransformProtocol {
     #[serde(rename = "ah")]
     Ah,
@@ -95,6 +97,7 @@ pub enum TransformProtocol {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum AuthAlgorithm {
     #[serde(rename = "aes-cmac")]
     AesCmac,
@@ -111,6 +114,7 @@ pub enum AuthAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum EncapsulationMode {
     #[serde(rename = "transport")]
     Transport,
@@ -119,6 +123,7 @@ pub enum EncapsulationMode {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Pfs {
     #[serde(rename = "group14")]
     Group14,

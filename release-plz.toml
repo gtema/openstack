@@ -6,6 +6,7 @@ git_release_enable = false
 [[package]]
 name = "openstack_sdk"
 git_release_enable = true
+version_group = "sdks"
 
 [[package]]
 name = "openstack_cli"
@@ -18,6 +19,11 @@ name = "openstack_tui"
 changelog_include = ["openstack_tui"]
 git_release_enable = true
 version_group = "bins"
+
+[[package]]
+name = "openstack_types"
+git_release_enable = true
+version_group = "sdks"
 
 [[package]]
 name = "structable_derive"

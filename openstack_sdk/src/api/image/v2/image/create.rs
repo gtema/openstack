@@ -46,6 +46,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Visibility {
     #[serde(rename = "community")]
     Community,
@@ -58,6 +59,7 @@ pub enum Visibility {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ContainerFormat {
     #[serde(rename = "aki")]
     Aki,
@@ -78,6 +80,7 @@ pub enum ContainerFormat {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum DiskFormat {
     #[serde(rename = "aki")]
     Aki,

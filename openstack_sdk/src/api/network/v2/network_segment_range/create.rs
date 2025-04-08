@@ -25,6 +25,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum NetworkType {
     #[serde(rename = "geneve")]
     Geneve,

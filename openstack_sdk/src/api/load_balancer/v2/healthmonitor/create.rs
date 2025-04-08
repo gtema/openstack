@@ -59,6 +59,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "HTTP")]
     Http,
@@ -77,6 +78,7 @@ pub enum Type {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum HttpMethod {
     #[serde(rename = "CONNECT")]
     Connect,

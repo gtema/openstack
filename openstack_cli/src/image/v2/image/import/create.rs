@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::image::v2::image::import::create;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::image::v2::image::import::create;
 use structable_derive::StructTable;
 
 /// Signals the Image Service to complete the image import workflow by

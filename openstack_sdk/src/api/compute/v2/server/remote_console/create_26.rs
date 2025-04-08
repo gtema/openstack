@@ -36,6 +36,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Protocol {
     #[serde(rename = "serial")]
     Serial,
@@ -46,6 +47,7 @@ pub enum Protocol {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Type {
     #[serde(rename = "novnc")]
     Novnc,

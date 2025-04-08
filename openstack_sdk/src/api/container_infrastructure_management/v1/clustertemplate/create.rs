@@ -28,6 +28,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Coe {
     #[serde(rename = "kubernetes")]
     Kubernetes,
@@ -60,6 +61,7 @@ pub struct Links<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ServerType {
     #[serde(rename = "bm")]
     Bm,

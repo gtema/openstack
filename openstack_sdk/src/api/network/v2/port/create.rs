@@ -64,6 +64,7 @@ pub struct AllowedAddressPairs<'a> {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum NumaAffinityPolicy {
     #[serde(rename = "legacy")]
     Legacy,
@@ -76,6 +77,7 @@ pub enum NumaAffinityPolicy {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum BindingVnicType {
     #[serde(rename = "accelerator-direct")]
     AcceleratorDirect,

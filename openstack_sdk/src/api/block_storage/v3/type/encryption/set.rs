@@ -29,6 +29,7 @@ use std::borrow::Cow;
 use std::collections::BTreeMap;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum ControlLocation {
     #[serde(rename = "back-end")]
     BackEnd,

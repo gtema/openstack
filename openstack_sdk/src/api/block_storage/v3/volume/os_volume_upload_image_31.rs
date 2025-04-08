@@ -25,6 +25,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum DiskFormat {
     #[serde(rename = "ploop")]
     Ploop,
@@ -43,6 +44,7 @@ pub enum DiskFormat {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Visibility {
     #[serde(rename = "community")]
     Community,

@@ -31,6 +31,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum EncryptionAlgorithm {
     #[serde(rename = "3des")]
     _3des,
@@ -85,6 +86,7 @@ pub enum EncryptionAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum AuthAlgorithm {
     #[serde(rename = "aes-cmac")]
     AesCmac,
@@ -101,6 +103,7 @@ pub enum AuthAlgorithm {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Phase1NegotiationMode {
     #[serde(rename = "aggressive")]
     Aggressive,
@@ -109,6 +112,7 @@ pub enum Phase1NegotiationMode {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum IkeVersion {
     #[serde(rename = "v1")]
     V1,
@@ -117,6 +121,7 @@ pub enum IkeVersion {
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Pfs {
     #[serde(rename = "group14")]
     Group14,

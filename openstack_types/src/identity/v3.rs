@@ -16,3 +16,30 @@
 // `openstack-codegenerator`.
 
 //! `Identity` Service bindings
+pub mod auth;
+pub mod credential;
+pub mod domain;
+pub mod ec2token;
+pub mod endpoint;
+pub mod group;
+pub mod limit;
+pub mod os_ep_filter;
+pub mod os_federation;
+pub mod os_inherit;
+pub mod os_oauth1;
+pub mod os_oauth2;
+pub mod os_revoke;
+pub mod os_simple_cert;
+pub mod os_trust;
+pub mod policy;
+pub mod project;
+pub mod region;
+pub mod registered_limit;
+pub mod role;
+pub mod role_assignment;
+pub mod role_inference;
+pub mod s3token;
+pub mod service;
+pub mod system;
+pub mod user;
+pub mod version;

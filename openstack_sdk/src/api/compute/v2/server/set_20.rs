@@ -32,6 +32,7 @@ use serde::Serialize;
 use std::borrow::Cow;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
+#[serde(untagged)]
 pub enum OsDcfDiskConfig {
     #[serde(rename = "AUTO")]
     Auto,
