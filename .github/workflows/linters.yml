@@ -25,7 +25,7 @@ concurrency:
 
 env:
   CARGO_TERM_COLOR: always
-  rust_min: 1.76.0
+  rust_min: 1.85.0
 
 jobs:
   rustfmt:
@@ -92,7 +92,7 @@ jobs:
         run:
           cargo clippy
           --lib --tests
-          --all-features ${{ clippy_args }}
+          --all-features ${{ matrix.clippy_args }}
           --message-format=json | ${CARGO_HOME}/bin/clippy-sarif | tee rust-clippy-results.sarif | ${CARGO_HOME}/bin/sarif-fmt
 
       - name: Upload analysis results to GitHub
