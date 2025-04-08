@@ -25,18 +25,19 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_json;
 use clap::ValueEnum;
 use dialoguer::Password;
-use openstack_sdk::api::identity::v3::auth::token::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::identity::v3::auth::token::create;
 use serde_json::Value;
+use std::fmt;
 use structable_derive::StructTable;
 
 /// Authenticates an identity and generates a token. Uses the password
@@ -390,6 +391,28 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseDomain {
+    id: Option<String>,
+    name: Option<String>,
+}
+
+impl fmt::Display for ResponseDomain {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "id={}",
+                self.id.clone().map_or(String::new(), |v| v.to_string())
+            ),
+            format!(
+                "name={}",
+                self.name.clone().map_or(String::new(), |v| v.to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 
 impl TokenCommand {

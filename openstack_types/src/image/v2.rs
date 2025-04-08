@@ -16,3 +16,9 @@
 // `openstack-codegenerator`.
 
 //! `Image` Service bindings
+pub mod cache;
+pub mod image;
+pub mod info;
+pub mod metadef;
+pub mod schema;
+pub mod task;

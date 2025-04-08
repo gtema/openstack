@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::compute::v2::server::os_get_rdpconsole;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::server::os_get_rdpconsole;
 use structable_derive::StructTable;
 
 /// Gets an [RDP](https://technet.microsoft.com/en-us/windowsserver/ee236407)

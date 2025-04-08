@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::image::v2::image::member::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::image::v2::image::member::get;
 use structable_derive::StructTable;
 
 /// Shows image member details. *(Since Image API v2.1)*

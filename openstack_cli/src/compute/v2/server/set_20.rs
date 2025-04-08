@@ -25,17 +25,17 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use clap::ValueEnum;
+use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::compute::v2::server::find;
 use openstack_sdk::api::compute::v2::server::set_20;
 use openstack_sdk::api::find;
-use openstack_sdk::api::QueryAsync;
 use serde_json::Value;
 use structable_derive::StructTable;
 

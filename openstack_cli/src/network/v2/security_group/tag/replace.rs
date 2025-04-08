@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::network::v2::security_group::tag::replace;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::network::v2::security_group::tag::replace;
 
 /// Command without description in OpenAPI
 ///

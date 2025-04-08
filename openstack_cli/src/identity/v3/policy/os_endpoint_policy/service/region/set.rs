@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_json;
 use crate::common::parse_key_val;
-use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::service::region::set;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::identity::v3::policy::os_endpoint_policy::service::region::set;
 use serde_json::Value;
 use std::collections::HashMap;
 

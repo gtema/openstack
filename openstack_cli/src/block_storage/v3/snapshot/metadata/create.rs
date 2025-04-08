@@ -25,15 +25,15 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_key_val;
-use openstack_sdk::api::block_storage::v3::snapshot::metadata::create;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::block_storage::v3::snapshot::metadata::create;
 use std::collections::HashMap;
 
 /// Command without description in OpenAPI
