@@ -23,13 +23,13 @@ use serde::{Deserialize, Serialize};
 pub struct AssociationResponse {
     /// The QoS association type.
     ///
-    association_type: String,
+    pub association_type: String,
 
     /// The Qos association ID.
     ///
-    id: String,
+    pub id: String,
 
     /// The QoS association name.
     ///
-    name: String,
+    pub name: String,
 }

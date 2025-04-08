@@ -23,34 +23,34 @@ use serde::{Deserialize, Serialize};
 pub struct RouterResponse {
     /// The ID of the router.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Network ID which the router interface is connected to.
     ///
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
     /// The ID of the port which represents the router interface.
     ///
-    port_id: Option<String>,
+    pub port_id: Option<String>,
 
     /// The ID of the project who owns the router interface.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The ID of the subnet which the router interface belongs to.
     ///
-    subnet_id: Option<String>,
+    pub subnet_id: Option<String>,
 
     /// A list of the ID of the subnet which the router interface belongs to.
     /// The list contains only one member.
     ///
-    subnet_ids: Option<Vec<String>>,
+    pub subnet_ids: Option<Vec<String>>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project who owns the router interface.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

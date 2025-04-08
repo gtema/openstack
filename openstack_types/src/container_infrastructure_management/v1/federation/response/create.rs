@@ -21,5 +21,5 @@ use serde::{Deserialize, Serialize};
 /// Federation response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct FederationResponse {
-    uuid: String,
+    pub uuid: String,
 }

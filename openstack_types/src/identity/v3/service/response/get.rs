@@ -23,26 +23,26 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceResponse {
     /// The service description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Defines whether the service and its endpoints appear in the service
     /// catalog: - `false`. The service and its endpoints do not appear in the
     /// service catalog. - `true`. The service and its endpoints appear in the
     /// service catalog.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The service name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 }

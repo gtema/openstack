@@ -24,14 +24,14 @@ pub struct AvailabilityZoneResponse {
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
-    zone_name: Option<String>,
+    pub zone_name: Option<String>,
 
     #[serde(rename = "zoneState")]
-    zone_state: Option<ZoneState>,
+    pub zone_state: Option<ZoneState>,
 }
 
 /// `ZoneState` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ZoneState {
-    available: Option<bool>,
+    pub available: Option<bool>,
 }

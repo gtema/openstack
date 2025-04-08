@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct AvailabilityZoneCapabilityResponse {
     /// The provider availability zone capability description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The provider availability zone capability name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

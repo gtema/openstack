@@ -27,49 +27,49 @@ pub struct AgentResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<BoolString>,
 
     /// The type of agent such as `Open vSwitch agent` or `DHCP agent`.
     ///
-    agent_type: Option<String>,
+    pub agent_type: Option<String>,
 
     /// Indicates the agent is alive and running.
     ///
-    alive: Option<bool>,
+    pub alive: Option<bool>,
 
     /// The availability zone of the agent.
     ///
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// The executable command used to start the agent such as
     /// `neutron-openvswitch-agent` or `neutron-dhcp-agent`.
     ///
-    binary: Option<String>,
+    pub binary: Option<String>,
 
     /// An object containing configuration specific key/value pairs; the
     /// semantics of which are determined by the binary name and type.
     ///
-    configurations: Option<HashMap<String, Value>>,
+    pub configurations: Option<HashMap<String, Value>>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Time at which the last heartbeat was received.
     ///
-    heartbeat_timestamp: Option<String>,
+    pub heartbeat_timestamp: Option<String>,
 
     /// The hostname of the system the agent is running on.
     ///
-    host: Option<String>,
+    pub host: Option<String>,
 
     /// The ID of the resource.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The value `null` means no resource view synchronization to Placement
     /// was attempted. `true` / `false` values signify the success of the last
@@ -80,15 +80,15 @@ pub struct AgentResponse {
     /// resources via Placement, therefore the value `null` does not
     /// necessarily means there is an error in the system.
     ///
-    resources_synced: Option<String>,
+    pub resources_synced: Option<String>,
 
     /// Time at which the agent was started.
     ///
-    started_at: Option<String>,
+    pub started_at: Option<String>,
 
     /// The name of AMQP topic the agent is listening on such as `dhcp_agent`.
     /// A special value of `N/A` is used when the agent doesn’t use an AMQP
     /// topic.
     ///
-    topic: Option<String>,
+    pub topic: Option<String>,
 }

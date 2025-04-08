@@ -23,20 +23,20 @@ use serde::{Deserialize, Serialize};
 pub struct KeypairResponse {
     /// The fingerprint for the keypair.
     ///
-    fingerprint: String,
+    pub fingerprint: String,
 
     /// The name for the keypair.
     ///
-    name: String,
+    pub name: String,
 
     /// The keypair public key.
     ///
-    public_key: String,
+    pub public_key: String,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
     ///
     #[serde(rename = "type")]
-    _type: String,
+    pub _type: String,
 }

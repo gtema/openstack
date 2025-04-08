@@ -23,11 +23,11 @@ use serde::{Deserialize, Serialize};
 pub struct BackupResponse {
     /// The UUID of the backup.
     ///
-    id: String,
+    pub id: String,
 
     /// The backup name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -37,6 +37,6 @@ pub struct BackupResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

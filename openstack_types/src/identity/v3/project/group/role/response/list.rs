@@ -23,15 +23,15 @@ use serde::{Deserialize, Serialize};
 pub struct RoleResponse {
     /// The role description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The role ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The role name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -39,5 +39,5 @@ pub struct RoleResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

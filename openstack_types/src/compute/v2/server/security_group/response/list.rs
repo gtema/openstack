@@ -25,39 +25,39 @@ use std::collections::HashMap;
 pub struct SecurityGroupResponse {
     /// Security group description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the security group.
     ///
-    id: String,
+    pub id: String,
 
     /// The security group name.
     ///
-    name: String,
+    pub name: String,
 
     /// The list of security group rules.
     ///
-    rules: Option<Vec<Rules>>,
+    pub rules: Option<Vec<Rules>>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    from_port: Option<i32>,
-    group: Option<Group>,
-    id: Option<String>,
-    ip_protocol: Option<String>,
-    ip_range: Option<HashMap<String, Value>>,
-    parent_group_id: Option<String>,
-    to_port: Option<i32>,
+    pub from_port: Option<i32>,
+    pub group: Option<Group>,
+    pub id: Option<String>,
+    pub ip_protocol: Option<String>,
+    pub ip_range: Option<HashMap<String, Value>>,
+    pub parent_group_id: Option<String>,
+    pub to_port: Option<i32>,
 }

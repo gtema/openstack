@@ -23,19 +23,19 @@ use serde::{Deserialize, Serialize};
 pub struct ExtensionResponse {
     /// A short name by which this extension is also known.
     ///
-    alias: String,
+    pub alias: String,
 
     /// Text describing this extension’s purpose.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Name of the extension.
     ///
-    name: String,
+    pub name: String,
 
     /// A URL pointing to the namespace for this extension.
     ///
-    namespace: Option<String>,
+    pub namespace: Option<String>,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -49,7 +49,7 @@ pub struct ExtensionResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    updated: Option<String>,
+    pub updated: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -59,6 +59,6 @@ pub struct ExtensionResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

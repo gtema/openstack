@@ -24,51 +24,51 @@ pub struct EncryptionResponse {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
     ///
-    cipher: Option<String>,
+    pub cipher: Option<String>,
 
     /// Notional service where encryption is performed. Valid values are
     /// “front-end” or “back-end”. The default value is “front-end”.
     ///
-    control_location: Option<ControlLocation>,
+    pub control_location: Option<ControlLocation>,
 
     /// The date and time when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The resource is deleted or not.
     ///
-    deleted: Option<bool>,
+    pub deleted: Option<bool>,
 
     /// The date and time when the resource was deleted.
     ///
-    deleted_at: Option<String>,
+    pub deleted_at: Option<String>,
 
     /// The UUID of the encryption.
     ///
-    encryption_id: Option<String>,
+    pub encryption_id: Option<String>,
 
     /// Size of encryption key, in bits. This is usually 256. The default value
     /// is None.
     ///
-    key_size: Option<i32>,
+    pub key_size: Option<i32>,
 
     /// The class that provides encryption support.
     ///
-    provider: Option<String>,
+    pub provider: Option<String>,
 
     /// The date and time when the resource was updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ControlLocation {
-    // BackEnd
-    #[serde(rename = "back-end")]
-    BackEnd,
-
     // FrontEnd
     #[serde(rename = "front-end")]
     FrontEnd,
+
+    // BackEnd
+    #[serde(rename = "back-end")]
+    BackEnd,
 }

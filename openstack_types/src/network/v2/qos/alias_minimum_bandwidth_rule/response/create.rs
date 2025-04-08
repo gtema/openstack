@@ -22,13 +22,13 @@ use serde::{Deserialize, Serialize};
 /// AliasMinimumBandwidthRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AliasMinimumBandwidthRuleResponse {
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    min_kbps: Option<IntString>,
+    pub min_kbps: Option<IntString>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

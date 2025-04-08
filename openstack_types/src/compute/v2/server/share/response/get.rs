@@ -23,11 +23,11 @@ use serde::{Deserialize, Serialize};
 pub struct ShareResponse {
     /// The export location used to attach the share to the underlying host.
     ///
-    export_location: Option<String>,
+    pub export_location: Option<String>,
 
     /// The UUID of the attached share.
     ///
-    share_id: String,
+    pub share_id: String,
 
     /// Status of the Share:
     ///
@@ -39,30 +39,22 @@ pub struct ShareResponse {
     /// - active: The share is attached, and the VM is running.
     /// - error: The share is in an error state.
     ///
-    status: Status,
+    pub status: Status,
 
     /// The device tag to be used by users to mount the share within the
     /// instance, if not provided then the share UUID will be used
     /// automatically.
     ///
-    tag: String,
+    pub tag: String,
 
     /// The UUID of the attached share.
     ///
-    uuid: Option<String>,
+    pub uuid: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Error
-    #[serde(rename = "error")]
-    Error,
-
-    // Active
-    #[serde(rename = "active")]
-    Active,
-
     // Inactive
     #[serde(rename = "inactive")]
     Inactive,
@@ -71,7 +63,15 @@ pub enum Status {
     #[serde(rename = "detaching")]
     Detaching,
 
+    // Error
+    #[serde(rename = "error")]
+    Error,
+
     // Attaching
     #[serde(rename = "attaching")]
     Attaching,
+
+    // Active
+    #[serde(rename = "active")]
+    Active,
 }

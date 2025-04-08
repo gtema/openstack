@@ -21,15 +21,15 @@ use serde::{Deserialize, Serialize};
 /// NetworkIpAvailability response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct NetworkIpAvailabilityResponse {
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
-    network_name: Option<String>,
+    pub network_name: Option<String>,
 
-    subnet_ip_availability: Option<String>,
+    pub subnet_ip_availability: Option<String>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
-    total_ips: Option<String>,
+    pub total_ips: Option<String>,
 
-    used_ips: Option<String>,
+    pub used_ips: Option<String>,
 }

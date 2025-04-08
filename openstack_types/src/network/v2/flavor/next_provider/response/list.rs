@@ -21,9 +21,9 @@ use serde::{Deserialize, Serialize};
 /// NextProvider response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct NextProviderResponse {
-    driver: Option<String>,
+    pub driver: Option<String>,
 
-    metainfo: Option<String>,
+    pub metainfo: Option<String>,
 
-    provider: Option<String>,
+    pub provider: Option<String>,
 }

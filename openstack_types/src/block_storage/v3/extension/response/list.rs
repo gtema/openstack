@@ -25,15 +25,15 @@ pub struct ExtensionResponse {
     /// availability-zone”, “os-extended-quotas”, “os- share-unmanage” or
     /// “os-used-limits.”
     ///
-    alias: String,
+    pub alias: String,
 
     /// The extension description.
     ///
-    description: String,
+    pub description: String,
 
     /// The name of the object.
     ///
-    name: String,
+    pub name: String,
 
     /// The date and time when the resource was updated.
     ///
@@ -53,5 +53,5 @@ pub struct ExtensionResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated: String,
+    pub updated: String,
 }

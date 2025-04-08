@@ -25,7 +25,7 @@ pub struct VolumeTransferResponse {
     ///
     /// **New in version 3.57**
     ///
-    accepted: Option<bool>,
+    pub accepted: Option<bool>,
 
     /// The date and time when the resource was created.
     ///
@@ -42,41 +42,41 @@ pub struct VolumeTransferResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Records the destination project_id after volume transfer.
     ///
     /// **New in version 3.57**
     ///
-    destination_project_id: Option<String>,
+    pub destination_project_id: Option<String>,
 
     /// The UUID of the object.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Links for the message.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// The name of the object.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Transfer volume without snapshots. Defaults to False if not specified.
     ///
     /// **New in version 3.55**
     ///
-    no_snapshots: Option<bool>,
+    pub no_snapshots: Option<bool>,
 
     /// Records the source project_id before volume transfer.
     ///
     /// **New in version 3.57**
     ///
-    source_project_id: Option<String>,
+    pub source_project_id: Option<String>,
 
     /// The UUID of the volume.
     ///
-    volume_id: Option<String>,
+    pub volume_id: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -86,6 +86,6 @@ pub struct VolumeTransferResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

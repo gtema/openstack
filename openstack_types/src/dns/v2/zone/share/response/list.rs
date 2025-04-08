@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 /// Share response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct ShareResponse {
-    shared_zones: Option<Vec<SharedZones>>,
+    pub shared_zones: Option<Vec<SharedZones>>,
 }
 
 /// Links to the resource, and other related resources. When a response has
@@ -31,8 +31,8 @@ pub struct ShareResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
-    zone: Option<String>,
+    pub _self: Option<String>,
+    pub zone: Option<String>,
 }
 
 /// Shared DNS Zone
@@ -40,16 +40,16 @@ pub struct Links {
 /// `SharedZones` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SharedZones {
-    created_at: Option<String>,
-    id: Option<String>,
-    links: Option<Links>,
-    project_id: Option<String>,
-    target_project_id: Option<String>,
-    updated_at: Option<String>,
+    pub created_at: Option<String>,
+    pub id: Option<String>,
+    pub links: Option<Links>,
+    pub project_id: Option<String>,
+    pub target_project_id: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// `LinksStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct LinksStructResponse {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

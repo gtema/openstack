@@ -25,21 +25,21 @@ pub struct FlavorResponse {
     ///
     /// **New in version 2.55**
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
     ///
-    id: String,
+    pub id: String,
 
     /// The display name of a flavor.
     ///
-    name: String,
+    pub name: String,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: String,
-    rel: String,
+    pub href: String,
+    pub rel: String,
 }

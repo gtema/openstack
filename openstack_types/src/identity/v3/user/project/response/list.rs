@@ -23,21 +23,21 @@ use serde::{Deserialize, Serialize};
 pub struct ProjectResponse {
     /// The description of the project.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain of the project.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// The ID of the project.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the project.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The parent id of the project.
     ///
-    parent_id: Option<String>,
+    pub parent_id: Option<String>,
 }

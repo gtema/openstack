@@ -24,5 +24,5 @@ pub struct LoggableResourceResponse {
     /// The resource log type such as ‘security_group’.
     ///
     #[serde(rename = "type")]
-    _type: String,
+    pub _type: String,
 }

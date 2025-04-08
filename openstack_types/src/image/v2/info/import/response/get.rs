@@ -21,10 +21,10 @@ use serde::{Deserialize, Serialize};
 /// Import response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct ImportResponse {
-    description: Option<String>,
+    pub description: Option<String>,
 
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 
-    value: Option<Vec<String>>,
+    pub value: Option<Vec<String>>,
 }

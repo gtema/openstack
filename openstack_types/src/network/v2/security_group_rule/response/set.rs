@@ -22,39 +22,39 @@ use serde::{Deserialize, Serialize};
 /// SecurityGroupRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct SecurityGroupRuleResponse {
-    belongs_to_default_sg: Option<BoolString>,
+    pub belongs_to_default_sg: Option<BoolString>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    ethertype: Option<Ethertype>,
+    pub ethertype: Option<Ethertype>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    normalized_cidr: Option<String>,
+    pub normalized_cidr: Option<String>,
 
-    port_range_max: Option<i32>,
+    pub port_range_max: Option<i32>,
 
-    port_range_min: Option<i32>,
+    pub port_range_min: Option<i32>,
 
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
-    remote_address_group_id: Option<String>,
+    pub remote_address_group_id: Option<String>,
 
-    remote_group_id: Option<String>,
+    pub remote_group_id: Option<String>,
 
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
-    security_group_id: Option<String>,
+    pub security_group_id: Option<String>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -72,11 +72,11 @@ pub enum Direction {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ethertype {
-    // Ipv4
-    #[serde(rename = "IPv4")]
-    Ipv4,
-
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+
+    // Ipv4
+    #[serde(rename = "IPv4")]
+    Ipv4,
 }

@@ -23,27 +23,27 @@ use std::collections::HashMap;
 /// Binding response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct BindingResponse {
-    host: Option<String>,
+    pub host: Option<String>,
 
-    profile: Option<HashMap<String, Value>>,
+    pub profile: Option<HashMap<String, Value>>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    status: Option<String>,
+    pub status: Option<String>,
 
-    vif_details: Option<String>,
+    pub vif_details: Option<String>,
 
-    vif_type: Option<String>,
+    pub vif_type: Option<String>,
 
-    vnic_type: Option<VnicType>,
+    pub vnic_type: Option<VnicType>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum VnicType {
-    // Baremetal
-    #[serde(rename = "baremetal")]
-    Baremetal,
+    // AcceleratorDirectPhysical
+    #[serde(rename = "accelerator-direct-physical")]
+    AcceleratorDirectPhysical,
 
     // AcceleratorDirect
     #[serde(rename = "accelerator-direct")]
@@ -53,35 +53,35 @@ pub enum VnicType {
     #[serde(rename = "direct-physical")]
     DirectPhysical,
 
-    // Vdpa
-    #[serde(rename = "vdpa")]
-    Vdpa,
-
-    // Macvtap
-    #[serde(rename = "macvtap")]
-    Macvtap,
-
-    // SmartNic
-    #[serde(rename = "smart-nic")]
-    SmartNic,
-
-    // AcceleratorDirectPhysical
-    #[serde(rename = "accelerator-direct-physical")]
-    AcceleratorDirectPhysical,
+    // Direct
+    #[serde(rename = "direct")]
+    Direct,
 
     // VirtioForwarder
     #[serde(rename = "virtio-forwarder")]
     VirtioForwarder,
 
-    // Direct
-    #[serde(rename = "direct")]
-    Direct,
+    // Baremetal
+    #[serde(rename = "baremetal")]
+    Baremetal,
+
+    // Macvtap
+    #[serde(rename = "macvtap")]
+    Macvtap,
 
     // RemoteManaged
     #[serde(rename = "remote-managed")]
     RemoteManaged,
 
+    // Vdpa
+    #[serde(rename = "vdpa")]
+    Vdpa,
+
     // Normal
     #[serde(rename = "normal")]
     Normal,
+
+    // SmartNic
+    #[serde(rename = "smart-nic")]
+    SmartNic,
 }

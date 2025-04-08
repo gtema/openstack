@@ -24,43 +24,43 @@ use serde::{Deserialize, Serialize};
 pub struct PolicyResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the QoS policy.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// If `true`, the QoS `policy` is the default policy.
     ///
-    is_default: Option<BoolString>,
+    pub is_default: Option<BoolString>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// A set of zero or more policy rules.
     ///
-    rules: Option<String>,
+    pub rules: Option<String>,
 
     /// Indicates whether this policy is shared across all projects.
     ///
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

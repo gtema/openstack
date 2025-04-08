@@ -25,9 +25,9 @@ pub struct TrustResponse {
     /// may be issued by the trustee just like a regular trust. If set to
     /// false, stops further redelegation. False by default.
     ///
-    allow_redelegation: Option<bool>,
+    pub allow_redelegation: Option<bool>,
 
-    deleted_at: Option<String>,
+    pub deleted_at: Option<String>,
 
     /// Specifies the expiration time of the trust. A trust may be revoked
     /// ahead of expiration. If the value represents a time in the past, the
@@ -36,11 +36,11 @@ pub struct TrustResponse {
     /// it may be omitted, then the expires_at value is copied from the
     /// redelegated trust.
     ///
-    expires_at: Option<String>,
+    pub expires_at: Option<String>,
 
     /// The ID of the trust.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// If set to true, then the user attribute of tokens generated based on
     /// the trust will represent that of the trustor rather than the trustee,
@@ -48,21 +48,21 @@ pub struct TrustResponse {
     /// if set to false, then the token's user attribute will represent that of
     /// the trustee.
     ///
-    impersonation: Option<bool>,
+    pub impersonation: Option<bool>,
 
     /// The links for the `user` resource.
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// Identifies the project upon which the trustor is delegating
     /// authorization.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// Returned with redelegated trust provides information about the
     /// predecessor in the trust chain.
     ///
-    redelegated_trust_id: Option<String>,
+    pub redelegated_trust_id: Option<String>,
 
     /// Specifies the maximum remaining depth of the redelegated trust chain.
     /// Each subsequent trust has this field decremented by 1 automatically.
@@ -83,7 +83,7 @@ pub struct TrustResponse {
     /// resulting value is 0, this means that the new trust will not be
     /// redelegatable, regardless of the value of allow_redelegation.
     ///
-    redelegation_count: Option<i32>,
+    pub redelegation_count: Option<i32>,
 
     /// Specifies how many times the trust can be used to obtain a token. This
     /// value is decreased each time a token is issued through the trust. Once
@@ -92,22 +92,22 @@ pub struct TrustResponse {
     /// tokens issued through the trust. If redelegation is enabled it must not
     /// be set.
     ///
-    remaining_uses: Option<i32>,
+    pub remaining_uses: Option<i32>,
 
-    roles: Option<Vec<Roles>>,
+    pub roles: Option<Vec<Roles>>,
 
     /// The links for the `user` resource.
     ///
-    roles_links: Option<RolesLinks>,
+    pub roles_links: Option<RolesLinks>,
 
     /// Represents the user who is capable of consuming the trust.
     ///
-    trustee_user_id: Option<String>,
+    pub trustee_user_id: Option<String>,
 
     /// Represents the user who created the trust, and who's authorization is
     /// being delegated.
     ///
-    trustor_user_id: Option<String>,
+    pub trustor_user_id: Option<String>,
 }
 
 /// The links for the `user` resource.
@@ -115,26 +115,26 @@ pub struct TrustResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    next: Option<String>,
-    previous: Option<String>,
-    _self: String,
+    pub next: Option<String>,
+    pub previous: Option<String>,
+    pub _self: String,
 }
 
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
-    immutable: Option<bool>,
+    pub immutable: Option<bool>,
 }
 
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
-    description: Option<String>,
-    domain_id: Option<String>,
-    id: Option<String>,
-    links: Option<Links>,
-    name: Option<String>,
-    options: Option<Options>,
+    pub description: Option<String>,
+    pub domain_id: Option<String>,
+    pub id: Option<String>,
+    pub links: Option<Links>,
+    pub name: Option<String>,
+    pub options: Option<Options>,
 }
 
 /// The links for the `user` resource.
@@ -142,7 +142,7 @@ pub struct Roles {
 /// `RolesLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RolesLinks {
-    next: Option<String>,
-    previous: Option<String>,
-    _self: String,
+    pub next: Option<String>,
+    pub previous: Option<String>,
+    pub _self: String,
 }

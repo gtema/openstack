@@ -23,40 +23,40 @@ use serde::{Deserialize, Serialize};
 pub struct QuotaResponse {
     /// The number of floating IP addresses allowed for each project.
     ///
-    floatingip: Option<Floatingip>,
+    pub floatingip: Option<Floatingip>,
 
     /// The number of networks allowed for each project.
     ///
-    network: Option<Network>,
+    pub network: Option<Network>,
 
     /// The number of ports allowed for each project.
     ///
-    port: Option<Port>,
+    pub port: Option<Port>,
 
     /// The number of role-based access control (RBAC) policies for each
     /// project.
     ///
-    rbac_policy: Option<RbacPolicy>,
+    pub rbac_policy: Option<RbacPolicy>,
 
     /// The number of routers allowed for each project.
     ///
-    router: Option<Router>,
+    pub router: Option<Router>,
 
     /// The number of security groups allowed for each project.
     ///
-    security_group: Option<SecurityGroup>,
+    pub security_group: Option<SecurityGroup>,
 
     /// The number of security group rules allowed for each project.
     ///
-    security_group_rule: Option<SecurityGroupRule>,
+    pub security_group_rule: Option<SecurityGroupRule>,
 
     /// The number of subnets allowed for each project.
     ///
-    subnet: Option<Subnet>,
+    pub subnet: Option<Subnet>,
 
     /// The number of subnet pools allowed for each project.
     ///
-    subnetpool: Option<Subnetpool>,
+    pub subnetpool: Option<Subnetpool>,
 }
 
 /// The number of floating IP addresses allowed for each project.
@@ -64,9 +64,9 @@ pub struct QuotaResponse {
 /// `Floatingip` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Floatingip {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of networks allowed for each project.
@@ -74,9 +74,9 @@ pub struct Floatingip {
 /// `Network` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Network {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of ports allowed for each project.
@@ -84,9 +84,9 @@ pub struct Network {
 /// `Port` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Port {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of role-based access control (RBAC) policies for each project.
@@ -94,9 +94,9 @@ pub struct Port {
 /// `RbacPolicy` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RbacPolicy {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of routers allowed for each project.
@@ -104,9 +104,9 @@ pub struct RbacPolicy {
 /// `Router` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Router {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of security groups allowed for each project.
@@ -114,9 +114,9 @@ pub struct Router {
 /// `SecurityGroup` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroup {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of security group rules allowed for each project.
@@ -124,9 +124,9 @@ pub struct SecurityGroup {
 /// `SecurityGroupRule` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRule {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of subnets allowed for each project.
@@ -134,9 +134,9 @@ pub struct SecurityGroupRule {
 /// `Subnet` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Subnet {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// The number of subnet pools allowed for each project.
@@ -144,7 +144,7 @@ pub struct Subnet {
 /// `Subnetpool` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Subnetpool {
-    limit: Option<i32>,
-    reserved: Option<i32>,
-    used: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub used: Option<i32>,
 }

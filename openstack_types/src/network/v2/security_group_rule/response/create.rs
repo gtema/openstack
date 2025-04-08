@@ -25,45 +25,45 @@ pub struct SecurityGroupRuleResponse {
     /// Indicates if the security group rule belongs to the default security
     /// group of the project or not.
     ///
-    belongs_to_default_sg: Option<BoolString>,
+    pub belongs_to_default_sg: Option<BoolString>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Ingress or egress, which is the direction in which the security group
     /// rule is applied.
     ///
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
     /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
     /// ingress or egress rules.
     ///
-    ethertype: Option<Ethertype>,
+    pub ethertype: Option<Ethertype>,
 
     /// The ID of the security group rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
-    normalized_cidr: Option<String>,
+    pub normalized_cidr: Option<String>,
 
     /// The maximum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be greater than or equal to the `port_range_min` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP code.
     ///
-    port_range_max: Option<i32>,
+    pub port_range_max: Option<i32>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be less than or equal to the `port_range_max` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP type.
     ///
-    port_range_min: Option<i32>,
+    pub port_range_min: Option<i32>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
@@ -77,38 +77,38 @@ pub struct SecurityGroupRuleResponse {
     /// `all` IP protocols. See the constants in `neutron_lib.constants` for
     /// the most up-to-date list of supported strings.
     ///
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
     /// The remote address group UUID that is associated with this security
     /// group rule.
     ///
-    remote_address_group_id: Option<String>,
+    pub remote_address_group_id: Option<String>,
 
     /// The remote group UUID to associate with this security group rule. You
     /// can specify either the `remote_group_id` or `remote_ip_prefix`
     /// attribute in the request body.
     ///
-    remote_group_id: Option<String>,
+    pub remote_group_id: Option<String>,
 
     /// The remote IP prefix that is matched by this security group rule.
     ///
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The security group ID to associate with this security group rule.
     ///
-    security_group_id: Option<String>,
+    pub security_group_id: Option<String>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -126,11 +126,11 @@ pub enum Direction {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ethertype {
-    // Ipv4
-    #[serde(rename = "IPv4")]
-    Ipv4,
-
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+
+    // Ipv4
+    #[serde(rename = "IPv4")]
+    Ipv4,
 }

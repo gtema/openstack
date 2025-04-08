@@ -21,17 +21,17 @@ use serde::{Deserialize, Serialize};
 /// Quota response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct QuotaResponse {
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    hard_limit: Option<i32>,
+    pub hard_limit: Option<i32>,
 
-    id: Option<i32>,
+    pub id: Option<i32>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    resource: Option<Resource>,
+    pub resource: Option<Resource>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

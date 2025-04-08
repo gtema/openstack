@@ -33,19 +33,19 @@ pub struct WebssoResponse {
     /// multiple requests and endpoints without exposing the token ID to
     /// non-privileged users.
     ///
-    audit_ids: Option<Vec<String>>,
+    pub audit_ids: Option<Vec<String>>,
 
     /// A catalog object.
     ///
-    catalog: Option<Vec<Catalog>>,
+    pub catalog: Option<Vec<Catalog>>,
 
     /// The date and time when the token expires.
     ///
-    expires_at: Option<String>,
+    pub expires_at: Option<String>,
 
     /// The date and time when the token was issued.
     ///
-    issues_at: Option<String>,
+    pub issues_at: Option<String>,
 
     /// The authentication methods, which are commonly password, token, or
     /// other methods. Indicates the accumulated set of authentication methods
@@ -58,52 +58,52 @@ pub struct WebssoResponse {
     /// authenticate the user in exchange for a token. The client is
     /// responsible for determining the total number of authentication factors.
     ///
-    methods: Option<Vec<String>>,
+    pub methods: Option<Vec<String>>,
 
     /// A user object
     ///
-    user: Option<User>,
+    pub user: Option<User>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
-    // Admin
-    #[serde(rename = "admin")]
-    Admin,
+    // Public
+    #[serde(rename = "public")]
+    Public,
 
     // Internal
     #[serde(rename = "internal")]
     Internal,
 
-    // Public
-    #[serde(rename = "public")]
-    Public,
+    // Admin
+    #[serde(rename = "admin")]
+    Admin,
 }
 
 /// `Endpoints` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Endpoints {
-    id: Option<String>,
-    interface: Option<Interface>,
-    region: Option<String>,
-    url: Option<String>,
+    pub id: Option<String>,
+    pub interface: Option<Interface>,
+    pub region: Option<String>,
+    pub url: Option<String>,
 }
 
 /// `Catalog` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Catalog {
-    endpoints: Option<Vec<Endpoints>>,
-    id: Option<String>,
-    name: Option<String>,
-    _type: Option<String>,
+    pub endpoints: Option<Vec<Endpoints>>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub _type: Option<String>,
 }
 
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
 }
 
 /// A user object
@@ -111,9 +111,9 @@ pub struct Domain {
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    domain: Option<Domain>,
-    id: Option<String>,
-    name: Option<String>,
-    os_federation: Option<HashMap<String, Value>>,
-    password_expires_at: Option<String>,
+    pub domain: Option<Domain>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub os_federation: Option<HashMap<String, Value>>,
+    pub password_expires_at: Option<String>,
 }

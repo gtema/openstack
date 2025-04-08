@@ -23,24 +23,24 @@ use serde::{Deserialize, Serialize};
 pub struct ClusterResponse {
     /// The binary name of the services in the cluster.
     ///
-    binary: Option<String>,
+    pub binary: Option<String>,
 
     /// The name of the service cluster.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The cluster replication status. Only included in responses if
     /// configured. One of: `enabled` or `disabled`.
     ///
-    replication_status: Option<ReplicationStatus>,
+    pub replication_status: Option<ReplicationStatus>,
 
     /// The state of the cluster. One of `up` or `down`.
     ///
-    state: Option<State>,
+    pub state: Option<State>,
 
     /// The status of the cluster. One of `enabled` or `disabled`.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -58,13 +58,13 @@ pub enum ReplicationStatus {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Up
-    #[serde(rename = "up")]
-    Up,
-
     // Down
     #[serde(rename = "down")]
     Down,
+
+    // Up
+    #[serde(rename = "up")]
+    Up,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

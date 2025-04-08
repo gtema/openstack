@@ -21,37 +21,37 @@ use serde::{Deserialize, Serialize};
 /// LocalIp response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct LocalIpResponse {
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    ip_mode: Option<IpMode>,
+    pub ip_mode: Option<IpMode>,
 
-    local_ip_address: Option<String>,
+    pub local_ip_address: Option<String>,
 
-    local_port_id: Option<String>,
+    pub local_port_id: Option<String>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum IpMode {
-    // Translate
-    #[serde(rename = "translate")]
-    Translate,
-
     // Passthrough
     #[serde(rename = "passthrough")]
     Passthrough,
+
+    // Translate
+    #[serde(rename = "translate")]
+    Translate,
 }

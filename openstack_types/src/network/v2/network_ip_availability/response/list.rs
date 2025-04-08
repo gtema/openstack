@@ -23,26 +23,26 @@ use serde::{Deserialize, Serialize};
 pub struct NetworkIpAvailabilityResponse {
     /// The ID of the network whose IP availability detail is reported.
     ///
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
     /// Human-readable name of the network.
     ///
-    network_name: Option<String>,
+    pub network_name: Option<String>,
 
     /// A list of dictionaries showing subnet IP availability. It contains
     /// information for every subnet associated to the network.
     ///
-    subnet_ip_availability: Option<String>,
+    pub subnet_ip_availability: Option<String>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The total number of IP addresses in a network.
     ///
-    total_ips: Option<String>,
+    pub total_ips: Option<String>,
 
     /// The number of used IP addresses of all subnets in a network.
     ///
-    used_ips: Option<String>,
+    pub used_ips: Option<String>,
 }

@@ -25,11 +25,11 @@ pub struct ClusterResponse {
     ///
     /// **New in version 3.26**
     ///
-    active_backend_id: Option<String>,
+    pub active_backend_id: Option<String>,
 
     /// The binary name of the services in the cluster.
     ///
-    binary: Option<String>,
+    pub binary: Option<String>,
 
     /// The date and time when the resource was created.
     ///
@@ -46,17 +46,17 @@ pub struct ClusterResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The reason for disabling a resource.
     ///
-    disabled_reason: Option<String>,
+    pub disabled_reason: Option<String>,
 
     /// Whether the cluster is frozen or not.
     ///
     /// **New in version 3.26**
     ///
-    frozen: Option<bool>,
+    pub frozen: Option<bool>,
 
     /// The last periodic heartbeat received.
     ///
@@ -73,32 +73,32 @@ pub struct ClusterResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    last_heartbeat: Option<String>,
+    pub last_heartbeat: Option<String>,
 
     /// The name of the service cluster.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The number of down hosts in the cluster.
     ///
-    num_down_hosts: Option<i32>,
+    pub num_down_hosts: Option<i32>,
 
     /// The number of hosts in the cluster.
     ///
-    num_hosts: Option<i32>,
+    pub num_hosts: Option<i32>,
 
     /// The cluster replication status. Only included in responses if
     /// configured. One of: `enabled` or `disabled`.
     ///
-    replication_status: Option<ReplicationStatus>,
+    pub replication_status: Option<ReplicationStatus>,
 
     /// The state of the cluster. One of `up` or `down`.
     ///
-    state: Option<State>,
+    pub state: Option<State>,
 
     /// The status of the cluster. One of `enabled` or `disabled`.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// The date and time when the resource was updated.
     ///
@@ -118,7 +118,7 @@ pub struct ClusterResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -136,13 +136,13 @@ pub enum ReplicationStatus {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Up
-    #[serde(rename = "up")]
-    Up,
-
     // Down
     #[serde(rename = "down")]
     Down,
+
+    // Up
+    #[serde(rename = "up")]
+    Up,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

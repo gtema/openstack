@@ -25,7 +25,7 @@ use std::collections::HashMap;
 pub struct AggregateResponse {
     /// The availability zone of the host aggregate.
     ///
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// The date and time when the resource was created. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -39,12 +39,12 @@ pub struct AggregateResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    created_at: String,
+    pub created_at: String,
 
     /// A boolean indicates whether this aggregate is deleted or not, if it has
     /// not been deleted, `false` will appear.
     ///
-    deleted: bool,
+    pub deleted: bool,
 
     /// The date and time when the resource was deleted. If the resource has
     /// not been deleted yet, this field will be `null`, The date and time
@@ -59,23 +59,23 @@ pub struct AggregateResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    deleted_at: Option<String>,
+    pub deleted_at: Option<String>,
 
     /// An array of host information.
     ///
-    hosts: Vec<String>,
+    pub hosts: Vec<String>,
 
     /// The ID of the host aggregate.
     ///
-    id: i32,
+    pub id: i32,
 
     /// Metadata key and value pairs associated with the aggregate.
     ///
-    metadata: Option<HashMap<String, Value>>,
+    pub metadata: Option<HashMap<String, Value>>,
 
     /// The name of the host aggregate.
     ///
-    name: String,
+    pub name: String,
 
     /// The date and time when the resource was updated, if the resource has
     /// not been updated, this field will show as `null`. The date and time
@@ -90,11 +90,11 @@ pub struct AggregateResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The UUID of the host aggregate.
     ///
     /// **New in version 2.41**
     ///
-    uuid: String,
+    pub uuid: String,
 }

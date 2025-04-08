@@ -24,17 +24,17 @@ use std::collections::HashMap;
 pub struct QosSpecResponse {
     /// The consumer type.
     ///
-    consumer: Option<String>,
+    pub consumer: Option<String>,
 
     /// The generated ID for the QoS specification.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the QoS specification.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// A `specs` object.
     ///
-    specs: Option<HashMap<String, Option<String>>>,
+    pub specs: Option<HashMap<String, Option<String>>>,
 }

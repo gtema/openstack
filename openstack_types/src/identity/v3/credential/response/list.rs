@@ -23,25 +23,25 @@ use serde::{Deserialize, Serialize};
 pub struct CredentialResponse {
     /// The credential itself, as a serialized blob.
     ///
-    blob: Option<String>,
+    pub blob: Option<String>,
 
     /// The UUID for the credential.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID for the project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The credential type, such as `ec2` or `cert`. The implementation
     /// determines the list of supported types.
     ///
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 
     /// The ID of the user who owns the credential.
     ///
-    user_id: Option<String>,
+    pub user_id: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -49,5 +49,5 @@ pub struct CredentialResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

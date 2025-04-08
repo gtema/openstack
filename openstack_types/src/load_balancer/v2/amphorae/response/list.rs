@@ -25,86 +25,86 @@ pub struct AmphoraeResponse {
     /// This is not guaranteed to be current. May be an empty-string if the
     /// compute service does not use zones.
     ///
-    cached_zone: Option<String>,
+    pub cached_zone: Option<String>,
 
     /// Whether the certificate is in the process of being replaced.
     ///
-    cert_busy: Option<bool>,
+    pub cert_busy: Option<bool>,
 
     /// The date the certificate for the amphora expires.
     ///
-    cert_expiration: Option<String>,
+    pub cert_expiration: Option<String>,
 
     /// The ID of the compute flavor used for the amphora.
     ///
     /// **New in version 2.3**
     ///
-    compute_flavor: Option<String>,
+    pub compute_flavor: Option<String>,
 
     /// The ID of the amphora resource in the compute system.
     ///
-    compute_id: Option<String>,
+    pub compute_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
     ///
-    ha_ip: Option<String>,
+    pub ha_ip: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
     ///
-    ha_port_id: Option<String>,
+    pub ha_port_id: Option<String>,
 
     /// The associated amphora ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID of the glance image used for the amphora.
     ///
     /// **New in version 2.1**
     ///
-    image_id: Option<String>,
+    pub image_id: Option<String>,
 
     /// The management IP of the amphora.
     ///
-    lb_network_ip: Option<String>,
+    pub lb_network_ip: Option<String>,
 
     /// The ID of the load balancer.
     ///
-    loadbalancer_id: Option<String>,
+    pub loadbalancer_id: Option<String>,
 
     /// The role of the amphora. One of `STANDALONE`, `MASTER`, `BACKUP`.
     ///
-    role: Option<String>,
+    pub role: Option<String>,
 
     /// The status of the amphora. One of: `BOOTING`, `ALLOCATED`, `READY`,
     /// `PENDING_CREATE`, `PENDING_DELETE`, `DELETED`, `ERROR`.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The vrrp group’s ID for the amphora.
     ///
-    vrrp_id: Option<i32>,
+    pub vrrp_id: Option<i32>,
 
     /// The bound interface name of the vrrp port on the amphora.
     ///
-    vrrp_interface: Option<String>,
+    pub vrrp_interface: Option<String>,
 
     /// The address of the vrrp port on the amphora.
     ///
-    vrrp_ip: Option<String>,
+    pub vrrp_ip: Option<String>,
 
     /// The vrrp port’s ID in the networking system.
     ///
-    vrrp_port_id: Option<String>,
+    pub vrrp_port_id: Option<String>,
 
     /// The priority of the amphora in the vrrp group.
     ///
-    vrrp_priority: Option<i32>,
+    pub vrrp_priority: Option<i32>,
 }

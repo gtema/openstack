@@ -21,13 +21,13 @@ use serde::{Deserialize, Serialize};
 /// Quota response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct QuotaResponse {
-    api_export_size: Option<i32>,
+    pub api_export_size: Option<i32>,
 
-    recordset_records: Option<i32>,
+    pub recordset_records: Option<i32>,
 
-    zone_records: Option<i32>,
+    pub zone_records: Option<i32>,
 
-    zone_recorsets: Option<i32>,
+    pub zone_recorsets: Option<i32>,
 
-    zones: Option<i32>,
+    pub zones: Option<i32>,
 }

@@ -23,22 +23,22 @@ use serde::{Deserialize, Serialize};
 pub struct AccessRuleResponse {
     /// The UUID of the access rule
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The request method that the application credential is permitted to use
     /// for a given API endpoint.
     ///
-    method: Option<Method>,
+    pub method: Option<Method>,
 
     /// The API path that the application credential is permitted to access.
     ///
-    path: Option<String>,
+    pub path: Option<String>,
 
     /// The service type identifier for the service that the application
     /// credential is permitted to access. Must be a service type that is
     /// listed in the service catalog and not a code name for a service.
     ///
-    service: Option<String>,
+    pub service: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -46,15 +46,15 @@ pub struct AccessRuleResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Method {
-    // Post
-    #[serde(rename = "POST")]
-    Post,
+    // Patch
+    #[serde(rename = "PATCH")]
+    Patch,
 
     // Delete
     #[serde(rename = "DELETE")]
@@ -64,13 +64,13 @@ pub enum Method {
     #[serde(rename = "HEAD")]
     Head,
 
-    // Patch
-    #[serde(rename = "PATCH")]
-    Patch,
-
     // Get
     #[serde(rename = "GET")]
     Get,
+
+    // Post
+    #[serde(rename = "POST")]
+    Post,
 
     // Put
     #[serde(rename = "PUT")]

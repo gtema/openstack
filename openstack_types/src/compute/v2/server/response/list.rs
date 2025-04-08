@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct ServerResponse {
     /// The UUID of the server.
     ///
-    id: String,
+    pub id: String,
 
     /// The server name.
     ///
-    name: String,
+    pub name: String,
 }

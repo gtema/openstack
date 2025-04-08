@@ -23,31 +23,31 @@ use serde::{Deserialize, Serialize};
 pub struct ShareResponse {
     /// Date / Time when resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// ID for the resource
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Links to the resource, and other related resources. When a response has
     /// been broken into pages, we will include a `next` link that should be
     /// followed to retrieve all results
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// ID for the project that owns the resource
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The project ID the zone will be shared with.
     ///
     /// **New in version 2.1**
     ///
-    target_project_id: Option<String>,
+    pub target_project_id: Option<String>,
 
     /// Date / Time when resource last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// Links to the resource, and other related resources. When a response has
@@ -57,6 +57,6 @@ pub struct ShareResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
-    zone: Option<String>,
+    pub _self: Option<String>,
+    pub zone: Option<String>,
 }

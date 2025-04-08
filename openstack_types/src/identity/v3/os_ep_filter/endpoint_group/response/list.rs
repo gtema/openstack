@@ -23,22 +23,22 @@ use serde::{Deserialize, Serialize};
 pub struct EndpointGroupResponse {
     /// The endpoint group description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Describes the filtering performed by the endpoint group. The filter
     /// used must be an endpoint property, such as interface, service_id,
     /// region, and enabled. Note that if using interface as a filter, the only
     /// available values are public, internal, and admin.
     ///
-    filters: Option<Filters>,
+    pub filters: Option<Filters>,
 
     /// The endpoint group ID
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the endpoint group.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -46,12 +46,16 @@ pub struct EndpointGroupResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
+    // Public
+    #[serde(rename = "public")]
+    Public,
+
     // Admin
     #[serde(rename = "admin")]
     Admin,
@@ -59,10 +63,6 @@ pub enum Interface {
     // Internal
     #[serde(rename = "internal")]
     Internal,
-
-    // Public
-    #[serde(rename = "public")]
-    Public,
 }
 
 /// Describes the filtering performed by the endpoint group. The filter used
@@ -73,8 +73,8 @@ pub enum Interface {
 /// `Filters` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Filters {
-    enabled: Option<bool>,
-    interface: Option<Interface>,
-    region_id: Option<String>,
-    service_id: Option<String>,
+    pub enabled: Option<bool>,
+    pub interface: Option<Interface>,
+    pub region_id: Option<String>,
+    pub service_id: Option<String>,
 }

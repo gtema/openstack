@@ -24,36 +24,36 @@ use serde::{Deserialize, Serialize};
 pub struct SegmentResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The UUID of the segment.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the attached network.
     ///
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
     /// The type of physical network that maps to this network resource. For
     /// example, `flat`, `vlan`, `vxlan`, or `gre`.
     ///
-    network_type: Option<String>,
+    pub network_type: Option<String>,
 
     /// The physical network where this network/segment is implemented.
     ///
-    physical_network: Option<String>,
+    pub physical_network: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The ID of the isolated segment on the physical network. The
     /// `network_type` attribute defines the segmentation model. For example,
@@ -61,9 +61,9 @@ pub struct SegmentResponse {
     /// the `network_type` value is gre, this ID is a gre key. `Note` that only
     /// the segmentation-id of VLAN type networks can be changed!
     ///
-    segmentation_id: Option<IntString>,
+    pub segmentation_id: Option<IntString>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

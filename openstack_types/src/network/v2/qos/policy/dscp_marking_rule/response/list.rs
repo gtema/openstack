@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct DscpMarkingRuleResponse {
     /// The DSCP mark value.
     ///
-    dscp_mark: Option<i32>,
+    pub dscp_mark: Option<i32>,
 
     /// The ID of the QoS DSCP marking rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 }

@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 pub struct ServerExternalEventResponse {
     /// List of external events to process.
     ///
-    events: Vec<Events>,
+    pub events: Vec<Events>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -33,52 +33,52 @@ pub enum Name {
     #[serde(rename = "network-vif-unplugged")]
     NetworkVifUnplugged,
 
-    // NetworkVifPlugged
-    #[serde(rename = "network-vif-plugged")]
-    NetworkVifPlugged,
-
-    // NetworkVifDeleted
-    #[serde(rename = "network-vif-deleted")]
-    NetworkVifDeleted,
-
     // VolumeExtended
     #[serde(rename = "volume-extended")]
     VolumeExtended,
+
+    // NetworkVifPlugged
+    #[serde(rename = "network-vif-plugged")]
+    NetworkVifPlugged,
 
     // NetworkChanged
     #[serde(rename = "network-changed")]
     NetworkChanged,
 
-    // PowerUpdate
-    #[serde(rename = "power-update")]
-    PowerUpdate,
+    // NetworkVifDeleted
+    #[serde(rename = "network-vif-deleted")]
+    NetworkVifDeleted,
 
     // AcceleratorRequestBound
     #[serde(rename = "accelerator-request-bound")]
     AcceleratorRequestBound,
+
+    // PowerUpdate
+    #[serde(rename = "power-update")]
+    PowerUpdate,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Failed
-    #[serde(rename = "failed")]
-    Failed,
+    // InProgress
+    #[serde(rename = "in-progress")]
+    InProgress,
 
     // Completed
     #[serde(rename = "completed")]
     Completed,
 
-    // InProgress
-    #[serde(rename = "in-progress")]
-    InProgress,
+    // Failed
+    #[serde(rename = "failed")]
+    Failed,
 }
 
 /// `Events` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Events {
-    name: Name,
-    server_uuid: String,
-    status: Status,
-    tag: Option<String>,
+    pub name: Name,
+    pub server_uuid: String,
+    pub status: Status,
+    pub tag: Option<String>,
 }

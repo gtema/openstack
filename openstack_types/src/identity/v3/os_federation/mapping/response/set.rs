@@ -23,20 +23,20 @@ use serde::{Deserialize, Serialize};
 pub struct MappingResponse {
     /// The Federation Mapping unique ID
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
-    rules: Option<Vec<Rules>>,
+    pub rules: Option<Vec<Rules>>,
 
     /// Mapping schema version
     ///
-    schema_version: Option<String>,
+    pub schema_version: Option<String>,
 }
 
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -54,38 +54,38 @@ pub enum Type {
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    domain: Option<Domain>,
-    email: Option<String>,
-    id: Option<String>,
-    name: Option<String>,
-    _type: Option<Type>,
+    pub domain: Option<Domain>,
+    pub email: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub _type: Option<Type>,
 }
 
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
-    name: String,
+    pub name: String,
 }
 
 /// `Projects` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Projects {
-    domain: Option<Domain>,
-    name: String,
-    roles: Vec<Roles>,
+    pub domain: Option<Domain>,
+    pub name: String,
+    pub roles: Vec<Roles>,
 }
 
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
-    id: String,
+    pub id: String,
 }
 
 /// `GroupStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct GroupStructResponse {
-    domain: Domain,
-    name: String,
+    pub domain: Domain,
+    pub name: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -100,50 +100,50 @@ pub enum LocalGroup {
 /// `Local` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Local {
-    domain: Option<Domain>,
-    group: Option<LocalGroup>,
-    group_ids: Option<String>,
-    groups: Option<String>,
-    projects: Option<Vec<Projects>>,
-    user: Option<User>,
+    pub domain: Option<Domain>,
+    pub group: Option<LocalGroup>,
+    pub group_ids: Option<String>,
+    pub groups: Option<String>,
+    pub projects: Option<Vec<Projects>>,
+    pub user: Option<User>,
 }
 
 /// `RemoteType` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteType {
-    _type: String,
+    pub _type: String,
 }
 
 /// `RemoteTypeAnyOneOfRegex` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteTypeAnyOneOfRegex {
-    any_one_of: Vec<String>,
-    regex: Option<bool>,
-    _type: String,
+    pub any_one_of: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
 }
 
 /// `RemoteTypeNotAnyOfRegex` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteTypeNotAnyOfRegex {
-    not_any_of: Vec<String>,
-    regex: Option<bool>,
-    _type: String,
+    pub not_any_of: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
 }
 
 /// `RemoteTypeBlacklistRegex` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteTypeBlacklistRegex {
-    blacklist: Vec<String>,
-    regex: Option<bool>,
-    _type: String,
+    pub blacklist: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
 }
 
 /// `RemoteTypeWhitelistRegex` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct RemoteTypeWhitelistRegex {
-    regex: Option<bool>,
-    _type: String,
-    whitelist: Vec<String>,
+    pub regex: Option<bool>,
+    pub _type: String,
+    pub whitelist: Vec<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -164,6 +164,6 @@ pub enum RulesRemote {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    local: Vec<Local>,
-    remote: Vec<RulesRemote>,
+    pub local: Vec<Local>,
+    pub remote: Vec<RulesRemote>,
 }

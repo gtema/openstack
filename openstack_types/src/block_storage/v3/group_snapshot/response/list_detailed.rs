@@ -36,39 +36,39 @@ pub struct GroupSnapshotResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The group snapshot description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the group.
     ///
-    group_id: Option<String>,
+    pub group_id: Option<String>,
 
     /// The group type ID.
     ///
-    group_type: Option<String>,
+    pub group_type: Option<String>,
 
     /// The group type ID.
     ///
-    group_type_id: Option<String>,
+    pub group_type_id: Option<String>,
 
     /// The ID of the group snapshot.
     ///
-    id: String,
+    pub id: String,
 
     /// The group snapshot name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The UUID of the volume group snapshot project.
     ///
     /// **New in version 3.58**
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The `status` of the generic group snapshot.
     ///
-    status: String,
+    pub status: String,
 }

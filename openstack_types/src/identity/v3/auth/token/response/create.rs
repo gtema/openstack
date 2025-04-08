@@ -33,17 +33,17 @@ pub struct TokenResponse {
     /// multiple requests and endpoints without exposing the token ID to
     /// non-privileged users.
     ///
-    audit_ids: Option<Vec<String>>,
+    pub audit_ids: Option<Vec<String>>,
 
     /// A `catalog` object.
     ///
-    catalog: Option<Vec<Catalog>>,
+    pub catalog: Option<Vec<Catalog>>,
 
     /// A domain object including the id and name representing the domain the
     /// token is scoped to. This is only included in tokens that are scoped to
     /// a domain.
     ///
-    domain: Option<DomainStructResponse>,
+    pub domain: Option<DomainStructResponse>,
 
     /// The date and time when the token expires.
     ///
@@ -59,13 +59,13 @@ pub struct TokenResponse {
     ///
     /// A `null` value indicates that the token never expires.
     ///
-    expires_at: Option<String>,
+    pub expires_at: Option<String>,
 
-    is_domain: Option<bool>,
+    pub is_domain: Option<bool>,
 
     /// The date and time when the token was issued.
     ///
-    issues_at: Option<String>,
+    pub issues_at: Option<String>,
 
     /// The authentication methods, which are commonly `password`, `token`, or
     /// other methods. Indicates the accumulated set of authentication methods
@@ -79,62 +79,62 @@ pub struct TokenResponse {
     /// client is responsible for determining the total number of
     /// authentication factors.
     ///
-    methods: Option<Vec<String>>,
+    pub methods: Option<Vec<String>>,
 
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
     /// in tokens that are scoped to a project.
     ///
-    project: Option<Project>,
+    pub project: Option<Project>,
 
     /// A list of `role` objects
     ///
-    roles: Option<Vec<Roles>>,
+    pub roles: Option<Vec<Roles>>,
 
     /// A `system` object containing information about which parts of the
     /// system the token is scoped to. If the token is scoped to the entire
     /// deployment system, the `system` object will consist of `{"all": true}`.
     /// This is only included in tokens that are scoped to the system.
     ///
-    system: Option<HashMap<String, bool>>,
+    pub system: Option<HashMap<String, bool>>,
 
     /// A `user` object.
     ///
-    user: Option<User>,
+    pub user: Option<User>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
-    // Admin
-    #[serde(rename = "admin")]
-    Admin,
+    // Public
+    #[serde(rename = "public")]
+    Public,
 
     // Internal
     #[serde(rename = "internal")]
     Internal,
 
-    // Public
-    #[serde(rename = "public")]
-    Public,
+    // Admin
+    #[serde(rename = "admin")]
+    Admin,
 }
 
 /// `Endpoints` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Endpoints {
-    id: Option<String>,
-    interface: Option<Interface>,
-    region: Option<String>,
-    url: Option<String>,
+    pub id: Option<String>,
+    pub interface: Option<Interface>,
+    pub region: Option<String>,
+    pub url: Option<String>,
 }
 
 /// `Catalog` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Catalog {
-    endpoints: Option<Vec<Endpoints>>,
-    id: Option<String>,
-    name: Option<String>,
-    _type: Option<String>,
+    pub endpoints: Option<Vec<Endpoints>>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub _type: Option<String>,
 }
 
 /// A `domain` object including the `id` and `name` representing the domain the
@@ -144,8 +144,8 @@ pub struct Catalog {
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
 }
 
 /// A `user` object.
@@ -153,11 +153,11 @@ pub struct Domain {
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    domain: Option<Domain>,
-    id: Option<String>,
-    name: Option<String>,
-    os_federation: Option<HashMap<String, Value>>,
-    password_expires_at: Option<String>,
+    pub domain: Option<Domain>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub os_federation: Option<HashMap<String, Value>>,
+    pub password_expires_at: Option<String>,
 }
 
 /// A domain object including the id and name representing the domain the token
@@ -166,8 +166,8 @@ pub struct User {
 /// `DomainStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DomainStructResponse {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
 }
 
 /// A `project` object including the `id`, `name` and `domain` object
@@ -177,13 +177,13 @@ pub struct DomainStructResponse {
 /// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Project {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
 }
 
 /// `Roles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Roles {
-    id: Option<String>,
-    name: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
 }

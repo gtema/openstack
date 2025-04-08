@@ -23,31 +23,31 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceProviderResponse {
     /// The URL to authenticate against
     ///
-    auth_url: Option<String>,
+    pub auth_url: Option<String>,
 
     /// The description of the service provider
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Whether the service provider is enabled or not
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The service provider ID
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The link to the resources in question.
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// The prefix of the RelayState SAML attribute
     ///
-    relay_state_prefix: Option<String>,
+    pub relay_state_prefix: Option<String>,
 
     /// The service provider's URL
     ///
-    sp_url: Option<String>,
+    pub sp_url: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -55,5 +55,5 @@ pub struct ServiceProviderResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

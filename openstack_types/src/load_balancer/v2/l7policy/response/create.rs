@@ -24,50 +24,50 @@ pub struct L7policyResponse {
     /// The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`,
     /// `REDIRECT_TO_URL`, or `REJECT`.
     ///
-    action: Option<String>,
+    pub action: Option<String>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the L7 policy.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID of the listener.
     ///
-    listener_id: Option<String>,
+    pub listener_id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The position of this policy on the listener. Positions start at 1.
     ///
-    position: Option<i32>,
+    pub position: Option<i32>,
 
     /// The ID of the project owning this resource.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// Requests matching this policy will be redirected to the specified URL
     /// or Prefix URL with the HTTP response code. Valid if `action` is
@@ -76,40 +76,40 @@ pub struct L7policyResponse {
     ///
     /// **New in version 2.9**
     ///
-    redirect_http_code: Option<i32>,
+    pub redirect_http_code: Option<i32>,
 
     /// Requests matching this policy will be redirected to the pool with this
     /// ID. Only valid if `action` is `REDIRECT_TO_POOL`. The pool has some
     /// restrictions, See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
     ///
-    redirect_pool_id: Option<String>,
+    pub redirect_pool_id: Option<String>,
 
     /// Requests matching this policy will be redirected to this Prefix URL.
     /// Only valid if `action` is `REDIRECT_PREFIX`.
     ///
-    redirect_prefix: Option<String>,
+    pub redirect_prefix: Option<String>,
 
     /// Requests matching this policy will be redirected to this URL. Only
     /// valid if `action` is `REDIRECT_TO_URL`.
     ///
-    redirect_url: Option<String>,
+    pub redirect_url: Option<String>,
 
     /// List of associated L7 rule IDs.
     ///
-    rules: Option<Vec<Rules>>,
+    pub rules: Option<Vec<Rules>>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// Base type for complex types
@@ -117,5 +117,5 @@ pub struct L7policyResponse {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    id: String,
+    pub id: String,
 }

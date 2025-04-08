@@ -21,13 +21,13 @@ use serde::{Deserialize, Serialize};
 /// PortAssociation response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct PortAssociationResponse {
-    fixed_ip: Option<String>,
+    pub fixed_ip: Option<String>,
 
-    fixed_port_id: Option<String>,
+    pub fixed_port_id: Option<String>,
 
-    host: Option<String>,
+    pub host: Option<String>,
 
-    local_ip_address: Option<String>,
+    pub local_ip_address: Option<String>,
 
-    local_ip_id: Option<String>,
+    pub local_ip_id: Option<String>,
 }

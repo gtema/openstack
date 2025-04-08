@@ -23,5 +23,5 @@ use serde::{Deserialize, Serialize};
 pub struct ServerResponse {
     /// The UUID for the resulting image snapshot.
     ///
-    image_id: String,
+    pub image_id: String,
 }

@@ -23,28 +23,28 @@ use serde::{Deserialize, Serialize};
 pub struct KeypairResponse {
     /// The date and time when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A boolean indicates whether this keypair is deleted or not. The value
     /// is always false (not deleted).
     ///
-    deleted: Option<bool>,
+    pub deleted: Option<bool>,
 
     /// It is always null.
     ///
-    deleted_at: Option<String>,
+    pub deleted_at: Option<String>,
 
     /// The fingerprint for the keypair.
     ///
-    fingerprint: String,
+    pub fingerprint: String,
 
     /// The keypair ID.
     ///
-    id: i32,
+    pub id: i32,
 
     /// The name for the keypair.
     ///
-    name: String,
+    pub name: String,
 
     /// If you do not provide a public key on create, a new keypair will be
     /// built for you, and the private key will be returned during the initial
@@ -53,24 +53,24 @@ pub struct KeypairResponse {
     ///
     /// **Available until version 2.91**
     ///
-    private_key: Option<String>,
+    pub private_key: Option<String>,
 
     /// The keypair public key.
     ///
-    public_key: String,
+    pub public_key: String,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
     ///
     /// **New in version 2.2**
     ///
     #[serde(rename = "type")]
-    _type: String,
+    pub _type: String,
 
     /// It is always null.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The user_id for a keypair.
     ///
-    user_id: String,
+    pub user_id: String,
 }

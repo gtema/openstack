@@ -24,53 +24,53 @@ pub struct EndpointGroupResponse {
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// List of endpoints of the same type, for the endpoint group. The values
     /// will depend on type.
     ///
-    endpoints: Option<Vec<String>>,
+    pub endpoints: Option<Vec<String>>,
 
     /// The ID of the VPN endpoint group.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The type of the endpoints in the group. A valid value is `subnet`,
     /// `cidr`, `network`, `router`, or `vlan`. Only `subnet` and `cidr` are
     /// supported at this moment.
     ///
     #[serde(rename = "type")]
-    _type: Option<Type>,
+    pub _type: Option<Type>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Cidr
-    #[serde(rename = "cidr")]
-    Cidr,
-
     // Network
     #[serde(rename = "network")]
     Network,
 
-    // Vlan
-    #[serde(rename = "vlan")]
-    Vlan,
+    // Cidr
+    #[serde(rename = "cidr")]
+    Cidr,
+
+    // Subnet
+    #[serde(rename = "subnet")]
+    Subnet,
 
     // Router
     #[serde(rename = "router")]
     Router,
 
-    // Subnet
-    #[serde(rename = "subnet")]
-    Subnet,
+    // Vlan
+    #[serde(rename = "vlan")]
+    Vlan,
 }

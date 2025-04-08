@@ -23,13 +23,13 @@ use serde::{Deserialize, Serialize};
 pub struct RestoreResponse {
     /// The UUID for a backup.
     ///
-    backup_id: Option<String>,
+    pub backup_id: Option<String>,
 
     /// The volume name.
     ///
-    backup_name: Option<String>,
+    pub backup_name: Option<String>,
 
     /// The UUID of the volume.
     ///
-    volume_id: Option<String>,
+    pub volume_id: Option<String>,
 }

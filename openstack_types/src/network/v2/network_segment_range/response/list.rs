@@ -23,38 +23,38 @@ use serde::{Deserialize, Serialize};
 /// NetworkSegmentRange response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct NetworkSegmentRangeResponse {
-    available: Option<String>,
+    pub available: Option<String>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     #[serde(rename = "default")]
-    _default: Option<BoolString>,
+    pub _default: Option<BoolString>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    maximum: Option<IntString>,
+    pub maximum: Option<IntString>,
 
-    minimum: Option<IntString>,
+    pub minimum: Option<IntString>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    network_type: Option<NetworkType>,
+    pub network_type: Option<NetworkType>,
 
-    physical_network: Option<String>,
+    pub physical_network: Option<String>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
-    used: Option<String>,
+    pub used: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -64,13 +64,13 @@ pub enum NetworkType {
     #[serde(rename = "vlan")]
     Vlan,
 
-    // Gre
-    #[serde(rename = "gre")]
-    Gre,
-
     // Geneve
     #[serde(rename = "geneve")]
     Geneve,
+
+    // Gre
+    #[serde(rename = "gre")]
+    Gre,
 
     // Vxlan
     #[serde(rename = "vxlan")]

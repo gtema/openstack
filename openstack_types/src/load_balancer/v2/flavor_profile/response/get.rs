@@ -21,11 +21,11 @@ use serde::{Deserialize, Serialize};
 /// FlavorProfile response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct FlavorProfileResponse {
-    flavor_data: Option<String>,
+    pub flavor_data: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    provider_name: Option<String>,
+    pub provider_name: Option<String>,
 }

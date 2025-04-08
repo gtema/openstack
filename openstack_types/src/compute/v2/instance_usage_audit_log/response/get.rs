@@ -25,39 +25,39 @@ use std::collections::HashMap;
 pub struct InstanceUsageAuditLogResponse {
     /// The number of errors.
     ///
-    errors: Option<i32>,
+    pub errors: Option<i32>,
 
     /// A list of the hosts whose instance audit tasks have not run.
     ///
-    hosts_not_run: Option<Vec<String>>,
+    pub hosts_not_run: Option<Vec<String>>,
 
     /// The number of instances.
     ///
-    instances: Option<i32>,
+    pub instances: Option<i32>,
 
     /// The object of instance usage audit logs.
     ///
-    log: Option<HashMap<String, Value>>,
+    pub log: Option<HashMap<String, Value>>,
 
     /// The log message of the instance usage audit task.
     ///
-    message: Option<String>,
+    pub message: Option<String>,
 
     /// The number of the hosts.
     ///
-    num_hosts: Option<i32>,
+    pub num_hosts: Option<i32>,
 
     /// The number of the hosts whose instance audit tasks have been done.
     ///
-    num_hosts_done: Option<i32>,
+    pub num_hosts_done: Option<i32>,
 
     /// The number of the hosts whose instance audit tasks have not run.
     ///
-    num_hosts_not_run: Option<i32>,
+    pub num_hosts_not_run: Option<i32>,
 
     /// The number of the hosts whose instance audit tasks are running.
     ///
-    num_hosts_running: Option<i32>,
+    pub num_hosts_running: Option<i32>,
 
     /// The overall status of instance audit tasks.
     ///
@@ -77,29 +77,29 @@ pub struct InstanceUsageAuditLogResponse {
     ///
     /// ```
     ///
-    overall_status: Option<String>,
+    pub overall_status: Option<String>,
 
     /// The beginning time of the instance usage audit period. For example,
     /// `2016-05-01 00:00:00`.
     ///
-    period_beginning: Option<String>,
+    pub period_beginning: Option<String>,
 
     /// The ending time of the instance usage audit period. For example,
     /// `2016-06-01 00:00:00`.
     ///
-    period_ending: Option<String>,
+    pub period_ending: Option<String>,
 
     /// The state of the instance usage audit task. `DONE` or `RUNNING`.
     ///
-    state: Option<State>,
+    pub state: Option<State>,
 
     /// The total number of instance audit task errors.
     ///
-    total_errors: Option<i32>,
+    pub total_errors: Option<i32>,
 
     /// The total number of VM instances in the period.
     ///
-    total_instances: Option<i32>,
+    pub total_instances: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

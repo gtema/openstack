@@ -23,23 +23,23 @@ use std::collections::HashMap;
 /// Aggregate response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AggregateResponse {
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
-    created_at: String,
+    pub created_at: String,
 
-    deleted: bool,
+    pub deleted: bool,
 
-    deleted_at: String,
+    pub deleted_at: String,
 
-    hosts: Vec<String>,
+    pub hosts: Vec<String>,
 
-    id: i32,
+    pub id: i32,
 
-    metadata: Option<HashMap<String, Value>>,
+    pub metadata: Option<HashMap<String, Value>>,
 
-    name: String,
+    pub name: String,
 
-    updated_at: String,
+    pub updated_at: String,
 
-    uuid: String,
+    pub uuid: String,
 }

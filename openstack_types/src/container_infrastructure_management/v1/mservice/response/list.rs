@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 pub struct MserviceResponse {
     /// The name of the binary form of the Magnum service.
     ///
-    binary: Option<Binary>,
+    pub binary: Option<Binary>,
 
     /// The date and time when the resource was created.
     ///
@@ -40,30 +40,30 @@ pub struct MserviceResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    disabled: Option<String>,
+    pub disabled: Option<String>,
 
     /// The disable reason of the service, `null` if the service is enabled or
     /// disabled without reason provided.
     ///
-    disabled_reason: Option<String>,
+    pub disabled_reason: Option<String>,
 
     /// The host for the service.
     ///
-    host: Option<String>,
+    pub host: Option<String>,
 
     /// The ID of the Magnum service.
     ///
-    id: Option<i32>,
+    pub id: Option<i32>,
 
     /// The total number of report.
     ///
-    report_count: Option<i32>,
+    pub report_count: Option<i32>,
 
     /// The current state of Magnum services.
     ///
-    state: Option<State>,
+    pub state: Option<State>,
 
     /// The date and time when the resource was updated.
     ///
@@ -83,7 +83,7 @@ pub struct MserviceResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -97,11 +97,11 @@ pub enum Binary {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Up
-    #[serde(rename = "up")]
-    Up,
-
     // Down
     #[serde(rename = "down")]
     Down,
+
+    // Up
+    #[serde(rename = "up")]
+    Up,
 }

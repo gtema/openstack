@@ -24,49 +24,49 @@ pub struct QuotaResponse {
     /// The number of floating IP addresses allowed for each project. A value
     /// of `-1` means no limit.
     ///
-    floatingip: Option<i32>,
+    pub floatingip: Option<i32>,
 
     /// The number of networks allowed for each project. A value of `-1` means
     /// no limit.
     ///
-    network: Option<i32>,
+    pub network: Option<i32>,
 
     /// The number of ports allowed for each project. A value of `-1` means no
     /// limit.
     ///
-    port: Option<i32>,
+    pub port: Option<i32>,
 
     /// The ID of the project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The number of role-based access control (RBAC) policies for each
     /// project. A value of `-1` means no limit.
     ///
-    rbac_policy: Option<i32>,
+    pub rbac_policy: Option<i32>,
 
     /// The number of routers allowed for each project. A value of `-1` means
     /// no limit.
     ///
-    router: Option<i32>,
+    pub router: Option<i32>,
 
     /// The number of security groups allowed for each project. A value of `-1`
     /// means no limit.
     ///
-    security_group: Option<i32>,
+    pub security_group: Option<i32>,
 
     /// The number of security group rules allowed for each project. A value of
     /// `-1` means no limit.
     ///
-    security_group_rule: Option<i32>,
+    pub security_group_rule: Option<i32>,
 
     /// The number of subnets allowed for each project. A value of `-1` means
     /// no limit.
     ///
-    subnet: Option<i32>,
+    pub subnet: Option<i32>,
 
     /// The number of subnet pools allowed for each project. A value of `-1`
     /// means no limit.
     ///
-    subnetpool: Option<i32>,
+    pub subnetpool: Option<i32>,
 }

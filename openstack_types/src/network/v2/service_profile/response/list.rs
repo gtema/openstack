@@ -24,22 +24,22 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceProfileResponse {
     /// The human-readable description for the service profile.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Provider driver to use for this profile.
     ///
-    driver: Option<String>,
+    pub driver: Option<String>,
 
     /// Indicates whether this service profile is enabled or not. Default is
     /// `true`.
     ///
-    enabled: Option<BoolString>,
+    pub enabled: Option<BoolString>,
 
     /// The UUID of the service profile.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// JSON-formatted meta information of the service profile.
     ///
-    metainfo: Option<String>,
+    pub metainfo: Option<String>,
 }

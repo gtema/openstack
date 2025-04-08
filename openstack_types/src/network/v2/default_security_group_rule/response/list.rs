@@ -24,35 +24,35 @@ use serde::{Deserialize, Serialize};
 pub struct DefaultSecurityGroupRuleResponse {
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Ingress or egress, which is the direction in which the security group
     /// rule is applied.
     ///
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
     /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
     /// ingress or egress rules.
     ///
-    ethertype: Option<Ethertype>,
+    pub ethertype: Option<Ethertype>,
 
     /// The ID of the security group default rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The maximum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be greater than or equal to the `port_range_min` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP code.
     ///
-    port_range_max: Option<i32>,
+    pub port_range_max: Option<i32>,
 
     /// The minimum port number in the range that is matched by the security
     /// group rule. If the protocol is TCP, UDP, DCCP, SCTP or UDP-Lite this
     /// value must be less than or equal to the `port_range_max` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP type.
     ///
-    port_range_min: Option<i32>,
+    pub port_range_min: Option<i32>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
     /// Valid string or integer values are `any` or `0`, `ah` or `51`, `dccp`
@@ -66,29 +66,29 @@ pub struct DefaultSecurityGroupRuleResponse {
     /// `all` IP protocols. See the constants in `neutron_lib.constants` for
     /// the most up-to-date list of supported strings.
     ///
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
     /// The remote address group UUID to associate with this security group
     /// rule.
     ///
-    remote_address_group_id: Option<String>,
+    pub remote_address_group_id: Option<String>,
 
-    remote_group_id: Option<String>,
+    pub remote_group_id: Option<String>,
 
     /// The remote IP prefix that is matched by this security group rule.
     ///
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
     /// Whether this security group rule template should be used in default
     /// security group created automatically for each new project. Default
     /// value is `False`.
     ///
-    used_in_default_sg: Option<BoolString>,
+    pub used_in_default_sg: Option<BoolString>,
 
     /// Whether this security group rule template should be used in custom
     /// security groups created by project user. Default value is `True`.
     ///
-    used_in_non_default_sg: Option<BoolString>,
+    pub used_in_non_default_sg: Option<BoolString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -106,11 +106,11 @@ pub enum Direction {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ethertype {
-    // Ipv4
-    #[serde(rename = "IPv4")]
-    Ipv4,
-
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+
+    // Ipv4
+    #[serde(rename = "IPv4")]
+    Ipv4,
 }

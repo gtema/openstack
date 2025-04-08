@@ -23,29 +23,29 @@ use serde::{Deserialize, Serialize};
 pub struct DomainResponse {
     /// The description of the domain.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// If set to `true`, domain is enabled. If set to `false`, domain is
     /// disabled.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The ID of the domain.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the project.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
     ///
-    options: Option<Options>,
+    pub options: Option<Options>,
 
     /// A list of simple strings assigned to a project.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 }
 
 /// The link to the resources in question.
@@ -53,7 +53,7 @@ pub struct DomainResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }
 
 /// The resource options for the role. Available resource options are
@@ -62,5 +62,5 @@ pub struct Links {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
-    immutable: Option<bool>,
+    pub immutable: Option<bool>,
 }

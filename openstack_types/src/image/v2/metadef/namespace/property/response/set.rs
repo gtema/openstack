@@ -23,51 +23,51 @@ use serde_json::Value;
 #[derive(Clone, Deserialize, Serialize)]
 pub struct PropertyResponse {
     #[serde(rename = "additionalItems")]
-    additional_items: Option<bool>,
+    pub additional_items: Option<bool>,
 
     #[serde(rename = "default")]
-    _default: Option<Value>,
+    pub _default: Option<Value>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
     #[serde(rename = "enum")]
-    _enum: Option<Vec<String>>,
+    pub _enum: Option<Vec<String>>,
 
-    items: Option<Items>,
+    pub items: Option<Items>,
 
-    maximum: Option<f32>,
+    pub maximum: Option<f32>,
 
     #[serde(rename = "maxItems")]
-    max_items: Option<i32>,
+    pub max_items: Option<i32>,
 
     #[serde(rename = "maxLength")]
-    max_length: Option<i32>,
+    pub max_length: Option<i32>,
 
-    minimum: Option<f32>,
+    pub minimum: Option<f32>,
 
     #[serde(rename = "minItems")]
-    min_items: Option<i32>,
+    pub min_items: Option<i32>,
 
     #[serde(rename = "minLength")]
-    min_length: Option<i32>,
+    pub min_length: Option<i32>,
 
-    name: String,
+    pub name: String,
 
-    operators: Option<Vec<String>>,
+    pub operators: Option<Vec<String>>,
 
-    pattern: Option<String>,
+    pub pattern: Option<String>,
 
-    readonly: Option<bool>,
+    pub readonly: Option<bool>,
 
-    required: Option<Vec<String>>,
+    pub required: Option<Vec<String>>,
 
-    title: String,
+    pub title: String,
 
     #[serde(rename = "type")]
-    _type: Type,
+    pub _type: Type,
 
     #[serde(rename = "uniqueItems")]
-    unique_items: Option<bool>,
+    pub unique_items: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -77,18 +77,6 @@ pub enum Type {
     #[serde(rename = "string")]
     String,
 
-    // Number
-    #[serde(rename = "number")]
-    Number,
-
-    // Object
-    #[serde(rename = "object")]
-    Object,
-
-    // Boolean
-    #[serde(rename = "boolean")]
-    Boolean,
-
     // Array
     #[serde(rename = "array")]
     Array,
@@ -96,11 +84,23 @@ pub enum Type {
     // Integer
     #[serde(rename = "integer")]
     Integer,
+
+    // Boolean
+    #[serde(rename = "boolean")]
+    Boolean,
+
+    // Number
+    #[serde(rename = "number")]
+    Number,
+
+    // Object
+    #[serde(rename = "object")]
+    Object,
 }
 
 /// `Items` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Items {
-    _enum: Option<Vec<String>>,
-    _type: Option<Type>,
+    pub _enum: Option<Vec<String>>,
+    pub _type: Option<Type>,
 }

@@ -21,9 +21,9 @@ use serde::{Deserialize, Serialize};
 /// AliasDscpMarkingRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AliasDscpMarkingRuleResponse {
-    dscp_mark: Option<i32>,
+    pub dscp_mark: Option<i32>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

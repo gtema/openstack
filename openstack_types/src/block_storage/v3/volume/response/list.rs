@@ -23,11 +23,11 @@ use serde::{Deserialize, Serialize};
 pub struct VolumeResponse {
     /// The UUID of the volume.
     ///
-    id: String,
+    pub id: String,
 
     /// The volume name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -37,6 +37,6 @@ pub struct VolumeResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

@@ -23,24 +23,24 @@ use serde::{Deserialize, Serialize};
 pub struct RoleResponse {
     /// The role description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// The role ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The resource name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
     ///
-    options: Option<Options>,
+    pub options: Option<Options>,
 }
 
 /// The resource options for the role. Available resource options are
@@ -49,5 +49,5 @@ pub struct RoleResponse {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
-    immutable: Option<bool>,
+    pub immutable: Option<bool>,
 }

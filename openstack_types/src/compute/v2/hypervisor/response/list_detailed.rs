@@ -35,7 +35,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    cpu_info: Option<HashMap<String, Value>>,
+    pub cpu_info: Option<HashMap<String, Value>>,
 
     /// The current_workload is the number of tasks the hypervisor is
     /// responsible for. This will be equal or greater than the number of
@@ -44,7 +44,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    current_workload: Option<i32>,
+    pub current_workload: Option<i32>,
 
     /// The actual free disk on this hypervisor(in GiB). If allocation ratios
     /// used for overcommit are configured, this may be negative. This is
@@ -53,7 +53,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    disk_available_least: Option<i32>,
+    pub disk_available_least: Option<i32>,
 
     /// The free disk remaining on this hypervisor(in GiB). This does not take
     /// allocation ratios used for overcommit into account so this value may be
@@ -61,35 +61,35 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    free_disk_gb: Option<i32>,
+    pub free_disk_gb: Option<i32>,
 
     /// The free RAM in this hypervisor(in MiB). This does not take allocation
     /// ratios used for overcommit into account so this value may be negative.
     ///
     /// **Available until version 2.87**
     ///
-    free_ram_mb: Option<i32>,
+    pub free_ram_mb: Option<i32>,
 
     /// The IP address of the hypervisor’s host.
     ///
-    host_ip: Option<String>,
+    pub host_ip: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
     ///
-    hypervisor_hostname: Option<String>,
+    pub hypervisor_hostname: Option<String>,
 
     /// The hypervisor type.
     ///
-    hypervisor_type: Option<String>,
+    pub hypervisor_type: Option<String>,
 
     /// The hypervisor version.
     ///
-    hypervisor_version: Option<i32>,
+    pub hypervisor_version: Option<i32>,
 
     /// The id of the hypervisor. From version 2.53 it is a string as UUID
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The disk in this hypervisor (in GiB). This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -97,13 +97,13 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    local_gb: Option<i32>,
+    pub local_gb: Option<i32>,
 
     /// The disk used in this hypervisor (in GiB).
     ///
     /// **Available until version 2.87**
     ///
-    local_gb_used: Option<i32>,
+    pub local_gb_used: Option<i32>,
 
     /// The memory of this hypervisor (in MiB). This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -111,19 +111,19 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    memory_mb: Option<i32>,
+    pub memory_mb: Option<i32>,
 
     /// The memory used in this hypervisor (in MiB).
     ///
     /// **Available until version 2.87**
     ///
-    memory_mb_used: Option<i32>,
+    pub memory_mb_used: Option<i32>,
 
     /// The number of running VMs on this hypervisor.
     ///
     /// **Available until version 2.87**
     ///
-    running_vms: Option<i32>,
+    pub running_vms: Option<i32>,
 
     /// A list of `server` objects. This field has become mandatory in
     /// microversion 2.75. If no servers is on hypervisor then empty list is
@@ -131,19 +131,19 @@ pub struct HypervisorResponse {
     ///
     /// **New in version 2.53**
     ///
-    servers: Option<Vec<Servers>>,
+    pub servers: Option<Vec<Servers>>,
 
     /// The hypervisor service object.
     ///
-    service: Option<Service>,
+    pub service: Option<Service>,
 
     /// The state of the hypervisor. One of `up` or `down`.
     ///
-    state: Option<State>,
+    pub state: Option<State>,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// The total uptime of the hypervisor and information about average load.
     /// Only reported for active hosts where the virt driver supports this
@@ -151,7 +151,7 @@ pub struct HypervisorResponse {
     ///
     /// **New in version 2.88**
     ///
-    uptime: Option<String>,
+    pub uptime: Option<String>,
 
     /// The number of vCPU in this hypervisor. This does not take allocation
     /// ratios used for overcommit into account so there may be disparity
@@ -159,13 +159,13 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
-    vcpus: Option<i32>,
+    pub vcpus: Option<i32>,
 
     /// The number of vCPU used in this hypervisor.
     ///
     /// **Available until version 2.87**
     ///
-    vcpus_used: Option<i32>,
+    pub vcpus_used: Option<i32>,
 }
 
 /// The hypervisor service object.
@@ -173,38 +173,38 @@ pub struct HypervisorResponse {
 /// `Service` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Service {
-    disabled_reason: Option<String>,
-    host: Option<String>,
-    id: Option<IntString>,
+    pub disabled_reason: Option<String>,
+    pub host: Option<String>,
+    pub id: Option<IntString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Down
-    #[serde(rename = "down")]
-    Down,
-
     // Up
     #[serde(rename = "up")]
     Up,
+
+    // Down
+    #[serde(rename = "down")]
+    Down,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Disabled
-    #[serde(rename = "disabled")]
-    Disabled,
-
     // Enabled
     #[serde(rename = "enabled")]
     Enabled,
+
+    // Disabled
+    #[serde(rename = "disabled")]
+    Disabled,
 }
 
 /// `Servers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Servers {
-    name: String,
-    uuid: String,
+    pub name: String,
+    pub uuid: String,
 }

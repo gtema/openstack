@@ -24,7 +24,7 @@ pub struct ManageableSnapshotResponse {
     /// A list of manageable snapshots.
     ///
     #[serde(rename = "manageable-snapshots")]
-    manageable_snapshots: Vec<ManageableSnapshots>,
+    pub manageable_snapshots: Vec<ManageableSnapshots>,
 }
 
 /// The snapshot’s origin volume information.
@@ -32,7 +32,7 @@ pub struct ManageableSnapshotResponse {
 /// `SourceReference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SourceReference {
-    source_name: Option<String>,
+    pub source_name: Option<String>,
 }
 
 /// Some information for the resource.
@@ -40,14 +40,14 @@ pub struct SourceReference {
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
-    source_name: Option<String>,
+    pub source_name: Option<String>,
 }
 
 /// `ManageableSnapshots` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ManageableSnapshots {
-    reference: Reference,
-    safe_to_manage: Option<bool>,
-    size: i64,
-    source_reference: SourceReference,
+    pub reference: Reference,
+    pub safe_to_manage: Option<bool>,
+    pub size: i64,
+    pub source_reference: SourceReference,
 }

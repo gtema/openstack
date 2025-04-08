@@ -22,43 +22,43 @@ use serde::{Deserialize, Serialize};
 /// SecurityGroup response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct SecurityGroupResponse {
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the security group.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// A list of `security_group_rule` objects. Refer to
     /// [Security group rules](#security-group-rules) for details.
     ///
-    security_group_rules: Option<Vec<SecurityGroupRules>>,
+    pub security_group_rules: Option<Vec<SecurityGroupRules>>,
 
     /// Indicates whether this security group is shared to the requester’s
     /// project.
     ///
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
     /// Indicates if the security group is stateful or stateless.
     ///
-    stateful: Option<BoolString>,
+    pub stateful: Option<BoolString>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -76,33 +76,33 @@ pub enum Direction {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ethertype {
-    // Ipv4
-    #[serde(rename = "IPv4")]
-    Ipv4,
-
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+
+    // Ipv4
+    #[serde(rename = "IPv4")]
+    Ipv4,
 }
 
 /// `SecurityGroupRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRules {
-    belongs_to_default_sg: Option<BoolString>,
-    created_at: Option<String>,
-    description: Option<String>,
-    direction: Option<Direction>,
-    ethertype: Option<Ethertype>,
-    id: Option<String>,
-    normalized_cidr: Option<String>,
-    port_range_max: Option<String>,
-    port_range_min: Option<String>,
-    protocol: Option<String>,
-    remote_address_group_id: Option<String>,
-    remote_group_id: Option<String>,
-    remote_ip_prefix: Option<String>,
-    revision_number: Option<i32>,
-    security_group_id: Option<String>,
-    tenant_id: Option<String>,
-    updated_at: Option<String>,
+    pub belongs_to_default_sg: Option<BoolString>,
+    pub created_at: Option<String>,
+    pub description: Option<String>,
+    pub direction: Option<Direction>,
+    pub ethertype: Option<Ethertype>,
+    pub id: Option<String>,
+    pub normalized_cidr: Option<String>,
+    pub port_range_max: Option<String>,
+    pub port_range_min: Option<String>,
+    pub protocol: Option<String>,
+    pub remote_address_group_id: Option<String>,
+    pub remote_group_id: Option<String>,
+    pub remote_ip_prefix: Option<String>,
+    pub revision_number: Option<i32>,
+    pub security_group_id: Option<String>,
+    pub tenant_id: Option<String>,
+    pub updated_at: Option<String>,
 }

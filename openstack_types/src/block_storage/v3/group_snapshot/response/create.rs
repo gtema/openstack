@@ -23,37 +23,37 @@ use serde::{Deserialize, Serialize};
 pub struct GroupSnapshotResponse {
     /// The date and time when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The group snapshot description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the group.
     ///
-    group_id: Option<String>,
+    pub group_id: Option<String>,
 
     /// The group type ID.
     ///
-    group_type: Option<String>,
+    pub group_type: Option<String>,
 
     /// The group type ID.
     ///
-    group_type_id: Option<String>,
+    pub group_type_id: Option<String>,
 
     /// The ID of the group snapshot.
     ///
-    id: String,
+    pub id: String,
 
     /// The group snapshot name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The UUID of the volume group project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The status of the generic group snapshot.
     ///
-    status: String,
+    pub status: String,
 }

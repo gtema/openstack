@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct ModelResponse {
     /// A short description of the enforcement model used
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The name of the enforcement model
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

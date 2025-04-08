@@ -21,9 +21,9 @@ use serde::{Deserialize, Serialize};
 /// FlavorProfile response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct FlavorProfileResponse {
-    flavorprofile_links: Option<Vec<FlavorprofileLinks>>,
+    pub flavorprofile_links: Option<Vec<FlavorprofileLinks>>,
 
-    flavorprofiles: Option<Vec<Flavorprofiles>>,
+    pub flavorprofiles: Option<Vec<Flavorprofiles>>,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -31,10 +31,10 @@ pub struct FlavorProfileResponse {
 /// `Flavorprofiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Flavorprofiles {
-    flavor_data: Option<String>,
-    id: Option<String>,
-    name: Option<String>,
-    provider_name: Option<String>,
+    pub flavor_data: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub provider_name: Option<String>,
 }
 
 /// Base type for complex types
@@ -42,6 +42,6 @@ pub struct Flavorprofiles {
 /// `FlavorprofileLinks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FlavorprofileLinks {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

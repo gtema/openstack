@@ -24,126 +24,126 @@ use serde::{Deserialize, Serialize};
 pub struct SubnetResponse {
     /// Allocation pools with `start` and `end` IP addresses for this subnet.
     ///
-    allocation_pools: Option<Vec<AllocationPools>>,
+    pub allocation_pools: Option<Vec<AllocationPools>>,
 
     /// The CIDR of the subnet.
     ///
-    cidr: Option<String>,
+    pub cidr: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// List of dns name servers associated with the subnet.
     ///
-    dns_nameservers: Option<Vec<String>>,
+    pub dns_nameservers: Option<Vec<String>>,
 
     /// Whether to publish DNS records for IPs from this subnet.
     ///
-    dns_publish_fixed_ip: Option<BoolString>,
+    pub dns_publish_fixed_ip: Option<BoolString>,
 
     /// Indicates whether dhcp is enabled or disabled for the subnet.
     ///
-    enable_dhcp: Option<BoolString>,
+    pub enable_dhcp: Option<BoolString>,
 
     /// Gateway IP of this subnet. If the value is `null` that implies no
     /// gateway is associated with the subnet.
     ///
-    gateway_ip: Option<String>,
+    pub gateway_ip: Option<String>,
 
     /// Additional routes for the subnet. A list of dictionaries with
     /// `destination` and `nexthop` parameters.
     ///
-    host_routes: Option<Vec<HostRoutes>>,
+    pub host_routes: Option<Vec<HostRoutes>>,
 
     /// The ID of the subnet.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The IP protocol version. Value is `4` or `6`.
     ///
-    ip_version: Option<i32>,
+    pub ip_version: Option<i32>,
 
     /// The IPv6 address modes specifies mechanisms for assigning IP addresses.
     /// Value is `slaac`, `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     ///
-    ipv6_address_mode: Option<Ipv6AddressMode>,
+    pub ipv6_address_mode: Option<Ipv6AddressMode>,
 
     /// The IPv6 router advertisement specifies whether the networking service
     /// should transmit ICMPv6 packets, for a subnet. Value is `slaac`,
     /// `dhcpv6-stateful`, `dhcpv6-stateless` or `null`.
     ///
-    ipv6_ra_mode: Option<Ipv6RaMode>,
+    pub ipv6_ra_mode: Option<Ipv6RaMode>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the network to which the subnet belongs.
     ///
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     #[serde(rename = "router:external")]
-    router_external: Option<BoolString>,
+    pub router_external: Option<BoolString>,
 
     /// The ID of a network segment the subnet is associated with. It is
     /// available when `segment` extension is enabled.
     ///
-    segment_id: Option<String>,
+    pub segment_id: Option<String>,
 
     /// The service types associated with the subnet.
     ///
-    service_types: Option<Vec<String>>,
+    pub service_types: Option<Vec<String>>,
 
     /// The ID of the subnet pool associated with the subnet.
     ///
-    subnetpool_id: Option<String>,
+    pub subnetpool_id: Option<String>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// `AllocationPools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationPools {
-    end: Option<String>,
-    start: Option<String>,
+    pub end: Option<String>,
+    pub start: Option<String>,
 }
 
 /// `HostRoutes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct HostRoutes {
-    destination: Option<String>,
-    nexthop: Option<String>,
+    pub destination: Option<String>,
+    pub nexthop: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ipv6RaMode {
-    // Slaac
-    #[serde(rename = "slaac")]
-    Slaac,
-
     // Dhcpv6Stateful
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
+
+    // Slaac
+    #[serde(rename = "slaac")]
+    Slaac,
 
     // Dhcpv6Stateless
     #[serde(rename = "dhcpv6-stateless")]
@@ -153,13 +153,13 @@ pub enum Ipv6RaMode {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ipv6AddressMode {
-    // Slaac
-    #[serde(rename = "slaac")]
-    Slaac,
-
     // Dhcpv6Stateful
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
+
+    // Slaac
+    #[serde(rename = "slaac")]
+    Slaac,
 
     // Dhcpv6Stateless
     #[serde(rename = "dhcpv6-stateless")]

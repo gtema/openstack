@@ -25,48 +25,48 @@ use std::collections::HashMap;
 pub struct NamespaceResponse {
     /// Date and time of namespace creation
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Provides a user friendly description of the namespace.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The user friendly name for the namespace. Used by UI if available.
     ///
-    display_name: Option<String>,
+    pub display_name: Option<String>,
 
     /// The unique namespace text.
     ///
-    namespace: String,
+    pub namespace: String,
 
-    objects: Option<Vec<Objects>>,
+    pub objects: Option<Vec<Objects>>,
 
     /// Owner of the namespace.
     ///
-    owner: Option<String>,
+    pub owner: Option<String>,
 
-    properties: Option<HashMap<String, Properties>>,
+    pub properties: Option<HashMap<String, Properties>>,
 
     /// If true, namespace will not be deletable.
     ///
-    protected: Option<bool>,
+    pub protected: Option<bool>,
 
-    resource_type_associations: Option<Vec<ResourceTypeAssociations>>,
+    pub resource_type_associations: Option<Vec<ResourceTypeAssociations>>,
 
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     #[serde(rename = "self")]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
-    tags: Option<Vec<Tags>>,
+    pub tags: Option<Vec<Tags>>,
 
     /// Date and time of the last namespace modification
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// Scope of namespace accessibility.
     ///
-    visibility: Option<Visibility>,
+    pub visibility: Option<Visibility>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -84,9 +84,9 @@ pub enum Visibility {
 /// `ResourceTypeAssociations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ResourceTypeAssociations {
-    name: Option<String>,
-    prefix: Option<String>,
-    properties_target: Option<String>,
+    pub name: Option<String>,
+    pub prefix: Option<String>,
+    pub properties_target: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -96,18 +96,6 @@ pub enum Type {
     #[serde(rename = "string")]
     String,
 
-    // Number
-    #[serde(rename = "number")]
-    Number,
-
-    // Object
-    #[serde(rename = "object")]
-    Object,
-
-    // Boolean
-    #[serde(rename = "boolean")]
-    Boolean,
-
     // Array
     #[serde(rename = "array")]
     Array,
@@ -115,50 +103,62 @@ pub enum Type {
     // Integer
     #[serde(rename = "integer")]
     Integer,
+
+    // Boolean
+    #[serde(rename = "boolean")]
+    Boolean,
+
+    // Number
+    #[serde(rename = "number")]
+    Number,
+
+    // Object
+    #[serde(rename = "object")]
+    Object,
 }
 
 /// `Items` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Items {
-    _enum: Option<Vec<String>>,
-    _type: Option<Type>,
+    pub _enum: Option<Vec<String>>,
+    pub _type: Option<Type>,
 }
 
 /// `Properties` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Properties {
-    additional_items: Option<bool>,
-    _default: Option<Value>,
-    description: Option<String>,
-    _enum: Option<Vec<String>>,
-    items: Option<Items>,
-    maximum: Option<f32>,
-    max_items: Option<i32>,
-    max_length: Option<i32>,
-    minimum: Option<f32>,
-    min_items: Option<i32>,
-    min_length: Option<i32>,
-    name: Option<String>,
-    operators: Option<Vec<String>>,
-    pattern: Option<String>,
-    readonly: Option<bool>,
-    required: Option<Vec<String>>,
-    title: String,
-    _type: Type,
-    unique_items: Option<bool>,
+    pub additional_items: Option<bool>,
+    pub _default: Option<Value>,
+    pub description: Option<String>,
+    pub _enum: Option<Vec<String>>,
+    pub items: Option<Items>,
+    pub maximum: Option<f32>,
+    pub max_items: Option<i32>,
+    pub max_length: Option<i32>,
+    pub minimum: Option<f32>,
+    pub min_items: Option<i32>,
+    pub min_length: Option<i32>,
+    pub name: Option<String>,
+    pub operators: Option<Vec<String>>,
+    pub pattern: Option<String>,
+    pub readonly: Option<bool>,
+    pub required: Option<Vec<String>>,
+    pub title: String,
+    pub _type: Type,
+    pub unique_items: Option<bool>,
 }
 
 /// `Objects` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Objects {
-    description: Option<String>,
-    name: Option<String>,
-    properties: Option<HashMap<String, Properties>>,
-    required: Option<Vec<String>>,
+    pub description: Option<String>,
+    pub name: Option<String>,
+    pub properties: Option<HashMap<String, Properties>>,
+    pub required: Option<Vec<String>>,
 }
 
 /// `Tags` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Tags {
-    name: Option<String>,
+    pub name: Option<String>,
 }

@@ -23,16 +23,16 @@ use serde::{Deserialize, Serialize};
 pub struct ResourceClassResponse {
     /// A list of links associated with one resource class.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// The name of one resource class.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

@@ -24,71 +24,71 @@ pub struct PortForwardingResponse {
     /// A text describing the rule, which helps users to manage/find easily
     /// theirs rules.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
     /// floating IP address.
     ///
-    external_port: Option<f32>,
+    pub external_port: Option<f32>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
     /// IP address.
     ///
-    external_port_range: Option<f32>,
+    pub external_port_range: Option<f32>,
 
     /// The ID of the floating IP port forwarding.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP port forwarding.
     ///
-    internal_ip_address: Option<String>,
+    pub internal_ip_address: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
-    internal_port: Option<f32>,
+    pub internal_port: Option<f32>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
     ///
-    internal_port_id: Option<String>,
+    pub internal_port_id: Option<String>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
-    internal_port_range: Option<f32>,
+    pub internal_port_range: Option<f32>,
 
     /// The IP protocol used in the floating IP port forwarding.
     ///
-    protocol: Option<Protocol>,
+    pub protocol: Option<Protocol>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    // Tcp
-    #[serde(rename = "tcp")]
-    Tcp,
-
-    // Sctp
-    #[serde(rename = "sctp")]
-    Sctp,
-
     // Ipv6Icmp
     #[serde(rename = "ipv6-icmp")]
     Ipv6Icmp,
+
+    // Udp
+    #[serde(rename = "udp")]
+    Udp,
+
+    // Tcp
+    #[serde(rename = "tcp")]
+    Tcp,
 
     // Dccp
     #[serde(rename = "dccp")]
     Dccp,
 
+    // Sctp
+    #[serde(rename = "sctp")]
+    Sctp,
+
     // Icmp
     #[serde(rename = "icmp")]
     Icmp,
-
-    // Udp
-    #[serde(rename = "udp")]
-    Udp,
 }

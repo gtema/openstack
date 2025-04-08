@@ -23,32 +23,32 @@ use serde::{Deserialize, Serialize};
 pub struct RegisteredLimitResponse {
     /// The default limit for the registered limit.
     ///
-    default_limit: Option<i32>,
+    pub default_limit: Option<i32>,
 
     /// The registered limit description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The registered limit ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The link to the resources in question.
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// The ID of the region that contains the service endpoint. The value can
     /// be None.
     ///
-    region_id: Option<String>,
+    pub region_id: Option<String>,
 
     /// The resource name.
     ///
-    resource_name: Option<String>,
+    pub resource_name: Option<String>,
 
     /// The UUID of the service to which the registered limit belongs.
     ///
-    service_id: Option<String>,
+    pub service_id: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -56,5 +56,5 @@ pub struct RegisteredLimitResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

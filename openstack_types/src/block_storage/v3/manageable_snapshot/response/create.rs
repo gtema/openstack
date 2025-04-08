@@ -28,11 +28,11 @@ pub struct ManageableSnapshotResponse {
     ///
     /// **New in version 3.65**
     ///
-    consumes_quota: Option<bool>,
+    pub consumes_quota: Option<bool>,
 
     /// The total count of requested resource before pagination is applied.
     ///
-    count: Option<i32>,
+    pub count: Option<i32>,
 
     /// The date and time when the resource was created.
     ///
@@ -49,47 +49,47 @@ pub struct ManageableSnapshotResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: String,
+    pub created_at: String,
 
     /// A description for the snapshot.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
     /// **New in version 3.14**
     ///
-    group_snapshot_id: Option<String>,
+    pub group_snapshot_id: Option<String>,
 
     /// The UUID of the object.
     ///
-    id: String,
+    pub id: String,
 
     /// One or more metadata key and value pairs for the snapshot.
     ///
-    metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<HashMap<String, String>>,
 
     /// The name of the snapshot. Default is `None`.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// A percentage value for the build progress.
     ///
     #[serde(rename = "os-extended-snapshot-attributes:progress")]
-    os_extended_snapshot_attributes_progress: Option<String>,
+    pub os_extended_snapshot_attributes_progress: Option<String>,
 
     /// The UUID of the owning project.
     ///
     #[serde(rename = "os-extended-snapshot-attributes:project_id")]
-    os_extended_snapshot_attributes_project_id: Option<String>,
+    pub os_extended_snapshot_attributes_project_id: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    size: i64,
+    pub size: i64,
 
     /// The status for the snapshot.
     ///
-    status: Status,
+    pub status: Status,
 
     /// The date and time when the resource was updated.
     ///
@@ -109,49 +109,49 @@ pub struct ManageableSnapshotResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The UUID of the volume.
     ///
-    volume_id: Option<String>,
+    pub volume_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
-
-    // ErrorDeleting
-    #[serde(rename = "error_deleting")]
-    ErrorDeleting,
-
-    // Creating
-    #[serde(rename = "creating")]
-    Creating,
-
-    // Available
-    #[serde(rename = "available")]
-    Available,
-
-    // Deleting
-    #[serde(rename = "deleting")]
-    Deleting,
-
-    // Restoring
-    #[serde(rename = "restoring")]
-    Restoring,
-
-    // Unmanaging
-    #[serde(rename = "unmanaging")]
-    Unmanaging,
+    // BackingUp
+    #[serde(rename = "backing-up")]
+    BackingUp,
 
     // Error
     #[serde(rename = "error")]
     Error,
 
-    // BackingUp
-    #[serde(rename = "backing-up")]
-    BackingUp,
+    // ErrorDeleting
+    #[serde(rename = "error_deleting")]
+    ErrorDeleting,
+
+    // Deleting
+    #[serde(rename = "deleting")]
+    Deleting,
+
+    // Available
+    #[serde(rename = "available")]
+    Available,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
+
+    // Creating
+    #[serde(rename = "creating")]
+    Creating,
+
+    // Unmanaging
+    #[serde(rename = "unmanaging")]
+    Unmanaging,
+
+    // Restoring
+    #[serde(rename = "restoring")]
+    Restoring,
 }

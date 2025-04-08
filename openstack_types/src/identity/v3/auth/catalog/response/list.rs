@@ -23,44 +23,44 @@ use serde::{Deserialize, Serialize};
 pub struct CatalogResponse {
     /// A list of `endpoint` objects.
     ///
-    endpoints: Option<Vec<Endpoints>>,
+    pub endpoints: Option<Vec<Endpoints>>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The service name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
-    // Admin
-    #[serde(rename = "admin")]
-    Admin,
+    // Public
+    #[serde(rename = "public")]
+    Public,
 
     // Internal
     #[serde(rename = "internal")]
     Internal,
 
-    // Public
-    #[serde(rename = "public")]
-    Public,
+    // Admin
+    #[serde(rename = "admin")]
+    Admin,
 }
 
 /// `Endpoints` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Endpoints {
-    id: Option<String>,
-    interface: Option<Interface>,
-    region: Option<String>,
-    url: Option<String>,
+    pub id: Option<String>,
+    pub interface: Option<Interface>,
+    pub region: Option<String>,
+    pub url: Option<String>,
 }

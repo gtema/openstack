@@ -25,7 +25,7 @@ use std::collections::HashMap;
 pub struct FlavorResponse {
     /// The description of the flavor.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The size of the root disk that will be created in GiB. If 0 the root
     /// disk will be set to exactly the size of the image used to deploy the
@@ -35,7 +35,7 @@ pub struct FlavorResponse {
     /// instances can be enforced for flavors with zero root disk via the
     /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
     ///
-    disk: i32,
+    pub disk: i32,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
     /// only be included if the user is allowed by policy to index flavor
@@ -43,32 +43,32 @@ pub struct FlavorResponse {
     ///
     /// **New in version 2.61**
     ///
-    extra_specs: Option<HashMap<String, String>>,
+    pub extra_specs: Option<HashMap<String, String>>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
     ///
-    id: String,
+    pub id: String,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
     ///
-    links: Vec<Links>,
+    pub links: Vec<Links>,
 
     /// The display name of a flavor.
     ///
-    name: String,
+    pub name: String,
 
     #[serde(rename = "os-flavor-access:is_public")]
-    os_flavor_access_is_public: Value,
+    pub os_flavor_access_is_public: Value,
 
     /// Whether or not the flavor has been administratively disabled. This is
     /// an artifact of the legacy v2 API and will always be set to `false`.
     /// There is currently no way to disable a flavor and set this to `true`.
     ///
     #[serde(rename = "OS-FLV-DISABLED:disabled")]
-    os_flv_disabled_disabled: bool,
+    pub os_flv_disabled_disabled: bool,
 
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
     /// disks may be written over on server state changes. So should only be
@@ -76,29 +76,29 @@ pub struct FlavorResponse {
     /// limitations. Defaults to 0.
     ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
-    os_flv_ext_data_ephemeral: i32,
+    pub os_flv_ext_data_ephemeral: i32,
 
     /// The amount of RAM a flavor has, in MiB.
     ///
-    ram: i32,
+    pub ram: i32,
 
-    rxtx_factor: Value,
+    pub rxtx_factor: Value,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
     /// (the default), no dedicated swap disk will be created. Currently, the
     /// empty string (‘’) is used to represent 0. As of microversion 2.75
     /// default return value of swap is 0 instead of empty string.
     ///
-    swap: i32,
+    pub swap: i32,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
-    vcpus: i32,
+    pub vcpus: i32,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: String,
-    rel: String,
+    pub href: String,
+    pub rel: String,
 }

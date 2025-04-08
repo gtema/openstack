@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct ExportRecordResponse {
     /// The service used to perform the backup.
     ///
-    backup_service: Option<String>,
+    pub backup_service: Option<String>,
 
     /// An identifier string to locate the backup.
     ///
-    backup_url: Option<String>,
+    pub backup_url: Option<String>,
 }

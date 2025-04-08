@@ -21,23 +21,23 @@ use serde::{Deserialize, Serialize};
 /// NdpProxy response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct NdpProxyResponse {
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    ip_address: Option<String>,
+    pub ip_address: Option<String>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    port_id: Option<String>,
+    pub port_id: Option<String>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
-    router_id: Option<String>,
+    pub router_id: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

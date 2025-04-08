@@ -21,5 +21,5 @@ use serde::{Deserialize, Serialize};
 /// ServiceProfile response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct ServiceProfileResponse {
-    id: String,
+    pub id: String,
 }

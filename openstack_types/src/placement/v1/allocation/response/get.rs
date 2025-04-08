@@ -24,14 +24,14 @@ use std::collections::HashMap;
 pub struct AllocationResponse {
     /// A dictionary of allocations keyed by resource provider uuid.
     ///
-    allocations: HashMap<String, AllocationsItem>,
+    pub allocations: HashMap<String, AllocationsItem>,
 
     /// The generation of the consumer. Will be absent when listing allocations
     /// for a consumer uuid that has no allocations.
     ///
     /// **New in version 1.28**
     ///
-    consumer_generation: Option<i32>,
+    pub consumer_generation: Option<i32>,
 
     /// A string that consists of numbers, `A-Z`, and `_` describing what kind
     /// of consumer is creating, or has created, allocations using a quantity
@@ -42,28 +42,28 @@ pub struct AllocationResponse {
     ///
     /// **New in version 1.38**
     ///
-    consumer_type: Option<String>,
+    pub consumer_type: Option<String>,
 
-    mappings: Option<HashMap<String, Vec<String>>>,
+    pub mappings: Option<HashMap<String, Vec<String>>>,
 
     /// The uuid of a project. Will be absent when listing allocations for a
     /// consumer uuid that has no allocations.
     ///
     /// **New in version 1.12**
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The uuid of a user. Will be absent when listing allocations for a
     /// consumer uuid that has no allocations.
     ///
     /// **New in version 1.12**
     ///
-    user_id: Option<String>,
+    pub user_id: Option<String>,
 }
 
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
-    generation: Option<i32>,
-    resources: HashMap<String, i32>,
+    pub generation: Option<i32>,
+    pub resources: HashMap<String, i32>,
 }

@@ -24,26 +24,26 @@ use std::collections::HashMap;
 pub struct TopologyResponse {
     /// The mapping of server cores to host physical CPU
     ///
-    cpu_pinning: Option<HashMap<String, i32>>,
+    pub cpu_pinning: Option<HashMap<String, i32>>,
 
     /// The host NUMA node the virtual NUMA node is map to.
     ///
-    host_node: Option<i32>,
+    pub host_node: Option<i32>,
 
     /// The amount of memory assigned to this NUMA node in MB.
     ///
-    memory_mb: Option<i32>,
+    pub memory_mb: Option<i32>,
 
     /// The page size in KB of a server. This field is `null` if the page size
     /// information is not available.
     ///
-    pagesize_kb: Option<i32>,
+    pub pagesize_kb: Option<i32>,
 
     /// A mapping of host cpus thread sibling.
     ///
-    siblings: Option<Vec<i32>>,
+    pub siblings: Option<Vec<i32>>,
 
     /// A list of IDs of the virtual CPU assigned to this NUMA node.
     ///
-    vcpu_set: Option<Vec<i32>>,
+    pub vcpu_set: Option<Vec<i32>>,
 }

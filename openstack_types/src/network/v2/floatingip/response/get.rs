@@ -24,33 +24,33 @@ use serde::{Deserialize, Serialize};
 pub struct FloatingipResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// A valid DNS domain.
     ///
-    dns_domain: Option<String>,
+    pub dns_domain: Option<String>,
 
     /// A valid DNS name.
     ///
-    dns_name: Option<String>,
+    pub dns_name: Option<String>,
 
     /// The fixed IP address that is associated with the floating IP address.
     ///
-    fixed_ip_address: Option<String>,
+    pub fixed_ip_address: Option<String>,
 
     /// The floating IP address.
     ///
-    floating_ip_address: Option<String>,
+    pub floating_ip_address: Option<String>,
 
     /// The ID of the network associated with the floating IP.
     ///
-    floating_network_id: Option<String>,
+    pub floating_network_id: Option<String>,
 
     /// The ID of the floating IP address.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The information of the port that this floating IP associates with. In
     /// particular, if the floating IP is associated with a port, this field
@@ -59,7 +59,7 @@ pub struct FloatingipResponse {
     /// and `device_owner`. If the floating IP is not associated with a port,
     /// this field is `null`.
     ///
-    port_details: Option<Vec<PortDetails>>,
+    pub port_details: Option<Vec<PortDetails>>,
 
     /// The associated port forwarding resources for the floating IP. If the
     /// floating IP has multiple port forwarding resources, this field has
@@ -70,63 +70,63 @@ pub struct FloatingipResponse {
     /// the TCP or UDP port or port range used by floating IP (`external_port`)
     /// or (`external_port_range`).
     ///
-    port_forwardings: Option<Vec<PortForwardings>>,
+    pub port_forwardings: Option<Vec<PortForwardings>>,
 
     /// The ID of a port associated with the floating IP.
     ///
-    port_id: Option<String>,
+    pub port_id: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
     ///
-    qos_policy_id: Option<String>,
+    pub qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The ID of the router for the floating IP.
     ///
-    router_id: Option<String>,
+    pub router_id: Option<String>,
 
     /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// `PortDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PortDetails {
-    admin_state_up: Option<BoolString>,
-    device_id: Option<String>,
-    device_owner: Option<String>,
-    mac_address: Option<String>,
-    name: Option<String>,
-    network_id: Option<String>,
-    status: Option<String>,
+    pub admin_state_up: Option<BoolString>,
+    pub device_id: Option<String>,
+    pub device_owner: Option<String>,
+    pub mac_address: Option<String>,
+    pub name: Option<String>,
+    pub network_id: Option<String>,
+    pub status: Option<String>,
 }
 
 /// `PortForwardings` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PortForwardings {
-    description: Option<String>,
-    external_port: Option<f32>,
-    external_port_range: Option<f32>,
-    id: Option<String>,
-    internal_ip_address: Option<String>,
-    internal_port: Option<f32>,
-    internal_port_id: Option<String>,
-    internal_port_range: Option<f32>,
-    protocol: Option<String>,
+    pub description: Option<String>,
+    pub external_port: Option<f32>,
+    pub external_port_range: Option<f32>,
+    pub id: Option<String>,
+    pub internal_ip_address: Option<String>,
+    pub internal_port: Option<f32>,
+    pub internal_port_id: Option<String>,
+    pub internal_port_range: Option<f32>,
+    pub protocol: Option<String>,
 }

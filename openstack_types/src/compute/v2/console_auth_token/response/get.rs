@@ -23,17 +23,17 @@ use serde::{Deserialize, Serialize};
 pub struct ConsoleAuthTokenResponse {
     /// The name or ID of the host.
     ///
-    host: Option<String>,
+    pub host: Option<String>,
 
     /// The UUID of the server.
     ///
-    instance_uuid: String,
+    pub instance_uuid: String,
 
     /// The id representing the internal access path.
     ///
-    internal_access_path: Option<String>,
+    pub internal_access_path: Option<String>,
 
     /// The port number.
     ///
-    port: i32,
+    pub port: i32,
 }

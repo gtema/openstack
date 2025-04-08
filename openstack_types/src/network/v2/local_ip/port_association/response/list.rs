@@ -23,21 +23,21 @@ use serde::{Deserialize, Serialize};
 pub struct PortAssociationResponse {
     /// The IP of the port associated with the Local IP.
     ///
-    fixed_ip: Option<String>,
+    pub fixed_ip: Option<String>,
 
     /// The ID of the port associated with the Local IP.
     ///
-    fixed_port_id: Option<String>,
+    pub fixed_port_id: Option<String>,
 
     /// The host of the port associated with the Local IP.
     ///
-    host: Option<String>,
+    pub host: Option<String>,
 
     /// The actual IP address of the Local IP.
     ///
-    local_ip_address: Option<String>,
+    pub local_ip_address: Option<String>,
 
     /// The ID of the Local IP.
     ///
-    local_ip_id: Option<String>,
+    pub local_ip_id: Option<String>,
 }

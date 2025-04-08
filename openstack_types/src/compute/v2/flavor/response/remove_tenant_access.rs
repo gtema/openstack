@@ -23,12 +23,12 @@ use serde::{Deserialize, Serialize};
 pub struct FlavorResponse {
     /// A list of objects, each with the keys `flavor_id` and `tenant_id`.
     ///
-    flavor_access: Vec<FlavorAccess>,
+    pub flavor_access: Vec<FlavorAccess>,
 }
 
 /// `FlavorAccess` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FlavorAccess {
-    flavor_id: String,
-    tenant_id: String,
+    pub flavor_id: String,
+    pub tenant_id: String,
 }

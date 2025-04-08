@@ -26,16 +26,16 @@ pub struct MinimumBandwidthRuleResponse {
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`. Default value is `egress`.
     ///
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
     /// The ID of the QoS minimum bandwidth rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The minimum KBPS (kilobits per second) value which should be available
     /// for port.
     ///
-    min_kbps: Option<IntString>,
+    pub min_kbps: Option<IntString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

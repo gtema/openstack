@@ -23,55 +23,55 @@ use serde::{Deserialize, Serialize};
 pub struct FloatingipResponse {
     /// current action in progress on the resource
     ///
-    action: Option<Action>,
+    pub action: Option<Action>,
 
     /// The floatingip address for this PTR record.
     ///
-    address: Option<String>,
+    pub address: Option<String>,
 
     /// Description for this PTR record
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// ID for PTR record in the format of <region>:\<floatingip_id>
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Domain name for this PTR record
     ///
-    ptrdname: Option<String>,
+    pub ptrdname: Option<String>,
 
     /// The status of the resource.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// Time to live for this PTR record
     ///
-    ttl: Option<i32>,
+    pub ttl: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Error
-    #[serde(rename = "ERROR")]
-    Error,
+    // Active
+    #[serde(rename = "ACTIVE")]
+    Active,
 
     // Success
     #[serde(rename = "SUCCESS")]
     Success,
 
-    // Active
-    #[serde(rename = "ACTIVE")]
-    Active,
-
-    // Deleted
-    #[serde(rename = "DELETED")]
-    Deleted,
+    // Error
+    #[serde(rename = "ERROR")]
+    Error,
 
     // Pending
     #[serde(rename = "PENDING")]
     Pending,
+
+    // Deleted
+    #[serde(rename = "DELETED")]
+    Deleted,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -81,13 +81,13 @@ pub enum Action {
     #[serde(rename = "NONE")]
     None,
 
-    // Delete
-    #[serde(rename = "DELETE")]
-    Delete,
-
     // Update
     #[serde(rename = "UPDATE")]
     Update,
+
+    // Delete
+    #[serde(rename = "DELETE")]
+    Delete,
 }
 
 /// Links to the resource, and other related resources. When a response has
@@ -97,5 +97,5 @@ pub enum Action {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

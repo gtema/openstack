@@ -24,11 +24,11 @@ use std::collections::HashMap;
 pub struct BackupResponse {
     /// The name of the availability zone.
     ///
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// The container name or null.
     ///
-    container: Option<String>,
+    pub container: Option<String>,
 
     /// The date and time when the resource was created.
     ///
@@ -45,64 +45,64 @@ pub struct BackupResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The time when the data on the volume was first saved. If it is a backup
     /// from volume, it will be the same as `created_at` for a backup. If it is
     /// a backup from a snapshot, it will be the same as `created_at` for the
     /// snapshot.
     ///
-    data_timestamp: Option<String>,
+    pub data_timestamp: Option<String>,
 
     /// The backup description or null.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// If the backup failed, the reason for the failure. Otherwise, null.
     ///
-    fail_reason: Option<String>,
+    pub fail_reason: Option<String>,
 
     /// If this value is `true`, there are other backups depending on this
     /// backup.
     ///
-    has_dependent_backups: Option<bool>,
+    pub has_dependent_backups: Option<bool>,
 
     /// The UUID of the backup.
     ///
-    id: String,
+    pub id: String,
 
     /// Indicates whether the backup mode is incremental. If this value is
     /// `true`, the backup mode is incremental. If this value is `false`, the
     /// backup mode is full.
     ///
-    is_incremental: Option<bool>,
+    pub is_incremental: Option<bool>,
 
     /// The backup metadata key value pairs.
     ///
     /// **New in version 3.43**
     ///
-    metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<HashMap<String, String>>,
 
     /// The backup name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The number of objects in the backup.
     ///
-    object_count: Option<i32>,
+    pub object_count: Option<i32>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    size: i64,
+    pub size: i64,
 
     /// The UUID of the source volume snapshot.
     ///
-    snapshot_id: Option<String>,
+    pub snapshot_id: Option<String>,
 
     /// The backup status. Refer to Backup statuses table for the possible
     /// status value.
     ///
-    status: String,
+    pub status: String,
 
     /// The date and time when the resource was updated.
     ///
@@ -122,11 +122,11 @@ pub struct BackupResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The UUID of the volume.
     ///
-    volume_id: String,
+    pub volume_id: String,
 }
 
 /// Links to the resources in question. See
@@ -136,6 +136,6 @@ pub struct BackupResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

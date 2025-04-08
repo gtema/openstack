@@ -27,7 +27,7 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    config_drive: Option<bool>,
+    pub config_drive: Option<bool>,
 
     /// The list of dictionaries with detailed information about VM CPUs.
     /// Following fields are presented in each dictionary:
@@ -38,7 +38,7 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    cpu_details: Option<Vec<HashMap<String, Value>>>,
+    pub cpu_details: Option<Vec<HashMap<String, Value>>>,
 
     /// The list of dictionaries with detailed information about VM disks.
     /// Following fields are presented in each dictionary:
@@ -51,7 +51,7 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    disk_details: Option<Vec<HashMap<String, Value>>>,
+    pub disk_details: Option<Vec<HashMap<String, Value>>>,
 
     /// The driver on which the VM is running. Possible values are:
     ///
@@ -62,24 +62,24 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    driver: Option<Driver>,
+    pub driver: Option<Driver>,
 
     /// The hypervisor on which the VM is running. Examples for libvirt driver
     /// may be: `qemu`, `kvm` or `xen`.
     ///
     /// **New in version 2.48**
     ///
-    hypervisor: Option<String>,
+    pub hypervisor: Option<String>,
 
     /// The hypervisor OS.
     ///
     /// **New in version 2.48**
     ///
-    hypervisor_os: Option<String>,
+    pub hypervisor_os: Option<String>,
 
     /// Id of the resource
     ///
-    id: String,
+    pub id: String,
 
     /// The dictionary with information about VM memory usage. Following fields
     /// are presented in the dictionary:
@@ -90,11 +90,11 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    memory_details: Option<Vec<HashMap<String, Value>>>,
+    pub memory_details: Option<Vec<HashMap<String, Value>>>,
 
     /// Name
     ///
-    name: String,
+    pub name: String,
 
     /// The list of dictionaries with detailed information about VM NICs.
     /// Following fields are presented in each dictionary:
@@ -113,25 +113,25 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    nic_details: Option<Vec<NicDetails>>,
+    pub nic_details: Option<Vec<NicDetails>>,
 
     /// The number of vCPUs.
     ///
     /// **New in version 2.48**
     ///
-    num_cpus: Option<i32>,
+    pub num_cpus: Option<i32>,
 
     /// The number of disks.
     ///
     /// **New in version 2.48**
     ///
-    num_disks: Option<i32>,
+    pub num_disks: Option<i32>,
 
     /// The number of vNICs.
     ///
     /// **New in version 2.48**
     ///
-    num_nics: Option<i32>,
+    pub num_nics: Option<i32>,
 
     /// A string enum denoting the current state of the VM. Possible values
     /// are:
@@ -145,18 +145,26 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
-    state: Option<State>,
+    pub state: Option<State>,
 
     /// The amount of time in seconds that the VM has been running.
     ///
     /// **New in version 2.48**
     ///
-    uptime: Option<i32>,
+    pub uptime: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Driver {
+    // Hyperv
+    #[serde(rename = "hyperv")]
+    Hyperv,
+
+    // Xenapi
+    #[serde(rename = "xenapi")]
+    Xenapi,
+
     // Libvirt
     #[serde(rename = "libvirt")]
     Libvirt,
@@ -164,14 +172,6 @@ pub enum Driver {
     // Ironic
     #[serde(rename = "ironic")]
     Ironic,
-
-    // Xenapi
-    #[serde(rename = "xenapi")]
-    Xenapi,
-
-    // Hyperv
-    #[serde(rename = "hyperv")]
-    Hyperv,
 
     // Vmwareapi
     #[serde(rename = "vmwareapi")]
@@ -181,43 +181,43 @@ pub enum Driver {
 /// `NicDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct NicDetails {
-    mac_address: Option<String>,
-    rx_drop: Option<i32>,
-    rx_errors: Option<i32>,
-    rx_octets: Option<i32>,
-    rx_packets: Option<i32>,
-    rx_rate: Option<i32>,
-    tx_drop: Option<i32>,
-    tx_errors: Option<i32>,
-    tx_octets: Option<i32>,
-    tx_packets: Option<i32>,
-    tx_rate: Option<i32>,
+    pub mac_address: Option<String>,
+    pub rx_drop: Option<i32>,
+    pub rx_errors: Option<i32>,
+    pub rx_octets: Option<i32>,
+    pub rx_packets: Option<i32>,
+    pub rx_rate: Option<i32>,
+    pub tx_drop: Option<i32>,
+    pub tx_errors: Option<i32>,
+    pub tx_octets: Option<i32>,
+    pub tx_packets: Option<i32>,
+    pub tx_rate: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Paused
-    #[serde(rename = "paused")]
-    Paused,
-
-    // Running
-    #[serde(rename = "running")]
-    Running,
-
     // Pending
     #[serde(rename = "pending")]
     Pending,
 
-    // Suspended
-    #[serde(rename = "suspended")]
-    Suspended,
+    // Shutdown
+    #[serde(rename = "shutdown")]
+    Shutdown,
 
     // Crashed
     #[serde(rename = "crashed")]
     Crashed,
 
-    // Shutdown
-    #[serde(rename = "shutdown")]
-    Shutdown,
+    // Paused
+    #[serde(rename = "paused")]
+    Paused,
+
+    // Suspended
+    #[serde(rename = "suspended")]
+    Suspended,
+
+    // Running
+    #[serde(rename = "running")]
+    Running,
 }

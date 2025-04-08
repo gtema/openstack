@@ -23,14 +23,14 @@ use serde::{Deserialize, Serialize};
 pub struct L3RouterResponse {
     /// A list of `router` objects.
     ///
-    routers: Vec<Routers>,
+    pub routers: Vec<Routers>,
 }
 
 /// `ExternalFixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalFixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
+    pub ip_address: Option<String>,
+    pub subnet_id: Option<String>,
 }
 
 /// The external gateway information of the router. If the router has an
@@ -41,35 +41,35 @@ pub struct ExternalFixedIps {
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {
-    enable_snat: Option<bool>,
-    external_fixed_ips: Option<Vec<ExternalFixedIps>>,
-    network_id: Option<String>,
+    pub enable_snat: Option<bool>,
+    pub external_fixed_ips: Option<Vec<ExternalFixedIps>>,
+    pub network_id: Option<String>,
 }
 
 /// `Routes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routes {
-    destination: Option<String>,
-    next_hop: Option<String>,
+    pub destination: Option<String>,
+    pub next_hop: Option<String>,
 }
 
 /// `Routers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routers {
-    admin_state_up: Option<bool>,
-    availability_zone_hints: Option<Vec<String>>,
-    availability_zones: Option<Vec<String>>,
-    description: Option<String>,
-    distributed: Option<bool>,
-    external_gateway_info: Option<ExternalGatewayInfo>,
-    flavor_id: Option<String>,
-    ha: Option<bool>,
-    id: Option<String>,
-    name: Option<String>,
-    project_id: Option<String>,
-    revision_number: Option<i32>,
-    routes: Option<Vec<Routes>>,
-    service_type_id: Option<String>,
-    status: Option<String>,
-    tenant_id: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub availability_zone_hints: Option<Vec<String>>,
+    pub availability_zones: Option<Vec<String>>,
+    pub description: Option<String>,
+    pub distributed: Option<bool>,
+    pub external_gateway_info: Option<ExternalGatewayInfo>,
+    pub flavor_id: Option<String>,
+    pub ha: Option<bool>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub project_id: Option<String>,
+    pub revision_number: Option<i32>,
+    pub routes: Option<Vec<Routes>>,
+    pub service_type_id: Option<String>,
+    pub status: Option<String>,
+    pub tenant_id: Option<String>,
 }

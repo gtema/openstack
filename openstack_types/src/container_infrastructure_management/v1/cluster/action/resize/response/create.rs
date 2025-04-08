@@ -21,5 +21,5 @@ use serde::{Deserialize, Serialize};
 /// Resize response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct ResizeResponse {
-    uuid: String,
+    pub uuid: String,
 }

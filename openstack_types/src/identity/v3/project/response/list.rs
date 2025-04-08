@@ -23,44 +23,44 @@ use serde::{Deserialize, Serialize};
 pub struct ProjectResponse {
     /// The description of the project.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain for the project.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The ID for the project.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    is_domain: Option<bool>,
+    pub is_domain: Option<bool>,
 
     /// The name of the project.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
     ///
-    options: Option<Options>,
+    pub options: Option<Options>,
 
     /// The ID of the parent for the project.
     ///
     /// **New in version 3.4**
     ///
-    parent_id: Option<String>,
+    pub parent_id: Option<String>,
 
     /// A list of simple strings assigned to a project.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 }
 
 /// The link to the resources in question.
@@ -68,7 +68,7 @@ pub struct ProjectResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }
 
 /// The resource options for the project. Available resource options are
@@ -77,5 +77,5 @@ pub struct Links {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
-    immutable: Option<bool>,
+    pub immutable: Option<bool>,
 }

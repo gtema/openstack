@@ -23,14 +23,14 @@ use serde::{Deserialize, Serialize};
 pub struct RegionResponse {
     /// The region description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID for the region.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     ///
-    parent_id: Option<String>,
+    pub parent_id: Option<String>,
 }

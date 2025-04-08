@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct VolumeTypeAccessResponse {
     /// The UUID of the project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The UUID of the volume type.
     ///
-    volume_type_id: Option<String>,
+    pub volume_type_id: Option<String>,
 }

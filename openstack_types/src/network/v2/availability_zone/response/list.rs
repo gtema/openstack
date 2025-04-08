@@ -23,15 +23,15 @@ use serde::{Deserialize, Serialize};
 pub struct AvailabilityZoneResponse {
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The resource type of the availability zone. The supported resource
     /// types are `network` and `router`.
     ///
-    resource: Option<String>,
+    pub resource: Option<String>,
 
     /// The state of the availability zone, which is either `available` or
     /// `unavailable`.
     ///
-    state: Option<String>,
+    pub state: Option<String>,
 }

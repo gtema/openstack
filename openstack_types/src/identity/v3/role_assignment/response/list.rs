@@ -21,80 +21,80 @@ use serde::{Deserialize, Serialize};
 /// RoleAssignment response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct RoleAssignmentResponse {
-    group: Option<Group>,
+    pub group: Option<Group>,
 
-    role: Role,
+    pub role: Role,
 
-    scope: Scope,
+    pub scope: Scope,
 
-    user: Option<User>,
+    pub user: Option<User>,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    assignment: String,
-    membership: Option<String>,
-    prior_role: Option<String>,
+    pub assignment: String,
+    pub membership: Option<String>,
+    pub prior_role: Option<String>,
 }
 
 /// `Domain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Domain {
-    id: String,
-    name: Option<String>,
+    pub id: String,
+    pub name: Option<String>,
 }
 
 /// `Role` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Role {
-    domain: Option<Domain>,
-    id: String,
-    name: Option<String>,
+    pub domain: Option<Domain>,
+    pub id: String,
+    pub name: Option<String>,
 }
 
 /// `Project` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Project {
-    domain: Option<Domain>,
-    id: String,
-    name: Option<String>,
+    pub domain: Option<Domain>,
+    pub id: String,
+    pub name: Option<String>,
 }
 
 /// `ScopeDomain` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ScopeDomain {
-    id: String,
-    name: Option<String>,
+    pub id: String,
+    pub name: Option<String>,
 }
 
 /// `System` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct System {
-    all: i32,
+    pub all: i32,
 }
 
 /// `Scope` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Scope {
-    domain: Option<ScopeDomain>,
-    os_inherit_inherited_to: Option<String>,
-    project: Option<Project>,
-    system: Option<System>,
+    pub domain: Option<ScopeDomain>,
+    pub os_inherit_inherited_to: Option<String>,
+    pub project: Option<Project>,
+    pub system: Option<System>,
 }
 
 /// `User` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    domain: Option<Domain>,
-    id: String,
-    name: Option<String>,
+    pub domain: Option<Domain>,
+    pub id: String,
+    pub name: Option<String>,
 }
 
 /// `Group` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Group {
-    domain: Option<Domain>,
-    id: String,
-    name: Option<String>,
+    pub domain: Option<Domain>,
+    pub id: String,
+    pub name: Option<String>,
 }

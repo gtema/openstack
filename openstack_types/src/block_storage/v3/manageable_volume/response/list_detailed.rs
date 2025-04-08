@@ -24,7 +24,7 @@ pub struct ManageableVolumeResponse {
     /// A list of manageable volumes.
     ///
     #[serde(rename = "manageable-volumes")]
-    manageable_volumes: Vec<ManageableVolumes>,
+    pub manageable_volumes: Vec<ManageableVolumes>,
 }
 
 /// Some information for the resource.
@@ -32,7 +32,7 @@ pub struct ManageableVolumeResponse {
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
-    source_name: Option<String>,
+    pub source_name: Option<String>,
 }
 
 /// Manageable volume object.
@@ -40,10 +40,10 @@ pub struct Reference {
 /// `ManageableVolumes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ManageableVolumes {
-    cinder_id: Option<String>,
-    extra_info: Option<String>,
-    reason_not_safe: Option<String>,
-    reference: Option<Reference>,
-    safe_to_manage: Option<bool>,
-    size: Option<i64>,
+    pub cinder_id: Option<String>,
+    pub extra_info: Option<String>,
+    pub reason_not_safe: Option<String>,
+    pub reference: Option<Reference>,
+    pub safe_to_manage: Option<bool>,
+    pub size: Option<i64>,
 }

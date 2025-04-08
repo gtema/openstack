@@ -25,11 +25,11 @@ pub struct EndpointResponse {
     /// `false`. The endpoint does not appear in the service catalog. - `true`.
     /// The endpoint appears in the service catalog.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The endpoint ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The interface type, which describes the visibility of the endpoint.
     /// Value is: - `public`. Visible by end users on a publicly available
@@ -37,37 +37,37 @@ pub struct EndpointResponse {
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
     ///
-    interface: Option<Interface>,
+    pub interface: Option<Interface>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
-    region: Option<String>,
+    pub region: Option<String>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
     ///
-    region_id: Option<String>,
+    pub region_id: Option<String>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
-    service_id: Option<String>,
+    pub service_id: Option<String>,
 
     /// The endpoint URL.
     ///
-    url: Option<String>,
+    pub url: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
-    // Admin
-    #[serde(rename = "admin")]
-    Admin,
+    // Public
+    #[serde(rename = "public")]
+    Public,
 
     // Internal
     #[serde(rename = "internal")]
     Internal,
 
-    // Public
-    #[serde(rename = "public")]
-    Public,
+    // Admin
+    #[serde(rename = "admin")]
+    Admin,
 }

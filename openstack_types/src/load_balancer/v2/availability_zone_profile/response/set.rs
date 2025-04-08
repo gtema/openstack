@@ -21,11 +21,11 @@ use serde::{Deserialize, Serialize};
 /// AvailabilityZoneProfile response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AvailabilityZoneProfileResponse {
-    availability_zone_data: Option<String>,
+    pub availability_zone_data: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    provider_name: Option<String>,
+    pub provider_name: Option<String>,
 }

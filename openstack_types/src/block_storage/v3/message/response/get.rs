@@ -36,46 +36,46 @@ pub struct MessageResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: String,
+    pub created_at: String,
 
     /// The id of the event to this message, this id could eventually be
     /// translated into `user_message`.
     ///
-    event_id: String,
+    pub event_id: String,
 
     /// The expire time of the message, this message could be deleted after
     /// this time.
     ///
-    guaranteed_until: Option<String>,
+    pub guaranteed_until: Option<String>,
 
     /// The UUID for the message.
     ///
-    id: String,
+    pub id: String,
 
     /// Links for the message.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// The level of the message, possible value is only ‘ERROR’ now.
     ///
-    message_level: String,
+    pub message_level: String,
 
     /// The id of the request during which the message was created.
     ///
-    request_id: String,
+    pub request_id: String,
 
     /// The resource type corresponding to `resource_uuid`.
     ///
-    resource_type: Option<String>,
+    pub resource_type: Option<String>,
 
     /// The UUID of the resource during whose operation the message was
     /// created.
     ///
-    resource_uuid: Option<String>,
+    pub resource_uuid: Option<String>,
 
     /// The translated readable message corresponding to `event_id`.
     ///
-    user_message: String,
+    pub user_message: String,
 }
 
 /// Links to the resources in question. See
@@ -85,6 +85,6 @@ pub struct MessageResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

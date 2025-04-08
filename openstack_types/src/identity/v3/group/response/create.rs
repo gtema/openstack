@@ -23,17 +23,17 @@ use serde::{Deserialize, Serialize};
 pub struct GroupResponse {
     /// The description of the group.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// The ID of the group.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

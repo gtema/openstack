@@ -22,29 +22,29 @@ use serde::{Deserialize, Serialize};
 /// DefaultSecurityGroupRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct DefaultSecurityGroupRuleResponse {
-    description: Option<String>,
+    pub description: Option<String>,
 
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    ethertype: Option<Ethertype>,
+    pub ethertype: Option<Ethertype>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    port_range_max: Option<i32>,
+    pub port_range_max: Option<i32>,
 
-    port_range_min: Option<i32>,
+    pub port_range_min: Option<i32>,
 
-    protocol: Option<String>,
+    pub protocol: Option<String>,
 
-    remote_address_group_id: Option<String>,
+    pub remote_address_group_id: Option<String>,
 
-    remote_group_id: Option<String>,
+    pub remote_group_id: Option<String>,
 
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
-    used_in_default_sg: Option<BoolString>,
+    pub used_in_default_sg: Option<BoolString>,
 
-    used_in_non_default_sg: Option<BoolString>,
+    pub used_in_non_default_sg: Option<BoolString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -62,11 +62,11 @@ pub enum Direction {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ethertype {
-    // Ipv4
-    #[serde(rename = "IPv4")]
-    Ipv4,
-
     // Ipv6
     #[serde(rename = "IPv6")]
     Ipv6,
+
+    // Ipv4
+    #[serde(rename = "IPv4")]
+    Ipv4,
 }

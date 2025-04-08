@@ -27,26 +27,26 @@ pub struct ServerResponse {
     /// automatically set by the provider.
     ///
     #[serde(rename = "accessIPv4")]
-    access_ipv4: Option<String>,
+    pub access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server. May be
     /// automatically set by the provider.
     ///
     #[serde(rename = "accessIPv6")]
-    access_ipv6: Option<String>,
+    pub access_ipv6: Option<String>,
 
     /// The addresses for the server. Servers with status `BUILD` hide their
     /// addresses information. This view is not updated immediately. Please
     /// consult with OpenStack Networking API for up-to-date information.
     ///
-    addresses: Option<HashMap<String, Vec<Addresses>>>,
+    pub addresses: Option<HashMap<String, Vec<Addresses>>>,
 
     /// Indicates whether or not a config drive was used for this server. The
     /// value is `True` or an empty string. An empty string stands for `False`.
     ///
     /// **New in version 2.75**
     ///
-    config_drive: Option<String>,
+    pub config_drive: Option<String>,
 
     /// The date and time when the resource was created. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -60,19 +60,19 @@ pub struct ServerResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    created: Option<String>,
+    pub created: Option<String>,
 
     /// The description of the server. Before microversion 2.19 this was set to
     /// the server name.
     ///
     /// **New in version 2.19**
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// A fault object. Only displayed when the server status is `ERROR` or
     /// `DELETED` and a fault occurred.
     ///
-    fault: Option<Fault>,
+    pub fault: Option<Fault>,
 
     /// Before microversion 2.47 this contains the ID and links for the flavor
     /// used to boot the server instance. This can be an empty object in case
@@ -82,7 +82,7 @@ pub struct ServerResponse {
     /// information used to create the server instance, represented as a nested
     /// dictionary.
     ///
-    flavor: Flavor,
+    pub flavor: Flavor,
 
     /// The host status. Values where next value in list can override the
     /// previous:
@@ -98,7 +98,7 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.75**
     ///
-    host_status: Option<HostStatus>,
+    pub host_status: Option<HostStatus>,
 
     /// An ID string representing the host. This is a hashed value so will not
     /// actually look like a hostname, and is hashed with data from the
@@ -109,43 +109,43 @@ pub struct ServerResponse {
     /// performance.
     ///
     #[serde(rename = "hostId")]
-    host_id: Option<String>,
+    pub host_id: Option<String>,
 
     /// Id of the server
     ///
-    id: String,
+    pub id: String,
 
     /// The UUID and links for the image for your server instance. The `image`
     /// object will be an empty string when you boot the server from a volume.
     ///
-    image: Image,
+    pub image: Image,
 
     /// The name of associated key pair, if any.
     ///
     /// **New in version 2.75**
     ///
-    key_name: Option<String>,
+    pub key_name: Option<String>,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// True if the instance is locked otherwise False.
     ///
     /// **New in version 2.9**
     ///
-    locked: Option<bool>,
+    pub locked: Option<bool>,
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
     /// backward compatibility.
     ///
-    metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<HashMap<String, String>>,
 
     /// The server name.
     ///
-    name: String,
+    pub name: String,
 
     /// Disk configuration. The value is either:
     ///
@@ -157,14 +157,14 @@ pub struct ServerResponse {
     ///   larger, The API does not partition the remaining disk space.
     ///
     #[serde(rename = "OS-DCF:diskConfig")]
-    os_dcf_disk_config: Option<OsDcfDiskConfig>,
+    pub os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// The availability zone name.
     ///
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-AZ:availability_zone")]
-    os_ext_az_availability_zone: Option<String>,
+    pub os_ext_az_availability_zone: Option<String>,
 
     /// The name of the compute host on which this instance is running. Appears
     /// in the response for administrative users only.
@@ -172,7 +172,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:host")]
-    os_ext_srv_attr_host: Option<String>,
+    pub os_ext_srv_attr_host: Option<String>,
 
     /// The hostname of the instance reported in the metadata service. This
     /// parameter only appears in responses for administrators until
@@ -187,7 +187,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:hostname")]
-    os_ext_srv_attr_hostname: Option<String>,
+    pub os_ext_srv_attr_hostname: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid. Appears in the response for
@@ -196,7 +196,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
-    os_ext_srv_attr_hypervisor_hostname: Option<String>,
+    pub os_ext_srv_attr_hypervisor_hostname: Option<String>,
 
     /// The instance name. The Compute API generates the instance name from the
     /// instance name template. Appears in the response for administrative
@@ -205,7 +205,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:instance_name")]
-    os_ext_srv_attr_instance_name: Option<String>,
+    pub os_ext_srv_attr_instance_name: Option<String>,
 
     /// The UUID of the kernel image when using an AMI. Will be null if not. By
     /// default, it appears in the response for administrative users only.
@@ -213,7 +213,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:kernel_id")]
-    os_ext_srv_attr_kernel_id: Option<String>,
+    pub os_ext_srv_attr_kernel_id: Option<String>,
 
     /// When servers are launched via multiple create, this is the sequence in
     /// which the servers were launched. By default, it appears in the response
@@ -222,7 +222,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:launch_index")]
-    os_ext_srv_attr_launch_index: Option<i32>,
+    pub os_ext_srv_attr_launch_index: Option<i32>,
 
     /// The UUID of the ramdisk image when using an AMI. Will be null if not.
     /// By default, it appears in the response for administrative users only.
@@ -230,7 +230,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:ramdisk_id")]
-    os_ext_srv_attr_ramdisk_id: Option<String>,
+    pub os_ext_srv_attr_ramdisk_id: Option<String>,
 
     /// The reservation id for the server. This is an id that can be useful in
     /// tracking groups of servers created with multiple create, that will all
@@ -240,7 +240,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:reservation_id")]
-    os_ext_srv_attr_reservation_id: Option<String>,
+    pub os_ext_srv_attr_reservation_id: Option<String>,
 
     /// The root device name for the instance By default, it appears in the
     /// response for administrative users only.
@@ -248,7 +248,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:root_device_name")]
-    os_ext_srv_attr_root_device_name: Option<String>,
+    pub os_ext_srv_attr_root_device_name: Option<String>,
 
     /// The user_data the instance was created with. By default, it appears in
     /// the response for administrative users only.
@@ -256,7 +256,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:user_data")]
-    os_ext_srv_attr_user_data: Option<String>,
+    pub os_ext_srv_attr_user_data: Option<String>,
 
     /// The power state of the instance. This is an enum value that is mapped
     /// as:
@@ -274,28 +274,28 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-STS:power_state")]
-    os_ext_sts_power_state: Option<i32>,
+    pub os_ext_sts_power_state: Option<i32>,
 
     /// The task state of the instance.
     ///
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-STS:task_state")]
-    os_ext_sts_task_state: Option<String>,
+    pub os_ext_sts_task_state: Option<String>,
 
     /// The VM state.
     ///
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-EXT-STS:vm_state")]
-    os_ext_sts_vm_state: Option<String>,
+    pub os_ext_sts_vm_state: Option<String>,
 
     /// The attached volumes, if any.
     ///
     /// **New in version 2.75**
     ///
     #[serde(rename = "os-extended-volumes:volumes_attached")]
-    os_extended_volumes_volumes_attached: Option<Vec<HashMap<String, Value>>>,
+    pub os_extended_volumes_volumes_attached: Option<Vec<HashMap<String, Value>>>,
 
     /// The date and time when the server was launched.
     ///
@@ -316,7 +316,7 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-SRV-USG:launched_at")]
-    os_srv_usg_launched_at: Option<String>,
+    pub os_srv_usg_launched_at: Option<String>,
 
     /// The date and time when the server was deleted.
     ///
@@ -335,40 +335,40 @@ pub struct ServerResponse {
     /// **New in version 2.75**
     ///
     #[serde(rename = "OS-SRV-USG:terminated_at")]
-    os_srv_usg_terminated_at: Option<String>,
+    pub os_srv_usg_terminated_at: Option<String>,
 
     /// A percentage value of the operation progress. This parameter only
     /// appears when the server status is `ACTIVE`, `BUILD`, `REBUILD`,
     /// `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
     ///
-    progress: Option<i32>,
+    pub progress: Option<i32>,
 
     /// One or more security groups objects.
     ///
     /// **New in version 2.75**
     ///
-    security_groups: Option<Vec<SecurityGroups>>,
+    pub security_groups: Option<Vec<SecurityGroups>>,
 
     /// The UUIDs of the server groups to which the server belongs. Currently
     /// this can contain at most one entry.
     ///
     /// **New in version 2.71**
     ///
-    server_groups: Option<Vec<String>>,
+    pub server_groups: Option<Vec<String>>,
 
     /// The server status.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// A list of tags. The maximum count of tags in this list is 50.
     ///
     /// **New in version 2.26**
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// A list of trusted certificate IDs, that were used during image
     /// signature verification to verify the signing certificate. The list is
@@ -377,7 +377,7 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.63**
     ///
-    trusted_image_certificates: Option<Vec<String>>,
+    pub trusted_image_certificates: Option<Vec<String>>,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -391,30 +391,30 @@ pub struct ServerResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    updated: Option<String>,
+    pub updated: Option<String>,
 
     /// The user ID of the user who owns the server.
     ///
-    user_id: Option<String>,
+    pub user_id: Option<String>,
 }
 
 /// `Addresses` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Addresses {
-    addr: Option<String>,
-    version: Option<i32>,
+    pub addr: Option<String>,
+    pub version: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum OsDcfDiskConfig {
-    // Auto
-    #[serde(rename = "AUTO")]
-    Auto,
-
     // Manual
     #[serde(rename = "MANUAL")]
     Manual,
+
+    // Auto
+    #[serde(rename = "AUTO")]
+    Auto,
 }
 
 /// A fault object. Only displayed when the server status is `ERROR` or
@@ -423,10 +423,10 @@ pub enum OsDcfDiskConfig {
 /// `Fault` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Fault {
-    code: Option<i32>,
-    created: Option<String>,
-    details: Option<String>,
-    message: Option<String>,
+    pub code: Option<i32>,
+    pub created: Option<String>,
+    pub details: Option<String>,
+    pub message: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -436,8 +436,8 @@ pub struct Fault {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }
 
 /// Before microversion 2.47 this contains the ID and links for the flavor used
@@ -451,15 +451,15 @@ pub struct Links {
 /// `Flavor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Flavor {
-    disk: Option<i32>,
-    ephemeral: Option<i32>,
-    extra_specs: Option<HashMap<String, String>>,
-    id: Option<String>,
-    links: Option<Vec<Links>>,
-    original_name: Option<String>,
-    ram: Option<i32>,
-    swap: Option<i32>,
-    vcpus: Option<i32>,
+    pub disk: Option<i32>,
+    pub ephemeral: Option<i32>,
+    pub extra_specs: Option<HashMap<String, String>>,
+    pub id: Option<String>,
+    pub links: Option<Vec<Links>>,
+    pub original_name: Option<String>,
+    pub ram: Option<i32>,
+    pub swap: Option<i32>,
+    pub vcpus: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -469,17 +469,9 @@ pub enum HostStatus {
     #[serde(rename = "")]
     Empty,
 
-    // Down
-    #[serde(rename = "DOWN")]
-    Down,
-
     // Unknown
     #[serde(rename = "UNKNOWN")]
     Unknown,
-
-    // Null
-    #[serde(rename = "null")]
-    Null,
 
     // Maintenance
     #[serde(rename = "MAINTENANCE")]
@@ -488,6 +480,14 @@ pub enum HostStatus {
     // Up
     #[serde(rename = "UP")]
     Up,
+
+    // Down
+    #[serde(rename = "DOWN")]
+    Down,
+
+    // Null
+    #[serde(rename = "null")]
+    Null,
 }
 
 /// The UUID and links for the image for your server instance. The `image`
@@ -496,12 +496,12 @@ pub enum HostStatus {
 /// `Image` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Image {
-    id: Option<String>,
-    links: Option<Vec<Links>>,
+    pub id: Option<String>,
+    pub links: Option<Vec<Links>>,
 }
 
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
-    name: Option<String>,
+    pub name: Option<String>,
 }

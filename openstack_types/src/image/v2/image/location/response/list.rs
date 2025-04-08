@@ -23,15 +23,15 @@ use std::collections::HashMap;
 /// Location response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct LocationResponse {
-    metadata: HashMap<String, Value>,
+    pub metadata: HashMap<String, Value>,
 
-    url: String,
+    pub url: String,
 
     /// Values to be used to populate the corresponding image properties. If
     /// the image status is not 'queued', values must exactly match those
     /// already contained in the image properties.
     ///
-    validation_data: Option<ValidationData>,
+    pub validation_data: Option<ValidationData>,
 }
 
 /// Values to be used to populate the corresponding image properties. If the
@@ -41,7 +41,7 @@ pub struct LocationResponse {
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
-    checksum: Option<String>,
-    os_hash_algo: String,
-    os_hash_value: String,
+    pub checksum: Option<String>,
+    pub os_hash_algo: String,
+    pub os_hash_value: String,
 }

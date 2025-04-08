@@ -23,93 +23,93 @@ use serde::{Deserialize, Serialize};
 pub struct RecordsetResponse {
     /// current action in progress on the resource
     ///
-    action: Option<Action>,
+    pub action: Option<Action>,
 
     /// Date / Time when resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Description for this recordset
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// ID for the resource
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Links to the resource, and other related resources. When a response has
     /// been broken into pages, we will include a `next` link that should be
     /// followed to retrieve all results
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// DNS Name for the recordset
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// ID for the project that owns the resource
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// A list of data for this recordset. Each item will be a separate record
     /// in Designate These items should conform to the DNS spec for the record
     /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
     /// hostname.
     ///
-    records: Option<Vec<String>>,
+    pub records: Option<Vec<String>>,
 
     /// The status of the resource.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// TTL (Time to Live) for the recordset.
     ///
-    ttl: Option<i32>,
+    pub ttl: Option<i32>,
 
     /// They RRTYPE of the recordset.
     ///
     #[serde(rename = "type")]
-    _type: Option<Type>,
+    pub _type: Option<Type>,
 
     /// Date / Time when resource last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// Version of the resource
     ///
-    version: Option<i32>,
+    pub version: Option<i32>,
 
     /// ID for the zone that contains this recordset
     ///
-    zone_id: Option<String>,
+    pub zone_id: Option<String>,
 
     /// The name of the zone that contains this recordset
     ///
-    zone_name: Option<String>,
+    pub zone_name: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Error
-    #[serde(rename = "ERROR")]
-    Error,
+    // Active
+    #[serde(rename = "ACTIVE")]
+    Active,
 
     // Success
     #[serde(rename = "SUCCESS")]
     Success,
 
-    // Active
-    #[serde(rename = "ACTIVE")]
-    Active,
-
-    // Deleted
-    #[serde(rename = "DELETED")]
-    Deleted,
+    // Error
+    #[serde(rename = "ERROR")]
+    Error,
 
     // Pending
     #[serde(rename = "PENDING")]
     Pending,
+
+    // Deleted
+    #[serde(rename = "DELETED")]
+    Deleted,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -119,61 +119,65 @@ pub enum Action {
     #[serde(rename = "NONE")]
     None,
 
-    // Delete
-    #[serde(rename = "DELETE")]
-    Delete,
+    // Create
+    #[serde(rename = "CREATE")]
+    Create,
 
     // Update
     #[serde(rename = "UPDATE")]
     Update,
 
-    // Create
-    #[serde(rename = "CREATE")]
-    Create,
+    // Delete
+    #[serde(rename = "DELETE")]
+    Delete,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Cert
-    #[serde(rename = "CERT")]
-    Cert,
+    // Cname
+    #[serde(rename = "CNAME")]
+    Cname,
+
+    // Spf
+    #[serde(rename = "SPF")]
+    Spf,
 
     // Naptr
     #[serde(rename = "NAPTR")]
     Naptr,
 
-    // Aaaa
-    #[serde(rename = "AAAA")]
-    Aaaa,
-
     // Ns
     #[serde(rename = "NS")]
     Ns,
-
-    // Mx
-    #[serde(rename = "MX")]
-    Mx,
-
-    // Cname
-    #[serde(rename = "CNAME")]
-    Cname,
-
-    // Soa
-    #[serde(rename = "SOA")]
-    Soa,
-
-    // Srv
-    #[serde(rename = "SRV")]
-    Srv,
 
     // Txt
     #[serde(rename = "TXT")]
     Txt,
 
-    // Spf
-    #[serde(rename = "SPF")]
-    Spf,
+    // Srv
+    #[serde(rename = "SRV")]
+    Srv,
+
+    // Sshfp
+    #[serde(rename = "SSHFP")]
+    Sshfp,
+
+    // Cert
+    #[serde(rename = "CERT")]
+    Cert,
+
+    // Aaaa
+    #[serde(rename = "AAAA")]
+    Aaaa,
+
+    // Ptr
+    #[serde(rename = "PTR")]
+    Ptr,
+
+    // Soa
+    #[serde(rename = "SOA")]
+    Soa,
 
     // Caa
     #[serde(rename = "CAA")]
@@ -183,13 +187,9 @@ pub enum Type {
     #[serde(rename = "A")]
     A,
 
-    // Ptr
-    #[serde(rename = "PTR")]
-    Ptr,
-
-    // Sshfp
-    #[serde(rename = "SSHFP")]
-    Sshfp,
+    // Mx
+    #[serde(rename = "MX")]
+    Mx,
 }
 
 /// Links to the resource, and other related resources. When a response has
@@ -199,5 +199,5 @@ pub enum Type {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

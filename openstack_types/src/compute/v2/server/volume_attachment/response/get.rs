@@ -25,44 +25,44 @@ pub struct VolumeAttachmentResponse {
     ///
     /// **New in version 2.89**
     ///
-    attachment_id: Option<String>,
+    pub attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
     ///
     /// **New in version 2.89**
     ///
-    bdm_uuid: Option<String>,
+    pub bdm_uuid: Option<String>,
 
     /// A flag indicating if the attached volume will be deleted when the
     /// server is deleted.
     ///
     /// **New in version 2.79**
     ///
-    delete_on_termination: Option<bool>,
+    pub delete_on_termination: Option<bool>,
 
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
-    device: String,
+    pub device: String,
 
     /// The volume ID of the attachment.
     ///
     /// **Available until version 2.88**
     ///
-    id: String,
+    pub id: String,
 
     /// The UUID of the server.
     ///
     #[serde(rename = "serverId")]
-    server_id: String,
+    pub server_id: String,
 
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.70**
     ///
-    tag: Option<String>,
+    pub tag: Option<String>,
 
     /// The UUID of the attached volume.
     ///
     #[serde(rename = "volumeId")]
-    volume_id: String,
+    pub volume_id: String,
 }

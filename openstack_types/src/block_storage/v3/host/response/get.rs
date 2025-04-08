@@ -21,16 +21,16 @@ use serde::{Deserialize, Serialize};
 /// Host response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct HostResponse {
-    resource: Resource,
+    pub resource: Resource,
 }
 
 /// `Resource` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Resource {
-    host: String,
-    project: String,
-    snapshot_count: String,
-    total_snapshot_gb: String,
-    total_volume_gb: String,
-    volume_count: String,
+    pub host: String,
+    pub project: String,
+    pub snapshot_count: String,
+    pub total_snapshot_gb: String,
+    pub total_volume_gb: String,
+    pub volume_count: String,
 }

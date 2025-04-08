@@ -26,5 +26,5 @@ pub struct Usage(HashMap<String, Item>);
 /// `Item` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Item {
-    consumer_count: Option<i32>,
+    pub consumer_count: Option<i32>,
 }
