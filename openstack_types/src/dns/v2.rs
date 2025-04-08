@@ -16,3 +16,13 @@
 // `openstack-codegenerator`.
 
 //! `Dns` Service bindings
+pub mod blacklist;
+pub mod limit;
+pub mod pool;
+pub mod quota;
+pub mod recordset;
+pub mod reverse;
+pub mod service_status;
+pub mod tld;
+pub mod tsigkey;
+pub mod zone;

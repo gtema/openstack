@@ -25,19 +25,19 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use crate::common::parse_json;
 use bytes::Bytes;
 use clap::ValueEnum;
 use dialoguer::Password;
 use http::Response;
-use openstack_sdk::api::identity::v3::auth::os_federation::saml2::create;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::identity::v3::auth::os_federation::saml2::create;
 use serde_json::Value;
 use structable_derive::StructTable;
 

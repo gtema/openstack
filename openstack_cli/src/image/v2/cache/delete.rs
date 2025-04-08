@@ -25,16 +25,16 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
 use bytes::Bytes;
 use http::Response;
-use openstack_sdk::api::image::v2::cache::delete;
 use openstack_sdk::api::RawQueryAsync;
+use openstack_sdk::api::image::v2::cache::delete;
 use structable_derive::StructTable;
 
 /// Deletes a image from cache. *(Since Image API v2.14)*

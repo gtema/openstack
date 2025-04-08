@@ -34,6 +34,7 @@ use crate::output::OutputProcessor;
 use openstack_sdk::api::QueryAsync;
 use openstack_sdk::api::identity::v3::auth::token::get;
 use serde_json::Value;
+use std::fmt;
 use structable_derive::StructTable;
 
 /// Validates and shows information for a token, including its expiration date
@@ -169,6 +170,28 @@ struct ResponseData {
     #[serde()]
     #[structable(optional, pretty)]
     user: Option<Value>,
+}
+/// `struct` response type
+#[derive(Default, Clone, Deserialize, Serialize)]
+struct ResponseDomain {
+    id: Option<String>,
+    name: Option<String>,
+}
+
+impl fmt::Display for ResponseDomain {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let data = Vec::from([
+            format!(
+                "id={}",
+                self.id.clone().map_or(String::new(), |v| v.to_string())
+            ),
+            format!(
+                "name={}",
+                self.name.clone().map_or(String::new(), |v| v.to_string())
+            ),
+        ]);
+        write!(f, "{}", data.join(";"))
+    }
 }
 
 impl TokenCommand {

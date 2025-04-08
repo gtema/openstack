@@ -16,3 +16,17 @@
 // `openstack-codegenerator`.
 
 //! `Load_balancer` Service bindings
+pub mod amphorae;
+pub mod availability_zone;
+pub mod availability_zone_profile;
+pub mod flavor;
+pub mod flavor_profile;
+pub mod healthmonitor;
+pub mod l7policy;
+pub mod listener;
+pub mod loadbalancer;
+pub mod octavia;
+pub mod pool;
+pub mod provider;
+pub mod quota;
+pub mod version;

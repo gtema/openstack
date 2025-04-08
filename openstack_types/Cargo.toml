@@ -1,6 +1,6 @@
 [package]
 name = "openstack_types"
-description = "OpenStack Types"
+description = "OpenStack API Types"
 version = "0.20.1"
 keywords = ["api", "openstack"]
 categories = ["api-bindings"]
@@ -37,8 +37,5 @@ placement = []
 
 [dependencies]
 chrono = { workspace= true }
-derive_builder = { workspace = true }
 serde = { workspace = true }
 serde_json = {workspace = true}
-thiserror = { workspace = true }
-tracing = { workspace = true}

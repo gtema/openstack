@@ -25,14 +25,14 @@ use tracing::info;
 
 use openstack_sdk::AsyncOpenStack;
 
-use crate::output::OutputProcessor;
 use crate::Cli;
 use crate::OpenStackCliError;
 use crate::OutputConfig;
 use crate::StructTable;
+use crate::output::OutputProcessor;
 
-use openstack_sdk::api::compute::v2::console_auth_token::get;
 use openstack_sdk::api::QueryAsync;
+use openstack_sdk::api::compute::v2::console_auth_token::get;
 use structable_derive::StructTable;
 
 /// Given the console authentication token for a server, shows the related
