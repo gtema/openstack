@@ -45,6 +45,10 @@ pub(crate) struct TableStructFieldReceiver {
     #[darling(default)]
     pretty: bool,
 
+    /// Serialize field as json for output
+    #[darling(default)]
+    serialize: bool,
+
     /// `status` field
     #[darling(default)]
     status: bool,
@@ -77,18 +81,19 @@ impl ToTokens for TableStructInputReceiver {
 
             // Determine how to get the data based in `optional` and `pretty`
             let field_value = match field.optional {
-                false => match field.pretty {
+                false => match field.serialize || field.pretty {
                     false => quote!(
                         self. #field_ident .to_string()
                     ),
                     true => quote!(
                         if options.pretty {
                             serde_json::to_string_pretty(&self. #field_ident)
-                                .unwrap_or(self. #field_ident .to_string())
-                        } else { self. #field_ident .to_string() }
+                        } else {
+                            serde_json::to_string(&self. #field_ident)
+                        }.unwrap_or(self. #field_ident .to_string())
                     ),
                 },
-                true => match field.pretty {
+                true => match field.serialize || field.pretty {
                     false => quote!(
                         self. #field_ident .clone().map_or(String::from(" "), |v| v.to_string())
                     ),
@@ -97,24 +102,32 @@ impl ToTokens for TableStructInputReceiver {
                             .clone()
                             .map_or(
                                 String::from(" "),
-                                |v| if options.pretty {serde_json::to_string_pretty(&v).unwrap_or(v.to_string())} else { v.to_string() }
+                                |v| if options.pretty {
+                                    serde_json::to_string_pretty(&v)
+                                } else {
+                                    serde_json::to_string(&v)
+                                }.unwrap_or("<ERROR SERIALIZING DATA>".into())
                             )
                     ),
                 },
             };
 
-            // Determine how to get the data based in `optional` and `pretty`
+            // Determine how to get the data based in `optional` and `pretty` for list row column
+            //let field_vec_value = field_value.clone();
             let field_vec_value = match field.optional {
-                false => match field.pretty {
+                false => match field.serialize || field.pretty {
                     false => quote!(
                         x. #field_ident .to_string()
                     ),
                     true => quote!(
-                        serde_json::to_string_pretty(&x. #field_ident)
-                            .unwrap_or(x. #field_ident .to_string())
+                        if options.pretty {
+                            serde_json::to_string_pretty(&x. #field_ident)
+                        } else {
+                            serde_json::to_string(&x. #field_ident)
+                        }.unwrap_or(x. #field_ident .to_string())
                     ),
                 },
-                true => match field.pretty {
+                true => match field.serialize || field.pretty {
                     false => quote!(
                         x. #field_ident .clone().map_or(String::from(" "), |v| v.to_string())
                     ),
@@ -123,7 +136,11 @@ impl ToTokens for TableStructInputReceiver {
                             .clone()
                             .map_or(
                                 String::from(" "),
-                                |v| serde_json::to_string_pretty(&v).unwrap_or(v.to_string())
+                                |v| if options.pretty {
+                                    serde_json::to_string_pretty(&v)
+                                } else {
+                                    serde_json::to_string_pretty(&v)
+                                }.unwrap_or("<ERROR SERIALIZING DATA>".into())
                             )
                     ),
                 },
