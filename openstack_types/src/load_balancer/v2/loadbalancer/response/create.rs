@@ -30,83 +30,83 @@ pub struct LoadbalancerResponse {
     ///
     /// **New in version 2.26**
     ///
-    additional_vips: Option<Vec<AdditionalVips>>,
+    pub additional_vips: Option<Vec<AdditionalVips>>,
 
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// An availability zone name.
     ///
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the flavor.
     ///
-    flavor_id: Option<String>,
+    pub flavor_id: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The associated listener IDs, if any.
     ///
-    listeners: Option<Vec<Listeners>>,
+    pub listeners: Option<Vec<Listeners>>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The associated pool IDs, if any.
     ///
-    pools: Option<Vec<PoolsStructResponse>>,
+    pub pools: Option<Vec<PoolsStructResponse>>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// Provider name for the load balancer.
     ///
-    provider: Option<String>,
+    pub provider: Option<String>,
 
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
     ///
-    vip_address: Option<String>,
+    pub vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP).
     ///
-    vip_network_id: Option<String>,
+    pub vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
     ///
-    vip_port_id: Option<String>,
+    pub vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
     ///
-    vip_qos_policy_id: Option<String>,
+    pub vip_qos_policy_id: Option<String>,
 
     /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
     /// Balancer.
     ///
     /// **New in version 2.29**
     ///
-    vip_sg_ids: Option<Vec<String>>,
+    pub vip_sg_ids: Option<Vec<String>>,
 
     /// The ID of the subnet for the Virtual IP (VIP).
     ///
-    vip_subnet_id: Option<String>,
+    pub vip_subnet_id: Option<String>,
 
     /// The VIP vNIC type used for the load balancer. One of `normal` or
     /// `direct`.
     ///
     /// **New in version 2.28**
     ///
-    vip_vnic_type: Option<String>,
+    pub vip_vnic_type: Option<String>,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -114,20 +114,20 @@ pub struct LoadbalancerResponse {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    admin_state_up: Option<bool>,
-    compare_type: Option<String>,
-    created_at: Option<String>,
-    id: Option<String>,
-    invert: Option<bool>,
-    key: Option<String>,
-    operating_status: Option<String>,
-    project_id: Option<String>,
-    provisioning_status: Option<String>,
-    tags: Option<Vec<String>>,
-    tenant_id: Option<String>,
-    _type: Option<String>,
-    updated_at: Option<String>,
-    value: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub compare_type: Option<String>,
+    pub created_at: Option<String>,
+    pub id: Option<String>,
+    pub invert: Option<bool>,
+    pub key: Option<String>,
+    pub operating_status: Option<String>,
+    pub project_id: Option<String>,
+    pub provisioning_status: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+    pub value: Option<String>,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -135,25 +135,25 @@ pub struct Rules {
 /// `L7policies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct L7policies {
-    action: Option<String>,
-    admin_state_up: Option<bool>,
-    created_at: Option<String>,
-    description: Option<String>,
-    id: Option<String>,
-    listener_id: Option<String>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    position: Option<i32>,
-    project_id: Option<String>,
-    provisioning_status: Option<String>,
-    redirect_http_code: Option<i32>,
-    redirect_pool_id: Option<String>,
-    redirect_prefix: Option<String>,
-    redirect_url: Option<String>,
-    rules: Option<Vec<Rules>>,
-    tags: Option<Vec<String>>,
-    tenant_id: Option<String>,
-    updated_at: Option<String>,
+    pub action: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub created_at: Option<String>,
+    pub description: Option<String>,
+    pub id: Option<String>,
+    pub listener_id: Option<String>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub position: Option<i32>,
+    pub project_id: Option<String>,
+    pub provisioning_status: Option<String>,
+    pub redirect_http_code: Option<i32>,
+    pub redirect_pool_id: Option<String>,
+    pub redirect_prefix: Option<String>,
+    pub redirect_url: Option<String>,
+    pub rules: Option<Vec<Rules>>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// Base type for complex types
@@ -161,7 +161,7 @@ pub struct L7policies {
 /// `Loadbalancers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Loadbalancers {
-    id: String,
+    pub id: String,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -169,40 +169,40 @@ pub struct Loadbalancers {
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
-    admin_state_up: Option<bool>,
-    allowed_cidrs: Option<Vec<String>>,
-    alpn_protocols: Option<Vec<String>>,
-    client_authentication: Option<String>,
-    client_ca_tls_container_ref: Option<String>,
-    client_crl_container_ref: Option<String>,
-    connection_limit: Option<i32>,
-    created_at: Option<String>,
-    default_pool_id: Option<String>,
-    default_tls_container_ref: Option<String>,
-    description: Option<String>,
-    hsts_include_subdomains: Option<bool>,
-    hsts_max_age: Option<i32>,
-    hsts_preload: Option<bool>,
-    id: Option<String>,
-    insert_headers: Option<HashMap<String, String>>,
-    l7policies: Option<Vec<L7policies>>,
-    loadbalancers: Option<Vec<Loadbalancers>>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    project_id: Option<String>,
-    protocol: Option<String>,
-    protocol_port: Option<i32>,
-    provisioning_status: Option<String>,
-    sni_container_refs: Option<Vec<String>>,
-    tags: Option<Vec<String>>,
-    tenant_id: Option<String>,
-    timeout_client_data: Option<i32>,
-    timeout_member_connect: Option<i32>,
-    timeout_member_data: Option<i32>,
-    timeout_tcp_inspect: Option<i32>,
-    tls_ciphers: Option<String>,
-    tls_versions: Option<Vec<String>>,
-    updated_at: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub allowed_cidrs: Option<Vec<String>>,
+    pub alpn_protocols: Option<Vec<String>>,
+    pub client_authentication: Option<String>,
+    pub client_ca_tls_container_ref: Option<String>,
+    pub client_crl_container_ref: Option<String>,
+    pub connection_limit: Option<i32>,
+    pub created_at: Option<String>,
+    pub default_pool_id: Option<String>,
+    pub default_tls_container_ref: Option<String>,
+    pub description: Option<String>,
+    pub hsts_include_subdomains: Option<bool>,
+    pub hsts_max_age: Option<i32>,
+    pub hsts_preload: Option<bool>,
+    pub id: Option<String>,
+    pub insert_headers: Option<HashMap<String, String>>,
+    pub l7policies: Option<Vec<L7policies>>,
+    pub loadbalancers: Option<Vec<Loadbalancers>>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub project_id: Option<String>,
+    pub protocol: Option<String>,
+    pub protocol_port: Option<i32>,
+    pub provisioning_status: Option<String>,
+    pub sni_container_refs: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub timeout_client_data: Option<i32>,
+    pub timeout_member_connect: Option<i32>,
+    pub timeout_member_data: Option<i32>,
+    pub timeout_tcp_inspect: Option<i32>,
+    pub tls_ciphers: Option<String>,
+    pub tls_versions: Option<Vec<String>>,
+    pub updated_at: Option<String>,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -210,24 +210,24 @@ pub struct Listeners {
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
-    address: Option<String>,
-    admin_state_up: Option<bool>,
-    backup: Option<bool>,
-    created_at: Option<String>,
-    id: Option<String>,
-    monitor_address: Option<String>,
-    monitor_port: Option<i32>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    project_id: Option<String>,
-    protocol_port: Option<i32>,
-    provisioning_status: Option<String>,
-    subnet_id: Option<String>,
-    tags: Option<Vec<String>>,
-    tenant_id: Option<String>,
-    updated_at: Option<String>,
-    vnic_type: Option<String>,
-    weight: Option<i32>,
+    pub address: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub backup: Option<bool>,
+    pub created_at: Option<String>,
+    pub id: Option<String>,
+    pub monitor_address: Option<String>,
+    pub monitor_port: Option<i32>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub project_id: Option<String>,
+    pub protocol_port: Option<i32>,
+    pub provisioning_status: Option<String>,
+    pub subnet_id: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub updated_at: Option<String>,
+    pub vnic_type: Option<String>,
+    pub weight: Option<i32>,
 }
 
 /// Base type for complex types
@@ -235,7 +235,7 @@ pub struct Members {
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {
-    id: String,
+    pub id: String,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -243,27 +243,27 @@ pub struct Pools {
 /// `Healthmonitor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Healthmonitor {
-    admin_state_up: Option<bool>,
-    created_at: Option<String>,
-    delay: Option<i32>,
-    domain_name: Option<String>,
-    expected_codes: Option<String>,
-    http_method: Option<String>,
-    http_version: Option<f32>,
-    id: Option<String>,
-    max_retries: Option<i32>,
-    max_retries_down: Option<i32>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    pools: Option<Vec<Pools>>,
-    project_id: Option<String>,
-    provisioning_status: Option<String>,
-    tags: Option<Vec<String>>,
-    tenant_id: Option<String>,
-    timeout: Option<i32>,
-    _type: Option<String>,
-    updated_at: Option<String>,
-    url_path: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub created_at: Option<String>,
+    pub delay: Option<i32>,
+    pub domain_name: Option<String>,
+    pub expected_codes: Option<String>,
+    pub http_method: Option<String>,
+    pub http_version: Option<f32>,
+    pub id: Option<String>,
+    pub max_retries: Option<i32>,
+    pub max_retries_down: Option<i32>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub pools: Option<Vec<Pools>>,
+    pub project_id: Option<String>,
+    pub provisioning_status: Option<String>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub timeout: Option<i32>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
+    pub url_path: Option<String>,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -271,10 +271,10 @@ pub struct Healthmonitor {
 /// `SessionPersistence` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SessionPersistence {
-    cookie_name: Option<String>,
-    persistence_granularity: Option<String>,
-    persistence_timeout: Option<i32>,
-    _type: Option<String>,
+    pub cookie_name: Option<String>,
+    pub persistence_granularity: Option<String>,
+    pub persistence_timeout: Option<i32>,
+    pub _type: Option<String>,
 }
 
 /// Base type for complex types
@@ -282,7 +282,7 @@ pub struct SessionPersistence {
 /// `PoolsListeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PoolsListeners {
-    id: String,
+    pub id: String,
 }
 
 /// Defines which attributes are to be shown on any response.
@@ -290,32 +290,32 @@ pub struct PoolsListeners {
 /// `PoolsStructResponse` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PoolsStructResponse {
-    admin_state_up: Option<bool>,
-    alpn_protocols: Option<Vec<String>>,
-    ca_tls_container_ref: Option<String>,
-    created_at: Option<String>,
-    crl_container_ref: Option<String>,
-    description: Option<String>,
-    healthmonitor: Option<Healthmonitor>,
-    healthmonitor_id: Option<String>,
-    id: Option<String>,
-    lb_algorithm: Option<String>,
-    listeners: Option<Vec<PoolsListeners>>,
-    loadbalancers: Option<Vec<Loadbalancers>>,
-    members: Option<Vec<Members>>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    project_id: Option<String>,
-    protocol: Option<String>,
-    provisioning_status: Option<String>,
-    session_persistence: Option<SessionPersistence>,
-    tags: Option<Vec<String>>,
-    tenant_id: Option<String>,
-    tls_ciphers: Option<String>,
-    tls_container_ref: Option<String>,
-    tls_enabled: Option<bool>,
-    tls_versions: Option<Vec<String>>,
-    updated_at: Option<String>,
+    pub admin_state_up: Option<bool>,
+    pub alpn_protocols: Option<Vec<String>>,
+    pub ca_tls_container_ref: Option<String>,
+    pub created_at: Option<String>,
+    pub crl_container_ref: Option<String>,
+    pub description: Option<String>,
+    pub healthmonitor: Option<Healthmonitor>,
+    pub healthmonitor_id: Option<String>,
+    pub id: Option<String>,
+    pub lb_algorithm: Option<String>,
+    pub listeners: Option<Vec<PoolsListeners>>,
+    pub loadbalancers: Option<Vec<Loadbalancers>>,
+    pub members: Option<Vec<Members>>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub project_id: Option<String>,
+    pub protocol: Option<String>,
+    pub provisioning_status: Option<String>,
+    pub session_persistence: Option<SessionPersistence>,
+    pub tags: Option<Vec<String>>,
+    pub tenant_id: Option<String>,
+    pub tls_ciphers: Option<String>,
+    pub tls_container_ref: Option<String>,
+    pub tls_enabled: Option<bool>,
+    pub tls_versions: Option<Vec<String>>,
+    pub updated_at: Option<String>,
 }
 
 /// Type for additional vips
@@ -323,6 +323,6 @@ pub struct PoolsStructResponse {
 /// `AdditionalVips` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AdditionalVips {
-    ip_address: Option<String>,
-    subnet_id: String,
+    pub ip_address: Option<String>,
+    pub subnet_id: String,
 }

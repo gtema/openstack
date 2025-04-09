@@ -24,13 +24,13 @@ pub struct HypervisorResponse {
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
     ///
-    hypervisor_hostname: String,
+    pub hypervisor_hostname: String,
 
     /// The id of the hypervisor as a UUID.
     ///
     /// **New in version 2.53**
     ///
-    id: String,
+    pub id: String,
 
     /// A list of `server` objects. This field has become mandatory in
     /// microversion 2.75. If no servers is on hypervisor then empty list is
@@ -38,44 +38,44 @@ pub struct HypervisorResponse {
     ///
     /// **New in version 2.53**
     ///
-    servers: Vec<Servers>,
+    pub servers: Vec<Servers>,
 
     /// The state of the hypervisor. One of `up` or `down`.
     ///
-    state: State,
+    pub state: State,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Down
-    #[serde(rename = "down")]
-    Down,
-
     // Up
     #[serde(rename = "up")]
     Up,
+
+    // Down
+    #[serde(rename = "down")]
+    Down,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Disabled
-    #[serde(rename = "disabled")]
-    Disabled,
-
     // Enabled
     #[serde(rename = "enabled")]
     Enabled,
+
+    // Disabled
+    #[serde(rename = "disabled")]
+    Disabled,
 }
 
 /// `Servers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Servers {
-    name: String,
-    uuid: String,
+    pub name: String,
+    pub uuid: String,
 }

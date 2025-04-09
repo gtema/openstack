@@ -23,27 +23,27 @@ use serde::{Deserialize, Serialize};
 pub struct AddressGroupResponse {
     /// A list of IP addresses.
     ///
-    addresses: Option<Vec<String>>,
+    pub addresses: Option<Vec<String>>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the address group.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

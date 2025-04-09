@@ -25,147 +25,147 @@ use std::collections::HashMap;
 pub struct ImageResponse {
     /// md5 hash of image contents.
     ///
-    checksum: Option<String>,
+    pub checksum: Option<String>,
 
     /// Format of the container
     ///
-    container_format: Option<ContainerFormat>,
+    pub container_format: Option<ContainerFormat>,
 
     /// Date and time of image registration
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// URL to access the image file kept in external store
     ///
-    direct_url: Option<String>,
+    pub direct_url: Option<String>,
 
     /// Format of the disk
     ///
-    disk_format: Option<DiskFormat>,
+    pub disk_format: Option<DiskFormat>,
 
     /// An image file url
     ///
-    file: Option<String>,
+    pub file: Option<String>,
 
     /// An identifier for the image
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// A set of URLs to access the image file kept in external store
     ///
-    locations: Option<Vec<Locations>>,
+    pub locations: Option<Vec<Locations>>,
 
     /// Amount of disk space (in GB) required to boot image.
     ///
-    min_disk: Option<i32>,
+    pub min_disk: Option<i32>,
 
     /// Amount of ram (in MB) required to boot image.
     ///
-    min_ram: Option<i32>,
+    pub min_ram: Option<i32>,
 
     /// Descriptive name for the image
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Algorithm to calculate the os_hash_value
     ///
-    os_hash_algo: Option<String>,
+    pub os_hash_algo: Option<String>,
 
     /// Hexdigest of the image contents using the algorithm specified by the
     /// os_hash_algo
     ///
-    os_hash_value: Option<String>,
+    pub os_hash_value: Option<String>,
 
     /// If true, image will not appear in default image list response.
     ///
-    os_hidden: Option<bool>,
+    pub os_hidden: Option<bool>,
 
     /// Owner of the image
     ///
-    owner: Option<String>,
+    pub owner: Option<String>,
 
     /// If true, image will not be deletable.
     ///
-    protected: Option<bool>,
+    pub protected: Option<bool>,
 
     /// An image schema url
     ///
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     /// An image self url
     ///
     #[serde(rename = "self")]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
     /// Size of image file in bytes
     ///
-    size: Option<i64>,
+    pub size: Option<i64>,
 
     /// Status of the image
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
     ///
-    stores: Option<String>,
+    pub stores: Option<String>,
 
     /// List of strings related to the image
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// Date and time of the last image modification
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// Virtual size of image in bytes
     ///
-    virtual_size: Option<i64>,
+    pub virtual_size: Option<i64>,
 
     /// Scope of image accessibility
     ///
-    visibility: Option<Visibility>,
+    pub visibility: Option<Visibility>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Queued
-    #[serde(rename = "queued")]
-    Queued,
+    // Saving
+    #[serde(rename = "saving")]
+    Saving,
 
     // Importing
     #[serde(rename = "importing")]
     Importing,
 
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
-
-    // Deactivated
-    #[serde(rename = "deactivated")]
-    Deactivated,
+    // Active
+    #[serde(rename = "active")]
+    Active,
 
     // Uploading
     #[serde(rename = "uploading")]
     Uploading,
 
-    // Killed
-    #[serde(rename = "killed")]
-    Killed,
-
-    // Saving
-    #[serde(rename = "saving")]
-    Saving,
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
 
     // PendingDelete
     #[serde(rename = "pending_delete")]
     PendingDelete,
 
-    // Active
-    #[serde(rename = "active")]
-    Active,
+    // Queued
+    #[serde(rename = "queued")]
+    Queued,
+
+    // Deactivated
+    #[serde(rename = "deactivated")]
+    Deactivated,
+
+    // Killed
+    #[serde(rename = "killed")]
+    Killed,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -175,6 +175,10 @@ pub enum Visibility {
     #[serde(rename = "public")]
     Public,
 
+    // Community
+    #[serde(rename = "community")]
+    Community,
+
     // Private
     #[serde(rename = "private")]
     Private,
@@ -182,42 +186,38 @@ pub enum Visibility {
     // Shared
     #[serde(rename = "shared")]
     Shared,
-
-    // Community
-    #[serde(rename = "community")]
-    Community,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ContainerFormat {
-    // Ovf
-    #[serde(rename = "ovf")]
-    Ovf,
-
     // Docker
     #[serde(rename = "docker")]
     Docker,
-
-    // Compressed
-    #[serde(rename = "compressed")]
-    Compressed,
-
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Ova
-    #[serde(rename = "ova")]
-    Ova,
 
     // Bare
     #[serde(rename = "bare")]
     Bare,
 
+    // Ova
+    #[serde(rename = "ova")]
+    Ova,
+
+    // Compressed
+    #[serde(rename = "compressed")]
+    Compressed,
+
+    // Ovf
+    #[serde(rename = "ovf")]
+    Ovf,
+
     // Ari
     #[serde(rename = "ari")]
     Ari,
+
+    // Aki
+    #[serde(rename = "aki")]
+    Aki,
 
     // Ami
     #[serde(rename = "ami")]
@@ -227,25 +227,9 @@ pub enum ContainerFormat {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum DiskFormat {
-    // Ploop
-    #[serde(rename = "ploop")]
-    Ploop,
-
     // Iso
     #[serde(rename = "iso")]
     Iso,
-
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Vdi
-    #[serde(rename = "vdi")]
-    Vdi,
-
-    // Raw
-    #[serde(rename = "raw")]
-    Raw,
 
     // Vmdk
     #[serde(rename = "vmdk")]
@@ -255,17 +239,33 @@ pub enum DiskFormat {
     #[serde(rename = "vhdx")]
     Vhdx,
 
-    // Ami
-    #[serde(rename = "ami")]
-    Ami,
-
     // Ari
     #[serde(rename = "ari")]
     Ari,
 
+    // Raw
+    #[serde(rename = "raw")]
+    Raw,
+
+    // Ploop
+    #[serde(rename = "ploop")]
+    Ploop,
+
+    // Aki
+    #[serde(rename = "aki")]
+    Aki,
+
+    // Ami
+    #[serde(rename = "ami")]
+    Ami,
+
     // Qcow2
     #[serde(rename = "qcow2")]
     Qcow2,
+
+    // Vdi
+    #[serde(rename = "vdi")]
+    Vdi,
 
     // Vhd
     #[serde(rename = "vhd")]
@@ -279,15 +279,15 @@ pub enum DiskFormat {
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
-    checksum: Option<String>,
-    os_hash_algo: String,
-    os_hash_value: String,
+    pub checksum: Option<String>,
+    pub os_hash_algo: String,
+    pub os_hash_value: String,
 }
 
 /// `Locations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Locations {
-    metadata: HashMap<String, Value>,
-    url: String,
-    validation_data: Option<ValidationData>,
+    pub metadata: HashMap<String, Value>,
+    pub url: String,
+    pub validation_data: Option<ValidationData>,
 }

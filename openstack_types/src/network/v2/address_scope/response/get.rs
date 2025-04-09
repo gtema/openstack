@@ -24,21 +24,21 @@ use serde::{Deserialize, Serialize};
 pub struct AddressScopeResponse {
     /// The ID of the address scope.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
     ///
-    ip_version: Option<i32>,
+    pub ip_version: Option<i32>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Indicates whether this resource is shared across all projects.
     ///
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

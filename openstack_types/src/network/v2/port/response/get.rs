@@ -27,7 +27,7 @@ pub struct PortResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<BoolString>,
 
     /// A set of zero or more allowed address pair objects each where address
     /// pair object contains an `ip_address` and `mac_address`. While the
@@ -37,12 +37,12 @@ pub struct PortResponse {
     /// connected to the port can send a packet with source address which
     /// matches one of the specified allowed address pairs.
     ///
-    allowed_address_pairs: Option<Vec<AllowedAddressPairs>>,
+    pub allowed_address_pairs: Option<Vec<AllowedAddressPairs>>,
 
     /// The ID of the host where the port resides.
     ///
     #[serde(rename = "binding:host_id")]
-    binding_host_id: Option<String>,
+    pub binding_host_id: Option<String>,
 
     /// A dictionary that enables the application running on the specific host
     /// to pass and receive vif port information specific to the networking
@@ -50,7 +50,7 @@ pub struct PortResponse {
     /// field. If the update request is null this response field will be {}.
     ///
     #[serde(rename = "binding:profile")]
-    binding_profile: Option<HashMap<String, Value>>,
+    pub binding_profile: Option<HashMap<String, Value>>,
 
     /// A dictionary which contains additional information on the port.
     /// Currently the following fields are defined: `port_filter` and
@@ -61,7 +61,7 @@ pub struct PortResponse {
     /// be used.
     ///
     #[serde(rename = "binding:vif_details")]
-    binding_vif_details: Option<HashMap<String, Value>>,
+    pub binding_vif_details: Option<HashMap<String, Value>>,
 
     /// The type of which mechanism is used for the port. An API consumer like
     /// nova can use this to determine an appropriate way to attach a device
@@ -73,7 +73,7 @@ pub struct PortResponse {
     /// an error that the port failed to be bound to a networking back-end.
     ///
     #[serde(rename = "binding:vif_type")]
-    binding_vif_type: Option<String>,
+    pub binding_vif_type: Option<String>,
 
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port. The
@@ -83,112 +83,112 @@ pub struct PortResponse {
     /// deployments.
     ///
     #[serde(rename = "binding:vnic_type")]
-    binding_vnic_type: Option<BindingVnicType>,
+    pub binding_vnic_type: Option<BindingVnicType>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Status of the underlying data plane of a port.
     ///
-    data_plane_status: Option<DataPlaneStatus>,
+    pub data_plane_status: Option<DataPlaneStatus>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the device that uses this port. For example, a server
     /// instance or a logical router.
     ///
-    device_id: Option<String>,
+    pub device_id: Option<String>,
 
     /// The entity type that uses this port. For example, `compute:nova`
     /// (server instance), `network:dhcp` (DHCP agent) or
     /// `network:router_interface` (router interface).
     ///
-    device_owner: Option<String>,
+    pub device_owner: Option<String>,
 
-    device_profile: Option<String>,
+    pub device_profile: Option<String>,
 
     /// Data assigned to a port by the Networking internal DNS including the
     /// `hostname`, `ip_address` and `fqdn`.
     ///
-    dns_assignment: Option<Vec<DnsAssignment>>,
+    pub dns_assignment: Option<Vec<DnsAssignment>>,
 
     /// A valid DNS domain.
     ///
-    dns_domain: Option<String>,
+    pub dns_domain: Option<String>,
 
     /// A valid DNS name.
     ///
-    dns_name: Option<String>,
+    pub dns_name: Option<String>,
 
     /// A set of zero or more extra DHCP option pairs. An option pair consists
     /// of an option value and name.
     ///
-    extra_dhcp_opts: Option<Vec<HashMap<String, Value>>>,
+    pub extra_dhcp_opts: Option<Vec<HashMap<String, Value>>>,
 
     /// The IP addresses for the port. If the port has multiple IP addresses,
     /// this field has multiple entries. Each entry consists of IP address
     /// (`ip_address`) and the subnet ID from which the IP address is assigned
     /// (`subnet_id`).
     ///
-    fixed_ips: Option<Vec<FixedIps>>,
+    pub fixed_ips: Option<Vec<FixedIps>>,
 
     /// Admin-only. The following values control Open vSwitch’s Userspace Tx
     /// packet steering feature:
     ///
     /// - `{"openvswitch": {"other_config": {"tx-steering": "hash|thread"}}}`
     ///
-    hints: Option<HashMap<String, Value>>,
+    pub hints: Option<HashMap<String, Value>>,
 
     /// The ID of the resource.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Indicates when ports use either `deferred`, `immediate` or no IP
     /// allocation (`none`).
     ///
-    ip_allocation: Option<String>,
+    pub ip_allocation: Option<String>,
 
     /// The MAC address of the port. If the port uses the `direct-physical`
     /// `vnic_type` then the value of this field is overwritten with the MAC
     /// address provided in the active binding:profile if any.
     ///
-    mac_address: Option<String>,
+    pub mac_address: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the attached network.
     ///
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
     ///
-    numa_affinity_policy: Option<NumaAffinityPolicy>,
+    pub numa_affinity_policy: Option<NumaAffinityPolicy>,
 
     /// The port security status. A valid value is enabled (`true`) or disabled
     /// (`false`). If port security is enabled for the port, security group
     /// rules and anti-spoofing rules are applied to the traffic on the port.
     /// If disabled, no such rules are applied.
     ///
-    port_security_enabled: Option<BoolString>,
+    pub port_security_enabled: Option<BoolString>,
 
     /// The uplink status propagation of the port. Valid values are enabled
     /// (`true`) and disabled (`false`).
     ///
-    propagate_uplink_status: Option<BoolString>,
+    pub propagate_uplink_status: Option<BoolString>,
 
     /// The ID of the QoS policy of the network where this port is plugged.
     ///
-    qos_network_policy_id: Option<String>,
+    pub qos_network_policy_id: Option<String>,
 
     /// The ID of the QoS policy associated with the port.
     ///
-    qos_policy_id: Option<String>,
+    pub qos_policy_id: Option<String>,
 
     /// Expose Placement resources (i.e.: `minimum-bandwidth`) and traits
     /// (i.e.: `vnic-type`, `physnet`) requested by a port to Nova and
@@ -205,65 +205,65 @@ pub struct PortResponse {
     /// class name and requested amount from the QoS policy. `same_subtree` key
     /// contains a list of `id` values from every resource group.
     ///
-    resource_request: Option<String>,
+    pub resource_request: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The IDs of security groups applied to the port.
     ///
-    security_groups: Option<Vec<String>>,
+    pub security_groups: Option<Vec<String>>,
 
     /// The port status. Values are `ACTIVE`, `DOWN`, `BUILD` and `ERROR`.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
+    pub ip_address: Option<String>,
+    pub subnet_id: Option<String>,
 }
 
 /// `AllowedAddressPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllowedAddressPairs {
-    ip_address: Option<String>,
-    max_address: Option<String>,
+    pub ip_address: Option<String>,
+    pub max_address: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum DataPlaneStatus {
-    // Active
-    #[serde(rename = "ACTIVE")]
-    Active,
-
     // Down
     #[serde(rename = "DOWN")]
     Down,
+
+    // Active
+    #[serde(rename = "ACTIVE")]
+    Active,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum NumaAffinityPolicy {
-    // Socket
-    #[serde(rename = "socket")]
-    Socket,
+    // Preferred
+    #[serde(rename = "preferred")]
+    Preferred,
 
     // Legacy
     #[serde(rename = "legacy")]
@@ -273,17 +273,17 @@ pub enum NumaAffinityPolicy {
     #[serde(rename = "required")]
     Required,
 
-    // Preferred
-    #[serde(rename = "preferred")]
-    Preferred,
+    // Socket
+    #[serde(rename = "socket")]
+    Socket,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum BindingVnicType {
-    // Baremetal
-    #[serde(rename = "baremetal")]
-    Baremetal,
+    // AcceleratorDirectPhysical
+    #[serde(rename = "accelerator-direct-physical")]
+    AcceleratorDirectPhysical,
 
     // AcceleratorDirect
     #[serde(rename = "accelerator-direct")]
@@ -293,43 +293,43 @@ pub enum BindingVnicType {
     #[serde(rename = "direct-physical")]
     DirectPhysical,
 
-    // Vdpa
-    #[serde(rename = "vdpa")]
-    Vdpa,
-
-    // Macvtap
-    #[serde(rename = "macvtap")]
-    Macvtap,
-
-    // SmartNic
-    #[serde(rename = "smart-nic")]
-    SmartNic,
-
-    // AcceleratorDirectPhysical
-    #[serde(rename = "accelerator-direct-physical")]
-    AcceleratorDirectPhysical,
+    // Direct
+    #[serde(rename = "direct")]
+    Direct,
 
     // VirtioForwarder
     #[serde(rename = "virtio-forwarder")]
     VirtioForwarder,
 
-    // Direct
-    #[serde(rename = "direct")]
-    Direct,
+    // Baremetal
+    #[serde(rename = "baremetal")]
+    Baremetal,
+
+    // Macvtap
+    #[serde(rename = "macvtap")]
+    Macvtap,
 
     // RemoteManaged
     #[serde(rename = "remote-managed")]
     RemoteManaged,
 
+    // Vdpa
+    #[serde(rename = "vdpa")]
+    Vdpa,
+
     // Normal
     #[serde(rename = "normal")]
     Normal,
+
+    // SmartNic
+    #[serde(rename = "smart-nic")]
+    SmartNic,
 }
 
 /// `DnsAssignment` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct DnsAssignment {
-    fqdn: Option<String>,
-    hostname: Option<String>,
-    ip_address: Option<String>,
+    pub fqdn: Option<String>,
+    pub hostname: Option<String>,
+    pub ip_address: Option<String>,
 }

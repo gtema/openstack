@@ -23,13 +23,13 @@ use serde::{Deserialize, Serialize};
 pub struct ResourceTypeResponse {
     /// Resource type creation date
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Resource type name
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Resource type update date
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

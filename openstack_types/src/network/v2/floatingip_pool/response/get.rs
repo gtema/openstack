@@ -21,13 +21,13 @@ use serde::{Deserialize, Serialize};
 /// FloatingipPool response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct FloatingipPoolResponse {
-    cidr: Option<String>,
+    pub cidr: Option<String>,
 
-    network_id: Option<String>,
+    pub network_id: Option<String>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    subnet_id: Option<String>,
+    pub subnet_id: Option<String>,
 
-    subnet_name: Option<String>,
+    pub subnet_name: Option<String>,
 }

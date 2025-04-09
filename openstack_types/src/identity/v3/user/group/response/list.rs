@@ -23,24 +23,24 @@ use serde::{Deserialize, Serialize};
 pub struct GroupResponse {
     /// The description of the group.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain of the group.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// The ID of the group.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The date and time when the group membership expires. A `null` value
     /// indicates that the membership never expires.
     ///
     /// **New in version 3.14**
     ///
-    membership_expires_at: Option<String>,
+    pub membership_expires_at: Option<String>,
 
     /// The name of the group.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

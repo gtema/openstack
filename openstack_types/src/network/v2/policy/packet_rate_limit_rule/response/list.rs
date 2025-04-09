@@ -22,13 +22,13 @@ use serde::{Deserialize, Serialize};
 /// PacketRateLimitRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct PacketRateLimitRuleResponse {
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    max_burst_kpps: Option<IntString>,
+    pub max_burst_kpps: Option<IntString>,
 
-    max_kpps: Option<IntString>,
+    pub max_kpps: Option<IntString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

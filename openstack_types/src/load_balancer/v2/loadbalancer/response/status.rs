@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 pub struct LoadbalancerResponse {
     /// A load balancer status object.
     ///
-    loadbalancer: Loadbalancer,
+    pub loadbalancer: Loadbalancer,
 }
 
 /// Defines which attributes are to be shown on status response.
@@ -31,11 +31,11 @@ pub struct LoadbalancerResponse {
 /// `HealthMonitor` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct HealthMonitor {
-    id: Option<String>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    provisioning_status: Option<String>,
-    _type: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub provisioning_status: Option<String>,
+    pub _type: Option<String>,
 }
 
 /// Defines which attributes are to be shown on status response.
@@ -43,12 +43,12 @@ pub struct HealthMonitor {
 /// `Members` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Members {
-    address: Option<String>,
-    id: Option<String>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    protocol_port: Option<i32>,
-    provisioning_status: Option<String>,
+    pub address: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub protocol_port: Option<i32>,
+    pub provisioning_status: Option<String>,
 }
 
 /// Defines which attributes are to be shown on status response.
@@ -56,12 +56,12 @@ pub struct Members {
 /// `Pools` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Pools {
-    health_monitor: Option<HealthMonitor>,
-    id: Option<String>,
-    members: Option<Vec<Members>>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    provisioning_status: Option<String>,
+    pub health_monitor: Option<HealthMonitor>,
+    pub id: Option<String>,
+    pub members: Option<Vec<Members>>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub provisioning_status: Option<String>,
 }
 
 /// Defines which attributes are to be shown on status response.
@@ -69,11 +69,11 @@ pub struct Pools {
 /// `Listeners` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Listeners {
-    id: Option<String>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    pools: Option<Vec<Pools>>,
-    provisioning_status: Option<String>,
+    pub id: Option<String>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub pools: Option<Vec<Pools>>,
+    pub provisioning_status: Option<String>,
 }
 
 /// A load balancer status object.
@@ -81,9 +81,9 @@ pub struct Listeners {
 /// `Loadbalancer` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Loadbalancer {
-    id: Option<String>,
-    listeners: Option<Vec<Listeners>>,
-    name: Option<String>,
-    operating_status: Option<String>,
-    provisioning_status: Option<String>,
+    pub id: Option<String>,
+    pub listeners: Option<Vec<Listeners>>,
+    pub name: Option<String>,
+    pub operating_status: Option<String>,
+    pub provisioning_status: Option<String>,
 }

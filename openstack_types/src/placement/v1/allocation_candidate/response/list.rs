@@ -26,36 +26,36 @@ pub struct AllocationCandidateResponse {
     /// subsequently use in a call to PUT /allocations/{consumer_uuid} to claim
     /// resources against a related set of resource providers.
     ///
-    allocation_requests: Option<Vec<AllocationRequests>>,
+    pub allocation_requests: Option<Vec<AllocationRequests>>,
 
-    provider_summaries: Option<HashMap<String, ProviderSummariesItem>>,
+    pub provider_summaries: Option<HashMap<String, ProviderSummariesItem>>,
 }
 
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
-    resources: Option<HashMap<String, i32>>,
+    pub resources: Option<HashMap<String, i32>>,
 }
 
 /// `AllocationRequests` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationRequests {
-    allocations: HashMap<String, AllocationsItem>,
-    mappings: Option<HashMap<String, Vec<String>>>,
+    pub allocations: HashMap<String, AllocationsItem>,
+    pub mappings: Option<HashMap<String, Vec<String>>>,
 }
 
 /// `ResourcesItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ResourcesItem {
-    capacity: Option<i32>,
-    used: Option<i32>,
+    pub capacity: Option<i32>,
+    pub used: Option<i32>,
 }
 
 /// `ProviderSummariesItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ProviderSummariesItem {
-    parent_provider_uuid: Option<String>,
-    resources: HashMap<String, ResourcesItem>,
-    root_provider_uuid: Option<String>,
-    traits: Option<Vec<String>>,
+    pub parent_provider_uuid: Option<String>,
+    pub resources: HashMap<String, ResourcesItem>,
+    pub root_provider_uuid: Option<String>,
+    pub traits: Option<Vec<String>>,
 }

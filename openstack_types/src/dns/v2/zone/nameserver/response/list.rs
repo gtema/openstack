@@ -23,17 +23,17 @@ use serde::{Deserialize, Serialize};
 pub struct NameserverResponse {
     /// The hostname of the nameserver that the zone should be delegated to
     ///
-    hostname: Option<String>,
+    pub hostname: Option<String>,
 
     /// The priority of the nameserver. This is used to determine the order of
     /// the the nameserver listings, and which server is used in the SOA record
     /// for the zone.
     ///
-    priority: Option<i32>,
+    pub priority: Option<i32>,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

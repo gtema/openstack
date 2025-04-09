@@ -23,20 +23,20 @@ use serde::{Deserialize, Serialize};
 pub struct ProjectResponse {
     /// The ID of the domain for the project.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The ID for the project.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the project.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -46,6 +46,6 @@ pub struct ProjectResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

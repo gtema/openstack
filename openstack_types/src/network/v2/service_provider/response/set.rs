@@ -22,9 +22,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Deserialize, Serialize)]
 pub struct ServiceProviderResponse {
     #[serde(rename = "default")]
-    _default: Option<String>,
+    pub _default: Option<String>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    service_type: Option<String>,
+    pub service_type: Option<String>,
 }

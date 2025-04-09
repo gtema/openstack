@@ -25,71 +25,67 @@ use std::collections::HashMap;
 pub struct TaskResponse {
     /// Datetime when this resource was created
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Datetime when this resource would be subject to removal
     ///
-    expires_at: Option<String>,
+    pub expires_at: Option<String>,
 
     /// An identifier for the task
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Image associated with the task
     ///
-    image_id: Option<String>,
+    pub image_id: Option<String>,
 
     /// The parameters required by task, JSON blob
     ///
-    input: Option<HashMap<String, Value>>,
+    pub input: Option<HashMap<String, Value>>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
     ///
-    message: Option<String>,
+    pub message: Option<String>,
 
     /// An identifier for the owner of this task
     ///
-    owner: Option<String>,
+    pub owner: Option<String>,
 
     /// Human-readable informative request-id
     ///
-    request_id: Option<String>,
+    pub request_id: Option<String>,
 
     /// The result of current task, JSON blob
     ///
-    result: Option<HashMap<String, Value>>,
+    pub result: Option<HashMap<String, Value>>,
 
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     #[serde(rename = "self")]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
     /// The current status of this task
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// The type of task represented by this content
     ///
     #[serde(rename = "type")]
-    _type: Option<Type>,
+    pub _type: Option<Type>,
 
     /// Datetime when this resource was updated
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// User associated with the task
     ///
-    user_id: Option<String>,
+    pub user_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // LocationImport
-    #[serde(rename = "location_import")]
-    LocationImport,
-
     // ApiImageImport
     #[serde(rename = "api_image_import")]
     ApiImageImport,
@@ -97,19 +93,15 @@ pub enum Type {
     // Import
     #[serde(rename = "import")]
     Import,
+
+    // LocationImport
+    #[serde(rename = "location_import")]
+    LocationImport,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Processing
-    #[serde(rename = "processing")]
-    Processing,
-
-    // Pending
-    #[serde(rename = "pending")]
-    Pending,
-
     // Success
     #[serde(rename = "success")]
     Success,
@@ -117,4 +109,12 @@ pub enum Status {
     // Failure
     #[serde(rename = "failure")]
     Failure,
+
+    // Pending
+    #[serde(rename = "pending")]
+    Pending,
+
+    // Processing
+    #[serde(rename = "processing")]
+    Processing,
 }

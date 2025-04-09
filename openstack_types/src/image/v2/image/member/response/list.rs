@@ -23,25 +23,25 @@ use serde::{Deserialize, Serialize};
 pub struct MemberResponse {
     /// Date and time of image member creation
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// An identifier for the image
     ///
-    image_id: Option<String>,
+    pub image_id: Option<String>,
 
     /// An identifier for the image member (tenantId)
     ///
-    member_id: Option<String>,
+    pub member_id: Option<String>,
 
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     /// The status of this image member
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// Date and time of last modification of image member
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

@@ -24,33 +24,33 @@ use std::collections::HashMap;
 pub struct TypeResponse {
     /// The volume type description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// A key and value pair that contains additional specifications that are
     /// associated with the volume type. Examples include capabilities,
     /// capacity, compression, and so on, depending on the storage driver in
     /// use.
     ///
-    extra_specs: Option<HashMap<String, Option<String>>>,
+    pub extra_specs: Option<HashMap<String, Option<String>>>,
 
     /// The UUID of the volume type.
     ///
-    id: String,
+    pub id: String,
 
     /// Whether the volume type is publicly visible.
     ///
-    is_public: Option<bool>,
+    pub is_public: Option<bool>,
 
     /// The name of the volume type.
     ///
-    name: String,
+    pub name: String,
 
     /// Whether the volume type is publicly visible.
     ///
     #[serde(rename = "os-volume-type-access:is_public")]
-    os_volume_type_access_is_public: Option<bool>,
+    pub os_volume_type_access_is_public: Option<bool>,
 
     /// The QoS specifications ID.
     ///
-    qos_specs_id: Option<String>,
+    pub qos_specs_id: Option<String>,
 }

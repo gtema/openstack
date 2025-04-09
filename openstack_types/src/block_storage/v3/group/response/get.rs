@@ -23,55 +23,55 @@ use serde::{Deserialize, Serialize};
 pub struct GroupResponse {
     /// The name of the availability zone.
     ///
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// The date and time when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The group description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
-    group_snapshot_id: Option<String>,
+    pub group_snapshot_id: Option<String>,
 
     /// The group type ID.
     ///
-    group_type: Option<String>,
+    pub group_type: Option<String>,
 
     /// The UUID of the group.
     ///
-    id: String,
+    pub id: String,
 
     /// The group name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The UUID of the volume group project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The group replication status.
     ///
-    replication_status: Option<String>,
+    pub replication_status: Option<String>,
 
     /// The UUID of the source group.
     ///
-    source_group_id: Option<String>,
+    pub source_group_id: Option<String>,
 
     /// The status of the generic group.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The list of volume types. In an environment with multiple-storage back
     /// ends, the scheduler determines where to send the volume based on the
     /// volume type.
     ///
-    volume_types: Option<Vec<String>>,
+    pub volume_types: Option<Vec<String>>,
 
     /// A list of volume ids, available only when list_volume set true.
     ///
-    volumes: Option<Vec<String>>,
+    pub volumes: Option<Vec<String>>,
 }

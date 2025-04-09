@@ -25,7 +25,7 @@ pub struct RemoteConsoleResponse {
     /// `serial` and `mks`. The protocol `mks` is added since Microversion
     /// `2.8`.
     ///
-    protocol: Protocol,
+    pub protocol: Protocol,
 
     /// The type of remote console. The valid values are `novnc`,
     /// `spice-html5`, `spice-direct`, `serial`, and `webmks`. The type
@@ -33,11 +33,11 @@ pub struct RemoteConsoleResponse {
     /// was added in Microversion `2.99`.
     ///
     #[serde(rename = "type")]
-    _type: Type,
+    pub _type: Type,
 
     /// The URL is used to connect the console.
     ///
-    url: String,
+    pub url: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -47,17 +47,17 @@ pub enum Protocol {
     #[serde(rename = "vnc")]
     Vnc,
 
-    // Spice
-    #[serde(rename = "spice")]
-    Spice,
+    // Mks
+    #[serde(rename = "mks")]
+    Mks,
 
     // Serial
     #[serde(rename = "serial")]
     Serial,
 
-    // Mks
-    #[serde(rename = "mks")]
-    Mks,
+    // Spice
+    #[serde(rename = "spice")]
+    Spice,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -67,10 +67,6 @@ pub enum Type {
     #[serde(rename = "spice-html5")]
     SpiceHtml5,
 
-    // Xvpvnc
-    #[serde(rename = "xvpvnc")]
-    Xvpvnc,
-
     // Serial
     #[serde(rename = "serial")]
     Serial,
@@ -78,6 +74,10 @@ pub enum Type {
     // Webmks
     #[serde(rename = "webmks")]
     Webmks,
+
+    // Xvpvnc
+    #[serde(rename = "xvpvnc")]
+    Xvpvnc,
 
     // Novnc
     #[serde(rename = "novnc")]

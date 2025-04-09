@@ -24,17 +24,17 @@ pub struct AccountResponse {
     /// The total number of bytes that are stored in Object Storage for the
     /// account.
     ///
-    bytes: Option<i64>,
+    pub bytes: Option<i64>,
 
     /// The number of objects in the container.
     ///
-    count: Option<i64>,
+    pub count: Option<i64>,
 
     /// Last modification date of the container
     ///
-    last_modified: Option<String>,
+    pub last_modified: Option<String>,
 
     /// The name of the container.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

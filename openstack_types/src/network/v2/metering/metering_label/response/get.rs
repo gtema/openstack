@@ -24,21 +24,21 @@ use serde::{Deserialize, Serialize};
 pub struct MeteringLabelResponse {
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the metering label.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Indicates whether this metering label is shared across all projects.
     ///
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

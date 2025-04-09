@@ -24,12 +24,12 @@ pub struct IkepolicyResponse {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
     ///
-    auth_algorithm: Option<AuthAlgorithm>,
+    pub auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The encryption algorithm. A valid value is `3des`, `aes-128`,
     /// `aes-192`, `aes-256`, `aes-128-ctr`, `aes-192-ctr`, `aes-256-ctr`.
@@ -38,126 +38,118 @@ pub struct IkepolicyResponse {
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
     ///
-    encryption_algorithm: Option<EncryptionAlgorithm>,
+    pub encryption_algorithm: Option<EncryptionAlgorithm>,
 
     /// The ID of the IKE policy.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The IKE version. A valid value is `v1` or `v2`. Default is `v1`.
     ///
-    ike_version: Option<IkeVersion>,
+    pub ike_version: Option<IkeVersion>,
 
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
     ///
-    lifetime: Option<String>,
+    pub lifetime: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
     ///
-    pfs: Option<Pfs>,
+    pub pfs: Option<Pfs>,
 
     /// The IKE mode. A valid value is `main`, which is the default.
     ///
-    phase1_negotiation_mode: Option<Phase1NegotiationMode>,
+    pub phase1_negotiation_mode: Option<Phase1NegotiationMode>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum EncryptionAlgorithm {
-    // Aes192Ccm16
-    #[serde(rename = "aes-192-ccm-16")]
-    Aes192Ccm16,
-
-    // Aes192Ccm8
-    #[serde(rename = "aes-192-ccm-8")]
-    Aes192Ccm8,
-
-    // Aes256Ccm12
-    #[serde(rename = "aes-256-ccm-12")]
-    Aes256Ccm12,
-
-    // Aes256
-    #[serde(rename = "aes-256")]
-    Aes256,
+    // Aes128Ccm12
+    #[serde(rename = "aes-128-ccm-12")]
+    Aes128Ccm12,
 
     // Aes192Gcm8
     #[serde(rename = "aes-192-gcm-8")]
     Aes192Gcm8,
 
-    // Aes192Gcm16
-    #[serde(rename = "aes-192-gcm-16")]
-    Aes192Gcm16,
+    // Aes192Ccm16
+    #[serde(rename = "aes-192-ccm-16")]
+    Aes192Ccm16,
 
-    // Aes256Ccm8
-    #[serde(rename = "aes-256-ccm-8")]
-    Aes256Ccm8,
+    // Aes256Ctr
+    #[serde(rename = "aes-256-ctr")]
+    Aes256Ctr,
 
-    // Aes256Gcm16
-    #[serde(rename = "aes-256-gcm-16")]
-    Aes256Gcm16,
-
-    // Aes128Ccm12
-    #[serde(rename = "aes-128-ccm-12")]
-    Aes128Ccm12,
-
-    // Aes128Ccm8
-    #[serde(rename = "aes-128-ccm-8")]
-    Aes128Ccm8,
-
-    // _3des
-    #[serde(rename = "3des")]
-    _3des,
-
-    // Aes128Ctr
-    #[serde(rename = "aes-128-ctr")]
-    Aes128Ctr,
-
-    // Aes128Gcm8
-    #[serde(rename = "aes-128-gcm-8")]
-    Aes128Gcm8,
-
-    // Aes256Gcm12
-    #[serde(rename = "aes-256-gcm-12")]
-    Aes256Gcm12,
-
-    // Aes192Ctr
-    #[serde(rename = "aes-192-ctr")]
-    Aes192Ctr,
-
-    // Aes192Ccm12
-    #[serde(rename = "aes-192-ccm-12")]
-    Aes192Ccm12,
-
-    // Aes128Gcm12
-    #[serde(rename = "aes-128-gcm-12")]
-    Aes128Gcm12,
-
-    // Aes128Ccm16
-    #[serde(rename = "aes-128-ccm-16")]
-    Aes128Ccm16,
+    // Aes256Ccm12
+    #[serde(rename = "aes-256-ccm-12")]
+    Aes256Ccm12,
 
     // Aes256Ccm16
     #[serde(rename = "aes-256-ccm-16")]
     Aes256Ccm16,
 
+    // Aes256
+    #[serde(rename = "aes-256")]
+    Aes256,
+
+    // Aes128Ccm16
+    #[serde(rename = "aes-128-ccm-16")]
+    Aes128Ccm16,
+
+    // Aes256Gcm12
+    #[serde(rename = "aes-256-gcm-12")]
+    Aes256Gcm12,
+
+    // Aes192Ccm8
+    #[serde(rename = "aes-192-ccm-8")]
+    Aes192Ccm8,
+
+    // _3des
+    #[serde(rename = "3des")]
+    _3des,
+
+    // Aes192Ccm12
+    #[serde(rename = "aes-192-ccm-12")]
+    Aes192Ccm12,
+
     // Aes128
     #[serde(rename = "aes-128")]
     Aes128,
 
+    // Aes128Gcm8
+    #[serde(rename = "aes-128-gcm-8")]
+    Aes128Gcm8,
+
+    // Aes128Gcm12
+    #[serde(rename = "aes-128-gcm-12")]
+    Aes128Gcm12,
+
+    // Aes192Gcm16
+    #[serde(rename = "aes-192-gcm-16")]
+    Aes192Gcm16,
+
+    // Aes128Ctr
+    #[serde(rename = "aes-128-ctr")]
+    Aes128Ctr,
+
     // Aes128Gcm16
     #[serde(rename = "aes-128-gcm-16")]
     Aes128Gcm16,
+
+    // Aes256Ccm8
+    #[serde(rename = "aes-256-ccm-8")]
+    Aes256Ccm8,
 
     // Aes192
     #[serde(rename = "aes-192")]
@@ -167,21 +159,29 @@ pub enum EncryptionAlgorithm {
     #[serde(rename = "aes-192-gcm-12")]
     Aes192Gcm12,
 
-    // Aes256Ctr
-    #[serde(rename = "aes-256-ctr")]
-    Aes256Ctr,
+    // Aes192Ctr
+    #[serde(rename = "aes-192-ctr")]
+    Aes192Ctr,
 
     // Aes256Gcm8
     #[serde(rename = "aes-256-gcm-8")]
     Aes256Gcm8,
+
+    // Aes256Gcm16
+    #[serde(rename = "aes-256-gcm-16")]
+    Aes256Gcm16,
+
+    // Aes128Ccm8
+    #[serde(rename = "aes-128-ccm-8")]
+    Aes128Ccm8,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum AuthAlgorithm {
-    // AesXcbc
-    #[serde(rename = "aes-xcbc")]
-    AesXcbc,
+    // Sha256
+    #[serde(rename = "sha256")]
+    Sha256,
 
     // Sha512
     #[serde(rename = "sha512")]
@@ -191,117 +191,105 @@ pub enum AuthAlgorithm {
     #[serde(rename = "sha384")]
     Sha384,
 
-    // Sha1
-    #[serde(rename = "sha1")]
-    Sha1,
+    // AesXcbc
+    #[serde(rename = "aes-xcbc")]
+    AesXcbc,
 
     // AesCmac
     #[serde(rename = "aes-cmac")]
     AesCmac,
 
-    // Sha256
-    #[serde(rename = "sha256")]
-    Sha256,
+    // Sha1
+    #[serde(rename = "sha1")]
+    Sha1,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Phase1NegotiationMode {
-    // Aggressive
-    #[serde(rename = "aggressive")]
-    Aggressive,
-
     // Main
     #[serde(rename = "main")]
     Main,
+
+    // Aggressive
+    #[serde(rename = "aggressive")]
+    Aggressive,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum IkeVersion {
-    // V2
-    #[serde(rename = "v2")]
-    V2,
-
     // V1
     #[serde(rename = "v1")]
     V1,
+
+    // V2
+    #[serde(rename = "v2")]
+    V2,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Pfs {
-    // Group30
-    #[serde(rename = "group30")]
-    Group30,
-
-    // Group14
-    #[serde(rename = "group14")]
-    Group14,
-
-    // Group18
-    #[serde(rename = "group18")]
-    Group18,
-
-    // Group17
-    #[serde(rename = "group17")]
-    Group17,
+    // Group23
+    #[serde(rename = "group23")]
+    Group23,
 
     // Group27
     #[serde(rename = "group27")]
     Group27,
 
-    // Group26
-    #[serde(rename = "group26")]
-    Group26,
-
-    // Group23
-    #[serde(rename = "group23")]
-    Group23,
-
-    // Group28
-    #[serde(rename = "group28")]
-    Group28,
-
-    // Group31
-    #[serde(rename = "group31")]
-    Group31,
-
     // Group24
     #[serde(rename = "group24")]
     Group24,
-
-    // Group19
-    #[serde(rename = "group19")]
-    Group19,
-
-    // Group20
-    #[serde(rename = "group20")]
-    Group20,
 
     // Group25
     #[serde(rename = "group25")]
     Group25,
 
-    // Group22
-    #[serde(rename = "group22")]
-    Group22,
+    // Group19
+    #[serde(rename = "group19")]
+    Group19,
 
-    // Group16
-    #[serde(rename = "group16")]
-    Group16,
+    // Group26
+    #[serde(rename = "group26")]
+    Group26,
 
-    // Group5
-    #[serde(rename = "group5")]
-    Group5,
+    // Group31
+    #[serde(rename = "group31")]
+    Group31,
 
     // Group29
     #[serde(rename = "group29")]
     Group29,
 
+    // Group28
+    #[serde(rename = "group28")]
+    Group28,
+
+    // Group14
+    #[serde(rename = "group14")]
+    Group14,
+
+    // Group30
+    #[serde(rename = "group30")]
+    Group30,
+
+    // Group17
+    #[serde(rename = "group17")]
+    Group17,
+
+    // Group5
+    #[serde(rename = "group5")]
+    Group5,
+
     // Group15
     #[serde(rename = "group15")]
     Group15,
+
+    // Group18
+    #[serde(rename = "group18")]
+    Group18,
 
     // Group21
     #[serde(rename = "group21")]
@@ -310,4 +298,16 @@ pub enum Pfs {
     // Group2
     #[serde(rename = "group2")]
     Group2,
+
+    // Group20
+    #[serde(rename = "group20")]
+    Group20,
+
+    // Group22
+    #[serde(rename = "group22")]
+    Group22,
+
+    // Group16
+    #[serde(rename = "group16")]
+    Group16,
 }

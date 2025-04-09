@@ -23,33 +23,33 @@ use serde::{Deserialize, Serialize};
 pub struct LimitResponse {
     /// The max amount of items allowed per page
     ///
-    max_page_limit: Option<i32>,
+    pub max_page_limit: Option<i32>,
 
     /// The max length of a recordset name
     ///
-    max_recordset_name_length: Option<i32>,
+    pub max_recordset_name_length: Option<i32>,
 
     /// The max amount of records contained in a recordset
     ///
-    max_recordset_records: Option<i32>,
+    pub max_recordset_records: Option<i32>,
 
     /// The max length of a zone name
     ///
-    max_zone_name_length: Option<i32>,
+    pub max_zone_name_length: Option<i32>,
 
     /// The max amount of records in a zone
     ///
-    max_zone_records: Option<i32>,
+    pub max_zone_records: Option<i32>,
 
     /// The max amount of recordsets per zone
     ///
-    max_zone_recordsets: Option<i32>,
+    pub max_zone_recordsets: Option<i32>,
 
     /// The max amount of zones for this project
     ///
-    max_zones: Option<i32>,
+    pub max_zones: Option<i32>,
 
     /// The lowest ttl allowed on this system
     ///
-    min_ttl: Option<i32>,
+    pub min_ttl: Option<i32>,
 }

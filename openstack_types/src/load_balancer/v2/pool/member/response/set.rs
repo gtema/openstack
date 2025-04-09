@@ -23,82 +23,82 @@ use serde::{Deserialize, Serialize};
 pub struct MemberResponse {
     /// The IP address of the backend member server.
     ///
-    address: Option<String>,
+    pub address: Option<String>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// Is the member a backup? Backup members only receive traffic when all
     /// non-backup members are down.
     ///
     /// **New in version 2.1**
     ///
-    backup: Option<bool>,
+    pub backup: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The ID of the member.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// An alternate IP address used for health monitoring a backend member.
     /// Default is `null` which monitors the member `address`.
     ///
-    monitor_address: Option<String>,
+    pub monitor_address: Option<String>,
 
     /// An alternate protocol port used for health monitoring a backend member.
     /// Default is `null` which monitors the member `protocol_port`.
     ///
-    monitor_port: Option<i32>,
+    pub monitor_port: Option<i32>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The protocol port number the backend member server is listening on.
     ///
-    protocol_port: Option<i32>,
+    pub protocol_port: Option<i32>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// The subnet ID the member service is accessible from.
     ///
-    subnet_id: Option<String>,
+    pub subnet_id: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The member vNIC type used for the member port. One of `normal` or
     /// `direct`.
     ///
     /// **New in version 2.29**
     ///
-    vnic_type: Option<String>,
+    pub vnic_type: Option<String>,
 
     /// The weight of a member determines the portion of requests or
     /// connections it services compared to the other members of the pool. For
@@ -107,5 +107,5 @@ pub struct MemberResponse {
     /// does not receive new connections but continues to service existing
     /// connections. A valid value is from `0` to `256`. Default is `1`.
     ///
-    weight: Option<i32>,
+    pub weight: Option<i32>,
 }

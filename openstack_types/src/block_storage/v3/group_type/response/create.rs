@@ -24,22 +24,22 @@ use std::collections::HashMap;
 pub struct GroupTypeResponse {
     /// The group type description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
     ///
-    group_specs: Option<HashMap<String, String>>,
+    pub group_specs: Option<HashMap<String, String>>,
 
     /// The group type ID.
     ///
-    id: String,
+    pub id: String,
 
     /// Whether the group type is publicly visible.
     ///
-    is_public: Option<bool>,
+    pub is_public: Option<bool>,
 
     /// The group type name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

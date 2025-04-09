@@ -24,25 +24,25 @@ use serde::{Deserialize, Serialize};
 pub struct FlavorResponse {
     /// The human-readable description for the flavor.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Indicates whether the flavor is enabled or not. Default is true.
     ///
-    enabled: Option<BoolString>,
+    pub enabled: Option<BoolString>,
 
     /// The ID of the flavor.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Name of the flavor.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// Service profile UUIDs associated with this flavor.
     ///
-    service_profiles: Option<Vec<String>>,
+    pub service_profiles: Option<Vec<String>>,
 
     /// Service type for the flavor. Example: FIREWALL.
     ///
-    service_type: Option<String>,
+    pub service_type: Option<String>,
 }

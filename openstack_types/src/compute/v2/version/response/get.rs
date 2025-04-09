@@ -24,22 +24,22 @@ pub struct VersionResponse {
     /// A common name for the version in question. Informative only, it has no
     /// real semantic meaning.
     ///
-    id: String,
+    pub id: String,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
     ///
-    links: Vec<Links>,
+    pub links: Vec<Links>,
 
     #[serde(rename = "media-types")]
-    media_types: Option<Vec<MediaTypes>>,
+    pub media_types: Option<Vec<MediaTypes>>,
 
     /// If this version of the API supports microversions, the minimum
     /// microversion that is supported. This will be the empty string if
     /// microversions are not supported.
     ///
-    min_version: String,
+    pub min_version: String,
 
     /// The status of this API version. This can be one of:
     ///
@@ -48,7 +48,7 @@ pub struct VersionResponse {
     /// - `DEPRECATED`: a deprecated version of the API that is slated for
     ///   removal
     ///
-    status: Status,
+    pub status: Status,
 
     /// This is a fixed string. It is `2011-01-21T11:33:21Z` in version 2.0,
     /// `2013-07-23T11:33:21Z` in version 2.1.
@@ -58,38 +58,38 @@ pub struct VersionResponse {
     /// It is vestigial and provides no useful information. It will be
     /// deprecated and removed in the future.
     ///
-    updated: String,
+    pub updated: String,
 
-    version: Option<String>,
+    pub version: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Supported
-    #[serde(rename = "SUPPORTED")]
-    Supported,
+    // Deprecated
+    #[serde(rename = "DEPRECATED")]
+    Deprecated,
 
     // Current
     #[serde(rename = "CURRENT")]
     Current,
 
-    // Deprecated
-    #[serde(rename = "DEPRECATED")]
-    Deprecated,
+    // Supported
+    #[serde(rename = "SUPPORTED")]
+    Supported,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: String,
-    rel: String,
-    _type: Option<String>,
+    pub href: String,
+    pub rel: String,
+    pub _type: Option<String>,
 }
 
 /// `MediaTypes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MediaTypes {
-    base: String,
-    _type: String,
+    pub base: String,
+    pub _type: String,
 }

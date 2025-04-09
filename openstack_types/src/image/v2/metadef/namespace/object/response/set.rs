@@ -25,24 +25,24 @@ use std::collections::HashMap;
 pub struct ObjectResponse {
     /// Date and time of object creation
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
-    name: String,
+    pub name: String,
 
-    properties: Option<HashMap<String, Properties>>,
+    pub properties: Option<HashMap<String, Properties>>,
 
-    required: Option<Vec<String>>,
+    pub required: Option<Vec<String>>,
 
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     #[serde(rename = "self")]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
     /// Date and time of the last object modification
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -52,18 +52,6 @@ pub enum Type {
     #[serde(rename = "string")]
     String,
 
-    // Number
-    #[serde(rename = "number")]
-    Number,
-
-    // Object
-    #[serde(rename = "object")]
-    Object,
-
-    // Boolean
-    #[serde(rename = "boolean")]
-    Boolean,
-
     // Array
     #[serde(rename = "array")]
     Array,
@@ -71,35 +59,47 @@ pub enum Type {
     // Integer
     #[serde(rename = "integer")]
     Integer,
+
+    // Boolean
+    #[serde(rename = "boolean")]
+    Boolean,
+
+    // Number
+    #[serde(rename = "number")]
+    Number,
+
+    // Object
+    #[serde(rename = "object")]
+    Object,
 }
 
 /// `Items` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Items {
-    _enum: Option<Vec<String>>,
-    _type: Option<Type>,
+    pub _enum: Option<Vec<String>>,
+    pub _type: Option<Type>,
 }
 
 /// `Properties` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Properties {
-    additional_items: Option<bool>,
-    _default: Option<Value>,
-    description: Option<String>,
-    _enum: Option<Vec<String>>,
-    items: Option<Items>,
-    maximum: Option<f32>,
-    max_items: Option<i32>,
-    max_length: Option<i32>,
-    minimum: Option<f32>,
-    min_items: Option<i32>,
-    min_length: Option<i32>,
-    name: Option<String>,
-    operators: Option<Vec<String>>,
-    pattern: Option<String>,
-    readonly: Option<bool>,
-    required: Option<Vec<String>>,
-    title: String,
-    _type: Type,
-    unique_items: Option<bool>,
+    pub additional_items: Option<bool>,
+    pub _default: Option<Value>,
+    pub description: Option<String>,
+    pub _enum: Option<Vec<String>>,
+    pub items: Option<Items>,
+    pub maximum: Option<f32>,
+    pub max_items: Option<i32>,
+    pub max_length: Option<i32>,
+    pub minimum: Option<f32>,
+    pub min_items: Option<i32>,
+    pub min_length: Option<i32>,
+    pub name: Option<String>,
+    pub operators: Option<Vec<String>>,
+    pub pattern: Option<String>,
+    pub readonly: Option<bool>,
+    pub required: Option<Vec<String>>,
+    pub title: String,
+    pub _type: Type,
+    pub unique_items: Option<bool>,
 }

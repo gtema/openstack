@@ -24,12 +24,12 @@ use std::collections::HashMap;
 pub struct AllocationResponse {
     /// A dictionary of allocation records keyed by consumer uuid.
     ///
-    allocations: HashMap<String, AllocationsItem>,
+    pub allocations: HashMap<String, AllocationsItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
     ///
-    resource_provider_generation: i32,
+    pub resource_provider_generation: i32,
 }
 
 /// A dictionary of allocation records keyed by consumer uuid.
@@ -37,5 +37,5 @@ pub struct AllocationResponse {
 /// `AllocationsItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AllocationsItem {
-    resources: HashMap<String, i32>,
+    pub resources: HashMap<String, i32>,
 }

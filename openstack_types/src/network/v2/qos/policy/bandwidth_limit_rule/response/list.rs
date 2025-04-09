@@ -26,20 +26,20 @@ pub struct BandwidthLimitRuleResponse {
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`. Default value is `egress`.
     ///
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
     /// The ID of the QoS Bandwidth limit rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The maximum burst size (in kilobits).
     ///
-    max_burst_kbps: Option<IntString>,
+    pub max_burst_kbps: Option<IntString>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
     ///
-    max_kbps: Option<IntString>,
+    pub max_kbps: Option<IntString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

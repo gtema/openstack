@@ -23,11 +23,11 @@ use serde::{Deserialize, Serialize};
 pub struct TagResponse {
     /// Date and time of tag creation
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    name: String,
+    pub name: String,
 
     /// Date and time of the last tag modification
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

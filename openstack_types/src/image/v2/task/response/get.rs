@@ -28,7 +28,7 @@ pub struct TaskResponse {
     /// The date and time stamp format is
     /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The date and time when the task is subject to removal. While the *task
     /// object*, that is, the record describing the task is subject to
@@ -42,57 +42,57 @@ pub struct TaskResponse {
     /// `failure`. Otherwise its value is `null`. It may not appear in the
     /// response when its value is `null`.
     ///
-    expires_at: Option<String>,
+    pub expires_at: Option<String>,
 
     /// The UUID of the task.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Image associated with the task
     ///
-    image_id: Option<String>,
+    pub image_id: Option<String>,
 
     /// A JSON object specifying the input parameters to the task. Consult your
     /// cloud provider’s documentation for details.
     ///
-    input: Option<HashMap<String, Value>>,
+    pub input: Option<HashMap<String, Value>>,
 
     /// Human-readable text, possibly an empty string, usually displayed in an
     /// error situation to provide more information about what has occurred.
     ///
-    message: Option<String>,
+    pub message: Option<String>,
 
     /// An identifier for the owner of the task, usually the tenant ID.
     ///
-    owner: Option<String>,
+    pub owner: Option<String>,
 
     /// Human-readable informative request-id
     ///
-    request_id: Option<String>,
+    pub request_id: Option<String>,
 
     /// A JSON object specifying information about the ultimate outcome of the
     /// task. Consult your cloud provider’s documentation for details.
     ///
-    result: Option<HashMap<String, Value>>,
+    pub result: Option<HashMap<String, Value>>,
 
     /// The URI for the schema describing an image task.
     ///
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     /// A URI for this task.
     ///
     #[serde(rename = "self")]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
     /// The current status of this task. The value can be `pending`,
     /// `processing`, `success` or `failure`.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// The type of task represented by this content.
     ///
     #[serde(rename = "type")]
-    _type: Option<Type>,
+    pub _type: Option<Type>,
 
     /// The date and time when the task was updated.
     ///
@@ -102,20 +102,16 @@ pub struct TaskResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// User associated with the task
     ///
-    user_id: Option<String>,
+    pub user_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // LocationImport
-    #[serde(rename = "location_import")]
-    LocationImport,
-
     // ApiImageImport
     #[serde(rename = "api_image_import")]
     ApiImageImport,
@@ -123,19 +119,15 @@ pub enum Type {
     // Import
     #[serde(rename = "import")]
     Import,
+
+    // LocationImport
+    #[serde(rename = "location_import")]
+    LocationImport,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Processing
-    #[serde(rename = "processing")]
-    Processing,
-
-    // Pending
-    #[serde(rename = "pending")]
-    Pending,
-
     // Success
     #[serde(rename = "success")]
     Success,
@@ -143,4 +135,12 @@ pub enum Status {
     // Failure
     #[serde(rename = "failure")]
     Failure,
+
+    // Pending
+    #[serde(rename = "pending")]
+    Pending,
+
+    // Processing
+    #[serde(rename = "processing")]
+    Processing,
 }

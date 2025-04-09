@@ -24,14 +24,14 @@ pub struct InterfaceResponse {
     /// List of the interface attachments.
     ///
     #[serde(rename = "interfaceAttachments")]
-    interface_attachments: Vec<InterfaceAttachments>,
+    pub interface_attachments: Vec<InterfaceAttachments>,
 }
 
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
+    pub ip_address: Option<String>,
+    pub subnet_id: Option<String>,
 }
 
 /// The interface attachment.
@@ -39,10 +39,10 @@ pub struct FixedIps {
 /// `InterfaceAttachments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InterfaceAttachments {
-    fixed_ips: Vec<FixedIps>,
-    mac_addr: Option<String>,
-    net_id: Option<String>,
-    port_id: Option<String>,
-    port_state: Option<String>,
-    tag: Option<String>,
+    pub fixed_ips: Vec<FixedIps>,
+    pub mac_addr: Option<String>,
+    pub net_id: Option<String>,
+    pub port_id: Option<String>,
+    pub port_state: Option<String>,
+    pub tag: Option<String>,
 }

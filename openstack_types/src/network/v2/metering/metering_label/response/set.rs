@@ -22,13 +22,13 @@ use serde::{Deserialize, Serialize};
 /// MeteringLabel response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct MeteringLabelResponse {
-    description: Option<String>,
+    pub description: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

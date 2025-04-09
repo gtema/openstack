@@ -24,51 +24,51 @@ use serde::{Deserialize, Serialize};
 pub struct LogResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Indicates whether this log object is enabled or disabled.
     ///
-    enabled: Option<BoolString>,
+    pub enabled: Option<BoolString>,
 
     /// Type of security events to log. `ACCEPT`, `DROP`, or `ALL`.
     ///
-    event: Option<Event>,
+    pub event: Option<Event>,
 
     /// The ID of the log object.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The ID of the project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The ID of resource log (e.g security group ID).
     ///
-    resource_id: Option<String>,
+    pub resource_id: Option<String>,
 
     /// The resource log type such as ‘security_group’.
     ///
-    resource_type: Option<String>,
+    pub resource_type: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The ID of resource target log such as port ID.
     ///
-    target_id: Option<String>,
+    pub target_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -78,11 +78,11 @@ pub enum Event {
     #[serde(rename = "ACCEPT")]
     Accept,
 
-    // All
-    #[serde(rename = "ALL")]
-    All,
-
     // Drop
     #[serde(rename = "DROP")]
     Drop,
+
+    // All
+    #[serde(rename = "ALL")]
+    All,
 }

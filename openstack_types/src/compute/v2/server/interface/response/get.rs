@@ -23,34 +23,34 @@ use serde::{Deserialize, Serialize};
 pub struct InterfaceResponse {
     /// Fixed IP addresses with subnet IDs.
     ///
-    fixed_ips: Vec<FixedIps>,
+    pub fixed_ips: Vec<FixedIps>,
 
     /// The MAC address.
     ///
-    mac_addr: Option<String>,
+    pub mac_addr: Option<String>,
 
     /// The network ID.
     ///
-    net_id: Option<String>,
+    pub net_id: Option<String>,
 
     /// The port ID.
     ///
-    port_id: Option<String>,
+    pub port_id: Option<String>,
 
     /// The port state.
     ///
-    port_state: Option<String>,
+    pub port_state: Option<String>,
 
     /// The device tag applied to the virtual network interface or `null`.
     ///
     /// **New in version 2.70**
     ///
-    tag: Option<String>,
+    pub tag: Option<String>,
 }
 
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
+    pub ip_address: Option<String>,
+    pub subnet_id: Option<String>,
 }

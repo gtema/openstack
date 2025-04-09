@@ -25,37 +25,37 @@ pub struct RouterResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<BoolString>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
-    availability_zone_hints: Option<Vec<String>>,
+    pub availability_zone_hints: Option<Vec<String>>,
 
     /// The availability zone(s) for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
-    availability_zones: Option<Vec<String>>,
+    pub availability_zones: Option<Vec<String>>,
 
     /// The associated conntrack helper resources for the roter. If the router
     /// has multiple conntrack helper resources, this field has multiple
     /// entries. Each entry consists of netfilter conntrack helper (`helper`),
     /// the network protocol (`protocol`), the network port (`port`).
     ///
-    conntrack_helpers: Option<String>,
+    pub conntrack_helpers: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
     ///
-    distributed: Option<BoolString>,
+    pub distributed: Option<BoolString>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
     /// router, the IPv6 address of internal subnets attached to the router can
@@ -64,7 +64,7 @@ pub struct RouterResponse {
     /// router can not be published to external by `ndp_proxy`. It is available
     /// when `router-extend-ndp-proxy` extension is enabled.
     ///
-    enable_ndp_proxy: Option<BoolString>,
+    pub enable_ndp_proxy: Option<BoolString>,
 
     /// The external gateway information of the router. If the router has an
     /// external gateway, this would be a dict with `network_id`,
@@ -72,57 +72,57 @@ pub struct RouterResponse {
     /// `enable_default_route_ecmp` and `enable_default_route_bfd`. Otherwise,
     /// this would be `null`.
     ///
-    external_gateway_info: Option<ExternalGatewayInfo>,
+    pub external_gateway_info: Option<ExternalGatewayInfo>,
 
     /// The ID of the flavor associated with the router.
     ///
-    flavor_id: Option<String>,
+    pub flavor_id: Option<String>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
     ///
-    ha: Option<BoolString>,
+    pub ha: Option<BoolString>,
 
     /// The ID of the router.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
     ///
-    routes: Option<Vec<Routes>>,
+    pub routes: Option<Vec<Routes>>,
 
     /// The router status.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// `ExternalFixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalFixedIps {
-    ip_address: Option<String>,
-    subnet_id: Option<String>,
+    pub ip_address: Option<String>,
+    pub subnet_id: Option<String>,
 }
 
 /// The external gateway information of the router. If the router has an
@@ -133,15 +133,15 @@ pub struct ExternalFixedIps {
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {
-    enable_snat: Option<BoolString>,
-    external_fixed_ips: Option<Vec<ExternalFixedIps>>,
-    network_id: String,
-    qos_policy_id: Option<String>,
+    pub enable_snat: Option<BoolString>,
+    pub external_fixed_ips: Option<Vec<ExternalFixedIps>>,
+    pub network_id: String,
+    pub qos_policy_id: Option<String>,
 }
 
 /// `Routes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routes {
-    destination: Option<String>,
-    nexthop: Option<String>,
+    pub destination: Option<String>,
+    pub nexthop: Option<String>,
 }

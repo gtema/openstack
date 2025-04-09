@@ -21,5 +21,5 @@ use serde::{Deserialize, Serialize};
 /// Server response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct ServerResponse {
-    output: String,
+    pub output: String,
 }

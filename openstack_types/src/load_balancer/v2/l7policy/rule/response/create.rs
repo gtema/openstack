@@ -24,65 +24,65 @@ pub struct RuleResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<bool>,
+    pub admin_state_up: Option<bool>,
 
     /// The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`,
     /// `EQUAL_TO`, `REGEX`, or `STARTS_WITH`.
     ///
-    compare_type: Option<String>,
+    pub compare_type: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The ID of the L7 rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// When `true` the logic of the rule is inverted. For example, with invert
     /// `true`, equal to would become not equal to.
     ///
-    invert: Option<bool>,
+    pub invert: Option<bool>,
 
     /// The key to use for the comparison. For example, the name of the cookie
     /// to evaluate.
     ///
-    key: Option<String>,
+    pub key: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
-    operating_status: Option<String>,
+    pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
-    provisioning_status: Option<String>,
+    pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`,
     /// `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`.
     ///
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The value to use for the comparison. For example, the file type to
     /// compare.
     ///
-    value: Option<String>,
+    pub value: Option<String>,
 }

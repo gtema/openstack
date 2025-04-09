@@ -23,5 +23,5 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceProfileResponse {
     /// The ID of the resource.
     ///
-    id: String,
+    pub id: String,
 }

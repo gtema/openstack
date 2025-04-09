@@ -23,12 +23,12 @@ use serde::{Deserialize, Serialize};
 pub struct LimitResponse {
     /// An `absolute` limits object.
     ///
-    absolute: Absolute,
+    pub absolute: Absolute,
 
     /// Rate-limit volume copy bandwidth, used to mitigate slow down of data
     /// access from the instances.
     ///
-    rate: Vec<String>,
+    pub rate: Vec<String>,
 }
 
 /// An `absolute` limits object.
@@ -36,14 +36,14 @@ pub struct LimitResponse {
 /// `Absolute` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Absolute {
-    max_total_backup_gigabytes: i64,
-    max_total_backups: i32,
-    max_total_snapshots: i32,
-    max_total_volume_gigabytes: i64,
-    max_total_volumes: i32,
-    total_backup_gigabytes_used: i64,
-    total_backups_used: i32,
-    total_gigabytes_used: i64,
-    total_snapshots_used: i32,
-    total_volumes_used: i32,
+    pub max_total_backup_gigabytes: i64,
+    pub max_total_backups: i32,
+    pub max_total_snapshots: i32,
+    pub max_total_volume_gigabytes: i64,
+    pub max_total_volumes: i32,
+    pub total_backup_gigabytes_used: i64,
+    pub total_backups_used: i32,
+    pub total_gigabytes_used: i64,
+    pub total_snapshots_used: i32,
+    pub total_volumes_used: i32,
 }

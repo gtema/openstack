@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct GroupResponse {
     /// The UUID of the object.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The group name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

@@ -23,12 +23,12 @@ use serde::{Deserialize, Serialize};
 pub struct ResourceClassResponse {
     /// The name of one resource class.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

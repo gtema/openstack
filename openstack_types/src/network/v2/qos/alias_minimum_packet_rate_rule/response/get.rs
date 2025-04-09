@@ -22,23 +22,23 @@ use serde::{Deserialize, Serialize};
 /// AliasMinimumPacketRateRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AliasMinimumPacketRateRuleResponse {
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    min_kpps: Option<IntString>,
+    pub min_kpps: Option<IntString>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Direction {
-    // Ingress
-    #[serde(rename = "ingress")]
-    Ingress,
-
     // Any
     #[serde(rename = "any")]
     Any,
+
+    // Ingress
+    #[serde(rename = "ingress")]
+    Ingress,
 
     // Egress
     #[serde(rename = "egress")]

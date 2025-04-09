@@ -24,9 +24,9 @@ pub struct FlavorAccessResponse {
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
     ///
-    flavor_id: String,
+    pub flavor_id: String,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
-    tenant_id: String,
+    pub tenant_id: String,
 }

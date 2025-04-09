@@ -25,11 +25,11 @@ use std::collections::HashMap;
 pub struct ServerGroupResponse {
     /// The UUID of the server group.
     ///
-    id: String,
+    pub id: String,
 
     /// A list of members in the server group.
     ///
-    members: Option<Vec<String>>,
+    pub members: Option<Vec<String>>,
 
     /// Metadata key and value pairs. The maximum size for each metadata key
     /// and value pair is 255 bytes. It’s always empty and only used for
@@ -37,11 +37,11 @@ pub struct ServerGroupResponse {
     ///
     /// **Available until version 2.63**
     ///
-    metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<HashMap<String, String>>,
 
     /// The name of the server group.
     ///
-    name: String,
+    pub name: String,
 
     /// A list of exactly one policy name to associate with the server group.
     /// The current valid policy names are:
@@ -61,7 +61,7 @@ pub struct ServerGroupResponse {
     ///
     /// **Available until version 2.63**
     ///
-    policies: Option<Vec<Policies>>,
+    pub policies: Option<Vec<Policies>>,
 
     /// The `policy` field represents the name of the policy. The current valid
     /// policy names are:
@@ -79,13 +79,13 @@ pub struct ServerGroupResponse {
     ///
     /// **New in version 2.64**
     ///
-    policy: Policy,
+    pub policy: Policy,
 
     /// The project ID who owns the server group.
     ///
     /// **New in version 2.13**
     ///
-    project_id: String,
+    pub project_id: String,
 
     /// The `rules` field, which is a dict, can be applied to the policy.
     /// Currently, only the `max_server_per_host` rule is supported for the
@@ -96,22 +96,18 @@ pub struct ServerGroupResponse {
     ///
     /// **New in version 2.64**
     ///
-    rules: Option<Rules>,
+    pub rules: Option<Rules>,
 
     /// The user ID who owns the server group.
     ///
     /// **New in version 2.13**
     ///
-    user_id: String,
+    pub user_id: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Policies {
-    // SoftAntiAffinity
-    #[serde(rename = "soft-anti-affinity")]
-    SoftAntiAffinity,
-
     // Affinity
     #[serde(rename = "affinity")]
     Affinity,
@@ -123,15 +119,15 @@ pub enum Policies {
     // SoftAffinity
     #[serde(rename = "soft-affinity")]
     SoftAffinity,
+
+    // SoftAntiAffinity
+    #[serde(rename = "soft-anti-affinity")]
+    SoftAntiAffinity,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Policy {
-    // SoftAntiAffinity
-    #[serde(rename = "soft-anti-affinity")]
-    SoftAntiAffinity,
-
     // Affinity
     #[serde(rename = "affinity")]
     Affinity,
@@ -143,6 +139,10 @@ pub enum Policy {
     // SoftAffinity
     #[serde(rename = "soft-affinity")]
     SoftAffinity,
+
+    // SoftAntiAffinity
+    #[serde(rename = "soft-anti-affinity")]
+    SoftAntiAffinity,
 }
 
 /// The `rules` field, which is a dict, can be applied to the policy.
@@ -157,5 +157,5 @@ pub enum Policy {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    max_server_per_host: Option<IntString>,
+    pub max_server_per_host: Option<IntString>,
 }

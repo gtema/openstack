@@ -26,11 +26,11 @@ pub struct ServerResponse {
     /// wouldn’t return the `adminPass` field in response.
     ///
     #[serde(rename = "adminPass")]
-    admin_pass: Option<String>,
+    pub admin_pass: Option<String>,
 
     /// The UUID of the server.
     ///
-    id: String,
+    pub id: String,
 
     /// Links pertaining to usage. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
@@ -38,7 +38,7 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.40**
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// Disk configuration. The value is either:
     ///
@@ -50,29 +50,29 @@ pub struct ServerResponse {
     ///   larger, The API does not partition the remaining disk space.
     ///
     #[serde(rename = "OS-DCF:diskConfig")]
-    os_dcf_disk_config: Option<OsDcfDiskConfig>,
+    pub os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// One or more security groups objects.
     ///
-    security_groups: Option<Vec<SecurityGroups>>,
+    pub security_groups: Option<Vec<SecurityGroups>>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum OsDcfDiskConfig {
-    // Auto
-    #[serde(rename = "AUTO")]
-    Auto,
-
     // Manual
     #[serde(rename = "MANUAL")]
     Manual,
+
+    // Auto
+    #[serde(rename = "AUTO")]
+    Auto,
 }
 
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -82,6 +82,6 @@ pub struct SecurityGroups {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

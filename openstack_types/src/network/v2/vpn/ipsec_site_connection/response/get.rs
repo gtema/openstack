@@ -26,45 +26,45 @@ pub struct IpsecSiteConnectionResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<BoolString>,
 
     /// The authentication mode. A valid value is `psk`, which is the default.
     ///
-    auth_mode: Option<AuthMode>,
+    pub auth_mode: Option<AuthMode>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// A dictionary with dead peer detection (DPD) protocol controls.
     ///
-    dpd: Option<String>,
+    pub dpd: Option<String>,
 
     /// The ID of the IPsec site-to-site connection.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID of the IKE policy.
     ///
-    ikepolicy_id: Option<String>,
+    pub ikepolicy_id: Option<String>,
 
     /// Indicates whether this VPN can only respond to connections or both
     /// respond to and initiate connections. A valid value is `response- only`
     /// or `bi-directional`. Default is `bi-directional`.
     ///
-    initiator: Option<Initiator>,
+    pub initiator: Option<Initiator>,
 
     /// The ID of the IPsec policy.
     ///
-    ipsecpolicy_id: Option<String>,
+    pub ipsecpolicy_id: Option<String>,
 
     /// The ID for the endpoint group that contains private subnets for the
     /// local side of the connection. Yo must specify this parameter with the
     /// `peer_ep_group_id` parameter unless in backward- compatible mode where
     /// `peer_cidrs` is provided with a `subnet_id` for the VPN service.
     ///
-    local_ep_group_id: Option<String>,
+    pub local_ep_group_id: Option<String>,
 
     /// An ID to be used instead of the external IP address for a virtual
     /// router used in traffic between instances on different networks in
@@ -72,25 +72,25 @@ pub struct IpsecSiteConnectionResponse {
     /// address, etc. If this is not configured then the external IP address
     /// will be used as the ID.
     ///
-    local_id: Option<String>,
+    pub local_id: Option<String>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     ///
-    mtu: Option<IntString>,
+    pub mtu: Option<IntString>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The peer gateway public IPv4 or IPv6 address or FQDN.
     ///
-    peer_address: Option<String>,
+    pub peer_address: Option<String>,
 
     /// (Deprecated) Unique list of valid peer private CIDRs in the form \<
     /// net_address > / < prefix > .
     ///
-    peer_cidrs: Option<Vec<String>>,
+    pub peer_cidrs: Option<Vec<String>>,
 
     /// The ID for the endpoint group that contains private CIDRs in the form
     /// \< net_address > / < prefix > for the peer side of the connection. You
@@ -98,47 +98,47 @@ pub struct IpsecSiteConnectionResponse {
     /// unless in backward-compatible mode where `peer_cidrs` is provided with
     /// a `subnet_id` for the VPN service.
     ///
-    peer_ep_group_id: Option<String>,
+    pub peer_ep_group_id: Option<String>,
 
     /// The peer router identity for authentication. A valid value is an IPv4
     /// address, IPv6 address, e-mail address, key ID, or FQDN. Typically, this
     /// value matches the `peer_address` value.
     ///
-    peer_id: Option<String>,
+    pub peer_id: Option<String>,
 
     /// The pre-shared key. A valid value is any string.
     ///
-    psk: Option<String>,
+    pub psk: Option<String>,
 
     /// The route mode. A valid value is `static`, which is the default.
     ///
-    route_mode: Option<String>,
+    pub route_mode: Option<String>,
 
     /// Indicates whether the IPsec connection is currently operational. Values
     /// are `ACTIVE`, `DOWN`, `BUILD`, `ERROR`, `PENDING_CREATE`,
     /// `PENDING_UPDATE`, or `PENDING_DELETE`.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// The ID of the VPN service.
     ///
-    vpnservice_id: Option<String>,
+    pub vpnservice_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Initiator {
-    // BiDirectional
-    #[serde(rename = "bi-directional")]
-    BiDirectional,
-
     // ResponseOnly
     #[serde(rename = "response-only")]
     ResponseOnly,
+
+    // BiDirectional
+    #[serde(rename = "bi-directional")]
+    BiDirectional,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

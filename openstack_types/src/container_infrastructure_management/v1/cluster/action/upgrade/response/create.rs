@@ -21,5 +21,5 @@ use serde::{Deserialize, Serialize};
 /// Upgrade response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct UpgradeResponse {
-    uuid: String,
+    pub uuid: String,
 }

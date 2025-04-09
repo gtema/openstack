@@ -31,10 +31,10 @@ pub struct RuleTypeResponse {
     /// list of acceptable values, otherwise it contains a dict with keys of
     /// `start` and `end` which define the range of acceptable values.
     ///
-    drivers: Option<String>,
+    pub drivers: Option<String>,
 
     /// The type of QoS rule.
     ///
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 }

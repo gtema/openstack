@@ -23,11 +23,11 @@ use serde::{Deserialize, Serialize};
 pub struct ImplyResponse {
     /// A prior role object.
     ///
-    implies: Option<Implies>,
+    pub implies: Option<Implies>,
 
     /// A prior role object.
     ///
-    prior_role: Option<PriorRole>,
+    pub prior_role: Option<PriorRole>,
 }
 
 /// The link to the resources in question.
@@ -35,7 +35,7 @@ pub struct ImplyResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }
 
 /// A prior role object.
@@ -43,10 +43,10 @@ pub struct Links {
 /// `PriorRole` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PriorRole {
-    description: Option<String>,
-    id: Option<String>,
-    links: Option<Links>,
-    name: Option<String>,
+    pub description: Option<String>,
+    pub id: Option<String>,
+    pub links: Option<Links>,
+    pub name: Option<String>,
 }
 
 /// A prior role object.
@@ -54,8 +54,8 @@ pub struct PriorRole {
 /// `Implies` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Implies {
-    description: Option<String>,
-    id: Option<String>,
-    links: Option<Links>,
-    name: Option<String>,
+    pub description: Option<String>,
+    pub id: Option<String>,
+    pub links: Option<Links>,
+    pub name: Option<String>,
 }

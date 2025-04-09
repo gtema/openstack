@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct ProviderResponse {
     /// Provider description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Provider name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

@@ -25,7 +25,7 @@ pub struct AmphoraeResponse {
     ///
     /// **New in version 2.3**
     ///
-    amphora_stats: Vec<AmphoraStats>,
+    pub amphora_stats: Vec<AmphoraStats>,
 }
 
 /// Defines which attributes are to show on stats response.
@@ -33,12 +33,12 @@ pub struct AmphoraeResponse {
 /// `AmphoraStats` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AmphoraStats {
-    active_connections: Option<i32>,
-    bytes_in: Option<i32>,
-    bytes_out: Option<i32>,
-    id: Option<String>,
-    listener_id: Option<String>,
-    loadbalancer_id: Option<String>,
-    request_errors: Option<i32>,
-    total_connections: Option<i32>,
+    pub active_connections: Option<i32>,
+    pub bytes_in: Option<i32>,
+    pub bytes_out: Option<i32>,
+    pub id: Option<String>,
+    pub listener_id: Option<String>,
+    pub loadbalancer_id: Option<String>,
+    pub request_errors: Option<i32>,
+    pub total_connections: Option<i32>,
 }

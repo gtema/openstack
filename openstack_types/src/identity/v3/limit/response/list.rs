@@ -23,36 +23,36 @@ use serde::{Deserialize, Serialize};
 pub struct LimitResponse {
     /// The limit description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// The limit ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID for the project.
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The ID of the region that contains the service endpoint. The value can
     /// be None.
     ///
-    region_id: Option<String>,
+    pub region_id: Option<String>,
 
     /// The override limit.
     ///
-    resource_limit: Option<i32>,
+    pub resource_limit: Option<i32>,
 
     /// The resource name.
     ///
-    resource_name: Option<String>,
+    pub resource_name: Option<String>,
 
     /// The UUID of the service to which the limit belongs.
     ///
-    service_id: Option<String>,
+    pub service_id: Option<String>,
 }
 
 /// The link to the resources in question.
@@ -60,5 +60,5 @@ pub struct LimitResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

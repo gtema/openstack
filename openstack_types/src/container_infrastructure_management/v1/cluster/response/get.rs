@@ -24,27 +24,27 @@ use std::collections::HashMap;
 pub struct ClusterResponse {
     /// The endpoint URL of COE API exposed to end-users.
     ///
-    api_address: Option<String>,
+    pub api_address: Option<String>,
 
     /// The UUID of the cluster template.
     ///
-    cluster_template_id: String,
+    pub cluster_template_id: String,
 
     /// Version info of chosen COE in cluster for helping client in picking the
     /// right version of client.
     ///
-    coe_version: Option<String>,
+    pub coe_version: Option<String>,
 
-    container_version: Option<String>,
+    pub container_version: Option<String>,
 
     /// The timeout for cluster creation in minutes. The value expected is a
     /// positive integer and the default is 60 minutes. If the timeout is
     /// reached during cluster creation process, the operation will be aborted
     /// and the cluster status will be set to `CREATE_FAILED`.
     ///
-    create_timeout: Option<i32>,
+    pub create_timeout: Option<i32>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The custom discovery url for node discovery. This is used by the COE to
     /// discover the servers that have been created to host the containers. The
@@ -61,17 +61,17 @@ pub struct ClusterResponse {
     /// In this case, Magnum will generate a unique url here for each uster and
     /// store the info for the servers.
     ///
-    discovery_url: Option<String>,
+    pub discovery_url: Option<String>,
 
-    docker_volume_size: Option<i32>,
+    pub docker_volume_size: Option<i32>,
 
-    faults: Option<HashMap<String, String>>,
+    pub faults: Option<HashMap<String, String>>,
 
-    fixed_network: Option<String>,
+    pub fixed_network: Option<String>,
 
-    fixed_subnet: Option<String>,
+    pub fixed_subnet: Option<String>,
 
-    flavor_id: Option<String>,
+    pub flavor_id: Option<String>,
 
     /// Whether enable or not using the floating IP of cloud provider. Some
     /// cloud providers used floating IP, some used public IP, thus Magnum
@@ -79,43 +79,43 @@ pub struct ClusterResponse {
     /// it’s not set, the value of floating_ip_enabled in template will be
     /// used.
     ///
-    floating_ip_enabled: Option<String>,
+    pub floating_ip_enabled: Option<String>,
 
-    health_status: Option<HealthStatus>,
+    pub health_status: Option<HealthStatus>,
 
-    health_status_reason: Option<HashMap<String, String>>,
+    pub health_status_reason: Option<HashMap<String, String>>,
 
     /// The name of the SSH keypair to configure in the cluster servers for ssh
     /// access. Users will need the key to be able to ssh to the servers in the
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
     ///
-    keypair: Option<String>,
+    pub keypair: Option<String>,
 
-    labels: Option<HashMap<String, String>>,
+    pub labels: Option<HashMap<String, String>>,
 
-    labels_added: Option<HashMap<String, String>>,
+    pub labels_added: Option<HashMap<String, String>>,
 
-    labels_overridden: Option<HashMap<String, String>>,
+    pub labels_overridden: Option<HashMap<String, String>>,
 
-    labels_skipped: Option<HashMap<String, String>>,
+    pub labels_skipped: Option<HashMap<String, String>>,
 
     /// Links to the resources in question.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// List of floating IP of all master nodes.
     ///
-    master_addresses: Option<Vec<String>>,
+    pub master_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as master for the cluster. The
     /// default is 1. Set to more than 1 master to enable High Availability. If
     /// the option `master-lb-enabled` is specified in the cluster template,
     /// the master servers will be placed in a load balancer pool.
     ///
-    master_count: Option<i32>,
+    pub master_count: Option<i32>,
 
-    master_flavor_id: Option<String>,
+    pub master_flavor_id: Option<String>,
 
     /// Since multiple masters may exist in a cluster, a Neutron load balancer
     /// is created to provide the API endpoint for the cluster and to direct
@@ -125,45 +125,45 @@ pub struct ClusterResponse {
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
     ///
-    master_lb_enabled: Option<String>,
+    pub master_lb_enabled: Option<String>,
 
-    merge_labels: Option<String>,
+    pub merge_labels: Option<String>,
 
     /// Name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// List of floating IP of all servers that serve as node.
     ///
-    node_addresses: Option<Vec<String>>,
+    pub node_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
     ///
-    node_count: Option<i32>,
+    pub node_count: Option<i32>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// The reference UUID of orchestration stack from Heat orchestration
     /// service.
     ///
-    stack_id: Option<String>,
+    pub stack_id: Option<String>,
 
     /// The current state of the cluster.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// The reason of cluster current status.
     ///
-    status_reason: Option<String>,
+    pub status_reason: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
-    user_id: Option<String>,
+    pub user_id: Option<String>,
 
     /// The UUID of the cluster.
     ///
-    uuid: Option<String>,
+    pub uuid: Option<String>,
 }
 
 /// A link representation.
@@ -171,87 +171,87 @@ pub struct ClusterResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    created_at: Option<String>,
-    href: Option<String>,
-    rel: Option<String>,
-    _type: Option<String>,
-    updated_at: Option<String>,
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // UpdateComplete
-    #[serde(rename = "UPDATE_COMPLETE")]
-    UpdateComplete,
-
-    // CreateComplete
-    #[serde(rename = "CREATE_COMPLETE")]
-    CreateComplete,
-
-    // RestoreComplete
-    #[serde(rename = "RESTORE_COMPLETE")]
-    RestoreComplete,
-
-    // DeleteInProgress
-    #[serde(rename = "DELETE_IN_PROGRESS")]
-    DeleteInProgress,
-
-    // CreateFailed
-    #[serde(rename = "CREATE_FAILED")]
-    CreateFailed,
-
-    // UpdateFailed
-    #[serde(rename = "UPDATE_FAILED")]
-    UpdateFailed,
-
-    // SnapshotComplete
-    #[serde(rename = "SNAPSHOT_COMPLETE")]
-    SnapshotComplete,
-
-    // ResumeComplete
-    #[serde(rename = "RESUME_COMPLETE")]
-    ResumeComplete,
-
     // AdoptComplete
     #[serde(rename = "ADOPT_COMPLETE")]
     AdoptComplete,
-
-    // DeleteFailed
-    #[serde(rename = "DELETE_FAILED")]
-    DeleteFailed,
-
-    // RollbackFailed
-    #[serde(rename = "ROLLBACK_FAILED")]
-    RollbackFailed,
-
-    // ResumeFailed
-    #[serde(rename = "RESUME_FAILED")]
-    ResumeFailed,
 
     // UpdateInProgress
     #[serde(rename = "UPDATE_IN_PROGRESS")]
     UpdateInProgress,
 
-    // DeleteComplete
-    #[serde(rename = "DELETE_COMPLETE")]
-    DeleteComplete,
+    // DeleteInProgress
+    #[serde(rename = "DELETE_IN_PROGRESS")]
+    DeleteInProgress,
 
-    // RollbackInProgress
-    #[serde(rename = "ROLLBACK_IN_PROGRESS")]
-    RollbackInProgress,
-
-    // CheckComplete
-    #[serde(rename = "CHECK_COMPLETE")]
-    CheckComplete,
+    // RestoreComplete
+    #[serde(rename = "RESTORE_COMPLETE")]
+    RestoreComplete,
 
     // RollbackComplete
     #[serde(rename = "ROLLBACK_COMPLETE")]
     RollbackComplete,
 
+    // SnapshotComplete
+    #[serde(rename = "SNAPSHOT_COMPLETE")]
+    SnapshotComplete,
+
+    // UpdateComplete
+    #[serde(rename = "UPDATE_COMPLETE")]
+    UpdateComplete,
+
+    // RollbackInProgress
+    #[serde(rename = "ROLLBACK_IN_PROGRESS")]
+    RollbackInProgress,
+
+    // ResumeFailed
+    #[serde(rename = "RESUME_FAILED")]
+    ResumeFailed,
+
+    // CheckComplete
+    #[serde(rename = "CHECK_COMPLETE")]
+    CheckComplete,
+
+    // DeleteFailed
+    #[serde(rename = "DELETE_FAILED")]
+    DeleteFailed,
+
     // CreateInProgress
     #[serde(rename = "CREATE_IN_PROGRESS")]
     CreateInProgress,
+
+    // CreateFailed
+    #[serde(rename = "CREATE_FAILED")]
+    CreateFailed,
+
+    // ResumeComplete
+    #[serde(rename = "RESUME_COMPLETE")]
+    ResumeComplete,
+
+    // CreateComplete
+    #[serde(rename = "CREATE_COMPLETE")]
+    CreateComplete,
+
+    // RollbackFailed
+    #[serde(rename = "ROLLBACK_FAILED")]
+    RollbackFailed,
+
+    // DeleteComplete
+    #[serde(rename = "DELETE_COMPLETE")]
+    DeleteComplete,
+
+    // UpdateFailed
+    #[serde(rename = "UPDATE_FAILED")]
+    UpdateFailed,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

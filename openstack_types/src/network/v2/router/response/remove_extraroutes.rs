@@ -23,22 +23,22 @@ use serde::{Deserialize, Serialize};
 pub struct RouterResponse {
     /// The ID of the router.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the router.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
     ///
-    routes: Option<Vec<Routes>>,
+    pub routes: Option<Vec<Routes>>,
 }
 
 /// `Routes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Routes {
-    destination: Option<String>,
-    nexthop: Option<String>,
+    pub destination: Option<String>,
+    pub nexthop: Option<String>,
 }

@@ -26,35 +26,35 @@ pub struct AttachmentResponse {
     /// The attach mode of attachment, read-only (‘ro’) or read-and-write
     /// (‘rw’), default is ‘rw’.
     ///
-    attach_mode: Option<AttachMode>,
+    pub attach_mode: Option<AttachMode>,
 
     /// The time when attachment is attached.
     ///
-    attached_at: Option<String>,
+    pub attached_at: Option<String>,
 
     /// The connection info used for server to connect the volume.
     ///
-    connection_info: Option<HashMap<String, Value>>,
+    pub connection_info: Option<HashMap<String, Value>>,
 
     /// The time when attachment is detached.
     ///
-    detached_at: Option<String>,
+    pub detached_at: Option<String>,
 
     /// The ID of attachment.
     ///
-    id: String,
+    pub id: String,
 
     /// The UUID of the attaching instance.
     ///
-    instance: Option<String>,
+    pub instance: Option<String>,
 
     /// The status of the attachment.
     ///
-    status: Status,
+    pub status: Status,
 
     /// The UUID of the volume which the attachment belongs to.
     ///
-    volume_id: String,
+    pub volume_id: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -72,17 +72,25 @@ pub enum AttachMode {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
+    // ErrorAttaching
+    #[serde(rename = "error_attaching")]
+    ErrorAttaching,
 
     // Attached
     #[serde(rename = "attached")]
     Attached,
 
+    // ErrorDetaching
+    #[serde(rename = "error_detaching")]
+    ErrorDetaching,
+
     // Detached
     #[serde(rename = "detached")]
     Detached,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
 
     // Reserved
     #[serde(rename = "reserved")]
@@ -91,12 +99,4 @@ pub enum Status {
     // Attaching
     #[serde(rename = "attaching")]
     Attaching,
-
-    // ErrorAttaching
-    #[serde(rename = "error_attaching")]
-    ErrorAttaching,
-
-    // ErrorDetaching
-    #[serde(rename = "error_detaching")]
-    ErrorDetaching,
 }

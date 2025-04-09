@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 /// AutoAllocatedTopology response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AutoAllocatedTopologyResponse {
-    id: Option<String>,
+    pub id: Option<String>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

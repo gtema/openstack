@@ -23,5 +23,5 @@ use serde::{Deserialize, Serialize};
 pub struct ServerPasswordResponse {
     /// The password returned from metadata server.
     ///
-    password: String,
+    pub password: String,
 }

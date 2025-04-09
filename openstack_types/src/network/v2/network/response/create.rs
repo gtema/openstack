@@ -26,80 +26,80 @@ pub struct NetworkResponse {
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
     ///
-    admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<BoolString>,
 
     /// The availability zone candidate for the network.
     ///
-    availability_zone_hints: Option<Vec<String>>,
+    pub availability_zone_hints: Option<Vec<String>>,
 
     /// The availability zone for the network.
     ///
-    availability_zones: Option<Vec<String>>,
+    pub availability_zones: Option<Vec<String>>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// A valid DNS domain.
     ///
-    dns_domain: Option<String>,
+    pub dns_domain: Option<String>,
 
     /// The ID of the network.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
     ///
-    ipv4_address_scope: Option<String>,
+    pub ipv4_address_scope: Option<String>,
 
     /// The ID of the IPv6 address scope that the network is associated with.
     ///
-    ipv6_address_scope: Option<String>,
+    pub ipv6_address_scope: Option<String>,
 
     /// The network is default pool or not.
     ///
-    is_default: Option<BoolString>,
+    pub is_default: Option<BoolString>,
 
     /// Indicates whether L2 connectivity is available throughout the
     /// `network`.
     ///
-    l2_adjacency: Option<String>,
+    pub l2_adjacency: Option<String>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     ///
-    mtu: Option<IntString>,
+    pub mtu: Option<IntString>,
 
     /// Human-readable name of the network.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
     /// value of `port_security_enabled` field of a newly created port.
     ///
-    port_security_enabled: Option<BoolString>,
+    pub port_security_enabled: Option<BoolString>,
 
     #[serde(rename = "provider:network_type")]
-    provider_network_type: Option<String>,
+    pub provider_network_type: Option<String>,
 
     #[serde(rename = "provider:physical_network")]
-    provider_physical_network: Option<String>,
+    pub provider_physical_network: Option<String>,
 
     #[serde(rename = "provider:segmentation_id")]
-    provider_segmentation_id: Option<IntString>,
+    pub provider_segmentation_id: Option<IntString>,
 
     /// The ID of the QoS policy associated with the network.
     ///
-    qos_policy_id: Option<String>,
+    pub qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// Defines whether the network may be used for creation of floating IPs.
     /// Only networks with this flag may be an external gateway for routers.
@@ -109,42 +109,42 @@ pub struct NetworkResponse {
     /// deleted when extension `floatingip-autodelete-internal` is present.
     ///
     #[serde(rename = "router:external")]
-    router_external: Option<BoolString>,
+    pub router_external: Option<BoolString>,
 
     /// A list of provider `segment` objects.
     ///
-    segments: Option<Vec<Segments>>,
+    pub segments: Option<Vec<Segments>>,
 
     /// Indicates whether this network is shared across all tenants. By
     /// default, only administrative users can change this value.
     ///
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
     ///
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// The associated subnets.
     ///
-    subnets: Option<Vec<String>>,
+    pub subnets: Option<Vec<String>>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// `Segments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Segments {
-    provider_network_type: Option<String>,
-    provider_physical_network: Option<String>,
-    provider_segmentation_id: Option<i32>,
+    pub provider_network_type: Option<String>,
+    pub provider_physical_network: Option<String>,
+    pub provider_segmentation_id: Option<i32>,
 }

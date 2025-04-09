@@ -29,10 +29,10 @@ pub struct AssistedVolumeSnapshotResponse {
     /// internally. So use `snapshot_id` instead for further operation on this
     /// snapshot.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The source volume ID.
     ///
     #[serde(rename = "volumeId")]
-    volume_id: String,
+    pub volume_id: String,
 }

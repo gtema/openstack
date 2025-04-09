@@ -25,18 +25,18 @@ use std::collections::HashMap;
 pub struct BindingResponse {
     /// The hostname of the system the agent is running on.
     ///
-    host: Option<String>,
+    pub host: Option<String>,
 
     /// A dictionary that enables the application running on the specific host
     /// to pass and receive vif port information specific to the networking
     /// back-end. The networking API does not define a specific format of this
     /// field. If the update request is null this response field will be {}.
     ///
-    profile: Option<HashMap<String, Value>>,
+    pub profile: Option<HashMap<String, Value>>,
 
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
-    status: Option<String>,
+    pub status: Option<String>,
 
     /// A dictionary which contains additional information on the port.
     /// Currently the following fields are defined: `port_filter` and
@@ -46,7 +46,7 @@ pub struct BindingResponse {
     /// API consumer like nova that the hybrid plugging strategy for OVS should
     /// be used.
     ///
-    vif_details: Option<String>,
+    pub vif_details: Option<String>,
 
     /// The type of which mechanism is used for the port. An API consumer like
     /// nova can use this to determine an appropriate way to attach a device
@@ -57,7 +57,7 @@ pub struct BindingResponse {
     /// the port is not bound to a networking back-end. `binding_failed` means
     /// an error that the port failed to be bound to a networking back-end.
     ///
-    vif_type: Option<String>,
+    pub vif_type: Option<String>,
 
     /// The type of vNIC which this port should be attached to. This is used to
     /// determine which mechanism driver(s) to be used to bind the port. The
@@ -66,15 +66,15 @@ pub struct BindingResponse {
     /// `remote-managed`. What type of vNIC is actually available depends on
     /// deployments.
     ///
-    vnic_type: Option<VnicType>,
+    pub vnic_type: Option<VnicType>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum VnicType {
-    // Baremetal
-    #[serde(rename = "baremetal")]
-    Baremetal,
+    // AcceleratorDirectPhysical
+    #[serde(rename = "accelerator-direct-physical")]
+    AcceleratorDirectPhysical,
 
     // AcceleratorDirect
     #[serde(rename = "accelerator-direct")]
@@ -84,35 +84,35 @@ pub enum VnicType {
     #[serde(rename = "direct-physical")]
     DirectPhysical,
 
-    // Vdpa
-    #[serde(rename = "vdpa")]
-    Vdpa,
-
-    // Macvtap
-    #[serde(rename = "macvtap")]
-    Macvtap,
-
-    // SmartNic
-    #[serde(rename = "smart-nic")]
-    SmartNic,
-
-    // AcceleratorDirectPhysical
-    #[serde(rename = "accelerator-direct-physical")]
-    AcceleratorDirectPhysical,
+    // Direct
+    #[serde(rename = "direct")]
+    Direct,
 
     // VirtioForwarder
     #[serde(rename = "virtio-forwarder")]
     VirtioForwarder,
 
-    // Direct
-    #[serde(rename = "direct")]
-    Direct,
+    // Baremetal
+    #[serde(rename = "baremetal")]
+    Baremetal,
+
+    // Macvtap
+    #[serde(rename = "macvtap")]
+    Macvtap,
 
     // RemoteManaged
     #[serde(rename = "remote-managed")]
     RemoteManaged,
 
+    // Vdpa
+    #[serde(rename = "vdpa")]
+    Vdpa,
+
     // Normal
     #[serde(rename = "normal")]
     Normal,
+
+    // SmartNic
+    #[serde(rename = "smart-nic")]
+    SmartNic,
 }

@@ -24,31 +24,31 @@ use std::collections::HashMap;
 /// Agent response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AgentResponse {
-    admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<BoolString>,
 
-    agent_type: Option<String>,
+    pub agent_type: Option<String>,
 
-    alive: Option<bool>,
+    pub alive: Option<bool>,
 
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
-    binary: Option<String>,
+    pub binary: Option<String>,
 
-    configurations: Option<HashMap<String, Value>>,
+    pub configurations: Option<HashMap<String, Value>>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    description: Option<String>,
+    pub description: Option<String>,
 
-    heartbeat_timestamp: Option<String>,
+    pub heartbeat_timestamp: Option<String>,
 
-    host: Option<String>,
+    pub host: Option<String>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    resources_synced: Option<String>,
+    pub resources_synced: Option<String>,
 
-    started_at: Option<String>,
+    pub started_at: Option<String>,
 
-    topic: Option<String>,
+    pub topic: Option<String>,
 }

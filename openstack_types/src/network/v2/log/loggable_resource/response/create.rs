@@ -22,5 +22,5 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Deserialize, Serialize)]
 pub struct LoggableResourceResponse {
     #[serde(rename = "type")]
-    _type: String,
+    pub _type: String,
 }

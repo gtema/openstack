@@ -26,14 +26,14 @@ pub struct ServiceProviderResponse {
     /// `false`, the provider is not the default.
     ///
     #[serde(rename = "default")]
-    _default: Option<String>,
+    pub _default: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The service type, which is `CORE`, `DUMMY`, `FIREWALL`, `FLAVORS`,
     /// `L3_ROUTER_NAT`, `METERING`, `QOS`, or `VPN`.
     ///
-    service_type: Option<String>,
+    pub service_type: Option<String>,
 }

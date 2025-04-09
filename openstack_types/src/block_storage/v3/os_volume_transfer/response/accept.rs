@@ -36,23 +36,23 @@ pub struct OsVolumeTransferResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The UUID of the object.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Links for the message.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// The name of the object.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The UUID of the volume.
     ///
-    volume_id: Option<String>,
+    pub volume_id: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -62,6 +62,6 @@ pub struct OsVolumeTransferResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

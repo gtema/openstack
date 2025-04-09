@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct ResourceFilterResponse {
     /// The resource filter array.
     ///
-    filters: Option<Vec<String>>,
+    pub filters: Option<Vec<String>>,
 
     /// Resource which the filters will be applied to.
     ///
-    resource: Option<String>,
+    pub resource: Option<String>,
 }

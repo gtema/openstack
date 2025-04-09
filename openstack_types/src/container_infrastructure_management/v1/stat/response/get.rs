@@ -23,13 +23,13 @@ use serde::{Deserialize, Serialize};
 pub struct StatResponse {
     /// The number of clusters.
     ///
-    clusters: Option<i32>,
+    pub clusters: Option<i32>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The total number of nodes including master nodes.
     ///
-    nodes: Option<i32>,
+    pub nodes: Option<i32>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

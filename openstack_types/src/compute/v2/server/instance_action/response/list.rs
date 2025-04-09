@@ -23,7 +23,7 @@ use serde::{Deserialize, Serialize};
 pub struct InstanceActionResponse {
     /// The name of the action.
     ///
-    action: String,
+    pub action: String,
 
     /// The events which occurred in this action in descending order of
     /// creation.
@@ -34,23 +34,23 @@ pub struct InstanceActionResponse {
     ///
     /// **New in version 2.51**
     ///
-    events: Vec<Events>,
+    pub events: Vec<Events>,
 
     /// The related error message for when an action fails.
     ///
-    message: Option<String>,
+    pub message: Option<String>,
 
     /// The ID of the project which initiated the server action.
     ///
-    project_id: String,
+    pub project_id: String,
 
     /// The request id generated when execute the API of this action.
     ///
-    request_id: String,
+    pub request_id: String,
 
     /// The date and time when the action was started.
     ///
-    start_time: Option<String>,
+    pub start_time: Option<String>,
 
     /// The date and time when the instance action or the action event of
     /// instance action was updated. The date and time stamp format is
@@ -67,22 +67,22 @@ pub struct InstanceActionResponse {
     ///
     /// **New in version 2.58**
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The ID of the user which initiated the server action.
     ///
-    user_id: String,
+    pub user_id: String,
 }
 
 /// `Events` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Events {
-    details: Option<String>,
-    event: String,
-    finish_time: Option<String>,
-    host: Option<String>,
-    host_id: Option<String>,
-    result: Option<String>,
-    start_time: Option<String>,
-    traceback: Option<String>,
+    pub details: Option<String>,
+    pub event: String,
+    pub finish_time: Option<String>,
+    pub host: Option<String>,
+    pub host_id: Option<String>,
+    pub result: Option<String>,
+    pub start_time: Option<String>,
+    pub traceback: Option<String>,
 }

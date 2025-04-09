@@ -24,29 +24,29 @@ pub struct ServerResponse {
     /// The type of the remote console
     ///
     #[serde(rename = "type")]
-    _type: Type,
+    pub _type: Type,
 
     /// The URL used to connect to the console.
     ///
-    url: String,
+    pub url: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Novnc
-    #[serde(rename = "novnc")]
-    Novnc,
+    // RdpHtml5
+    #[serde(rename = "rdp-html5")]
+    RdpHtml5,
 
     // Serial
     #[serde(rename = "serial")]
     Serial,
 
+    // Novnc
+    #[serde(rename = "novnc")]
+    Novnc,
+
     // SpiceHtml5
     #[serde(rename = "spice-html5")]
     SpiceHtml5,
-
-    // RdpHtml5
-    #[serde(rename = "rdp-html5")]
-    RdpHtml5,
 }

@@ -24,47 +24,47 @@ pub struct QuotaSetResponse {
     /// The object of detailed cores quota, including in_use, limit and
     /// reserved number of cores.
     ///
-    cores: Option<Cores>,
+    pub cores: Option<Cores>,
 
     /// The object of detailed fixed ips quota, including in_use, limit and
     /// reserved number of fixed ips.
     ///
     /// **Available until version 2.35**
     ///
-    fixed_ips: Option<FixedIps>,
+    pub fixed_ips: Option<FixedIps>,
 
     /// The object of detailed floating ips quota, including in_use, limit and
     /// reserved number of floating ips.
     ///
     /// **Available until version 2.35**
     ///
-    floating_ips: Option<FloatingIps>,
+    pub floating_ips: Option<FloatingIps>,
 
     /// The UUID of the tenant/user the quotas listed for.
     ///
-    id: String,
+    pub id: String,
 
     /// The object of detailed injected files quota, including in_use, limit
     /// and reserved number of injected files.
     ///
     /// **Available until version 2.56**
     ///
-    injected_files: Option<InjectedFiles>,
+    pub injected_files: Option<InjectedFiles>,
 
     /// The object of detailed injected file content bytes quota, including
     /// in_use, limit and reserved number of injected file content bytes.
     ///
-    injected_files_content_bytes: Option<InjectedFilesContentBytes>,
+    pub injected_files_content_bytes: Option<InjectedFilesContentBytes>,
 
     /// The object of detailed injected file path bytes quota, including
     /// in_use, limit and reserved number of injected file path bytes.
     ///
-    injected_files_path_bytes: Option<InjectedFilesPathBytes>,
+    pub injected_files_path_bytes: Option<InjectedFilesPathBytes>,
 
     /// The object of detailed servers quota, including in_use, limit and
     /// reserved number of instances.
     ///
-    instances: Option<Instances>,
+    pub instances: Option<Instances>,
 
     /// The object of detailed key pairs quota, including in_use, limit and
     /// reserved number of key pairs.
@@ -75,47 +75,47 @@ pub struct QuotaSetResponse {
     /// key_pairs are a user-level resource, not a project- level resource, so
     /// for legacy reasons, the keypair in-use information is not counted.
     ///
-    key_pairs: Option<KeyPairs>,
+    pub key_pairs: Option<KeyPairs>,
 
     /// The object of detailed key metadata items quota, including in_use,
     /// limit and reserved number of metadata items.
     ///
-    metadata_items: Option<MetadataItems>,
+    pub metadata_items: Option<MetadataItems>,
 
     /// The number of private networks that can be created per project.
     ///
     /// **Available until version 2.35**
     ///
-    networks: Option<Networks>,
+    pub networks: Option<Networks>,
 
     /// The object of detailed key ram quota, including in_use, limit and
     /// reserved number of ram.
     ///
-    ram: Option<Ram>,
+    pub ram: Option<Ram>,
 
     /// The object of detailed security group rules quota, including in_use,
     /// limit and reserved number of security group rules.
     ///
     /// **Available until version 2.35**
     ///
-    security_group_rules: Option<SecurityGroupRules>,
+    pub security_group_rules: Option<SecurityGroupRules>,
 
     /// The object of detailed security groups, including in_use, limit and
     /// reserved number of security groups.
     ///
     /// **Available until version 2.35**
     ///
-    security_groups: Option<SecurityGroups>,
+    pub security_groups: Option<SecurityGroups>,
 
     /// The object of detailed server group members, including in_use, limit
     /// and reserved number of server group members.
     ///
-    server_group_members: Option<ServerGroupMembers>,
+    pub server_group_members: Option<ServerGroupMembers>,
 
     /// The object of detailed server groups, including in_use, limit and
     /// reserved number of server groups.
     ///
-    server_groups: Option<ServerGroups>,
+    pub server_groups: Option<ServerGroups>,
 }
 
 /// The object of detailed servers quota, including in_use, limit and reserved
@@ -124,9 +124,9 @@ pub struct QuotaSetResponse {
 /// `Instances` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Instances {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed cores quota, including in_use, limit and reserved
@@ -135,9 +135,9 @@ pub struct Instances {
 /// `Cores` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Cores {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed key ram quota, including in_use, limit and reserved
@@ -146,9 +146,9 @@ pub struct Cores {
 /// `Ram` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Ram {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed floating ips quota, including in_use, limit and
@@ -159,9 +159,9 @@ pub struct Ram {
 /// `FloatingIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FloatingIps {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed fixed ips quota, including in_use, limit and
@@ -172,9 +172,9 @@ pub struct FloatingIps {
 /// `FixedIps` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct FixedIps {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed key metadata items quota, including in_use, limit
@@ -183,9 +183,9 @@ pub struct FixedIps {
 /// `MetadataItems` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct MetadataItems {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed key pairs quota, including in_use, limit and
@@ -200,9 +200,9 @@ pub struct MetadataItems {
 /// `KeyPairs` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct KeyPairs {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed security groups, including in_use, limit and
@@ -213,9 +213,9 @@ pub struct KeyPairs {
 /// `SecurityGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroups {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed security group rules quota, including in_use, limit
@@ -226,9 +226,9 @@ pub struct SecurityGroups {
 /// `SecurityGroupRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRules {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed injected files quota, including in_use, limit and
@@ -239,9 +239,9 @@ pub struct SecurityGroupRules {
 /// `InjectedFiles` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFiles {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed injected file content bytes quota, including in_use,
@@ -250,9 +250,9 @@ pub struct InjectedFiles {
 /// `InjectedFilesContentBytes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFilesContentBytes {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed injected file path bytes quota, including in_use,
@@ -261,9 +261,9 @@ pub struct InjectedFilesContentBytes {
 /// `InjectedFilesPathBytes` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InjectedFilesPathBytes {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed server groups, including in_use, limit and reserved
@@ -272,9 +272,9 @@ pub struct InjectedFilesPathBytes {
 /// `ServerGroups` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroups {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The object of detailed server group members, including in_use, limit and
@@ -283,9 +283,9 @@ pub struct ServerGroups {
 /// `ServerGroupMembers` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ServerGroupMembers {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }
 
 /// The number of private networks that can be created per project.
@@ -295,7 +295,7 @@ pub struct ServerGroupMembers {
 /// `Networks` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Networks {
-    in_use: Option<i32>,
-    limit: Option<i32>,
-    reserved: Option<i32>,
+    pub in_use: Option<i32>,
+    pub limit: Option<i32>,
+    pub reserved: Option<i32>,
 }

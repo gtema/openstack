@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct AutoAllocatedTopologyResponse {
     /// The ID of the network for the auto allocated topology.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID of the project owning the auto allocated topology.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

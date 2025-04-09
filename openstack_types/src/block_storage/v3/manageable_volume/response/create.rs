@@ -43,30 +43,30 @@ pub struct ManageableVolumeResponse {
     ///
     /// ```
     ///
-    attachments: Vec<Attachments>,
+    pub attachments: Vec<Attachments>,
 
     /// The name of the availability zone.
     ///
-    availability_zone: Option<String>,
+    pub availability_zone: Option<String>,
 
     /// Enables or disables the bootable attribute. You can boot an instance
     /// from a bootable volume.
     ///
-    bootable: String,
+    pub bootable: String,
 
     /// The cluster name of volume backend.
     ///
-    cluster_name: Option<String>,
+    pub cluster_name: Option<String>,
 
     /// The UUID of the consistency group.
     ///
-    consistencygroup_id: Option<String>,
+    pub consistencygroup_id: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
     /// perform an operation.
     ///
-    consumes_quota: Option<bool>,
+    pub consumes_quota: Option<bool>,
 
     /// The date and time when the resource was created.
     ///
@@ -83,59 +83,59 @@ pub struct ManageableVolumeResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The volume description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// If true, this volume is encrypted.
     ///
-    encrypted: bool,
+    pub encrypted: bool,
 
     /// The ID of the group.
     ///
-    group_id: Option<String>,
+    pub group_id: Option<String>,
 
     /// The UUID of the volume.
     ///
-    id: String,
+    pub id: String,
 
     /// The volume links.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// A `metadata` object. Contains one or more metadata key and value pairs
     /// that are associated with the volume.
     ///
-    metadata: Option<HashMap<String, String>>,
+    pub metadata: Option<HashMap<String, String>>,
 
     /// The volume migration status. Admin only.
     ///
-    migration_status: String,
+    pub migration_status: String,
 
     /// If true, this volume can attach to more than one instance.
     ///
-    multiattach: Option<bool>,
+    pub multiattach: Option<bool>,
 
     /// The volume name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
     /// driver or null if the driver doesn’t use the field or if it hasn’t
     /// created it yet. Only returned for administrators.
     ///
-    provider_id: Option<String>,
+    pub provider_id: Option<String>,
 
     /// The volume replication status.
     ///
-    replication_status: String,
+    pub replication_status: String,
 
     /// A unique identifier that’s used to indicate what node the
     /// volume-service for a particular volume is being serviced by.
     ///
-    service_uuid: Option<String>,
+    pub service_uuid: Option<String>,
 
     /// An indicator whether the host connecting the volume should lock for the
     /// whole attach/detach process or not. true means only is iSCSI initiator
@@ -143,26 +143,26 @@ pub struct ManageableVolumeResponse {
     /// locks, and null means to always use locks. Look at os-brick’s
     /// guard_connection context manager. Default=True.
     ///
-    shared_targets: Option<bool>,
+    pub shared_targets: Option<bool>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    size: i64,
+    pub size: i64,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
     /// with same size as the snapshot.
     ///
-    snapshot_id: Option<String>,
+    pub snapshot_id: Option<String>,
 
     /// The UUID of the source volume. The API creates a new volume with the
     /// same size as the source volume unless a larger size is requested.
     ///
-    source_volid: Option<String>,
+    pub source_volid: Option<String>,
 
     /// The volume status.
     ///
-    status: String,
+    pub status: String,
 
     /// The date and time when the resource was updated.
     ///
@@ -182,31 +182,31 @@ pub struct ManageableVolumeResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The UUID of the user.
     ///
-    user_id: String,
+    pub user_id: String,
 
     /// A `volume_type` object.
     ///
-    volume_type: Option<String>,
+    pub volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
     ///
-    volume_type_id: Option<String>,
+    pub volume_type_id: Option<String>,
 }
 
 /// `Attachments` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Attachments {
-    attached_at: Option<String>,
-    attachment_id: String,
-    device: Option<String>,
-    host_name: Option<String>,
-    id: String,
-    server_id: Option<String>,
-    volume_id: String,
+    pub attached_at: Option<String>,
+    pub attachment_id: String,
+    pub device: Option<String>,
+    pub host_name: Option<String>,
+    pub id: String,
+    pub server_id: Option<String>,
+    pub volume_id: String,
 }
 
 /// Links to the resources in question. See
@@ -216,6 +216,6 @@ pub struct Attachments {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

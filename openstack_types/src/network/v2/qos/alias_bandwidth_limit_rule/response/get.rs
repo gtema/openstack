@@ -22,15 +22,15 @@ use serde::{Deserialize, Serialize};
 /// AliasBandwidthLimitRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct AliasBandwidthLimitRuleResponse {
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    max_burst_kbps: Option<IntString>,
+    pub max_burst_kbps: Option<IntString>,
 
-    max_kbps: Option<IntString>,
+    pub max_kbps: Option<IntString>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

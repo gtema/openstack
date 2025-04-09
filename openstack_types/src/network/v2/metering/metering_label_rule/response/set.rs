@@ -22,21 +22,21 @@ use serde::{Deserialize, Serialize};
 /// MeteringLabelRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct MeteringLabelRuleResponse {
-    destination_ip_prefix: Option<String>,
+    pub destination_ip_prefix: Option<String>,
 
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
-    excluded: Option<BoolString>,
+    pub excluded: Option<BoolString>,
 
-    id: Option<String>,
+    pub id: Option<String>,
 
-    metering_label_id: Option<String>,
+    pub metering_label_id: Option<String>,
 
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
-    source_ip_prefix: Option<String>,
+    pub source_ip_prefix: Option<String>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

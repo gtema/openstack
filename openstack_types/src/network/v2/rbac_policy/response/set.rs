@@ -24,11 +24,11 @@ pub struct RbacPolicyResponse {
     /// Action for the RBAC policy which is `access_as_external` or
     /// `access_as_shared`.
     ///
-    action: Option<String>,
+    pub action: Option<String>,
 
     /// The ID of the RBAC policy.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The ID of the `object_type` resource. An `object_type` of `network`
     /// returns a network ID, an `object_type` of `qos-policy` returns a QoS
@@ -37,19 +37,19 @@ pub struct RbacPolicyResponse {
     /// ID, an `object_type` of `subnetpool` returns a subnetpool ID and an
     /// `object_type` of `address-group` returns an address group ID.
     ///
-    object_id: Option<String>,
+    pub object_id: Option<String>,
 
     /// The type of the object that the RBAC policy affects. Types include
     /// `qos-policy`, `network`, `security-group`, `address-scope`,
     /// `subnetpool` or `address-group`.
     ///
-    object_type: Option<String>,
+    pub object_type: Option<String>,
 
     /// The ID of the tenant to which the RBAC policy will be enforced.
     ///
-    target_tenant: Option<String>,
+    pub target_tenant: Option<String>,
 
     /// The ID of the project that owns the resource.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }

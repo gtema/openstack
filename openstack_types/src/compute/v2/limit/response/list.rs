@@ -24,7 +24,7 @@ pub struct LimitResponse {
     /// Name/value pairs that set quota limits within a deployment and
     /// Name/value pairs of resource usage.
     ///
-    absolute: Absolute,
+    pub absolute: Absolute,
 }
 
 /// Name/value pairs that set quota limits within a deployment and Name/value
@@ -33,15 +33,15 @@ pub struct LimitResponse {
 /// `Absolute` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Absolute {
-    max_server_group_members: Option<i32>,
-    max_server_groups: Option<i32>,
-    max_server_metamax_server_meta: Option<i32>,
-    max_total_cores: Option<i32>,
-    max_total_instances: Option<i32>,
-    max_total_keypairs: Option<i32>,
-    max_total_ramsize: Option<i32>,
-    total_cores_used: Option<i32>,
-    total_instances_used: Option<i32>,
-    total_ramused: Option<i32>,
-    total_server_groups_used: Option<i32>,
+    pub max_server_group_members: Option<i32>,
+    pub max_server_groups: Option<i32>,
+    pub max_server_metamax_server_meta: Option<i32>,
+    pub max_total_cores: Option<i32>,
+    pub max_total_instances: Option<i32>,
+    pub max_total_keypairs: Option<i32>,
+    pub max_total_ramsize: Option<i32>,
+    pub total_cores_used: Option<i32>,
+    pub total_instances_used: Option<i32>,
+    pub total_ramused: Option<i32>,
+    pub total_server_groups_used: Option<i32>,
 }

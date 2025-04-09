@@ -21,10 +21,10 @@ use serde::{Deserialize, Serialize};
 /// RuleType response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct RuleTypeResponse {
-    drivers: Option<String>,
+    pub drivers: Option<String>,
 
     /// The type of QoS rule.
     ///
     #[serde(rename = "type")]
-    _type: Option<String>,
+    pub _type: Option<String>,
 }

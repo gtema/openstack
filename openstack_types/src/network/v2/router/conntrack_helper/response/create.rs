@@ -24,45 +24,45 @@ use serde::{Deserialize, Serialize};
 pub struct ConntrackHelperResponse {
     /// The netfilter conntrack helper module.
     ///
-    helper: Option<String>,
+    pub helper: Option<String>,
 
     /// The ID of the conntrack helper.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     ///
-    port: Option<IntString>,
+    pub port: Option<IntString>,
 
     /// The network protocol for the netfilter conntrack target rule.
     ///
-    protocol: Option<Protocol>,
+    pub protocol: Option<Protocol>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    // Tcp
-    #[serde(rename = "tcp")]
-    Tcp,
-
-    // Sctp
-    #[serde(rename = "sctp")]
-    Sctp,
-
     // Ipv6Icmp
     #[serde(rename = "ipv6-icmp")]
     Ipv6Icmp,
+
+    // Udp
+    #[serde(rename = "udp")]
+    Udp,
+
+    // Tcp
+    #[serde(rename = "tcp")]
+    Tcp,
 
     // Dccp
     #[serde(rename = "dccp")]
     Dccp,
 
+    // Sctp
+    #[serde(rename = "sctp")]
+    Sctp,
+
     // Icmp
     #[serde(rename = "icmp")]
     Icmp,
-
-    // Udp
-    #[serde(rename = "udp")]
-    Udp,
 }

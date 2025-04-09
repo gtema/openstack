@@ -23,35 +23,43 @@ use serde::{Deserialize, Serialize};
 pub struct AttachmentResponse {
     /// The ID of attachment.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The UUID of the attaching instance.
     ///
-    instance: Option<String>,
+    pub instance: Option<String>,
 
     /// The status of the attachment.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// The UUID of the volume which the attachment belongs to.
     ///
-    volume_id: Option<String>,
+    pub volume_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
+    // ErrorAttaching
+    #[serde(rename = "error_attaching")]
+    ErrorAttaching,
 
     // Attached
     #[serde(rename = "attached")]
     Attached,
 
+    // ErrorDetaching
+    #[serde(rename = "error_detaching")]
+    ErrorDetaching,
+
     // Detached
     #[serde(rename = "detached")]
     Detached,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
 
     // Reserved
     #[serde(rename = "reserved")]
@@ -60,12 +68,4 @@ pub enum Status {
     // Attaching
     #[serde(rename = "attaching")]
     Attaching,
-
-    // ErrorAttaching
-    #[serde(rename = "error_attaching")]
-    ErrorAttaching,
-
-    // ErrorDetaching
-    #[serde(rename = "error_detaching")]
-    ErrorDetaching,
 }

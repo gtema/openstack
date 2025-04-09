@@ -26,5 +26,5 @@ pub struct ServerResponse {
     /// wouldn’t return the adminPass field in response.
     ///
     #[serde(rename = "adminPass")]
-    admin_pass: String,
+    pub admin_pass: String,
 }

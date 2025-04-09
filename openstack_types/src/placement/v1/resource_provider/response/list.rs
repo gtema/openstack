@@ -24,32 +24,32 @@ pub struct ResourceProviderResponse {
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
     ///
-    generation: i32,
+    pub generation: i32,
 
     /// The name of one resource provider.
     ///
-    name: String,
+    pub name: String,
 
     /// The UUID of the immediate parent of the resource provider.
     ///
     /// **New in version 1.14**
     ///
-    parent_provider_uuid: Option<String>,
+    pub parent_provider_uuid: Option<String>,
 
     /// Read-only UUID of the top-most provider in this provider tree.
     ///
     /// **New in version 1.14**
     ///
-    root_provider_uuid: Option<String>,
+    pub root_provider_uuid: Option<String>,
 
     /// The uuid of a resource provider.
     ///
-    uuid: String,
+    pub uuid: String,
 }
 
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

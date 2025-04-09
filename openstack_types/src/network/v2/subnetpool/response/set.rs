@@ -25,17 +25,17 @@ use serde::{Deserialize, Serialize};
 pub struct SubnetpoolResponse {
     /// An address scope to assign to the subnet pool.
     ///
-    address_scope_id: Option<String>,
+    pub address_scope_id: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The size of the prefix to allocate when the `cidr` or `prefixlen`
     /// attributes are omitted when you create the subnet. Default is
     /// `min_prefixlen`.
     ///
-    default_prefixlen: Option<IntString>,
+    pub default_prefixlen: Option<IntString>,
 
     /// A per-project quota on the prefix space that can be allocated from the
     /// subnet pool for project subnets. Default is no quota is enforced on
@@ -44,64 +44,64 @@ pub struct SubnetpoolResponse {
     /// `default_quota` is measured units of /64. All projects that use the
     /// subnet pool have the same prefix quota applied.
     ///
-    default_quota: Option<IntString>,
+    pub default_quota: Option<IntString>,
 
     /// A human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the subnet pool.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
     ///
-    ip_version: Option<i32>,
+    pub ip_version: Option<i32>,
 
     /// The subnetpool is default pool or not.
     ///
-    is_default: Option<BoolString>,
+    pub is_default: Option<BoolString>,
 
     /// The maximum prefix size that can be allocated from the subnet pool. For
     /// IPv4 subnet pools, default is `32`. For IPv6 subnet pools, default is
     /// `128`.
     ///
-    max_prefixlen: Option<IntString>,
+    pub max_prefixlen: Option<IntString>,
 
     /// The smallest prefix that can be allocated from a subnet pool. For IPv4
     /// subnet pools, default is `8`. For IPv6 subnet pools, default is `64`.
     ///
-    min_prefixlen: Option<IntString>,
+    pub min_prefixlen: Option<IntString>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// A list of subnet prefixes to assign to the subnet pool. The API merges
     /// adjacent prefixes and treats them as a single prefix. Each subnet
     /// prefix must be unique among all subnet prefixes in all subnet pools
     /// that are associated with the address scope.
     ///
-    prefixes: Option<Vec<String>>,
+    pub prefixes: Option<Vec<String>>,
 
     /// The revision number of the resource.
     ///
-    revision_number: Option<i32>,
+    pub revision_number: Option<i32>,
 
     /// Indicates whether this resource is shared across all projects. By
     /// default, only administrative users can change this value.
     ///
-    shared: Option<BoolString>,
+    pub shared: Option<BoolString>,
 
     /// The list of tags on the resource.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }

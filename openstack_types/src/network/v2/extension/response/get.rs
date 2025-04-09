@@ -23,21 +23,21 @@ use serde::{Deserialize, Serialize};
 pub struct ExtensionResponse {
     /// The alias for the extension. For example “quotas” or “security-group”.
     ///
-    alias: Option<String>,
+    pub alias: Option<String>,
 
     /// The human-readable description for the resource.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// Human-readable name of the resource.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// A URL pointing to the namespace for this extension.
     ///
-    namespace: Option<String>,
+    pub namespace: Option<String>,
 
     /// The date and timestamp when the extension was last updated.
     ///
-    updated: Option<String>,
+    pub updated: Option<String>,
 }

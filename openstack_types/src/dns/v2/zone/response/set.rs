@@ -24,117 +24,117 @@ use std::collections::HashMap;
 pub struct ZoneResponse {
     /// current action in progress on the resource
     ///
-    action: Option<Action>,
+    pub action: Option<Action>,
 
     /// Key:Value pairs of information about this zone, and the pool the user
     /// would like to place the zone in. This information can be used by the
     /// scheduler to place zones on the correct pool.
     ///
-    attributes: Option<HashMap<String, String>>,
+    pub attributes: Option<HashMap<String, String>>,
 
     /// Date / Time when resource was created.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// Description for this zone
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// e-mail for the zone. Used in SOA records for the zone
     ///
-    email: Option<String>,
+    pub email: Option<String>,
 
     /// ID for the resource
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// Links to the resource, and other related resources. When a response has
     /// been broken into pages, we will include a `next` link that should be
     /// followed to retrieve all results
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// Mandatory for secondary zones. The servers to slave from to get DNS
     /// information
     ///
-    masters: Option<Vec<String>>,
+    pub masters: Option<Vec<String>>,
 
     /// DNS Name for the zone
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// ID for the pool hosting this zone
     ///
-    pool_id: Option<String>,
+    pub pool_id: Option<String>,
 
     /// ID for the project that owns the resource
     ///
-    project_id: Option<String>,
+    pub project_id: Option<String>,
 
     /// current serial number for the zone
     ///
-    serial: Option<i32>,
+    pub serial: Option<i32>,
 
     /// True if the zone is shared with another project.
     ///
     /// **New in version 2.1**
     ///
-    shared: Option<bool>,
+    pub shared: Option<bool>,
 
     /// The status of the resource.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// For secondary zones. The last time an update was retrieved from the
     /// master servers
     ///
-    transferred_at: Option<String>,
+    pub transferred_at: Option<String>,
 
     /// TTL (Time to Live) for the zone.
     ///
-    ttl: Option<i32>,
+    pub ttl: Option<i32>,
 
     /// Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are
     /// slaved from another DNS Server. Defaults to PRIMARY
     ///
     #[serde(rename = "type")]
-    _type: Option<Type>,
+    pub _type: Option<Type>,
 
     /// Date / Time when resource last updated.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// Version of the resource
     ///
-    version: Option<i32>,
+    pub version: Option<i32>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Error
-    #[serde(rename = "ERROR")]
-    Error,
-
     // Zone
     #[serde(rename = "ZONE")]
     Zone,
-
-    // Success
-    #[serde(rename = "SUCCESS")]
-    Success,
 
     // Active
     #[serde(rename = "ACTIVE")]
     Active,
 
-    // Deleted
-    #[serde(rename = "DELETED")]
-    Deleted,
+    // Success
+    #[serde(rename = "SUCCESS")]
+    Success,
+
+    // Error
+    #[serde(rename = "ERROR")]
+    Error,
 
     // Pending
     #[serde(rename = "PENDING")]
     Pending,
+
+    // Deleted
+    #[serde(rename = "DELETED")]
+    Deleted,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -144,26 +144,22 @@ pub enum Action {
     #[serde(rename = "NONE")]
     None,
 
-    // Delete
-    #[serde(rename = "DELETE")]
-    Delete,
+    // Create
+    #[serde(rename = "CREATE")]
+    Create,
 
     // Update
     #[serde(rename = "UPDATE")]
     Update,
 
-    // Create
-    #[serde(rename = "CREATE")]
-    Create,
+    // Delete
+    #[serde(rename = "DELETE")]
+    Delete,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Primary
-    #[serde(rename = "PRIMARY")]
-    Primary,
-
     // Secondary
     #[serde(rename = "SECONDARY")]
     Secondary,
@@ -171,6 +167,10 @@ pub enum Type {
     // Catalog
     #[serde(rename = "CATALOG")]
     Catalog,
+
+    // Primary
+    #[serde(rename = "PRIMARY")]
+    Primary,
 }
 
 /// Links to the resource, and other related resources. When a response has
@@ -180,5 +180,5 @@ pub enum Type {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    _self: Option<String>,
+    pub _self: Option<String>,
 }

@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct FlavorCapabilityResponse {
     /// The provider flavor capability description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The provider flavor capability name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

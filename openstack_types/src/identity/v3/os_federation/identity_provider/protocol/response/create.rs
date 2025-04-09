@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct ProtocolResponse {
     /// The federation protocol ID
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
-    mapping_id: Option<String>,
+    pub mapping_id: Option<String>,
 
-    remote_id_attribute: Option<String>,
+    pub remote_id_attribute: Option<String>,
 }

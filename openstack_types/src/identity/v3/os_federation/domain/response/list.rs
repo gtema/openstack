@@ -23,20 +23,20 @@ use serde::{Deserialize, Serialize};
 pub struct DomainResponse {
     /// The description of the domain.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// If set to `true`, domain is enabled. If set to `false`, domain is
     /// disabled.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The ID of the domain.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The name of the domain.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }
 
 /// Links to the resources in question. See
@@ -46,6 +46,6 @@ pub struct DomainResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    href: Option<String>,
-    rel: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
 }

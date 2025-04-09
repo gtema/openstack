@@ -24,7 +24,7 @@ pub struct ManageableSnapshotResponse {
     /// A list of manageable snapshots.
     ///
     #[serde(rename = "manageable-snapshots")]
-    manageable_snapshots: Vec<ManageableSnapshots>,
+    pub manageable_snapshots: Vec<ManageableSnapshots>,
 }
 
 /// The snapshot’s origin volume information.
@@ -32,7 +32,7 @@ pub struct ManageableSnapshotResponse {
 /// `SourceReference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SourceReference {
-    source_name: Option<String>,
+    pub source_name: Option<String>,
 }
 
 /// Some information for the resource.
@@ -40,17 +40,17 @@ pub struct SourceReference {
 /// `Reference` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Reference {
-    source_name: Option<String>,
+    pub source_name: Option<String>,
 }
 
 /// `ManageableSnapshots` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ManageableSnapshots {
-    cinder_id: Option<String>,
-    extra_info: Option<String>,
-    reason_not_safe: Option<String>,
-    reference: Option<Reference>,
-    safe_to_manage: Option<bool>,
-    size: Option<i64>,
-    source_reference: Option<SourceReference>,
+    pub cinder_id: Option<String>,
+    pub extra_info: Option<String>,
+    pub reason_not_safe: Option<String>,
+    pub reference: Option<Reference>,
+    pub safe_to_manage: Option<bool>,
+    pub size: Option<i64>,
+    pub source_reference: Option<SourceReference>,
 }

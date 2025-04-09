@@ -22,36 +22,36 @@ use serde::{Deserialize, Serialize};
 /// MeteringLabelRule response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct MeteringLabelRuleResponse {
-    destination_ip_prefix: Option<String>,
+    pub destination_ip_prefix: Option<String>,
 
     /// Ingress or egress, which is the direction in which the metering rule is
     /// applied.
     ///
-    direction: Option<Direction>,
+    pub direction: Option<Direction>,
 
     /// Indicates whether to count the traffic of a specific IP address with
     /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
     /// values.
     ///
-    excluded: Option<BoolString>,
+    pub excluded: Option<BoolString>,
 
     /// The ID of the metering label rule.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The metering label ID associated with this metering rule.
     ///
-    metering_label_id: Option<String>,
+    pub metering_label_id: Option<String>,
 
     /// (deprecated) The source IP prefix that is matched by this metering
     /// rule. By source IP prefix, one should read the internal/private IPs
     /// used in OpenStack.
     ///
-    remote_ip_prefix: Option<String>,
+    pub remote_ip_prefix: Option<String>,
 
-    source_ip_prefix: Option<String>,
+    pub source_ip_prefix: Option<String>,
 
-    tenant_id: Option<String>,
+    pub tenant_id: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

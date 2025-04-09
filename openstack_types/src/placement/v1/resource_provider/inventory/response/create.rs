@@ -24,21 +24,21 @@ use std::collections::HashMap;
 pub struct InventoryResponse {
     /// A dictionary of inventories keyed by resource classes.
     ///
-    inventories: HashMap<String, InventoriesItem>,
+    pub inventories: HashMap<String, InventoriesItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
     ///
-    resource_provider_generation: i32,
+    pub resource_provider_generation: i32,
 }
 
 /// `InventoriesItem` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct InventoriesItem {
-    allocation_ratio: Option<f32>,
-    max_unit: Option<i32>,
-    min_unit: Option<i32>,
-    reserved: Option<i32>,
-    step_size: Option<i32>,
-    total: i32,
+    pub allocation_ratio: Option<f32>,
+    pub max_unit: Option<i32>,
+    pub min_unit: Option<i32>,
+    pub reserved: Option<i32>,
+    pub step_size: Option<i32>,
+    pub total: i32,
 }

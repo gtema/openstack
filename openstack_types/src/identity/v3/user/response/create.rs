@@ -23,20 +23,20 @@ use serde::{Deserialize, Serialize};
 pub struct UserResponse {
     /// The ID of the default project for the user.
     ///
-    default_project_id: Option<String>,
+    pub default_project_id: Option<String>,
 
     /// The resource description.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of the domain.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
     /// list contains the `idp_id` and `protocols`. `protocols` is a list of
@@ -55,19 +55,19 @@ pub struct UserResponse {
     ///
     /// ```
     ///
-    federated: Option<Vec<Federated>>,
+    pub federated: Option<Vec<Federated>>,
 
     /// The user ID.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The links for the `user` resource.
     ///
-    links: Option<Links>,
+    pub links: Option<Links>,
 
     /// The user name. Must be unique within the owning domain.
     ///
-    name: String,
+    pub name: String,
 
     /// The resource options for the user. Available resource options are
     /// `ignore_change_password_upon_first_use`, `ignore_password_expiry`,
@@ -75,9 +75,9 @@ pub struct UserResponse {
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
     ///
-    options: Option<Options>,
+    pub options: Option<Options>,
 
-    password: Option<String>,
+    pub password: Option<String>,
 
     /// The date and time when the password expires. The time zone is UTC.
     ///
@@ -86,21 +86,21 @@ pub struct UserResponse {
     ///
     /// **New in version 3.7**
     ///
-    password_expires_at: Option<String>,
+    pub password_expires_at: Option<String>,
 }
 
 /// `Protocols` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Protocols {
-    protocol_id: String,
-    unique_id: String,
+    pub protocol_id: String,
+    pub unique_id: String,
 }
 
 /// `Federated` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Federated {
-    idp_id: String,
-    protocols: Vec<Protocols>,
+    pub idp_id: String,
+    pub protocols: Vec<Protocols>,
 }
 
 /// The links for the `user` resource.
@@ -108,9 +108,9 @@ pub struct Federated {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    next: Option<String>,
-    previous: Option<String>,
-    _self: String,
+    pub next: Option<String>,
+    pub previous: Option<String>,
+    pub _self: String,
 }
 
 /// The resource options for the user. Available resource options are
@@ -122,11 +122,11 @@ pub struct Links {
 /// `Options` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Options {
-    ignore_change_password_upon_first_use: Option<bool>,
-    ignore_lockout_failure_attempts: Option<bool>,
-    ignore_password_expiry: Option<bool>,
-    ignore_user_inactivity: Option<bool>,
-    lock_password: Option<bool>,
-    multi_factor_auth_enabled: Option<bool>,
-    multi_factor_auth_rules: Option<Vec<Vec<String>>>,
+    pub ignore_change_password_upon_first_use: Option<bool>,
+    pub ignore_lockout_failure_attempts: Option<bool>,
+    pub ignore_password_expiry: Option<bool>,
+    pub ignore_user_inactivity: Option<bool>,
+    pub lock_password: Option<bool>,
+    pub multi_factor_auth_enabled: Option<bool>,
+    pub multi_factor_auth_rules: Option<Vec<Vec<String>>>,
 }

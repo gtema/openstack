@@ -26,94 +26,94 @@ pub struct QuotaClassSetResponse {
     ///
     /// **Available until version 2.56**
     ///
-    cores: Option<IntString>,
+    pub cores: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    fixed_ips: Option<IntString>,
+    pub fixed_ips: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    floating_ips: Option<IntString>,
+    pub floating_ips: Option<IntString>,
 
     /// The ID of the quota class. Nova supports the `default` Quota Class
     /// only.
     ///
-    id: String,
+    pub id: String,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    injected_file_content_bytes: Option<IntString>,
+    pub injected_file_content_bytes: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    injected_file_path_bytes: Option<IntString>,
+    pub injected_file_path_bytes: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    injected_files: Option<IntString>,
+    pub injected_files: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    instances: Option<IntString>,
+    pub instances: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    key_pairs: Option<IntString>,
+    pub key_pairs: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    metadata_items: Option<IntString>,
+    pub metadata_items: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    networks: Option<IntString>,
+    pub networks: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    ram: Option<IntString>,
+    pub ram: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    security_group_rules: Option<IntString>,
+    pub security_group_rules: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    security_groups: Option<IntString>,
+    pub security_groups: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    server_group_members: Option<IntString>,
+    pub server_group_members: Option<IntString>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    server_groups: Option<IntString>,
+    pub server_groups: Option<IntString>,
 }

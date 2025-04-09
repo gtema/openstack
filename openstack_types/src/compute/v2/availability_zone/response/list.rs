@@ -24,17 +24,17 @@ use serde_json::Value;
 pub struct AvailabilityZoneResponse {
     /// It is always `null`.
     ///
-    hosts: Option<Value>,
+    pub hosts: Option<Value>,
 
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
-    zone_name: String,
+    pub zone_name: String,
 
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
-    zone_state: ZoneState,
+    pub zone_state: ZoneState,
 }
 
 /// The current state of the availability zone.
@@ -42,5 +42,5 @@ pub struct AvailabilityZoneResponse {
 /// `ZoneState` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ZoneState {
-    available: Option<bool>,
+    pub available: Option<bool>,
 }

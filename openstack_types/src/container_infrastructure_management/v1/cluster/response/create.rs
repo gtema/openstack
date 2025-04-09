@@ -23,5 +23,5 @@ use serde::{Deserialize, Serialize};
 pub struct ClusterResponse {
     /// The UUID of the cluster.
     ///
-    uuid: String,
+    pub uuid: String,
 }

@@ -24,25 +24,25 @@ pub struct IdentityProviderResponse {
     /// The length of validity in minutes for group memberships carried over
     /// through mapping and persisted in the database.
     ///
-    authorization_ttl: Option<i32>,
+    pub authorization_ttl: Option<i32>,
 
     /// The Identity Provider description
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
     ///
-    domain_id: Option<String>,
+    pub domain_id: Option<String>,
 
     /// Whether the Identity Provider is enabled or not
     ///
-    enabled: Option<bool>,
+    pub enabled: Option<bool>,
 
     /// The Identity Provider unique ID
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// List of the unique Identity Provider’s remote IDs
     ///
-    remote_ids: Option<Vec<String>>,
+    pub remote_ids: Option<Vec<String>>,
 }

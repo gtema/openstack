@@ -29,7 +29,7 @@ pub struct ImageResponse {
     /// compatibility with legacy images. To validate image data, instead use
     /// the secure multihash fields `os_hash_algo` and `os_hash_value`.
     ///
-    checksum: Option<String>,
+    pub checksum: Option<String>,
 
     /// Format of the image container.
     ///
@@ -47,7 +47,7 @@ pub struct ImageResponse {
     /// **Train changes**: The `compressed` container format is a supported
     /// value.
     ///
-    container_format: Option<ContainerFormat>,
+    pub container_format: Option<ContainerFormat>,
 
     /// The date and time when the resource was created.
     ///
@@ -64,14 +64,14 @@ pub struct ImageResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
     /// The URL to access the image file kept in external store. *It is present
     /// only if the* `show_image_direct_url` *option is* `true` *in the Image
     /// service’s configuration file.* **Because it presents a security risk,
     /// this option is disabled by default.**
     ///
-    direct_url: Option<String>,
+    pub direct_url: Option<String>,
 
     /// The format of the disk.
     ///
@@ -89,11 +89,11 @@ pub struct ImageResponse {
     /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
     ///
-    disk_format: Option<DiskFormat>,
+    pub disk_format: Option<DiskFormat>,
 
     /// The URL for the virtual machine image file.
     ///
-    file: Option<String>,
+    pub file: Option<String>,
 
     /// A unique, user-defined image UUID, in the format:
     ///
@@ -113,7 +113,7 @@ pub struct ImageResponse {
     ///
     /// If you omit this value, the API generates a UUID for the image.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// A list of objects, each of which describes an image location. Each
     /// object contains a `url` key, whose value is a URL specifying a
@@ -124,21 +124,21 @@ pub struct ImageResponse {
     /// service’s configuration file.* **Because it presents a security risk,
     /// this option is disabled by default.**
     ///
-    locations: Option<Vec<Locations>>,
+    pub locations: Option<Vec<Locations>>,
 
     /// Amount of disk space in GB that is required to boot the image. The
     /// value might be `null` (JSON null data type).
     ///
-    min_disk: Option<i32>,
+    pub min_disk: Option<i32>,
 
     /// Amount of RAM in MB that is required to boot the image. The value might
     /// be `null` (JSON null data type).
     ///
-    min_ram: Option<i32>,
+    pub min_ram: Option<i32>,
 
     /// The name of the image. Value might be `null` (JSON null data type).
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The algorithm used to compute a secure hash of the image data for this
     /// image. The result of the computation is displayed as the value of the
@@ -146,7 +146,7 @@ pub struct ImageResponse {
     /// type). The algorithm used is chosen by the cloud operator; it may not
     /// be configured by end users. *(Since Image API v2.7)*
     ///
-    os_hash_algo: Option<String>,
+    pub os_hash_algo: Option<String>,
 
     /// The hexdigest of the secure hash of the image data computed using the
     /// algorithm whose name is the value of the `os_hash_algo` property. The
@@ -154,7 +154,7 @@ pub struct ImageResponse {
     /// associated with this image, or if the image was created using a version
     /// of the Image Service API prior to version 2.7. *(Since Image API v2.7)*
     ///
-    os_hash_value: Option<String>,
+    pub os_hash_value: Option<String>,
 
     /// This field controls whether an image is displayed in the default
     /// image-list response. A “hidden” image is out of date somehow (for
@@ -164,45 +164,45 @@ pub struct ImageResponse {
     /// it’s easier for end users to find and use a more up-to-date version of
     /// this image. *(Since Image API v2.7)*
     ///
-    os_hidden: Option<bool>,
+    pub os_hidden: Option<bool>,
 
     /// An identifier for the owner of the image, usually the project (also
     /// called the “tenant”) ID. The value might be `null` (JSON null data
     /// type).
     ///
-    owner: Option<String>,
+    pub owner: Option<String>,
 
     /// A boolean value that must be `false` or the image cannot be deleted.
     ///
-    protected: Option<bool>,
+    pub protected: Option<bool>,
 
     /// The URL for the schema describing a virtual machine image.
     ///
-    schema: Option<String>,
+    pub schema: Option<String>,
 
     /// The URL for the virtual machine image.
     ///
     #[serde(rename = "self")]
-    _self: Option<String>,
+    pub _self: Option<String>,
 
     /// The size of the image data, in bytes. The value might be `null` (JSON
     /// null data type).
     ///
-    size: Option<i64>,
+    pub size: Option<i64>,
 
     /// The image status.
     ///
-    status: Option<Status>,
+    pub status: Option<Status>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
     ///
-    stores: Option<String>,
+    pub stores: Option<String>,
 
     /// List of tags for this image, possibly an empty list.
     ///
-    tags: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
 
     /// The date and time when the resource was updated.
     ///
@@ -222,56 +222,56 @@ pub struct ImageResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The virtual size of the image. The value might be `null` (JSON null
     /// data type).
     ///
-    virtual_size: Option<i64>,
+    pub virtual_size: Option<i64>,
 
     /// Image visibility, that is, the access permission for the image.
     ///
-    visibility: Option<Visibility>,
+    pub visibility: Option<Visibility>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Queued
-    #[serde(rename = "queued")]
-    Queued,
+    // Saving
+    #[serde(rename = "saving")]
+    Saving,
 
     // Importing
     #[serde(rename = "importing")]
     Importing,
 
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
-
-    // Deactivated
-    #[serde(rename = "deactivated")]
-    Deactivated,
+    // Active
+    #[serde(rename = "active")]
+    Active,
 
     // Uploading
     #[serde(rename = "uploading")]
     Uploading,
 
-    // Killed
-    #[serde(rename = "killed")]
-    Killed,
-
-    // Saving
-    #[serde(rename = "saving")]
-    Saving,
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
 
     // PendingDelete
     #[serde(rename = "pending_delete")]
     PendingDelete,
 
-    // Active
-    #[serde(rename = "active")]
-    Active,
+    // Queued
+    #[serde(rename = "queued")]
+    Queued,
+
+    // Deactivated
+    #[serde(rename = "deactivated")]
+    Deactivated,
+
+    // Killed
+    #[serde(rename = "killed")]
+    Killed,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -281,6 +281,10 @@ pub enum Visibility {
     #[serde(rename = "public")]
     Public,
 
+    // Community
+    #[serde(rename = "community")]
+    Community,
+
     // Private
     #[serde(rename = "private")]
     Private,
@@ -288,42 +292,38 @@ pub enum Visibility {
     // Shared
     #[serde(rename = "shared")]
     Shared,
-
-    // Community
-    #[serde(rename = "community")]
-    Community,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ContainerFormat {
-    // Ovf
-    #[serde(rename = "ovf")]
-    Ovf,
-
     // Docker
     #[serde(rename = "docker")]
     Docker,
-
-    // Compressed
-    #[serde(rename = "compressed")]
-    Compressed,
-
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Ova
-    #[serde(rename = "ova")]
-    Ova,
 
     // Bare
     #[serde(rename = "bare")]
     Bare,
 
+    // Ova
+    #[serde(rename = "ova")]
+    Ova,
+
+    // Compressed
+    #[serde(rename = "compressed")]
+    Compressed,
+
+    // Ovf
+    #[serde(rename = "ovf")]
+    Ovf,
+
     // Ari
     #[serde(rename = "ari")]
     Ari,
+
+    // Aki
+    #[serde(rename = "aki")]
+    Aki,
 
     // Ami
     #[serde(rename = "ami")]
@@ -333,25 +333,9 @@ pub enum ContainerFormat {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum DiskFormat {
-    // Ploop
-    #[serde(rename = "ploop")]
-    Ploop,
-
     // Iso
     #[serde(rename = "iso")]
     Iso,
-
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Vdi
-    #[serde(rename = "vdi")]
-    Vdi,
-
-    // Raw
-    #[serde(rename = "raw")]
-    Raw,
 
     // Vmdk
     #[serde(rename = "vmdk")]
@@ -361,17 +345,33 @@ pub enum DiskFormat {
     #[serde(rename = "vhdx")]
     Vhdx,
 
-    // Ami
-    #[serde(rename = "ami")]
-    Ami,
-
     // Ari
     #[serde(rename = "ari")]
     Ari,
 
+    // Raw
+    #[serde(rename = "raw")]
+    Raw,
+
+    // Ploop
+    #[serde(rename = "ploop")]
+    Ploop,
+
+    // Aki
+    #[serde(rename = "aki")]
+    Aki,
+
+    // Ami
+    #[serde(rename = "ami")]
+    Ami,
+
     // Qcow2
     #[serde(rename = "qcow2")]
     Qcow2,
+
+    // Vdi
+    #[serde(rename = "vdi")]
+    Vdi,
 
     // Vhd
     #[serde(rename = "vhd")]
@@ -385,15 +385,15 @@ pub enum DiskFormat {
 /// `ValidationData` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ValidationData {
-    checksum: Option<String>,
-    os_hash_algo: String,
-    os_hash_value: String,
+    pub checksum: Option<String>,
+    pub os_hash_algo: String,
+    pub os_hash_value: String,
 }
 
 /// `Locations` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Locations {
-    metadata: HashMap<String, Value>,
-    url: String,
-    validation_data: Option<ValidationData>,
+    pub metadata: HashMap<String, Value>,
+    pub url: String,
+    pub validation_data: Option<ValidationData>,
 }

@@ -26,7 +26,7 @@ pub struct SnapshotResponse {
     ///
     /// **New in version 3.45**
     ///
-    count: Option<i32>,
+    pub count: Option<i32>,
 
     /// The date and time when the resource was created.
     ///
@@ -43,31 +43,31 @@ pub struct SnapshotResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
-    created_at: String,
+    pub created_at: String,
 
     /// A description for the snapshot.
     ///
-    description: Option<String>,
+    pub description: Option<String>,
 
     /// The snapshot UUID.
     ///
-    id: String,
+    pub id: String,
 
     /// One or more metadata key and value pairs for the snapshot, if any.
     ///
-    metadata: HashMap<String, String>,
+    pub metadata: HashMap<String, String>,
 
     /// The name of the object.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
-    size: i64,
+    pub size: i64,
 
     /// The status for the snapshot.
     ///
-    status: Status,
+    pub status: Status,
 
     /// The date and time when the resource was updated.
     ///
@@ -87,49 +87,49 @@ pub struct SnapshotResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// If the snapshot was created from a volume, the volume ID.
     ///
-    volume_id: String,
+    pub volume_id: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
-
-    // ErrorDeleting
-    #[serde(rename = "error_deleting")]
-    ErrorDeleting,
-
-    // Creating
-    #[serde(rename = "creating")]
-    Creating,
-
-    // Available
-    #[serde(rename = "available")]
-    Available,
-
-    // Deleting
-    #[serde(rename = "deleting")]
-    Deleting,
-
-    // Restoring
-    #[serde(rename = "restoring")]
-    Restoring,
-
-    // Unmanaging
-    #[serde(rename = "unmanaging")]
-    Unmanaging,
+    // BackingUp
+    #[serde(rename = "backing-up")]
+    BackingUp,
 
     // Error
     #[serde(rename = "error")]
     Error,
 
-    // BackingUp
-    #[serde(rename = "backing-up")]
-    BackingUp,
+    // ErrorDeleting
+    #[serde(rename = "error_deleting")]
+    ErrorDeleting,
+
+    // Deleting
+    #[serde(rename = "deleting")]
+    Deleting,
+
+    // Available
+    #[serde(rename = "available")]
+    Available,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
+
+    // Creating
+    #[serde(rename = "creating")]
+    Creating,
+
+    // Unmanaging
+    #[serde(rename = "unmanaging")]
+    Unmanaging,
+
+    // Restoring
+    #[serde(rename = "restoring")]
+    Restoring,
 }

@@ -23,21 +23,21 @@ use serde::{Deserialize, Serialize};
 pub struct ListenerResponse {
     /// The currently active connections.
     ///
-    active_connections: Option<i32>,
+    pub active_connections: Option<i32>,
 
     /// The total bytes received.
     ///
-    bytes_in: Option<i32>,
+    pub bytes_in: Option<i32>,
 
     /// The total bytes sent.
     ///
-    bytes_out: Option<i32>,
+    pub bytes_out: Option<i32>,
 
     /// The total requests that were unable to be fulfilled.
     ///
-    request_errors: Option<i32>,
+    pub request_errors: Option<i32>,
 
     /// The total connections handled.
     ///
-    total_connections: Option<i32>,
+    pub total_connections: Option<i32>,
 }

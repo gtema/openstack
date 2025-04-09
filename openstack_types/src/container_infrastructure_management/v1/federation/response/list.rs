@@ -22,63 +22,63 @@ use std::collections::HashMap;
 /// Federation response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct FederationResponse {
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    hostcluster_id: Option<String>,
+    pub hostcluster_id: Option<String>,
 
-    member_ids: Option<Vec<String>>,
+    pub member_ids: Option<Vec<String>>,
 
-    name: Option<String>,
+    pub name: Option<String>,
 
-    properties: Option<HashMap<String, String>>,
+    pub properties: Option<HashMap<String, String>>,
 
-    status: Option<Status>,
+    pub status: Option<Status>,
 
-    status_reason: Option<String>,
+    pub status_reason: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
-    uuid: Option<String>,
+    pub uuid: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // UpdateComplete
-    #[serde(rename = "UPDATE_COMPLETE")]
-    UpdateComplete,
-
-    // CreateComplete
-    #[serde(rename = "CREATE_COMPLETE")]
-    CreateComplete,
-
-    // CreateFailed
-    #[serde(rename = "CREATE_FAILED")]
-    CreateFailed,
+    // UpdateInProgress
+    #[serde(rename = "UPDATE_IN_PROGRESS")]
+    UpdateInProgress,
 
     // DeleteInProgress
     #[serde(rename = "DELETE_IN_PROGRESS")]
     DeleteInProgress,
 
-    // UpdateFailed
-    #[serde(rename = "UPDATE_FAILED")]
-    UpdateFailed,
+    // UpdateComplete
+    #[serde(rename = "UPDATE_COMPLETE")]
+    UpdateComplete,
 
     // DeleteFailed
     #[serde(rename = "DELETE_FAILED")]
     DeleteFailed,
 
-    // UpdateInProgress
-    #[serde(rename = "UPDATE_IN_PROGRESS")]
-    UpdateInProgress,
+    // CreateInProgress
+    #[serde(rename = "CREATE_IN_PROGRESS")]
+    CreateInProgress,
+
+    // CreateFailed
+    #[serde(rename = "CREATE_FAILED")]
+    CreateFailed,
+
+    // CreateComplete
+    #[serde(rename = "CREATE_COMPLETE")]
+    CreateComplete,
 
     // DeleteComplete
     #[serde(rename = "DELETE_COMPLETE")]
     DeleteComplete,
 
-    // CreateInProgress
-    #[serde(rename = "CREATE_IN_PROGRESS")]
-    CreateInProgress,
+    // UpdateFailed
+    #[serde(rename = "UPDATE_FAILED")]
+    UpdateFailed,
 }
 
 /// A link representation.
@@ -86,9 +86,9 @@ pub enum Status {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    created_at: Option<String>,
-    href: Option<String>,
-    rel: Option<String>,
-    _type: Option<String>,
-    updated_at: Option<String>,
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
 }

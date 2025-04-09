@@ -23,9 +23,9 @@ use serde::{Deserialize, Serialize};
 pub struct GroupSnapshotResponse {
     /// The ID of the group snapshot.
     ///
-    id: Option<String>,
+    pub id: Option<String>,
 
     /// The group snapshot name.
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 }

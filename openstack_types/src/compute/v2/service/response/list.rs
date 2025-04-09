@@ -24,38 +24,38 @@ use serde::{Deserialize, Serialize};
 pub struct ServiceResponse {
     /// The binary name of the service.
     ///
-    binary: Option<String>,
+    pub binary: Option<String>,
 
     /// The reason for disabling a service.
     ///
-    disabled_reason: Option<String>,
+    pub disabled_reason: Option<String>,
 
     /// Whether or not this service was forced down manually by an
     /// administrator after the service was fenced. This value is useful to
     /// know that some 3rd party has verified the service should be marked
     /// down.
     ///
-    forced_down: Option<bool>,
+    pub forced_down: Option<bool>,
 
     /// The name of the host.
     ///
-    host: String,
+    pub host: String,
 
     /// The id of the service as a uuid.
     ///
-    id: IntString,
+    pub id: IntString,
 
     /// Service name
     ///
-    name: Option<String>,
+    pub name: Option<String>,
 
     /// The state of the service. One of `up` or `down`.
     ///
-    state: String,
+    pub state: String,
 
     /// The status of the service. One of `enabled` or `disabled`.
     ///
-    status: Status,
+    pub status: Status,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -69,21 +69,21 @@ pub struct ServiceResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 
     /// The availability zone name.
     ///
-    zone: String,
+    pub zone: String,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Disabled
-    #[serde(rename = "disabled")]
-    Disabled,
-
     // Enabled
     #[serde(rename = "enabled")]
     Enabled,
+
+    // Disabled
+    #[serde(rename = "disabled")]
+    Disabled,
 }

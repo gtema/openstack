@@ -21,25 +21,25 @@ use serde::{Deserialize, Serialize};
 /// Certificate response representation
 #[derive(Clone, Deserialize, Serialize)]
 pub struct CertificateResponse {
-    ca_cert_type: Option<String>,
+    pub ca_cert_type: Option<String>,
 
     /// The UUID of the cluster.
     ///
-    cluster_uuid: Option<String>,
+    pub cluster_uuid: Option<String>,
 
-    created_at: Option<String>,
+    pub created_at: Option<String>,
 
-    csr: Option<String>,
+    pub csr: Option<String>,
 
     /// Links to the resources in question.
     ///
-    links: Option<Vec<Links>>,
+    pub links: Option<Vec<Links>>,
 
     /// CA certificate for the cluster.
     ///
-    pem: Option<String>,
+    pub pem: Option<String>,
 
-    updated_at: Option<String>,
+    pub updated_at: Option<String>,
 }
 
 /// A link representation.
@@ -47,9 +47,9 @@ pub struct CertificateResponse {
 /// `Links` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Links {
-    created_at: Option<String>,
-    href: Option<String>,
-    rel: Option<String>,
-    _type: Option<String>,
-    updated_at: Option<String>,
+    pub created_at: Option<String>,
+    pub href: Option<String>,
+    pub rel: Option<String>,
+    pub _type: Option<String>,
+    pub updated_at: Option<String>,
 }
