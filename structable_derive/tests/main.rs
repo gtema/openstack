@@ -11,7 +11,7 @@ struct User {
     last_name: String,
     #[structable(title = "Long", wide)]
     extra: String,
-    #[structable(optional, pretty, wide)]
+    #[structable(optional, serialize, wide)]
     complex_data: Option<Value>,
     #[structable(optional)]
     dummy: Option<String>,
