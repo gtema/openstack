@@ -14,7 +14,72 @@
 
 //! Common types that can be used in responses of the API operations
 use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
+use std::collections::BTreeSet;
 use std::fmt;
+use std::str::FromStr;
+
+/// Output configuration for the StructTable derived structure.
+#[derive(Clone, Debug, Default, Deserialize)]
+pub struct OutputConfig {
+    /// Limit fields (their titles) to be returned
+    #[serde(default)]
+    pub fields: BTreeSet<String>,
+
+    /// Wide mode (additional fields requested)
+    #[serde(default)]
+    pub wide: bool,
+
+    /// Pretty-print the output (relevant only for serialized fields)
+    #[serde(default)]
+    pub pretty: bool,
+}
+
+/// StructTable trait for structs that might be returned to the used in the table form.
+pub trait StructTable {
+    /// Build a table data as a Vec of column headers and Vec of Vec of string for cells
+    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
+    /// Return the row/column with the status column
+    fn status(&self) -> Vec<Option<String>>;
+}
+
+/// Deserialize whatever is an integer, number or a string number falling back to the Default (0)
+pub fn deser_num_str<'de, D, T>(deserializer: D) -> Result<T, D::Error>
+where
+    T: FromStr + Deserialize<'de> + Default,
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum NumOrString<T> {
+        String(String),
+        Number(T),
+    }
+
+    Ok(match NumOrString::<T>::deserialize(deserializer) {
+        Ok(NumOrString::String(s)) => s.parse::<T>().unwrap_or_else(|_| T::default()),
+        Ok(NumOrString::Number(num)) => <T as Into<T>>::into(num),
+        Err(_) => T::default(),
+    })
+}
+
+/// Deserialize whatever is a boolean or a string boolean falling back to the Default (false)
+pub fn deser_bool_str<'de, D>(deserializer: D) -> Result<bool, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum BoolOrStr {
+        String(String),
+        Bool(bool),
+    }
+
+    Ok(match BoolOrStr::deserialize(deserializer) {
+        Ok(BoolOrStr::String(s)) => s.parse().unwrap_or(false),
+        Ok(BoolOrStr::Bool(val)) => val,
+        Err(_) => false,
+    })
+}
 
 /// IntString
 ///
@@ -195,11 +260,103 @@ mod tests {
         BoolDeserializer, Error as ValueError, F64Deserializer, StrDeserializer, U64Deserializer,
     };
     use serde::de::IntoDeserializer;
+    use serde_json::json;
 
     use super::*;
 
     #[test]
-    fn test_intstring_int() {
+    fn test_deser_num_str() {
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestI64 {
+            #[serde(deserialize_with = "deser_num_str")]
+            pub i: i64,
+        }
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestU64 {
+            #[serde(deserialize_with = "deser_num_str")]
+            pub i: u64,
+        }
+
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestF64 {
+            #[serde(deserialize_with = "deser_num_str")]
+            pub i: f64,
+        }
+
+        assert_eq!(
+            TestI64 { i: 1 },
+            serde_json::from_value(json!({"i": 1})).unwrap()
+        );
+        assert_eq!(
+            TestI64 { i: -1 },
+            serde_json::from_value(json!({"i": -1})).unwrap()
+        );
+        assert_eq!(
+            TestU64 { i: 1 },
+            serde_json::from_value(json!({"i": 1})).unwrap()
+        );
+        assert_eq!(
+            TestU64 { i: 1 },
+            serde_json::from_value(json!({"i": "1"})).unwrap()
+        );
+        assert_eq!(
+            TestU64 { i: 0 },
+            serde_json::from_value(json!({"i": ""})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: 1.2 },
+            serde_json::from_value(json!({"i": 1.2})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: -1.2 },
+            serde_json::from_value(json!({"i": -1.2})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: -1.2 },
+            serde_json::from_value(json!({"i": "-1.2"})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: 0.0 },
+            serde_json::from_value(json!({"i": "0"})).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_deser_bool_str() {
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct Test {
+            #[serde(deserialize_with = "deser_bool_str")]
+            pub i: bool,
+        }
+
+        assert_eq!(
+            Test { i: false },
+            serde_json::from_value(json!({"i": false})).unwrap()
+        );
+        assert_eq!(
+            Test { i: false },
+            serde_json::from_value(json!({"i": "false"})).unwrap()
+        );
+        assert_eq!(
+            Test { i: true },
+            serde_json::from_value(json!({"i": true})).unwrap()
+        );
+        assert_eq!(
+            Test { i: true },
+            serde_json::from_value(json!({"i": "true"})).unwrap()
+        );
+        assert_eq!(
+            Test { i: false },
+            serde_json::from_value(json!({"i": "foo"})).unwrap()
+        );
+        assert_eq!(
+            Test { i: false },
+            serde_json::from_value(json!({"i": ""})).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_deser_intstring_int() {
         let deserializer: U64Deserializer<ValueError> = 1u64.into_deserializer();
         assert_eq!(IntString::deserialize(deserializer), Ok(IntString(1)));
     }
