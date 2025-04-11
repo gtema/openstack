@@ -62,6 +62,28 @@ where
     })
 }
 
+/// Deserialize whatever is an integer, number or a string number falling back to the Default (0)
+/// as an optional attribute
+pub fn deser_num_str_opt<'de, D, T>(deserializer: D) -> Result<Option<T>, D::Error>
+where
+    T: FromStr + Deserialize<'de> + Default,
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum NumOrString<T> {
+        String(String),
+        Number(T),
+        Null,
+    }
+
+    Ok(match NumOrString::<T>::deserialize(deserializer) {
+        Ok(NumOrString::String(s)) => Some(s.parse::<T>().unwrap_or_else(|_| T::default())),
+        Ok(NumOrString::Number(num)) => Some(<T as Into<T>>::into(num)),
+        _ => None,
+    })
+}
+
 /// Deserialize whatever is a boolean or a string boolean falling back to the Default (false)
 pub fn deser_bool_str<'de, D>(deserializer: D) -> Result<bool, D::Error>
 where
@@ -78,6 +100,27 @@ where
         Ok(BoolOrStr::String(s)) => s.parse().unwrap_or(false),
         Ok(BoolOrStr::Bool(val)) => val,
         Err(_) => false,
+    })
+}
+
+/// Deserialize whatever is a boolean or a string boolean falling back to the Default (false) as an
+/// optional attribute
+pub fn deser_bool_str_opt<'de, D>(deserializer: D) -> Result<Option<bool>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum BoolOrStr {
+        String(String),
+        Bool(bool),
+        Null,
+    }
+
+    Ok(match BoolOrStr::deserialize(deserializer) {
+        Ok(BoolOrStr::String(s)) => Some(s.parse().unwrap_or(false)),
+        Ok(BoolOrStr::Bool(val)) => Some(val),
+        _ => None,
     })
 }
 
@@ -320,6 +363,67 @@ mod tests {
             serde_json::from_value(json!({"i": "0"})).unwrap()
         );
     }
+    #[test]
+    fn test_deser_num_str_opt() {
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestI64 {
+            #[serde(deserialize_with = "deser_num_str_opt")]
+            pub i: Option<i64>,
+        }
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestU64 {
+            #[serde(deserialize_with = "deser_num_str_opt")]
+            pub i: Option<u64>,
+        }
+
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestF64 {
+            #[serde(deserialize_with = "deser_num_str_opt")]
+            pub i: Option<f64>,
+        }
+
+        assert_eq!(
+            TestI64 { i: Some(1) },
+            serde_json::from_value(json!({"i": 1})).unwrap()
+        );
+
+        assert_eq!(
+            TestI64 { i: Some(-1) },
+            serde_json::from_value(json!({"i": -1})).unwrap()
+        );
+        assert_eq!(
+            TestU64 { i: Some(1) },
+            serde_json::from_value(json!({"i": 1})).unwrap()
+        );
+        assert_eq!(
+            TestU64 { i: Some(1) },
+            serde_json::from_value(json!({"i": "1"})).unwrap()
+        );
+        assert_eq!(
+            TestU64 { i: Some(0) },
+            serde_json::from_value(json!({"i": ""})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: Some(1.2) },
+            serde_json::from_value(json!({"i": 1.2})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: Some(-1.2) },
+            serde_json::from_value(json!({"i": -1.2})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: Some(-1.2) },
+            serde_json::from_value(json!({"i": "-1.2"})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: Some(0.0) },
+            serde_json::from_value(json!({"i": "0"})).unwrap()
+        );
+        assert_eq!(
+            TestF64 { i: None },
+            serde_json::from_value(json!({"i": None::<f64>})).unwrap()
+        );
+    }
 
     #[test]
     fn test_deser_bool_str() {
@@ -352,6 +456,54 @@ mod tests {
         assert_eq!(
             Test { i: false },
             serde_json::from_value(json!({"i": ""})).unwrap()
+        );
+    }
+
+    #[test]
+    fn test_deser_bool_str_opt() {
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct Test {
+            #[serde(deserialize_with = "deser_bool_str_opt")]
+            pub i: Option<bool>,
+        }
+        #[derive(Debug, Deserialize, PartialEq)]
+        struct TestDefault {
+            #[serde(deserialize_with = "deser_bool_str_opt", default)]
+            pub i: Option<bool>,
+        }
+
+
+        assert_eq!(
+            Test { i: Some(false) },
+            serde_json::from_value(json!({"i": false})).unwrap()
+        );
+        assert_eq!(
+            Test { i: Some(false) },
+            serde_json::from_value(json!({"i": "false"})).unwrap()
+        );
+        assert_eq!(
+            Test { i: Some(true) },
+            serde_json::from_value(json!({"i": true})).unwrap()
+        );
+        assert_eq!(
+            Test { i: Some(true) },
+            serde_json::from_value(json!({"i": "true"})).unwrap()
+        );
+        assert_eq!(
+            Test { i: Some(false) },
+            serde_json::from_value(json!({"i": "foo"})).unwrap()
+        );
+        assert_eq!(
+            Test { i: Some(false) },
+            serde_json::from_value(json!({"i": ""})).unwrap()
+        );
+        assert_eq!(
+            Test { i: None },
+            serde_json::from_value(json!({"i": None::<bool>})).unwrap()
+        );
+        assert_eq!(
+            TestDefault { i: None },
+            serde_json::from_value(json!({})).unwrap()
         );
     }
 
