@@ -75,21 +75,77 @@ pub struct IkepolicyResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum EncryptionAlgorithm {
+    // _3des
+    #[serde(rename = "3des")]
+    _3des,
+
+    // Aes128
+    #[serde(rename = "aes-128")]
+    Aes128,
+
     // Aes128Ccm12
     #[serde(rename = "aes-128-ccm-12")]
     Aes128Ccm12,
 
-    // Aes192Gcm8
-    #[serde(rename = "aes-192-gcm-8")]
-    Aes192Gcm8,
+    // Aes128Ccm16
+    #[serde(rename = "aes-128-ccm-16")]
+    Aes128Ccm16,
+
+    // Aes128Ccm8
+    #[serde(rename = "aes-128-ccm-8")]
+    Aes128Ccm8,
+
+    // Aes128Ctr
+    #[serde(rename = "aes-128-ctr")]
+    Aes128Ctr,
+
+    // Aes128Gcm12
+    #[serde(rename = "aes-128-gcm-12")]
+    Aes128Gcm12,
+
+    // Aes128Gcm16
+    #[serde(rename = "aes-128-gcm-16")]
+    Aes128Gcm16,
+
+    // Aes128Gcm8
+    #[serde(rename = "aes-128-gcm-8")]
+    Aes128Gcm8,
+
+    // Aes192
+    #[serde(rename = "aes-192")]
+    Aes192,
+
+    // Aes192Ccm12
+    #[serde(rename = "aes-192-ccm-12")]
+    Aes192Ccm12,
 
     // Aes192Ccm16
     #[serde(rename = "aes-192-ccm-16")]
     Aes192Ccm16,
 
-    // Aes256Ctr
-    #[serde(rename = "aes-256-ctr")]
-    Aes256Ctr,
+    // Aes192Ccm8
+    #[serde(rename = "aes-192-ccm-8")]
+    Aes192Ccm8,
+
+    // Aes192Ctr
+    #[serde(rename = "aes-192-ctr")]
+    Aes192Ctr,
+
+    // Aes192Gcm12
+    #[serde(rename = "aes-192-gcm-12")]
+    Aes192Gcm12,
+
+    // Aes192Gcm16
+    #[serde(rename = "aes-192-gcm-16")]
+    Aes192Gcm16,
+
+    // Aes192Gcm8
+    #[serde(rename = "aes-192-gcm-8")]
+    Aes192Gcm8,
+
+    // Aes256
+    #[serde(rename = "aes-256")]
+    Aes256,
 
     // Aes256Ccm12
     #[serde(rename = "aes-256-ccm-12")]
@@ -99,121 +155,65 @@ pub enum EncryptionAlgorithm {
     #[serde(rename = "aes-256-ccm-16")]
     Aes256Ccm16,
 
-    // Aes256
-    #[serde(rename = "aes-256")]
-    Aes256,
+    // Aes256Ccm8
+    #[serde(rename = "aes-256-ccm-8")]
+    Aes256Ccm8,
 
-    // Aes128Ccm16
-    #[serde(rename = "aes-128-ccm-16")]
-    Aes128Ccm16,
+    // Aes256Ctr
+    #[serde(rename = "aes-256-ctr")]
+    Aes256Ctr,
 
     // Aes256Gcm12
     #[serde(rename = "aes-256-gcm-12")]
     Aes256Gcm12,
 
-    // Aes192Ccm8
-    #[serde(rename = "aes-192-ccm-8")]
-    Aes192Ccm8,
-
-    // _3des
-    #[serde(rename = "3des")]
-    _3des,
-
-    // Aes192Ccm12
-    #[serde(rename = "aes-192-ccm-12")]
-    Aes192Ccm12,
-
-    // Aes128
-    #[serde(rename = "aes-128")]
-    Aes128,
-
-    // Aes128Gcm8
-    #[serde(rename = "aes-128-gcm-8")]
-    Aes128Gcm8,
-
-    // Aes128Gcm12
-    #[serde(rename = "aes-128-gcm-12")]
-    Aes128Gcm12,
-
-    // Aes192Gcm16
-    #[serde(rename = "aes-192-gcm-16")]
-    Aes192Gcm16,
-
-    // Aes128Ctr
-    #[serde(rename = "aes-128-ctr")]
-    Aes128Ctr,
-
-    // Aes128Gcm16
-    #[serde(rename = "aes-128-gcm-16")]
-    Aes128Gcm16,
-
-    // Aes256Ccm8
-    #[serde(rename = "aes-256-ccm-8")]
-    Aes256Ccm8,
-
-    // Aes192
-    #[serde(rename = "aes-192")]
-    Aes192,
-
-    // Aes192Gcm12
-    #[serde(rename = "aes-192-gcm-12")]
-    Aes192Gcm12,
-
-    // Aes192Ctr
-    #[serde(rename = "aes-192-ctr")]
-    Aes192Ctr,
-
-    // Aes256Gcm8
-    #[serde(rename = "aes-256-gcm-8")]
-    Aes256Gcm8,
-
     // Aes256Gcm16
     #[serde(rename = "aes-256-gcm-16")]
     Aes256Gcm16,
 
-    // Aes128Ccm8
-    #[serde(rename = "aes-128-ccm-8")]
-    Aes128Ccm8,
+    // Aes256Gcm8
+    #[serde(rename = "aes-256-gcm-8")]
+    Aes256Gcm8,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum AuthAlgorithm {
-    // Sha256
-    #[serde(rename = "sha256")]
-    Sha256,
-
-    // Sha512
-    #[serde(rename = "sha512")]
-    Sha512,
-
-    // Sha384
-    #[serde(rename = "sha384")]
-    Sha384,
+    // AesCmac
+    #[serde(rename = "aes-cmac")]
+    AesCmac,
 
     // AesXcbc
     #[serde(rename = "aes-xcbc")]
     AesXcbc,
 
-    // AesCmac
-    #[serde(rename = "aes-cmac")]
-    AesCmac,
-
     // Sha1
     #[serde(rename = "sha1")]
     Sha1,
+
+    // Sha256
+    #[serde(rename = "sha256")]
+    Sha256,
+
+    // Sha384
+    #[serde(rename = "sha384")]
+    Sha384,
+
+    // Sha512
+    #[serde(rename = "sha512")]
+    Sha512,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Phase1NegotiationMode {
-    // Main
-    #[serde(rename = "main")]
-    Main,
-
     // Aggressive
     #[serde(rename = "aggressive")]
     Aggressive,
+
+    // Main
+    #[serde(rename = "main")]
+    Main,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -231,69 +231,29 @@ pub enum IkeVersion {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Pfs {
-    // Group23
-    #[serde(rename = "group23")]
-    Group23,
-
-    // Group27
-    #[serde(rename = "group27")]
-    Group27,
-
-    // Group24
-    #[serde(rename = "group24")]
-    Group24,
-
-    // Group25
-    #[serde(rename = "group25")]
-    Group25,
-
-    // Group19
-    #[serde(rename = "group19")]
-    Group19,
-
-    // Group26
-    #[serde(rename = "group26")]
-    Group26,
-
-    // Group31
-    #[serde(rename = "group31")]
-    Group31,
-
-    // Group29
-    #[serde(rename = "group29")]
-    Group29,
-
-    // Group28
-    #[serde(rename = "group28")]
-    Group28,
-
     // Group14
     #[serde(rename = "group14")]
     Group14,
-
-    // Group30
-    #[serde(rename = "group30")]
-    Group30,
-
-    // Group17
-    #[serde(rename = "group17")]
-    Group17,
-
-    // Group5
-    #[serde(rename = "group5")]
-    Group5,
 
     // Group15
     #[serde(rename = "group15")]
     Group15,
 
+    // Group16
+    #[serde(rename = "group16")]
+    Group16,
+
+    // Group17
+    #[serde(rename = "group17")]
+    Group17,
+
     // Group18
     #[serde(rename = "group18")]
     Group18,
 
-    // Group21
-    #[serde(rename = "group21")]
-    Group21,
+    // Group19
+    #[serde(rename = "group19")]
+    Group19,
 
     // Group2
     #[serde(rename = "group2")]
@@ -303,11 +263,51 @@ pub enum Pfs {
     #[serde(rename = "group20")]
     Group20,
 
+    // Group21
+    #[serde(rename = "group21")]
+    Group21,
+
     // Group22
     #[serde(rename = "group22")]
     Group22,
 
-    // Group16
-    #[serde(rename = "group16")]
-    Group16,
+    // Group23
+    #[serde(rename = "group23")]
+    Group23,
+
+    // Group24
+    #[serde(rename = "group24")]
+    Group24,
+
+    // Group25
+    #[serde(rename = "group25")]
+    Group25,
+
+    // Group26
+    #[serde(rename = "group26")]
+    Group26,
+
+    // Group27
+    #[serde(rename = "group27")]
+    Group27,
+
+    // Group28
+    #[serde(rename = "group28")]
+    Group28,
+
+    // Group29
+    #[serde(rename = "group29")]
+    Group29,
+
+    // Group30
+    #[serde(rename = "group30")]
+    Group30,
+
+    // Group31
+    #[serde(rename = "group31")]
+    Group31,
+
+    // Group5
+    #[serde(rename = "group5")]
+    Group5,
 }

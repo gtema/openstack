@@ -42,27 +42,27 @@ pub struct ConntrackHelperResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    // Ipv6Icmp
-    #[serde(rename = "ipv6-icmp")]
-    Ipv6Icmp,
-
-    // Udp
-    #[serde(rename = "udp")]
-    Udp,
-
-    // Tcp
-    #[serde(rename = "tcp")]
-    Tcp,
-
     // Dccp
     #[serde(rename = "dccp")]
     Dccp,
+
+    // Icmp
+    #[serde(rename = "icmp")]
+    Icmp,
+
+    // Ipv6Icmp
+    #[serde(rename = "ipv6-icmp")]
+    Ipv6Icmp,
 
     // Sctp
     #[serde(rename = "sctp")]
     Sctp,
 
-    // Icmp
-    #[serde(rename = "icmp")]
-    Icmp,
+    // Tcp
+    #[serde(rename = "tcp")]
+    Tcp,
+
+    // Udp
+    #[serde(rename = "udp")]
+    Udp,
 }

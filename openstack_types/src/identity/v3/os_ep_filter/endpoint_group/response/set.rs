@@ -56,10 +56,6 @@ pub struct Links {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
-    // Public
-    #[serde(rename = "public")]
-    Public,
-
     // Admin
     #[serde(rename = "admin")]
     Admin,
@@ -67,6 +63,10 @@ pub enum Interface {
     // Internal
     #[serde(rename = "internal")]
     Internal,
+
+    // Public
+    #[serde(rename = "public")]
+    Public,
 }
 
 /// Describes the filtering performed by the endpoint group. The filter used

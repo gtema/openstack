@@ -60,23 +60,23 @@ pub struct SecurityGroupRuleResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Direction {
-    // Ingress
-    #[serde(rename = "ingress")]
-    Ingress,
-
     // Egress
     #[serde(rename = "egress")]
     Egress,
+
+    // Ingress
+    #[serde(rename = "ingress")]
+    Ingress,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Ethertype {
-    // Ipv6
-    #[serde(rename = "IPv6")]
-    Ipv6,
-
     // Ipv4
     #[serde(rename = "IPv4")]
     Ipv4,
+
+    // Ipv6
+    #[serde(rename = "IPv6")]
+    Ipv6,
 }

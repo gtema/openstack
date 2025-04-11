@@ -92,9 +92,29 @@ pub enum Status {
     #[serde(rename = "ADOPT_COMPLETE")]
     AdoptComplete,
 
-    // UpdateInProgress
-    #[serde(rename = "UPDATE_IN_PROGRESS")]
-    UpdateInProgress,
+    // CheckComplete
+    #[serde(rename = "CHECK_COMPLETE")]
+    CheckComplete,
+
+    // CreateComplete
+    #[serde(rename = "CREATE_COMPLETE")]
+    CreateComplete,
+
+    // CreateFailed
+    #[serde(rename = "CREATE_FAILED")]
+    CreateFailed,
+
+    // CreateInProgress
+    #[serde(rename = "CREATE_IN_PROGRESS")]
+    CreateInProgress,
+
+    // DeleteComplete
+    #[serde(rename = "DELETE_COMPLETE")]
+    DeleteComplete,
+
+    // DeleteFailed
+    #[serde(rename = "DELETE_FAILED")]
+    DeleteFailed,
 
     // DeleteInProgress
     #[serde(rename = "DELETE_IN_PROGRESS")]
@@ -104,9 +124,25 @@ pub enum Status {
     #[serde(rename = "RESTORE_COMPLETE")]
     RestoreComplete,
 
+    // ResumeComplete
+    #[serde(rename = "RESUME_COMPLETE")]
+    ResumeComplete,
+
+    // ResumeFailed
+    #[serde(rename = "RESUME_FAILED")]
+    ResumeFailed,
+
     // RollbackComplete
     #[serde(rename = "ROLLBACK_COMPLETE")]
     RollbackComplete,
+
+    // RollbackFailed
+    #[serde(rename = "ROLLBACK_FAILED")]
+    RollbackFailed,
+
+    // RollbackInProgress
+    #[serde(rename = "ROLLBACK_IN_PROGRESS")]
+    RollbackInProgress,
 
     // SnapshotComplete
     #[serde(rename = "SNAPSHOT_COMPLETE")]
@@ -116,47 +152,11 @@ pub enum Status {
     #[serde(rename = "UPDATE_COMPLETE")]
     UpdateComplete,
 
-    // RollbackInProgress
-    #[serde(rename = "ROLLBACK_IN_PROGRESS")]
-    RollbackInProgress,
-
-    // ResumeFailed
-    #[serde(rename = "RESUME_FAILED")]
-    ResumeFailed,
-
-    // CheckComplete
-    #[serde(rename = "CHECK_COMPLETE")]
-    CheckComplete,
-
-    // DeleteFailed
-    #[serde(rename = "DELETE_FAILED")]
-    DeleteFailed,
-
-    // CreateInProgress
-    #[serde(rename = "CREATE_IN_PROGRESS")]
-    CreateInProgress,
-
-    // CreateFailed
-    #[serde(rename = "CREATE_FAILED")]
-    CreateFailed,
-
-    // ResumeComplete
-    #[serde(rename = "RESUME_COMPLETE")]
-    ResumeComplete,
-
-    // CreateComplete
-    #[serde(rename = "CREATE_COMPLETE")]
-    CreateComplete,
-
-    // RollbackFailed
-    #[serde(rename = "ROLLBACK_FAILED")]
-    RollbackFailed,
-
-    // DeleteComplete
-    #[serde(rename = "DELETE_COMPLETE")]
-    DeleteComplete,
-
     // UpdateFailed
     #[serde(rename = "UPDATE_FAILED")]
     UpdateFailed,
+
+    // UpdateInProgress
+    #[serde(rename = "UPDATE_IN_PROGRESS")]
+    UpdateInProgress,
 }

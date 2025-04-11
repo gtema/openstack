@@ -236,25 +236,25 @@ pub struct ImageResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Saving
-    #[serde(rename = "saving")]
-    Saving,
+    // Active
+    #[serde(rename = "active")]
+    Active,
+
+    // Deactivated
+    #[serde(rename = "deactivated")]
+    Deactivated,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
 
     // Importing
     #[serde(rename = "importing")]
     Importing,
 
-    // Active
-    #[serde(rename = "active")]
-    Active,
-
-    // Uploading
-    #[serde(rename = "uploading")]
-    Uploading,
-
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
+    // Killed
+    #[serde(rename = "killed")]
+    Killed,
 
     // PendingDelete
     #[serde(rename = "pending_delete")]
@@ -264,22 +264,18 @@ pub enum Status {
     #[serde(rename = "queued")]
     Queued,
 
-    // Deactivated
-    #[serde(rename = "deactivated")]
-    Deactivated,
+    // Saving
+    #[serde(rename = "saving")]
+    Saving,
 
-    // Killed
-    #[serde(rename = "killed")]
-    Killed,
+    // Uploading
+    #[serde(rename = "uploading")]
+    Uploading,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Visibility {
-    // Public
-    #[serde(rename = "public")]
-    Public,
-
     // Community
     #[serde(rename = "community")]
     Community,
@@ -287,6 +283,10 @@ pub enum Visibility {
     // Private
     #[serde(rename = "private")]
     Private,
+
+    // Public
+    #[serde(rename = "public")]
+    Public,
 
     // Shared
     #[serde(rename = "shared")]
@@ -296,66 +296,42 @@ pub enum Visibility {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ContainerFormat {
-    // Docker
-    #[serde(rename = "docker")]
-    Docker,
+    // Aki
+    #[serde(rename = "aki")]
+    Aki,
+
+    // Ami
+    #[serde(rename = "ami")]
+    Ami,
+
+    // Ari
+    #[serde(rename = "ari")]
+    Ari,
 
     // Bare
     #[serde(rename = "bare")]
     Bare,
 
-    // Ova
-    #[serde(rename = "ova")]
-    Ova,
-
     // Compressed
     #[serde(rename = "compressed")]
     Compressed,
 
+    // Docker
+    #[serde(rename = "docker")]
+    Docker,
+
+    // Ova
+    #[serde(rename = "ova")]
+    Ova,
+
     // Ovf
     #[serde(rename = "ovf")]
     Ovf,
-
-    // Ari
-    #[serde(rename = "ari")]
-    Ari,
-
-    // Aki
-    #[serde(rename = "aki")]
-    Aki,
-
-    // Ami
-    #[serde(rename = "ami")]
-    Ami,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum DiskFormat {
-    // Iso
-    #[serde(rename = "iso")]
-    Iso,
-
-    // Vmdk
-    #[serde(rename = "vmdk")]
-    Vmdk,
-
-    // Vhdx
-    #[serde(rename = "vhdx")]
-    Vhdx,
-
-    // Ari
-    #[serde(rename = "ari")]
-    Ari,
-
-    // Raw
-    #[serde(rename = "raw")]
-    Raw,
-
-    // Ploop
-    #[serde(rename = "ploop")]
-    Ploop,
-
     // Aki
     #[serde(rename = "aki")]
     Aki,
@@ -364,9 +340,25 @@ pub enum DiskFormat {
     #[serde(rename = "ami")]
     Ami,
 
+    // Ari
+    #[serde(rename = "ari")]
+    Ari,
+
+    // Iso
+    #[serde(rename = "iso")]
+    Iso,
+
+    // Ploop
+    #[serde(rename = "ploop")]
+    Ploop,
+
     // Qcow2
     #[serde(rename = "qcow2")]
     Qcow2,
+
+    // Raw
+    #[serde(rename = "raw")]
+    Raw,
 
     // Vdi
     #[serde(rename = "vdi")]
@@ -375,6 +367,14 @@ pub enum DiskFormat {
     // Vhd
     #[serde(rename = "vhd")]
     Vhd,
+
+    // Vhdx
+    #[serde(rename = "vhdx")]
+    Vhdx,
+
+    // Vmdk
+    #[serde(rename = "vmdk")]
+    Vmdk,
 }
 
 /// Values to be used to populate the corresponding image properties. If the

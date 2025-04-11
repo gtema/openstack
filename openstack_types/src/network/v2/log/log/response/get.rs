@@ -78,11 +78,11 @@ pub enum Event {
     #[serde(rename = "ACCEPT")]
     Accept,
 
-    // Drop
-    #[serde(rename = "DROP")]
-    Drop,
-
     // All
     #[serde(rename = "ALL")]
     All,
+
+    // Drop
+    #[serde(rename = "DROP")]
+    Drop,
 }

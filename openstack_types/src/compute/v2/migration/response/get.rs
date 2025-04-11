@@ -138,11 +138,11 @@ pub enum MigrationType {
     #[serde(rename = "live-migration")]
     LiveMigration,
 
-    // Resize
-    #[serde(rename = "resize")]
-    Resize,
-
     // Migration
     #[serde(rename = "migration")]
     Migration,
+
+    // Resize
+    #[serde(rename = "resize")]
+    Resize,
 }

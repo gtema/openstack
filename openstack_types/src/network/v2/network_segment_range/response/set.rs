@@ -60,10 +60,6 @@ pub struct NetworkSegmentRangeResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum NetworkType {
-    // Vlan
-    #[serde(rename = "vlan")]
-    Vlan,
-
     // Geneve
     #[serde(rename = "geneve")]
     Geneve,
@@ -71,6 +67,10 @@ pub enum NetworkType {
     // Gre
     #[serde(rename = "gre")]
     Gre,
+
+    // Vlan
+    #[serde(rename = "vlan")]
+    Vlan,
 
     // Vxlan
     #[serde(rename = "vxlan")]

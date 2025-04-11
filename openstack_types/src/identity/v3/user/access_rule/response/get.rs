@@ -56,21 +56,21 @@ pub struct Links {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Method {
-    // Patch
-    #[serde(rename = "PATCH")]
-    Patch,
-
     // Delete
     #[serde(rename = "DELETE")]
     Delete,
+
+    // Get
+    #[serde(rename = "GET")]
+    Get,
 
     // Head
     #[serde(rename = "HEAD")]
     Head,
 
-    // Get
-    #[serde(rename = "GET")]
-    Get,
+    // Patch
+    #[serde(rename = "PATCH")]
+    Patch,
 
     // Post
     #[serde(rename = "POST")]

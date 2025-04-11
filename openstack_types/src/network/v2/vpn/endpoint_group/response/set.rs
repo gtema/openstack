@@ -54,21 +54,21 @@ pub struct EndpointGroupResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Network
-    #[serde(rename = "network")]
-    Network,
-
     // Cidr
     #[serde(rename = "cidr")]
     Cidr,
 
-    // Subnet
-    #[serde(rename = "subnet")]
-    Subnet,
+    // Network
+    #[serde(rename = "network")]
+    Network,
 
     // Router
     #[serde(rename = "router")]
     Router,
+
+    // Subnet
+    #[serde(rename = "subnet")]
+    Subnet,
 
     // Vlan
     #[serde(rename = "vlan")]

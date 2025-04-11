@@ -42,13 +42,13 @@ pub struct Domain {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Local
-    #[serde(rename = "local")]
-    Local,
-
     // Ephemeral
     #[serde(rename = "ephemeral")]
     Ephemeral,
+
+    // Local
+    #[serde(rename = "local")]
+    Local,
 }
 
 /// `User` type

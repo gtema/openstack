@@ -141,13 +141,13 @@ pub enum Ipv6RaMode {
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
 
-    // Slaac
-    #[serde(rename = "slaac")]
-    Slaac,
-
     // Dhcpv6Stateless
     #[serde(rename = "dhcpv6-stateless")]
     Dhcpv6Stateless,
+
+    // Slaac
+    #[serde(rename = "slaac")]
+    Slaac,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
@@ -157,11 +157,11 @@ pub enum Ipv6AddressMode {
     #[serde(rename = "dhcpv6-stateful")]
     Dhcpv6Stateful,
 
-    // Slaac
-    #[serde(rename = "slaac")]
-    Slaac,
-
     // Dhcpv6Stateless
     #[serde(rename = "dhcpv6-stateless")]
     Dhcpv6Stateless,
+
+    // Slaac
+    #[serde(rename = "slaac")]
+    Slaac,
 }

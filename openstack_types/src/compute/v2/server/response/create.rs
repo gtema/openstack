@@ -60,13 +60,13 @@ pub struct ServerResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum OsDcfDiskConfig {
-    // Manual
-    #[serde(rename = "MANUAL")]
-    Manual,
-
     // Auto
     #[serde(rename = "AUTO")]
     Auto,
+
+    // Manual
+    #[serde(rename = "MANUAL")]
+    Manual,
 }
 
 /// `SecurityGroups` type

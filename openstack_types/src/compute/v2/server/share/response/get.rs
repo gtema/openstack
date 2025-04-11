@@ -55,9 +55,13 @@ pub struct ShareResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Inactive
-    #[serde(rename = "inactive")]
-    Inactive,
+    // Active
+    #[serde(rename = "active")]
+    Active,
+
+    // Attaching
+    #[serde(rename = "attaching")]
+    Attaching,
 
     // Detaching
     #[serde(rename = "detaching")]
@@ -67,11 +71,7 @@ pub enum Status {
     #[serde(rename = "error")]
     Error,
 
-    // Attaching
-    #[serde(rename = "attaching")]
-    Attaching,
-
-    // Active
-    #[serde(rename = "active")]
-    Active,
+    // Inactive
+    #[serde(rename = "inactive")]
+    Inactive,
 }
