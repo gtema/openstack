@@ -16,19 +16,28 @@
 // `openstack-codegenerator`.
 //! Response type for the put metering/metering-labels/{id} operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// MeteringLabel response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MeteringLabelResponse {
+    #[structable(optional)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub shared: Option<bool>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }

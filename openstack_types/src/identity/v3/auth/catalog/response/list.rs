@@ -17,26 +17,33 @@
 //! Response type for the get auth/catalog operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Catalog response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct CatalogResponse {
     /// A list of `endpoint` objects.
     ///
+    #[structable(optional, serialize, wide)]
     pub endpoints: Option<Vec<Endpoints>>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The service name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, title = "type", wide)]
     pub _type: Option<String>,
 }
 

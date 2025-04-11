@@ -17,12 +17,16 @@
 //! Response type for the post os-server-external-events operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServerExternalEvent response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerExternalEventResponse {
     /// List of external events to process.
     ///
+    #[structable(serialize)]
     pub events: Vec<Events>,
 }
 

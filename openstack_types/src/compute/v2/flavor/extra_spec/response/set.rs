@@ -16,10 +16,9 @@
 // `openstack-codegenerator`.
 //! Response type for the put flavors/{flavor_id}/os-extra_specs/{id} operation
 
-use crate::common::NumString;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// Response data as HashMap type
 #[derive(Deserialize, Serialize)]
-pub struct ExtraSpec(HashMap<String, NumString>);
+pub struct ExtraSpec(HashMap<String, f64>);

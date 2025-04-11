@@ -18,12 +18,16 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Type response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TypeResponse {
     /// The volume type description.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// A key and value pair that contains additional specifications that are
@@ -31,26 +35,32 @@ pub struct TypeResponse {
     /// capacity, compression, and so on, depending on the storage driver in
     /// use.
     ///
+    #[structable(optional, serialize)]
     pub extra_specs: Option<HashMap<String, Option<String>>>,
 
     /// The UUID of the volume type.
     ///
+    #[structable()]
     pub id: String,
 
     /// Whether the volume type is publicly visible.
     ///
+    #[structable(optional)]
     pub is_public: Option<bool>,
 
     /// The name of the volume type.
     ///
+    #[structable()]
     pub name: String,
 
     /// Whether the volume type is publicly visible.
     ///
     #[serde(rename = "os-volume-type-access:is_public")]
+    #[structable(optional, title = "os-volume-type-access:is_public")]
     pub os_volume_type_access_is_public: Option<bool>,
 
     /// The QoS specifications ID.
     ///
+    #[structable(optional)]
     pub qos_specs_id: Option<String>,
 }

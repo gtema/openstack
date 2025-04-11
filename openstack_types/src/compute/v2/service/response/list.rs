@@ -16,18 +16,23 @@
 // `openstack-codegenerator`.
 //! Response type for the get os-services operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Service response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceResponse {
     /// The binary name of the service.
     ///
+    #[structable(optional, wide)]
     pub binary: Option<String>,
 
     /// The reason for disabling a service.
     ///
+    #[structable(optional, wide)]
     pub disabled_reason: Option<String>,
 
     /// Whether or not this service was forced down manually by an
@@ -35,26 +40,33 @@ pub struct ServiceResponse {
     /// know that some 3rd party has verified the service should be marked
     /// down.
     ///
+    #[structable(optional, wide)]
     pub forced_down: Option<bool>,
 
     /// The name of the host.
     ///
+    #[structable(wide)]
     pub host: String,
 
     /// The id of the service as a uuid.
     ///
-    pub id: IntString,
+    #[serde(deserialize_with = "deser_num_str")]
+    #[structable()]
+    pub id: i64,
 
     /// Service name
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The state of the service. One of `up` or `down`.
     ///
+    #[structable()]
     pub state: String,
 
     /// The status of the service. One of `enabled` or `disabled`.
     ///
+    #[structable(serialize)]
     pub status: Status,
 
     /// The date and time when the resource was updated. The date and time
@@ -69,10 +81,12 @@ pub struct ServiceResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The availability zone name.
     ///
+    #[structable(wide)]
     pub zone: String,
 }
 

@@ -17,20 +17,26 @@
 //! Response type for the post backups/import_record operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ImportRecord response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImportRecordResponse {
     /// The UUID of the backup.
     ///
+    #[structable()]
     pub id: String,
 
     /// Links for the backup.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The backup name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 }
 

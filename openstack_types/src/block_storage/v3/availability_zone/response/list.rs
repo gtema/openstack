@@ -17,16 +17,21 @@
 //! Response type for the get os-availability-zone operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AvailabilityZone response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
+    #[structable(optional, title = "zoneName")]
     pub zone_name: Option<String>,
 
     #[serde(rename = "zoneState")]
+    #[structable(optional, serialize, title = "zoneState")]
     pub zone_state: Option<ZoneState>,
 }
 

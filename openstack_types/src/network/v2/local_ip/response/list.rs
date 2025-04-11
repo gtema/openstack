@@ -17,30 +17,44 @@
 //! Response type for the get local-ips operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// LocalIp response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LocalIpResponse {
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub ip_mode: Option<IpMode>,
 
+    #[structable(optional, wide)]
     pub local_ip_address: Option<String>,
 
+    #[structable(optional, wide)]
     pub local_port_id: Option<String>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, wide)]
     pub network_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

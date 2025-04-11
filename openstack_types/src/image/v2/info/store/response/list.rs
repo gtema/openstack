@@ -17,14 +17,20 @@
 //! Response type for the get info/stores operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Store response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct StoreResponse {
     #[serde(rename = "default")]
+    #[structable(optional, title = "default", wide)]
     pub _default: Option<bool>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 }

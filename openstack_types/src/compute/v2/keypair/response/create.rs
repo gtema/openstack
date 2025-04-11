@@ -17,33 +17,42 @@
 //! Response type for the post os-keypairs operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Keypair response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct KeypairResponse {
     /// The date and time when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A boolean indicates whether this keypair is deleted or not. The value
     /// is always false (not deleted).
     ///
+    #[structable(optional)]
     pub deleted: Option<bool>,
 
     /// It is always null.
     ///
+    #[structable(optional, serialize)]
     pub deleted_at: Option<String>,
 
     /// The fingerprint for the keypair.
     ///
+    #[structable()]
     pub fingerprint: String,
 
     /// The keypair ID.
     ///
+    #[structable()]
     pub id: i32,
 
     /// The name for the keypair.
     ///
+    #[structable()]
     pub name: String,
 
     /// If you do not provide a public key on create, a new keypair will be
@@ -53,10 +62,12 @@ pub struct KeypairResponse {
     ///
     /// **Available until version 2.91**
     ///
+    #[structable(optional)]
     pub private_key: Option<String>,
 
     /// The keypair public key.
     ///
+    #[structable()]
     pub public_key: String,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
@@ -64,13 +75,16 @@ pub struct KeypairResponse {
     /// **New in version 2.2**
     ///
     #[serde(rename = "type")]
+    #[structable(title = "type")]
     pub _type: String,
 
     /// It is always null.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 
     /// The user_id for a keypair.
     ///
+    #[structable()]
     pub user_id: String,
 }

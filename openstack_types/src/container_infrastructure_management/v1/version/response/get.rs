@@ -17,34 +17,50 @@
 //! Response type for the get  operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Version response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VersionResponse {
+    #[structable(optional, serialize)]
     pub certificates: Option<Vec<Certificates>>,
 
+    #[structable(optional, serialize)]
     pub clusters: Option<Vec<Clusters>>,
 
+    #[structable(optional, serialize)]
     pub clustertemplates: Option<Vec<Clustertemplates>>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, serialize)]
     pub federations: Option<Vec<Federations>>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
+    #[structable(optional, serialize)]
     pub media_types: Option<Vec<MediaTypes>>,
 
+    #[structable(optional, serialize)]
     pub mservices: Option<Vec<Mservices>>,
 
+    #[structable(optional, serialize)]
     pub nodegroups: Option<Vec<Nodegroups>>,
 
+    #[structable(optional, serialize)]
     pub quotas: Option<Vec<Quotas>>,
 
+    #[structable(optional, serialize)]
     pub stats: Option<Vec<Stats>>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

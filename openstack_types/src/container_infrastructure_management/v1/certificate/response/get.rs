@@ -17,28 +17,38 @@
 //! Response type for the get certificates/{certificate_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Certificate response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct CertificateResponse {
+    #[structable(optional)]
     pub ca_cert_type: Option<String>,
 
     /// The UUID of the cluster.
     ///
+    #[structable(optional)]
     pub cluster_uuid: Option<String>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional)]
     pub csr: Option<String>,
 
     /// Links to the resources in question.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// CA certificate for the cluster.
     ///
+    #[structable(optional)]
     pub pem: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

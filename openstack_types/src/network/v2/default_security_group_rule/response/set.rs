@@ -16,35 +16,52 @@
 // `openstack-codegenerator`.
 //! Response type for the put default-security-group-rules/{id} operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// DefaultSecurityGroupRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DefaultSecurityGroupRuleResponse {
+    #[structable(optional)]
     pub description: Option<String>,
 
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional, serialize)]
     pub ethertype: Option<Ethertype>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, serialize)]
     pub port_range_max: Option<i32>,
 
+    #[structable(optional, serialize)]
     pub port_range_min: Option<i32>,
 
+    #[structable(optional)]
     pub protocol: Option<String>,
 
+    #[structable(optional)]
     pub remote_address_group_id: Option<String>,
 
+    #[structable(optional)]
     pub remote_group_id: Option<String>,
 
+    #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
-    pub used_in_default_sg: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub used_in_default_sg: Option<bool>,
 
-    pub used_in_non_default_sg: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub used_in_non_default_sg: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

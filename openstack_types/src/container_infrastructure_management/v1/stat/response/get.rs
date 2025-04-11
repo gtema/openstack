@@ -17,19 +17,26 @@
 //! Response type for the get stats operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Stat response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct StatResponse {
     /// The number of clusters.
     ///
+    #[structable(optional)]
     pub clusters: Option<i32>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The total number of nodes including master nodes.
     ///
+    #[structable(optional)]
     pub nodes: Option<i32>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

@@ -17,17 +17,22 @@
 //! Response type for the post servers/{id}/action operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Server response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// The type of the remote console
     ///
     #[serde(rename = "type")]
+    #[structable(serialize, title = "type")]
     pub _type: Type,
 
     /// The URL used to connect to the console.
     ///
+    #[structable()]
     pub url: String,
 }
 

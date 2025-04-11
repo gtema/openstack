@@ -17,14 +17,20 @@
 //! Response type for the get info/import operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Import response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImportResponse {
+    #[structable(optional)]
     pub description: Option<String>,
 
     #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
+    #[structable(optional, serialize)]
     pub value: Option<Vec<String>>,
 }

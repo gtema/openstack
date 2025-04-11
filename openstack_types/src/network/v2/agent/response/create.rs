@@ -16,39 +16,57 @@
 // `openstack-codegenerator`.
 //! Response type for the post agents operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Agent response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AgentResponse {
-    pub admin_state_up: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub admin_state_up: Option<bool>,
 
+    #[structable(optional)]
     pub agent_type: Option<String>,
 
+    #[structable(optional)]
     pub alive: Option<bool>,
 
+    #[structable(optional)]
     pub availability_zone: Option<String>,
 
+    #[structable(optional)]
     pub binary: Option<String>,
 
+    #[structable(optional, serialize)]
     pub configurations: Option<HashMap<String, Value>>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub heartbeat_timestamp: Option<String>,
 
+    #[structable(optional)]
     pub host: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional)]
     pub resources_synced: Option<String>,
 
+    #[structable(optional)]
     pub started_at: Option<String>,
 
+    #[structable(optional)]
     pub topic: Option<String>,
 }

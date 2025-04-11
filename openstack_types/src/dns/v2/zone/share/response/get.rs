@@ -17,36 +17,45 @@
 //! Response type for the get zones/{zone_id}/shares/{zone_share_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Share response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ShareResponse {
     /// Date / Time when resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// ID for the resource
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Links to the resource, and other related resources. When a response has
     /// been broken into pages, we will include a `next` link that should be
     /// followed to retrieve all results
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// ID for the project that owns the resource
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The project ID the zone will be shared with.
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional)]
     pub target_project_id: Option<String>,
 
     /// Date / Time when resource last updated.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 }
 

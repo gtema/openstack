@@ -17,12 +17,16 @@
 //! Response type for the get lbaas/loadbalancers/{loadbalancer_id}/status operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Loadbalancer response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoadbalancerResponse {
     /// A load balancer status object.
     ///
+    #[structable(serialize)]
     pub loadbalancer: Loadbalancer,
 }
 

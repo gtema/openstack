@@ -17,9 +17,12 @@
 //! Response type for the get lbaas/loadbalancers/{loadbalancer_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Loadbalancer response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoadbalancerResponse {
     /// A list of JSON objects defining “additional VIPs”. The format for these
     /// is `{"subnet_id": <subnet_id>, "ip_address": <ip_address>}`, where the
@@ -29,89 +32,110 @@ pub struct LoadbalancerResponse {
     ///
     /// **New in version 2.26**
     ///
+    #[structable(optional, serialize)]
     pub additional_vips: Option<Vec<AdditionalVips>>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// An availability zone name.
     ///
+    #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the flavor.
     ///
+    #[structable(optional)]
     pub flavor_id: Option<String>,
 
     /// The ID of the load balancer.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The associated listener IDs, if any.
     ///
+    #[structable(optional, serialize)]
     pub listeners: Option<Vec<Listeners>>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The associated pool IDs, if any.
     ///
+    #[structable(optional, serialize)]
     pub pools: Option<Vec<Pools>>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// Provider name for the load balancer.
     ///
+    #[structable(optional)]
     pub provider: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
     ///
+    #[structable(optional)]
     pub vip_address: Option<String>,
 
     /// The ID of the network for the Virtual IP (VIP).
     ///
+    #[structable(optional)]
     pub vip_network_id: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
     ///
+    #[structable(optional)]
     pub vip_port_id: Option<String>,
 
     /// The ID of the QoS Policy which will apply to the Virtual IP (VIP).
     ///
+    #[structable(optional)]
     pub vip_qos_policy_id: Option<String>,
 
     /// The list of Security Group IDs of the Virtual IP (VIP) port of the Load
@@ -119,10 +143,12 @@ pub struct LoadbalancerResponse {
     ///
     /// **New in version 2.29**
     ///
+    #[structable(optional, serialize)]
     pub vip_sg_ids: Option<Vec<String>>,
 
     /// The ID of the subnet for the Virtual IP (VIP).
     ///
+    #[structable(optional)]
     pub vip_subnet_id: Option<String>,
 
     /// The VIP vNIC type used for the load balancer. One of `normal` or
@@ -130,6 +156,7 @@ pub struct LoadbalancerResponse {
     ///
     /// **New in version 2.28**
     ///
+    #[structable(optional)]
     pub vip_vnic_type: Option<String>,
 }
 

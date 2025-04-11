@@ -16,19 +16,23 @@
 // `openstack-codegenerator`.
 //! Response type for the post os-server-groups operation
 
-use crate::common::IntString;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServerGroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerGroupResponse {
     /// The UUID of the server group.
     ///
+    #[structable()]
     pub id: String,
 
     /// A list of members in the server group.
     ///
+    #[structable(optional, serialize)]
     pub members: Option<Vec<String>>,
 
     /// Metadata key and value pairs. The maximum size for each metadata key
@@ -37,10 +41,12 @@ pub struct ServerGroupResponse {
     ///
     /// **Available until version 2.63**
     ///
+    #[structable(optional, serialize)]
     pub metadata: Option<HashMap<String, String>>,
 
     /// The name of the server group.
     ///
+    #[structable()]
     pub name: String,
 
     /// A list of exactly one policy name to associate with the server group.
@@ -61,6 +67,7 @@ pub struct ServerGroupResponse {
     ///
     /// **Available until version 2.63**
     ///
+    #[structable(optional, serialize)]
     pub policies: Option<Vec<Policies>>,
 
     /// The `policy` field represents the name of the policy. The current valid
@@ -79,12 +86,14 @@ pub struct ServerGroupResponse {
     ///
     /// **New in version 2.64**
     ///
+    #[structable(serialize)]
     pub policy: Policy,
 
     /// The project ID who owns the server group.
     ///
     /// **New in version 2.13**
     ///
+    #[structable()]
     pub project_id: String,
 
     /// The `rules` field, which is a dict, can be applied to the policy.
@@ -96,12 +105,14 @@ pub struct ServerGroupResponse {
     ///
     /// **New in version 2.64**
     ///
+    #[structable(optional, serialize)]
     pub rules: Option<Rules>,
 
     /// The user ID who owns the server group.
     ///
     /// **New in version 2.13**
     ///
+    #[structable()]
     pub user_id: String,
 }
 
@@ -157,5 +168,5 @@ pub enum Policy {
 /// `Rules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Rules {
-    pub max_server_per_host: Option<IntString>,
+    pub max_server_per_host: Option<i64>,
 }

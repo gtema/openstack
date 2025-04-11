@@ -17,9 +17,13 @@
 //! Response type for the get flavors/{flavor_id}/service_profiles/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServiceProfile response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProfileResponse {
+    #[structable()]
     pub id: String,
 }

@@ -17,49 +17,61 @@
 //! Response type for the get projects operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Project response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProjectResponse {
     /// The description of the project.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain for the project.
     ///
+    #[structable(optional, serialize, wide)]
     pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
+    #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID for the project.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
+    #[structable(optional, wide)]
     pub is_domain: Option<bool>,
 
     /// The name of the project.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the project. Available resource options are
     /// `immutable`.
     ///
+    #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 
     /// The ID of the parent for the project.
     ///
     /// **New in version 3.4**
     ///
+    #[structable(optional, serialize, wide)]
     pub parent_id: Option<String>,
 
     /// A list of simple strings assigned to a project.
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 }
 

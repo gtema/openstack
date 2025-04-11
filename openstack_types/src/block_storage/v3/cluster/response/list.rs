@@ -17,29 +17,37 @@
 //! Response type for the get clusters operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Cluster response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The binary name of the services in the cluster.
     ///
+    #[structable(optional)]
     pub binary: Option<String>,
 
     /// The name of the service cluster.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The cluster replication status. Only included in responses if
     /// configured. One of: `enabled` or `disabled`.
     ///
+    #[structable(optional, serialize)]
     pub replication_status: Option<ReplicationStatus>,
 
     /// The state of the cluster. One of `up` or `down`.
     ///
+    #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The status of the cluster. One of `enabled` or `disabled`.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 }
 

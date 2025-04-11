@@ -16,48 +16,64 @@
 // `openstack-codegenerator`.
 //! Response type for the get security-groups operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// SecurityGroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupResponse {
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the security group.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// A list of `security_group_rule` objects. Refer to
     /// [Security group rules](#security-group-rules) for details.
     ///
+    #[structable(optional, serialize, wide)]
     pub security_group_rules: Option<Vec<SecurityGroupRules>>,
 
     /// Indicates whether this security group is shared to the requester’s
     /// project.
     ///
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub shared: Option<bool>,
 
     /// Indicates if the security group is stateful or stateless.
     ///
-    pub stateful: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub stateful: Option<bool>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 
@@ -88,7 +104,7 @@ pub enum Ethertype {
 /// `SecurityGroupRules` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SecurityGroupRules {
-    pub belongs_to_default_sg: Option<BoolString>,
+    pub belongs_to_default_sg: Option<bool>,
     pub created_at: Option<String>,
     pub description: Option<String>,
     pub direction: Option<Direction>,

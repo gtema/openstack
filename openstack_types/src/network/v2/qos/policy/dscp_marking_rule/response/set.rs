@@ -17,15 +17,20 @@
 //! Response type for the put qos/policies/{policy_id}/dscp_marking_rules/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// DscpMarkingRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DscpMarkingRuleResponse {
     /// The DSCP mark value.
     ///
+    #[structable(optional)]
     pub dscp_mark: Option<i32>,
 
     /// The ID of the QoS DSCP marking rule.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 }

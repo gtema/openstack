@@ -18,55 +18,77 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Property response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PropertyResponse {
     #[serde(rename = "additionalItems")]
+    #[structable(optional, title = "additionalItems")]
     pub additional_items: Option<bool>,
 
     #[serde(rename = "default")]
+    #[structable(optional, serialize, title = "default")]
     pub _default: Option<Value>,
 
+    #[structable(optional)]
     pub description: Option<String>,
 
     #[serde(rename = "enum")]
+    #[structable(optional, serialize, title = "enum")]
     pub _enum: Option<Vec<String>>,
 
+    #[structable(optional, serialize)]
     pub items: Option<Items>,
 
+    #[structable(optional)]
     pub maximum: Option<f32>,
 
     #[serde(rename = "maxItems")]
+    #[structable(optional, title = "maxItems")]
     pub max_items: Option<i32>,
 
     #[serde(rename = "maxLength")]
+    #[structable(optional, title = "maxLength")]
     pub max_length: Option<i32>,
 
+    #[structable(optional)]
     pub minimum: Option<f32>,
 
     #[serde(rename = "minItems")]
+    #[structable(optional, title = "minItems")]
     pub min_items: Option<i32>,
 
     #[serde(rename = "minLength")]
+    #[structable(optional, title = "minLength")]
     pub min_length: Option<i32>,
 
+    #[structable()]
     pub name: String,
 
+    #[structable(optional, serialize)]
     pub operators: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub pattern: Option<String>,
 
+    #[structable(optional)]
     pub readonly: Option<bool>,
 
+    #[structable(optional, serialize)]
     pub required: Option<Vec<String>>,
 
+    #[structable()]
     pub title: String,
 
     #[serde(rename = "type")]
+    #[structable(serialize, title = "type")]
     pub _type: Type,
 
     #[serde(rename = "uniqueItems")]
+    #[structable(optional, title = "uniqueItems")]
     pub unique_items: Option<bool>,
 }
 

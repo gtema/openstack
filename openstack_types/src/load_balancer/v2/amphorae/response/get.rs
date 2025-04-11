@@ -17,94 +17,117 @@
 //! Response type for the get octavia/amphorae/{amphora_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Amphorae response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AmphoraeResponse {
     /// The availability zone of a compute instance, cached at create time.
     /// This is not guaranteed to be current. May be an empty-string if the
     /// compute service does not use zones.
     ///
+    #[structable(optional)]
     pub cached_zone: Option<String>,
 
     /// Whether the certificate is in the process of being replaced.
     ///
+    #[structable(optional)]
     pub cert_busy: Option<bool>,
 
     /// The date the certificate for the amphora expires.
     ///
+    #[structable(optional)]
     pub cert_expiration: Option<String>,
 
     /// The ID of the compute flavor used for the amphora.
     ///
     /// **New in version 2.3**
     ///
+    #[structable(optional)]
     pub compute_flavor: Option<String>,
 
     /// The ID of the amphora resource in the compute system.
     ///
+    #[structable(optional)]
     pub compute_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The IP address of the Virtual IP (VIP).
     ///
+    #[structable(optional)]
     pub ha_ip: Option<String>,
 
     /// The ID of the Virtual IP (VIP) port.
     ///
+    #[structable(optional)]
     pub ha_port_id: Option<String>,
 
     /// The associated amphora ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID of the glance image used for the amphora.
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional)]
     pub image_id: Option<String>,
 
     /// The management IP of the amphora.
     ///
+    #[structable(optional)]
     pub lb_network_ip: Option<String>,
 
     /// The ID of the load balancer.
     ///
+    #[structable(optional)]
     pub loadbalancer_id: Option<String>,
 
     /// The role of the amphora. One of `STANDALONE`, `MASTER`, `BACKUP`.
     ///
+    #[structable(optional)]
     pub role: Option<String>,
 
     /// The status of the amphora. One of: `BOOTING`, `ALLOCATED`, `READY`,
     /// `PENDING_CREATE`, `PENDING_DELETE`, `DELETED`, `ERROR`.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The vrrp group’s ID for the amphora.
     ///
+    #[structable(optional)]
     pub vrrp_id: Option<i32>,
 
     /// The bound interface name of the vrrp port on the amphora.
     ///
+    #[structable(optional)]
     pub vrrp_interface: Option<String>,
 
     /// The address of the vrrp port on the amphora.
     ///
+    #[structable(optional)]
     pub vrrp_ip: Option<String>,
 
     /// The vrrp port’s ID in the networking system.
     ///
+    #[structable(optional)]
     pub vrrp_port_id: Option<String>,
 
     /// The priority of the amphora in the vrrp group.
     ///
+    #[structable(optional)]
     pub vrrp_priority: Option<i32>,
 }

@@ -17,12 +17,16 @@
 //! Response type for the get types/{type_id}/encryption/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Encryption response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EncryptionResponse {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
     ///
+    #[structable()]
     pub cipher: String,
 }

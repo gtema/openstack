@@ -18,16 +18,21 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AllocationCandidate response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AllocationCandidateResponse {
     /// A list of objects that contain a serialized HTTP body that a client may
     /// subsequently use in a call to PUT /allocations/{consumer_uuid} to claim
     /// resources against a related set of resource providers.
     ///
+    #[structable(optional, serialize)]
     pub allocation_requests: Option<Vec<AllocationRequests>>,
 
+    #[structable(optional, serialize)]
     pub provider_summaries: Option<HashMap<String, ProviderSummariesItem>>,
 }
 

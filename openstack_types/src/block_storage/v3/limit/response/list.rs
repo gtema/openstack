@@ -17,17 +17,22 @@
 //! Response type for the get limits operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Limit response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LimitResponse {
     /// An `absolute` limits object.
     ///
+    #[structable(serialize)]
     pub absolute: Absolute,
 
     /// Rate-limit volume copy bandwidth, used to mitigate slow down of data
     /// access from the instances.
     ///
+    #[structable(serialize)]
     pub rate: Vec<String>,
 }
 

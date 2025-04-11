@@ -17,11 +17,15 @@
 //! Response type for the get servers/{server_id}/os-server-password operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServerPassword response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerPasswordResponse {
     /// The password returned from metadata server.
     ///
+    #[structable()]
     pub password: String,
 }

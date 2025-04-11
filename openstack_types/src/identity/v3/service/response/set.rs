@@ -17,12 +17,16 @@
 //! Response type for the patch services/{service_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Service response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceResponse {
     /// The service description.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// Defines whether the service and its endpoints appear in the service
@@ -30,19 +34,23 @@ pub struct ServiceResponse {
     /// service catalog. - `true`. The service and its endpoints appear in the
     /// service catalog.
     ///
+    #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The service name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The service type, which describes the API implemented by the service.
     /// Value is `compute`, `ec2`, `identity`, `image`, `network`, or `volume`.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     pub _type: Option<String>,
 }

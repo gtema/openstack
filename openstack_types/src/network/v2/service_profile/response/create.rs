@@ -16,30 +16,37 @@
 // `openstack-codegenerator`.
 //! Response type for the post service_profiles operation
 
-use crate::common::BoolString;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServiceProfile response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProfileResponse {
     /// The human-readable description for the service profile.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// Provider driver to use for this profile.
     ///
+    #[structable(optional)]
     pub driver: Option<String>,
 
     /// Indicates whether this service profile is enabled or not. Default is
     /// `true`.
     ///
-    pub enabled: Option<BoolString>,
+    #[structable(optional, serialize)]
+    pub enabled: Option<bool>,
 
     /// The UUID of the service profile.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// JSON-formatted meta information of the service profile.
     ///
+    #[structable(optional)]
     pub metainfo: Option<String>,
 }

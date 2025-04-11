@@ -17,16 +17,21 @@
 //! Response type for the get role_inferences operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// RoleInference response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleInferenceResponse {
     /// An implied role object.
     ///
+    #[structable(optional, serialize)]
     pub implies: Option<Vec<Implies>>,
 
     /// A prior role object.
     ///
+    #[structable(optional, serialize)]
     pub prior_role: Option<PriorRole>,
 }
 

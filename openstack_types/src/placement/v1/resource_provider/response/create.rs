@@ -17,13 +17,17 @@
 //! Response type for the post resource_providers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ResourceProvider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceProviderResponse {
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
     ///
+    #[structable()]
     pub generation: i32,
 
     /// A list of links associated with one resource provider.
@@ -34,26 +38,31 @@ pub struct ResourceProviderResponse {
     /// Traits relationship link is available starting from version 1.6.
     /// Allocations relationship link is available starting from version 1.11.
     ///
+    #[structable(serialize)]
     pub links: Vec<Links>,
 
     /// The name of one resource provider.
     ///
+    #[structable()]
     pub name: String,
 
     /// The UUID of the immediate parent of the resource provider.
     ///
     /// **New in version 1.14**
     ///
+    #[structable(optional)]
     pub parent_provider_uuid: Option<String>,
 
     /// Read-only UUID of the top-most provider in this provider tree.
     ///
     /// **New in version 1.14**
     ///
+    #[structable(optional)]
     pub root_provider_uuid: Option<String>,
 
     /// The uuid of a resource provider.
     ///
+    #[structable()]
     pub uuid: String,
 }
 

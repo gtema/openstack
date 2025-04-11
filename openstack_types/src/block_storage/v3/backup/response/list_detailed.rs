@@ -18,16 +18,21 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Backup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BackupResponse {
     /// The name of the availability zone.
     ///
+    #[structable(optional, wide)]
     pub availability_zone: Option<String>,
 
     /// The container name or null.
     ///
+    #[structable(optional, serialize, wide)]
     pub container: Option<String>,
 
     /// The date and time when the resource was created.
@@ -45,6 +50,7 @@ pub struct BackupResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The time when the data on the volume was first saved. If it is a backup
@@ -52,56 +58,68 @@ pub struct BackupResponse {
     /// a backup from a snapshot, it will be the same as `created_at` for the
     /// snapshot.
     ///
+    #[structable(optional, wide)]
     pub data_timestamp: Option<String>,
 
     /// The backup description or null.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// If the backup failed, the reason for the failure. Otherwise, null.
     ///
+    #[structable(optional, serialize, wide)]
     pub fail_reason: Option<String>,
 
     /// If this value is `true`, there are other backups depending on this
     /// backup.
     ///
+    #[structable(optional, wide)]
     pub has_dependent_backups: Option<bool>,
 
     /// The UUID of the backup.
     ///
+    #[structable()]
     pub id: String,
 
     /// Indicates whether the backup mode is incremental. If this value is
     /// `true`, the backup mode is incremental. If this value is `false`, the
     /// backup mode is full.
     ///
+    #[structable(optional, wide)]
     pub is_incremental: Option<bool>,
 
     /// The backup metadata key value pairs.
     ///
     /// **New in version 3.43**
     ///
+    #[structable(optional, serialize, wide)]
     pub metadata: Option<HashMap<String, String>>,
 
     /// The backup name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The number of objects in the backup.
     ///
+    #[structable(optional, wide)]
     pub object_count: Option<i32>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
+    #[structable(wide)]
     pub size: i64,
 
     /// The UUID of the source volume snapshot.
     ///
+    #[structable(optional, serialize, wide)]
     pub snapshot_id: Option<String>,
 
     /// The backup status. Refer to Backup statuses table for the possible
     /// status value.
     ///
+    #[structable()]
     pub status: String,
 
     /// The date and time when the resource was updated.
@@ -122,10 +140,12 @@ pub struct BackupResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable(wide)]
     pub volume_id: String,
 }
 

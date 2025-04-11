@@ -17,36 +17,46 @@
 //! Response type for the get reverse/floatingips operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Floatingip response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FloatingipResponse {
     /// current action in progress on the resource
     ///
+    #[structable(optional, serialize, wide)]
     pub action: Option<Action>,
 
     /// The floatingip address for this PTR record.
     ///
+    #[structable(optional, wide)]
     pub address: Option<String>,
 
     /// Description for this PTR record
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// ID for PTR record in the format of <region>:\<floatingip_id>
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Domain name for this PTR record
     ///
+    #[structable(optional, serialize, wide)]
     pub ptrdname: Option<String>,
 
     /// The status of the resource.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Time to live for this PTR record
     ///
+    #[structable(optional, wide)]
     pub ttl: Option<i32>,
 }
 

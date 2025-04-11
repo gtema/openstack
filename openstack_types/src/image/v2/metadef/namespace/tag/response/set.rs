@@ -17,17 +17,23 @@
 //! Response type for the put metadefs/namespaces/{namespace_name}/tags/{tag_name} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Tag response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TagResponse {
     /// Date and time of tag creation
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable()]
     pub name: String,
 
     /// Date and time of the last tag modification
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

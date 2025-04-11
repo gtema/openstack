@@ -18,25 +18,31 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Listener response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ListenerResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional, wide)]
     pub admin_state_up: Option<bool>,
 
     /// A list of IPv4, IPv6 or mix of both CIDRs.
     ///
     /// **New in version 2.12**
     ///
+    #[structable(optional, serialize, wide)]
     pub allowed_cidrs: Option<Vec<String>>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
     /// **New in version 2.20**
     ///
+    #[structable(optional, serialize, wide)]
     pub alpn_protocols: Option<Vec<String>>,
 
     /// The TLS client authentication mode. One of the options `NONE`,
@@ -44,6 +50,7 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.8**
     ///
+    #[structable(optional, wide)]
     pub client_authentication: Option<String>,
 
     /// The ref of the
@@ -53,6 +60,7 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.8**
     ///
+    #[structable(optional, wide)]
     pub client_ca_tls_container_ref: Option<String>,
 
     /// The URI of the
@@ -62,22 +70,26 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.8**
     ///
+    #[structable(optional, wide)]
     pub client_crl_container_ref: Option<String>,
 
     /// The maximum number of connections permitted for this listener. Default
     /// value is -1 which represents infinite connections or a default value
     /// defined by the provider driver.
     ///
+    #[structable(optional, wide)]
     pub connection_limit: Option<i32>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The ID of the pool used by the listener if no L7 policies match. The
     /// pool has some restrictions. See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
     ///
+    #[structable(optional, wide)]
     pub default_pool_id: Option<String>,
 
     /// The URI of the
@@ -87,10 +99,12 @@ pub struct ListenerResponse {
     /// “certificate” containing the certificate and key for `TERMINATED_HTTPS`
     /// listeners.
     ///
+    #[structable(optional, wide)]
     pub default_tls_container_ref: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// Defines whether the `includeSubDomains` directive should be added to
@@ -98,6 +112,7 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.27**
     ///
+    #[structable(optional, wide)]
     pub hsts_include_subdomains: Option<bool>,
 
     /// The value of the `max_age` directive for the Strict-Transport-Security
@@ -105,6 +120,7 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.27**
     ///
+    #[structable(optional, wide)]
     pub hsts_max_age: Option<i32>,
 
     /// Defines whether the `preload` directive should be added to the
@@ -112,10 +128,12 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.27**
     ///
+    #[structable(optional, wide)]
     pub hsts_preload: Option<bool>,
 
     /// The ID of the listener.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// A dictionary of optional headers to insert into the request before it
@@ -123,41 +141,50 @@ pub struct ListenerResponse {
     /// [Supported HTTP Header Insertions](#header-insertions). Both keys and
     /// values are always specified as strings.
     ///
+    #[structable(optional, serialize, wide)]
     pub insert_headers: Option<HashMap<String, String>>,
 
     /// A list of L7 policy IDs.
     ///
+    #[structable(optional, serialize, wide)]
     pub l7policies: Option<Vec<L7policies>>,
 
     /// A list of load balancer IDs.
     ///
+    #[structable(optional, serialize, wide)]
     pub loadbalancers: Option<Vec<Loadbalancers>>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional, status)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `SCTP`,
     /// `PROMETHEUS`, `TCP`, `TERMINATED_HTTPS`, or `UDP`.
     ///
+    #[structable(optional, wide)]
     pub protocol: Option<String>,
 
     /// The protocol port number for the resource.
     ///
+    #[structable(optional, wide)]
     pub protocol_port: Option<i32>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional, wide)]
     pub provisioning_status: Option<String>,
 
     /// A list of URIs to the
@@ -167,32 +194,38 @@ pub struct ListenerResponse {
     /// “certificate” containing the certificates and keys for
     /// `TERMINATED_HTTPS` listeners.
     ///
+    #[structable(optional, serialize, wide)]
     pub sni_container_refs: Option<Vec<String>>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// Frontend client inactivity timeout in milliseconds. Default: 50000.
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional, wide)]
     pub timeout_client_data: Option<i32>,
 
     /// Backend member connection timeout in milliseconds. Default: 5000.
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional, wide)]
     pub timeout_member_connect: Option<i32>,
 
     /// Backend member inactivity timeout in milliseconds. Default: 50000.
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional, wide)]
     pub timeout_member_data: Option<i32>,
 
     /// Time, in milliseconds, to wait for additional TCP packets for content
@@ -200,6 +233,7 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional, wide)]
     pub timeout_tcp_inspect: Option<i32>,
 
     /// List of ciphers in OpenSSL format (colon-separated). See
@@ -207,6 +241,7 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.15**
     ///
+    #[structable(optional, wide)]
     pub tls_ciphers: Option<String>,
 
     /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
@@ -214,10 +249,12 @@ pub struct ListenerResponse {
     ///
     /// **New in version 2.17**
     ///
+    #[structable(optional, serialize, wide)]
     pub tls_versions: Option<Vec<String>>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

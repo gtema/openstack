@@ -16,30 +16,39 @@
 // `openstack-codegenerator`.
 //! Response type for the get qos/policies/{policy_id}/bandwidth_limit_rules operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// BandwidthLimitRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BandwidthLimitRuleResponse {
     /// The direction of the traffic to which the QoS rule is applied, as seen
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`. Default value is `egress`.
     ///
+    #[structable(optional, serialize, wide)]
     pub direction: Option<Direction>,
 
     /// The ID of the QoS Bandwidth limit rule.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The maximum burst size (in kilobits).
     ///
-    pub max_burst_kbps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional, wide)]
+    pub max_burst_kbps: Option<i64>,
 
     /// The maximum KBPS (kilobits per second) value. If you specify this
     /// value, must be greater than 0 otherwise max_kbps will have no value.
     ///
-    pub max_kbps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional, wide)]
+    pub max_kbps: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

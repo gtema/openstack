@@ -18,21 +18,27 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Backup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BackupResponse {
     /// The name of the availability zone.
     ///
+    #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// The container name or null.
     ///
+    #[structable(optional, serialize)]
     pub container: Option<String>,
 
     /// The date and time when the resource was created. The date and time
     /// stamp format is ISO 8601
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The time when the data on the volume was first saved. If it is a backup
@@ -40,69 +46,84 @@ pub struct BackupResponse {
     /// backup from a snapshot, it will be the same as created_at for the
     /// snapshot.
     ///
+    #[structable(optional)]
     pub data_timestamp: Option<String>,
 
     /// The backup description or null.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// If the backup failed, the reason for the failure. Otherwise, null.
     ///
+    #[structable(optional, serialize)]
     pub fail_reason: Option<String>,
 
     /// If this value is true, there are other backups depending on this
     /// backup.
     ///
+    #[structable(optional)]
     pub has_dependent_backups: Option<bool>,
 
     /// The UUID of the backup.
     ///
+    #[structable()]
     pub id: String,
 
     /// Indicates whether the backup mode is incremental. If this value is
     /// true, the backup mode is incremental. If this value is false, the
     /// backup mode is full.
     ///
+    #[structable(optional)]
     pub is_incremental: Option<bool>,
 
     /// Links for the backup.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The backup metadata key value pairs.
     ///
     /// **New in version 3.43**
     ///
+    #[structable(optional, serialize)]
     pub metadata: Option<HashMap<String, String>>,
 
     /// The backup name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The number of objects in the backup.
     ///
+    #[structable(optional)]
     pub object_count: Option<i32>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
+    #[structable()]
     pub size: i64,
 
     /// The UUID of the source volume snapshot.
     ///
+    #[structable(optional, serialize)]
     pub snapshot_id: Option<String>,
 
     /// The backup status. Refer to Backup statuses table for the possible
     /// status value.
     ///
+    #[structable()]
     pub status: String,
 
     /// The date and time when the resource was updated. The date and time
     /// stamp format is ISO 8601
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable()]
     pub volume_id: String,
 }
 

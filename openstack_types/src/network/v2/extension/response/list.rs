@@ -17,27 +17,35 @@
 //! Response type for the get extensions operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Extension response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ExtensionResponse {
     /// The alias for the extension. For example “quotas” or “security-group”.
     ///
+    #[structable(optional)]
     pub alias: Option<String>,
 
     /// The human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// A URL pointing to the namespace for this extension.
     ///
+    #[structable(optional)]
     pub namespace: Option<String>,
 
     /// The date and timestamp when the extension was last updated.
     ///
+    #[structable(optional)]
     pub updated: Option<String>,
 }

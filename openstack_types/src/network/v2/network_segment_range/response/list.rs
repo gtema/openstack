@@ -16,44 +16,66 @@
 // `openstack-codegenerator`.
 //! Response type for the get network-segment-ranges operation
 
-use crate::common::BoolString;
-use crate::common::IntString;
+use crate::common::deser_bool_str_opt;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// NetworkSegmentRange response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkSegmentRangeResponse {
+    #[structable(optional, wide)]
     pub available: Option<String>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
-    #[serde(rename = "default")]
-    pub _default: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt", rename = "default")]
+    #[structable(optional, title = "default", wide)]
+    pub _default: Option<bool>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub maximum: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional, wide)]
+    pub maximum: Option<i64>,
 
-    pub minimum: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional, wide)]
+    pub minimum: Option<i64>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub network_type: Option<NetworkType>,
 
+    #[structable(optional, wide)]
     pub physical_network: Option<String>,
 
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub shared: Option<bool>,
 
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub used: Option<String>,
 }
 

@@ -17,33 +17,44 @@
 //! Response type for the put address-groups/{id}/add_addresses operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AddressGroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AddressGroupResponse {
     /// A list of IP addresses.
     ///
+    #[structable(optional, serialize)]
     pub addresses: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the address group.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[structable(optional)]
     pub revision_number: Option<i32>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

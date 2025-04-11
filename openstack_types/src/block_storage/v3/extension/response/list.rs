@@ -17,22 +17,28 @@
 //! Response type for the get extensions operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Extension response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ExtensionResponse {
     /// The alias for the extension. For example, “FOXNSOX”, “os-
     /// availability-zone”, “os-extended-quotas”, “os- share-unmanage” or
     /// “os-used-limits.”
     ///
+    #[structable()]
     pub alias: String,
 
     /// The extension description.
     ///
+    #[structable()]
     pub description: String,
 
     /// The name of the object.
     ///
+    #[structable()]
     pub name: String,
 
     /// The date and time when the resource was updated.
@@ -53,5 +59,6 @@ pub struct ExtensionResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable()]
     pub updated: String,
 }

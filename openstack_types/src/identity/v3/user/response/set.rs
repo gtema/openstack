@@ -17,25 +17,32 @@
 //! Response type for the patch users/{user_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// User response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct UserResponse {
     /// The ID of the default project for the user.
     ///
+    #[structable(optional, serialize)]
     pub default_project_id: Option<String>,
 
     /// The resource description.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// The ID of the domain.
     ///
+    #[structable(optional)]
     pub domain_id: Option<String>,
 
     /// If the user is enabled, this value is `true`. If the user is disabled,
     /// this value is `false`.
     ///
+    #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// List of federated objects associated with a user. Each object in the
@@ -55,18 +62,22 @@ pub struct UserResponse {
     ///
     /// ```
     ///
+    #[structable(optional, serialize)]
     pub federated: Option<Vec<Federated>>,
 
     /// The user ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The links for the `user` resource.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The user name. Must be unique within the owning domain.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the user. Available resource options are
@@ -75,6 +86,7 @@ pub struct UserResponse {
     /// `multi_factor_auth_enabled`, and `multi_factor_auth_rules`
     /// `ignore_user_inactivity`.
     ///
+    #[structable(optional, serialize)]
     pub options: Option<Options>,
 
     /// The date and time when the password expires. The time zone is UTC.
@@ -84,6 +96,7 @@ pub struct UserResponse {
     ///
     /// **New in version 3.7**
     ///
+    #[structable(optional, serialize)]
     pub password_expires_at: Option<String>,
 }
 

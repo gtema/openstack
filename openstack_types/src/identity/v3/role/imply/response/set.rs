@@ -17,16 +17,21 @@
 //! Response type for the put roles/{prior_role_id}/implies/{implied_role_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Imply response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImplyResponse {
     /// A prior role object.
     ///
+    #[structable(optional, serialize)]
     pub implies: Option<Implies>,
 
     /// A prior role object.
     ///
+    #[structable(optional, serialize)]
     pub prior_role: Option<PriorRole>,
 }
 

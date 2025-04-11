@@ -17,13 +17,17 @@
 //! Response type for the get manageable_snapshots operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ManageableSnapshot response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ManageableSnapshotResponse {
     /// A list of manageable snapshots.
     ///
     #[serde(rename = "manageable-snapshots")]
+    #[structable(serialize, title = "manageable-snapshots")]
     pub manageable_snapshots: Vec<ManageableSnapshots>,
 }
 

@@ -17,13 +17,19 @@
 //! Response type for the post qos/alias-dscp-marking-rules operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AliasDscpMarkingRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasDscpMarkingRuleResponse {
+    #[structable(optional)]
     pub dscp_mark: Option<i32>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }

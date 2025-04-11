@@ -17,20 +17,29 @@
 //! Response type for the get quotas operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Quota response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub hard_limit: Option<i32>,
 
+    #[structable(optional)]
     pub id: Option<i32>,
 
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub resource: Option<Resource>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

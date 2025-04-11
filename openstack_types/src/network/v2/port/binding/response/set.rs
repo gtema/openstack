@@ -19,22 +19,32 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Binding response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BindingResponse {
+    #[structable(optional)]
     pub host: Option<String>,
 
+    #[structable(optional, serialize)]
     pub profile: Option<HashMap<String, Value>>,
 
+    #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[structable(optional)]
     pub status: Option<String>,
 
+    #[structable(optional)]
     pub vif_details: Option<String>,
 
+    #[structable(optional)]
     pub vif_type: Option<String>,
 
+    #[structable(optional, serialize)]
     pub vnic_type: Option<VnicType>,
 }
 

@@ -17,11 +17,15 @@
 //! Response type for the patch clusters/{cluster_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Cluster response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The UUID of the cluster.
     ///
+    #[structable()]
     pub uuid: String,
 }

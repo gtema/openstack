@@ -17,15 +17,20 @@
 //! Response type for the get lbaas/providers/{provider}/flavor_capabilities operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// FlavorCapability response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorCapabilityResponse {
     /// The provider flavor capability description.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The provider flavor capability name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }

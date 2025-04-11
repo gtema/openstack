@@ -17,16 +17,21 @@
 //! Response type for the get OS-TRUST/trusts/{trust_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Trust response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TrustResponse {
     /// If set to true then a trust between a trustor and any third-party user
     /// may be issued by the trustee just like a regular trust. If set to
     /// false, stops further redelegation. False by default.
     ///
+    #[structable(optional, serialize)]
     pub allow_redelegation: Option<bool>,
 
+    #[structable(optional, serialize)]
     pub deleted_at: Option<String>,
 
     /// Specifies the expiration time of the trust. A trust may be revoked
@@ -36,10 +41,12 @@ pub struct TrustResponse {
     /// it may be omitted, then the expires_at value is copied from the
     /// redelegated trust.
     ///
+    #[structable(optional, serialize)]
     pub expires_at: Option<String>,
 
     /// The ID of the trust.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// If set to true, then the user attribute of tokens generated based on
@@ -48,20 +55,24 @@ pub struct TrustResponse {
     /// if set to false, then the token's user attribute will represent that of
     /// the trustee.
     ///
+    #[structable(optional)]
     pub impersonation: Option<bool>,
 
     /// The links for the `user` resource.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// Identifies the project upon which the trustor is delegating
     /// authorization.
     ///
+    #[structable(optional, serialize)]
     pub project_id: Option<String>,
 
     /// Returned with redelegated trust provides information about the
     /// predecessor in the trust chain.
     ///
+    #[structable(optional, serialize)]
     pub redelegated_trust_id: Option<String>,
 
     /// Specifies the maximum remaining depth of the redelegated trust chain.
@@ -83,6 +94,7 @@ pub struct TrustResponse {
     /// resulting value is 0, this means that the new trust will not be
     /// redelegatable, regardless of the value of allow_redelegation.
     ///
+    #[structable(optional, serialize)]
     pub redelegation_count: Option<i32>,
 
     /// Specifies how many times the trust can be used to obtain a token. This
@@ -92,21 +104,26 @@ pub struct TrustResponse {
     /// tokens issued through the trust. If redelegation is enabled it must not
     /// be set.
     ///
+    #[structable(optional, serialize)]
     pub remaining_uses: Option<i32>,
 
+    #[structable(optional, serialize)]
     pub roles: Option<Vec<Roles>>,
 
     /// The links for the `user` resource.
     ///
+    #[structable(optional, serialize)]
     pub roles_links: Option<RolesLinks>,
 
     /// Represents the user who is capable of consuming the trust.
     ///
+    #[structable(optional)]
     pub trustee_user_id: Option<String>,
 
     /// Represents the user who created the trust, and who's authorization is
     /// being delegated.
     ///
+    #[structable(optional)]
     pub trustor_user_id: Option<String>,
 }
 

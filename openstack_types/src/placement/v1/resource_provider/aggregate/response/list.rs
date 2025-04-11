@@ -19,5 +19,5 @@
 use serde::{Deserialize, Serialize};
 
 /// Aggregate response representation
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Aggregate(String);

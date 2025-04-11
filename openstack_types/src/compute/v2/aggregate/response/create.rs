@@ -17,12 +17,16 @@
 //! Response type for the post os-aggregates operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Aggregate response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AggregateResponse {
     /// The availability zone of the host aggregate.
     ///
+    #[structable(optional, serialize)]
     pub availability_zone: Option<String>,
 
     /// The date and time when the resource was created. The date and time
@@ -37,11 +41,13 @@ pub struct AggregateResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable()]
     pub created_at: String,
 
     /// A boolean indicates whether this aggregate is deleted or not, if it has
     /// not been deleted, `false` will appear.
     ///
+    #[structable()]
     pub deleted: bool,
 
     /// The date and time when the resource was deleted. If the resource has
@@ -57,14 +63,17 @@ pub struct AggregateResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional, serialize)]
     pub deleted_at: Option<String>,
 
     /// The ID of the host aggregate.
     ///
+    #[structable()]
     pub id: i32,
 
     /// The name of the host aggregate.
     ///
+    #[structable()]
     pub name: String,
 
     /// The date and time when the resource was updated, if the resource has
@@ -80,11 +89,13 @@ pub struct AggregateResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 
     /// The UUID of the host aggregate.
     ///
     /// **New in version 2.41**
     ///
+    #[structable()]
     pub uuid: String,
 }

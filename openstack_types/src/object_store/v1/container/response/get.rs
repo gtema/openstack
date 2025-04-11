@@ -17,34 +17,43 @@
 //! Response type for the get {account}/{container} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Container response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ContainerResponse {
     /// The total number of bytes that are stored in Object Storage for the
     /// container.
     ///
+    #[structable(optional)]
     pub bytes: Option<i64>,
 
     /// The content type of the object.
     ///
+    #[structable(optional)]
     pub content_type: Option<String>,
 
     /// The MD5 checksum value of the object content.
     ///
+    #[structable(optional)]
     pub hash: Option<String>,
 
     /// The date and time when the object was last modified. The date and time
     /// stamp format is ISO 8601
     ///
+    #[structable(optional)]
     pub last_modified: Option<String>,
 
     /// The name of the container.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// This field exists only when the object is symlink. This is the target
     /// path of the symlink object.
     ///
+    #[structable(optional)]
     pub symlink_path: Option<String>,
 }

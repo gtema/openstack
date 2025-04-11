@@ -17,18 +17,24 @@
 //! Response type for the put OS-FEDERATION/mappings/{mapping_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Mapping response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MappingResponse {
     /// The Federation Mapping unique ID
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, serialize)]
     pub rules: Option<Vec<Rules>>,
 
     /// Mapping schema version
     ///
+    #[structable(optional)]
     pub schema_version: Option<String>,
 }
 

@@ -19,5 +19,5 @@
 use serde::{Deserialize, Serialize};
 
 /// Trait response representation
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Trait(String);

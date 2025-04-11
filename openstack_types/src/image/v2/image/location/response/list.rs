@@ -19,18 +19,24 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Location response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LocationResponse {
+    #[structable(serialize)]
     pub metadata: HashMap<String, Value>,
 
+    #[structable()]
     pub url: String,
 
     /// Values to be used to populate the corresponding image properties. If
     /// the image status is not 'queued', values must exactly match those
     /// already contained in the image properties.
     ///
+    #[structable(optional, serialize)]
     pub validation_data: Option<ValidationData>,
 }
 

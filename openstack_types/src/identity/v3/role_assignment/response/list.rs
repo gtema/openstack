@@ -17,16 +17,23 @@
 //! Response type for the get role_assignments operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// RoleAssignment response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleAssignmentResponse {
+    #[structable(optional, serialize)]
     pub group: Option<Group>,
 
+    #[structable(serialize)]
     pub role: Role,
 
+    #[structable(serialize)]
     pub scope: Scope,
 
+    #[structable(optional, serialize)]
     pub user: Option<User>,
 }
 

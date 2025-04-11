@@ -17,16 +17,21 @@
 //! Response type for the get roles/{prior_role_id}/implies operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Imply response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImplyResponse {
     /// An array of implied role objects.
     ///
+    #[structable(optional, serialize)]
     pub implies: Option<Vec<Implies>>,
 
     /// A prior role object.
     ///
+    #[structable(optional, serialize)]
     pub prior_role: Option<PriorRole>,
 }
 

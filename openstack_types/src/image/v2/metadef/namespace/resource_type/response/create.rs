@@ -17,18 +17,23 @@
 //! Response type for the post metadefs/namespaces/{namespace_name}/resource_types operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ResourceType response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceTypeResponse {
     /// Date and time of resource type association
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Resource type names should be aligned with Heat resource types whenever
     /// possible:
     /// https://docs.openstack.org/heat/latest/template_guide/openstack.html
     ///
+    #[structable()]
     pub name: String,
 
     /// Specifies the prefix to use for the given resource type. Any properties
@@ -36,6 +41,7 @@ pub struct ResourceTypeResponse {
     /// to the specified resource type. Must include prefix separator (e.g. a
     /// colon :).
     ///
+    #[structable(optional)]
     pub prefix: Option<String>,
 
     /// Some resource types allow more than one key / value pair per instance.
@@ -43,9 +49,11 @@ pub struct ResourceTypeResponse {
     /// image properties metadata is evaluated by Nova (scheduling or drivers).
     /// This property allows a namespace target to remove the ambiguity.
     ///
+    #[structable(optional)]
     pub properties_target: Option<String>,
 
     /// Date and time of the last resource type association modification
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

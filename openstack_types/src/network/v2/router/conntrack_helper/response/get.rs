@@ -16,26 +16,34 @@
 // `openstack-codegenerator`.
 //! Response type for the get routers/{router_id}/conntrack_helpers/{id} operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ConntrackHelper response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ConntrackHelperResponse {
     /// The netfilter conntrack helper module.
     ///
+    #[structable(optional)]
     pub helper: Option<String>,
 
     /// The ID of the conntrack helper.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The network port for the netfilter conntrack target rule.
     ///
-    pub port: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub port: Option<i64>,
 
     /// The network protocol for the netfilter conntrack target rule.
     ///
+    #[structable(optional, serialize)]
     pub protocol: Option<Protocol>,
 }
 

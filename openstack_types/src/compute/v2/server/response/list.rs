@@ -17,15 +17,20 @@
 //! Response type for the get servers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Server response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// The UUID of the server.
     ///
+    #[structable()]
     pub id: String,
 
     /// The server name.
     ///
+    #[structable()]
     pub name: String,
 }

@@ -17,23 +17,29 @@
 //! Response type for the get vpn/ipsecpolicies/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Ipsecpolicy response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct IpsecpolicyResponse {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
     ///
+    #[structable(optional, serialize)]
     pub auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The encapsulation mode. A valid value is `tunnel` or `transport`.
     /// Default is `tunnel`.
     ///
+    #[structable(optional, serialize)]
     pub encapsulation_mode: Option<EncapsulationMode>,
 
     /// The encryption algorithm. A valid value is `3des`, `aes-128`,
@@ -43,34 +49,41 @@ pub struct IpsecpolicyResponse {
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
     ///
+    #[structable(optional, serialize)]
     pub encryption_algorithm: Option<EncryptionAlgorithm>,
 
     /// The ID of the IPsec policy.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
     ///
+    #[structable(optional)]
     pub lifetime: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
     ///
+    #[structable(optional, serialize)]
     pub pfs: Option<Pfs>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The transform protocol. A valid value is `ESP`, `AH`, or `AH- ESP`.
     /// Default is `ESP`.
     ///
+    #[structable(optional, serialize)]
     pub transform_protocol: Option<TransformProtocol>,
 }
 

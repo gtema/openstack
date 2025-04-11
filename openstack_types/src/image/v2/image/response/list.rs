@@ -19,112 +19,140 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Image response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImageResponse {
     /// md5 hash of image contents.
     ///
+    #[structable(optional, serialize, wide)]
     pub checksum: Option<String>,
 
     /// Format of the container
     ///
+    #[structable(optional, serialize, wide)]
     pub container_format: Option<ContainerFormat>,
 
     /// Date and time of image registration
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// URL to access the image file kept in external store
     ///
+    #[structable(optional, wide)]
     pub direct_url: Option<String>,
 
     /// Format of the disk
     ///
+    #[structable(optional, serialize, wide)]
     pub disk_format: Option<DiskFormat>,
 
     /// An image file url
     ///
+    #[structable(optional, wide)]
     pub file: Option<String>,
 
     /// An identifier for the image
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// A set of URLs to access the image file kept in external store
     ///
+    #[structable(optional, serialize, wide)]
     pub locations: Option<Vec<Locations>>,
 
     /// Amount of disk space (in GB) required to boot image.
     ///
+    #[structable(optional, wide)]
     pub min_disk: Option<i32>,
 
     /// Amount of ram (in MB) required to boot image.
     ///
+    #[structable(optional, wide)]
     pub min_ram: Option<i32>,
 
     /// Descriptive name for the image
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// Algorithm to calculate the os_hash_value
     ///
+    #[structable(optional, serialize, wide)]
     pub os_hash_algo: Option<String>,
 
     /// Hexdigest of the image contents using the algorithm specified by the
     /// os_hash_algo
     ///
+    #[structable(optional, serialize, wide)]
     pub os_hash_value: Option<String>,
 
     /// If true, image will not appear in default image list response.
     ///
+    #[structable(optional, wide)]
     pub os_hidden: Option<bool>,
 
     /// Owner of the image
     ///
+    #[structable(optional, serialize, wide)]
     pub owner: Option<String>,
 
     /// If true, image will not be deletable.
     ///
+    #[structable(optional, wide)]
     pub protected: Option<bool>,
 
     /// An image schema url
     ///
+    #[structable(optional, wide)]
     pub schema: Option<String>,
 
     /// An image self url
     ///
     #[serde(rename = "self")]
+    #[structable(optional, title = "self", wide)]
     pub _self: Option<String>,
 
     /// Size of image file in bytes
     ///
+    #[structable(optional, serialize, wide)]
     pub size: Option<i64>,
 
     /// Status of the image
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
     ///
+    #[structable(optional, wide)]
     pub stores: Option<String>,
 
     /// List of strings related to the image
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// Date and time of the last image modification
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// Virtual size of image in bytes
     ///
+    #[structable(optional, serialize, wide)]
     pub virtual_size: Option<i64>,
 
     /// Scope of image accessibility
     ///
+    #[structable(optional, serialize, wide)]
     pub visibility: Option<Visibility>,
 }
 

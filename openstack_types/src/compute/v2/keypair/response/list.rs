@@ -17,20 +17,26 @@
 //! Response type for the get os-keypairs operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Keypair response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct KeypairResponse {
     /// The fingerprint for the keypair.
     ///
+    #[structable()]
     pub fingerprint: String,
 
     /// The name for the keypair.
     ///
+    #[structable()]
     pub name: String,
 
     /// The keypair public key.
     ///
+    #[structable()]
     pub public_key: String,
 
     /// The type of the keypair. Allowed values are `ssh` or `x509`.
@@ -38,5 +44,6 @@ pub struct KeypairResponse {
     /// **New in version 2.2**
     ///
     #[serde(rename = "type")]
+    #[structable(title = "type", wide)]
     pub _type: String,
 }

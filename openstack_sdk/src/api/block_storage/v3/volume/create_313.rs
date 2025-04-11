@@ -74,6 +74,13 @@ pub struct Volume<'a> {
     /// The UUID of the image from which you want to create the volume.
     /// Required to create a bootable volume.
     ///
+    /// **New in version 3.46**: Instead of directly consuming a zero-byte
+    /// image that has been created by the Compute service when an instance
+    /// snapshot was requested, the Block Storage service will use the
+    /// `snapshot_id` contained in the `block_device_mapping` image property to
+    /// locate the volume snapshot, and will use that to create the volume
+    /// instead.
+    ///
     #[serde(rename = "imageRef", skip_serializing_if = "Option::is_none")]
     #[builder(default, setter(into))]
     pub(crate) image_ref: Option<Option<Cow<'a, str>>>,

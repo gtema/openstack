@@ -19,14 +19,18 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Diagnostic response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DiagnosticResponse {
     /// Indicates whether or not a config drive was used for this server.
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub config_drive: Option<bool>,
 
     /// The list of dictionaries with detailed information about VM CPUs.
@@ -38,6 +42,7 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional, serialize)]
     pub cpu_details: Option<Vec<HashMap<String, Value>>>,
 
     /// The list of dictionaries with detailed information about VM disks.
@@ -51,6 +56,7 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional, serialize)]
     pub disk_details: Option<Vec<HashMap<String, Value>>>,
 
     /// The driver on which the VM is running. Possible values are:
@@ -62,6 +68,7 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional, serialize)]
     pub driver: Option<Driver>,
 
     /// The hypervisor on which the VM is running. Examples for libvirt driver
@@ -69,16 +76,19 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub hypervisor: Option<String>,
 
     /// The hypervisor OS.
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub hypervisor_os: Option<String>,
 
     /// Id of the resource
     ///
+    #[structable()]
     pub id: String,
 
     /// The dictionary with information about VM memory usage. Following fields
@@ -90,10 +100,12 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional, serialize)]
     pub memory_details: Option<Vec<HashMap<String, Value>>>,
 
     /// Name
     ///
+    #[structable()]
     pub name: String,
 
     /// The list of dictionaries with detailed information about VM NICs.
@@ -113,24 +125,28 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional, serialize)]
     pub nic_details: Option<Vec<NicDetails>>,
 
     /// The number of vCPUs.
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub num_cpus: Option<i32>,
 
     /// The number of disks.
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub num_disks: Option<i32>,
 
     /// The number of vNICs.
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub num_nics: Option<i32>,
 
     /// A string enum denoting the current state of the VM. Possible values
@@ -145,12 +161,14 @@ pub struct DiagnosticResponse {
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The amount of time in seconds that the VM has been running.
     ///
     /// **New in version 2.48**
     ///
+    #[structable(optional)]
     pub uptime: Option<i32>,
 }
 

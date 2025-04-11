@@ -17,9 +17,13 @@
 //! Response type for the post federations operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Federation response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FederationResponse {
+    #[structable()]
     pub uuid: String,
 }

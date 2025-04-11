@@ -17,15 +17,20 @@
 //! Response type for the get limits/model operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Model response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ModelResponse {
     /// A short description of the enforcement model used
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The name of the enforcement model
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }

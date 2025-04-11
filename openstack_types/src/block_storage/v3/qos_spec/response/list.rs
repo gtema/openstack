@@ -18,23 +18,30 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// QosSpec response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QosSpecResponse {
     /// The consumer type.
     ///
+    #[structable(optional, wide)]
     pub consumer: Option<String>,
 
     /// The generated ID for the QoS specification.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the QoS specification.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// A `specs` object.
     ///
+    #[structable(optional, serialize, wide)]
     pub specs: Option<HashMap<String, Option<String>>>,
 }

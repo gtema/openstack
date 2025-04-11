@@ -16,29 +16,38 @@
 // `openstack-codegenerator`.
 //! Response type for the post metering/metering-labels operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// MeteringLabel response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MeteringLabelResponse {
     /// A human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the metering label.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// Indicates whether this metering label is shared across all projects.
     ///
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub shared: Option<bool>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }

@@ -17,23 +17,29 @@
 //! Response type for the get service-providers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServiceProvider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProviderResponse {
     /// Defines whether the provider is the default for the service type. If
     /// this value is `true`, the provider is the default. If this value is
     /// `false`, the provider is not the default.
     ///
     #[serde(rename = "default")]
+    #[structable(optional, title = "default", wide)]
     pub _default: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The service type, which is `CORE`, `DUMMY`, `FIREWALL`, `FLAVORS`,
     /// `L3_ROUTER_NAT`, `METERING`, `QOS`, or `VPN`.
     ///
+    #[structable(optional)]
     pub service_type: Option<String>,
 }

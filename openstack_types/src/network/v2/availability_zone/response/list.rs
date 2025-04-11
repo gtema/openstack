@@ -17,21 +17,27 @@
 //! Response type for the get availability_zones operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AvailabilityZone response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource type of the availability zone. The supported resource
     /// types are `network` and `router`.
     ///
+    #[structable(optional)]
     pub resource: Option<String>,
 
     /// The state of the availability zone, which is either `available` or
     /// `unavailable`.
     ///
+    #[structable(optional, status)]
     pub state: Option<String>,
 }

@@ -18,17 +18,22 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Inventory response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InventoryResponse {
     /// A dictionary of inventories keyed by resource classes.
     ///
+    #[structable(serialize)]
     pub inventories: HashMap<String, InventoriesItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
     ///
+    #[structable()]
     pub resource_provider_generation: i32,
 }
 

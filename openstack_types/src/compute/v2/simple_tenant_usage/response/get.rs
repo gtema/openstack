@@ -17,12 +17,16 @@
 //! Response type for the get os-simple-tenant-usage/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// SimpleTenantUsage response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SimpleTenantUsageResponse {
     /// A list of the tenant usage objects.
     ///
+    #[structable(optional, serialize)]
     pub tenant_usages: Option<Vec<TenantUsages>>,
 
     /// Links pertaining to usage. See
@@ -31,6 +35,7 @@ pub struct SimpleTenantUsageResponse {
     ///
     /// **New in version 2.40**
     ///
+    #[structable(optional, serialize)]
     pub tenant_usages_links: Option<Vec<TenantUsagesLinks>>,
 }
 

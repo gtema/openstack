@@ -19,9 +19,12 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Websso response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct WebssoResponse {
     /// A list of one or two audit IDs. An audit ID is a unique, randomly
     /// generated, URL-safe string that you can use to track a token. The first
@@ -33,18 +36,22 @@ pub struct WebssoResponse {
     /// multiple requests and endpoints without exposing the token ID to
     /// non-privileged users.
     ///
+    #[structable(optional, serialize)]
     pub audit_ids: Option<Vec<String>>,
 
     /// A catalog object.
     ///
+    #[structable(optional, serialize)]
     pub catalog: Option<Vec<Catalog>>,
 
     /// The date and time when the token expires.
     ///
+    #[structable(optional)]
     pub expires_at: Option<String>,
 
     /// The date and time when the token was issued.
     ///
+    #[structable(optional)]
     pub issues_at: Option<String>,
 
     /// The authentication methods, which are commonly password, token, or
@@ -58,10 +65,12 @@ pub struct WebssoResponse {
     /// authenticate the user in exchange for a token. The client is
     /// responsible for determining the total number of authentication factors.
     ///
+    #[structable(optional, serialize)]
     pub methods: Option<Vec<String>>,
 
     /// A user object
     ///
+    #[structable(optional, serialize)]
     pub user: Option<User>,
 }
 

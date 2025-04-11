@@ -16,19 +16,28 @@
 // `openstack-codegenerator`.
 //! Response type for the post policies/{policy_id}/packet_rate_limit_rules operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// PacketRateLimitRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PacketRateLimitRuleResponse {
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub max_burst_kpps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub max_burst_kpps: Option<i64>,
 
-    pub max_kpps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub max_kpps: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

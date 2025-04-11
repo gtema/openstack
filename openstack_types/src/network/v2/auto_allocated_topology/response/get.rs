@@ -17,15 +17,20 @@
 //! Response type for the get auto-allocated-topology/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AutoAllocatedTopology response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AutoAllocatedTopologyResponse {
     /// The ID of the network for the auto allocated topology.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID of the project owning the auto allocated topology.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }

@@ -17,19 +17,28 @@
 //! Response type for the post network-ip-availabilities operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// NetworkIpAvailability response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkIpAvailabilityResponse {
+    #[structable(optional)]
     pub network_id: Option<String>,
 
+    #[structable(optional)]
     pub network_name: Option<String>,
 
+    #[structable(optional)]
     pub subnet_ip_availability: Option<String>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
+    #[structable(optional)]
     pub total_ips: Option<String>,
 
+    #[structable(optional)]
     pub used_ips: Option<String>,
 }

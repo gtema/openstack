@@ -17,17 +17,25 @@
 //! Response type for the get local_ips/{local_ip_id}/port_associations/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// PortAssociation response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PortAssociationResponse {
+    #[structable(optional)]
     pub fixed_ip: Option<String>,
 
+    #[structable(optional)]
     pub fixed_port_id: Option<String>,
 
+    #[structable(optional)]
     pub host: Option<String>,
 
+    #[structable(optional)]
     pub local_ip_address: Option<String>,
 
+    #[structable(optional)]
     pub local_ip_id: Option<String>,
 }

@@ -17,12 +17,16 @@
 //! Response type for the get servers/{server_id}/os-instance-actions/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// InstanceAction response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InstanceActionResponse {
     /// The name of the action.
     ///
+    #[structable()]
     pub action: String,
 
     /// The events which occurred in this action in descending order of
@@ -34,22 +38,27 @@ pub struct InstanceActionResponse {
     ///
     /// **New in version 2.51**
     ///
+    #[structable(serialize)]
     pub events: Vec<Events>,
 
     /// The related error message for when an action fails.
     ///
+    #[structable(optional, serialize)]
     pub message: Option<String>,
 
     /// The ID of the project which initiated the server action.
     ///
+    #[structable()]
     pub project_id: String,
 
     /// The request id generated when execute the API of this action.
     ///
+    #[structable()]
     pub request_id: String,
 
     /// The date and time when the action was started.
     ///
+    #[structable(optional)]
     pub start_time: Option<String>,
 
     /// The date and time when the instance action or the action event of
@@ -67,10 +76,12 @@ pub struct InstanceActionResponse {
     ///
     /// **New in version 2.58**
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The ID of the user which initiated the server action.
     ///
+    #[structable()]
     pub user_id: String,
 }
 

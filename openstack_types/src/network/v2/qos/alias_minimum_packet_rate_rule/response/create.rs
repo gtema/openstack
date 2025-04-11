@@ -16,17 +16,24 @@
 // `openstack-codegenerator`.
 //! Response type for the post qos/alias-minimum-packet-rate-rules operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AliasMinimumPacketRateRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasMinimumPacketRateRuleResponse {
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub min_kpps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub min_kpps: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

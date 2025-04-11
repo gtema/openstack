@@ -17,12 +17,17 @@
 //! Response type for the post qos/rule-types operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// RuleType response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RuleTypeResponse {
+    #[structable(optional)]
     pub drivers: Option<String>,
 
     #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     pub _type: Option<String>,
 }

@@ -17,19 +17,24 @@
 //! Response type for the put lbaas/pools/{pool_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Pool response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PoolResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// A list of ALPN protocols. Available protocols: http/1.0, http/1.1, h2
     ///
     /// **New in version 2.24**
     ///
+    #[structable(optional, serialize)]
     pub alpn_protocols: Option<Vec<String>>,
 
     /// The reference of the
@@ -39,10 +44,12 @@ pub struct PoolResponse {
     ///
     /// **New in version 2.8**
     ///
+    #[structable(optional)]
     pub ca_tls_container_ref: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The reference of the
@@ -50,72 +57,88 @@ pub struct PoolResponse {
     /// secret containing a PEM format CA revocation list file for
     /// `tls_enabled` pools.
     ///
+    #[structable(optional)]
     pub crl_container_ref: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The associated health monitor ID.
     ///
+    #[structable(optional)]
     pub healthmonitor_id: Option<String>,
 
     /// The ID of the pool.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The load balancing algorithm for the pool. One of `LEAST_CONNECTIONS`,
     /// `ROUND_ROBIN`, `SOURCE_IP`, or `SOURCE_IP_PORT`.
     ///
+    #[structable(optional)]
     pub lb_algorithm: Option<String>,
 
     /// A list of listener IDs.
     ///
+    #[structable(optional, serialize)]
     pub listeners: Option<Vec<Listeners>>,
 
     /// A list of load balancer IDs.
     ///
+    #[structable(optional, serialize)]
     pub loadbalancers: Option<Vec<Loadbalancers>>,
 
     /// A list of member IDs.
     ///
+    #[structable(optional, serialize)]
     pub members: Option<Vec<Members>>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The protocol for the resource. One of `HTTP`, `HTTPS`, `PROXY`,
     /// `PROXYV2`, `SCTP`, `TCP`, or `UDP`.
     ///
+    #[structable(optional)]
     pub protocol: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A JSON object specifying the session persistence for the pool or `null`
     /// for no session persistence. See
     /// [Pool Session Persistence](#session-persistence). Default is `null`.
     ///
+    #[structable(optional, serialize)]
     pub session_persistence: Option<SessionPersistence>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// List of ciphers in OpenSSL format (colon-separated). See
@@ -123,6 +146,7 @@ pub struct PoolResponse {
     ///
     /// **New in version 2.15**
     ///
+    #[structable(optional)]
     pub tls_ciphers: Option<String>,
 
     /// The reference to the
@@ -133,6 +157,7 @@ pub struct PoolResponse {
     ///
     /// **New in version 2.8**
     ///
+    #[structable(optional)]
     pub tls_container_ref: Option<String>,
 
     /// When `true` connections to backend member servers will use TLS
@@ -140,6 +165,7 @@ pub struct PoolResponse {
     ///
     /// **New in version 2.8**
     ///
+    #[structable(optional)]
     pub tls_enabled: Option<bool>,
 
     /// A list of TLS protocol versions. Available versions: SSLv3, TLSv1,
@@ -147,10 +173,12 @@ pub struct PoolResponse {
     ///
     /// **New in version 2.17**
     ///
+    #[structable(optional, serialize)]
     pub tls_versions: Option<Vec<String>>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

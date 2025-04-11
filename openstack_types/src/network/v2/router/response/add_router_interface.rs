@@ -17,40 +17,51 @@
 //! Response type for the put routers/{id}/add_router_interface operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Router response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RouterResponse {
     /// The ID of the router.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Network ID which the router interface is connected to.
     ///
+    #[structable(optional)]
     pub network_id: Option<String>,
 
     /// The ID of the port which represents the router interface.
     ///
+    #[structable(optional)]
     pub port_id: Option<String>,
 
     /// The ID of the project who owns the router interface.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The ID of the subnet which the router interface belongs to.
     ///
+    #[structable(optional)]
     pub subnet_id: Option<String>,
 
     /// A list of the ID of the subnet which the router interface belongs to.
     /// The list contains only one member.
     ///
+    #[structable(optional, serialize)]
     pub subnet_ids: Option<Vec<String>>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project who owns the router interface.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }

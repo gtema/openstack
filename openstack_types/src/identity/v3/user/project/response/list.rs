@@ -17,27 +17,35 @@
 //! Response type for the get users/{user_id}/projects operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Project response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProjectResponse {
     /// The description of the project.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain of the project.
     ///
+    #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the project.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The parent id of the project.
     ///
+    #[structable(optional, wide)]
     pub parent_id: Option<String>,
 }

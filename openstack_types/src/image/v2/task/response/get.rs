@@ -19,15 +19,19 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Task response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TaskResponse {
     /// The date and time when the task was created.
     ///
     /// The date and time stamp format is
     /// [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The date and time when the task is subject to removal. While the *task
@@ -42,56 +46,68 @@ pub struct TaskResponse {
     /// `failure`. Otherwise its value is `null`. It may not appear in the
     /// response when its value is `null`.
     ///
+    #[structable(optional, serialize)]
     pub expires_at: Option<String>,
 
     /// The UUID of the task.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Image associated with the task
     ///
+    #[structable(optional)]
     pub image_id: Option<String>,
 
     /// A JSON object specifying the input parameters to the task. Consult your
     /// cloud provider’s documentation for details.
     ///
+    #[structable(optional, serialize)]
     pub input: Option<HashMap<String, Value>>,
 
     /// Human-readable text, possibly an empty string, usually displayed in an
     /// error situation to provide more information about what has occurred.
     ///
+    #[structable(optional)]
     pub message: Option<String>,
 
     /// An identifier for the owner of the task, usually the tenant ID.
     ///
+    #[structable(optional)]
     pub owner: Option<String>,
 
     /// Human-readable informative request-id
     ///
+    #[structable(optional)]
     pub request_id: Option<String>,
 
     /// A JSON object specifying information about the ultimate outcome of the
     /// task. Consult your cloud provider’s documentation for details.
     ///
+    #[structable(optional, serialize)]
     pub result: Option<HashMap<String, Value>>,
 
     /// The URI for the schema describing an image task.
     ///
+    #[structable(optional)]
     pub schema: Option<String>,
 
     /// A URI for this task.
     ///
     #[serde(rename = "self")]
+    #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
     /// The current status of this task. The value can be `pending`,
     /// `processing`, `success` or `failure`.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The type of task represented by this content.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, serialize, title = "type")]
     pub _type: Option<Type>,
 
     /// The date and time when the task was updated.
@@ -102,10 +118,12 @@ pub struct TaskResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// User associated with the task
     ///
+    #[structable(optional)]
     pub user_id: Option<String>,
 }
 

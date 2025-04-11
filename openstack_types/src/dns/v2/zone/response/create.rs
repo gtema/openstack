@@ -18,94 +18,116 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Zone response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ZoneResponse {
     /// current action in progress on the resource
     ///
+    #[structable(optional, serialize)]
     pub action: Option<Action>,
 
     /// Key:Value pairs of information about this zone, and the pool the user
     /// would like to place the zone in. This information can be used by the
     /// scheduler to place zones on the correct pool.
     ///
+    #[structable(optional, serialize)]
     pub attributes: Option<HashMap<String, String>>,
 
     /// Date / Time when resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Description for this zone
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// e-mail for the zone. Used in SOA records for the zone
     ///
+    #[structable(optional)]
     pub email: Option<String>,
 
     /// ID for the resource
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Links to the resource, and other related resources. When a response has
     /// been broken into pages, we will include a `next` link that should be
     /// followed to retrieve all results
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// Mandatory for secondary zones. The servers to slave from to get DNS
     /// information
     ///
+    #[structable(optional, serialize)]
     pub masters: Option<Vec<String>>,
 
     /// DNS Name for the zone
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// ID for the pool hosting this zone
     ///
+    #[structable(optional)]
     pub pool_id: Option<String>,
 
     /// ID for the project that owns the resource
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// current serial number for the zone
     ///
+    #[structable(optional)]
     pub serial: Option<i32>,
 
     /// True if the zone is shared with another project.
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional)]
     pub shared: Option<bool>,
 
     /// The status of the resource.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// For secondary zones. The last time an update was retrieved from the
     /// master servers
     ///
+    #[structable(optional, serialize)]
     pub transferred_at: Option<String>,
 
     /// TTL (Time to Live) for the zone.
     ///
+    #[structable(optional)]
     pub ttl: Option<i32>,
 
     /// Type of zone. PRIMARY is controlled by Designate, SECONDARY zones are
     /// slaved from another DNS Server. Defaults to PRIMARY
     ///
     #[serde(rename = "type")]
+    #[structable(optional, serialize, title = "type")]
     pub _type: Option<Type>,
 
     /// Date / Time when resource last updated.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 
     /// Version of the resource
     ///
+    #[structable(optional)]
     pub version: Option<i32>,
 }
 

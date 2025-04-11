@@ -17,32 +17,41 @@
 //! Response type for the get network-ip-availabilities operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// NetworkIpAvailability response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkIpAvailabilityResponse {
     /// The ID of the network whose IP availability detail is reported.
     ///
+    #[structable(optional)]
     pub network_id: Option<String>,
 
     /// Human-readable name of the network.
     ///
+    #[structable(optional)]
     pub network_name: Option<String>,
 
     /// A list of dictionaries showing subnet IP availability. It contains
     /// information for every subnet associated to the network.
     ///
+    #[structable(optional)]
     pub subnet_ip_availability: Option<String>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The total number of IP addresses in a network.
     ///
+    #[structable(optional)]
     pub total_ips: Option<String>,
 
     /// The number of used IP addresses of all subnets in a network.
     ///
+    #[structable(optional)]
     pub used_ips: Option<String>,
 }

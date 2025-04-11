@@ -17,11 +17,16 @@
 //! Response type for the post auto-allocated-topology operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AutoAllocatedTopology response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AutoAllocatedTopologyResponse {
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }

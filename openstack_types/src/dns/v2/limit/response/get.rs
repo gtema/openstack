@@ -17,39 +17,50 @@
 //! Response type for the get limits operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Limit response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LimitResponse {
     /// The max amount of items allowed per page
     ///
+    #[structable(optional)]
     pub max_page_limit: Option<i32>,
 
     /// The max length of a recordset name
     ///
+    #[structable(optional)]
     pub max_recordset_name_length: Option<i32>,
 
     /// The max amount of records contained in a recordset
     ///
+    #[structable(optional)]
     pub max_recordset_records: Option<i32>,
 
     /// The max length of a zone name
     ///
+    #[structable(optional)]
     pub max_zone_name_length: Option<i32>,
 
     /// The max amount of records in a zone
     ///
+    #[structable(optional)]
     pub max_zone_records: Option<i32>,
 
     /// The max amount of recordsets per zone
     ///
+    #[structable(optional)]
     pub max_zone_recordsets: Option<i32>,
 
     /// The max amount of zones for this project
     ///
+    #[structable(optional)]
     pub max_zones: Option<i32>,
 
     /// The lowest ttl allowed on this system
     ///
+    #[structable(optional)]
     pub min_ttl: Option<i32>,
 }

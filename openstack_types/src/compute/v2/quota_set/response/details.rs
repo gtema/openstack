@@ -17,13 +17,17 @@
 //! Response type for the get os-quota-sets/{id}/detail operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// QuotaSet response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaSetResponse {
     /// The object of detailed cores quota, including in_use, limit and
     /// reserved number of cores.
     ///
+    #[structable(optional, serialize)]
     pub cores: Option<Cores>,
 
     /// The object of detailed fixed ips quota, including in_use, limit and
@@ -31,6 +35,7 @@ pub struct QuotaSetResponse {
     ///
     /// **Available until version 2.35**
     ///
+    #[structable(optional, serialize)]
     pub fixed_ips: Option<FixedIps>,
 
     /// The object of detailed floating ips quota, including in_use, limit and
@@ -38,10 +43,12 @@ pub struct QuotaSetResponse {
     ///
     /// **Available until version 2.35**
     ///
+    #[structable(optional, serialize)]
     pub floating_ips: Option<FloatingIps>,
 
     /// The UUID of the tenant/user the quotas listed for.
     ///
+    #[structable()]
     pub id: String,
 
     /// The object of detailed injected files quota, including in_use, limit
@@ -49,21 +56,25 @@ pub struct QuotaSetResponse {
     ///
     /// **Available until version 2.56**
     ///
+    #[structable(optional, serialize)]
     pub injected_files: Option<InjectedFiles>,
 
     /// The object of detailed injected file content bytes quota, including
     /// in_use, limit and reserved number of injected file content bytes.
     ///
+    #[structable(optional, serialize)]
     pub injected_files_content_bytes: Option<InjectedFilesContentBytes>,
 
     /// The object of detailed injected file path bytes quota, including
     /// in_use, limit and reserved number of injected file path bytes.
     ///
+    #[structable(optional, serialize)]
     pub injected_files_path_bytes: Option<InjectedFilesPathBytes>,
 
     /// The object of detailed servers quota, including in_use, limit and
     /// reserved number of instances.
     ///
+    #[structable(optional, serialize)]
     pub instances: Option<Instances>,
 
     /// The object of detailed key pairs quota, including in_use, limit and
@@ -75,22 +86,26 @@ pub struct QuotaSetResponse {
     /// key_pairs are a user-level resource, not a project- level resource, so
     /// for legacy reasons, the keypair in-use information is not counted.
     ///
+    #[structable(optional, serialize)]
     pub key_pairs: Option<KeyPairs>,
 
     /// The object of detailed key metadata items quota, including in_use,
     /// limit and reserved number of metadata items.
     ///
+    #[structable(optional, serialize)]
     pub metadata_items: Option<MetadataItems>,
 
     /// The number of private networks that can be created per project.
     ///
     /// **Available until version 2.35**
     ///
+    #[structable(optional, serialize)]
     pub networks: Option<Networks>,
 
     /// The object of detailed key ram quota, including in_use, limit and
     /// reserved number of ram.
     ///
+    #[structable(optional, serialize)]
     pub ram: Option<Ram>,
 
     /// The object of detailed security group rules quota, including in_use,
@@ -98,6 +113,7 @@ pub struct QuotaSetResponse {
     ///
     /// **Available until version 2.35**
     ///
+    #[structable(optional, serialize)]
     pub security_group_rules: Option<SecurityGroupRules>,
 
     /// The object of detailed security groups, including in_use, limit and
@@ -105,16 +121,19 @@ pub struct QuotaSetResponse {
     ///
     /// **Available until version 2.35**
     ///
+    #[structable(optional, serialize)]
     pub security_groups: Option<SecurityGroups>,
 
     /// The object of detailed server group members, including in_use, limit
     /// and reserved number of server group members.
     ///
+    #[structable(optional, serialize)]
     pub server_group_members: Option<ServerGroupMembers>,
 
     /// The object of detailed server groups, including in_use, limit and
     /// reserved number of server groups.
     ///
+    #[structable(optional, serialize)]
     pub server_groups: Option<ServerGroups>,
 }
 

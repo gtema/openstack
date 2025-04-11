@@ -16,40 +16,50 @@
 // `openstack-codegenerator`.
 //! Response type for the get floatingips operation
 
-use crate::common::BoolString;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Floatingip response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FloatingipResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// A valid DNS domain.
     ///
+    #[structable(optional, wide)]
     pub dns_domain: Option<String>,
 
     /// A valid DNS name.
     ///
+    #[structable(optional, wide)]
     pub dns_name: Option<String>,
 
     /// The fixed IP address that is associated with the floating IP address.
     ///
+    #[structable(optional, wide)]
     pub fixed_ip_address: Option<String>,
 
     /// The floating IP address.
     ///
+    #[structable(optional)]
     pub floating_ip_address: Option<String>,
 
     /// The ID of the network associated with the floating IP.
     ///
+    #[structable(optional, wide)]
     pub floating_network_id: Option<String>,
 
     /// The ID of the floating IP address.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The information of the port that this floating IP associates with. In
@@ -59,6 +69,7 @@ pub struct FloatingipResponse {
     /// and `device_owner`. If the floating IP is not associated with a port,
     /// this field is `null`.
     ///
+    #[structable(optional, serialize, wide)]
     pub port_details: Option<Vec<PortDetails>>,
 
     /// The associated port forwarding resources for the floating IP. If the
@@ -70,45 +81,54 @@ pub struct FloatingipResponse {
     /// the TCP or UDP port or port range used by floating IP (`external_port`)
     /// or (`external_port_range`).
     ///
+    #[structable(optional, serialize, wide)]
     pub port_forwardings: Option<Vec<PortForwardings>>,
 
     /// The ID of a port associated with the floating IP.
     ///
+    #[structable(optional, serialize, wide)]
     pub port_id: Option<String>,
 
     /// The ID of the QoS policy associated with the floating IP.
     ///
+    #[structable(optional, serialize, wide)]
     pub qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
     ///
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// The ID of the router for the floating IP.
     ///
+    #[structable(optional, serialize, wide)]
     pub router_id: Option<String>,
 
     /// The status of the floating IP. Values are `ACTIVE`, `DOWN` and `ERROR`.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 
 /// `PortDetails` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct PortDetails {
-    pub admin_state_up: Option<BoolString>,
+    pub admin_state_up: Option<bool>,
     pub device_id: Option<String>,
     pub device_owner: Option<String>,
     pub mac_address: Option<String>,

@@ -17,37 +17,47 @@
 //! Response type for the post registered_limits operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// RegisteredLimit response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RegisteredLimitResponse {
     /// The default limit for the registered limit.
     ///
+    #[structable(optional)]
     pub default_limit: Option<i32>,
 
     /// The registered limit description.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// The registered limit ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The ID of the region that contains the service endpoint. The value can
     /// be None.
     ///
+    #[structable(optional, serialize)]
     pub region_id: Option<String>,
 
     /// The resource name.
     ///
+    #[structable(optional)]
     pub resource_name: Option<String>,
 
     /// The UUID of the service to which the registered limit belongs.
     ///
+    #[structable(optional)]
     pub service_id: Option<String>,
 }
 

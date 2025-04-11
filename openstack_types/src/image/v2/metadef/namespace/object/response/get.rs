@@ -19,29 +19,40 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Object response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ObjectResponse {
     /// Date and time of object creation
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional)]
     pub description: Option<String>,
 
+    #[structable()]
     pub name: String,
 
+    #[structable(optional, serialize)]
     pub properties: Option<HashMap<String, Properties>>,
 
+    #[structable(optional, serialize)]
     pub required: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub schema: Option<String>,
 
     #[serde(rename = "self")]
+    #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
     /// Date and time of the last object modification
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

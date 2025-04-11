@@ -17,16 +17,21 @@
 //! Response type for the get servers/{server_id}/shares/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Share response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ShareResponse {
     /// The export location used to attach the share to the underlying host.
     ///
+    #[structable(optional)]
     pub export_location: Option<String>,
 
     /// The UUID of the attached share.
     ///
+    #[structable()]
     pub share_id: String,
 
     /// Status of the Share:
@@ -39,16 +44,19 @@ pub struct ShareResponse {
     /// - active: The share is attached, and the VM is running.
     /// - error: The share is in an error state.
     ///
+    #[structable(serialize)]
     pub status: Status,
 
     /// The device tag to be used by users to mount the share within the
     /// instance, if not provided then the share UUID will be used
     /// automatically.
     ///
+    #[structable()]
     pub tag: String,
 
     /// The UUID of the attached share.
     ///
+    #[structable(optional)]
     pub uuid: Option<String>,
 }
 

@@ -18,9 +18,12 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Snapshot response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SnapshotResponse {
     /// Whether this resource consumes quota or not. Resources that not counted
     /// for quota usage are usually temporary internal resources created to
@@ -28,12 +31,14 @@ pub struct SnapshotResponse {
     ///
     /// **New in version 3.65**
     ///
+    #[structable(optional, serialize, wide)]
     pub consumes_quota: Option<bool>,
 
     /// The total count of requested resource before pagination is applied.
     ///
     /// **New in version 3.45**
     ///
+    #[structable(optional, serialize, wide)]
     pub count: Option<i32>,
 
     /// The date and time when the resource was created.
@@ -51,46 +56,56 @@ pub struct SnapshotResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable()]
     pub created_at: String,
 
     /// A description for the snapshot.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
     /// **New in version 3.14**
     ///
+    #[structable(optional, wide)]
     pub group_snapshot_id: Option<String>,
 
     /// The snapshot UUID.
     ///
+    #[structable()]
     pub id: String,
 
     /// One or more metadata key and value pairs for the snapshot, if any.
     ///
+    #[structable(optional, serialize, wide)]
     pub metadata: Option<HashMap<String, String>>,
 
     /// The name of the object.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// A percentage value for the build progress.
     ///
     #[serde(rename = "os-extended-snapshot-attributes:progress")]
+    #[structable(optional, title = "os-extended-snapshot-attributes:progress", wide)]
     pub os_extended_snapshot_attributes_progress: Option<String>,
 
     /// The UUID of the owning project.
     ///
     #[serde(rename = "os-extended-snapshot-attributes:project_id")]
+    #[structable(optional, title = "os-extended-snapshot-attributes:project_id", wide)]
     pub os_extended_snapshot_attributes_project_id: Option<String>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
+    #[structable(wide)]
     pub size: i64,
 
     /// The status for the snapshot.
     ///
+    #[structable(serialize)]
     pub status: Status,
 
     /// The date and time when the resource was updated.
@@ -111,10 +126,12 @@ pub struct SnapshotResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 
     /// If the snapshot was created from a volume, the volume ID.
     ///
+    #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
 

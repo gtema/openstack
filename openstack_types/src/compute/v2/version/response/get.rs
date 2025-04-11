@@ -17,28 +17,35 @@
 //! Response type for the get versions/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Version response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VersionResponse {
     /// A common name for the version in question. Informative only, it has no
     /// real semantic meaning.
     ///
+    #[structable()]
     pub id: String,
 
     /// Links to the resources in question. See
     /// [API Guide / Links and References](https://docs.openstack.org/api-guide/compute/links_and_references.html)
     /// for more info.
     ///
+    #[structable(serialize)]
     pub links: Vec<Links>,
 
     #[serde(rename = "media-types")]
+    #[structable(optional, serialize, title = "media-types")]
     pub media_types: Option<Vec<MediaTypes>>,
 
     /// If this version of the API supports microversions, the minimum
     /// microversion that is supported. This will be the empty string if
     /// microversions are not supported.
     ///
+    #[structable()]
     pub min_version: String,
 
     /// The status of this API version. This can be one of:
@@ -48,6 +55,7 @@ pub struct VersionResponse {
     /// - `DEPRECATED`: a deprecated version of the API that is slated for
     ///   removal
     ///
+    #[structable(serialize)]
     pub status: Status,
 
     /// This is a fixed string. It is `2011-01-21T11:33:21Z` in version 2.0,
@@ -58,8 +66,10 @@ pub struct VersionResponse {
     /// It is vestigial and provides no useful information. It will be
     /// deprecated and removed in the future.
     ///
+    #[structable()]
     pub updated: String,
 
+    #[structable(optional)]
     pub version: Option<String>,
 }
 

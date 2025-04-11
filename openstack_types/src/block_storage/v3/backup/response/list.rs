@@ -17,16 +17,21 @@
 //! Response type for the get backups operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Backup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct BackupResponse {
     /// The UUID of the backup.
     ///
+    #[structable()]
     pub id: String,
 
     /// The backup name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 }
 

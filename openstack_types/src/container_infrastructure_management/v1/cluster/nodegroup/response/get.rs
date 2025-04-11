@@ -18,60 +18,89 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Nodegroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NodegroupResponse {
+    #[structable(optional)]
     pub cluster_id: Option<String>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional)]
     pub docker_volume_size: Option<i32>,
 
+    #[structable(optional)]
     pub flavor_id: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<i32>,
 
+    #[structable(optional)]
     pub image_id: Option<String>,
 
+    #[structable(optional)]
     pub is_default: Option<String>,
 
+    #[structable(optional, serialize)]
     pub labels: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_added: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_overridden: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_skipped: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
+    #[structable(optional)]
     pub max_node_count: Option<i32>,
 
+    #[structable(optional)]
     pub merge_labels: Option<String>,
 
+    #[structable(optional)]
     pub min_node_count: Option<i32>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, serialize)]
     pub node_addresses: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub node_count: Option<i32>,
 
+    #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[structable(optional)]
     pub role: Option<String>,
 
+    #[structable(optional)]
     pub stack_id: Option<String>,
 
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
+    #[structable(optional)]
     pub status_reason: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional)]
     pub uuid: Option<String>,
 
+    #[structable(optional)]
     pub version: Option<String>,
 }
 

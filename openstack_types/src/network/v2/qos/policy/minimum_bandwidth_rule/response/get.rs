@@ -16,26 +16,33 @@
 // `openstack-codegenerator`.
 //! Response type for the get qos/policies/{policy_id}/minimum_bandwidth_rules/{id} operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// MinimumBandwidthRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MinimumBandwidthRuleResponse {
     /// The direction of the traffic to which the QoS rule is applied, as seen
     /// from the point of view of the `port`. Valid values are `egress` and
     /// `ingress`. Default value is `egress`.
     ///
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
     /// The ID of the QoS minimum bandwidth rule.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The minimum KBPS (kilobits per second) value which should be available
     /// for port.
     ///
-    pub min_kbps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub min_kbps: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

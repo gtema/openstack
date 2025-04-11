@@ -19,25 +19,31 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AvailabilityZone response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// An object containing a list of host information. The host information
     /// is comprised of host and service objects. The service object returns
     /// three parameters representing the states of the service: `active`,
     /// `available`, and `updated_at`.
     ///
+    #[structable(optional, serialize)]
     pub hosts: Option<HashMap<String, Value>>,
 
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
+    #[structable(title = "zoneName")]
     pub zone_name: String,
 
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
+    #[structable(serialize, title = "zoneState")]
     pub zone_state: ZoneState,
 }
 

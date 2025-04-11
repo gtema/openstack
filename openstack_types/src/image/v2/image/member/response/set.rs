@@ -17,9 +17,12 @@
 //! Response type for the put images/{image_id}/members/{member_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Member response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MemberResponse {
     /// The date and time when the resource was created.
     ///
@@ -36,24 +39,29 @@ pub struct MemberResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The UUID of the image.
     ///
+    #[structable(optional)]
     pub image_id: Option<String>,
 
     /// The ID of the image member. An image member is usually a project (also
     /// called the “tenant”) with whom the image is shared.
     ///
+    #[structable(optional)]
     pub member_id: Option<String>,
 
     /// The URL for the schema describing an image member.
     ///
+    #[structable(optional)]
     pub schema: Option<String>,
 
     /// The status of this image member. Value is one of `pending`, `accepted`,
     /// `rejected`.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The date and time when the resource was updated.
@@ -74,6 +82,7 @@ pub struct MemberResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

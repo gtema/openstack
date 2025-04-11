@@ -17,24 +17,31 @@
 //! Response type for the get extensions operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Extension response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ExtensionResponse {
     /// A short name by which this extension is also known.
     ///
+    #[structable()]
     pub alias: String,
 
     /// Text describing this extension’s purpose.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// Name of the extension.
     ///
+    #[structable()]
     pub name: String,
 
     /// A URL pointing to the namespace for this extension.
     ///
+    #[structable(optional)]
     pub namespace: Option<String>,
 
     /// The date and time when the resource was updated. The date and time
@@ -49,6 +56,7 @@ pub struct ExtensionResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional)]
     pub updated: Option<String>,
 }
 

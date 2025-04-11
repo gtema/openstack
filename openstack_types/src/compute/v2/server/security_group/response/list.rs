@@ -19,28 +19,36 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// SecurityGroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupResponse {
     /// Security group description.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the security group.
     ///
+    #[structable()]
     pub id: String,
 
     /// The security group name.
     ///
+    #[structable()]
     pub name: String,
 
     /// The list of security group rules.
     ///
+    #[structable(optional, serialize, wide)]
     pub rules: Option<Vec<Rules>>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 }
 

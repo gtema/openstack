@@ -19,9 +19,12 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Token response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TokenResponse {
     /// A list of one or two audit IDs. An audit ID is a unique, randomly
     /// generated, URL-safe string that you can use to track a token. The first
@@ -33,16 +36,19 @@ pub struct TokenResponse {
     /// multiple requests and endpoints without exposing the token ID to
     /// non-privileged users.
     ///
+    #[structable(optional, serialize)]
     pub audit_ids: Option<Vec<String>>,
 
     /// A `catalog` object.
     ///
+    #[structable(optional, serialize)]
     pub catalog: Option<Vec<Catalog>>,
 
     /// A domain object including the id and name representing the domain the
     /// token is scoped to. This is only included in tokens that are scoped to
     /// a domain.
     ///
+    #[structable(optional, serialize)]
     pub domain: Option<DomainStructResponse>,
 
     /// The date and time when the token expires.
@@ -59,12 +65,15 @@ pub struct TokenResponse {
     ///
     /// A `null` value indicates that the token never expires.
     ///
+    #[structable(optional)]
     pub expires_at: Option<String>,
 
+    #[structable(optional)]
     pub is_domain: Option<bool>,
 
     /// The date and time when the token was issued.
     ///
+    #[structable(optional)]
     pub issues_at: Option<String>,
 
     /// The authentication methods, which are commonly `password`, `token`, or
@@ -79,16 +88,19 @@ pub struct TokenResponse {
     /// client is responsible for determining the total number of
     /// authentication factors.
     ///
+    #[structable(optional, serialize)]
     pub methods: Option<Vec<String>>,
 
     /// A `project` object including the `id`, `name` and `domain` object
     /// representing the project the token is scoped to. This is only included
     /// in tokens that are scoped to a project.
     ///
+    #[structable(optional, serialize)]
     pub project: Option<Project>,
 
     /// A list of `role` objects
     ///
+    #[structable(optional, serialize)]
     pub roles: Option<Vec<Roles>>,
 
     /// A `system` object containing information about which parts of the
@@ -96,10 +108,12 @@ pub struct TokenResponse {
     /// deployment system, the `system` object will consist of `{"all": true}`.
     /// This is only included in tokens that are scoped to the system.
     ///
+    #[structable(optional, serialize)]
     pub system: Option<HashMap<String, bool>>,
 
     /// A `user` object.
     ///
+    #[structable(optional, serialize)]
     pub user: Option<User>,
 }
 

@@ -16,53 +16,69 @@
 // `openstack-codegenerator`.
 //! Response type for the get qos/policies operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Policy response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PolicyResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the QoS policy.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// If `true`, the QoS `policy` is the default policy.
     ///
-    pub is_default: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub is_default: Option<bool>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The revision number of the resource.
     ///
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// A set of zero or more policy rules.
     ///
+    #[structable(optional, wide)]
     pub rules: Option<String>,
 
     /// Indicates whether this policy is shared across all projects.
     ///
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub shared: Option<bool>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

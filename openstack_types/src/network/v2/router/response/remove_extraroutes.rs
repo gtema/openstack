@@ -17,22 +17,28 @@
 //! Response type for the put routers/{id}/remove_extraroutes operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Router response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RouterResponse {
     /// The ID of the router.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the router.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
     ///
+    #[structable(optional, serialize)]
     pub routes: Option<Vec<Routes>>,
 }
 

@@ -17,16 +17,21 @@
 //! Response type for the post resource_classes operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ResourceClass response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceClassResponse {
     /// A list of links associated with one resource class.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The name of one resource class.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }
 

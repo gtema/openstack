@@ -17,19 +17,24 @@
 //! Response type for the get os-hypervisors operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Hypervisor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct HypervisorResponse {
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
     ///
+    #[structable(wide)]
     pub hypervisor_hostname: String,
 
     /// The id of the hypervisor as a UUID.
     ///
     /// **New in version 2.53**
     ///
+    #[structable()]
     pub id: String,
 
     /// A list of `server` objects. This field has become mandatory in
@@ -38,14 +43,17 @@ pub struct HypervisorResponse {
     ///
     /// **New in version 2.53**
     ///
+    #[structable(serialize, wide)]
     pub servers: Vec<Servers>,
 
     /// The state of the hypervisor. One of `up` or `down`.
     ///
+    #[structable(serialize)]
     pub state: State,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 }
 

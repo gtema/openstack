@@ -17,9 +17,13 @@
 //! Response type for the post servers/{id}/action operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Server response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
+    #[structable()]
     pub output: String,
 }

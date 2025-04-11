@@ -17,15 +17,20 @@
 //! Response type for the get default-types/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// DefaultType response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DefaultTypeResponse {
     /// The UUID of the project.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The UUID for an existing volume type.
     ///
+    #[structable(optional)]
     pub volume_type_id: Option<String>,
 }

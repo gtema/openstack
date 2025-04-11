@@ -19,67 +19,85 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Task response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TaskResponse {
     /// Datetime when this resource was created
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Datetime when this resource would be subject to removal
     ///
+    #[structable(optional, serialize, wide)]
     pub expires_at: Option<String>,
 
     /// An identifier for the task
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Image associated with the task
     ///
+    #[structable(optional, wide)]
     pub image_id: Option<String>,
 
     /// The parameters required by task, JSON blob
     ///
+    #[structable(optional, serialize, wide)]
     pub input: Option<HashMap<String, Value>>,
 
     /// Human-readable informative message only included when appropriate
     /// (usually on failure)
     ///
+    #[structable(optional, wide)]
     pub message: Option<String>,
 
     /// An identifier for the owner of this task
     ///
+    #[structable(optional, wide)]
     pub owner: Option<String>,
 
     /// Human-readable informative request-id
     ///
+    #[structable(optional, wide)]
     pub request_id: Option<String>,
 
     /// The result of current task, JSON blob
     ///
+    #[structable(optional, serialize, wide)]
     pub result: Option<HashMap<String, Value>>,
 
+    #[structable(optional, wide)]
     pub schema: Option<String>,
 
     #[serde(rename = "self")]
+    #[structable(optional, title = "self", wide)]
     pub _self: Option<String>,
 
     /// The current status of this task
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The type of task represented by this content
     ///
     #[serde(rename = "type")]
+    #[structable(optional, serialize, title = "type", wide)]
     pub _type: Option<Type>,
 
     /// Datetime when this resource was updated
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// User associated with the task
     ///
+    #[structable(optional, wide)]
     pub user_id: Option<String>,
 }
 
