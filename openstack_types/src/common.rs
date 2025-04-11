@@ -13,7 +13,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 //! Common types that can be used in responses of the API operations
-use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, de::Visitor};
 use std::collections::BTreeSet;
 use std::fmt;
 use std::str::FromStr;
@@ -299,10 +299,10 @@ pub enum NameOrId {
 
 #[cfg(test)]
 mod tests {
+    use serde::de::IntoDeserializer;
     use serde::de::value::{
         BoolDeserializer, Error as ValueError, F64Deserializer, StrDeserializer, U64Deserializer,
     };
-    use serde::de::IntoDeserializer;
     use serde_json::json;
 
     use super::*;
@@ -471,7 +471,6 @@ mod tests {
             #[serde(deserialize_with = "deser_bool_str_opt", default)]
             pub i: Option<bool>,
         }
-
 
         assert_eq!(
             Test { i: Some(false) },
