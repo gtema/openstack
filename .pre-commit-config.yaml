@@ -30,11 +30,9 @@ repos:
         name: cargo fmt
         description: Format rust files with cargo fmt
         entry: cargo fmt
-        args: ["--"]
+        args: ["--", "--check", "--collor", "always"]
         language: rust
         types: [rust]
-        minimum_pre_commit_version: 2.21.0
-        require_serial: true
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.16.3
     hooks:
