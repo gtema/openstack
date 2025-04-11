@@ -16,13 +16,15 @@
 // `openstack-codegenerator`.
 //! Response type for the get os-hypervisors/detail operation
 
-use crate::common::IntString;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Hypervisor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct HypervisorResponse {
     /// A dictionary that contains cpu information like `arch`, `model`,
     /// `vendor`, `features` and `topology`. The content of this field is
@@ -35,6 +37,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, serialize, wide)]
     pub cpu_info: Option<HashMap<String, Value>>,
 
     /// The current_workload is the number of tasks the hypervisor is
@@ -44,6 +47,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub current_workload: Option<i32>,
 
     /// The actual free disk on this hypervisor(in GiB). If allocation ratios
@@ -53,6 +57,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub disk_available_least: Option<i32>,
 
     /// The free disk remaining on this hypervisor(in GiB). This does not take
@@ -61,6 +66,7 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub free_disk_gb: Option<i32>,
 
     /// The free RAM in this hypervisor(in MiB). This does not take allocation
@@ -68,27 +74,33 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub free_ram_mb: Option<i32>,
 
     /// The IP address of the hypervisor’s host.
     ///
+    #[structable(optional, wide)]
     pub host_ip: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
     /// Ironic driver, it is the Ironic node uuid.
     ///
+    #[structable(optional, wide)]
     pub hypervisor_hostname: Option<String>,
 
     /// The hypervisor type.
     ///
+    #[structable(optional, wide)]
     pub hypervisor_type: Option<String>,
 
     /// The hypervisor version.
     ///
+    #[structable(optional, wide)]
     pub hypervisor_version: Option<i32>,
 
     /// The id of the hypervisor. From version 2.53 it is a string as UUID
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The disk in this hypervisor (in GiB). This does not take allocation
@@ -97,12 +109,14 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub local_gb: Option<i32>,
 
     /// The disk used in this hypervisor (in GiB).
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub local_gb_used: Option<i32>,
 
     /// The memory of this hypervisor (in MiB). This does not take allocation
@@ -111,18 +125,21 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub memory_mb: Option<i32>,
 
     /// The memory used in this hypervisor (in MiB).
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub memory_mb_used: Option<i32>,
 
     /// The number of running VMs on this hypervisor.
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub running_vms: Option<i32>,
 
     /// A list of `server` objects. This field has become mandatory in
@@ -131,18 +148,22 @@ pub struct HypervisorResponse {
     ///
     /// **New in version 2.53**
     ///
+    #[structable(optional, serialize, wide)]
     pub servers: Option<Vec<Servers>>,
 
     /// The hypervisor service object.
     ///
+    #[structable(optional, serialize, wide)]
     pub service: Option<Service>,
 
     /// The state of the hypervisor. One of `up` or `down`.
     ///
+    #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The status of the hypervisor. One of `enabled` or `disabled`.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The total uptime of the hypervisor and information about average load.
@@ -151,6 +172,7 @@ pub struct HypervisorResponse {
     ///
     /// **New in version 2.88**
     ///
+    #[structable(optional, wide)]
     pub uptime: Option<String>,
 
     /// The number of vCPU in this hypervisor. This does not take allocation
@@ -159,12 +181,14 @@ pub struct HypervisorResponse {
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub vcpus: Option<i32>,
 
     /// The number of vCPU used in this hypervisor.
     ///
     /// **Available until version 2.87**
     ///
+    #[structable(optional, wide)]
     pub vcpus_used: Option<i32>,
 }
 
@@ -175,7 +199,7 @@ pub struct HypervisorResponse {
 pub struct Service {
     pub disabled_reason: Option<String>,
     pub host: Option<String>,
-    pub id: Option<IntString>,
+    pub id: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

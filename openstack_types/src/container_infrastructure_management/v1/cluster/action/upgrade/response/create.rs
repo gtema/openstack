@@ -17,9 +17,13 @@
 //! Response type for the post clusters/actions/upgrade operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Upgrade response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct UpgradeResponse {
+    #[structable()]
     pub uuid: String,
 }

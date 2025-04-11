@@ -17,24 +17,31 @@
 //! Response type for the get {account} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Account response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AccountResponse {
     /// The total number of bytes that are stored in Object Storage for the
     /// account.
     ///
+    #[structable(optional)]
     pub bytes: Option<i64>,
 
     /// The number of objects in the container.
     ///
+    #[structable(optional)]
     pub count: Option<i64>,
 
     /// Last modification date of the container
     ///
+    #[structable(optional)]
     pub last_modified: Option<String>,
 
     /// The name of the container.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }

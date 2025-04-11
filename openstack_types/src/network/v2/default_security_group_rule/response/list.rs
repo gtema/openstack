@@ -16,28 +16,35 @@
 // `openstack-codegenerator`.
 //! Response type for the get default-security-group-rules operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// DefaultSecurityGroupRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DefaultSecurityGroupRuleResponse {
     /// A human-readable description for the resource.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// Ingress or egress, which is the direction in which the security group
     /// rule is applied.
     ///
+    #[structable(optional, serialize, wide)]
     pub direction: Option<Direction>,
 
     /// Must be IPv4 or IPv6, and addresses represented in CIDR must match the
     /// ingress or egress rules.
     ///
+    #[structable(optional, serialize, wide)]
     pub ethertype: Option<Ethertype>,
 
     /// The ID of the security group default rule.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The maximum port number in the range that is matched by the security
@@ -45,6 +52,7 @@ pub struct DefaultSecurityGroupRuleResponse {
     /// value must be greater than or equal to the `port_range_min` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP code.
     ///
+    #[structable(optional, serialize, wide)]
     pub port_range_max: Option<i32>,
 
     /// The minimum port number in the range that is matched by the security
@@ -52,6 +60,7 @@ pub struct DefaultSecurityGroupRuleResponse {
     /// value must be less than or equal to the `port_range_max` attribute
     /// value. If the protocol is ICMP, this value must be an ICMP type.
     ///
+    #[structable(optional, serialize, wide)]
     pub port_range_min: Option<i32>,
 
     /// The IP protocol can be represented by a string, an integer, or `null`.
@@ -66,29 +75,37 @@ pub struct DefaultSecurityGroupRuleResponse {
     /// `all` IP protocols. See the constants in `neutron_lib.constants` for
     /// the most up-to-date list of supported strings.
     ///
+    #[structable(optional, wide)]
     pub protocol: Option<String>,
 
     /// The remote address group UUID to associate with this security group
     /// rule.
     ///
+    #[structable(optional, wide)]
     pub remote_address_group_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub remote_group_id: Option<String>,
 
     /// The remote IP prefix that is matched by this security group rule.
     ///
+    #[structable(optional, wide)]
     pub remote_ip_prefix: Option<String>,
 
     /// Whether this security group rule template should be used in default
     /// security group created automatically for each new project. Default
     /// value is `False`.
     ///
-    pub used_in_default_sg: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub used_in_default_sg: Option<bool>,
 
     /// Whether this security group rule template should be used in custom
     /// security groups created by project user. Default value is `True`.
     ///
-    pub used_in_non_default_sg: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub used_in_non_default_sg: Option<bool>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

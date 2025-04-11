@@ -17,27 +17,40 @@
 //! Response type for the get ndp-proxies operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// NdpProxy response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NdpProxyResponse {
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, wide)]
     pub ip_address: Option<String>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, wide)]
     pub port_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
+    #[structable(optional, wide)]
     pub router_id: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

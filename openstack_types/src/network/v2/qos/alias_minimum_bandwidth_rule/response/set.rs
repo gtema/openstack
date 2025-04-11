@@ -16,18 +16,26 @@
 // `openstack-codegenerator`.
 //! Response type for the put qos/alias-minimum-bandwidth-rules/{id} operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AliasMinimumBandwidthRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasMinimumBandwidthRuleResponse {
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub min_kbps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub min_kbps: Option<i64>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }
 

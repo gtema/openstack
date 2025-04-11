@@ -17,12 +17,16 @@
 //! Response type for the get log/loggable-resources operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// LoggableResource response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoggableResourceResponse {
     /// The resource log type such as ‘security_group’.
     ///
     #[serde(rename = "type")]
+    #[structable(title = "type", wide)]
     pub _type: String,
 }

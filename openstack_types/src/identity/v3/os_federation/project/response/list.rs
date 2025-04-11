@@ -17,25 +17,32 @@
 //! Response type for the get OS-FEDERATION/projects operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Project response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProjectResponse {
     /// The ID of the domain for the project.
     ///
+    #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// If set to `true`, project is enabled. If set to `false`, project is
     /// disabled.
     ///
+    #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID for the project.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the project.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }
 

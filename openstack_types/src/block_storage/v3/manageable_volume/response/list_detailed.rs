@@ -17,13 +17,17 @@
 //! Response type for the get manageable_volumes/detail operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ManageableVolume response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ManageableVolumeResponse {
     /// A list of manageable volumes.
     ///
     #[serde(rename = "manageable-volumes")]
+    #[structable(serialize, title = "manageable-volumes", wide)]
     pub manageable_volumes: Vec<ManageableVolumes>,
 }
 

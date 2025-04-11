@@ -17,10 +17,14 @@
 //! Response type for the put log/loggable-resources/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// LoggableResource response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoggableResourceResponse {
     #[serde(rename = "type")]
+    #[structable(title = "type")]
     pub _type: String,
 }

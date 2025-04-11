@@ -17,27 +17,34 @@
 //! Response type for the get users/{user_id}/access_rules operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AccessRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AccessRuleResponse {
     /// The UUID of the access rule
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The request method that the application credential is permitted to use
     /// for a given API endpoint.
     ///
+    #[structable(optional, serialize, wide)]
     pub method: Option<Method>,
 
     /// The API path that the application credential is permitted to access.
     ///
+    #[structable(optional, wide)]
     pub path: Option<String>,
 
     /// The service type identifier for the service that the application
     /// credential is permitted to access. Must be a service type that is
     /// listed in the service catalog and not a code name for a service.
     ///
+    #[structable(optional, wide)]
     pub service: Option<String>,
 }
 

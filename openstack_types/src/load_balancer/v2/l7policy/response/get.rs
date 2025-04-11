@@ -17,56 +17,70 @@
 //! Response type for the get lbaas/l7policies/{l7policy_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// L7policy response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct L7policyResponse {
     /// The L7 policy action. One of `REDIRECT_PREFIX`, `REDIRECT_TO_POOL`,
     /// `REDIRECT_TO_URL`, or `REJECT`.
     ///
+    #[structable(optional)]
     pub action: Option<String>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the L7 policy.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID of the listener.
     ///
+    #[structable(optional)]
     pub listener_id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The position of this policy on the listener. Positions start at 1.
     ///
+    #[structable(optional)]
     pub position: Option<i32>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// Requests matching this policy will be redirected to the specified URL
@@ -76,6 +90,7 @@ pub struct L7policyResponse {
     ///
     /// **New in version 2.9**
     ///
+    #[structable(optional)]
     pub redirect_http_code: Option<i32>,
 
     /// Requests matching this policy will be redirected to the pool with this
@@ -83,32 +98,39 @@ pub struct L7policyResponse {
     /// restrictions, See
     /// [Protocol Combinations (Listener/Pool)](#valid-protocol).
     ///
+    #[structable(optional)]
     pub redirect_pool_id: Option<String>,
 
     /// Requests matching this policy will be redirected to this Prefix URL.
     /// Only valid if `action` is `REDIRECT_PREFIX`.
     ///
+    #[structable(optional)]
     pub redirect_prefix: Option<String>,
 
     /// Requests matching this policy will be redirected to this URL. Only
     /// valid if `action` is `REDIRECT_TO_URL`.
     ///
+    #[structable(optional)]
     pub redirect_url: Option<String>,
 
     /// List of associated L7 rule IDs.
     ///
+    #[structable(optional, serialize)]
     pub rules: Option<Vec<Rules>>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

@@ -17,19 +17,25 @@
 //! Response type for the get qos-specs/{id}/associations operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Association response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AssociationResponse {
     /// The QoS association type.
     ///
+    #[structable(wide)]
     pub association_type: String,
 
     /// The Qos association ID.
     ///
+    #[structable()]
     pub id: String,
 
     /// The QoS association name.
     ///
+    #[structable()]
     pub name: String,
 }

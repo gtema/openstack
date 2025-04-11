@@ -16,17 +16,24 @@
 // `openstack-codegenerator`.
 //! Response type for the put qos/policies/{policy_id}/minimum-packet-rate-rules/{id} operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// MinimumPacketRateRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MinimumPacketRateRuleResponse {
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub min_kpps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub min_kpps: Option<i64>,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

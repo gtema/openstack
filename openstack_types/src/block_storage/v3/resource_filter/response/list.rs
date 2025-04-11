@@ -17,15 +17,20 @@
 //! Response type for the get resource_filters operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ResourceFilter response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceFilterResponse {
     /// The resource filter array.
     ///
+    #[structable(optional, serialize)]
     pub filters: Option<Vec<String>>,
 
     /// Resource which the filters will be applied to.
     ///
+    #[structable(optional)]
     pub resource: Option<String>,
 }

@@ -18,12 +18,16 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Allocation response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AllocationResponse {
     /// A dictionary of allocations keyed by resource provider uuid.
     ///
+    #[structable(serialize)]
     pub allocations: HashMap<String, AllocationsItem>,
 
     /// The generation of the consumer. Will be absent when listing allocations
@@ -31,6 +35,7 @@ pub struct AllocationResponse {
     ///
     /// **New in version 1.28**
     ///
+    #[structable(optional, serialize)]
     pub consumer_generation: Option<i32>,
 
     /// A string that consists of numbers, `A-Z`, and `_` describing what kind
@@ -42,8 +47,10 @@ pub struct AllocationResponse {
     ///
     /// **New in version 1.38**
     ///
+    #[structable(optional)]
     pub consumer_type: Option<String>,
 
+    #[structable(optional, serialize)]
     pub mappings: Option<HashMap<String, Vec<String>>>,
 
     /// The uuid of a project. Will be absent when listing allocations for a
@@ -51,6 +58,7 @@ pub struct AllocationResponse {
     ///
     /// **New in version 1.12**
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The uuid of a user. Will be absent when listing allocations for a
@@ -58,6 +66,7 @@ pub struct AllocationResponse {
     ///
     /// **New in version 1.12**
     ///
+    #[structable(optional)]
     pub user_id: Option<String>,
 }
 

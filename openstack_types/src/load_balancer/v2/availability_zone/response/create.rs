@@ -17,15 +17,22 @@
 //! Response type for the post lbaas/availabilityzones operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AvailabilityZone response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
+    #[structable(optional)]
     pub availability_zone_profile_id: Option<String>,
 
+    #[structable(optional)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub enabled: Option<bool>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 }

@@ -19,53 +19,70 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Namespace response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NamespaceResponse {
     /// Date and time of namespace creation
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Provides a user friendly description of the namespace.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The user friendly name for the namespace. Used by UI if available.
     ///
+    #[structable(optional)]
     pub display_name: Option<String>,
 
     /// The unique namespace text.
     ///
+    #[structable()]
     pub namespace: String,
 
+    #[structable(optional, serialize)]
     pub objects: Option<Vec<Objects>>,
 
     /// Owner of the namespace.
     ///
+    #[structable(optional)]
     pub owner: Option<String>,
 
+    #[structable(optional, serialize)]
     pub properties: Option<HashMap<String, Properties>>,
 
     /// If true, namespace will not be deletable.
     ///
+    #[structable(optional)]
     pub protected: Option<bool>,
 
+    #[structable(optional, serialize)]
     pub resource_type_associations: Option<Vec<ResourceTypeAssociations>>,
 
+    #[structable(optional)]
     pub schema: Option<String>,
 
     #[serde(rename = "self")]
+    #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<Tags>>,
 
     /// Date and time of the last namespace modification
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// Scope of namespace accessibility.
     ///
+    #[structable(optional, serialize)]
     pub visibility: Option<Visibility>,
 }
 

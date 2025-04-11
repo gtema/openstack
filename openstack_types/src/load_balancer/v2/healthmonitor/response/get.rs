@@ -17,21 +17,27 @@
 //! Response type for the get lbaas/healthmonitors/{healthmonitor_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Healthmonitor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct HealthmonitorResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The time, in seconds, between sending probes to members.
     ///
+    #[structable(optional)]
     pub delay: Option<i32>,
 
     /// The domain name, which be injected into the HTTP Host Header to the
@@ -39,6 +45,7 @@ pub struct HealthmonitorResponse {
     ///
     /// **New in version 2.10**
     ///
+    #[structable(optional)]
     pub domain_name: Option<String>,
 
     /// The list of HTTP status codes expected in response from the member to
@@ -48,82 +55,99 @@ pub struct HealthmonitorResponse {
     /// - A list, such as `200, 202`
     /// - A range, such as `200-204`
     ///
+    #[structable(optional)]
     pub expected_codes: Option<String>,
 
     /// The HTTP method that the health monitor uses for requests. One of
     /// `CONNECT`, `DELETE`, `GET`, `HEAD`, `OPTIONS`, `PATCH`, `POST`, `PUT`,
     /// or `TRACE`.
     ///
+    #[structable(optional)]
     pub http_method: Option<String>,
 
     /// The HTTP version. One of `1.0` or `1.1`. The default is `1.0`.
     ///
     /// **New in version 2.10**
     ///
+    #[structable(optional)]
     pub http_version: Option<f32>,
 
     /// The associated health monitor ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The number of successful checks before changing the `operating status`
     /// of the member to `ONLINE`. A valid value is from `1` to `10`.
     ///
+    #[structable(optional)]
     pub max_retries: Option<i32>,
 
     /// The number of allowed check failures before changing the
     /// `operating status` of the member to `ERROR`. A valid value is from `1`
     /// to `10`.
     ///
+    #[structable(optional)]
     pub max_retries_down: Option<i32>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional)]
     pub operating_status: Option<String>,
 
+    #[structable(optional, serialize)]
     pub pools: Option<Vec<Pools>>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The maximum time, in seconds, that a monitor waits to connect before it
     /// times out. This value must be less than the delay value.
     ///
+    #[structable(optional)]
     pub timeout: Option<i32>,
 
     /// The type of health monitor. One of `HTTP`, `HTTPS`, `PING`, `SCTP`,
     /// `TCP`, `TLS-HELLO`, or `UDP-CONNECT`.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The HTTP URL path of the request sent by the monitor to test the health
     /// of a backend member. Must be a string that begins with a forward slash
     /// (`/`).
     ///
+    #[structable(optional)]
     pub url_path: Option<String>,
 }
 

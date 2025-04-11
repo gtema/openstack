@@ -17,23 +17,29 @@
 //! Response type for the get flavors operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Flavor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
     /// The description of the flavor.
     ///
     /// **New in version 2.55**
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
     ///
+    #[structable()]
     pub id: String,
 
     /// The display name of a flavor.
     ///
+    #[structable()]
     pub name: String,
 }
 

@@ -16,58 +16,74 @@
 // `openstack-codegenerator`.
 //! Response type for the get log/logs operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Log response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LogResponse {
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// Indicates whether this log object is enabled or disabled.
     ///
-    pub enabled: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub enabled: Option<bool>,
 
     /// Type of security events to log. `ACCEPT`, `DROP`, or `ALL`.
     ///
+    #[structable(optional, serialize, wide)]
     pub event: Option<Event>,
 
     /// The ID of the log object.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The ID of resource log (e.g security group ID).
     ///
+    #[structable(optional, serialize, wide)]
     pub resource_id: Option<String>,
 
     /// The resource log type such as ‘security_group’.
     ///
+    #[structable(optional, wide)]
     pub resource_type: Option<String>,
 
     /// The revision number of the resource.
     ///
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// The ID of resource target log such as port ID.
     ///
+    #[structable(optional, serialize, wide)]
     pub target_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

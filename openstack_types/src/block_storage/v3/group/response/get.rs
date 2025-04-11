@@ -17,61 +17,77 @@
 //! Response type for the get groups/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Group response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The name of the availability zone.
     ///
+    #[structable(optional)]
     pub availability_zone: Option<String>,
 
     /// The date and time when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The group description.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
+    #[structable(optional, serialize)]
     pub group_snapshot_id: Option<String>,
 
     /// The group type ID.
     ///
+    #[structable(optional)]
     pub group_type: Option<String>,
 
     /// The UUID of the group.
     ///
+    #[structable()]
     pub id: String,
 
     /// The group name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The UUID of the volume group project.
     ///
+    #[structable(optional, serialize)]
     pub project_id: Option<String>,
 
     /// The group replication status.
     ///
+    #[structable(optional, serialize)]
     pub replication_status: Option<String>,
 
     /// The UUID of the source group.
     ///
+    #[structable(optional, serialize)]
     pub source_group_id: Option<String>,
 
     /// The status of the generic group.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of volume types. In an environment with multiple-storage back
     /// ends, the scheduler determines where to send the volume based on the
     /// volume type.
     ///
+    #[structable(optional, serialize)]
     pub volume_types: Option<Vec<String>>,
 
     /// A list of volume ids, available only when list_volume set true.
     ///
+    #[structable(optional, serialize)]
     pub volumes: Option<Vec<String>>,
 }

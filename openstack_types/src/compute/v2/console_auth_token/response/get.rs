@@ -17,23 +17,30 @@
 //! Response type for the get os-console-auth-tokens/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ConsoleAuthToken response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ConsoleAuthTokenResponse {
     /// The name or ID of the host.
     ///
+    #[structable(optional)]
     pub host: Option<String>,
 
     /// The UUID of the server.
     ///
+    #[structable()]
     pub instance_uuid: String,
 
     /// The id representing the internal access path.
     ///
+    #[structable(optional)]
     pub internal_access_path: Option<String>,
 
     /// The port number.
     ///
+    #[structable()]
     pub port: i32,
 }

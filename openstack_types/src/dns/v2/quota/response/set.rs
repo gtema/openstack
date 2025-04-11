@@ -17,17 +17,25 @@
 //! Response type for the patch quotas/{project_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Quota response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
+    #[structable(optional)]
     pub api_export_size: Option<i32>,
 
+    #[structable(optional)]
     pub recordset_records: Option<i32>,
 
+    #[structable(optional)]
     pub zone_records: Option<i32>,
 
+    #[structable(optional)]
     pub zone_recorsets: Option<i32>,
 
+    #[structable(optional)]
     pub zones: Option<i32>,
 }

@@ -17,15 +17,20 @@
 //! Response type for the get lbaas/providers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Provider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProviderResponse {
     /// Provider description.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// Provider name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }

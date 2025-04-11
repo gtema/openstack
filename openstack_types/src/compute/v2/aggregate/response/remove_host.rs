@@ -19,27 +19,40 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Aggregate response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AggregateResponse {
+    #[structable(optional, serialize)]
     pub availability_zone: Option<String>,
 
+    #[structable()]
     pub created_at: String,
 
+    #[structable()]
     pub deleted: bool,
 
+    #[structable()]
     pub deleted_at: String,
 
+    #[structable(serialize)]
     pub hosts: Vec<String>,
 
+    #[structable()]
     pub id: i32,
 
+    #[structable(optional, serialize)]
     pub metadata: Option<HashMap<String, Value>>,
 
+    #[structable()]
     pub name: String,
 
+    #[structable()]
     pub updated_at: String,
 
+    #[structable()]
     pub uuid: String,
 }

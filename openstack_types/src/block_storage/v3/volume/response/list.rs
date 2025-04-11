@@ -17,16 +17,21 @@
 //! Response type for the get volumes operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Volume response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeResponse {
     /// The UUID of the volume.
     ///
+    #[structable()]
     pub id: String,
 
     /// The volume name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 }
 

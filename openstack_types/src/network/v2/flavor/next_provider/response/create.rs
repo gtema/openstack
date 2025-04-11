@@ -17,13 +17,19 @@
 //! Response type for the post flavors/{flavor_id}/next_providers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// NextProvider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NextProviderResponse {
+    #[structable(optional)]
     pub driver: Option<String>,
 
+    #[structable(optional)]
     pub metainfo: Option<String>,
 
+    #[structable(optional)]
     pub provider: Option<String>,
 }

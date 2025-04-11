@@ -17,18 +17,23 @@
 //! Response type for the get clusters/detail operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Cluster response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The ID of active storage backend. Only in `cinder-volume` service.
     ///
     /// **New in version 3.26**
     ///
+    #[structable(optional, serialize)]
     pub active_backend_id: Option<String>,
 
     /// The binary name of the services in the cluster.
     ///
+    #[structable(optional)]
     pub binary: Option<String>,
 
     /// The date and time when the resource was created.
@@ -46,16 +51,19 @@ pub struct ClusterResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The reason for disabling a resource.
     ///
+    #[structable(optional, serialize)]
     pub disabled_reason: Option<String>,
 
     /// Whether the cluster is frozen or not.
     ///
     /// **New in version 3.26**
     ///
+    #[structable(optional, serialize)]
     pub frozen: Option<bool>,
 
     /// The last periodic heartbeat received.
@@ -73,31 +81,38 @@ pub struct ClusterResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional, wide)]
     pub last_heartbeat: Option<String>,
 
     /// The name of the service cluster.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The number of down hosts in the cluster.
     ///
+    #[structable(optional, wide)]
     pub num_down_hosts: Option<i32>,
 
     /// The number of hosts in the cluster.
     ///
+    #[structable(optional, wide)]
     pub num_hosts: Option<i32>,
 
     /// The cluster replication status. Only included in responses if
     /// configured. One of: `enabled` or `disabled`.
     ///
+    #[structable(optional, serialize)]
     pub replication_status: Option<ReplicationStatus>,
 
     /// The state of the cluster. One of `up` or `down`.
     ///
+    #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The status of the cluster. One of `enabled` or `disabled`.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The date and time when the resource was updated.
@@ -118,6 +133,7 @@ pub struct ClusterResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

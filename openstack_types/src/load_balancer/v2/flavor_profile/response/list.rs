@@ -17,12 +17,17 @@
 //! Response type for the get lbaas/flavorprofiles operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// FlavorProfile response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorProfileResponse {
+    #[structable(optional, serialize)]
     pub flavorprofile_links: Option<Vec<FlavorprofileLinks>>,
 
+    #[structable(optional, serialize)]
     pub flavorprofiles: Option<Vec<Flavorprofiles>>,
 }
 

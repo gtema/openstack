@@ -17,45 +17,57 @@
 //! Response type for the get quotas/{id}/details operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Quota response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaResponse {
     /// The number of floating IP addresses allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub floatingip: Option<Floatingip>,
 
     /// The number of networks allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub network: Option<Network>,
 
     /// The number of ports allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub port: Option<Port>,
 
     /// The number of role-based access control (RBAC) policies for each
     /// project.
     ///
+    #[structable(optional, serialize)]
     pub rbac_policy: Option<RbacPolicy>,
 
     /// The number of routers allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub router: Option<Router>,
 
     /// The number of security groups allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub security_group: Option<SecurityGroup>,
 
     /// The number of security group rules allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub security_group_rule: Option<SecurityGroupRule>,
 
     /// The number of subnets allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub subnet: Option<Subnet>,
 
     /// The number of subnet pools allowed for each project.
     ///
+    #[structable(optional, serialize)]
     pub subnetpool: Option<Subnetpool>,
 }
 

@@ -18,28 +18,36 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// GroupType response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupTypeResponse {
     /// The group type description.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// A set of key and value pairs that contains the specifications for a
     /// group type.
     ///
+    #[structable(optional, serialize, wide)]
     pub group_specs: Option<HashMap<String, String>>,
 
     /// The group type ID.
     ///
+    #[structable()]
     pub id: String,
 
     /// Whether the group type is publicly visible.
     ///
+    #[structable(optional, wide)]
     pub is_public: Option<bool>,
 
     /// The group type name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 }

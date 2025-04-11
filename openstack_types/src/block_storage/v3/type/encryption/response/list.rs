@@ -17,47 +17,59 @@
 //! Response type for the get types/{type_id}/encryption operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Encryption response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EncryptionResponse {
     /// The encryption algorithm or mode. For example, aes-xts-plain64. The
     /// default value is None.
     ///
+    #[structable(optional)]
     pub cipher: Option<String>,
 
     /// Notional service where encryption is performed. Valid values are
     /// “front-end” or “back-end”. The default value is “front-end”.
     ///
+    #[structable(optional, serialize)]
     pub control_location: Option<ControlLocation>,
 
     /// The date and time when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The resource is deleted or not.
     ///
+    #[structable(optional)]
     pub deleted: Option<bool>,
 
     /// The date and time when the resource was deleted.
     ///
+    #[structable(optional, serialize)]
     pub deleted_at: Option<String>,
 
     /// The UUID of the encryption.
     ///
+    #[structable(optional)]
     pub encryption_id: Option<String>,
 
     /// Size of encryption key, in bits. This is usually 256. The default value
     /// is None.
     ///
+    #[structable(optional)]
     pub key_size: Option<i32>,
 
     /// The class that provides encryption support.
     ///
+    #[structable(optional)]
     pub provider: Option<String>,
 
     /// The date and time when the resource was updated.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 }
 

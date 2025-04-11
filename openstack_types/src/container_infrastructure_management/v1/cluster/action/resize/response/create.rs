@@ -17,9 +17,13 @@
 //! Response type for the post clusters/actions/resize operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Resize response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResizeResponse {
+    #[structable()]
     pub uuid: String,
 }

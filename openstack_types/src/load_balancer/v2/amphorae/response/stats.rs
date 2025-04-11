@@ -17,14 +17,18 @@
 //! Response type for the get octavia/amphorae/{amphora_id}/stats operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Amphorae response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AmphoraeResponse {
     /// A list of amphora statistics objects, one per listener.
     ///
     /// **New in version 2.3**
     ///
+    #[structable(serialize)]
     pub amphora_stats: Vec<AmphoraStats>,
 }
 

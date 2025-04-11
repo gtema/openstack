@@ -17,15 +17,20 @@
 //! Response type for the get types/{type_id}/os-volume-type-access operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// VolumeTypeAccess response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeTypeAccessResponse {
     /// The UUID of the project.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The UUID of the volume type.
     ///
+    #[structable(optional)]
     pub volume_type_id: Option<String>,
 }

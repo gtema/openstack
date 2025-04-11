@@ -18,9 +18,12 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Volume response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeResponse {
     /// Instance attachment information. If this volume is attached to a server
     /// instance, the attachments list includes the UUID of the attached
@@ -43,25 +46,30 @@ pub struct VolumeResponse {
     ///
     /// ```
     ///
+    #[structable(serialize, wide)]
     pub attachments: Vec<Attachments>,
 
     /// The name of the availability zone.
     ///
+    #[structable(optional, wide)]
     pub availability_zone: Option<String>,
 
     /// Enables or disables the bootable attribute. You can boot an instance
     /// from a bootable volume.
     ///
+    #[structable(wide)]
     pub bootable: String,
 
     /// The cluster name of volume backend.
     ///
     /// **New in version 3.61**
     ///
+    #[structable(optional, wide)]
     pub cluster_name: Option<String>,
 
     /// The UUID of the consistency group.
     ///
+    #[structable(optional, wide)]
     pub consistencygroup_id: Option<String>,
 
     /// Whether this resource consumes quota or not. Resources that not counted
@@ -70,6 +78,7 @@ pub struct VolumeResponse {
     ///
     /// **New in version 3.65**
     ///
+    #[structable(optional, wide)]
     pub consumes_quota: Option<bool>,
 
     /// The date and time when the resource was created.
@@ -87,41 +96,50 @@ pub struct VolumeResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The volume description.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// If true, this volume is encrypted.
     ///
+    #[structable(wide)]
     pub encrypted: bool,
 
     /// The ID of the group.
     ///
     /// **New in version 3.13**
     ///
+    #[structable(optional, wide)]
     pub group_id: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable()]
     pub id: String,
 
     /// A `metadata` object. Contains one or more metadata key and value pairs
     /// that are associated with the volume.
     ///
+    #[structable(optional, serialize, wide)]
     pub metadata: Option<HashMap<String, String>>,
 
     /// The volume migration status. Admin only.
     ///
+    #[structable(wide)]
     pub migration_status: String,
 
     /// If true, this volume can attach to more than one instance.
     ///
+    #[structable(optional, wide)]
     pub multiattach: Option<bool>,
 
     /// The volume name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The provider ID for the volume. The value is either a string set by the
@@ -130,10 +148,12 @@ pub struct VolumeResponse {
     ///
     /// **New in version 3.21**
     ///
+    #[structable(optional, serialize, wide)]
     pub provider_id: Option<String>,
 
     /// The volume replication status.
     ///
+    #[structable(wide)]
     pub replication_status: String,
 
     /// A unique identifier that’s used to indicate what node the
@@ -141,6 +161,7 @@ pub struct VolumeResponse {
     ///
     /// **New in version 3.48**
     ///
+    #[structable(optional, wide)]
     pub service_uuid: Option<String>,
 
     /// An indicator whether the host connecting the volume should lock for the
@@ -151,25 +172,30 @@ pub struct VolumeResponse {
     ///
     /// **New in version 3.69**
     ///
+    #[structable(optional, wide)]
     pub shared_targets: Option<bool>,
 
     /// The size of the volume, in gibibytes (GiB).
     ///
+    #[structable(wide)]
     pub size: i64,
 
     /// To create a volume from an existing snapshot, specify the UUID of the
     /// volume snapshot. The volume is created in same availability zone and
     /// with same size as the snapshot.
     ///
+    #[structable(optional, wide)]
     pub snapshot_id: Option<String>,
 
     /// The UUID of the source volume. The API creates a new volume with the
     /// same size as the source volume unless a larger size is requested.
     ///
+    #[structable(optional, wide)]
     pub source_volid: Option<String>,
 
     /// The volume status.
     ///
+    #[structable()]
     pub status: String,
 
     /// The date and time when the resource was updated.
@@ -190,20 +216,24 @@ pub struct VolumeResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The UUID of the user.
     ///
+    #[structable(wide)]
     pub user_id: String,
 
     /// The associated volume type name for the volume.
     ///
+    #[structable(optional, wide)]
     pub volume_type: Option<String>,
 
     /// The associated volume type ID for the volume.
     ///
     /// **New in version 3.63**
     ///
+    #[structable(optional, wide)]
     pub volume_type_id: Option<String>,
 }
 

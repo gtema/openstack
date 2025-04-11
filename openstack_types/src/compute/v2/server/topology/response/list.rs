@@ -18,32 +18,41 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Topology response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct TopologyResponse {
     /// The mapping of server cores to host physical CPU
     ///
+    #[structable(optional, serialize)]
     pub cpu_pinning: Option<HashMap<String, i32>>,
 
     /// The host NUMA node the virtual NUMA node is map to.
     ///
+    #[structable(optional)]
     pub host_node: Option<i32>,
 
     /// The amount of memory assigned to this NUMA node in MB.
     ///
+    #[structable(optional)]
     pub memory_mb: Option<i32>,
 
     /// The page size in KB of a server. This field is `null` if the page size
     /// information is not available.
     ///
+    #[structable(optional, serialize)]
     pub pagesize_kb: Option<i32>,
 
     /// A mapping of host cpus thread sibling.
     ///
+    #[structable(optional, serialize)]
     pub siblings: Option<Vec<i32>>,
 
     /// A list of IDs of the virtual CPU assigned to this NUMA node.
     ///
+    #[structable(optional, serialize)]
     pub vcpu_set: Option<Vec<i32>>,
 }

@@ -17,15 +17,20 @@
 //! Response type for the get lbaas/providers/{provider}/availability_zone_capabilities operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AvailabilityZoneCapability response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneCapabilityResponse {
     /// The provider availability zone capability description.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The provider availability zone capability name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }

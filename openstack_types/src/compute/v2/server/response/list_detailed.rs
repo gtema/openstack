@@ -19,31 +19,38 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Server response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// IPv4 address that should be used to access this server. May be
     /// automatically set by the provider.
     ///
     #[serde(rename = "accessIPv4")]
+    #[structable(optional, title = "accessIPv4", wide)]
     pub access_ipv4: Option<String>,
 
     /// IPv6 address that should be used to access this server. May be
     /// automatically set by the provider.
     ///
     #[serde(rename = "accessIPv6")]
+    #[structable(optional, title = "accessIPv6", wide)]
     pub access_ipv6: Option<String>,
 
     /// The addresses for the server. Servers with status `BUILD` hide their
     /// addresses information. This view is not updated immediately. Please
     /// consult with OpenStack Networking API for up-to-date information.
     ///
+    #[structable(optional, serialize, wide)]
     pub addresses: Option<HashMap<String, Vec<Addresses>>>,
 
     /// Indicates whether or not a config drive was used for this server. The
     /// value is `True` or an empty string. An empty string stands for `False`.
     ///
+    #[structable(optional, wide)]
     pub config_drive: Option<String>,
 
     /// The date and time when the resource was created. The date and time
@@ -58,6 +65,7 @@ pub struct ServerResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional, wide)]
     pub created: Option<String>,
 
     /// The description of the server. Before microversion 2.19 this was set to
@@ -65,11 +73,13 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.19**
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// A fault object. Only displayed when the server status is `ERROR` or
     /// `DELETED` and a fault occurred.
     ///
+    #[structable(optional, serialize, wide)]
     pub fault: Option<Fault>,
 
     /// Before microversion 2.47 this contains the ID and links for the flavor
@@ -80,6 +90,7 @@ pub struct ServerResponse {
     /// information used to create the server instance, represented as a nested
     /// dictionary.
     ///
+    #[structable(serialize, wide)]
     pub flavor: Flavor,
 
     /// The host status. Values where next value in list can override the
@@ -96,6 +107,7 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.16**
     ///
+    #[structable(optional, serialize, wide)]
     pub host_status: Option<HostStatus>,
 
     /// An ID string representing the host. This is a hashed value so will not
@@ -107,34 +119,41 @@ pub struct ServerResponse {
     /// performance.
     ///
     #[serde(rename = "hostId")]
+    #[structable(optional, title = "hostId", wide)]
     pub host_id: Option<String>,
 
     /// Id of the server
     ///
+    #[structable()]
     pub id: String,
 
     /// The UUID and links for the image for your server instance. The `image`
     /// object will be an empty string when you boot the server from a volume.
     ///
+    #[structable(serialize, wide)]
     pub image: Image,
 
     /// The name of associated key pair, if any.
     ///
+    #[structable(optional, wide)]
     pub key_name: Option<String>,
 
     /// True if the instance is locked otherwise False.
     ///
     /// **New in version 2.9**
     ///
+    #[structable(optional, wide)]
     pub locked: Option<bool>,
 
     /// A dictionary of metadata key-and-value pairs, which is maintained for
     /// backward compatibility.
     ///
+    #[structable(optional, serialize, wide)]
     pub metadata: Option<HashMap<String, String>>,
 
     /// The server name.
     ///
+    #[structable()]
     pub name: String,
 
     /// Disk configuration. The value is either:
@@ -147,17 +166,20 @@ pub struct ServerResponse {
     ///   larger, The API does not partition the remaining disk space.
     ///
     #[serde(rename = "OS-DCF:diskConfig")]
+    #[structable(optional, serialize, title = "OS-DCF:diskConfig", wide)]
     pub os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// The availability zone name.
     ///
     #[serde(rename = "OS-EXT-AZ:availability_zone")]
+    #[structable(optional, title = "OS-EXT-AZ:availability_zone", wide)]
     pub os_ext_az_availability_zone: Option<String>,
 
     /// The name of the compute host on which this instance is running. Appears
     /// in the response for administrative users only.
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:host")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:host", wide)]
     pub os_ext_srv_attr_host: Option<String>,
 
     /// The hostname of the instance reported in the metadata service. This
@@ -173,6 +195,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:hostname")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:hostname", wide)]
     pub os_ext_srv_attr_hostname: Option<String>,
 
     /// The hypervisor host name provided by the Nova virt driver. For the
@@ -180,6 +203,7 @@ pub struct ServerResponse {
     /// administrative users only.
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:hypervisor_hostname")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:hypervisor_hostname", wide)]
     pub os_ext_srv_attr_hypervisor_hostname: Option<String>,
 
     /// The instance name. The Compute API generates the instance name from the
@@ -187,6 +211,7 @@ pub struct ServerResponse {
     /// users only.
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:instance_name")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:instance_name", wide)]
     pub os_ext_srv_attr_instance_name: Option<String>,
 
     /// The UUID of the kernel image when using an AMI. Will be null if not. By
@@ -195,6 +220,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:kernel_id")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:kernel_id", wide)]
     pub os_ext_srv_attr_kernel_id: Option<String>,
 
     /// When servers are launched via multiple create, this is the sequence in
@@ -204,6 +230,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:launch_index")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:launch_index", wide)]
     pub os_ext_srv_attr_launch_index: Option<i32>,
 
     /// The UUID of the ramdisk image when using an AMI. Will be null if not.
@@ -212,6 +239,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:ramdisk_id")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:ramdisk_id", wide)]
     pub os_ext_srv_attr_ramdisk_id: Option<String>,
 
     /// The reservation id for the server. This is an id that can be useful in
@@ -222,6 +250,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:reservation_id")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:reservation_id", wide)]
     pub os_ext_srv_attr_reservation_id: Option<String>,
 
     /// The root device name for the instance By default, it appears in the
@@ -230,6 +259,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:root_device_name")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:root_device_name", wide)]
     pub os_ext_srv_attr_root_device_name: Option<String>,
 
     /// The user_data the instance was created with. By default, it appears in
@@ -238,6 +268,7 @@ pub struct ServerResponse {
     /// **New in version 2.3**
     ///
     #[serde(rename = "OS-EXT-SRV-ATTR:user_data")]
+    #[structable(optional, title = "OS-EXT-SRV-ATTR:user_data", wide)]
     pub os_ext_srv_attr_user_data: Option<String>,
 
     /// The power state of the instance. This is an enum value that is mapped
@@ -254,21 +285,30 @@ pub struct ServerResponse {
     /// ```
     ///
     #[serde(rename = "OS-EXT-STS:power_state")]
+    #[structable(optional, title = "OS-EXT-STS:power_state", wide)]
     pub os_ext_sts_power_state: Option<i32>,
 
     /// The task state of the instance.
     ///
     #[serde(rename = "OS-EXT-STS:task_state")]
+    #[structable(optional, title = "OS-EXT-STS:task_state", wide)]
     pub os_ext_sts_task_state: Option<String>,
 
     /// The VM state.
     ///
     #[serde(rename = "OS-EXT-STS:vm_state")]
+    #[structable(optional, title = "OS-EXT-STS:vm_state", wide)]
     pub os_ext_sts_vm_state: Option<String>,
 
     /// The attached volumes, if any.
     ///
     #[serde(rename = "os-extended-volumes:volumes_attached")]
+    #[structable(
+        optional,
+        serialize,
+        title = "os-extended-volumes:volumes_attached",
+        wide
+    )]
     pub os_extended_volumes_volumes_attached: Option<Vec<HashMap<String, Value>>>,
 
     /// The date and time when the server was launched.
@@ -288,6 +328,7 @@ pub struct ServerResponse {
     /// `null`.
     ///
     #[serde(rename = "OS-SRV-USG:launched_at")]
+    #[structable(optional, title = "OS-SRV-USG:launched_at", wide)]
     pub os_srv_usg_launched_at: Option<String>,
 
     /// The date and time when the server was deleted.
@@ -305,35 +346,42 @@ pub struct ServerResponse {
     /// date and time stamp is not set, its value is `null`.
     ///
     #[serde(rename = "OS-SRV-USG:terminated_at")]
+    #[structable(optional, title = "OS-SRV-USG:terminated_at", wide)]
     pub os_srv_usg_terminated_at: Option<String>,
 
     /// A percentage value of the operation progress. This parameter only
     /// appears when the server status is `ACTIVE`, `BUILD`, `REBUILD`,
     /// `RESIZE`, `VERIFY_RESIZE` or `MIGRATING`.
     ///
+    #[structable(optional, wide)]
     pub progress: Option<i32>,
 
     /// One or more security groups objects.
     ///
+    #[structable(optional, serialize, wide)]
     pub security_groups: Option<Vec<SecurityGroups>>,
 
     /// The UUIDs of the server groups to which the server belongs. Currently
     /// this can contain at most one entry.
     ///
+    #[structable(optional, serialize, wide)]
     pub server_groups: Option<Vec<String>>,
 
     /// The server status.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// A list of tags. The maximum count of tags in this list is 50.
     ///
     /// **New in version 2.26**
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The UUID of the tenant in a multi-tenancy cloud.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// A list of trusted certificate IDs, that were used during image
@@ -343,6 +391,7 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.63**
     ///
+    #[structable(optional, serialize, wide)]
     pub trusted_image_certificates: Option<Vec<String>>,
 
     /// The date and time when the resource was updated. The date and time
@@ -357,10 +406,12 @@ pub struct ServerResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional, wide)]
     pub updated: Option<String>,
 
     /// The user ID of the user who owns the server.
     ///
+    #[structable(optional, wide)]
     pub user_id: Option<String>,
 }
 

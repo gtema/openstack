@@ -16,89 +16,118 @@
 // `openstack-codegenerator`.
 //! Response type for the get networks operation
 
-use crate::common::BoolString;
-use crate::common::IntString;
+use crate::common::deser_bool_str_opt;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Network response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkResponse {
     /// The administrative state of the network, which is up (`true`) or down
     /// (`false`).
     ///
-    pub admin_state_up: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub admin_state_up: Option<bool>,
 
     /// The availability zone candidate for the network.
     ///
+    #[structable(optional, serialize, wide)]
     pub availability_zone_hints: Option<Vec<String>>,
 
     /// The availability zone for the network.
     ///
+    #[structable(optional, serialize, wide)]
     pub availability_zones: Option<Vec<String>>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// A valid DNS domain.
     ///
+    #[structable(optional, wide)]
     pub dns_domain: Option<String>,
 
     /// The ID of the network.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID of the IPv4 address scope that the network is associated with.
     ///
+    #[structable(optional, wide)]
     pub ipv4_address_scope: Option<String>,
 
     /// The ID of the IPv6 address scope that the network is associated with.
     ///
+    #[structable(optional, wide)]
     pub ipv6_address_scope: Option<String>,
 
     /// The network is default pool or not.
     ///
-    pub is_default: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub is_default: Option<bool>,
 
     /// Indicates whether L2 connectivity is available throughout the
     /// `network`.
     ///
+    #[structable(optional, wide)]
     pub l2_adjacency: Option<String>,
 
     /// The maximum transmission unit (MTU) value to address fragmentation.
     /// Minimum value is 68 for IPv4, and 1280 for IPv6.
     ///
-    pub mtu: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional, wide)]
+    pub mtu: Option<i64>,
 
     /// Human-readable name of the network.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The port security status of the network. Valid values are enabled
     /// (`true`) and disabled (`false`). This value is used as the default
     /// value of `port_security_enabled` field of a newly created port.
     ///
-    pub port_security_enabled: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub port_security_enabled: Option<bool>,
 
     #[serde(rename = "provider:network_type")]
+    #[structable(optional, title = "provider:network_type", wide)]
     pub provider_network_type: Option<String>,
 
     #[serde(rename = "provider:physical_network")]
+    #[structable(optional, title = "provider:physical_network", wide)]
     pub provider_physical_network: Option<String>,
 
-    #[serde(rename = "provider:segmentation_id")]
-    pub provider_segmentation_id: Option<IntString>,
+    #[serde(
+        deserialize_with = "deser_num_str_opt",
+        rename = "provider:segmentation_id"
+    )]
+    #[structable(optional, title = "provider:segmentation_id", wide)]
+    pub provider_segmentation_id: Option<i64>,
 
     /// The ID of the QoS policy associated with the network.
     ///
+    #[structable(optional, serialize, wide)]
     pub qos_policy_id: Option<String>,
 
     /// The revision number of the resource.
     ///
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// Defines whether the network may be used for creation of floating IPs.
@@ -108,36 +137,45 @@ pub struct NetworkResponse {
     /// internal the unused floating IPs of this network are automatically
     /// deleted when extension `floatingip-autodelete-internal` is present.
     ///
-    #[serde(rename = "router:external")]
-    pub router_external: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt", rename = "router:external")]
+    #[structable(optional, title = "router:external", wide)]
+    pub router_external: Option<bool>,
 
     /// A list of provider `segment` objects.
     ///
+    #[structable(optional, serialize, wide)]
     pub segments: Option<Vec<Segments>>,
 
     /// Indicates whether this network is shared across all tenants. By
     /// default, only administrative users can change this value.
     ///
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub shared: Option<bool>,
 
     /// The network status. Values are `ACTIVE`, `DOWN`, `BUILD` or `ERROR`.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The associated subnets.
     ///
+    #[structable(optional, serialize, wide)]
     pub subnets: Option<Vec<String>>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

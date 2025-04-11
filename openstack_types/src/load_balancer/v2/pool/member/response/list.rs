@@ -17,17 +17,22 @@
 //! Response type for the get lbaas/pools/{pool_id}/members operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Member response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MemberResponse {
     /// The IP address of the backend member server.
     ///
+    #[structable(optional, wide)]
     pub address: Option<String>,
 
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional, wide)]
     pub admin_state_up: Option<bool>,
 
     /// Is the member a backup? Backup members only receive traffic when all
@@ -35,62 +40,76 @@ pub struct MemberResponse {
     ///
     /// **New in version 2.1**
     ///
+    #[structable(optional, wide)]
     pub backup: Option<bool>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The ID of the member.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// An alternate IP address used for health monitoring a backend member.
     /// Default is `null` which monitors the member `address`.
     ///
+    #[structable(optional, wide)]
     pub monitor_address: Option<String>,
 
     /// An alternate protocol port used for health monitoring a backend member.
     /// Default is `null` which monitors the member `protocol_port`.
     ///
+    #[structable(optional, wide)]
     pub monitor_port: Option<i32>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional, status)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The protocol port number the backend member server is listening on.
     ///
+    #[structable(optional, wide)]
     pub protocol_port: Option<i32>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional, wide)]
     pub provisioning_status: Option<String>,
 
     /// The subnet ID the member service is accessible from.
     ///
+    #[structable(optional, wide)]
     pub subnet_id: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The member vNIC type used for the member port. One of `normal` or
@@ -98,6 +117,7 @@ pub struct MemberResponse {
     ///
     /// **New in version 2.29**
     ///
+    #[structable(optional, wide)]
     pub vnic_type: Option<String>,
 
     /// The weight of a member determines the portion of requests or
@@ -107,5 +127,6 @@ pub struct MemberResponse {
     /// does not receive new connections but continues to service existing
     /// connections. A valid value is from `0` to `256`. Default is `1`.
     ///
+    #[structable(optional, wide)]
     pub weight: Option<i32>,
 }

@@ -17,19 +17,24 @@
 //! Response type for the post servers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Server response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServerResponse {
     /// The administrative password for the server. If you set
     /// `enable_instance_password` configuration option to `False`, the API
     /// wouldn’t return the `adminPass` field in response.
     ///
     #[serde(rename = "adminPass")]
+    #[structable(optional, title = "adminPass")]
     pub admin_pass: Option<String>,
 
     /// The UUID of the server.
     ///
+    #[structable()]
     pub id: String,
 
     /// Links pertaining to usage. See
@@ -38,6 +43,7 @@ pub struct ServerResponse {
     ///
     /// **New in version 2.40**
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// Disk configuration. The value is either:
@@ -50,10 +56,12 @@ pub struct ServerResponse {
     ///   larger, The API does not partition the remaining disk space.
     ///
     #[serde(rename = "OS-DCF:diskConfig")]
+    #[structable(optional, serialize, title = "OS-DCF:diskConfig")]
     pub os_dcf_disk_config: Option<OsDcfDiskConfig>,
 
     /// One or more security groups objects.
     ///
+    #[structable(optional, serialize)]
     pub security_groups: Option<Vec<SecurityGroups>>,
 }
 

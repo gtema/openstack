@@ -17,15 +17,21 @@
 //! Response type for the get OS-FEDERATION/identity_providers/{idp_id}/protocols operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Protocol response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ProtocolResponse {
     /// The federation protocol ID
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, wide)]
     pub mapping_id: Option<String>,
 
+    #[structable(optional, wide)]
     pub remote_id_attribute: Option<String>,
 }

@@ -19,41 +19,52 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Attachment response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AttachmentResponse {
     /// The attach mode of attachment, read-only (‘ro’) or read-and-write
     /// (‘rw’), default is ‘rw’.
     ///
+    #[structable(optional, serialize)]
     pub attach_mode: Option<AttachMode>,
 
     /// The time when attachment is attached.
     ///
+    #[structable(optional)]
     pub attached_at: Option<String>,
 
     /// The connection info used for server to connect the volume.
     ///
+    #[structable(optional, serialize)]
     pub connection_info: Option<HashMap<String, Value>>,
 
     /// The time when attachment is detached.
     ///
+    #[structable(optional)]
     pub detached_at: Option<String>,
 
     /// The ID of attachment.
     ///
+    #[structable()]
     pub id: String,
 
     /// The UUID of the attaching instance.
     ///
+    #[structable(optional, serialize)]
     pub instance: Option<String>,
 
     /// The status of the attachment.
     ///
+    #[structable(serialize)]
     pub status: Status,
 
     /// The UUID of the volume which the attachment belongs to.
     ///
+    #[structable()]
     pub volume_id: String,
 }
 

@@ -17,18 +17,23 @@
 //! Response type for the get vpn/ikepolicies/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Ikepolicy response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct IkepolicyResponse {
     /// The authentication hash algorithm. Valid values are `sha1`, `sha256`,
     /// `sha384`, `sha512`, `aes-xcbc`, `aes-cmac`. The default is `sha1`.
     ///
+    #[structable(optional, serialize)]
     pub auth_algorithm: Option<AuthAlgorithm>,
 
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The encryption algorithm. A valid value is `3des`, `aes-128`,
@@ -38,37 +43,45 @@ pub struct IkepolicyResponse {
     /// 128, 192, 256 bits and ICV length 8, 12, 16 octets. Default is
     /// `aes-128`.
     ///
+    #[structable(optional, serialize)]
     pub encryption_algorithm: Option<EncryptionAlgorithm>,
 
     /// The ID of the IKE policy.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The IKE version. A valid value is `v1` or `v2`. Default is `v1`.
     ///
+    #[structable(optional, serialize)]
     pub ike_version: Option<IkeVersion>,
 
     /// The lifetime of the security association. The lifetime consists of a
     /// unit and integer value. You can omit either the unit or value portion
     /// of the lifetime. Default unit is seconds and default value is 3600.
     ///
+    #[structable(optional)]
     pub lifetime: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// Perfect forward secrecy (PFS). A valid value is `Group2`, `Group5`,
     /// `Group14` to `Group31`. Default is `Group5`.
     ///
+    #[structable(optional, serialize)]
     pub pfs: Option<Pfs>,
 
     /// The IKE mode. A valid value is `main`, which is the default.
     ///
+    #[structable(optional, serialize)]
     pub phase1_negotiation_mode: Option<Phase1NegotiationMode>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }
 

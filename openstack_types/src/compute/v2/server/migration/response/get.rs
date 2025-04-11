@@ -17,9 +17,12 @@
 //! Response type for the get servers/{server_id}/migrations/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Migration response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MigrationResponse {
     /// The date and time when the resource was created. The date and time
     /// stamp format is [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -33,48 +36,59 @@ pub struct MigrationResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The target compute for a migration.
     ///
+    #[structable(optional)]
     pub dest_compute: Option<String>,
 
     /// The target host for a migration.
     ///
+    #[structable(optional)]
     pub dest_host: Option<String>,
 
     /// The target node for a migration.
     ///
+    #[structable(optional)]
     pub dest_node: Option<String>,
 
     /// The amount of disk, in bytes, that has been processed during the
     /// migration.
     ///
+    #[structable(optional)]
     pub disk_processed_bytes: Option<i32>,
 
     /// The amount of disk, in bytes, that still needs to be migrated.
     ///
+    #[structable(optional)]
     pub disk_remaining_bytes: Option<i32>,
 
     /// The total amount of disk, in bytes, that needs to be migrated.
     ///
+    #[structable(optional)]
     pub disk_total_bytes: Option<i32>,
 
     /// The ID of the server migration.
     ///
+    #[structable(optional)]
     pub id: Option<i32>,
 
     /// The amount of memory, in bytes, that has been processed during the
     /// migration.
     ///
+    #[structable(optional)]
     pub memory_processed_bytes: Option<i32>,
 
     /// The amount of memory, in bytes, that still needs to be migrated.
     ///
+    #[structable(optional)]
     pub memory_remaining_bytes: Option<i32>,
 
     /// The total amount of memory, in bytes, that needs to be migrated.
     ///
+    #[structable(optional)]
     pub memory_total_bytes: Option<i32>,
 
     /// The ID of the project which initiated the server migration. The value
@@ -82,22 +96,27 @@ pub struct MigrationResponse {
     ///
     /// **New in version 2.80**
     ///
+    #[structable(optional, serialize)]
     pub project_id: Option<String>,
 
     /// The UUID of the server.
     ///
+    #[structable(optional)]
     pub server_uuid: Option<String>,
 
     /// The source compute for a migration.
     ///
+    #[structable(optional)]
     pub source_compute: Option<String>,
 
     /// The source node for a migration.
     ///
+    #[structable(optional)]
     pub source_node: Option<String>,
 
     /// The current status of the migration.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The date and time when the resource was updated. The date and time
@@ -112,6 +131,7 @@ pub struct MigrationResponse {
     /// included, is the time zone as an offset from UTC. In the previous
     /// example, the offset value is `-05:00`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The ID of the user which initiated the server migration. The value may
@@ -119,11 +139,13 @@ pub struct MigrationResponse {
     ///
     /// **New in version 2.80**
     ///
+    #[structable(optional, serialize)]
     pub user_id: Option<String>,
 
     /// The UUID of the migration.
     ///
     /// **New in version 2.59**
     ///
+    #[structable(optional)]
     pub uuid: Option<String>,
 }

@@ -17,18 +17,23 @@
 //! Response type for the get zones/{zone_id}/nameservers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Nameserver response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NameserverResponse {
     /// The hostname of the nameserver that the zone should be delegated to
     ///
+    #[structable(optional)]
     pub hostname: Option<String>,
 
     /// The priority of the nameserver. This is used to determine the order of
     /// the the nameserver listings, and which server is used in the SOA record
     /// for the zone.
     ///
+    #[structable(optional)]
     pub priority: Option<i32>,
 }
 

@@ -17,25 +17,32 @@
 //! Response type for the get auth/domains operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Domain response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct DomainResponse {
     /// The description of the domain.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// If set to `true`, domain is enabled. If set to `false`, domain is
     /// disabled.
     ///
+    #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The ID of the domain.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the domain.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }
 

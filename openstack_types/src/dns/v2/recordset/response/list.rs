@@ -17,32 +17,41 @@
 //! Response type for the get recordsets operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Recordset response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RecordsetResponse {
     /// current action in progress on the resource
     ///
+    #[structable(optional, serialize, wide)]
     pub action: Option<Action>,
 
     /// Date / Time when resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Description for this recordset
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// ID for the resource
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// DNS Name for the recordset
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// ID for the project that owns the resource
     ///
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// A list of data for this recordset. Each item will be a separate record
@@ -50,35 +59,43 @@ pub struct RecordsetResponse {
     /// type - e.g. A records must be IPv4 addresses, CNAME records must be a
     /// hostname.
     ///
+    #[structable(optional, serialize, wide)]
     pub records: Option<Vec<String>>,
 
     /// The status of the resource.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// TTL (Time to Live) for the recordset.
     ///
+    #[structable(optional, wide)]
     pub ttl: Option<i32>,
 
     /// They RRTYPE of the recordset.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, serialize, title = "type", wide)]
     pub _type: Option<Type>,
 
     /// Date / Time when resource last updated.
     ///
+    #[structable(optional, serialize)]
     pub updated_at: Option<String>,
 
     /// Version of the resource
     ///
+    #[structable(optional, wide)]
     pub version: Option<i32>,
 
     /// ID for the zone that contains this recordset
     ///
+    #[structable(optional, wide)]
     pub zone_id: Option<String>,
 
     /// The name of the zone that contains this recordset
     ///
+    #[structable(optional, wide)]
     pub zone_name: Option<String>,
 }
 

@@ -17,17 +17,25 @@
 //! Response type for the put floatingip-pools/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// FloatingipPool response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FloatingipPoolResponse {
+    #[structable(optional, serialize)]
     pub cidr: Option<String>,
 
+    #[structable(optional)]
     pub network_id: Option<String>,
 
+    #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[structable(optional)]
     pub subnet_id: Option<String>,
 
+    #[structable(optional)]
     pub subnet_name: Option<String>,
 }

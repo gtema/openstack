@@ -19,44 +19,56 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// InstanceUsageAuditLog response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InstanceUsageAuditLogResponse {
     /// The number of errors.
     ///
+    #[structable(optional, wide)]
     pub errors: Option<i32>,
 
     /// A list of the hosts whose instance audit tasks have not run.
     ///
+    #[structable(optional, serialize, wide)]
     pub hosts_not_run: Option<Vec<String>>,
 
     /// The number of instances.
     ///
+    #[structable(optional, wide)]
     pub instances: Option<i32>,
 
     /// The object of instance usage audit logs.
     ///
+    #[structable(optional, serialize, wide)]
     pub log: Option<HashMap<String, Value>>,
 
     /// The log message of the instance usage audit task.
     ///
+    #[structable(optional, wide)]
     pub message: Option<String>,
 
     /// The number of the hosts.
     ///
+    #[structable(optional)]
     pub num_hosts: Option<i32>,
 
     /// The number of the hosts whose instance audit tasks have been done.
     ///
+    #[structable(optional)]
     pub num_hosts_done: Option<i32>,
 
     /// The number of the hosts whose instance audit tasks have not run.
     ///
+    #[structable(optional)]
     pub num_hosts_not_run: Option<i32>,
 
     /// The number of the hosts whose instance audit tasks are running.
     ///
+    #[structable(optional)]
     pub num_hosts_running: Option<i32>,
 
     /// The overall status of instance audit tasks.
@@ -77,28 +89,34 @@ pub struct InstanceUsageAuditLogResponse {
     ///
     /// ```
     ///
+    #[structable(optional)]
     pub overall_status: Option<String>,
 
     /// The beginning time of the instance usage audit period. For example,
     /// `2016-05-01 00:00:00`.
     ///
+    #[structable(optional)]
     pub period_beginning: Option<String>,
 
     /// The ending time of the instance usage audit period. For example,
     /// `2016-06-01 00:00:00`.
     ///
+    #[structable(optional)]
     pub period_ending: Option<String>,
 
     /// The state of the instance usage audit task. `DONE` or `RUNNING`.
     ///
+    #[structable(optional, serialize, status)]
     pub state: Option<State>,
 
     /// The total number of instance audit task errors.
     ///
+    #[structable(optional)]
     pub total_errors: Option<i32>,
 
     /// The total number of VM instances in the period.
     ///
+    #[structable(optional)]
     pub total_instances: Option<i32>,
 }
 

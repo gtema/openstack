@@ -17,14 +17,18 @@
 //! Response type for the get volume-transfers/detail operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// VolumeTransfer response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeTransferResponse {
     /// Records if this transfer was accepted or not.
     ///
     /// **New in version 3.57**
     ///
+    #[structable(optional, wide)]
     pub accepted: Option<bool>,
 
     /// The date and time when the resource was created.
@@ -42,36 +46,43 @@ pub struct VolumeTransferResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Records the destination project_id after volume transfer.
     ///
     /// **New in version 3.57**
     ///
+    #[structable(optional, wide)]
     pub destination_project_id: Option<String>,
 
     /// The UUID of the object.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the object.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// Transfer volume without snapshots. Defaults to False if not specified.
     ///
     /// **New in version 3.55**
     ///
+    #[structable(optional, wide)]
     pub no_snapshots: Option<bool>,
 
     /// Records the source project_id before volume transfer.
     ///
     /// **New in version 3.57**
     ///
+    #[structable(optional, wide)]
     pub source_project_id: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
 

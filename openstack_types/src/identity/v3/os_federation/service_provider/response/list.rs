@@ -17,32 +17,41 @@
 //! Response type for the get OS-FEDERATION/service_providers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServiceProvider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProviderResponse {
     /// The URL to authenticate against
     ///
+    #[structable(optional, wide)]
     pub auth_url: Option<String>,
 
     /// The description of the service provider
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// Whether the service provider is enabled or not
     ///
+    #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The service provider ID
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The prefix of the RelayState SAML attribute
     ///
+    #[structable(optional, serialize, wide)]
     pub relay_state_prefix: Option<String>,
 
     /// The service provider's URL
     ///
+    #[structable(optional, wide)]
     pub sp_url: Option<String>,
 }
 

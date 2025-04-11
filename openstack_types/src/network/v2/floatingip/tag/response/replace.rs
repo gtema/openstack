@@ -19,5 +19,5 @@
 use serde::{Deserialize, Serialize};
 
 /// Tag response representation
-#[derive(Deserialize, Serialize, Clone)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct Tag(String);

@@ -18,23 +18,30 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Cluster response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The endpoint URL of COE API exposed to end-users.
     ///
+    #[structable(optional)]
     pub api_address: Option<String>,
 
     /// The UUID of the cluster template.
     ///
+    #[structable()]
     pub cluster_template_id: String,
 
     /// Version info of chosen COE in cluster for helping client in picking the
     /// right version of client.
     ///
+    #[structable(optional)]
     pub coe_version: Option<String>,
 
+    #[structable(optional)]
     pub container_version: Option<String>,
 
     /// The timeout for cluster creation in minutes. The value expected is a
@@ -42,8 +49,10 @@ pub struct ClusterResponse {
     /// reached during cluster creation process, the operation will be aborted
     /// and the cluster status will be set to `CREATE_FAILED`.
     ///
+    #[structable(optional)]
     pub create_timeout: Option<i32>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The custom discovery url for node discovery. This is used by the COE to
@@ -61,16 +70,22 @@ pub struct ClusterResponse {
     /// In this case, Magnum will generate a unique url here for each uster and
     /// store the info for the servers.
     ///
+    #[structable(optional)]
     pub discovery_url: Option<String>,
 
+    #[structable(optional)]
     pub docker_volume_size: Option<i32>,
 
+    #[structable(optional, serialize)]
     pub faults: Option<HashMap<String, String>>,
 
+    #[structable(optional)]
     pub fixed_network: Option<String>,
 
+    #[structable(optional)]
     pub fixed_subnet: Option<String>,
 
+    #[structable(optional)]
     pub flavor_id: Option<String>,
 
     /// Whether enable or not using the floating IP of cloud provider. Some
@@ -79,10 +94,13 @@ pub struct ClusterResponse {
     /// it’s not set, the value of floating_ip_enabled in template will be
     /// used.
     ///
+    #[structable(optional)]
     pub floating_ip_enabled: Option<String>,
 
+    #[structable(optional, serialize)]
     pub health_status: Option<HealthStatus>,
 
+    #[structable(optional, serialize)]
     pub health_status_reason: Option<HashMap<String, String>>,
 
     /// The name of the SSH keypair to configure in the cluster servers for ssh
@@ -90,22 +108,29 @@ pub struct ClusterResponse {
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
     ///
+    #[structable(optional)]
     pub keypair: Option<String>,
 
+    #[structable(optional, serialize)]
     pub labels: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_added: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_overridden: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_skipped: Option<HashMap<String, String>>,
 
     /// Links to the resources in question.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// List of floating IP of all master nodes.
     ///
+    #[structable(optional, serialize)]
     pub master_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as master for the cluster. The
@@ -113,8 +138,10 @@ pub struct ClusterResponse {
     /// the option `master-lb-enabled` is specified in the cluster template,
     /// the master servers will be placed in a load balancer pool.
     ///
+    #[structable(optional)]
     pub master_count: Option<i32>,
 
+    #[structable(optional)]
     pub master_flavor_id: Option<String>,
 
     /// Since multiple masters may exist in a cluster, a Neutron load balancer
@@ -125,44 +152,56 @@ pub struct ClusterResponse {
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
     ///
+    #[structable(optional)]
     pub master_lb_enabled: Option<String>,
 
+    #[structable(optional)]
     pub merge_labels: Option<String>,
 
     /// Name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// List of floating IP of all servers that serve as node.
     ///
+    #[structable(optional, serialize)]
     pub node_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
     ///
+    #[structable(optional)]
     pub node_count: Option<i32>,
 
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The reference UUID of orchestration stack from Heat orchestration
     /// service.
     ///
+    #[structable(optional)]
     pub stack_id: Option<String>,
 
     /// The current state of the cluster.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The reason of cluster current status.
     ///
+    #[structable(optional)]
     pub status_reason: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional)]
     pub user_id: Option<String>,
 
     /// The UUID of the cluster.
     ///
+    #[structable(optional)]
     pub uuid: Option<String>,
 }
 

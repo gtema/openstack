@@ -17,20 +17,26 @@
 //! Response type for the get os-volume-transfer operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// OsVolumeTransfer response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct OsVolumeTransferResponse {
     /// The UUID of the object.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The name of the object.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
 

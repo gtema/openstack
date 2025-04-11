@@ -18,33 +18,42 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Role response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleResponse {
     /// The role description.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// The ID of the domain.
     ///
+    #[structable(optional, serialize)]
     pub domain_id: Option<String>,
 
     /// The role ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<HashMap<String, Option<String>>>,
 
     /// The resource name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
     ///
+    #[structable(optional, serialize)]
     pub options: Option<Options>,
 }
 

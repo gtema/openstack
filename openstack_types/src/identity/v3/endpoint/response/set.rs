@@ -17,18 +17,23 @@
 //! Response type for the patch endpoints/{endpoint_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Endpoint response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EndpointResponse {
     /// Indicates whether the endpoint appears in the service catalog: -
     /// `false`. The endpoint does not appear in the service catalog. - `true`.
     /// The endpoint appears in the service catalog.
     ///
+    #[structable(optional)]
     pub enabled: Option<bool>,
 
     /// The endpoint ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The interface type, which describes the visibility of the endpoint.
@@ -37,22 +42,27 @@ pub struct EndpointResponse {
     /// internal network interface. - `admin`. Visible by administrative users
     /// on a secure network interface.
     ///
+    #[structable(optional, serialize)]
     pub interface: Option<Interface>,
 
     /// (Deprecated in v3.2) The geographic location of the service endpoint.
     ///
+    #[structable(optional)]
     pub region: Option<String>,
 
     /// (Since v3.2) The ID of the region that contains the service endpoint.
     ///
+    #[structable(optional)]
     pub region_id: Option<String>,
 
     /// The UUID of the service to which the endpoint belongs.
     ///
+    #[structable(optional)]
     pub service_id: Option<String>,
 
     /// The endpoint URL.
     ///
+    #[structable(optional)]
     pub url: Option<String>,
 }
 

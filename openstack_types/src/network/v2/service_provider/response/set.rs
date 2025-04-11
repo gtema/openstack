@@ -17,14 +17,20 @@
 //! Response type for the put service-providers/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ServiceProvider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ServiceProviderResponse {
     #[serde(rename = "default")]
+    #[structable(optional, title = "default")]
     pub _default: Option<String>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional)]
     pub service_type: Option<String>,
 }

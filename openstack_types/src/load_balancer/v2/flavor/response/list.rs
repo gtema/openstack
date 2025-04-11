@@ -17,17 +17,25 @@
 //! Response type for the get lbaas/flavors operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Flavor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
+    #[structable(optional, wide)]
     pub flavor_profile_id: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 }

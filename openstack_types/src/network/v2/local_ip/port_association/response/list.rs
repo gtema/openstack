@@ -17,27 +17,35 @@
 //! Response type for the get local_ips/{local_ip_id}/port_associations operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// PortAssociation response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PortAssociationResponse {
     /// The IP of the port associated with the Local IP.
     ///
+    #[structable(optional)]
     pub fixed_ip: Option<String>,
 
     /// The ID of the port associated with the Local IP.
     ///
+    #[structable(optional)]
     pub fixed_port_id: Option<String>,
 
     /// The host of the port associated with the Local IP.
     ///
+    #[structable(optional)]
     pub host: Option<String>,
 
     /// The actual IP address of the Local IP.
     ///
+    #[structable(optional)]
     pub local_ip_address: Option<String>,
 
     /// The ID of the Local IP.
     ///
+    #[structable(optional)]
     pub local_ip_id: Option<String>,
 }

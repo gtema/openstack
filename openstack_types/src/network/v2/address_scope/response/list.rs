@@ -16,29 +16,38 @@
 // `openstack-codegenerator`.
 //! Response type for the get address-scopes operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AddressScope response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AddressScopeResponse {
     /// The ID of the address scope.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The IP protocol version. Valid value is `4` or `6`. Default is `4`.
     ///
+    #[structable(optional, wide)]
     pub ip_version: Option<i32>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// Indicates whether this resource is shared across all projects.
     ///
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub shared: Option<bool>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 }

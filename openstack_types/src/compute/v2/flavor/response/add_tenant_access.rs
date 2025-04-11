@@ -17,12 +17,16 @@
 //! Response type for the post flavors/{id}/action operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Flavor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
     /// A list of objects, each with the keys `flavor_id` and `tenant_id`.
     ///
+    #[structable(serialize)]
     pub flavor_access: Vec<FlavorAccess>,
 }
 

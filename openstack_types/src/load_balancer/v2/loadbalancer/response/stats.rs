@@ -17,27 +17,35 @@
 //! Response type for the get lbaas/loadbalancers/{loadbalancer_id}/stats operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Loadbalancer response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LoadbalancerResponse {
     /// The currently active connections.
     ///
+    #[structable(optional)]
     pub active_connections: Option<i32>,
 
     /// The total bytes received.
     ///
+    #[structable(optional)]
     pub bytes_in: Option<i32>,
 
     /// The total bytes sent.
     ///
+    #[structable(optional)]
     pub bytes_out: Option<i32>,
 
     /// The total requests that were unable to be fulfilled.
     ///
+    #[structable(optional)]
     pub request_errors: Option<i32>,
 
     /// The total connections handled.
     ///
+    #[structable(optional)]
     pub total_connections: Option<i32>,
 }

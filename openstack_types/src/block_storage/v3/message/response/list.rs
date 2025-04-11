@@ -17,9 +17,12 @@
 //! Response type for the get messages operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Message response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MessageResponse {
     /// The date and time when the resource was created.
     ///
@@ -36,41 +39,50 @@ pub struct MessageResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable()]
     pub created_at: String,
 
     /// The id of the event to this message, this id could eventually be
     /// translated into `user_message`.
     ///
+    #[structable(wide)]
     pub event_id: String,
 
     /// The expire time of the message, this message could be deleted after
     /// this time.
     ///
+    #[structable(optional, wide)]
     pub guaranteed_until: Option<String>,
 
     /// The UUID for the message.
     ///
+    #[structable()]
     pub id: String,
 
     /// The level of the message, possible value is only ‘ERROR’ now.
     ///
+    #[structable(wide)]
     pub message_level: String,
 
     /// The id of the request during which the message was created.
     ///
+    #[structable(wide)]
     pub request_id: String,
 
     /// The resource type corresponding to `resource_uuid`.
     ///
+    #[structable(optional, wide)]
     pub resource_type: Option<String>,
 
     /// The UUID of the resource during whose operation the message was
     /// created.
     ///
+    #[structable(optional, wide)]
     pub resource_uuid: Option<String>,
 
     /// The translated readable message corresponding to `event_id`.
     ///
+    #[structable(wide)]
     pub user_message: String,
 }
 

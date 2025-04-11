@@ -18,17 +18,22 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Allocation response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AllocationResponse {
     /// A dictionary of allocation records keyed by consumer uuid.
     ///
+    #[structable(serialize)]
     pub allocations: HashMap<String, AllocationsItem>,
 
     /// A consistent view marker that assists with the management of concurrent
     /// resource provider updates.
     ///
+    #[structable()]
     pub resource_provider_generation: i32,
 }
 

@@ -17,15 +17,20 @@
 //! Response type for the get backups/{id}/export_record operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ExportRecord response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ExportRecordResponse {
     /// The service used to perform the backup.
     ///
+    #[structable(optional)]
     pub backup_service: Option<String>,
 
     /// An identifier string to locate the backup.
     ///
+    #[structable(optional)]
     pub backup_url: Option<String>,
 }

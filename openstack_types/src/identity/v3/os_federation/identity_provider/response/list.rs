@@ -17,32 +17,41 @@
 //! Response type for the get OS-FEDERATION/identity_providers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// IdentityProvider response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct IdentityProviderResponse {
     /// The length of validity in minutes for group memberships carried over
     /// through mapping and persisted in the database.
     ///
+    #[structable(optional, wide)]
     pub authorization_ttl: Option<i32>,
 
     /// The Identity Provider description
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of a domain that is associated with the Identity Provider.
     ///
+    #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// Whether the Identity Provider is enabled or not
     ///
+    #[structable(optional, wide)]
     pub enabled: Option<bool>,
 
     /// The Identity Provider unique ID
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// List of the unique Identity Provider’s remote IDs
     ///
+    #[structable(optional, serialize, wide)]
     pub remote_ids: Option<Vec<String>>,
 }

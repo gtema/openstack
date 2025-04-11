@@ -19,21 +19,30 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Store response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct StoreResponse {
     #[serde(rename = "default")]
+    #[structable(optional, title = "default", wide)]
     pub _default: Option<bool>,
 
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub properties: Option<HashMap<String, Value>>,
 
     #[serde(rename = "type")]
+    #[structable(optional, title = "type", wide)]
     pub _type: Option<String>,
 
+    #[structable(optional, wide)]
     pub weight: Option<f32>,
 }

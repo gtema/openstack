@@ -17,29 +17,37 @@
 //! Response type for the get roles operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Role response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleResponse {
     /// The role description.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain.
     ///
+    #[structable(optional, serialize, wide)]
     pub domain_id: Option<String>,
 
     /// The role ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The resource name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The resource options for the role. Available resource options are
     /// `immutable`.
     ///
+    #[structable(optional, serialize, wide)]
     pub options: Option<Options>,
 }
 

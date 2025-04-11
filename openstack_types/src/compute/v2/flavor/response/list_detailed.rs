@@ -16,18 +16,22 @@
 // `openstack-codegenerator`.
 //! Response type for the get flavors/detail operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Flavor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
     /// The description of the flavor.
     ///
     /// **New in version 2.55**
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The size of the root disk that will be created in GiB. If 0 the root
@@ -38,6 +42,7 @@ pub struct FlavorResponse {
     /// instances can be enforced for flavors with zero root disk via the
     /// `os_compute_api:servers:create:zero_disk_flavor` policy rule.
     ///
+    #[structable(wide)]
     pub disk: i32,
 
     /// A dictionary of the flavor’s extra-specs key-and-value pairs. This will
@@ -46,18 +51,22 @@ pub struct FlavorResponse {
     ///
     /// **New in version 2.61**
     ///
+    #[structable(optional, serialize, wide)]
     pub extra_specs: Option<HashMap<String, String>>,
 
     /// The ID of the flavor. While people often make this look like an int,
     /// this is really a string.
     ///
+    #[structable()]
     pub id: String,
 
     /// The display name of a flavor.
     ///
+    #[structable()]
     pub name: String,
 
     #[serde(rename = "os-flavor-access:is_public")]
+    #[structable(serialize, title = "os-flavor-access:is_public", wide)]
     pub os_flavor_access_is_public: Value,
 
     /// Whether or not the flavor has been administratively disabled. This is
@@ -65,6 +74,7 @@ pub struct FlavorResponse {
     /// There is currently no way to disable a flavor and set this to `true`.
     ///
     #[serde(rename = "OS-FLV-DISABLED:disabled")]
+    #[structable(title = "OS-FLV-DISABLED:disabled", wide)]
     pub os_flv_disabled_disabled: bool,
 
     /// The size of the ephemeral disk that will be created, in GiB. Ephemeral
@@ -73,12 +83,15 @@ pub struct FlavorResponse {
     /// limitations. Defaults to 0.
     ///
     #[serde(rename = "OS-FLV-EXT-DATA:ephemeral")]
+    #[structable(title = "OS-FLV-EXT-DATA:ephemeral", wide)]
     pub os_flv_ext_data_ephemeral: i32,
 
     /// The amount of RAM a flavor has, in MiB.
     ///
+    #[structable(wide)]
     pub ram: i32,
 
+    #[structable(serialize, wide)]
     pub rxtx_factor: Value,
 
     /// The size of a dedicated swap disk that will be allocated, in MiB. If 0
@@ -86,10 +99,13 @@ pub struct FlavorResponse {
     /// empty string (‘’) is used to represent 0. As of microversion 2.75
     /// default return value of swap is 0 instead of empty string.
     ///
-    pub swap: IntString,
+    #[serde(deserialize_with = "deser_num_str")]
+    #[structable(wide)]
+    pub swap: i64,
 
     /// The number of virtual CPUs that will be allocated to the server.
     ///
+    #[structable(wide)]
     pub vcpus: i32,
 }
 

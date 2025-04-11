@@ -17,12 +17,16 @@
 //! Response type for the get agents/{agent_id}/l3-routers operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// L3Router response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct L3RouterResponse {
     /// A list of `router` objects.
     ///
+    #[structable(serialize)]
     pub routers: Vec<Routers>,
 }
 

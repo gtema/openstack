@@ -18,26 +18,38 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Federation response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FederationResponse {
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional)]
     pub hostcluster_id: Option<String>,
 
+    #[structable(optional, serialize)]
     pub member_ids: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, serialize)]
     pub properties: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
+    #[structable(optional)]
     pub status_reason: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional)]
     pub uuid: Option<String>,
 }
 

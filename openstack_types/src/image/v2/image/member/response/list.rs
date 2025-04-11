@@ -17,30 +17,39 @@
 //! Response type for the get images/{image_id}/members operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Member response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MemberResponse {
     /// Date and time of image member creation
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// An identifier for the image
     ///
+    #[structable(optional)]
     pub image_id: Option<String>,
 
     /// An identifier for the image member (tenantId)
     ///
+    #[structable(optional)]
     pub member_id: Option<String>,
 
+    #[structable(optional)]
     pub schema: Option<String>,
 
     /// The status of this image member
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Date and time of last modification of image member
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

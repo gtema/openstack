@@ -17,19 +17,25 @@
 //! Response type for the get metadefs/resource_types operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// ResourceType response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ResourceTypeResponse {
     /// Resource type creation date
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Resource type name
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// Resource type update date
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }

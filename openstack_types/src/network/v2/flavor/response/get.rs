@@ -16,33 +16,41 @@
 // `openstack-codegenerator`.
 //! Response type for the get flavors/{id} operation
 
-use crate::common::BoolString;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Flavor response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct FlavorResponse {
     /// The human-readable description for the flavor.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// Indicates whether the flavor is enabled or not. Default is true.
     ///
-    pub enabled: Option<BoolString>,
+    #[structable(optional, serialize)]
+    pub enabled: Option<bool>,
 
     /// The ID of the flavor.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Name of the flavor.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// Service profile UUIDs associated with this flavor.
     ///
+    #[structable(optional, serialize)]
     pub service_profiles: Option<Vec<String>>,
 
     /// Service type for the flavor. Example: FIREWALL.
     ///
+    #[structable(optional)]
     pub service_type: Option<String>,
 }

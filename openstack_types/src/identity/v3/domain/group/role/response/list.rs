@@ -17,20 +17,26 @@
 //! Response type for the get domains/{domain_id}/groups/{group_id}/roles operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Role response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RoleResponse {
     /// The role description.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The role ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The role name.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }
 

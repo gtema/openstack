@@ -16,44 +16,63 @@
 // `openstack-codegenerator`.
 //! Response type for the put security-group-rules/{id} operation
 
-use crate::common::BoolString;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// SecurityGroupRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct SecurityGroupRuleResponse {
-    pub belongs_to_default_sg: Option<BoolString>,
+    #[structable(optional, serialize)]
+    pub belongs_to_default_sg: Option<bool>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional)]
     pub description: Option<String>,
 
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional, serialize)]
     pub ethertype: Option<Ethertype>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional, serialize)]
     pub normalized_cidr: Option<String>,
 
+    #[structable(optional, serialize)]
     pub port_range_max: Option<i32>,
 
+    #[structable(optional, serialize)]
     pub port_range_min: Option<i32>,
 
+    #[structable(optional)]
     pub protocol: Option<String>,
 
+    #[structable(optional)]
     pub remote_address_group_id: Option<String>,
 
+    #[structable(optional)]
     pub remote_group_id: Option<String>,
 
+    #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
+    #[structable(optional)]
     pub revision_number: Option<i32>,
 
+    #[structable(optional)]
     pub security_group_id: Option<String>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

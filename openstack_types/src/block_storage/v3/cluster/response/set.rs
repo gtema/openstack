@@ -17,61 +17,77 @@
 //! Response type for the put clusters/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Cluster response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
     /// The ID of active storage backend. Only in cinder-volume service.
     ///
+    #[structable(optional, serialize)]
     pub active_backend_id: Option<String>,
 
     /// The binary name of the services in the cluster.
     ///
+    #[structable(optional)]
     pub binary: Option<String>,
 
     /// The date and time when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The reason for disabling a resource.
     ///
+    #[structable(optional, serialize)]
     pub disabled_reason: Option<String>,
 
     /// Whether the cluster is frozen or not.
     ///
+    #[structable(optional, serialize)]
     pub frozen: Option<bool>,
 
     /// The last periodic heartbeat received.
     ///
+    #[structable(optional)]
     pub last_heartbeat: Option<String>,
 
     /// The name of the service cluster.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The number of down hosts in the cluster.
     ///
+    #[structable(optional)]
     pub num_down_hosts: Option<i32>,
 
     /// The number of hosts in the cluster.
     ///
+    #[structable(optional)]
     pub num_hosts: Option<i32>,
 
     /// The cluster replication status. Only included in responses if
     /// configured.
     ///
+    #[structable(optional, serialize)]
     pub replication_status: Option<ReplicationStatus>,
 
     /// The state of the cluster.
     ///
+    #[structable(optional, serialize)]
     pub state: Option<State>,
 
     /// The status of the cluster.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The date and time when the resource was updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

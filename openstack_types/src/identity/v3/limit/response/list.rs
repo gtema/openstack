@@ -17,41 +17,52 @@
 //! Response type for the get limits operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Limit response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct LimitResponse {
     /// The limit description.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain.
     ///
+    #[structable(optional, serialize, wide)]
     pub domain_id: Option<String>,
 
     /// The limit ID.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The ID for the project.
     ///
+    #[structable(optional, serialize, wide)]
     pub project_id: Option<String>,
 
     /// The ID of the region that contains the service endpoint. The value can
     /// be None.
     ///
+    #[structable(optional, serialize, wide)]
     pub region_id: Option<String>,
 
     /// The override limit.
     ///
+    #[structable(optional, wide)]
     pub resource_limit: Option<i32>,
 
     /// The resource name.
     ///
+    #[structable(optional, wide)]
     pub resource_name: Option<String>,
 
     /// The UUID of the service to which the limit belongs.
     ///
+    #[structable(optional, wide)]
     pub service_id: Option<String>,
 }
 

@@ -17,30 +17,38 @@
 //! Response type for the put vpn/endpoint-groups/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// EndpointGroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EndpointGroupResponse {
     /// A human-readable description for the resource. Default is an empty
     /// string.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// List of endpoints of the same type, for the endpoint group. The values
     /// will depend on type.
     ///
+    #[structable(optional, serialize)]
     pub endpoints: Option<Vec<String>>,
 
     /// The ID of the VPN endpoint group.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource. Default is an empty string.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The type of the endpoints in the group. A valid value is `subnet`,
@@ -48,6 +56,7 @@ pub struct EndpointGroupResponse {
     /// supported at this moment.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, serialize, title = "type")]
     pub _type: Option<Type>,
 }
 

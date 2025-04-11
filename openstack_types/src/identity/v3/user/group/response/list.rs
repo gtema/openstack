@@ -17,20 +17,26 @@
 //! Response type for the get users/{user_id}/groups operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Group response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The description of the group.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// The ID of the domain of the group.
     ///
+    #[structable(optional, wide)]
     pub domain_id: Option<String>,
 
     /// The ID of the group.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The date and time when the group membership expires. A `null` value
@@ -38,9 +44,11 @@ pub struct GroupResponse {
     ///
     /// **New in version 3.14**
     ///
+    #[structable(optional, wide)]
     pub membership_expires_at: Option<String>,
 
     /// The name of the group.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }

@@ -17,14 +17,18 @@
 //! Response type for the post servers/{server_id}/remote-consoles operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// RemoteConsole response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RemoteConsoleResponse {
     /// The protocol of remote console. The valid values are `vnc`, `spice`,
     /// `serial` and `mks`. The protocol `mks` is added since Microversion
     /// `2.8`.
     ///
+    #[structable(serialize)]
     pub protocol: Protocol,
 
     /// The type of remote console. The valid values are `novnc`,
@@ -33,10 +37,12 @@ pub struct RemoteConsoleResponse {
     /// was added in Microversion `2.99`.
     ///
     #[serde(rename = "type")]
+    #[structable(serialize, title = "type")]
     pub _type: Type,
 
     /// The URL is used to connect the console.
     ///
+    #[structable()]
     pub url: String,
 }
 

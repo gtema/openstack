@@ -18,17 +18,22 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Clustertemplate response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClustertemplateResponse {
     /// The exposed port of COE API server.
     ///
+    #[structable(optional, wide)]
     pub apiserver_port: Option<i32>,
 
     /// Display the attribute `os_distro` defined as appropriate metadata in
     /// image for the cluster driver.
     ///
+    #[structable(optional, wide)]
     pub cluster_distro: Option<String>,
 
     /// Specify the Container Orchestration Engine to use. Supported COEs
@@ -36,19 +41,23 @@ pub struct ClustertemplateResponse {
     /// drivers installed, refer to the cluster driver documentation for the
     /// new COE names.
     ///
+    #[structable(optional, serialize, wide)]
     pub coe: Option<Coe>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The DNS nameserver for the servers and containers in the cluster to
     /// use. This is configured in the private Neutron network for the cluster.
     /// The default is `8.8.8.8`.
     ///
+    #[structable(optional, wide)]
     pub dns_nameserver: Option<String>,
 
     /// The name of a driver to manage the storage for the images and the
     /// container’s writable layer. The default is `devicemapper`.
     ///
+    #[structable(optional)]
     pub docker_storage_driver: Option<String>,
 
     /// The size in GB for the local storage on each server for the Docker
@@ -57,8 +66,10 @@ pub struct ClustertemplateResponse {
     /// storage driver, the minimum value is 3GB. For the `overlay` storage
     /// driver, the minimum value is 1GB.
     ///
+    #[structable(optional, wide)]
     pub docker_volume_size: Option<i32>,
 
+    #[structable(optional)]
     pub driver: Option<String>,
 
     /// The name or network ID of a Neutron network to provide connectivity to
@@ -72,32 +83,38 @@ pub struct ClustertemplateResponse {
     /// external network to provide access from the external internet to
     /// servers and the container services hosted in the cluster.
     ///
+    #[structable(optional, wide)]
     pub external_network_id: Option<String>,
 
     /// The name or network ID of a Neutron network to provide connectivity to
     /// the internal network for the cluster.
     ///
+    #[structable(optional, wide)]
     pub fixed_network: Option<String>,
 
     /// Fixed subnet that are using to allocate network address for nodes in
     /// cluster.
     ///
+    #[structable(optional, wide)]
     pub fixed_subnet: Option<String>,
 
     /// The nova flavor ID or name for booting the node servers. The default is
     /// `m1.small`.
     ///
+    #[structable(optional, wide)]
     pub flavor_id: Option<String>,
 
     /// Whether enable or not using the floating IP of cloud provider. Some
     /// cloud providers used floating IP, some used public IP, thus Magnum
     /// provide this option for specifying the choice of using floating IP.
     ///
+    #[structable(optional)]
     pub floating_ip_enabled: Option<String>,
 
     /// Indicates whether the ClusterTemplate is hidden or not, the default
     /// value is false.
     ///
+    #[structable(optional)]
     pub hidden: Option<String>,
 
     /// The IP address for a proxy to use when direct http access from the
@@ -106,6 +123,7 @@ pub struct ClustertemplateResponse {
     /// and containers to access these sites. The format is a URL including a
     /// port number. The default is `None`.
     ///
+    #[structable(optional, wide)]
     pub http_proxy: Option<String>,
 
     /// The IP address for a proxy to use when direct https access from the
@@ -114,17 +132,20 @@ pub struct ClustertemplateResponse {
     /// and containers to access these sites. The format is a URL including a
     /// port number. The default is `None`.
     ///
+    #[structable(optional, wide)]
     pub https_proxy: Option<String>,
 
     /// The name or UUID of the base image in Glance to boot the servers for
     /// the cluster. The image must have the attribute `os_distro` defined as
     /// appropriate for the cluster driver.
     ///
+    #[structable(wide)]
     pub image_id: String,
 
     /// The URL pointing to users’s own private insecure docker registry to
     /// deploy and run docker containers.
     ///
+    #[structable(optional, wide)]
     pub insecure_registry: Option<String>,
 
     /// The name of the SSH keypair to configure in the cluster servers for ssh
@@ -132,6 +153,7 @@ pub struct ClustertemplateResponse {
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
     ///
+    #[structable(optional, wide)]
     pub keypair_id: Option<String>,
 
     /// Arbitrary labels in the form of `key=value` pairs. The accepted keys
@@ -139,10 +161,12 @@ pub struct ClustertemplateResponse {
     /// way to pass additional parameters that are specific to a cluster
     /// driver.
     ///
+    #[structable(optional, serialize, wide)]
     pub labels: Option<HashMap<String, String>>,
 
     /// The flavor of the master node for this cluster template.
     ///
+    #[structable(optional, wide)]
     pub master_flavor_id: Option<String>,
 
     /// Since multiple masters may exist in a cluster, a Neutron load balancer
@@ -153,10 +177,12 @@ pub struct ClustertemplateResponse {
     /// as the API endpoint. The default is `true`, i.e. to create the load
     /// balancer for the cluster.
     ///
+    #[structable(optional)]
     pub master_lb_enabled: Option<String>,
 
     /// Name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The name of a network driver for providing the networks for the
@@ -164,14 +190,17 @@ pub struct ClustertemplateResponse {
     /// network for the cluster. The operation and networking model are
     /// specific to the particular driver.
     ///
+    #[structable(optional, wide)]
     pub network_driver: Option<String>,
 
     /// When a proxy server is used, some sites should not go through the proxy
     /// and should be accessed normally. In this case, users can specify these
     /// sites as a comma separated list of IPs. The default is `None`.
     ///
+    #[structable(optional, wide)]
     pub no_proxy: Option<String>,
 
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// Access to a cluster template is normally limited to the admin, owner or
@@ -179,6 +208,7 @@ pub struct ClustertemplateResponse {
     /// cluster template public and accessible by other users. The default is
     /// not public.
     ///
+    #[structable(optional, wide)]
     pub public: Option<String>,
 
     /// Docker images by default are pulled from the public Docker registry,
@@ -187,16 +217,19 @@ pub struct ClustertemplateResponse {
     /// Magnum will create a local registry in the cluster backed by swift to
     /// host the images. The default is to use the public registry.
     ///
+    #[structable(optional, wide)]
     pub registry_enabled: Option<String>,
 
     /// The servers in the cluster can be `vm` or `baremetal`. This parameter
     /// selects the type of server to create for the cluster. The default is
     /// `vm`.
     ///
+    #[structable(optional, serialize, wide)]
     pub server_type: Option<ServerType>,
 
     /// Administrator tags for the cluster template.
     ///
+    #[structable(optional)]
     pub tags: Option<String>,
 
     /// Transport Layer Security (TLS) is normally enabled to secure the
@@ -205,19 +238,24 @@ pub struct ClustertemplateResponse {
     /// Specifying this parameter will disable TLS so that users can access the
     /// COE endpoints without a certificate. The default is TLS enabled.
     ///
+    #[structable(optional, wide)]
     pub tls_disabled: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional)]
     pub user_id: Option<String>,
 
     /// The UUID of the cluster template.
     ///
+    #[structable(optional)]
     pub uuid: Option<String>,
 
     /// The name of a volume driver for managing the persistent storage for the
     /// containers. The functionality supported are specific to the driver.
     ///
+    #[structable(optional, wide)]
     pub volume_driver: Option<String>,
 }
 

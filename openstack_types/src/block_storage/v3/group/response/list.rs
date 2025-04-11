@@ -17,15 +17,20 @@
 //! Response type for the get groups operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Group response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The UUID of the object.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The group name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 }

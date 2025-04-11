@@ -17,51 +17,63 @@
 //! Response type for the post floatingips/{floatingip_id}/port_forwardings operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// PortForwarding response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PortForwardingResponse {
     /// A text describing the rule, which helps users to manage/find easily
     /// theirs rules.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the port forwarding’s
     /// floating IP address.
     ///
+    #[structable(optional, serialize)]
     pub external_port: Option<f32>,
 
     /// The TCP/UDP/other protocol port range of the port forwarding’s floating
     /// IP address.
     ///
+    #[structable(optional)]
     pub external_port_range: Option<f32>,
 
     /// The ID of the floating IP port forwarding.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The fixed IPv4 address of the Neutron port associated to the floating
     /// IP port forwarding.
     ///
+    #[structable(optional)]
     pub internal_ip_address: Option<String>,
 
     /// The TCP/UDP/other protocol port number of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
+    #[structable(optional, serialize)]
     pub internal_port: Option<f32>,
 
     /// The ID of the Neutron port associated to the floating IP port
     /// forwarding.
     ///
+    #[structable(optional)]
     pub internal_port_id: Option<String>,
 
     /// The TCP/UDP/other protocol port range of the Neutron port fixed IP
     /// address associated to the floating ip port forwarding.
     ///
+    #[structable(optional)]
     pub internal_port_range: Option<f32>,
 
     /// The IP protocol used in the floating IP port forwarding.
     ///
+    #[structable(optional, serialize)]
     pub protocol: Option<Protocol>,
 }
 

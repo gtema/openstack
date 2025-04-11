@@ -17,12 +17,16 @@
 //! Response type for the get groups/detail operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Group response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The name of the availability zone.
     ///
+    #[structable(optional, wide)]
     pub availability_zone: Option<String>,
 
     /// The date and time when the resource was created.
@@ -40,46 +44,56 @@ pub struct GroupResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The group description.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the group snapshot.
     ///
+    #[structable(optional, serialize, wide)]
     pub group_snapshot_id: Option<String>,
 
     /// The group type ID.
     ///
+    #[structable(optional, wide)]
     pub group_type: Option<String>,
 
     /// The UUID of the group.
     ///
+    #[structable()]
     pub id: String,
 
     /// The name of the object.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The UUID of the volume group project.
     ///
     /// **New in version 3.58**
     ///
+    #[structable(optional, serialize, wide)]
     pub project_id: Option<String>,
 
     /// The group replication status.
     ///
     /// **New in version 3.38**
     ///
+    #[structable(optional, serialize, wide)]
     pub replication_status: Option<String>,
 
     /// The UUID of the source group.
     ///
+    #[structable(optional, serialize, wide)]
     pub source_group_id: Option<String>,
 
     /// The status of the generic group.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of volume types. In an environment with multiple-storage back
@@ -88,11 +102,13 @@ pub struct GroupResponse {
     /// multiple- storage back ends, see
     /// [Configure multiple-storage back ends](https://docs.openstack.org/cinder/latest/admin/blockstorage-multi-backend.html).
     ///
+    #[structable(optional, serialize, wide)]
     pub volume_types: Option<Vec<String>>,
 
     /// A list of `volume` ids, available only when `list_volume` set true.
     ///
     /// **New in version 3.25**
     ///
+    #[structable(optional, serialize, wide)]
     pub volumes: Option<Vec<String>>,
 }

@@ -17,12 +17,16 @@
 //! Response type for the get OS-EP-FILTER/endpoint_groups/{endpoint_group_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// EndpointGroup response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct EndpointGroupResponse {
     /// The endpoint group description.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// Describes the filtering performed by the endpoint group. The filter
@@ -30,18 +34,22 @@ pub struct EndpointGroupResponse {
     /// region, and enabled. Note that if using interface as a filter, the only
     /// available values are public, internal, and admin.
     ///
+    #[structable(optional, serialize)]
     pub filters: Option<Filters>,
 
     /// The endpoint group ID
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The link to the resources in question.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Links>,
 
     /// The name of the endpoint group.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }
 

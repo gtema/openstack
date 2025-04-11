@@ -16,104 +16,138 @@
 // `openstack-codegenerator`.
 //! Response type for the get os-quota-class-sets/{id} operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// QuotaClassSet response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct QuotaClassSetResponse {
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub cores: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub cores: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub fixed_ips: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub fixed_ips: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub floating_ips: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub floating_ips: Option<i64>,
 
     /// The ID of the quota class. Nova supports the `default` Quota Class
     /// only.
     ///
+    #[structable()]
     pub id: String,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub injected_file_content_bytes: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub injected_file_content_bytes: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub injected_file_path_bytes: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub injected_file_path_bytes: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub injected_files: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub injected_files: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub instances: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub instances: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub key_pairs: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub key_pairs: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub metadata_items: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub metadata_items: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub networks: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub networks: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub ram: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub ram: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub security_group_rules: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub security_group_rules: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub security_groups: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub security_groups: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub server_group_members: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub server_group_members: Option<i64>,
 
     /// The number of allowed injected files for the quota class.
     ///
     /// **Available until version 2.56**
     ///
-    pub server_groups: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub server_groups: Option<i64>,
 }

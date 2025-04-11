@@ -16,41 +16,53 @@
 // `openstack-codegenerator`.
 //! Response type for the post metering/metering-label-rules operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// MeteringLabelRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MeteringLabelRuleResponse {
+    #[structable(optional)]
     pub destination_ip_prefix: Option<String>,
 
     /// Ingress or egress, which is the direction in which the metering rule is
     /// applied.
     ///
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
     /// Indicates whether to count the traffic of a specific IP address with
     /// the `remote_ip_prefix`, `source_ip_prefix`, or `destination_ip_prefix`
     /// values.
     ///
-    pub excluded: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub excluded: Option<bool>,
 
     /// The ID of the metering label rule.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The metering label ID associated with this metering rule.
     ///
+    #[structable(optional)]
     pub metering_label_id: Option<String>,
 
     /// (deprecated) The source IP prefix that is matched by this metering
     /// rule. By source IP prefix, one should read the internal/private IPs
     /// used in OpenStack.
     ///
+    #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
+    #[structable(optional)]
     pub source_ip_prefix: Option<String>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }
 

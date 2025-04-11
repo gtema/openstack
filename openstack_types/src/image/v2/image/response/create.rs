@@ -19,9 +19,12 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Image response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ImageResponse {
     /// An MD5 hash over the image data. The value might be `null` (JSON null
     /// data type), as this field is no longer populated by the Image Service
@@ -29,6 +32,7 @@ pub struct ImageResponse {
     /// compatibility with legacy images. To validate image data, instead use
     /// the secure multihash fields `os_hash_algo` and `os_hash_value`.
     ///
+    #[structable(optional, serialize)]
     pub checksum: Option<String>,
 
     /// Format of the image container.
@@ -47,6 +51,7 @@ pub struct ImageResponse {
     /// **Train changes**: The `compressed` container format is a supported
     /// value.
     ///
+    #[structable(optional, serialize)]
     pub container_format: Option<ContainerFormat>,
 
     /// The date and time when the resource was created.
@@ -64,6 +69,7 @@ pub struct ImageResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The URL to access the image file kept in external store. *It is present
@@ -71,6 +77,7 @@ pub struct ImageResponse {
     /// service’s configuration file.* **Because it presents a security risk,
     /// this option is disabled by default.**
     ///
+    #[structable(optional)]
     pub direct_url: Option<String>,
 
     /// The format of the disk.
@@ -89,10 +96,12 @@ pub struct ImageResponse {
     /// **Newton changes**: The `vhdx` disk format is a supported value.\
     /// **Ocata changes**: The `ploop` disk format is a supported value.
     ///
+    #[structable(optional, serialize)]
     pub disk_format: Option<DiskFormat>,
 
     /// The URL for the virtual machine image file.
     ///
+    #[structable(optional)]
     pub file: Option<String>,
 
     /// A unique, user-defined image UUID, in the format:
@@ -113,6 +122,7 @@ pub struct ImageResponse {
     ///
     /// If you omit this value, the API generates a UUID for the image.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// A list of objects, each of which describes an image location. Each
@@ -124,20 +134,24 @@ pub struct ImageResponse {
     /// service’s configuration file.* **Because it presents a security risk,
     /// this option is disabled by default.**
     ///
+    #[structable(optional, serialize)]
     pub locations: Option<Vec<Locations>>,
 
     /// Amount of disk space in GB that is required to boot the image. The
     /// value might be `null` (JSON null data type).
     ///
+    #[structable(optional)]
     pub min_disk: Option<i32>,
 
     /// Amount of RAM in MB that is required to boot the image. The value might
     /// be `null` (JSON null data type).
     ///
+    #[structable(optional)]
     pub min_ram: Option<i32>,
 
     /// The name of the image. Value might be `null` (JSON null data type).
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The algorithm used to compute a secure hash of the image data for this
@@ -146,6 +160,7 @@ pub struct ImageResponse {
     /// type). The algorithm used is chosen by the cloud operator; it may not
     /// be configured by end users. *(Since Image API v2.7)*
     ///
+    #[structable(optional, serialize)]
     pub os_hash_algo: Option<String>,
 
     /// The hexdigest of the secure hash of the image data computed using the
@@ -154,6 +169,7 @@ pub struct ImageResponse {
     /// associated with this image, or if the image was created using a version
     /// of the Image Service API prior to version 2.7. *(Since Image API v2.7)*
     ///
+    #[structable(optional, serialize)]
     pub os_hash_value: Option<String>,
 
     /// This field controls whether an image is displayed in the default
@@ -164,44 +180,53 @@ pub struct ImageResponse {
     /// it’s easier for end users to find and use a more up-to-date version of
     /// this image. *(Since Image API v2.7)*
     ///
+    #[structable(optional)]
     pub os_hidden: Option<bool>,
 
     /// An identifier for the owner of the image, usually the project (also
     /// called the “tenant”) ID. The value might be `null` (JSON null data
     /// type).
     ///
+    #[structable(optional, serialize)]
     pub owner: Option<String>,
 
     /// A boolean value that must be `false` or the image cannot be deleted.
     ///
+    #[structable(optional)]
     pub protected: Option<bool>,
 
     /// The URL for the schema describing a virtual machine image.
     ///
+    #[structable(optional)]
     pub schema: Option<String>,
 
     /// The URL for the virtual machine image.
     ///
     #[serde(rename = "self")]
+    #[structable(optional, title = "self")]
     pub _self: Option<String>,
 
     /// The size of the image data, in bytes. The value might be `null` (JSON
     /// null data type).
     ///
+    #[structable(optional, serialize)]
     pub size: Option<i32>,
 
     /// The image status.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// Store in which image data resides. Only present when the operator has
     /// enabled multiple stores. May be a comma-separated list of store
     /// identifiers.
     ///
+    #[structable(optional)]
     pub stores: Option<String>,
 
     /// List of tags for this image, possibly an empty list.
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The date and time when the resource was updated.
@@ -222,15 +247,18 @@ pub struct ImageResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The virtual size of the image. The value might be `null` (JSON null
     /// data type).
     ///
+    #[structable(optional, serialize)]
     pub virtual_size: Option<i32>,
 
     /// Image visibility, that is, the access permission for the image.
     ///
+    #[structable(optional, serialize)]
     pub visibility: Option<Visibility>,
 }
 

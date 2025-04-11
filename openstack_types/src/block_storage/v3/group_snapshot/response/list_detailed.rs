@@ -17,9 +17,12 @@
 //! Response type for the get group_snapshots/detail operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// GroupSnapshot response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupSnapshotResponse {
     /// The date and time when the resource was created.
     ///
@@ -36,39 +39,48 @@ pub struct GroupSnapshotResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The group snapshot description.
     ///
+    #[structable(optional, serialize, wide)]
     pub description: Option<String>,
 
     /// The ID of the group.
     ///
+    #[structable(optional, wide)]
     pub group_id: Option<String>,
 
     /// The group type ID.
     ///
+    #[structable(optional, wide)]
     pub group_type: Option<String>,
 
     /// The group type ID.
     ///
+    #[structable(optional, wide)]
     pub group_type_id: Option<String>,
 
     /// The ID of the group snapshot.
     ///
+    #[structable()]
     pub id: String,
 
     /// The group snapshot name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The UUID of the volume group snapshot project.
     ///
     /// **New in version 3.58**
     ///
+    #[structable(optional, serialize, wide)]
     pub project_id: Option<String>,
 
     /// The `status` of the generic group snapshot.
     ///
+    #[structable()]
     pub status: String,
 }

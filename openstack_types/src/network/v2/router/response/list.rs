@@ -16,25 +16,32 @@
 // `openstack-codegenerator`.
 //! Response type for the get routers operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Router response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RouterResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    pub admin_state_up: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional, wide)]
+    pub admin_state_up: Option<bool>,
 
     /// The availability zone candidates for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
+    #[structable(optional, serialize, wide)]
     pub availability_zone_hints: Option<Vec<String>>,
 
     /// The availability zone(s) for the router. It is available when
     /// `router_availability_zone` extension is enabled.
     ///
+    #[structable(optional, serialize, wide)]
     pub availability_zones: Option<Vec<String>>,
 
     /// The associated conntrack helper resources for the roter. If the router
@@ -42,20 +49,24 @@ pub struct RouterResponse {
     /// entries. Each entry consists of netfilter conntrack helper (`helper`),
     /// the network protocol (`protocol`), the network port (`port`).
     ///
+    #[structable(optional, wide)]
     pub conntrack_helpers: Option<String>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional, wide)]
     pub description: Option<String>,
 
     /// `true` indicates a distributed router. It is available when `dvr`
     /// extension is enabled.
     ///
-    pub distributed: Option<BoolString>,
+    #[structable(optional, serialize, wide)]
+    pub distributed: Option<bool>,
 
     /// Enable NDP proxy attribute. `true` means NDP proxy is enabled for the
     /// router, the IPv6 address of internal subnets attached to the router can
@@ -64,7 +75,8 @@ pub struct RouterResponse {
     /// router can not be published to external by `ndp_proxy`. It is available
     /// when `router-extend-ndp-proxy` extension is enabled.
     ///
-    pub enable_ndp_proxy: Option<BoolString>,
+    #[structable(optional, serialize, wide)]
+    pub enable_ndp_proxy: Option<bool>,
 
     /// The external gateway information of the router. If the router has an
     /// external gateway, this would be a dict with `network_id`,
@@ -72,49 +84,60 @@ pub struct RouterResponse {
     /// `enable_default_route_ecmp` and `enable_default_route_bfd`. Otherwise,
     /// this would be `null`.
     ///
+    #[structable(optional, serialize, wide)]
     pub external_gateway_info: Option<ExternalGatewayInfo>,
 
     /// The ID of the flavor associated with the router.
     ///
+    #[structable(optional, wide)]
     pub flavor_id: Option<String>,
 
     /// `true` indicates a highly-available router. It is available when
     /// `l3-ha` extension is enabled.
     ///
-    pub ha: Option<BoolString>,
+    #[structable(optional, serialize, wide)]
+    pub ha: Option<bool>,
 
     /// The ID of the router.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The revision number of the resource.
     ///
+    #[structable(optional, wide)]
     pub revision_number: Option<i32>,
 
     /// The extra routes configuration for L3 router. A list of dictionaries
     /// with `destination` and `nexthop` parameters. It is available when
     /// `extraroute` extension is enabled.
     ///
+    #[structable(optional, serialize, wide)]
     pub routes: Option<Vec<Routes>>,
 
     /// The router status.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize, wide)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
+    #[structable(optional, wide)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 
@@ -133,7 +156,7 @@ pub struct ExternalFixedIps {
 /// `ExternalGatewayInfo` type
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct ExternalGatewayInfo {
-    pub enable_snat: Option<BoolString>,
+    pub enable_snat: Option<bool>,
     pub external_fixed_ips: Option<Vec<ExternalFixedIps>>,
     pub network_id: String,
     pub qos_policy_id: Option<String>,

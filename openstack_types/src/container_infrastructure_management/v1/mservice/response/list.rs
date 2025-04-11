@@ -17,12 +17,16 @@
 //! Response type for the get mservices operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Mservice response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MserviceResponse {
     /// The name of the binary form of the Magnum service.
     ///
+    #[structable(optional, serialize, wide)]
     pub binary: Option<Binary>,
 
     /// The date and time when the resource was created.
@@ -40,29 +44,36 @@ pub struct MserviceResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub disabled: Option<String>,
 
     /// The disable reason of the service, `null` if the service is enabled or
     /// disabled without reason provided.
     ///
+    #[structable(optional, wide)]
     pub disabled_reason: Option<String>,
 
     /// The host for the service.
     ///
+    #[structable(optional, wide)]
     pub host: Option<String>,
 
     /// The ID of the Magnum service.
     ///
+    #[structable(optional)]
     pub id: Option<i32>,
 
     /// The total number of report.
     ///
+    #[structable(optional, wide)]
     pub report_count: Option<i32>,
 
     /// The current state of Magnum services.
     ///
+    #[structable(optional, serialize, status)]
     pub state: Option<State>,
 
     /// The date and time when the resource was updated.
@@ -83,6 +94,7 @@ pub struct MserviceResponse {
     /// If the `updated_at` date and time stamp is not set, its value is
     /// `null`.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

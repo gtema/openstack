@@ -16,44 +16,66 @@
 // `openstack-codegenerator`.
 //! Response type for the post network-segment-ranges operation
 
-use crate::common::BoolString;
-use crate::common::IntString;
+use crate::common::deser_bool_str_opt;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// NetworkSegmentRange response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct NetworkSegmentRangeResponse {
+    #[structable(optional)]
     pub available: Option<String>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
-    #[serde(rename = "default")]
-    pub _default: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt", rename = "default")]
+    #[structable(optional, title = "default")]
+    pub _default: Option<bool>,
 
+    #[structable(optional)]
     pub description: Option<String>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub maximum: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub maximum: Option<i64>,
 
-    pub minimum: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub minimum: Option<i64>,
 
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, serialize)]
     pub network_type: Option<NetworkType>,
 
+    #[structable(optional)]
     pub physical_network: Option<String>,
 
+    #[structable(optional)]
     pub project_id: Option<String>,
 
+    #[structable(optional)]
     pub revision_number: Option<i32>,
 
-    pub shared: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub shared: Option<bool>,
 
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional)]
     pub used: Option<String>,
 }
 

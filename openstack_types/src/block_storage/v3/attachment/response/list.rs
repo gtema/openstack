@@ -17,24 +17,31 @@
 //! Response type for the get attachments operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Attachment response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AttachmentResponse {
     /// The ID of attachment.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The UUID of the attaching instance.
     ///
+    #[structable(optional, serialize, wide)]
     pub instance: Option<String>,
 
     /// The status of the attachment.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
     /// The UUID of the volume which the attachment belongs to.
     ///
+    #[structable(optional, wide)]
     pub volume_id: Option<String>,
 }
 

@@ -17,20 +17,26 @@
 //! Response type for the get regions/{region_id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Region response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RegionResponse {
     /// The region description.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID for the region.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// To make this region a child of another region, set this parameter to
     /// the ID of the parent region.
     ///
+    #[structable(optional)]
     pub parent_id: Option<String>,
 }

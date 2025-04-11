@@ -17,34 +17,43 @@
 //! Response type for the get servers/{server_id}/os-interface/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Interface response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InterfaceResponse {
     /// Fixed IP addresses with subnet IDs.
     ///
+    #[structable(serialize)]
     pub fixed_ips: Vec<FixedIps>,
 
     /// The MAC address.
     ///
+    #[structable(optional)]
     pub mac_addr: Option<String>,
 
     /// The network ID.
     ///
+    #[structable(optional)]
     pub net_id: Option<String>,
 
     /// The port ID.
     ///
+    #[structable(optional)]
     pub port_id: Option<String>,
 
     /// The port state.
     ///
+    #[structable(optional)]
     pub port_state: Option<String>,
 
     /// The device tag applied to the virtual network interface or `null`.
     ///
     /// **New in version 2.70**
     ///
+    #[structable(optional, serialize)]
     pub tag: Option<String>,
 }
 

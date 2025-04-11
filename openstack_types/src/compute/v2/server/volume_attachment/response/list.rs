@@ -17,20 +17,25 @@
 //! Response type for the get servers/{server_id}/os-volume_attachments operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// VolumeAttachment response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct VolumeAttachmentResponse {
     /// The UUID of the associated volume attachment in Cinder.
     ///
     /// **New in version 2.89**
     ///
+    #[structable(optional, wide)]
     pub attachment_id: Option<String>,
 
     /// The UUID of the block device mapping record in Nova for the attachment.
     ///
     /// **New in version 2.89**
     ///
+    #[structable(optional, wide)]
     pub bdm_uuid: Option<String>,
 
     /// A flag indicating if the attached volume will be deleted when the
@@ -38,31 +43,37 @@ pub struct VolumeAttachmentResponse {
     ///
     /// **New in version 2.79**
     ///
+    #[structable(optional, wide)]
     pub delete_on_termination: Option<bool>,
 
     /// Name of the device in the attachment object, such as, `/dev/vdb`.
     ///
+    #[structable(wide)]
     pub device: String,
 
     /// The volume ID of the attachment.
     ///
     /// **Available until version 2.88**
     ///
+    #[structable()]
     pub id: String,
 
     /// The UUID of the server.
     ///
     #[serde(rename = "serverId")]
+    #[structable(title = "serverId", wide)]
     pub server_id: String,
 
     /// The device tag applied to the volume block device or `null`.
     ///
     /// **New in version 2.70**
     ///
+    #[structable(optional, serialize, wide)]
     pub tag: Option<String>,
 
     /// The UUID of the attached volume.
     ///
     #[serde(rename = "volumeId")]
+    #[structable(title = "volumeId", wide)]
     pub volume_id: String,
 }

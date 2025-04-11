@@ -17,9 +17,12 @@
 //! Response type for the post os-volume-transfer/{id}/accept operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// OsVolumeTransfer response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct OsVolumeTransferResponse {
     /// The date and time when the resource was created.
     ///
@@ -36,22 +39,27 @@ pub struct OsVolumeTransferResponse {
     /// The `±hh:mm` value, if included, is the time zone as an offset from
     /// UTC.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The UUID of the object.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Links for the message.
     ///
+    #[structable(optional, serialize)]
     pub links: Option<Vec<Links>>,
 
     /// The name of the object.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable(optional)]
     pub volume_id: Option<String>,
 }
 

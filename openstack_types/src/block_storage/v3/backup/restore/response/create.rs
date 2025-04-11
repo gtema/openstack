@@ -17,19 +17,25 @@
 //! Response type for the post backups/{id}/restore operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Restore response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RestoreResponse {
     /// The UUID for a backup.
     ///
+    #[structable(optional)]
     pub backup_id: Option<String>,
 
     /// The volume name.
     ///
+    #[structable(optional)]
     pub backup_name: Option<String>,
 
     /// The UUID of the volume.
     ///
+    #[structable(optional)]
     pub volume_id: Option<String>,
 }

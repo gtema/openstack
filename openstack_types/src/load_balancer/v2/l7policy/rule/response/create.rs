@@ -17,72 +17,89 @@
 //! Response type for the post lbaas/l7policies/{l7policy_id}/rules operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Rule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RuleResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
+    #[structable(optional)]
     pub admin_state_up: Option<bool>,
 
     /// The comparison type for the L7 rule. One of `CONTAINS`, `ENDS_WITH`,
     /// `EQUAL_TO`, `REGEX`, or `STARTS_WITH`.
     ///
+    #[structable(optional)]
     pub compare_type: Option<String>,
 
     /// The UTC date and timestamp when the resource was created.
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// The ID of the L7 rule.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// When `true` the logic of the rule is inverted. For example, with invert
     /// `true`, equal to would become not equal to.
     ///
+    #[structable(optional)]
     pub invert: Option<bool>,
 
     /// The key to use for the comparison. For example, the name of the cookie
     /// to evaluate.
     ///
+    #[structable(optional)]
     pub key: Option<String>,
 
     /// The operating status of the resource. See
     /// [Operating Status Codes](#op-status).
     ///
+    #[structable(optional)]
     pub operating_status: Option<String>,
 
     /// The ID of the project owning this resource.
     ///
+    #[structable(optional)]
     pub project_id: Option<String>,
 
     /// The provisioning status of the resource. See
     /// [Provisioning Status Codes](#prov-status).
     ///
+    #[structable(optional)]
     pub provisioning_status: Option<String>,
 
     /// A list of simple strings assigned to the resource.
     ///
     /// **New in version 2.5**
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// The L7 rule type. One of `COOKIE`, `FILE_TYPE`, `HEADER`, `HOST_NAME`,
     /// `PATH`, `SSL_CONN_HAS_CERT`, `SSL_VERIFY_RESULT`, or `SSL_DN_FIELD`.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     pub _type: Option<String>,
 
     /// The UTC date and timestamp when the resource was last updated.
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
     /// The value to use for the comparison. For example, the file type to
     /// compare.
     ///
+    #[structable(optional)]
     pub value: Option<String>,
 }

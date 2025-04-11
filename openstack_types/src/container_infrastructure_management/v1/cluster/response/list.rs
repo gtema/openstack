@@ -18,18 +18,25 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Cluster response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ClusterResponse {
+    #[structable(optional, wide)]
     pub api_address: Option<String>,
 
     /// The UUID of the cluster template.
     ///
+    #[structable(wide)]
     pub cluster_template_id: String,
 
+    #[structable(optional, wide)]
     pub coe_version: Option<String>,
 
+    #[structable(optional, wide)]
     pub container_version: Option<String>,
 
     /// The timeout for cluster creation in minutes. The value expected is a
@@ -37,26 +44,37 @@ pub struct ClusterResponse {
     /// reached during cluster creation process, the operation will be aborted
     /// and the cluster status will be set to `CREATE_FAILED`.
     ///
+    #[structable(optional, wide)]
     pub create_timeout: Option<i32>,
 
+    #[structable(optional)]
     pub created_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub discovery_url: Option<String>,
 
+    #[structable(optional, wide)]
     pub docker_volume_size: Option<i32>,
 
+    #[structable(optional, serialize, wide)]
     pub faults: Option<HashMap<String, String>>,
 
+    #[structable(optional)]
     pub fixed_network: Option<String>,
 
+    #[structable(optional)]
     pub fixed_subnet: Option<String>,
 
+    #[structable(optional, wide)]
     pub flavor_id: Option<String>,
 
+    #[structable(optional)]
     pub floating_ip_enabled: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub health_status: Option<HealthStatus>,
 
+    #[structable(optional, serialize, wide)]
     pub health_status_reason: Option<HashMap<String, String>>,
 
     /// The name of the SSH keypair to configure in the cluster servers for ssh
@@ -64,16 +82,22 @@ pub struct ClusterResponse {
     /// cluster. The login name is specific to the cluster driver, for example
     /// with fedora-atomic image, default login name is `fedora`.
     ///
+    #[structable(optional, wide)]
     pub keypair: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub labels: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_added: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_overridden: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize)]
     pub labels_skipped: Option<HashMap<String, String>>,
 
+    #[structable(optional, serialize, wide)]
     pub master_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as master for the cluster. The
@@ -81,44 +105,58 @@ pub struct ClusterResponse {
     /// the option `master-lb-enabled` is specified in the cluster template,
     /// the master servers will be placed in a load balancer pool.
     ///
+    #[structable(optional, wide)]
     pub master_count: Option<i32>,
 
+    #[structable(optional, wide)]
     pub master_flavor_id: Option<String>,
 
+    #[structable(optional)]
     pub master_lb_enabled: Option<String>,
 
+    #[structable(optional)]
     pub merge_labels: Option<String>,
 
     /// Name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
+    #[structable(optional, serialize, wide)]
     pub node_addresses: Option<Vec<String>>,
 
     /// The number of servers that will serve as node in the cluster. The
     /// default is 1.
     ///
+    #[structable(optional, wide)]
     pub node_count: Option<i32>,
 
+    #[structable(optional, wide)]
     pub project_id: Option<String>,
 
     /// The reference UUID of orchestration stack from Heat orchestration
     /// service.
     ///
+    #[structable(optional, wide)]
     pub stack_id: Option<String>,
 
     /// The current state of the cluster.
     ///
+    #[structable(optional, serialize)]
     pub status: Option<Status>,
 
+    #[structable(optional, wide)]
     pub status_reason: Option<String>,
 
+    #[structable(optional)]
     pub updated_at: Option<String>,
 
+    #[structable(optional, wide)]
     pub user_id: Option<String>,
 
     /// The UUID of the cluster.
     ///
+    #[structable(optional)]
     pub uuid: Option<String>,
 }
 

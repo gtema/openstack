@@ -16,26 +16,38 @@
 // `openstack-codegenerator`.
 //! Response type for the get metering/metering-label-rules/{id} operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// MeteringLabelRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct MeteringLabelRuleResponse {
+    #[structable(optional)]
     pub destination_ip_prefix: Option<String>,
 
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
-    pub excluded: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub excluded: Option<bool>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
+    #[structable(optional)]
     pub metering_label_id: Option<String>,
 
+    #[structable(optional)]
     pub remote_ip_prefix: Option<String>,
 
+    #[structable(optional)]
     pub source_ip_prefix: Option<String>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }
 

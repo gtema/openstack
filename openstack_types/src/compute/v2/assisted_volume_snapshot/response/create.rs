@@ -17,9 +17,12 @@
 //! Response type for the post os-assisted-volume-snapshots operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AssistedVolumeSnapshot response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AssistedVolumeSnapshotResponse {
     /// Its the same arbitrary string which was sent in request body.
     ///
@@ -29,10 +32,12 @@ pub struct AssistedVolumeSnapshotResponse {
     /// internally. So use `snapshot_id` instead for further operation on this
     /// snapshot.
     ///
+    #[structable(optional, serialize)]
     pub id: Option<String>,
 
     /// The source volume ID.
     ///
     #[serde(rename = "volumeId")]
+    #[structable(title = "volumeId")]
     pub volume_id: String,
 }

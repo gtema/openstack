@@ -18,22 +18,28 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AvailabilityZone response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AvailabilityZoneResponse {
     /// It is always `null`.
     ///
+    #[structable(optional)]
     pub hosts: Option<Value>,
 
     /// The availability zone name.
     ///
     #[serde(rename = "zoneName")]
+    #[structable(title = "zoneName")]
     pub zone_name: String,
 
     /// The current state of the availability zone.
     ///
     #[serde(rename = "zoneState")]
+    #[structable(serialize, title = "zoneState")]
     pub zone_state: ZoneState,
 }
 

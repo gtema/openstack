@@ -17,13 +17,17 @@
 //! Response type for the get servers/{server_id}/os-interface operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Interface response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct InterfaceResponse {
     /// List of the interface attachments.
     ///
     #[serde(rename = "interfaceAttachments")]
+    #[structable(serialize, title = "interfaceAttachments", wide)]
     pub interface_attachments: Vec<InterfaceAttachments>,
 }
 

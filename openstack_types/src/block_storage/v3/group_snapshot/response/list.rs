@@ -17,15 +17,20 @@
 //! Response type for the get group_snapshots operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// GroupSnapshot response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupSnapshotResponse {
     /// The ID of the group snapshot.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The group snapshot name.
     ///
+    #[structable(optional, serialize)]
     pub name: Option<String>,
 }

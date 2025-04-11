@@ -16,20 +16,30 @@
 // `openstack-codegenerator`.
 //! Response type for the get qos/alias-bandwidth-limit-rules/{id} operation
 
-use crate::common::IntString;
+use crate::common::deser_num_str_opt;
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// AliasBandwidthLimitRule response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct AliasBandwidthLimitRuleResponse {
+    #[structable(optional, serialize)]
     pub direction: Option<Direction>,
 
+    #[structable(optional)]
     pub id: Option<String>,
 
-    pub max_burst_kbps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub max_burst_kbps: Option<i64>,
 
-    pub max_kbps: Option<IntString>,
+    #[serde(deserialize_with = "deser_num_str_opt")]
+    #[structable(optional)]
+    pub max_kbps: Option<i64>,
 
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 }
 

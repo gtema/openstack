@@ -17,9 +17,12 @@
 //! Response type for the get qos/rule-types/{id} operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// RuleType response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct RuleTypeResponse {
     /// List of loaded QoS drivers with supported rule type parameters with
     /// possible values for each. Each driver is represented by a dict with the
@@ -31,10 +34,12 @@ pub struct RuleTypeResponse {
     /// list of acceptable values, otherwise it contains a dict with keys of
     /// `start` and `end` which define the range of acceptable values.
     ///
+    #[structable(optional)]
     pub drivers: Option<String>,
 
     /// The type of QoS rule.
     ///
     #[serde(rename = "type")]
+    #[structable(optional, title = "type")]
     pub _type: Option<String>,
 }

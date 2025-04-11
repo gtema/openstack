@@ -16,18 +16,23 @@
 // `openstack-codegenerator`.
 //! Response type for the get ports/{port_id} operation
 
-use crate::common::BoolString;
+use crate::common::deser_bool_str_opt;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Port response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct PortResponse {
     /// The administrative state of the resource, which is up (`true`) or down
     /// (`false`).
     ///
-    pub admin_state_up: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub admin_state_up: Option<bool>,
 
     /// A set of zero or more allowed address pair objects each where address
     /// pair object contains an `ip_address` and `mac_address`. While the
@@ -37,11 +42,13 @@ pub struct PortResponse {
     /// connected to the port can send a packet with source address which
     /// matches one of the specified allowed address pairs.
     ///
+    #[structable(optional, serialize)]
     pub allowed_address_pairs: Option<Vec<AllowedAddressPairs>>,
 
     /// The ID of the host where the port resides.
     ///
     #[serde(rename = "binding:host_id")]
+    #[structable(optional, title = "binding:host_id")]
     pub binding_host_id: Option<String>,
 
     /// A dictionary that enables the application running on the specific host
@@ -50,6 +57,7 @@ pub struct PortResponse {
     /// field. If the update request is null this response field will be {}.
     ///
     #[serde(rename = "binding:profile")]
+    #[structable(optional, serialize, title = "binding:profile")]
     pub binding_profile: Option<HashMap<String, Value>>,
 
     /// A dictionary which contains additional information on the port.
@@ -61,6 +69,7 @@ pub struct PortResponse {
     /// be used.
     ///
     #[serde(rename = "binding:vif_details")]
+    #[structable(optional, serialize, title = "binding:vif_details")]
     pub binding_vif_details: Option<HashMap<String, Value>>,
 
     /// The type of which mechanism is used for the port. An API consumer like
@@ -73,6 +82,7 @@ pub struct PortResponse {
     /// an error that the port failed to be bound to a networking back-end.
     ///
     #[serde(rename = "binding:vif_type")]
+    #[structable(optional, title = "binding:vif_type")]
     pub binding_vif_type: Option<String>,
 
     /// The type of vNIC which this port should be attached to. This is used to
@@ -83,49 +93,60 @@ pub struct PortResponse {
     /// deployments.
     ///
     #[serde(rename = "binding:vnic_type")]
+    #[structable(optional, serialize, title = "binding:vnic_type")]
     pub binding_vnic_type: Option<BindingVnicType>,
 
     /// Time at which the resource has been created (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub created_at: Option<String>,
 
     /// Status of the underlying data plane of a port.
     ///
+    #[structable(optional, serialize)]
     pub data_plane_status: Option<DataPlaneStatus>,
 
     /// A human-readable description for the resource.
     ///
+    #[structable(optional)]
     pub description: Option<String>,
 
     /// The ID of the device that uses this port. For example, a server
     /// instance or a logical router.
     ///
+    #[structable(optional)]
     pub device_id: Option<String>,
 
     /// The entity type that uses this port. For example, `compute:nova`
     /// (server instance), `network:dhcp` (DHCP agent) or
     /// `network:router_interface` (router interface).
     ///
+    #[structable(optional)]
     pub device_owner: Option<String>,
 
+    #[structable(optional, serialize)]
     pub device_profile: Option<String>,
 
     /// Data assigned to a port by the Networking internal DNS including the
     /// `hostname`, `ip_address` and `fqdn`.
     ///
+    #[structable(optional, serialize)]
     pub dns_assignment: Option<Vec<DnsAssignment>>,
 
     /// A valid DNS domain.
     ///
+    #[structable(optional)]
     pub dns_domain: Option<String>,
 
     /// A valid DNS name.
     ///
+    #[structable(optional)]
     pub dns_name: Option<String>,
 
     /// A set of zero or more extra DHCP option pairs. An option pair consists
     /// of an option value and name.
     ///
+    #[structable(optional, serialize)]
     pub extra_dhcp_opts: Option<Vec<HashMap<String, Value>>>,
 
     /// The IP addresses for the port. If the port has multiple IP addresses,
@@ -133,6 +154,7 @@ pub struct PortResponse {
     /// (`ip_address`) and the subnet ID from which the IP address is assigned
     /// (`subnet_id`).
     ///
+    #[structable(optional, serialize)]
     pub fixed_ips: Option<Vec<FixedIps>>,
 
     /// Admin-only. The following values control Open vSwitch’s Userspace Tx
@@ -140,34 +162,41 @@ pub struct PortResponse {
     ///
     /// - `{"openvswitch": {"other_config": {"tx-steering": "hash|thread"}}}`
     ///
+    #[structable(optional, serialize)]
     pub hints: Option<HashMap<String, Value>>,
 
     /// The ID of the resource.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// Indicates when ports use either `deferred`, `immediate` or no IP
     /// allocation (`none`).
     ///
+    #[structable(optional)]
     pub ip_allocation: Option<String>,
 
     /// The MAC address of the port. If the port uses the `direct-physical`
     /// `vnic_type` then the value of this field is overwritten with the MAC
     /// address provided in the active binding:profile if any.
     ///
+    #[structable(optional)]
     pub mac_address: Option<String>,
 
     /// Human-readable name of the resource.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 
     /// The ID of the attached network.
     ///
+    #[structable(optional)]
     pub network_id: Option<String>,
 
     /// The port NUMA affinity policy requested during the virtual machine
     /// scheduling. Values: `None`, `required`, `preferred` or `legacy`.
     ///
+    #[structable(optional, serialize)]
     pub numa_affinity_policy: Option<NumaAffinityPolicy>,
 
     /// The port security status. A valid value is enabled (`true`) or disabled
@@ -175,19 +204,25 @@ pub struct PortResponse {
     /// rules and anti-spoofing rules are applied to the traffic on the port.
     /// If disabled, no such rules are applied.
     ///
-    pub port_security_enabled: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub port_security_enabled: Option<bool>,
 
     /// The uplink status propagation of the port. Valid values are enabled
     /// (`true`) and disabled (`false`).
     ///
-    pub propagate_uplink_status: Option<BoolString>,
+    #[serde(deserialize_with = "deser_bool_str_opt")]
+    #[structable(optional)]
+    pub propagate_uplink_status: Option<bool>,
 
     /// The ID of the QoS policy of the network where this port is plugged.
     ///
+    #[structable(optional, serialize)]
     pub qos_network_policy_id: Option<String>,
 
     /// The ID of the QoS policy associated with the port.
     ///
+    #[structable(optional, serialize)]
     pub qos_policy_id: Option<String>,
 
     /// Expose Placement resources (i.e.: `minimum-bandwidth`) and traits
@@ -205,30 +240,37 @@ pub struct PortResponse {
     /// class name and requested amount from the QoS policy. `same_subtree` key
     /// contains a list of `id` values from every resource group.
     ///
+    #[structable(optional)]
     pub resource_request: Option<String>,
 
     /// The revision number of the resource.
     ///
+    #[structable(optional)]
     pub revision_number: Option<i32>,
 
     /// The IDs of security groups applied to the port.
     ///
+    #[structable(optional, serialize)]
     pub security_groups: Option<Vec<String>>,
 
     /// The port status. Values are `ACTIVE`, `DOWN`, `BUILD` and `ERROR`.
     ///
+    #[structable(optional)]
     pub status: Option<String>,
 
     /// The list of tags on the resource.
     ///
+    #[structable(optional, serialize)]
     pub tags: Option<Vec<String>>,
 
     /// The ID of the project.
     ///
+    #[structable(optional)]
     pub tenant_id: Option<String>,
 
     /// Time at which the resource has been updated (in UTC ISO8601 format).
     ///
+    #[structable(optional)]
     pub updated_at: Option<String>,
 }
 

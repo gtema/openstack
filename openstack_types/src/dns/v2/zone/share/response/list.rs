@@ -17,10 +17,14 @@
 //! Response type for the get zones/{zone_id}/shares operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Share response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct ShareResponse {
+    #[structable(optional, serialize)]
     pub shared_zones: Option<Vec<SharedZones>>,
 }
 

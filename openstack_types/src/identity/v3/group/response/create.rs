@@ -17,23 +17,30 @@
 //! Response type for the post groups operation
 
 use serde::{Deserialize, Serialize};
+use structable_derive::StructTable;
+
+use crate::common::{OutputConfig, StructTable};
 
 /// Group response representation
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize, StructTable)]
 pub struct GroupResponse {
     /// The description of the group.
     ///
+    #[structable(optional, serialize)]
     pub description: Option<String>,
 
     /// The ID of the domain.
     ///
+    #[structable(optional)]
     pub domain_id: Option<String>,
 
     /// The ID of the group.
     ///
+    #[structable(optional)]
     pub id: Option<String>,
 
     /// The user name. Must be unique within the owning domain.
     ///
+    #[structable(optional)]
     pub name: Option<String>,
 }
