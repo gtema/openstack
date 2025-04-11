@@ -90,7 +90,7 @@ impl ToTokens for TableStructInputReceiver {
                             serde_json::to_string_pretty(&self. #field_ident)
                         } else {
                             serde_json::to_string(&self. #field_ident)
-                        }.unwrap_or(self. #field_ident .to_string())
+                        }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
                     ),
                 },
                 true => match field.serialize || field.pretty {
@@ -106,7 +106,7 @@ impl ToTokens for TableStructInputReceiver {
                                     serde_json::to_string_pretty(&v)
                                 } else {
                                     serde_json::to_string(&v)
-                                }.unwrap_or("<ERROR SERIALIZING DATA>".into())
+                                }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
                             )
                     ),
                 },
@@ -124,7 +124,7 @@ impl ToTokens for TableStructInputReceiver {
                             serde_json::to_string_pretty(&x. #field_ident)
                         } else {
                             serde_json::to_string(&x. #field_ident)
-                        }.unwrap_or(x. #field_ident .to_string())
+                        }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
                     ),
                 },
                 true => match field.serialize || field.pretty {
@@ -139,8 +139,8 @@ impl ToTokens for TableStructInputReceiver {
                                 |v| if options.pretty {
                                     serde_json::to_string_pretty(&v)
                                 } else {
-                                    serde_json::to_string_pretty(&v)
-                                }.unwrap_or("<ERROR SERIALIZING DATA>".into())
+                                    serde_json::to_string(&v)
+                                }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
                             )
                     ),
                 },
@@ -225,8 +225,8 @@ impl ToTokens for TableStructInputReceiver {
             Some(field) => {
                 let field_ident = field.ident.as_ref().unwrap();
 
-                match field.optional {
-                    true => (
+                match (field.optional, field.serialize) {
+                    (true, false) => (
                         quote!(
                             fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
                                     self.iter().map(|item| item. #field_ident .clone().map(|val| val.to_string())).collect()
@@ -236,7 +236,7 @@ impl ToTokens for TableStructInputReceiver {
                                     Vec::from([self. #field_ident .clone().map(|val| val.to_string())])
                         }),
                     ),
-                    false => (
+                    (false, false) => (
                         quote!(
                             fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
                                     self.iter().map(|item| Some(item. #field_ident .to_string())).collect()
@@ -244,6 +244,26 @@ impl ToTokens for TableStructInputReceiver {
                         quote!(
                             fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
                                     Vec::from([Some(self. #field_ident .to_string())])
+                        }),
+                    ),
+                    (true, true) => (
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    self.iter().map(|item| item. #field_ident .clone().map(|val| serde_json::to_string(&val).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))).collect()
+                        }),
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    Vec::from([self. #field_ident .clone().map(|val| serde_json::to_string(&val).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))])
+                        }),
+                    ),
+                    (false, true) => (
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    self.iter().map(|item| Some(serde_json::to_string(&item. #field_ident).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))).collect()
+                        }),
+                        quote!(
+                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
+                                    Vec::from([Some(serde_json::to_string(&self. #field_ident).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))])
                         }),
                     ),
                 }

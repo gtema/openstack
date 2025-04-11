@@ -32,6 +32,27 @@ struct OptionStatusStruct {
     status: Option<String>,
 }
 
+#[derive(Clone, Deserialize, Serialize)]
+enum Status {
+    Dummy,
+}
+
+#[derive(Deserialize, Serialize, StructTable)]
+struct SerializeStatusStruct {
+    #[structable(title = "ID")]
+    id: u64,
+    #[structable(serialize, status)]
+    status: Status,
+}
+
+#[derive(Deserialize, Serialize, StructTable)]
+struct SerializeOptionStatusStruct {
+    #[structable(title = "ID")]
+    id: u64,
+    #[structable(optional, serialize, status)]
+    status: Option<Status>,
+}
+
 struct OutputConfig {
     /// Limit fields (their titles) to be returned
     fields: BTreeSet<String>,
@@ -353,7 +374,7 @@ fn test_list_wide() {
                     "Scooby".into(),
                     "Doo".into(),
                     "Foo".into(),
-                    "{\n  \"a\": \"b\",\n  \"c\": \"d\"\n}".to_string(),
+                    "{\"a\":\"b\",\"c\":\"d\"}".to_string(),
                     " ".to_string()
                 ],
                 vec![
@@ -425,30 +446,50 @@ fn test_list_status_no_status() {
 
 #[test]
 fn test_single_status() {
-    let raw = StatusStruct {
-        id: 1,
-        status: "foo".into(),
-    };
-
-    let data = raw.status();
-    assert_eq!(data, vec![Some("foo".into()),]);
+    assert_eq!(
+        StatusStruct {
+            id: 1,
+            status: "foo".into(),
+        }
+        .status(),
+        vec![Some("foo".into()),]
+    );
 }
 
 #[test]
 fn test_single_no_status() {
-    let raw = User::default();
-
-    let data = raw.status();
-    assert_eq!(data, vec![None]);
+    assert_eq!(User::default().status(), vec![None]);
 }
 
 #[test]
 fn test_single_option_status() {
-    let raw = OptionStatusStruct {
-        id: 1,
-        status: Some("foo".into()),
-    };
+    assert_eq!(
+        OptionStatusStruct {
+            id: 1,
+            status: Some("foo".into()),
+        }
+        .status(),
+        vec![Some("foo".into()),]
+    );
+}
 
-    let data = raw.status();
-    assert_eq!(data, vec![Some("foo".into()),]);
+#[test]
+fn test_complex_status() {
+    assert_eq!(
+        SerializeStatusStruct {
+            id: 1,
+            status: Status::Dummy,
+        }
+        .status(),
+        vec![Some("Dummy".into()),]
+    );
+
+    assert_eq!(
+        SerializeOptionStatusStruct {
+            id: 1,
+            status: Some(Status::Dummy),
+        }
+        .status(),
+        vec![Some("Dummy".into()),]
+    );
 }
