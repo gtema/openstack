@@ -64,11 +64,11 @@ pub struct EncryptionResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ControlLocation {
-    // FrontEnd
-    #[serde(rename = "front-end")]
-    FrontEnd,
-
     // BackEnd
     #[serde(rename = "back-end")]
     BackEnd,
+
+    // FrontEnd
+    #[serde(rename = "front-end")]
+    FrontEnd,
 }

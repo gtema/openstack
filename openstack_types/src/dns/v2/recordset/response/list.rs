@@ -89,9 +89,9 @@ pub enum Status {
     #[serde(rename = "ACTIVE")]
     Active,
 
-    // Success
-    #[serde(rename = "SUCCESS")]
-    Success,
+    // Deleted
+    #[serde(rename = "DELETED")]
+    Deleted,
 
     // Error
     #[serde(rename = "ERROR")]
@@ -101,41 +101,57 @@ pub enum Status {
     #[serde(rename = "PENDING")]
     Pending,
 
-    // Deleted
-    #[serde(rename = "DELETED")]
-    Deleted,
+    // Success
+    #[serde(rename = "SUCCESS")]
+    Success,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Action {
-    // None
-    #[serde(rename = "NONE")]
-    None,
-
     // Create
     #[serde(rename = "CREATE")]
     Create,
 
-    // Update
-    #[serde(rename = "UPDATE")]
-    Update,
-
     // Delete
     #[serde(rename = "DELETE")]
     Delete,
+
+    // None
+    #[serde(rename = "NONE")]
+    None,
+
+    // Update
+    #[serde(rename = "UPDATE")]
+    Update,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
+    // A
+    #[serde(rename = "A")]
+    A,
+
+    // Aaaa
+    #[serde(rename = "AAAA")]
+    Aaaa,
+
+    // Caa
+    #[serde(rename = "CAA")]
+    Caa,
+
+    // Cert
+    #[serde(rename = "CERT")]
+    Cert,
+
     // Cname
     #[serde(rename = "CNAME")]
     Cname,
 
-    // Spf
-    #[serde(rename = "SPF")]
-    Spf,
+    // Mx
+    #[serde(rename = "MX")]
+    Mx,
 
     // Naptr
     #[serde(rename = "NAPTR")]
@@ -145,9 +161,17 @@ pub enum Type {
     #[serde(rename = "NS")]
     Ns,
 
-    // Txt
-    #[serde(rename = "TXT")]
-    Txt,
+    // Ptr
+    #[serde(rename = "PTR")]
+    Ptr,
+
+    // Soa
+    #[serde(rename = "SOA")]
+    Soa,
+
+    // Spf
+    #[serde(rename = "SPF")]
+    Spf,
 
     // Srv
     #[serde(rename = "SRV")]
@@ -157,33 +181,9 @@ pub enum Type {
     #[serde(rename = "SSHFP")]
     Sshfp,
 
-    // Cert
-    #[serde(rename = "CERT")]
-    Cert,
-
-    // Aaaa
-    #[serde(rename = "AAAA")]
-    Aaaa,
-
-    // Ptr
-    #[serde(rename = "PTR")]
-    Ptr,
-
-    // Soa
-    #[serde(rename = "SOA")]
-    Soa,
-
-    // Caa
-    #[serde(rename = "CAA")]
-    Caa,
-
-    // A
-    #[serde(rename = "A")]
-    A,
-
-    // Mx
-    #[serde(rename = "MX")]
-    Mx,
+    // Txt
+    #[serde(rename = "TXT")]
+    Txt,
 }
 
 /// Links to the resource, and other related resources. When a response has

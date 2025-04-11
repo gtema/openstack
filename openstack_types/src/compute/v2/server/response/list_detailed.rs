@@ -374,13 +374,13 @@ pub struct Addresses {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum OsDcfDiskConfig {
-    // Manual
-    #[serde(rename = "MANUAL")]
-    Manual,
-
     // Auto
     #[serde(rename = "AUTO")]
     Auto,
+
+    // Manual
+    #[serde(rename = "MANUAL")]
+    Manual,
 }
 
 /// A fault object. Only displayed when the server status is `ERROR` or
@@ -435,25 +435,25 @@ pub enum HostStatus {
     #[serde(rename = "")]
     Empty,
 
-    // Unknown
-    #[serde(rename = "UNKNOWN")]
-    Unknown,
+    // Down
+    #[serde(rename = "DOWN")]
+    Down,
 
     // Maintenance
     #[serde(rename = "MAINTENANCE")]
     Maintenance,
 
-    // Up
-    #[serde(rename = "UP")]
-    Up,
-
-    // Down
-    #[serde(rename = "DOWN")]
-    Down,
-
     // Null
     #[serde(rename = "null")]
     Null,
+
+    // Unknown
+    #[serde(rename = "UNKNOWN")]
+    Unknown,
+
+    // Up
+    #[serde(rename = "UP")]
+    Up,
 }
 
 /// The UUID and links for the image for your server instance. The `image`

@@ -43,10 +43,6 @@ pub struct RemoteConsoleResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Protocol {
-    // Vnc
-    #[serde(rename = "vnc")]
-    Vnc,
-
     // Mks
     #[serde(rename = "mks")]
     Mks,
@@ -58,18 +54,26 @@ pub enum Protocol {
     // Spice
     #[serde(rename = "spice")]
     Spice,
+
+    // Vnc
+    #[serde(rename = "vnc")]
+    Vnc,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // SpiceHtml5
-    #[serde(rename = "spice-html5")]
-    SpiceHtml5,
+    // Novnc
+    #[serde(rename = "novnc")]
+    Novnc,
 
     // Serial
     #[serde(rename = "serial")]
     Serial,
+
+    // SpiceHtml5
+    #[serde(rename = "spice-html5")]
+    SpiceHtml5,
 
     // Webmks
     #[serde(rename = "webmks")]
@@ -78,8 +82,4 @@ pub enum Type {
     // Xvpvnc
     #[serde(rename = "xvpvnc")]
     Xvpvnc,
-
-    // Novnc
-    #[serde(rename = "novnc")]
-    Novnc,
 }

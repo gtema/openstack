@@ -41,47 +41,47 @@ pub struct BindingResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum VnicType {
-    // AcceleratorDirectPhysical
-    #[serde(rename = "accelerator-direct-physical")]
-    AcceleratorDirectPhysical,
-
     // AcceleratorDirect
     #[serde(rename = "accelerator-direct")]
     AcceleratorDirect,
 
-    // DirectPhysical
-    #[serde(rename = "direct-physical")]
-    DirectPhysical,
-
-    // Direct
-    #[serde(rename = "direct")]
-    Direct,
-
-    // VirtioForwarder
-    #[serde(rename = "virtio-forwarder")]
-    VirtioForwarder,
+    // AcceleratorDirectPhysical
+    #[serde(rename = "accelerator-direct-physical")]
+    AcceleratorDirectPhysical,
 
     // Baremetal
     #[serde(rename = "baremetal")]
     Baremetal,
 
+    // Direct
+    #[serde(rename = "direct")]
+    Direct,
+
+    // DirectPhysical
+    #[serde(rename = "direct-physical")]
+    DirectPhysical,
+
     // Macvtap
     #[serde(rename = "macvtap")]
     Macvtap,
-
-    // RemoteManaged
-    #[serde(rename = "remote-managed")]
-    RemoteManaged,
-
-    // Vdpa
-    #[serde(rename = "vdpa")]
-    Vdpa,
 
     // Normal
     #[serde(rename = "normal")]
     Normal,
 
+    // RemoteManaged
+    #[serde(rename = "remote-managed")]
+    RemoteManaged,
+
     // SmartNic
     #[serde(rename = "smart-nic")]
     SmartNic,
+
+    // Vdpa
+    #[serde(rename = "vdpa")]
+    Vdpa,
+
+    // VirtioForwarder
+    #[serde(rename = "virtio-forwarder")]
+    VirtioForwarder,
 }

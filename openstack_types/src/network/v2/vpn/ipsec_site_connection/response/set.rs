@@ -132,13 +132,13 @@ pub struct IpsecSiteConnectionResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Initiator {
-    // ResponseOnly
-    #[serde(rename = "response-only")]
-    ResponseOnly,
-
     // BiDirectional
     #[serde(rename = "bi-directional")]
     BiDirectional,
+
+    // ResponseOnly
+    #[serde(rename = "response-only")]
+    ResponseOnly,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]

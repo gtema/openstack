@@ -249,25 +249,25 @@ pub struct AllowedAddressPairs {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum DataPlaneStatus {
-    // Down
-    #[serde(rename = "DOWN")]
-    Down,
-
     // Active
     #[serde(rename = "ACTIVE")]
     Active,
+
+    // Down
+    #[serde(rename = "DOWN")]
+    Down,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum NumaAffinityPolicy {
-    // Preferred
-    #[serde(rename = "preferred")]
-    Preferred,
-
     // Legacy
     #[serde(rename = "legacy")]
     Legacy,
+
+    // Preferred
+    #[serde(rename = "preferred")]
+    Preferred,
 
     // Required
     #[serde(rename = "required")]
@@ -281,49 +281,49 @@ pub enum NumaAffinityPolicy {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum BindingVnicType {
-    // AcceleratorDirectPhysical
-    #[serde(rename = "accelerator-direct-physical")]
-    AcceleratorDirectPhysical,
-
     // AcceleratorDirect
     #[serde(rename = "accelerator-direct")]
     AcceleratorDirect,
 
-    // DirectPhysical
-    #[serde(rename = "direct-physical")]
-    DirectPhysical,
-
-    // Direct
-    #[serde(rename = "direct")]
-    Direct,
-
-    // VirtioForwarder
-    #[serde(rename = "virtio-forwarder")]
-    VirtioForwarder,
+    // AcceleratorDirectPhysical
+    #[serde(rename = "accelerator-direct-physical")]
+    AcceleratorDirectPhysical,
 
     // Baremetal
     #[serde(rename = "baremetal")]
     Baremetal,
 
+    // Direct
+    #[serde(rename = "direct")]
+    Direct,
+
+    // DirectPhysical
+    #[serde(rename = "direct-physical")]
+    DirectPhysical,
+
     // Macvtap
     #[serde(rename = "macvtap")]
     Macvtap,
-
-    // RemoteManaged
-    #[serde(rename = "remote-managed")]
-    RemoteManaged,
-
-    // Vdpa
-    #[serde(rename = "vdpa")]
-    Vdpa,
 
     // Normal
     #[serde(rename = "normal")]
     Normal,
 
+    // RemoteManaged
+    #[serde(rename = "remote-managed")]
+    RemoteManaged,
+
     // SmartNic
     #[serde(rename = "smart-nic")]
     SmartNic,
+
+    // Vdpa
+    #[serde(rename = "vdpa")]
+    Vdpa,
+
+    // VirtioForwarder
+    #[serde(rename = "virtio-forwarder")]
+    VirtioForwarder,
 }
 
 /// `DnsAssignment` type

@@ -57,9 +57,9 @@ pub enum Status {
     #[serde(rename = "ACTIVE")]
     Active,
 
-    // Success
-    #[serde(rename = "SUCCESS")]
-    Success,
+    // Deleted
+    #[serde(rename = "DELETED")]
+    Deleted,
 
     // Error
     #[serde(rename = "ERROR")]
@@ -69,14 +69,18 @@ pub enum Status {
     #[serde(rename = "PENDING")]
     Pending,
 
-    // Deleted
-    #[serde(rename = "DELETED")]
-    Deleted,
+    // Success
+    #[serde(rename = "SUCCESS")]
+    Success,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Action {
+    // Delete
+    #[serde(rename = "DELETE")]
+    Delete,
+
     // None
     #[serde(rename = "NONE")]
     None,
@@ -84,10 +88,6 @@ pub enum Action {
     // Update
     #[serde(rename = "UPDATE")]
     Update,
-
-    // Delete
-    #[serde(rename = "DELETE")]
-    Delete,
 }
 
 /// Links to the resource, and other related resources. When a response has

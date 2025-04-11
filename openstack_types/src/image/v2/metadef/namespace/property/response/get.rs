@@ -73,21 +73,17 @@ pub struct PropertyResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // String
-    #[serde(rename = "string")]
-    String,
-
     // Array
     #[serde(rename = "array")]
     Array,
 
-    // Integer
-    #[serde(rename = "integer")]
-    Integer,
-
     // Boolean
     #[serde(rename = "boolean")]
     Boolean,
+
+    // Integer
+    #[serde(rename = "integer")]
+    Integer,
 
     // Number
     #[serde(rename = "number")]
@@ -96,6 +92,10 @@ pub enum Type {
     // Object
     #[serde(rename = "object")]
     Object,
+
+    // String
+    #[serde(rename = "string")]
+    String,
 }
 
 /// `Items` type

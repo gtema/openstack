@@ -59,15 +59,15 @@ pub struct EndpointResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Interface {
-    // Public
-    #[serde(rename = "public")]
-    Public,
+    // Admin
+    #[serde(rename = "admin")]
+    Admin,
 
     // Internal
     #[serde(rename = "internal")]
     Internal,
 
-    // Admin
-    #[serde(rename = "admin")]
-    Admin,
+    // Public
+    #[serde(rename = "public")]
+    Public,
 }

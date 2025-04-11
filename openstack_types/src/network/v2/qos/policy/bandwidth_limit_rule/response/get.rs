@@ -45,11 +45,11 @@ pub struct BandwidthLimitRuleResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Direction {
-    // Ingress
-    #[serde(rename = "ingress")]
-    Ingress,
-
     // Egress
     #[serde(rename = "egress")]
     Egress,
+
+    // Ingress
+    #[serde(rename = "ingress")]
+    Ingress,
 }

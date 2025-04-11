@@ -80,13 +80,13 @@ pub struct MemberResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Pending
-    #[serde(rename = "pending")]
-    Pending,
-
     // Accepted
     #[serde(rename = "accepted")]
     Accepted,
+
+    // Pending
+    #[serde(rename = "pending")]
+    Pending,
 
     // Rejected
     #[serde(rename = "rejected")]

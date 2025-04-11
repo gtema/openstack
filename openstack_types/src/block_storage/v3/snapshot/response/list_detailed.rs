@@ -121,9 +121,25 @@ pub struct SnapshotResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
+    // Available
+    #[serde(rename = "available")]
+    Available,
+
     // BackingUp
     #[serde(rename = "backing-up")]
     BackingUp,
+
+    // Creating
+    #[serde(rename = "creating")]
+    Creating,
+
+    // Deleted
+    #[serde(rename = "deleted")]
+    Deleted,
+
+    // Deleting
+    #[serde(rename = "deleting")]
+    Deleting,
 
     // Error
     #[serde(rename = "error")]
@@ -133,27 +149,11 @@ pub enum Status {
     #[serde(rename = "error_deleting")]
     ErrorDeleting,
 
-    // Deleting
-    #[serde(rename = "deleting")]
-    Deleting,
-
-    // Available
-    #[serde(rename = "available")]
-    Available,
-
-    // Deleted
-    #[serde(rename = "deleted")]
-    Deleted,
-
-    // Creating
-    #[serde(rename = "creating")]
-    Creating,
+    // Restoring
+    #[serde(rename = "restoring")]
+    Restoring,
 
     // Unmanaging
     #[serde(rename = "unmanaging")]
     Unmanaging,
-
-    // Restoring
-    #[serde(rename = "restoring")]
-    Restoring,
 }

@@ -52,25 +52,25 @@ pub struct HypervisorResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Up
-    #[serde(rename = "up")]
-    Up,
-
     // Down
     #[serde(rename = "down")]
     Down,
+
+    // Up
+    #[serde(rename = "up")]
+    Up,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Enabled
-    #[serde(rename = "enabled")]
-    Enabled,
-
     // Disabled
     #[serde(rename = "disabled")]
     Disabled,
+
+    // Enabled
+    #[serde(rename = "enabled")]
+    Enabled,
 }
 
 /// `Servers` type

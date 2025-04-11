@@ -66,13 +66,13 @@ pub struct VersionResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Deprecated
-    #[serde(rename = "DEPRECATED")]
-    Deprecated,
-
     // Current
     #[serde(rename = "CURRENT")]
     Current,
+
+    // Deprecated
+    #[serde(rename = "DEPRECATED")]
+    Deprecated,
 
     // Supported
     #[serde(rename = "SUPPORTED")]

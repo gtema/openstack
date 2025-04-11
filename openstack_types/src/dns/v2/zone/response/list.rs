@@ -106,17 +106,13 @@ pub struct ZoneResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Zone
-    #[serde(rename = "ZONE")]
-    Zone,
-
     // Active
     #[serde(rename = "ACTIVE")]
     Active,
 
-    // Success
-    #[serde(rename = "SUCCESS")]
-    Success,
+    // Deleted
+    #[serde(rename = "DELETED")]
+    Deleted,
 
     // Error
     #[serde(rename = "ERROR")]
@@ -126,38 +122,38 @@ pub enum Status {
     #[serde(rename = "PENDING")]
     Pending,
 
-    // Deleted
-    #[serde(rename = "DELETED")]
-    Deleted,
+    // Success
+    #[serde(rename = "SUCCESS")]
+    Success,
+
+    // Zone
+    #[serde(rename = "ZONE")]
+    Zone,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Action {
-    // None
-    #[serde(rename = "NONE")]
-    None,
-
     // Create
     #[serde(rename = "CREATE")]
     Create,
 
-    // Update
-    #[serde(rename = "UPDATE")]
-    Update,
-
     // Delete
     #[serde(rename = "DELETE")]
     Delete,
+
+    // None
+    #[serde(rename = "NONE")]
+    None,
+
+    // Update
+    #[serde(rename = "UPDATE")]
+    Update,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
-    // Secondary
-    #[serde(rename = "SECONDARY")]
-    Secondary,
-
     // Catalog
     #[serde(rename = "CATALOG")]
     Catalog,
@@ -165,6 +161,10 @@ pub enum Type {
     // Primary
     #[serde(rename = "PRIMARY")]
     Primary,
+
+    // Secondary
+    #[serde(rename = "SECONDARY")]
+    Secondary,
 }
 
 /// Links to the resource, and other related resources. When a response has

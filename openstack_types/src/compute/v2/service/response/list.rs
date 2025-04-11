@@ -79,11 +79,11 @@ pub struct ServiceResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Enabled
-    #[serde(rename = "enabled")]
-    Enabled,
-
     // Disabled
     #[serde(rename = "disabled")]
     Disabled,
+
+    // Enabled
+    #[serde(rename = "enabled")]
+    Enabled,
 }

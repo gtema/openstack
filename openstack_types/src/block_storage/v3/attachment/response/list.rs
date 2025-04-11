@@ -41,31 +41,31 @@ pub struct AttachmentResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // ErrorAttaching
-    #[serde(rename = "error_attaching")]
-    ErrorAttaching,
-
     // Attached
     #[serde(rename = "attached")]
     Attached,
 
-    // ErrorDetaching
-    #[serde(rename = "error_detaching")]
-    ErrorDetaching,
-
-    // Detached
-    #[serde(rename = "detached")]
-    Detached,
+    // Attaching
+    #[serde(rename = "attaching")]
+    Attaching,
 
     // Deleted
     #[serde(rename = "deleted")]
     Deleted,
 
+    // Detached
+    #[serde(rename = "detached")]
+    Detached,
+
+    // ErrorAttaching
+    #[serde(rename = "error_attaching")]
+    ErrorAttaching,
+
+    // ErrorDetaching
+    #[serde(rename = "error_detaching")]
+    ErrorDetaching,
+
     // Reserved
     #[serde(rename = "reserved")]
     Reserved,
-
-    // Attaching
-    #[serde(rename = "attaching")]
-    Attaching,
 }

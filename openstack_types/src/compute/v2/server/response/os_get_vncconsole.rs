@@ -34,6 +34,10 @@ pub struct ServerResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Type {
+    // Novnc
+    #[serde(rename = "novnc")]
+    Novnc,
+
     // RdpHtml5
     #[serde(rename = "rdp-html5")]
     RdpHtml5,
@@ -41,10 +45,6 @@ pub enum Type {
     // Serial
     #[serde(rename = "serial")]
     Serial,
-
-    // Novnc
-    #[serde(rename = "novnc")]
-    Novnc,
 
     // SpiceHtml5
     #[serde(rename = "spice-html5")]

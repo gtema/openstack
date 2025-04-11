@@ -29,17 +29,9 @@ pub struct ServerExternalEventResponse {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Name {
-    // NetworkVifUnplugged
-    #[serde(rename = "network-vif-unplugged")]
-    NetworkVifUnplugged,
-
-    // VolumeExtended
-    #[serde(rename = "volume-extended")]
-    VolumeExtended,
-
-    // NetworkVifPlugged
-    #[serde(rename = "network-vif-plugged")]
-    NetworkVifPlugged,
+    // AcceleratorRequestBound
+    #[serde(rename = "accelerator-request-bound")]
+    AcceleratorRequestBound,
 
     // NetworkChanged
     #[serde(rename = "network-changed")]
@@ -49,22 +41,26 @@ pub enum Name {
     #[serde(rename = "network-vif-deleted")]
     NetworkVifDeleted,
 
-    // AcceleratorRequestBound
-    #[serde(rename = "accelerator-request-bound")]
-    AcceleratorRequestBound,
+    // NetworkVifPlugged
+    #[serde(rename = "network-vif-plugged")]
+    NetworkVifPlugged,
+
+    // NetworkVifUnplugged
+    #[serde(rename = "network-vif-unplugged")]
+    NetworkVifUnplugged,
 
     // PowerUpdate
     #[serde(rename = "power-update")]
     PowerUpdate,
+
+    // VolumeExtended
+    #[serde(rename = "volume-extended")]
+    VolumeExtended,
 }
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // InProgress
-    #[serde(rename = "in-progress")]
-    InProgress,
-
     // Completed
     #[serde(rename = "completed")]
     Completed,
@@ -72,6 +68,10 @@ pub enum Status {
     // Failed
     #[serde(rename = "failed")]
     Failed,
+
+    // InProgress
+    #[serde(rename = "in-progress")]
+    InProgress,
 }
 
 /// `Events` type

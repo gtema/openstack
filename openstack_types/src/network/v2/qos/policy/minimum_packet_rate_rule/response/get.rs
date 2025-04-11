@@ -36,11 +36,11 @@ pub enum Direction {
     #[serde(rename = "any")]
     Any,
 
-    // Ingress
-    #[serde(rename = "ingress")]
-    Ingress,
-
     // Egress
     #[serde(rename = "egress")]
     Egress,
+
+    // Ingress
+    #[serde(rename = "ingress")]
+    Ingress,
 }

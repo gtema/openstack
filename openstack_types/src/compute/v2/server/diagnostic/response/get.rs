@@ -161,21 +161,21 @@ pub enum Driver {
     #[serde(rename = "hyperv")]
     Hyperv,
 
-    // Xenapi
-    #[serde(rename = "xenapi")]
-    Xenapi,
+    // Ironic
+    #[serde(rename = "ironic")]
+    Ironic,
 
     // Libvirt
     #[serde(rename = "libvirt")]
     Libvirt,
 
-    // Ironic
-    #[serde(rename = "ironic")]
-    Ironic,
-
     // Vmwareapi
     #[serde(rename = "vmwareapi")]
     Vmwareapi,
+
+    // Xenapi
+    #[serde(rename = "xenapi")]
+    Xenapi,
 }
 
 /// `NicDetails` type
@@ -197,14 +197,6 @@ pub struct NicDetails {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum State {
-    // Pending
-    #[serde(rename = "pending")]
-    Pending,
-
-    // Shutdown
-    #[serde(rename = "shutdown")]
-    Shutdown,
-
     // Crashed
     #[serde(rename = "crashed")]
     Crashed,
@@ -213,11 +205,19 @@ pub enum State {
     #[serde(rename = "paused")]
     Paused,
 
-    // Suspended
-    #[serde(rename = "suspended")]
-    Suspended,
+    // Pending
+    #[serde(rename = "pending")]
+    Pending,
 
     // Running
     #[serde(rename = "running")]
     Running,
+
+    // Shutdown
+    #[serde(rename = "shutdown")]
+    Shutdown,
+
+    // Suspended
+    #[serde(rename = "suspended")]
+    Suspended,
 }

@@ -118,10 +118,6 @@ pub enum Type {
 #[derive(Debug, Deserialize, Clone, Serialize)]
 #[serde(untagged)]
 pub enum Status {
-    // Success
-    #[serde(rename = "success")]
-    Success,
-
     // Failure
     #[serde(rename = "failure")]
     Failure,
@@ -133,4 +129,8 @@ pub enum Status {
     // Processing
     #[serde(rename = "processing")]
     Processing,
+
+    // Success
+    #[serde(rename = "success")]
+    Success,
 }
