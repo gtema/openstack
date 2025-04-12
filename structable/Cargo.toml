@@ -1,0 +1,25 @@
+[package]
+name = "structable"
+version = "0.1.0"
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]
+serde.workspace = true
+
+structable_derive = { version = "^0.1", path = "../structable_derive" }
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[[example]]
+name = "user"
+path = "examples/user.rs"
+
+[[example]]
+name = "users"
+path = "examples/users.rs"

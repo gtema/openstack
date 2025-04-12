@@ -69,7 +69,6 @@ impl ToTokens for TableStructInputReceiver {
             .expect("Should never be enum")
             .fields;
 
-        let mut struct_fields = Vec::new();
         let mut vec_struct_headers = Vec::new();
         let mut vec_struct_fields = Vec::new();
         let mut status_field: Option<&TableStructFieldReceiver> = None;
@@ -78,31 +77,33 @@ impl ToTokens for TableStructInputReceiver {
         for field in fields.iter() {
             let field_ident = field.ident.as_ref().unwrap();
             let field_title = field.title.clone().unwrap_or(field_ident.to_string());
+            let field_wide = field.wide;
 
-            // Determine how to get the data based in `optional` and `pretty`
-            let field_value = match field.optional {
+            // Determine how to get the data based in `optional` and `pretty` for list row column
+            let field_vec_value = match field.optional {
                 false => match field.serialize || field.pretty {
                     false => quote!(
-                        self. #field_ident .to_string()
+                        Some(self. #field_ident .to_string())
                     ),
                     true => quote!(
-                        if options.pretty {
+                        Some(
+                        if options.pretty_mode() {
                             serde_json::to_string_pretty(&self. #field_ident)
                         } else {
                             serde_json::to_string(&self. #field_ident)
                         }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
+                        )
                     ),
                 },
                 true => match field.serialize || field.pretty {
                     false => quote!(
-                        self. #field_ident .clone().map_or(String::from(" "), |v| v.to_string())
+                        self. #field_ident .clone().map(|x| x.to_string())
                     ),
                     true => quote!(
                         self. #field_ident
                             .clone()
-                            .map_or(
-                                String::from(" "),
-                                |v| if options.pretty {
+                            .map(
+                                |v| if options.pretty_mode() {
                                     serde_json::to_string_pretty(&v)
                                 } else {
                                     serde_json::to_string(&v)
@@ -112,98 +113,19 @@ impl ToTokens for TableStructInputReceiver {
                 },
             };
 
-            // Determine how to get the data based in `optional` and `pretty` for list row column
-            //let field_vec_value = field_value.clone();
-            let field_vec_value = match field.optional {
-                false => match field.serialize || field.pretty {
-                    false => quote!(
-                        x. #field_ident .to_string()
-                    ),
-                    true => quote!(
-                        if options.pretty {
-                            serde_json::to_string_pretty(&x. #field_ident)
-                        } else {
-                            serde_json::to_string(&x. #field_ident)
-                        }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
-                    ),
-                },
-                true => match field.serialize || field.pretty {
-                    false => quote!(
-                        x. #field_ident .clone().map_or(String::from(" "), |v| v.to_string())
-                    ),
-                    true => quote!(
-                        x. #field_ident
-                            .clone()
-                            .map_or(
-                                String::from(" "),
-                                |v| if options.pretty {
-                                    serde_json::to_string_pretty(&v)
-                                } else {
-                                    serde_json::to_string(&v)
-                                }.unwrap_or_else(|_| String::from("<ERROR SERIALIZING DATA>"))
-                            )
-                    ),
-                },
-            };
-
-            // Build field rows for <T> impl
-            let struct_row = match field.wide {
-                false => match field.optional {
-                    false => quote!(
-                        if options.fields.is_empty() || options.fields.contains(#field_title) {
-                            res.push(Vec::from([
-                                #field_title .to_string(),
-                                #field_value
-                            ]));
-                        }
-                    ),
-                    true => quote!(
-                        if self. #field_ident .is_some() && (options.fields.is_empty() || options.fields.contains(#field_title)) {
-                            res.push(Vec::from([
-                                #field_title.to_string(),
-                                #field_value
-                            ]));
-                        }
-                    ),
-                },
-
-                true => quote!(
-                    if options.fields.contains(#field_title) || (options.fields.is_empty() && options.wide) {
-                        res.push(Vec::from([
-                            #field_title.to_string(),
-                            #field_value
-                        ]));
-                    }
-                ),
-            };
             // Build field values processing for Vec<T> impl
-            let vec_struct_row = match field.wide {
-                false => quote!(
-                    if options.fields.is_empty() || options.fields.contains(#field_title) {
-                        row.push(#field_vec_value);
-                    }
-                ),
-                true => quote!(
-                    if options.fields.contains(#field_title) || (options.fields.is_empty() && options.wide)  {
-                        row.push(#field_vec_value);
-                    }
-                ),
-            };
+            let vec_struct_row = quote!(
+                if options.should_return_field(#field_title, #field_wide) {
+                    row.push(#field_vec_value);
+                }
+            );
             // Build field headers processing for the Vec<T> impl
-            let vec_struct_header_row = match field.wide {
-                false => quote!(
-                    if options.fields.is_empty() || options.fields.contains(#field_title) {
-                        headers.push(#field_title .to_string());
-                    }
-                ),
-                true => quote!(
-                    if options.fields.contains(#field_title) || (options.fields.is_empty() && options.wide)  {
-                        headers.push(#field_title .to_string());
-                    }
-                ),
-            };
+            let vec_struct_header_row = quote!(
+                if options.should_return_field(#field_title, #field_wide) {
+                   headers.push(#field_title .to_string());
+                }
+            );
 
-            struct_fields.push(struct_row);
             vec_struct_fields.push(vec_struct_row);
             vec_struct_headers.push(vec_struct_header_row);
 
@@ -220,96 +142,66 @@ impl ToTokens for TableStructInputReceiver {
         if status_alt_field.is_some() && status_field.is_none() {
             status_field = status_alt_field;
         }
+
         // Construct code for the `status` trait method for single struct and vec
-        let (item_status, struct_status) = match status_field {
+        let struct_status = match status_field {
             Some(field) => {
                 let field_ident = field.ident.as_ref().unwrap();
 
                 match (field.optional, field.serialize) {
-                    (true, false) => (
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    self.iter().map(|item| item. #field_ident .clone().map(|val| val.to_string())).collect()
-                        }),
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    Vec::from([self. #field_ident .clone().map(|val| val.to_string())])
-                        }),
+                    (true, false) => quote!(
+                        self. #field_ident .clone().map(|val| val.to_string())
                     ),
-                    (false, false) => (
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    self.iter().map(|item| Some(item. #field_ident .to_string())).collect()
-                        }),
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    Vec::from([Some(self. #field_ident .to_string())])
-                        }),
+                    (false, false) => quote!(
+                        Some(self. #field_ident .to_string())
                     ),
-                    (true, true) => (
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    self.iter().map(|item| item. #field_ident .clone().map(|val| serde_json::to_string(&val).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))).collect()
-                        }),
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    Vec::from([self. #field_ident .clone().map(|val| serde_json::to_string(&val).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))])
-                        }),
+                    (true, true) => quote!(
+                        self. #field_ident .clone().map(|val| serde_json::to_string(&val).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))
                     ),
-                    (false, true) => (
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    self.iter().map(|item| Some(serde_json::to_string(&item. #field_ident).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))).collect()
-                        }),
-                        quote!(
-                            fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                                    Vec::from([Some(serde_json::to_string(&self. #field_ident).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))])
-                        }),
+                    (false, true) => quote!(
+                        Some(serde_json::to_string(&self. #field_ident).map(|x| x.trim_matches('"').to_string()).unwrap_or_else(|_| String::from("<ERROR SERIALIZING>")))
                     ),
                 }
             }
-            _ => (
-                quote!(
-                    fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                        return std::iter::repeat_with(|| None).take(self.len()).collect();
-                    }
-                ),
-                quote!(
-                    fn status(&self) -> ::std::vec::Vec<Option<::std::string::String>> {
-                        Vec::from([None])
-                    }
-                ),
-            ),
+            _ => quote!(None),
         };
 
         tokens.extend(quote! {
             impl #imp StructTable for #ident #ty #wher {
-                fn build(&self, options: &OutputConfig) -> (::std::vec::Vec<::std::string::String>, ::std::vec::Vec<::std::vec::Vec<::std::string::String>>) {
-                    let headers: Vec<String> = Vec::from(["Attribute".to_string(), "Value".to_string()]);
-                    let mut res: Vec<Vec<String>> = Vec::new();
-                    #(#struct_fields)*
-                    (headers, res)
-                }
-
-                #struct_status
-            }
-
-            impl #imp StructTable for Vec<#ident> #ty #wher {
-                fn build(&self, options: &OutputConfig) -> (::std::vec::Vec<::std::string::String>, ::std::vec::Vec<::std::vec::Vec<::std::string::String>>) {
-                    let mut res: Vec<Vec<String>> = Vec::new();
+                fn headers<O: StructTableOptions>(options: &O) -> ::std::vec::Vec<::std::string::String> {
                     let mut headers: Vec<String> = Vec::new();
-
                     #(#vec_struct_headers)*
-
-                    for x in self.iter() {
-                        let mut row: Vec<String> = Vec::new();
-                        #(#vec_struct_fields)*
-                        res.push(row);
-                    }
-                    (headers, res)
+                    headers
                 }
 
-                #item_status
+                fn data<O: StructTableOptions>(&self, options: &O) -> ::std::vec::Vec<Option<::std::string::String>> {
+                    let mut row: Vec<Option<String>> = Vec::new();
+                    #(#vec_struct_fields)*
+                    row
+                }
+
+                fn status(&self) -> Option<String> {
+                    #struct_status
+                }
+
+            }
+            impl #imp StructTable for &#ident #ty #wher {
+                fn headers<O: StructTableOptions>(options: &O) -> ::std::vec::Vec<::std::string::String> {
+                    let mut headers: Vec<String> = Vec::new();
+                    #(#vec_struct_headers)*
+                    headers
+                }
+
+                fn data<O: StructTableOptions>(&self, options: &O) -> ::std::vec::Vec<Option<::std::string::String>> {
+                    let mut row: Vec<Option<String>> = Vec::new();
+                    #(#vec_struct_fields)*
+                    row
+                }
+
+                fn status(&self) -> Option<String> {
+                    #struct_status
+                }
+
             }
         });
     }
