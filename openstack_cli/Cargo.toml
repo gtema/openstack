@@ -72,7 +72,7 @@ reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = {workspace = true}
 strip-ansi-escapes = { workspace = true }
-structable_derive = { path = "../structable_derive", version = "^0.1" }
+structable_derive = { version = "^0.1" }
 tokio = { workspace = true, features = ["fs", "macros", "net", "sync", "rt-multi-thread", "io-std"]}
 tokio-util = {workspace = true}
 thiserror = { workspace = true }

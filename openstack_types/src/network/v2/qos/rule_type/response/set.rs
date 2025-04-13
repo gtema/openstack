@@ -17,9 +17,7 @@
 //! Response type for the put qos/rule-types/{id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// RuleType response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

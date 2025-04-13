@@ -17,9 +17,7 @@
 //! Response type for the get role_assignments operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// RoleAssignment response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

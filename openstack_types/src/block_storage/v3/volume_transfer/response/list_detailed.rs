@@ -17,9 +17,7 @@
 //! Response type for the get volume-transfers/detail operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// VolumeTransfer response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

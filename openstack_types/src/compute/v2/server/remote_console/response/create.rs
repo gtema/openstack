@@ -17,9 +17,7 @@
 //! Response type for the post servers/{server_id}/remote-consoles operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// RemoteConsole response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

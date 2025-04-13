@@ -17,9 +17,7 @@
 //! Response type for the get OS-FEDERATION/identity_providers/{idp_id}/protocols operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Protocol response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

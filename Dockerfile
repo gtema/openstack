@@ -18,7 +18,6 @@ COPY openstack_sdk/Cargo.toml /usr/src/openstack/openstack_sdk/
 COPY openstack_cli/Cargo.toml /usr/src/openstack/openstack_cli/
 COPY openstack_tui/Cargo.toml /usr/src/openstack/openstack_tui/
 COPY openstack_types/Cargo.toml /usr/src/openstack/openstack_types/
-COPY structable_derive/Cargo.toml /usr/src/openstack/structable_derive/
 COPY xtask/Cargo.toml /usr/src/openstack/xtask/
 COPY fuzz/Cargo.toml /usr/src/openstack/fuzz/
 RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/src/lib.rs &&\
@@ -26,7 +25,6 @@ RUN mkdir -p openstack/openstack_cli/src/bin && touch openstack/openstack_cli/sr
     mkdir -p openstack/openstack_tui/src/bin && touch openstack/openstack_tui/src/lib.rs &&\
     cp openstack/src/main.rs openstack/openstack_tui/src/bin/ostui.rs &&\
     mkdir -p openstack/openstack_sdk/src && touch openstack/openstack_sdk/src/lib.rs &&\
-    mkdir -p openstack/structable_derive/src && touch openstack/structable_derive/src/lib.rs &&\
     mkdir -p /usr/src/openstack/xtask/src && touch openstack/xtask/src/lib.rs &&\
     mkdir -p openstack/fuzz/src && touch openstack/fuzz/src/lib.rs &&\
     mkdir -p openstack/openstack_sdk/examples &&\
@@ -50,7 +48,7 @@ RUN cargo build --target x86_64-unknown-linux-musl --release -p openstack_cli
 COPY . /usr/src/openstack/
 
 ## Touch main.rs to prevent cached release build
-RUN touch openstack_sdk/src/lib.rs && touch openstack_cli/src/bin/osc.rs && touch openstack_cli/src/lib.rs && touch structable_derive/src/lib.rs
+RUN touch openstack_sdk/src/lib.rs && touch openstack_cli/src/bin/osc.rs && touch openstack_cli/src/lib.rs
 
 # This is the actual application build.
 RUN cargo build --target x86_64-unknown-linux-musl --release --bin osc

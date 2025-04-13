@@ -39,4 +39,5 @@ placement = []
 chrono = { workspace= true }
 serde = { workspace = true }
 serde_json = {workspace = true}
-structable_derive = { version = "^0.1", path = "../structable_derive" }
+structable = { version = "^0.2" }
+structable_derive = { version = "^0.2" }

@@ -17,9 +17,7 @@
 //! Response type for the put routers/{id}/add_router_interface operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Router response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

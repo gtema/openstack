@@ -17,9 +17,7 @@
 //! Response type for the get servers/{server_id}/os-volume_attachments/{id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// VolumeAttachment response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

@@ -17,9 +17,7 @@
 //! Response type for the get zones/{zone_id}/shares/{zone_share_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Share response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

@@ -17,9 +17,7 @@
 //! Response type for the post credentials operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Credential response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

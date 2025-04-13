@@ -17,9 +17,7 @@
 //! Response type for the post metadefs/namespaces/{namespace_name}/resource_types operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// ResourceType response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

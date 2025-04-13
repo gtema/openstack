@@ -17,9 +17,7 @@
 //! Response type for the get qos/alias-dscp-marking-rules/{id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// AliasDscpMarkingRule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

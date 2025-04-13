@@ -17,9 +17,7 @@
 //! Response type for the put flavors/{flavor_id}/service_profiles/{id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// ServiceProfile response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

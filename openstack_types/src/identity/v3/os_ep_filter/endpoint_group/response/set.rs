@@ -17,9 +17,7 @@
 //! Response type for the patch OS-EP-FILTER/endpoint_groups/{endpoint_group_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// EndpointGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

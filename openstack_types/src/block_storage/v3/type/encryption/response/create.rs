@@ -17,9 +17,7 @@
 //! Response type for the post types/{type_id}/encryption operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Encryption response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

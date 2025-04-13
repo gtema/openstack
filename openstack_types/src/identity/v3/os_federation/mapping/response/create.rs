@@ -17,9 +17,7 @@
 //! Response type for the put OS-FEDERATION/mappings/{mapping_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Mapping response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
