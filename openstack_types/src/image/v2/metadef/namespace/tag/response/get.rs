@@ -17,9 +17,7 @@
 //! Response type for the get metadefs/namespaces/{namespace_name}/tags/{tag_name} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Tag response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

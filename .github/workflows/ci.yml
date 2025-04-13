@@ -16,7 +16,6 @@ on:
       - 'openstack_sdk/**'
       - 'openstack_tui/**'
       - 'openstack_types/**'
-      - 'structable_derive/**'
       - 'fuzz/**'
 
 env:

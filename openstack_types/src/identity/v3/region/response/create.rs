@@ -17,9 +17,7 @@
 //! Response type for the post regions operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Region response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

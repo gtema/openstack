@@ -17,9 +17,7 @@
 //! Response type for the post floatingips/{floatingip_id}/port_forwardings operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// PortForwarding response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

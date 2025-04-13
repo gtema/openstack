@@ -17,9 +17,7 @@
 //! Response type for the get projects operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Project response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

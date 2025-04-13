@@ -17,9 +17,7 @@
 //! Response type for the get certificates/{certificate_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Certificate response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

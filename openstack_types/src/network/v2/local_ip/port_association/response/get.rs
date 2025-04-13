@@ -17,9 +17,7 @@
 //! Response type for the get local_ips/{local_ip_id}/port_associations/{id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// PortAssociation response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

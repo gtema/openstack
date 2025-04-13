@@ -18,9 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// GroupType response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

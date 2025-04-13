@@ -17,9 +17,7 @@
 //! Response type for the put lbaas/pools/{pool_id}/members/{member_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Member response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

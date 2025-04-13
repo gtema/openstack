@@ -17,9 +17,7 @@
 //! Response type for the post backups/import_record operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// ImportRecord response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

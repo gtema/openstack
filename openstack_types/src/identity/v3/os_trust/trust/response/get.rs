@@ -17,9 +17,7 @@
 //! Response type for the get OS-TRUST/trusts/{trust_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Trust response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

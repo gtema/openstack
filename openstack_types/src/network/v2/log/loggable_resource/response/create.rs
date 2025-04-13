@@ -17,9 +17,7 @@
 //! Response type for the post log/loggable-resources operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// LoggableResource response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

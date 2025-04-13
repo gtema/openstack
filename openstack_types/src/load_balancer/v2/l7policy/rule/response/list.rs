@@ -17,9 +17,7 @@
 //! Response type for the get lbaas/l7policies/{l7policy_id}/rules operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Rule response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

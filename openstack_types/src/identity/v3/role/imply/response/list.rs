@@ -17,9 +17,7 @@
 //! Response type for the get roles/{prior_role_id}/implies operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Imply response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

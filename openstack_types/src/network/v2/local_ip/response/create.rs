@@ -17,9 +17,7 @@
 //! Response type for the post local-ips operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// LocalIp response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

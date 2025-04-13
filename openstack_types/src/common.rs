@@ -14,33 +14,8 @@
 
 //! Common types that can be used in responses of the API operations
 use serde::{de::Visitor, Deserialize, Deserializer, Serialize};
-use std::collections::BTreeSet;
 use std::fmt;
 use std::str::FromStr;
-
-/// Output configuration for the StructTable derived structure.
-#[derive(Clone, Debug, Default, Deserialize)]
-pub struct OutputConfig {
-    /// Limit fields (their titles) to be returned
-    #[serde(default)]
-    pub fields: BTreeSet<String>,
-
-    /// Wide mode (additional fields requested)
-    #[serde(default)]
-    pub wide: bool,
-
-    /// Pretty-print the output (relevant only for serialized fields)
-    #[serde(default)]
-    pub pretty: bool,
-}
-
-/// StructTable trait for structs that might be returned to the used in the table form.
-pub trait StructTable {
-    /// Build a table data as a Vec of column headers and Vec of Vec of string for cells
-    fn build(&self, options: &OutputConfig) -> (Vec<String>, Vec<Vec<String>>);
-    /// Return the row/column with the status column
-    fn status(&self) -> Vec<Option<String>>;
-}
 
 /// Deserialize whatever is an integer, number or a string number falling back to the Default (0)
 pub fn deser_num_str<'de, D, T>(deserializer: D) -> Result<T, D::Error>

@@ -17,9 +17,7 @@
 //! Response type for the get lbaas/quotas/{project_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Quota response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

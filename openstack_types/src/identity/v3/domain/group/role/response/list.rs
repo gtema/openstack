@@ -17,9 +17,7 @@
 //! Response type for the get domains/{domain_id}/groups/{group_id}/roles operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Role response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

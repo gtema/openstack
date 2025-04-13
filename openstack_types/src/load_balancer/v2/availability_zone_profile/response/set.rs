@@ -17,9 +17,7 @@
 //! Response type for the put lbaas/availabilityzoneprofiles/{availabilityzoneprofile_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// AvailabilityZoneProfile response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

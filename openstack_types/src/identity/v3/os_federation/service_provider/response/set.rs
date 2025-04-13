@@ -17,9 +17,7 @@
 //! Response type for the patch OS-FEDERATION/service_providers/{service_provider_id} operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// ServiceProvider response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

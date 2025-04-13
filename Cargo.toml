@@ -5,7 +5,6 @@ members = [
   "openstack_cli",
   "openstack_tui",
   "openstack_types",
-  "structable_derive",
   "xtask",
   "fuzz"
 ]

@@ -17,9 +17,7 @@
 //! Response type for the put address-groups/{id}/add_addresses operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// AddressGroup response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

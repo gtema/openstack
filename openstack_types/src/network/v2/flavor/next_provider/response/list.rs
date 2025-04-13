@@ -17,9 +17,7 @@
 //! Response type for the get flavors/{flavor_id}/next_providers operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// NextProvider response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

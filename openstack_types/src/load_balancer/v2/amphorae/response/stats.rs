@@ -17,9 +17,7 @@
 //! Response type for the get octavia/amphorae/{amphora_id}/stats operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// Amphorae response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

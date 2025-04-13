@@ -17,7 +17,6 @@ on:
       - 'openstack_sdk/**'
       - 'openstack_tui/**'
       - 'openstack_types/**'
-      - 'structable_derive/**'
       - 'fuzz/**'
 
 concurrency:
@@ -60,7 +59,7 @@ jobs:
       matrix:
         include:
           - rust_ver: 1.76
-            clippy_args: "-p openstack_sdk -p structable_derive"
+            clippy_args: "-p openstack_sdk -p openstack_types"
           - rust_ver: 1.85
             clippy_args: "-p openstack_cli -p openstack_tui"
     steps:

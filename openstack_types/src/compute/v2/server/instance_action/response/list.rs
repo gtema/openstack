@@ -17,9 +17,7 @@
 //! Response type for the get servers/{server_id}/os-instance-actions operation
 
 use serde::{Deserialize, Serialize};
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// InstanceAction response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]

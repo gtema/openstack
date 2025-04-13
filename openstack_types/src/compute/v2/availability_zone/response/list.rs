@@ -18,9 +18,7 @@
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use structable_derive::StructTable;
-
-use crate::common::{OutputConfig, StructTable};
+use structable::{StructTable, StructTableOptions};
 
 /// AvailabilityZone response representation
 #[derive(Clone, Deserialize, Serialize, StructTable)]
