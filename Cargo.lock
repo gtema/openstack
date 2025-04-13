@@ -2209,7 +2209,7 @@ dependencies = [
  "serde",
  "serde_json",
  "strip-ansi-escapes",
- "structable_derive 0.1.6",
+ "structable_derive",
  "tempfile",
  "thiserror 2.0.12",
  "tokio",
@@ -2292,7 +2292,7 @@ dependencies = [
  "serde_yaml",
  "signal-hook",
  "strip-ansi-escapes",
- "structable_derive 0.1.6",
+ "structable_derive",
  "strum 0.27.1",
  "thiserror 2.0.12",
  "tokio",
@@ -2310,7 +2310,7 @@ dependencies = [
  "serde",
  "serde_json",
  "structable",
- "structable_derive 0.2.0",
+ "structable_derive",
 ]
 
 [[package]]
@@ -3187,19 +3187,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc773b2994dea011705dd9eebe1b49a165f0205ae47a3e92153e147fa05be878"
 dependencies = [
  "serde",
- "structable_derive 0.2.0",
-]
-
-[[package]]
-name = "structable_derive"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ddaee16db414869b59fcfaa1348ecda6308465f95c04d8e89acab76dd246269b"
-dependencies = [
- "darling",
- "proc-macro2",
- "quote",
- "syn 2.0.100",
+ "structable_derive",
 ]
 
 [[package]]
