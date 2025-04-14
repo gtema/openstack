@@ -17,11 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::load_balancer::v2::healthmonitor::response::list::HealthmonitorResponse;
+
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerHealthmonitor, LoadBalancerHealthmonitorApiRequest,
-        LoadBalancerHealthmonitorList,
+        LoadBalancerApiRequest, LoadBalancerHealthmonitorApiRequest, LoadBalancerHealthmonitorList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +35,14 @@ use crate::{
 const TITLE: &str = "LB HealthMonitors";
 const VIEW_CONFIG_KEY: &str = "load-balancer.healthmonitor";
 
-impl ResourceKey for LoadBalancerHealthmonitor {
+impl ResourceKey for HealthmonitorResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type LoadBalancerHealthMonitors<'a> =
-    TableViewComponentBase<'a, LoadBalancerHealthmonitor, LoadBalancerHealthmonitorList>;
+    TableViewComponentBase<'a, HealthmonitorResponse, LoadBalancerHealthmonitorList>;
 
 impl Component for LoadBalancerHealthMonitors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

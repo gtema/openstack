@@ -18,12 +18,14 @@ use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
+use openstack_types::block_storage::v3::volume::response::list_detailed::VolumeResponse;
+
 use crate::{
     action::Action,
     cloud_worker::block_storage::v3::{
-        BlockStorageApiRequest, BlockStorageVolume, BlockStorageVolumeApiRequest,
-        BlockStorageVolumeDelete, BlockStorageVolumeDeleteBuilder,
-        BlockStorageVolumeDeleteBuilderError, BlockStorageVolumeList,
+        BlockStorageApiRequest, BlockStorageVolumeApiRequest, BlockStorageVolumeDelete,
+        BlockStorageVolumeDeleteBuilder, BlockStorageVolumeDeleteBuilderError,
+        BlockStorageVolumeList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -36,18 +38,18 @@ use crate::{
 const TITLE: &str = "Volumes";
 const VIEW_CONFIG_KEY: &str = "block_storage.volume";
 
-impl ResourceKey for BlockStorageVolume {
+impl ResourceKey for VolumeResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type BlockStorageVolumes<'a> =
-    TableViewComponentBase<'a, BlockStorageVolume, BlockStorageVolumeList>;
+    TableViewComponentBase<'a, VolumeResponse, BlockStorageVolumeList>;
 
-impl TryFrom<&BlockStorageVolume> for BlockStorageVolumeDelete {
+impl TryFrom<&VolumeResponse> for BlockStorageVolumeDelete {
     type Error = BlockStorageVolumeDeleteBuilderError;
-    fn try_from(value: &BlockStorageVolume) -> Result<Self, Self::Error> {
+    fn try_from(value: &VolumeResponse) -> Result<Self, Self::Error> {
         let mut builder = BlockStorageVolumeDeleteBuilder::default();
         builder.id(value.id.clone());
         if let Some(val) = &value.name {

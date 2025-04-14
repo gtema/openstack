@@ -16,7 +16,7 @@ use crossterm::event::KeyEvent;
 use eyre::Result;
 use ratatui::prelude::*;
 use serde::Deserialize;
-use structable_derive::StructTable;
+use structable::{StructTable, StructTableOptions};
 use tokio::sync::mpsc::UnboundedSender;
 
 use crate::{
@@ -30,7 +30,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable, as_string},
+    utils::{ResourceKey, as_string},
 };
 
 const TITLE: &str = "InstanceAction Events";

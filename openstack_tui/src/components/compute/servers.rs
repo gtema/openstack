@@ -19,10 +19,12 @@ use serde_json::json;
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 
+use openstack_types::compute::v2::server::response::list_detailed::ServerResponse;
+
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeServer, ComputeServerApiRequest, ComputeServerDelete,
+        ComputeApiRequest, ComputeServerApiRequest, ComputeServerDelete,
         ComputeServerDeleteBuilder, ComputeServerDeleteBuilderError,
         ComputeServerGetConsoleOutputBuilder, ComputeServerInstanceActionList,
         ComputeServerInstanceActionListBuilder, ComputeServerInstanceActionListBuilderError,
@@ -39,13 +41,13 @@ use crate::{
 const TITLE: &str = "Compute Servers";
 const VIEW_CONFIG_KEY: &str = "compute.server";
 
-impl ResourceKey for ComputeServer {
+impl ResourceKey for ServerResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeServers<'a> = TableViewComponentBase<'a, ComputeServer, ComputeServerList>;
+pub type ComputeServers<'a> = TableViewComponentBase<'a, ServerResponse, ComputeServerList>;
 
 impl ComputeServers<'_> {
     /// Normalize filters
@@ -66,9 +68,9 @@ impl ComputeServers<'_> {
     }
 }
 
-impl TryFrom<&ComputeServer> for ComputeServerDelete {
+impl TryFrom<&ServerResponse> for ComputeServerDelete {
     type Error = ComputeServerDeleteBuilderError;
-    fn try_from(value: &ComputeServer) -> Result<Self, Self::Error> {
+    fn try_from(value: &ServerResponse) -> Result<Self, Self::Error> {
         let mut builder = ComputeServerDeleteBuilder::default();
         builder.id(value.id.clone());
         builder.name(value.name.clone());
@@ -76,9 +78,9 @@ impl TryFrom<&ComputeServer> for ComputeServerDelete {
     }
 }
 
-impl TryFrom<&ComputeServer> for ComputeServerInstanceActionList {
+impl TryFrom<&ServerResponse> for ComputeServerInstanceActionList {
     type Error = ComputeServerInstanceActionListBuilderError;
-    fn try_from(value: &ComputeServer) -> Result<Self, Self::Error> {
+    fn try_from(value: &ServerResponse) -> Result<Self, Self::Error> {
         let mut builder = ComputeServerInstanceActionListBuilder::default();
         builder.server_id(value.id.clone());
         builder.server_name(value.name.clone());

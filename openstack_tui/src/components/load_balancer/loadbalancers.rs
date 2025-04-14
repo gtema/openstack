@@ -17,13 +17,15 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::load_balancer::v2::loadbalancer::response::list::LoadbalancerResponse;
+
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
         LoadBalancerApiRequest, LoadBalancerListenerList, LoadBalancerListenerListBuilder,
-        LoadBalancerListenerListBuilderError, LoadBalancerLoadbalancer,
-        LoadBalancerLoadbalancerApiRequest, LoadBalancerLoadbalancerList, LoadBalancerPoolList,
-        LoadBalancerPoolListBuilder, LoadBalancerPoolListBuilderError,
+        LoadBalancerListenerListBuilderError, LoadBalancerLoadbalancerApiRequest,
+        LoadBalancerLoadbalancerList, LoadBalancerPoolList, LoadBalancerPoolListBuilder,
+        LoadBalancerPoolListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -36,15 +38,15 @@ use crate::{
 const TITLE: &str = "LoadBalancers";
 const VIEW_CONFIG_KEY: &str = "load-balancer.loadbalancer";
 
-impl ResourceKey for LoadBalancerLoadbalancer {
+impl ResourceKey for LoadbalancerResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&LoadBalancerLoadbalancer> for LoadBalancerListenerList {
+impl TryFrom<&LoadbalancerResponse> for LoadBalancerListenerList {
     type Error = LoadBalancerListenerListBuilderError;
-    fn try_from(value: &LoadBalancerLoadbalancer) -> Result<Self, Self::Error> {
+    fn try_from(value: &LoadbalancerResponse) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerListenerListBuilder::default();
         if let Some(val) = &value.id {
             builder.load_balancer_id(val.clone());
@@ -56,9 +58,9 @@ impl TryFrom<&LoadBalancerLoadbalancer> for LoadBalancerListenerList {
     }
 }
 
-impl TryFrom<&LoadBalancerLoadbalancer> for LoadBalancerPoolList {
+impl TryFrom<&LoadbalancerResponse> for LoadBalancerPoolList {
     type Error = LoadBalancerPoolListBuilderError;
-    fn try_from(value: &LoadBalancerLoadbalancer) -> Result<Self, Self::Error> {
+    fn try_from(value: &LoadbalancerResponse) -> Result<Self, Self::Error> {
         let mut builder = LoadBalancerPoolListBuilder::default();
         if let Some(val) = &value.id {
             builder.loadbalancer_id(val.clone());
@@ -71,7 +73,7 @@ impl TryFrom<&LoadBalancerLoadbalancer> for LoadBalancerPoolList {
 }
 
 pub type LoadBalancers<'a> =
-    TableViewComponentBase<'a, LoadBalancerLoadbalancer, LoadBalancerLoadbalancerList>;
+    TableViewComponentBase<'a, LoadbalancerResponse, LoadBalancerLoadbalancerList>;
 
 impl Component for LoadBalancers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

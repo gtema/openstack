@@ -6,8 +6,7 @@ members = [
   "openstack_tui",
   "openstack_types",
   "xtask",
-  "fuzz"
-]
+  "fuzz"]
 default-members = ["openstack_cli", "openstack_sdk", "openstack_tui", "openstack_types"]
 
 [workspace.package]

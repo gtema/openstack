@@ -17,11 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::load_balancer::v2::listener::response::list::ListenerResponse;
+
 use crate::{
     action::Action,
     cloud_worker::load_balancer::v2::{
-        LoadBalancerApiRequest, LoadBalancerListener, LoadBalancerListenerApiRequest,
-        LoadBalancerListenerList,
+        LoadBalancerApiRequest, LoadBalancerListenerApiRequest, LoadBalancerListenerList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +35,14 @@ use crate::{
 const TITLE: &str = "LB Listeners";
 const VIEW_CONFIG_KEY: &str = "load-balancer.listener";
 
-impl ResourceKey for LoadBalancerListener {
+impl ResourceKey for ListenerResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type LoadBalancerListeners<'a> =
-    TableViewComponentBase<'a, LoadBalancerListener, LoadBalancerListenerList>;
+    TableViewComponentBase<'a, ListenerResponse, LoadBalancerListenerList>;
 
 impl Component for LoadBalancerListeners<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

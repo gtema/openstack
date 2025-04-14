@@ -17,11 +17,13 @@ use eyre::{Result, WrapErr};
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::network::v2::network::response::list::NetworkResponse;
+
 use crate::{
     action::Action,
     cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkNetwork, NetworkNetworkApiRequest, NetworkNetworkList,
-        NetworkSubnetList, NetworkSubnetListBuilder, NetworkSubnetListBuilderError,
+        NetworkApiRequest, NetworkNetworkApiRequest, NetworkNetworkList, NetworkSubnetList,
+        NetworkSubnetListBuilder, NetworkSubnetListBuilderError,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -33,15 +35,16 @@ use crate::{
 
 const TITLE: &str = "Networks";
 const VIEW_CONFIG_KEY: &str = "network.network";
-impl ResourceKey for NetworkNetwork {
+
+impl ResourceKey for NetworkResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-impl TryFrom<&NetworkNetwork> for NetworkSubnetList {
+impl TryFrom<&NetworkResponse> for NetworkSubnetList {
     type Error = NetworkSubnetListBuilderError;
-    fn try_from(value: &NetworkNetwork) -> Result<Self, Self::Error> {
+    fn try_from(value: &NetworkResponse) -> Result<Self, Self::Error> {
         let mut builder = NetworkSubnetListBuilder::default();
         if let Some(val) = &value.id {
             builder.network_id(val.clone());
@@ -53,7 +56,7 @@ impl TryFrom<&NetworkNetwork> for NetworkSubnetList {
     }
 }
 
-pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkNetwork, NetworkNetworkList>;
+pub type NetworkNetworks<'a> = TableViewComponentBase<'a, NetworkResponse, NetworkNetworkList>;
 
 impl NetworkNetworks<'_> {
     /// Normalize filters

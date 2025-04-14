@@ -17,10 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::compute::v2::aggregate::response::list::AggregateResponse;
+
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
-        ComputeAggregate, ComputeAggregateApiRequest, ComputeAggregateList, ComputeApiRequest,
+        ComputeAggregateApiRequest, ComputeAggregateList, ComputeApiRequest,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -33,13 +35,14 @@ use crate::{
 const TITLE: &str = "Compute Aggregates";
 const VIEW_CONFIG_KEY: &str = "compute.aggregate";
 
-impl ResourceKey for ComputeAggregate {
+impl ResourceKey for AggregateResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type ComputeAggregates<'a> = TableViewComponentBase<'a, ComputeAggregate, ComputeAggregateList>;
+pub type ComputeAggregates<'a> =
+    TableViewComponentBase<'a, AggregateResponse, ComputeAggregateList>;
 
 impl Component for ComputeAggregates<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

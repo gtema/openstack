@@ -17,11 +17,13 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::identity::v3::group::user::response::list::UserResponse;
+
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUser,
-        IdentityGroupUserApiRequest, IdentityGroupUserList,
+        IdentityApiRequest, IdentityGroupApiRequest, IdentityGroupUserApiRequest,
+        IdentityGroupUserList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -34,14 +36,13 @@ use crate::{
 const TITLE: &str = "Identity Group Users";
 const VIEW_CONFIG_KEY: &str = "identity.user";
 
-impl ResourceKey for IdentityGroupUser {
+impl ResourceKey for UserResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityGroupUsers<'a> =
-    TableViewComponentBase<'a, IdentityGroupUser, IdentityGroupUserList>;
+pub type IdentityGroupUsers<'a> = TableViewComponentBase<'a, UserResponse, IdentityGroupUserList>;
 
 impl Component for IdentityGroupUsers<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

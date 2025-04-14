@@ -17,10 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::compute::v2::hypervisor::response::list_detailed::HypervisorResponse;
+
 use crate::{
     action::Action,
     cloud_worker::compute::v2::{
-        ComputeApiRequest, ComputeHypervisor, ComputeHypervisorApiRequest, ComputeHypervisorList,
+        ComputeApiRequest, ComputeHypervisorApiRequest, ComputeHypervisorList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -33,14 +35,14 @@ use crate::{
 const TITLE: &str = "Compute Hypervisors";
 const VIEW_CONFIG_KEY: &str = "compute.hypervisor";
 
-impl ResourceKey for ComputeHypervisor {
+impl ResourceKey for HypervisorResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
 pub type ComputeHypervisors<'a> =
-    TableViewComponentBase<'a, ComputeHypervisor, ComputeHypervisorList>;
+    TableViewComponentBase<'a, HypervisorResponse, ComputeHypervisorList>;
 
 impl Component for ComputeHypervisors<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {

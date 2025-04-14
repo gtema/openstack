@@ -17,11 +17,11 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::network::v2::subnet::response::list::SubnetResponse;
+
 use crate::{
     action::Action,
-    cloud_worker::network::v2::{
-        NetworkApiRequest, NetworkSubnet, NetworkSubnetApiRequest, NetworkSubnetList,
-    },
+    cloud_worker::network::v2::{NetworkApiRequest, NetworkSubnetApiRequest, NetworkSubnetList},
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
     config::Config,
@@ -33,13 +33,13 @@ use crate::{
 const TITLE: &str = "Subnets";
 const VIEW_CONFIG_KEY: &str = "network.subnet";
 
-impl ResourceKey for NetworkSubnet {
+impl ResourceKey for SubnetResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type NetworkSubnets<'a> = TableViewComponentBase<'a, NetworkSubnet, NetworkSubnetList>;
+pub type NetworkSubnets<'a> = TableViewComponentBase<'a, SubnetResponse, NetworkSubnetList>;
 
 impl NetworkSubnets<'_> {
     /// Normalize filters

@@ -33,6 +33,7 @@ itertools = { workspace = true }
 json5 = "^0.4"
 lazy_static = "^1.5"
 openstack_sdk = { path = "../openstack_sdk", version = "^0.20", default-features = false, features = ["async", "block_storage", "compute", "dns", "identity", "image", "load_balancer", "network"] }
+openstack_types = { path = "../openstack_types", version = "^0.20" }
 pretty_assertions = "^1.4"
 ratatui = { version = "^0.29", features = ["serde", "macros"] }
 serde = { workspace = true  }
@@ -40,7 +41,8 @@ serde_json = { workspace = true }
 serde_yaml = "^0.9"
 signal-hook = "^0.3"
 strip-ansi-escapes = "^0.2"
-structable_derive = { version = "^0.1" }
+structable_derive = { version = "^0.2" }
+structable = { version = "^0.2" }
 strum = { version = "^0.27", features = ["derive"] }
 thiserror = { workspace = true }
 tokio = { workspace = true }

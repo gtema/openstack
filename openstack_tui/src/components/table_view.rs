@@ -22,6 +22,7 @@ use ratatui::{
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::{cmp, fmt::Display};
+use structable::{OutputConfig, StructTable, build_list_table};
 use tokio::sync::mpsc::UnboundedSender;
 use tracing::{debug, instrument};
 
@@ -31,7 +32,7 @@ use crate::{
     config::Config,
     error::TuiError,
     mode::Mode,
-    utils::{OutputConfig, ResourceKey, StructTable},
+    utils::ResourceKey,
 };
 
 const ITEM_HEIGHT: usize = 1;
@@ -47,7 +48,7 @@ enum Focus {
 pub struct TableViewComponentBase<'a, T, F>
 where
     T: StructTable,
-    Vec<T>: StructTable,
+    //Vec<T>: StructTable,
     T: DeserializeOwned,
     T: ResourceKey,
     F: Default + Display,
@@ -77,7 +78,8 @@ where
 impl<T, F> Default for TableViewComponentBase<'_, T, F>
 where
     T: StructTable,
-    Vec<T>: StructTable,
+    for<'a> &'a T: StructTable,
+    //Vec<T>: StructTable,
     T: DeserializeOwned,
     T: ResourceKey,
     F: Default + Display,
@@ -90,7 +92,9 @@ where
 impl<T, F> TableViewComponentBase<'_, T, F>
 where
     T: StructTable,
-    Vec<T>: StructTable,
+    for<'a> &'a T: StructTable,
+    //T: Borrow<StructTable>,
+    //Vec<T>: StructTable,
     T: DeserializeOwned,
     T: ResourceKey,
     F: Default + Display,
@@ -347,8 +351,9 @@ where
     /// Synchronize table data from internal vector of typed entries
     pub fn sync_table_data(&mut self) -> Result<(), TuiError> {
         let view_config = self.get_output_config().clone();
-        let (table_headers, table_rows) = self.items.build(&view_config);
-        let mut statuses = self.items.status();
+        let (table_headers, table_rows) = build_list_table(self.items.iter(), &view_config);
+        let mut statuses: Vec<Option<String>> =
+            self.items.iter().map(|item| item.status()).collect();
 
         // Ensure we have as many statuses as rows to zip them properly
         statuses.resize_with(table_rows.len(), Default::default);
@@ -361,6 +366,7 @@ where
         self.table_headers = table_headers
             .clone()
             .into_iter()
+            .map(|x| x.to_uppercase())
             .map(Cell::from)
             .collect::<Row>();
         self.table_rows = table_rows;

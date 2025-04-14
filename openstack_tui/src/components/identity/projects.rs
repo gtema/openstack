@@ -17,10 +17,12 @@ use eyre::Result;
 use ratatui::prelude::*;
 use tokio::sync::mpsc::UnboundedSender;
 
+use openstack_types::identity::v3::project::response::list::ProjectResponse;
+
 use crate::{
     action::Action,
     cloud_worker::identity::v3::{
-        IdentityApiRequest, IdentityProject, IdentityProjectApiRequest, IdentityProjectList,
+        IdentityApiRequest, IdentityProjectApiRequest, IdentityProjectList,
     },
     cloud_worker::types::ApiRequest,
     components::{Component, table_view::TableViewComponentBase},
@@ -33,13 +35,13 @@ use crate::{
 const TITLE: &str = "Identity Projects";
 const VIEW_CONFIG_KEY: &str = "identity.project";
 
-impl ResourceKey for IdentityProject {
+impl ResourceKey for ProjectResponse {
     fn get_key() -> &'static str {
         VIEW_CONFIG_KEY
     }
 }
 
-pub type IdentityProjects<'a> = TableViewComponentBase<'a, IdentityProject, IdentityProjectList>;
+pub type IdentityProjects<'a> = TableViewComponentBase<'a, ProjectResponse, IdentityProjectList>;
 
 impl Component for IdentityProjects<'_> {
     fn register_config_handler(&mut self, config: Config) -> Result<(), TuiError> {
